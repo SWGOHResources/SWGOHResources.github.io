@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Relic Signal Planner</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0d0d0d;
+  --bg1: #141414;
+  --bg2: #1a1a1a;
+  --bg3: #212121;
+  --bg4: #2a2a2a;
+  --border: #2e2e2e;
+  --border2: #3a3a3a;
+  --text: #f0f0f0;
+  --text2: #999;
+  --text3: #555;
+  --grey: #a0a0a0;
+  --grey-dim: #4a4a4a;
+  --green: #4caf50;
+  --green-dim: #1e3320;
+  --green-mid: #2d5c32;
+  --blue: #5b9bd5;
+  --blue-dim: #1a2a3d;
+  --blue-mid: #2a4a6a;
+  --accent: #7c6af7;
+  --accent-dim: #1e1a3a;
+  --accent-mid: #3a3070;
+  --red: #e05555;
+  --red-dim: #2a1515;
+  --yellow: #d4a84b;
+  --yellow-dim: #2a2010;
+  --radius: 6px;
+  --radius-lg: 10px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{height:100%}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:13px;line-height:1.5;min-height:100vh}
+
+/* ─── Top bar ─────────────────────────────────── */
+.topbar{
+  position:sticky;top:0;z-index:200;
+  background:var(--bg1);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:0;
+  height:48px;padding:0 20px;
+}
+.topbar-title{font-size:14px;font-weight:600;letter-spacing:.02em;color:var(--text);margin-right:24px}
+.topbar-title span{color:var(--accent)}
+.topbar-tabs{display:flex;gap:2px;flex:1}
+.tab-btn{
+  height:48px;padding:0 16px;background:none;border:none;
+  color:var(--text2);font-size:13px;font-family:'Inter',sans-serif;
+  cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;
+  white-space:nowrap;
+}
+.tab-btn:hover{color:var(--text)}
+.tab-btn.active{color:var(--text);border-bottom-color:var(--accent)}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.saved-badge{font-size:11px;color:var(--text3);display:flex;align-items:center;gap:5px}
+.saved-dot{width:6px;height:6px;border-radius:50%;background:var(--green)}
+
+/* ─── Layout ──────────────────────────────────── */
+.app{max-width:1100px;margin:0 auto;padding:24px 20px}
+.page{display:none}.page.active{display:block}
+
+/* ─── Shared components ───────────────────────── */
+.section{background:var(--bg1);border:1px solid var(--border);border-radius:var(--radius-lg);margin-bottom:16px;overflow:hidden}
+.section-head{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.section-title{font-size:13px;font-weight:600;flex:1}
+.section-body{padding:16px 18px}
+.label{font-size:11px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--text3);margin-bottom:6px}
+
+/* signal pills */
+.pill{display:inline-flex;align-items:center;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:500;font-family:'JetBrains Mono',monospace}
+.pill-grey{background:rgba(160,160,160,.12);color:var(--grey);border:1px solid rgba(160,160,160,.2)}
+.pill-green{background:rgba(76,175,80,.12);color:var(--green);border:1px solid rgba(76,175,80,.2)}
+.pill-blue{background:rgba(91,155,213,.12);color:var(--blue);border:1px solid rgba(91,155,213,.2)}
+.pill-get2{background:rgba(212,168,75,.12);color:var(--yellow);border:1px solid rgba(212,168,75,.2)}
+.pill-red{background:rgba(224,85,85,.12);color:var(--red);border:1px solid rgba(224,85,85,.2)}
+.pill-accent{background:var(--accent-dim);color:#a89df9;border:1px solid rgba(124,106,247,.3)}
+
+/* inputs */
+input[type=text],input[type=number],select{
+  background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);
+  color:var(--text);font-family:'Inter',sans-serif;font-size:13px;
+  padding:0 10px;height:32px;width:100%;outline:none;
+  transition:border-color .15s;-webkit-appearance:none;appearance:none;
+}
+input:focus,select:focus{border-color:var(--accent)}
+select{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23555'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 9px center;padding-right:26px;cursor:pointer;
+}
+select option{background:#1a1a1a}
+input[type=range]{accent-color:var(--accent);width:100%;cursor:pointer}
+input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:pointer}
+
+/* buttons */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:5px;
+  height:30px;padding:0 12px;border-radius:var(--radius);border:none;
+  font-family:'Inter',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;
+}
+.btn-accent{background:var(--accent-mid);color:#c0b8ff;border:1px solid rgba(124,106,247,.4)}
+.btn-accent:hover{background:var(--accent);color:#fff}
+.btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border2)}
+.btn-ghost:hover:not(:disabled){background:var(--bg3);color:var(--text)}
+.btn-ghost:disabled{opacity:0.3;cursor:default}
+.btn-danger{background:transparent;color:var(--text3);border:1px solid transparent;width:28px;padding:0;font-size:15px}
+.btn-danger:hover{background:var(--red-dim);color:var(--red);border-color:rgba(224,85,85,.3)}
+.btn-sm{height:26px;padding:0 8px;font-size:11px}
+.btn-icon{width:26px;height:26px;padding:0;font-size:14px;display:inline-flex;align-items:center;justify-content:center}
+
+/* ─── Config page ───────────────────────────── */
+.config-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+@media(max-width:800px){.config-grid{grid-template-columns:1fr}}
+.field-row{display:flex;align-items:center;gap:10px}
+.income-table{width:100%;border-collapse:collapse}
+.income-table th{font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--text3);padding:6px 10px;text-align:left;border-bottom:1px solid var(--border)}
+.income-table td{padding:6px 10px;border-bottom:1px solid var(--border)}
+.income-table tr:last-child td{border-bottom:none}
+.income-table input{height:28px;text-align:right;font-family:'JetBrains Mono',monospace;width:60px;padding:0 6px;}
+.source-name{color:var(--text2);font-size:12px}
+.cantina-rate{font-size:11px;font-family:'JetBrains Mono',monospace;text-align:right}
+
+/* ─── TB page ─────────────────────────────────── */
+.tb-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:640px){.tb-grid{grid-template-columns:1fr}}
+.planet-item{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border)}
+.planet-item:last-child{border-bottom:none}
+.planet-name{font-size:13px;font-weight:500;flex:1;min-width:80px}
+.planet-completions{display:flex;align-items:center;gap:8px;flex:2}
+.planet-completions input[type=range]{flex:1}
+.planet-val{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--yellow);min-width:28px;text-align:right}
+.planet-get2{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text2);min-width:50px;text-align:right}
+.stars-input{display:flex;align-items:center;gap:10px}
+.stars-input input[type=range]{flex:1}
+.stars-val{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:600;color:var(--yellow);min-width:28px}
+.get2-summary{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:14px}
+.get2-box{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px}
+.get2-box-label{font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);margin-bottom:4px}
+.get2-box-val{font-size:16px;font-weight:600;font-family:'JetBrains Mono',monospace;color:var(--yellow)}
+
+/* ─── Plan page ───────────────────────────────── */
+.plan-layout{display:grid;grid-template-columns:1fr 340px;gap:16px;align-items:start}
+@media(max-width:860px){.plan-layout{grid-template-columns:1fr}}
+
+.group-card{
+  background:var(--bg1);border:1px solid var(--border);border-radius:var(--radius-lg);
+  margin-bottom:12px;overflow:hidden;
+  transition:border-color .15s;
+}
+
+.group-head{
+  display:flex;align-items:center;gap:8px;padding:10px 14px;
+  background:var(--bg2);border-bottom:1px solid var(--border);cursor:pointer;
+}
+.group-head:hover{background:var(--bg3)}
+.group-label-input{
+  background:transparent;border:none;color:var(--text);
+  font-size:13px;font-weight:600;font-family:'Inter',sans-serif;
+  flex:1;outline:none;cursor:text;
+  border-bottom:1px solid transparent;
+}
+.group-label-input:focus{border-bottom-color:var(--accent)}
+.group-chevron{color:var(--text3);transition:transform .2s;font-size:11px;margin-left:auto}
+.group-card.collapsed .group-chevron{transform:rotate(-90deg)}
+.group-card.collapsed .group-body{display:none}
+
+.group-signals{display:flex;gap:6px;align-items:center}
+.group-body{padding:14px}
+
+.upgrade-row{
+  display:grid;grid-template-columns:1fr 70px 70px auto auto;
+  gap:8px;align-items:center;padding:7px 10px;
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);
+  margin-bottom:5px;
+}
+.upgrade-row:hover{border-color:var(--border2)}
+.upgrade-badges{display:flex;gap:4px}
+.upgrade-add{margin-top:8px}
+
+.summary-sticky{position:sticky;top:72px}
+.income-stat{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:8px 14px;border-bottom:1px solid var(--border);font-size:13px;
+}
+.income-stat:last-child{border-bottom:none}
+.income-stat-val{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:500}
+
+.cumulative-table{width:100%;border-collapse:collapse;font-size:12px}
+.cumulative-table th{
+  font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;
+  color:var(--text3);padding:5px 8px;text-align:right;border-bottom:1px solid var(--border);
+}
+.cumulative-table th:first-child{text-align:left}
+.cumulative-table td{padding:5px 8px;text-align:right;border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace}
+.cumulative-table td:first-child{text-align:left;font-family:'Inter',sans-serif;color:var(--text2)}
+.cumulative-table tr:last-child td{border-bottom:none}
+.pos{color:var(--green)}.neg{color:var(--red)}
+
+.reorder-btn{
+  width:26px;height:26px;border-radius:4px;
+  background:var(--bg3);border:1px solid var(--border2);
+  color:var(--text);cursor:pointer;font-size:12px;font-weight:bold;
+  display:flex;align-items:center;justify-content:center;transition:all .15s;
+}
+.reorder-btn:hover:not(:disabled){background:var(--accent-mid);color:#fff;border-color:var(--accent);}
+.reorder-btn:disabled{background:transparent;opacity:.3;cursor:default;color:var(--text3);border-color:var(--border);}
+
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-title">Relic <span>Planner</span></div>
+  <div class="topbar-tabs">
+    <button class="tab-btn active" onclick="showTab('plan')">Group Plan</button>
+    <button class="tab-btn" onclick="showTab('tb')">TB Setup</button>
+    <button class="tab-btn" onclick="showTab('config')">Configuration</button>
+  </div>
+  <div class="topbar-right">
+    <div class="saved-badge"><div class="saved-dot" id="saveDot"></div><span id="saveText">Saved</span></div>
+  </div>
+</div>
+
+<div class="app">
+
+<!-- ══════════ PLAN PAGE ══════════ -->
+<div class="page active" id="page-plan">
+  <div class="plan-layout">
+    <div id="groups-col">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <div style="font-size:12px;color:var(--text3)">Drag groups to reorder · click header to collapse</div>
+        <button class="btn btn-accent" onclick="addGroup()">+ Add group</button>
+      </div>
+      <div id="groups-list"></div>
+    </div>
+    <div class="summary-sticky">
+      <div class="section">
+        <div class="section-head"><div class="section-title">Monthly income</div></div>
+        <div id="income-display"></div>
+        <div style="padding:10px 14px;border-top:1px solid var(--border)">
+          <div style="font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);margin-bottom:8px">GET 2 store</div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+            <div style="font-size:12px;color:var(--text2);flex:1">Grey ×20 purchases <span style="color:var(--text3)">(1600 each)</span></div>
+            <input type="number" id="grey-purchases" min="0" max="50" value="0"
+              style="width:60px;text-align:center" oninput="onGreyPurchasesChange()">
+          </div>
+          <div style="font-size:11px;color:var(--text3)" id="grey-purchase-cost"></div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-head"><div class="section-title">Cumulative balance</div></div>
+        <div style="padding:12px 14px;overflow-x:auto">
+          <table class="cumulative-table" id="cumulative-table"></table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ TB PAGE ══════════ -->
+<div class="page" id="page-tb">
+  <div style="display:flex;gap:10px;align-items:center;margin-bottom:16px;flex-wrap:wrap">
+    <div style="font-size:13px;color:var(--text2)">Configure your 2 monthly TBs. Both use the same settings (same guild, same territory).</div>
+  </div>
+  <div class="tb-grid">
+    <div>
+      <div class="section">
+        <div class="section-head"><div class="section-title">ROTE star rewards</div></div>
+        <div class="section-body">
+          <div class="label">Stars achieved</div>
+          <div class="stars-input">
+            <input type="range" id="rote-stars-range" min="1" max="24" value="24"
+              oninput="onStarsChange(this.value)">
+            <div class="stars-val" id="stars-display">24+</div>
+            <div style="font-size:11px;color:var(--text3)">★</div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px">
+            <div style="font-size:12px;color:var(--text2)">GET 2 per TB</div>
+            <div class="pill pill-get2" id="rote-get2-per-tb">6000</div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+            <div style="font-size:12px;color:var(--text2)">GET 2 per month (×2 TBs)</div>
+            <div class="pill pill-get2" id="rote-get2-month">12000</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-head"><div class="section-title">Planet missions</div></div>
+        <div class="section-body">
+          <div style="display:grid;grid-template-columns:1fr 120px 70px;gap:6px;margin-bottom:8px">
+            <div class="label">Planet</div>
+            <div class="label" style="text-align:center">Completions / TB</div>
+            <div class="label" style="text-align:right">GET 2</div>
+          </div>
+          <div id="planet-list"></div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="section">
+        <div class="section-head"><div class="section-title">Monthly GET 2 summary</div></div>
+        <div class="section-body">
+          <div class="get2-summary">
+            <div class="get2-box">
+              <div class="get2-box-label">ROTE reward</div>
+              <div class="get2-box-val" id="g2-rote">0</div>
+            </div>
+            <div class="get2-box">
+              <div class="get2-box-label">Missions</div>
+              <div class="get2-box-val" id="g2-missions">0</div>
+            </div>
+          </div>
+          <div style="border-top:1px solid var(--border);margin-top:14px;padding-top:14px">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div style="font-size:13px;font-weight:600">Total GET 2 / month</div>
+              <div class="pill pill-get2" style="font-size:15px;padding:4px 12px" id="g2-total">0</div>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px">
+              <div style="font-size:12px;color:var(--text2)">Grey ×20 buys available <span style="color:var(--text3)">(1600 ea)</span></div>
+              <div class="pill pill-grey" id="g2-buys-avail">0</div>
+            </div>
+            <div style="font-size:11px;color:var(--text3);margin-top:6px" id="g2-spend-note"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ CONFIGURATION PAGE ══════════ -->
+<div class="page" id="page-config">
+  <div class="config-grid">
+    <div style="display:flex; flex-direction:column; gap:16px">
+      <!-- Cantina Farming -->
+      <div class="section" style="margin-bottom:0">
+        <div class="section-head"><div class="section-title">Cantina Farming Strategy</div></div>
+        <div class="section-body">
+          <div class="field-row" style="justify-content:space-between; margin-bottom:10px">
+            <div style="font-size:12px; color:var(--text2)">Free Daily Energy</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:13px">120</div>
+          </div>
+          <div class="field-row" style="justify-content:space-between; margin-bottom:10px">
+            <div style="font-size:12px; color:var(--text2)">Bonus Daily Energy (45)</div>
+            <div style="display:flex; align-items:center">
+              <input type="checkbox" id="cantina-bonus" onchange="onCantinaChange('bonusEnergy', this.checked)">
+            </div>
+          </div>
+          <div class="field-row" style="justify-content:space-between; margin-bottom:10px">
+            <div style="font-size:12px; color:var(--text2)">Daily Crystal Refreshes</div>
+            <input type="number" id="cantina-refreshes" min="0" max="14" value="0" style="width:70px;text-align:right" oninput="onCantinaChange('refreshes', this.value)">
+          </div>
+          <div class="field-row" style="justify-content:space-between; margin-bottom:16px; padding-bottom:10px; border-bottom:1px solid var(--border)">
+            <div style="font-size:12px; font-weight:600">Total Energy Budget / Day</div>
+            <div id="cantina-budget" style="font-family:'JetBrains Mono',monospace;font-size:13px; font-weight:600; color:var(--accent)">120</div>
+          </div>
+          
+          <div style="font-size:10px; text-transform:uppercase; letter-spacing:.07em; color:var(--text3); margin-bottom:8px">Energy Allocation (Per Node)</div>
+          <table class="income-table" id="cantina-table"></table>
+          
+          <div class="field-row" style="justify-content:space-between; margin-top:12px; padding-top:12px; border-top:1px solid var(--border)">
+            <div style="font-size:12px; font-weight:600">Total Allocated</div>
+            <div id="cantina-allocated" style="font-family:'JetBrains Mono',monospace;font-size:13px; font-weight:600">0</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Base Income -->
+      <div class="section" style="margin-bottom:0">
+        <div class="section-head"><div class="section-title">Base Monthly Income</div></div>
+        <div style="padding:0">
+          <table class="income-table" id="income-edit-table"></table>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:16px">
+      <!-- Toggles -->
+      <div class="section" style="margin-bottom:0">
+        <div class="section-head"><div class="section-title">Optional Store Sources</div></div>
+        <div class="section-body" id="toggles-container">
+          <!-- Rendered via JS -->
+        </div>
+      </div>
+
+      <!-- Relic Costs -->
+      <div class="section" style="margin-bottom:0">
+        <div class="section-head"><div class="section-title">Relic Signal Costs</div></div>
+        <div class="section-body" style="padding:12px 16px">
+          <table style="width:100%;border-collapse:collapse;font-size:12px">
+            <thead><tr>
+              <th style="text-align:left;padding:5px 8px;color:var(--text3);font-size:10px;letter-spacing:.07em;text-transform:uppercase;border-bottom:1px solid var(--border)">Level</th>
+              <th style="padding:5px 8px;color:var(--grey);font-size:10px;letter-spacing:.07em;text-transform:uppercase;border-bottom:1px solid var(--border)">Grey</th>
+              <th style="padding:5px 8px;color:var(--green);font-size:10px;letter-spacing:.07em;text-transform:uppercase;border-bottom:1px solid var(--border)">Green</th>
+              <th style="padding:5px 8px;color:var(--blue);font-size:10px;letter-spacing:.07em;text-transform:uppercase;border-bottom:1px solid var(--border)">Blue</th>
+            </tr></thead>
+            <tbody id="relic-cost-table"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="section" style="margin-bottom:0">
+        <div class="section-head"><div class="section-title">Data Actions</div></div>
+        <div class="section-body" style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-ghost" onclick="exportData()">Export JSON</button>
+          <button class="btn btn-ghost" onclick="document.getElementById('import-file').click()">Import JSON</button>
+          <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(this)">
+          <button class="btn btn-danger" style="height:30px;width:auto;padding:0 12px;color:var(--red);font-size:12px;border:1px solid rgba(224,85,85,.2)" onclick="if(confirm('Reset all data?'))resetData()">Reset all</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- .app -->
+
+<script>
+// ═══════════════════════════════════════════════════════
+// DATA CONSTANTS
+// ═══════════════════════════════════════════════════════
+
+const ROTE_TABLE = {
+  24:6000,23:5850,22:5675,21:5500,20:5325,19:5150,18:4975,17:4800,
+  16:4625,15:4450,14:4275,13:4100,12:3925,11:3750,10:3575,9:3400,
+  8:3225,7:3050,6:2875,5:2700,4:2525,3:2350,2:2175,1:2000
+};
+
+const PLANET_GET2_PER_COMPLETION = 50;
+const PLANETS = [
+  { key:'DATHOMIR',  label:'Dathomir', hasMissions:true },
+  { key:'TATOOINE',  label:'Tatooine', hasMissions:true },
+  { key:'KASHYYYK',  label:'Kashyyyk', hasMissions:true },
+  { key:'ZEFFO',     label:'Zeffo',    hasMissions:true },
+];
+
+const RELIC_COST = {
+  10:{grey:0, green:25,blue:45},
+  9:{grey:30, green:30,blue:55},
+  8:{grey:20, green:25,blue:45},
+  7:{grey:20, green:25,blue:35},
+  6:{grey:20, green:25,blue:25},
+  5:{grey:20, green:25,blue:15},
+  4:{grey:20, green:25,blue:0},
+  3:{grey:20, green:15,blue:0},
+  2:{grey:15, green:0, blue:0},
+  1:{grey:0,  green:0, blue:0}
+};
+
+const CANTINA_NODES = {
+  c8grey:  { label: 'Cantina 8 (Gy)', rates: { grey: 9.90, green: 0,    blue: 0    } },
+  c8green: { label: 'Cantina 8 (Gr)', rates: { grey: 0,    green: 7.43, blue: 0    } },
+  c8blue:  { label: 'Cantina 8 (Bl)', rates: { grey: 0,    green: 0,    blue: 4.95 } },
+  n9b:     { label: 'Node 9B',        rates: { grey: 7.57, green: 3.63, blue: 0    } },
+  n9d:     { label: 'Node 9D',        rates: { grey: 7.76, green: 0,    blue: 2.44 } },
+  n9f:     { label: 'Node 9F',        rates: { grey: 0,    green: 5.17, blue: 2.97 } }
+};
+
+const DEFAULT_SOURCES = [
+  { key:'assault',  label:'Assault Battles', grey:70, green:42, blue:42 },
+  { key:'conquest', label:'Conquest',        grey:10, green:10, blue:10 },
+  { key:'rote',     label:'ROTE (30★)',      grey:21, green:11, blue:9  },
+];
+
+const DEFAULT_TOGGLES = {
+  episodeShipment: { enabled: false, label: 'Episode Shipment', grey: 180, green: 160, blue: 0 },
+  eraColiseum:     { enabled: false, label: 'Era Coliseum',     grey: 0,   green: 0,   blue: 100 }
+};
+
+// ═══════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════
+let state = {
+  roteStars: 24,
+  greyPurchases: 0,
+  planetCompletions: { DATHOMIR:0, TATOOINE:0, KASHYYYK:0, ZEFFO:0 },
+  cantina: {
+    refreshes: 0,
+    bonusEnergy: false,
+    alloc: { c8grey: 120, c8green: 0, c8blue: 0, n9b: 0, n9d: 0, n9f: 0 }
+  },
+  toggles: JSON.parse(JSON.stringify(DEFAULT_TOGGLES)),
+  sources: JSON.parse(JSON.stringify(DEFAULT_SOURCES)),
+  groups: [],
+  _mid: 0,
+  _uid: 0,
+};
+
+// ═══════════════════════════════════════════════════════
+// PERSISTENCE
+// ═══════════════════════════════════════════════════════
+function save(){
+  try{ localStorage.setItem('relic_planner_v4', JSON.stringify(state)); }catch(e){}
+  const dot=document.getElementById('saveDot');
+  const txt=document.getElementById('saveText');
+  dot.style.background='var(--green)';
+  txt.textContent='Saved';
+  clearTimeout(save._t);
+  save._t=setTimeout(()=>{ dot.style.background='var(--green)'; txt.textContent='Saved'; },1500);
+}
+
+function load(){
+  try{
+    let raw=localStorage.getItem('relic_planner_v4') || localStorage.getItem('relic_planner_v3');
+    if(raw){
+      const p=JSON.parse(raw);
+      
+      // Migrate old months to groups
+      if(p.months) { p.groups = p.months; delete p.months; }
+      
+      // Strip old legacy sources from base array to prevent double counting
+      if(p.sources) {
+        p.sources = p.sources.filter(s => !['cantina','era_store','episode_store','episode_track'].includes(s.key));
+      }
+
+      state={ ...state, ...p };
+      
+      if(!state.cantina) state.cantina = { refreshes: 0, bonusEnergy: false, alloc: { c8grey: 120, c8green: 0, c8blue: 0, n9b: 0, n9d: 0, n9f: 0 }};
+      if(state.cantina.bonusEnergy === undefined) state.cantina.bonusEnergy = false;
+      if(!state.toggles) state.toggles = JSON.parse(JSON.stringify(DEFAULT_TOGGLES));
+      if(!state.sources || state.sources.length===0) state.sources=JSON.parse(JSON.stringify(DEFAULT_SOURCES));
+    }
+  }catch(e){}
+}
+
+function exportData(){
+  const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='relic_planner.json';a.click();
+}
+function importData(input){
+  const file=input.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=e=>{ try{ state=JSON.parse(e.target.result); save(); init(); }catch(x){ alert('Invalid file'); } };
+  reader.readAsText(file);
+  input.value='';
+}
+function resetData(){
+  localStorage.removeItem('relic_planner_v4');
+  localStorage.removeItem('relic_planner_v3');
+  state={roteStars:24,greyPurchases:0,
+    planetCompletions:{DATHOMIR:0,TATOOINE:0,KASHYYYK:0,ZEFFO:0},
+    cantina: { refreshes: 0, bonusEnergy: false, alloc: { c8grey: 120, c8green: 0, c8blue: 0, n9b: 0, n9d: 0, n9f: 0 } },
+    toggles: JSON.parse(JSON.stringify(DEFAULT_TOGGLES)),
+    sources:JSON.parse(JSON.stringify(DEFAULT_SOURCES)),
+    groups:[],_mid:0,_uid:0};
+  init();
+}
+
+// ═══════════════════════════════════════════════════════
+// CALCULATIONS
+// ═══════════════════════════════════════════════════════
+function getCantinaBudget() {
+  return 120 + (state.cantina.bonusEnergy ? 45 : 0) + (state.cantina.refreshes * 120);
+}
+
+function calcCantinaIncome(){
+  let total = { grey: 0, green: 0, blue: 0 };
+  for (const key in CANTINA_NODES) {
+    const alloc = state.cantina.alloc[key] || 0;
+    const factor = (alloc / 120) * 30; // monthly calculation
+    total.grey += factor * CANTINA_NODES[key].rates.grey;
+    total.green += factor * CANTINA_NODES[key].rates.green;
+    total.blue += factor * CANTINA_NODES[key].rates.blue;
+  }
+  return { grey: Math.round(total.grey), green: Math.round(total.green), blue: Math.round(total.blue) };
+}
+
+function calcMonthlyIncome(){
+  let grey=0,green=0,blue=0;
+  
+  // Base Sources
+  for(const s of state.sources){
+    grey+=Number(s.grey||0);green+=Number(s.green||0);blue+=Number(s.blue||0);
+  }
+  // Toggles
+  for(const k in state.toggles){
+    const t = state.toggles[k];
+    if(t.enabled) {
+      grey+=Number(t.grey||0);green+=Number(t.green||0);blue+=Number(t.blue||0);
+    }
+  }
+  // Cantina
+  const cantina = calcCantinaIncome();
+  grey+=cantina.grey; green+=cantina.green; blue+=cantina.blue;
+  
+  // Grey Store Purchases
+  const greyExtra=(state.greyPurchases||0)*20;
+  
+  return { grey: grey + greyExtra, green: green, blue: blue };
+}
+
+function calcGet2PerMonth(){
+  const rote=(ROTE_TABLE[state.roteStars]||0)*2;
+  let missions=0;
+  for(const p of PLANETS){
+    if (p.hasMissions) {
+      const c=Math.min(50, Number(state.planetCompletions[p.key]||0));
+      missions += c * PLANET_GET2_PER_COMPLETION * 2;
+    }
+  }
+  return { rote, missions, total: rote+missions };
+}
+
+function costForRange(from,to){
+  let grey=0,green=0,blue=0;
+  for(let r=Number(from)+1;r<=Number(to);r++){
+    const c=RELIC_COST[r]||{grey:0,green:0,blue:0};
+    grey+=c.grey;green+=c.green;blue+=c.blue;
+  }
+  return {grey,green,blue};
+}
+
+function calcGroupDemand(group){
+  let grey=0,green=0,blue=0;
+  for(const u of group.units){
+    if(!u.from||!u.to||Number(u.to)<=Number(u.from)) continue;
+    const c=costForRange(u.from,u.to);
+    grey+=c.grey;green+=c.green;blue+=c.blue;
+  }
+  return {grey,green,blue};
+}
+
+// ═══════════════════════════════════════════════════════
+// TAB NAVIGATION
+// ═══════════════════════════════════════════════════════
+function showTab(name){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  event.currentTarget.classList.add('active');
+  if(name==='plan') renderPlan();
+  if(name==='tb') renderTB();
+  if(name==='config') renderConfig();
+}
+
+// ═══════════════════════════════════════════════════════
+// TB PAGE
+// ═══════════════════════════════════════════════════════
+function renderTB(){
+  document.getElementById('rote-stars-range').value=state.roteStars;
+  document.getElementById('stars-display').textContent = state.roteStars == 24 ? "24+" : state.roteStars;
+  const rotePerTB=ROTE_TABLE[state.roteStars]||0;
+  document.getElementById('rote-get2-per-tb').textContent=rotePerTB.toLocaleString();
+  document.getElementById('rote-get2-month').textContent=(rotePerTB*2).toLocaleString();
+
+  const pl=document.getElementById('planet-list');
+  pl.innerHTML=PLANETS.map(p=>{
+    const c=p.hasMissions ? Math.min(50,Number(state.planetCompletions[p.key]||0)) : 0;
+    const get2perTB=c*PLANET_GET2_PER_COMPLETION;
+    const completionsHtml = p.hasMissions 
+      ? `<input type="range" min="0" max="50" value="${c}" step="1" oninput="updatePlanetComp('${p.key}',this.value)">
+         <div class="planet-val">${c}</div>`
+      : `<div style="font-size:12px;color:var(--text3);text-align:right;padding-right:12px;flex:1">—</div>`;
+    return `
+    <div class="planet-item">
+      <div class="planet-name">${p.label}</div>
+      <div class="planet-completions">${completionsHtml}</div>
+      <div class="planet-get2">${p.hasMissions ? get2perTB : '—'}</div>
+    </div>`;
+  }).join('');
+  updateGet2Summary();
+}
+
+function onStarsChange(v){
+  state.roteStars=Number(v);
+  document.getElementById('stars-display').textContent = v == 24 ? "24+" : v;
+  const rotePerTB=ROTE_TABLE[state.roteStars]||0;
+  document.getElementById('rote-get2-per-tb').textContent=rotePerTB.toLocaleString();
+  document.getElementById('rote-get2-month').textContent=(rotePerTB*2).toLocaleString();
+  updateGet2Summary();
+  save();
+}
+
+function updatePlanetComp(key,val){
+  state.planetCompletions[key]=Math.min(50,Number(val));
+  const items=document.querySelectorAll('.planet-item');
+  PLANETS.forEach((p,i)=>{
+    if(p.key!==key || !p.hasMissions) return;
+    const c=state.planetCompletions[key];
+    items[i].querySelector('.planet-val').textContent=c;
+    items[i].querySelector('.planet-get2').textContent=c*PLANET_GET2_PER_COMPLETION;
+  });
+  updateGet2Summary();
+  save();
+}
+
+function updateGet2Summary(){
+  const g=calcGet2PerMonth();
+  document.getElementById('g2-rote').textContent=g.rote.toLocaleString();
+  document.getElementById('g2-missions').textContent=g.missions.toLocaleString();
+  document.getElementById('g2-total').textContent=g.total.toLocaleString();
+  const buys=Math.floor(g.total/1600);
+  document.getElementById('g2-buys-avail').textContent=buys;
+  document.getElementById('g2-spend-note').textContent=`${buys} × 1600 = ${(buys*1600).toLocaleString()} GET 2 spent · ${(g.total-buys*1600).toLocaleString()} remaining`;
+  updatePlanSummary();
+}
+
+// ═══════════════════════════════════════════════════════
+// CONFIGURATION PAGE
+// ═══════════════════════════════════════════════════════
+function renderConfig(){
+  // --- Cantina Farming UI ---
+  document.getElementById('cantina-refreshes').value = state.cantina.refreshes;
+  document.getElementById('cantina-bonus').checked = state.cantina.bonusEnergy;
+  document.getElementById('cantina-budget').textContent = getCantinaBudget();
+  
+  const cantinaTbl = document.getElementById('cantina-table');
+  cantinaTbl.innerHTML=`
+    <thead><tr>
+      <th>Node</th>
+      <th style="text-align:right">Gy</th>
+      <th style="text-align:right">Gr</th>
+      <th style="text-align:right">Bl</th>
+      <th style="text-align:right; width:70px">Energy</th>
+    </tr></thead>
+    <tbody>${Object.entries(CANTINA_NODES).map(([k, n])=>`
+      <tr>
+        <td class="source-name">${n.label}</td>
+        <td class="cantina-rate" style="color:${n.rates.grey>0?'var(--grey)':'var(--text3)'}">${n.rates.grey||'-'}</td>
+        <td class="cantina-rate" style="color:${n.rates.green>0?'var(--green)':'var(--text3)'}">${n.rates.green||'-'}</td>
+        <td class="cantina-rate" style="color:${n.rates.blue>0?'var(--blue)':'var(--text3)'}">${n.rates.blue||'-'}</td>
+        <td><input type="number" value="${state.cantina.alloc[k]}" oninput="onCantinaChange('${k}', this.value)"></td>
+      </tr>`).join('')}
+    </tbody>`;
+  updateCantinaAlloc();
+
+  // --- Base Income UI ---
+  const tbody=document.getElementById('income-edit-table');
+  tbody.innerHTML=`
+    <thead><tr>
+      <th>Source</th>
+      <th style="text-align:right">Grey</th>
+      <th style="text-align:right">Green</th>
+      <th style="text-align:right">Blue</th>
+    </tr></thead>
+    <tbody>${state.sources.map((s,i)=>`
+      <tr>
+        <td class="source-name">${s.label}</td>
+        <td><input type="number" value="${s.grey}" oninput="updateSource(${i},'grey',this.value)"></td>
+        <td><input type="number" value="${s.green}" oninput="updateSource(${i},'green',this.value)"></td>
+        <td><input type="number" value="${s.blue}" oninput="updateSource(${i},'blue',this.value)"></td>
+      </tr>`).join('')}
+    </tbody>`;
+
+  // --- Toggles UI ---
+  const tgContainer = document.getElementById('toggles-container');
+  tgContainer.innerHTML = Object.entries(state.toggles).map(([k, t]) => `
+    <div style="margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid var(--border)">
+      <label style="display:flex; align-items:center; gap:8px; margin-bottom:8px; cursor:pointer">
+        <input type="checkbox" ${t.enabled?'checked':''} onchange="updateToggle('${k}', 'enabled', this.checked)">
+        <span style="font-size:13px; font-weight:500; color:${t.enabled?'var(--text)':'var(--text2)'}">${t.label}</span>
+      </label>
+      <div style="display:flex; gap:8px; padding-left:24px; opacity:${t.enabled?'1':'0.4'}; pointer-events:${t.enabled?'auto':'none'}">
+        <div style="display:flex;align-items:center;gap:4px">
+          <span style="font-size:11px;color:var(--grey)">Gy:</span>
+          <input type="number" style="width:60px" value="${t.grey}" oninput="updateToggle('${k}','grey',this.value)">
+        </div>
+        <div style="display:flex;align-items:center;gap:4px">
+          <span style="font-size:11px;color:var(--green)">Gr:</span>
+          <input type="number" style="width:60px" value="${t.green}" oninput="updateToggle('${k}','green',this.value)">
+        </div>
+        <div style="display:flex;align-items:center;gap:4px">
+          <span style="font-size:11px;color:var(--blue)">Bl:</span>
+          <input type="number" style="width:60px" value="${t.blue}" oninput="updateToggle('${k}','blue',this.value)">
+        </div>
+      </div>
+    </div>`).join('');
+
+  // --- Relic Cost UI ---
+  const rt=document.getElementById('relic-cost-table');
+  rt.innerHTML=Object.entries(RELIC_COST).reverse().map(([lvl,c])=>`
+    <tr>
+      <td style="padding:5px 8px;color:var(--text2);font-size:12px">→ R${lvl}</td>
+      <td style="padding:5px 8px;text-align:right;color:var(--grey);font-family:'JetBrains Mono',monospace">${c.grey}</td>
+      <td style="padding:5px 8px;text-align:right;color:var(--green);font-family:'JetBrains Mono',monospace">${c.green}</td>
+      <td style="padding:5px 8px;text-align:right;color:var(--blue);font-family:'JetBrains Mono',monospace">${c.blue}</td>
+    </tr>`).join('');
+}
+
+function onCantinaChange(field, val){
+  if (field === 'refreshes') {
+    state.cantina.refreshes = Math.max(0, parseInt(val)||0);
+  } else if (field === 'bonusEnergy') {
+    state.cantina.bonusEnergy = val; // boolean
+  } else {
+    state.cantina.alloc[field] = Math.max(0, parseInt(val)||0);
+  }
+  document.getElementById('cantina-budget').textContent = getCantinaBudget();
+  updateCantinaAlloc();
+  save(); updatePlanSummary();
+}
+
+function updateCantinaAlloc() {
+  const bgt = getCantinaBudget();
+  const allocSum = Object.values(state.cantina.alloc).reduce((a,b)=>a+b, 0);
+  const el = document.getElementById('cantina-allocated');
+  el.textContent = allocSum;
+  el.style.color = allocSum > bgt ? 'var(--red)' : (allocSum === bgt ? 'var(--green)' : 'var(--text)');
+}
+
+function updateSource(i,field,val){
+  state.sources[i][field]=Number(val)||0;
+  save(); updatePlanSummary();
+}
+
+function updateToggle(key, field, val){
+  if(field === 'enabled') state.toggles[key].enabled = val;
+  else state.toggles[key][field] = Number(val)||0;
+  
+  if(field === 'enabled') renderConfig(); // re-render to toggle disabled states visually
+  save(); updatePlanSummary();
+}
+
+// ═══════════════════════════════════════════════════════
+// PLAN PAGE — GROUPS
+// ═══════════════════════════════════════════════════════
+function addGroup(){
+  state._mid++;
+  state.groups.push({ id:state._mid, label:`Group ${state._mid}`, collapsed:false, units:[] });
+  save(); renderPlan();
+}
+
+function removeGroup(id){
+  if(!confirm('Remove this group?')) return;
+  state.groups=state.groups.filter(m=>m.id!==id);
+  save(); renderPlan();
+}
+
+function toggleCollapse(id){
+  const m=state.groups.find(x=>x.id===id);
+  if(m){ m.collapsed=!m.collapsed; save(); renderPlan(); }
+}
+
+function moveGroup(id,dir){
+  const idx=state.groups.findIndex(m=>m.id===id);
+  const newIdx=idx+dir;
+  if(newIdx<0||newIdx>=state.groups.length) return;
+  const arr=state.groups;
+  [arr[idx],arr[newIdx]]=[arr[newIdx],arr[idx]];
+  save(); renderPlan();
+}
+
+function updateGroupLabel(id,val){
+  const m=state.groups.find(x=>x.id===id);
+  if(m){ m.label=val; save(); }
+}
+
+function addUnit(groupId){
+  const m=state.groups.find(x=>x.id===groupId);
+  if(!m) return;
+  state._uid++;
+  m.units.push({id:state._uid, name:'', from:'', to:''});
+  save(); renderPlan();
+}
+
+function removeUnit(groupId, unitId){
+  const m=state.groups.find(x=>x.id===groupId);
+  if(!m) return;
+  m.units=m.units.filter(u=>u.id!==unitId);
+  save(); renderPlan();
+}
+
+function updateUnit(groupId, unitId, field, val){
+  const m=state.groups.find(x=>x.id===groupId);
+  if(!m) return;
+  const u=m.units.find(x=>x.id===unitId);
+  if(!u) return;
+  u[field]=val; save(); renderPlan();
+}
+
+function onGreyPurchasesChange(){
+  const v=Math.max(0,parseInt(document.getElementById('grey-purchases').value)||0);
+  state.greyPurchases=v;
+  const get2=calcGet2PerMonth();
+  const maxBuys=Math.floor(get2.total/1600);
+  const clamped=Math.min(v,maxBuys);
+  if(clamped!==v){
+    state.greyPurchases=clamped;
+    document.getElementById('grey-purchases').value=clamped;
+  }
+  const cost=state.greyPurchases*1600;
+  document.getElementById('grey-purchase-cost').textContent=
+    state.greyPurchases>0 ? `${state.greyPurchases}×1600 = ${cost.toLocaleString()} GET 2 spent` : '';
+  save(); updatePlanSummary();
+}
+
+function renderPlan(){
+  const inc=calcMonthlyIncome();
+  const incEl=document.getElementById('income-display');
+  incEl.innerHTML=`
+    <div class="income-stat"><span style="color:var(--grey)">Grey</span><span class="income-stat-val" style="color:var(--grey)">${inc.grey}</span></div>
+    <div class="income-stat"><span style="color:var(--green)">Green</span><span class="income-stat-val" style="color:var(--green)">${inc.green}</span></div>
+    <div class="income-stat" style="border-bottom:none"><span style="color:var(--blue)">Blue</span><span class="income-stat-val" style="color:var(--blue)">${inc.blue}</span></div>`;
+
+  document.getElementById('grey-purchases').value=state.greyPurchases||0;
+  const cost=(state.greyPurchases||0)*1600;
+  document.getElementById('grey-purchase-cost').textContent=
+    state.greyPurchases>0 ? `${state.greyPurchases}×1600 = ${cost.toLocaleString()} GET 2` : '';
+
+  const list=document.getElementById('groups-list');
+  if(!state.groups.length){
+    list.innerHTML=`<div style="text-align:center;padding:48px 20px;color:var(--text3);font-size:13px">No groups yet — click "Add group" to start planning.</div>`;
+  } else {
+    let carry={grey:0,green:0,blue:0};
+    const groupData=state.groups.map(m=>{
+      const demand=calcGroupDemand(m);
+      const available={
+        grey: inc.grey + carry.grey,
+        green: inc.green + carry.green,
+        blue: inc.blue + carry.blue
+      };
+      const net={
+        grey: available.grey - demand.grey,
+        green: available.green - demand.green,
+        blue: available.blue - demand.blue
+      };
+      const newCarry={
+        grey: Math.max(0,net.grey),
+        green: Math.max(0,net.green),
+        blue: Math.max(0,net.blue)
+      };
+      const result={ m, demand, available, net, carryIn:{...carry}, carryOut:{...newCarry} };
+      carry=newCarry;
+      return result;
+    });
+
+    list.innerHTML=groupData.map((d,idx)=>buildGroupCard(d,idx)).join('');
+    renderCumulativeTable(groupData);
+  }
+}
+
+function buildGroupCard({m,demand,available,net,carryIn,carryOut},idx){
+  const hasCarryIn=carryIn.grey>0||carryIn.green>0||carryIn.blue>0;
+
+  const unitRows=m.units.map(u=>{
+    const valid=u.from&&u.to&&Number(u.to)>Number(u.from);
+    const c=valid?costForRange(u.from,u.to):{grey:0,green:0,blue:0};
+    return `
+    <div class="upgrade-row">
+      <input type="text" placeholder="Unit name" value="${escHtml(u.name)}"
+        oninput="updateUnit(${m.id},${u.id},'name',this.value)"
+        style="font-size:12px;height:28px">
+      <select onchange="updateUnit(${m.id},${u.id},'from',this.value)" style="font-size:12px;height:28px">
+        ${relicOpts(1,9,u.from,'From')}
+      </select>
+      <select onchange="updateUnit(${m.id},${u.id},'to',this.value)" style="font-size:12px;height:28px">
+        ${relicOpts(2,10,u.to,'To')}
+      </select>
+      <div class="upgrade-badges" style="min-width:120px">
+        ${valid ? `<span class="pill pill-grey" style="font-size:11px">${c.grey}</span><span class="pill pill-green" style="font-size:11px">${c.green}</span><span class="pill pill-blue" style="font-size:11px">${c.blue}</span>` : '<span style="color:var(--text3);font-size:11px">—</span>'}
+      </div>
+      <div style="display:flex;gap:4px;margin-left:auto">
+        <button class="btn btn-danger btn-icon" style="height:28px" onclick="removeUnit(${m.id},${u.id})">×</button>
+      </div>
+    </div>`;
+  }).join('');
+
+  const carryInHtml=hasCarryIn?`
+    <div style="padding:6px 14px;background:rgba(124,106,247,.06);border-bottom:1px solid var(--border);font-size:11px;color:var(--text3);display:flex;gap:8px;align-items:center">
+      <span style="text-transform:uppercase;letter-spacing:.06em">Carry-in:</span>
+      ${carryIn.grey>0?`<span class="pill pill-grey" style="font-size:11px">+${carryIn.grey}</span>`:''}
+      ${carryIn.green>0?`<span class="pill pill-green" style="font-size:11px">+${carryIn.green}</span>`:''}
+      ${carryIn.blue>0?`<span class="pill pill-blue" style="font-size:11px">+${carryIn.blue}</span>`:''}
+    </div>`:'' ;
+
+  return `
+  <div class="group-card${m.collapsed?' collapsed':''}" id="gc-${m.id}">
+    ${carryInHtml}
+    <div class="group-head" onclick="toggleCollapse(${m.id})" style="cursor:default">
+      <div style="display:flex;gap:4px;flex-shrink:0">
+        <button class="reorder-btn" onclick="event.stopPropagation();moveGroup(${m.id},-1)" ${idx===0?'disabled':''} title="Move group up">▲</button>
+        <button class="reorder-btn" onclick="event.stopPropagation();moveGroup(${m.id},1)" ${idx===state.groups.length-1?'disabled':''} title="Move group down">▼</button>
+      </div>
+      <input class="group-label-input" value="${escHtml(m.label)}"
+        onclick="event.stopPropagation()"
+        oninput="updateGroupLabel(${m.id},this.value)"
+        style="margin-left:6px">
+      <div class="group-signals" style="flex-shrink:0;gap:4px">
+        ${demand.grey>0?`<span class="pill pill-grey" style="font-size:11px">${demand.grey}</span>`:''}
+        ${demand.green>0?`<span class="pill pill-green" style="font-size:11px">${demand.green}</span>`:''}
+        ${demand.blue>0?`<span class="pill pill-blue" style="font-size:11px">${demand.blue}</span>`:''}
+      </div>
+      <button class="btn btn-ghost btn-sm" style="margin-left:6px;flex-shrink:0" onclick="event.stopPropagation();toggleCollapse(${m.id})">
+        ${m.collapsed?'▼ Expand':'▲ Collapse'}
+      </button>
+      <button class="btn btn-danger btn-sm" style="margin-left:4px;flex-shrink:0;color:var(--text3);font-size:13px" onclick="event.stopPropagation();removeGroup(${m.id})">×</button>
+    </div>
+    <div class="group-body">
+      ${unitRows}
+      <div class="upgrade-add">
+        <button class="btn btn-ghost btn-sm" onclick="addUnit(${m.id})">+ Add unit</button>
+      </div>
+      <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border)">
+        <div style="display:grid;grid-template-columns:1fr auto;gap:16px;align-items:start">
+          <div>
+            <div style="font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:8px">Income · demand · balance</div>
+            <div style="display:flex;gap:16px;flex-wrap:wrap">
+              ${['grey','green','blue'].map(col=>{
+                const v=net[col];
+                const cls=v>=0?'pos':'neg';
+                const sign=v>0?'+':'';
+                return `<div style="display:flex;flex-direction:column;gap:3px;align-items:flex-start">
+                  <span style="font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--text3)">${col}</span>
+                  <span class="pill pill-${col}" style="font-size:11px">${available[col]} in · ${demand[col]} used</span>
+                  <span class="${cls}" style="font-size:13px;font-weight:600;font-family:'JetBrains Mono',monospace">${sign}${v}</span>
+                </div>`;
+              }).join('')}
+            </div>
+          </div>
+          <div>
+            <div style="font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:8px">Carry out →</div>
+            <div style="display:flex;flex-direction:column;gap:4px">
+              ${carryOut.grey>0?`<span class="pill pill-grey" style="font-size:11px">+${carryOut.grey}</span>`:''}
+              ${carryOut.green>0?`<span class="pill pill-green" style="font-size:11px">+${carryOut.green}</span>`:''}
+              ${carryOut.blue>0?`<span class="pill pill-blue" style="font-size:11px">+${carryOut.blue}</span>`:''}
+              ${carryOut.grey===0&&carryOut.green===0&&carryOut.blue===0?`<span style="color:var(--text3);font-size:12px">none</span>`:''}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderCumulativeTable(groupData){
+  const tbl=document.getElementById('cumulative-table');
+  tbl.innerHTML=`
+    <thead><tr>
+      <th style="text-align:left">Group</th>
+      <th style="color:var(--grey)">Grey</th>
+      <th style="color:var(--green)">Green</th>
+      <th style="color:var(--blue)">Blue</th>
+    </tr></thead>
+    <tbody>${groupData.map(d=>`
+      <tr>
+        <td>${escHtml(d.m.label)}</td>
+        <td class="${d.net.grey>=0?'pos':'neg'}">${d.net.grey>=0?'+':''}${d.net.grey}</td>
+        <td class="${d.net.green>=0?'pos':'neg'}">${d.net.green>=0?'+':''}${d.net.green}</td>
+        <td class="${d.net.blue>=0?'pos':'neg'}">${d.net.blue>=0?'+':''}${d.net.blue}</td>
+      </tr>`).join('')}
+    </tbody>`;
+}
+
+function updatePlanSummary(){
+  if(document.getElementById('page-plan').classList.contains('active')) renderPlan();
+}
+
+// ═══════════════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════════════
+function relicOpts(min,max,selected,placeholder){
+  let o=`<option value="">${placeholder}</option>`;
+  for(let i=min;i<=max;i++) o+=`<option value="${i}"${String(selected)===String(i)?' selected':''}>R${i}</option>`;
+  return o;
+}
+function escHtml(s){
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ═══════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════
+function init(){
+  renderPlan();
+  renderTB();
+  renderConfig();
+}
+
+load();
+init();
+</script>
+</body>
+</html>
