@@ -454,9 +454,9 @@ const RELIC_COST = {
 };
 
 const CANTINA_NODES = {
-  c8grey:  { label: 'Cantina 8 (Gy)', rates: { grey: 9.90, green: 0,    blue: 0    } },
-  c8green: { label: 'Cantina 8 (Gr)', rates: { grey: 0,    green: 7.43, blue: 0    } },
-  c8blue:  { label: 'Cantina 8 (Bl)', rates: { grey: 0,    green: 0,    blue: 4.95 } },
+  c8grey:  { label: 'Cantina 8C)', rates: { grey: 9.90, green: 0,    blue: 0    } },
+  c8green: { label: 'Cantina 8F', rates: { grey: 0,    green: 7.43, blue: 0    } },
+  c8blue:  { label: 'Cantina 8G', rates: { grey: 0,    green: 0,    blue: 4.95 } },
   n9b:     { label: 'Node 9B',        rates: { grey: 7.57, green: 3.63, blue: 0    } },
   n9d:     { label: 'Node 9D',        rates: { grey: 7.76, green: 0,    blue: 2.44 } },
   n9f:     { label: 'Node 9F',        rates: { grey: 0,    green: 5.17, blue: 2.97 } }
@@ -546,7 +546,7 @@ function resetData(){
   localStorage.removeItem('relic_planner_v3');
   state={roteStars:24,greyPurchases:0,
     planetCompletions:{DATHOMIR:0,TATOOINE:0,KASHYYYK:0,ZEFFO:0},
-    cantina: { refreshes: 0, bonusEnergy: false, alloc: { c8grey: 120, c8green: 0, c8blue: 0, n9b: 0, n9d: 0, n9f: 0 } },
+    cantina: { refreshes: 0, bonusEnergy: false, alloc: { c8grey: 0, c8green: 0, c8blue: 0, n9b: 0, n9d: 0, n9f: 0 } },
     toggles: JSON.parse(JSON.stringify(DEFAULT_TOGGLES)),
     sources:JSON.parse(JSON.stringify(DEFAULT_SOURCES)),
     groups:[],_mid:0,_uid:0};
