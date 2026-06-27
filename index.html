@@ -58,7 +58,11 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-
 }
 .tab-btn:hover{color:var(--text)}
 .tab-btn.active{color:var(--text);border-bottom-color:var(--accent)}
-.topbar-right{display:flex;align-items:center;gap:10px}
+.topbar-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+.auth-panel{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.auth-inline{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.auth-inline input{width:140px;height:28px;font-size:12px}
+.auth-status{font-size:11px;color:var(--text3)}
 .saved-badge{font-size:11px;color:var(--text3);display:flex;align-items:center;gap:5px}
 .saved-dot{width:6px;height:6px;border-radius:50%;background:var(--green)}
 
@@ -223,6 +227,20 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
     <button class="tab-btn" onclick="showTab('config')">Configuration</button>
   </div>
   <div class="topbar-right">
+    <div class="auth-panel">
+      <div class="auth-inline" id="auth-logged-out">
+        <input id="auth-email" type="email" placeholder="Email">
+        <input id="auth-password" type="password" placeholder="Password">
+        <button class="btn btn-sm btn-accent" onclick="signInWithEmail()">Sign in</button>
+        <button class="btn btn-sm btn-ghost" onclick="signUpWithEmail()">Create</button>
+        <button class="btn btn-sm btn-ghost" onclick="signInWithGoogle()">Google</button>
+      </div>
+      <div class="auth-inline" id="auth-logged-in" style="display:none">
+        <span id="auth-user-name" class="auth-status"></span>
+        <button class="btn btn-sm btn-ghost" onclick="signOut()">Sign out</button>
+      </div>
+      <div id="auth-status" class="auth-status">Connecting…</div>
+    </div>
     <div class="saved-badge"><div class="saved-dot" id="saveDot"></div><span id="saveText">Saved</span></div>
   </div>
 </div>
@@ -422,6 +440,9 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
 
 </div><!-- .app -->
 
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
 <script>
 // ═══════════════════════════════════════════════════════
 // DATA CONSTANTS
@@ -478,6 +499,23 @@ const DEFAULT_TOGGLES = {
 // ═══════════════════════════════════════════════════════
 // STATE
 // ═══════════════════════════════════════════════════════
+const LOCAL_STORAGE_KEY = 'relic_planner_v4';
+const FIREBASE_CONFIG = window.FIREBASE_CONFIG || {
+  apiKey: 'AIzaSyBixCM0BOfOeD37ybGA0M1_6-XT3x6MVFk',
+  authDomain: 'noteproject-4c78d.firebaseapp.com',
+  projectId: 'noteproject-4c78d',
+  storageBucket: 'noteproject-4c78d.firebasestorage.app',
+  messagingSenderId: '791609826482',
+  appId: '1:791609826482:web:6a7c2e4ed6c5147a623dab'
+};
+
+let firebaseApp = null;
+let firebaseAuth = null;
+let firebaseDb = null;
+let authUser = null;
+let authReady = false;
+let remoteSaveTimer = null;
+
 let state = {
   roteStars: 24,
   greyPurchases: 0,
@@ -497,6 +535,48 @@ let state = {
 // ═══════════════════════════════════════════════════════
 // PERSISTENCE
 // ═══════════════════════════════════════════════════════
+function isFirebaseConfigured(){
+  return Boolean(FIREBASE_CONFIG.apiKey && FIREBASE_CONFIG.projectId);
+}
+
+function setSaveStatus(message, isError){
+  const dot=document.getElementById('saveDot');
+  const txt=document.getElementById('saveText');
+  if(!dot || !txt) return;
+  dot.style.background = isError ? 'var(--red)' : 'var(--green)';
+  txt.textContent = message;
+  clearTimeout(setSaveStatus._t);
+  setSaveStatus._t=setTimeout(()=>{
+    dot.style.background='var(--green)';
+    txt.textContent='Saved';
+  },1500);
+}
+
+function setAuthStatus(message, isError){
+  const el=document.getElementById('auth-status');
+  if(!el) return;
+  el.textContent=message;
+  el.style.color=isError ? 'var(--red)' : 'var(--text3)';
+}
+
+function updateAuthUI(){
+  const loggedOut=document.getElementById('auth-logged-out');
+  const loggedIn=document.getElementById('auth-logged-in');
+  const nameEl=document.getElementById('auth-user-name');
+  if(!loggedOut || !loggedIn || !nameEl) return;
+  if(authUser){
+    loggedOut.style.display='none';
+    loggedIn.style.display='inline-flex';
+    nameEl.textContent = authUser.displayName || authUser.email || 'Account';
+    setAuthStatus('Signed in', false);
+  } else {
+    loggedOut.style.display='inline-flex';
+    loggedIn.style.display='none';
+    nameEl.textContent='';
+    setAuthStatus(authReady ? 'Not signed in' : 'Connecting…', false);
+  }
+}
+
 function normalizeSources(rawSources){
   const defaults = JSON.parse(JSON.stringify(DEFAULT_SOURCES));
   if(!Array.isArray(rawSources) || rawSources.length===0) return defaults;
@@ -519,19 +599,45 @@ function normalizeSources(rawSources){
   });
 }
 
+function mergeStateWithDefaults(remoteState){
+  const base = JSON.parse(JSON.stringify(state));
+  const incoming = remoteState && typeof remoteState === 'object' ? remoteState : {};
+  const merged = { ...base, ...incoming };
+  merged.cantina = { ...base.cantina, ...(incoming.cantina || {}) };
+  merged.cantina.alloc = { ...base.cantina.alloc, ...(incoming.cantina?.alloc || {}) };
+  merged.planetCompletions = { ...base.planetCompletions, ...(incoming.planetCompletions || {}) };
+  merged.toggles = { ...JSON.parse(JSON.stringify(DEFAULT_TOGGLES)), ...(incoming.toggles || {}) };
+  merged.sources = normalizeSources(incoming.sources);
+  merged.groups = Array.isArray(incoming.groups) ? incoming.groups : base.groups;
+  merged._mid = Number(incoming._mid || base._mid) || base._mid;
+  merged._uid = Number(incoming._uid || base._uid) || base._uid;
+  return merged;
+}
+
+function scheduleRemoteSave(){
+  if(!authUser || !firebaseDb) return;
+  clearTimeout(remoteSaveTimer);
+  remoteSaveTimer=setTimeout(async ()=>{
+    try{
+      const ref = firebaseDb.collection('users').doc(authUser.uid);
+      await ref.set({ data: state }, { merge: true });
+      setSaveStatus('Saved to Firebase');
+    } catch(e){
+      console.error(e);
+      setSaveStatus('Firebase save failed', true);
+    }
+  }, 400);
+}
+
 function save(){
-  try{ localStorage.setItem('relic_planner_v4', JSON.stringify(state)); }catch(e){}
-  const dot=document.getElementById('saveDot');
-  const txt=document.getElementById('saveText');
-  dot.style.background='var(--green)';
-  txt.textContent='Saved';
-  clearTimeout(save._t);
-  save._t=setTimeout(()=>{ dot.style.background='var(--green)'; txt.textContent='Saved'; },1500);
+  try{ localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(state)); }catch(e){}
+  setSaveStatus('Saved');
+  if(authUser && firebaseDb) scheduleRemoteSave();
 }
 
 function load(){
   try{
-    let raw=localStorage.getItem('relic_planner_v4') || localStorage.getItem('relic_planner_v3');
+    let raw=localStorage.getItem(LOCAL_STORAGE_KEY) || localStorage.getItem('relic_planner_v3');
     if(raw){
       const p=JSON.parse(raw);
       
@@ -551,6 +657,98 @@ function load(){
   }catch(e){}
 }
 
+async function loadFromFirebase(){
+  if(!authUser || !firebaseDb) return;
+  try{
+    const ref = firebaseDb.collection('users').doc(authUser.uid);
+    const snap = await ref.get();
+    if(snap.exists){
+      const payload = snap.data();
+      if(payload && payload.data){
+        state = mergeStateWithDefaults(payload.data);
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(state));
+        setSaveStatus('Loaded from Firebase');
+      }
+    } else {
+      await ref.set({ data: state }, { merge: true });
+    }
+    init();
+  } catch(e){
+    console.error(e);
+    setAuthStatus('Could not load data from Firebase', true);
+  }
+}
+
+async function signInWithEmail(){
+  const email=document.getElementById('auth-email').value.trim();
+  const password=document.getElementById('auth-password').value;
+  if(!email || !password){ setAuthStatus('Enter your email and password', true); return; }
+  try{
+    setAuthStatus('Signing in…');
+    await firebaseAuth.signInWithEmailAndPassword(email, password);
+  } catch(e){
+    console.error(e);
+    setAuthStatus(e.message || 'Unable to sign in', true);
+  }
+}
+
+async function signUpWithEmail(){
+  const email=document.getElementById('auth-email').value.trim();
+  const password=document.getElementById('auth-password').value;
+  if(!email || !password){ setAuthStatus('Enter your email and password', true); return; }
+  try{
+    setAuthStatus('Creating account…');
+    await firebaseAuth.createUserWithEmailAndPassword(email, password);
+  } catch(e){
+    console.error(e);
+    setAuthStatus(e.message || 'Unable to create account', true);
+  }
+}
+
+async function signInWithGoogle(){
+  if(!firebaseAuth) return;
+  try{
+    const provider = new firebase.auth.GoogleAuthProvider();
+    setAuthStatus('Opening Google sign-in…');
+    await firebaseAuth.signInWithPopup(provider);
+  } catch(e){
+    console.error(e);
+    setAuthStatus(e.message || 'Google sign-in failed', true);
+  }
+}
+
+async function signOut(){
+  if(!firebaseAuth) return;
+  try{ await firebaseAuth.signOut(); } catch(e){ console.error(e); }
+}
+
+function initFirebase(){
+  if(!isFirebaseConfigured()){
+    setAuthStatus('Add Firebase config to enable sign-in', true);
+    updateAuthUI();
+    return;
+  }
+
+  try{
+    firebaseApp = firebase.apps.length ? firebase.apps[0] : firebase.initializeApp(FIREBASE_CONFIG);
+    firebaseAuth = firebaseApp.auth();
+    firebaseDb = firebaseApp.firestore();
+    firebaseAuth.onAuthStateChanged((user)=>{
+      authUser = user;
+      authReady = true;
+      updateAuthUI();
+      if(user){
+        loadFromFirebase();
+      } else {
+        setAuthStatus('Not signed in', false);
+      }
+    });
+  } catch(e){
+    console.error(e);
+    setAuthStatus('Firebase initialization failed', true);
+  }
+}
+
 function exportData(){
   const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);
@@ -564,7 +762,7 @@ function importData(input){
   input.value='';
 }
 function resetData(){
-  localStorage.removeItem('relic_planner_v4');
+  localStorage.removeItem(LOCAL_STORAGE_KEY);
   localStorage.removeItem('relic_planner_v3');
   state={roteStars:24,greyPurchases:0,
     planetCompletions:{DATHOMIR:0,TATOOINE:0,KASHYYYK:0,ZEFFO:0},
@@ -1096,6 +1294,7 @@ function init(){
 }
 
 load();
+initFirebase();
 init();
 </script>
 </body>
