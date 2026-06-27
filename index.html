@@ -57,7 +57,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-
 
 /* ─── Top banner ───────────────────────────────── */
 .top-banner{
-  background:rgba(124,106,247,.14);color:#d9d4ff;border-bottom:1px solid rgba(124,106,247,.25);
+  background:var(--accent-mid);color:#ece7ff;border-bottom:1px solid rgba(124,106,247,.35);
   padding:10px 20px;font-size:12px;line-height:1.45;text-align:center;
 }
 .topbar-title{font-size:14px;font-weight:600;letter-spacing:.02em;color:var(--text);margin-right:24px}
@@ -862,12 +862,20 @@ function calcCantinaIncome(){
   return { grey: Math.round(total.grey), green: Math.round(total.green), blue: Math.round(total.blue) };
 }
 
+function sanitizeNumericValue(val){
+  const cleaned = String(val ?? '').replace(/[^\d-]/g, '');
+  if (cleaned === '' || cleaned === '-') return 0;
+  const parsed = Number(cleaned);
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
 function calcMonthlyIncome(){
   let grey=0,green=0,blue=0;
   
   // Base Sources
   for(const s of state.sources){
-    grey+=Number(s.grey||0);green+=Number(s.green||0);blue+=Number(s.blue||0);
+    const multiplier = (s.key === 'rote' || /rote/i.test(s.label || '')) ? 2 : 1;
+    grey+=Number(s.grey||0)*multiplier;green+=Number(s.green||0)*multiplier;blue+=Number(s.blue||0)*multiplier;
   }
   // Toggles
   for(const k in state.toggles){
@@ -1016,7 +1024,7 @@ function renderConfig(){
         <td class="cantina-rate" style="color:${n.rates.grey>0?'var(--grey)':'var(--text3)'}">${n.rates.grey||'-'}</td>
         <td class="cantina-rate" style="color:${n.rates.green>0?'var(--green)':'var(--text3)'}">${n.rates.green||'-'}</td>
         <td class="cantina-rate" style="color:${n.rates.blue>0?'var(--blue)':'var(--text3)'}">${n.rates.blue||'-'}</td>
-        <td><input type="number" inputmode="numeric" value="${state.cantina.alloc[k]}" oninput="onCantinaChange('${k}', this.value)" onblur="commitCantinaValue('${k}', this)"></td>
+        <td><input type="text" inputmode="numeric" pattern="[0-9]*" value="${state.cantina.alloc[k]}" oninput="onCantinaChange('${k}', this.value)" onblur="commitCantinaValue('${k}', this)"></td>
       </tr>`).join('')}
     </tbody>`;
   updateCantinaAlloc();
@@ -1033,9 +1041,9 @@ function renderConfig(){
     <tbody>${state.sources.map((s,i)=>`
       <tr>
         <td class="source-name">${s.label}</td>
-        <td><input type="number" inputmode="numeric" value="${s.grey}" oninput="updateSource(${i},'grey',this.value)" onblur="commitSourceValue(${i},'grey',this)"></td>
-        <td><input type="number" inputmode="numeric" value="${s.green}" oninput="updateSource(${i},'green',this.value)" onblur="commitSourceValue(${i},'green',this)"></td>
-        <td><input type="number" inputmode="numeric" value="${s.blue}" oninput="updateSource(${i},'blue',this.value)" onblur="commitSourceValue(${i},'blue',this)"></td>
+        <td><input type="text" inputmode="numeric" pattern="[0-9]*" value="${s.grey}" oninput="updateSource(${i},'grey',this.value)" onblur="commitSourceValue(${i},'grey',this)"></td>
+        <td><input type="text" inputmode="numeric" pattern="[0-9]*" value="${s.green}" oninput="updateSource(${i},'green',this.value)" onblur="commitSourceValue(${i},'green',this)"></td>
+        <td><input type="text" inputmode="numeric" pattern="[0-9]*" value="${s.blue}" oninput="updateSource(${i},'blue',this.value)" onblur="commitSourceValue(${i},'blue',this)"></td>
       </tr>`).join('')}
     </tbody>`;
 
@@ -1050,15 +1058,15 @@ function renderConfig(){
       <div style="display:flex; gap:8px; padding-left:24px; opacity:${t.enabled?'1':'0.4'}; pointer-events:${t.enabled?'auto':'none'}">
         <div style="display:flex;align-items:center;gap:4px">
           <span style="font-size:11px;color:var(--grey)">Gy:</span>
-          <input type="number" inputmode="numeric" style="width:60px" value="${t.grey}" oninput="updateToggle('${k}','grey',this.value)" onblur="commitToggleValue('${k}','grey',this)">
+          <input type="text" inputmode="numeric" pattern="[0-9]*" style="width:60px" value="${t.grey}" oninput="updateToggle('${k}','grey',this.value)" onblur="commitToggleValue('${k}','grey',this)">
         </div>
         <div style="display:flex;align-items:center;gap:4px">
           <span style="font-size:11px;color:var(--green)">Gr:</span>
-          <input type="number" inputmode="numeric" style="width:60px" value="${t.green}" oninput="updateToggle('${k}','green',this.value)" onblur="commitToggleValue('${k}','green',this)">
+          <input type="text" inputmode="numeric" pattern="[0-9]*" style="width:60px" value="${t.green}" oninput="updateToggle('${k}','green',this.value)" onblur="commitToggleValue('${k}','green',this)">
         </div>
         <div style="display:flex;align-items:center;gap:4px">
           <span style="font-size:11px;color:var(--blue)">Bl:</span>
-          <input type="number" inputmode="numeric" style="width:60px" value="${t.blue}" oninput="updateToggle('${k}','blue',this.value)" onblur="commitToggleValue('${k}','blue',this)">
+          <input type="text" inputmode="numeric" pattern="[0-9]*" style="width:60px" value="${t.blue}" oninput="updateToggle('${k}','blue',this.value)" onblur="commitToggleValue('${k}','blue',this)">
         </div>
       </div>
     </div>`).join('');
@@ -1080,7 +1088,7 @@ function onCantinaChange(field, val){
   } else if (field === 'bonusEnergy') {
     state.cantina.bonusEnergy = val; // boolean
   } else {
-    state.cantina.alloc[field] = Math.max(0, parseInt(val)||0);
+    state.cantina.alloc[field] = Math.max(0, Math.floor(sanitizeNumericValue(val)));
   }
   document.getElementById('cantina-budget').textContent = getCantinaBudget();
   updateCantinaAlloc();
@@ -1101,7 +1109,7 @@ function updateCantinaAlloc() {
 }
 
 function updateSource(i,field,val){
-  state.sources[i][field]=Number(val)||0;
+  state.sources[i][field]=Math.max(0, Math.floor(sanitizeNumericValue(val)));
   updatePlanSummary();
 }
 
@@ -1112,7 +1120,7 @@ function commitSourceValue(i, field, element){
 
 function updateToggle(key, field, val){
   if(field === 'enabled') state.toggles[key].enabled = val;
-  else state.toggles[key][field] = Number(val)||0;
+  else state.toggles[key][field] = Math.max(0, Math.floor(sanitizeNumericValue(val)));
   
   if(field === 'enabled') renderConfig(); // re-render to toggle disabled states visually
   updatePlanSummary();
