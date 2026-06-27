@@ -454,7 +454,7 @@ const RELIC_COST = {
 };
 
 const CANTINA_NODES = {
-  c8grey:  { label: 'Cantina 8C)', rates: { grey: 9.90, green: 0,    blue: 0    } },
+  c8grey:  { label: 'Cantina 8C', rates: { grey: 9.90, green: 0,    blue: 0    } },
   c8green: { label: 'Cantina 8F', rates: { grey: 0,    green: 7.43, blue: 0    } },
   c8blue:  { label: 'Cantina 8G', rates: { grey: 0,    green: 0,    blue: 4.95 } },
   n9b:     { label: 'Node 9B',        rates: { grey: 7.57, green: 3.63, blue: 0    } },
@@ -496,6 +496,28 @@ let state = {
 // ═══════════════════════════════════════════════════════
 // PERSISTENCE
 // ═══════════════════════════════════════════════════════
+function normalizeSources(rawSources){
+  const defaults = JSON.parse(JSON.stringify(DEFAULT_SOURCES));
+  if(!Array.isArray(rawSources) || rawSources.length===0) return defaults;
+
+  const byKey = new Map();
+  for(const s of rawSources){
+    if(!s || !s.key) continue;
+    const key = String(s.key).toLowerCase();
+    if(['cantina','era_store','episode_store','episode_track'].includes(key)) continue;
+
+    const normalizedKey = key === 'episodetrack' || key === 'episode_track' ? 'episodetrack' : key;
+    if(!byKey.has(normalizedKey)) {
+      byKey.set(normalizedKey, { ...s, key: normalizedKey });
+    }
+  }
+
+  return defaults.map(def => {
+    const existing = byKey.get(def.key);
+    return existing ? { ...def, ...existing, key: def.key } : { ...def };
+  });
+}
+
 function save(){
   try{ localStorage.setItem('relic_planner_v4', JSON.stringify(state)); }catch(e){}
   const dot=document.getElementById('saveDot');
@@ -515,14 +537,12 @@ function load(){
       // Migrate old months to groups
       if(p.months) { p.groups = p.months; delete p.months; }
       
-      // Strip old legacy sources from base array to prevent double counting
-      if(p.sources) {
-        p.sources = p.sources.filter(s => !['cantina','era_store','episode_store','episode_track'].includes(s.key));
-      }
+      // Normalize legacy sources so older saved data still includes the current defaults
+      p.sources = normalizeSources(p.sources);
 
       state={ ...state, ...p };
       
-      if(!state.cantina) state.cantina = { refreshes: 0, bonusEnergy: false, alloc: { c8grey: 120, c8green: 0, c8blue: 0, n9b: 0, n9d: 0, n9f: 0 }};
+      if(!state.cantina) state.cantina = { refreshes: 0, bonusEnergy: false, alloc: { c8grey: 0, c8green: 0, c8blue: 0, n9b: 0, n9d: 0, n9f: 0 }};
       if(state.cantina.bonusEnergy === undefined) state.cantina.bonusEnergy = false;
       if(!state.toggles) state.toggles = JSON.parse(JSON.stringify(DEFAULT_TOGGLES));
       if(!state.sources || state.sources.length===0) state.sources=JSON.parse(JSON.stringify(DEFAULT_SOURCES));
