@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' https://www.gstatic.com https://www.googleapis.com https://fonts.googleapis.com 'unsafe-inline'; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' https://fonts.gstatic.com data:; connect-src 'self' https://www.googleapis.com https://firestore.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com; frame-src https://accounts.google.com; object-src 'none'; base-uri 'self'; form-action 'self' https://accounts.google.com">
+<meta name="referrer-policy" content="strict-origin-when-cross-origin">
 <title>Home</title>
 <link rel="icon" href="/favicon.ico" type="image/x-icon">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -618,7 +620,8 @@ function updateAuthUI(){
       plannerShell.style.display='block';
       if(userPanel){
         userPanel.style.display='block';
-        userPanel.innerHTML=`Signed in as <strong>${(authUser.displayName || authUser.email || 'Account').replace(/</g,'&lt;')}</strong>`;
+        const displayName = authUser.displayName || authUser.email || 'Account';
+        userPanel.textContent = `Signed in as ${displayName}`;
       }
       setAuthStatus('Signed in', false);
     } else {
@@ -1381,6 +1384,23 @@ function init(){
   renderConfig();
 }
 
+function attachTextInputScrollGuard(){
+  document.addEventListener('keydown', (event) => {
+    const target = event.target;
+    const isTextLikeInput = target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement;
+    const acceptsText = isTextLikeInput && !target.readOnly && !target.disabled && ['text','email','password','search','url','tel',''].includes(target.type);
+
+    if (event.code === 'Space' && acceptsText) {
+      const start = target.selectionStart ?? target.value.length;
+      const end = target.selectionEnd ?? start;
+      event.preventDefault();
+      target.setRangeText(' ', start, end, 'end');
+      target.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+  });
+}
+
+attachTextInputScrollGuard();
 load();
 initFirebase();
 init();
