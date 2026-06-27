@@ -645,20 +645,6 @@ function updateAuthUI(){
 }
 
 function canPerformStoreEdit(){
-  const now = Date.now();
-  if(!storeEditWarmupStartedAt){ storeEditWarmupStartedAt = now; }
-  if(now - storeEditWarmupStartedAt < LIMITS.warmupWindowMs){
-    if(storeEditWarmupCount < LIMITS.warmupEditsAllowed){
-      storeEditWarmupCount += 1;
-      return true;
-    }
-  }
-
-  storeEditTimestamps = storeEditTimestamps.filter(t => now - t < 60000);
-  if(storeEditTimestamps.length >= LIMITS.maxStoreEditsPerMinute){
-    return false;
-  }
-  storeEditTimestamps.push(now);
   return true;
 }
 
@@ -1024,7 +1010,7 @@ function renderConfig(){
         <td class="cantina-rate" style="color:${n.rates.grey>0?'var(--grey)':'var(--text3)'}">${n.rates.grey||'-'}</td>
         <td class="cantina-rate" style="color:${n.rates.green>0?'var(--green)':'var(--text3)'}">${n.rates.green||'-'}</td>
         <td class="cantina-rate" style="color:${n.rates.blue>0?'var(--blue)':'var(--text3)'}">${n.rates.blue||'-'}</td>
-        <td><input type="number" value="${state.cantina.alloc[k]}" oninput="onCantinaChange('${k}', this.value)"></td>
+        <td><input type="number" inputmode="numeric" value="${state.cantina.alloc[k]}" oninput="onCantinaChange('${k}', this.value)" onblur="commitCantinaValue('${k}', this)"></td>
       </tr>`).join('')}
     </tbody>`;
   updateCantinaAlloc();
@@ -1041,9 +1027,9 @@ function renderConfig(){
     <tbody>${state.sources.map((s,i)=>`
       <tr>
         <td class="source-name">${s.label}</td>
-        <td><input type="number" value="${s.grey}" oninput="updateSource(${i},'grey',this.value)"></td>
-        <td><input type="number" value="${s.green}" oninput="updateSource(${i},'green',this.value)"></td>
-        <td><input type="number" value="${s.blue}" oninput="updateSource(${i},'blue',this.value)"></td>
+        <td><input type="number" inputmode="numeric" value="${s.grey}" oninput="updateSource(${i},'grey',this.value)" onblur="commitSourceValue(${i},'grey',this)"></td>
+        <td><input type="number" inputmode="numeric" value="${s.green}" oninput="updateSource(${i},'green',this.value)" onblur="commitSourceValue(${i},'green',this)"></td>
+        <td><input type="number" inputmode="numeric" value="${s.blue}" oninput="updateSource(${i},'blue',this.value)" onblur="commitSourceValue(${i},'blue',this)"></td>
       </tr>`).join('')}
     </tbody>`;
 
@@ -1058,15 +1044,15 @@ function renderConfig(){
       <div style="display:flex; gap:8px; padding-left:24px; opacity:${t.enabled?'1':'0.4'}; pointer-events:${t.enabled?'auto':'none'}">
         <div style="display:flex;align-items:center;gap:4px">
           <span style="font-size:11px;color:var(--grey)">Gy:</span>
-          <input type="number" style="width:60px" value="${t.grey}" oninput="updateToggle('${k}','grey',this.value)">
+          <input type="number" inputmode="numeric" style="width:60px" value="${t.grey}" oninput="updateToggle('${k}','grey',this.value)" onblur="commitToggleValue('${k}','grey',this)">
         </div>
         <div style="display:flex;align-items:center;gap:4px">
           <span style="font-size:11px;color:var(--green)">Gr:</span>
-          <input type="number" style="width:60px" value="${t.green}" oninput="updateToggle('${k}','green',this.value)">
+          <input type="number" inputmode="numeric" style="width:60px" value="${t.green}" oninput="updateToggle('${k}','green',this.value)" onblur="commitToggleValue('${k}','green',this)">
         </div>
         <div style="display:flex;align-items:center;gap:4px">
           <span style="font-size:11px;color:var(--blue)">Bl:</span>
-          <input type="number" style="width:60px" value="${t.blue}" oninput="updateToggle('${k}','blue',this.value)">
+          <input type="number" inputmode="numeric" style="width:60px" value="${t.blue}" oninput="updateToggle('${k}','blue',this.value)" onblur="commitToggleValue('${k}','blue',this)">
         </div>
       </div>
     </div>`).join('');
@@ -1083,10 +1069,6 @@ function renderConfig(){
 }
 
 function onCantinaChange(field, val){
-  if(!canPerformStoreEdit()){
-    showLimitNotice(`You are changing too quickly. Please wait a moment.`);
-    return;
-  }
   if (field === 'refreshes') {
     state.cantina.refreshes = Math.max(0, parseInt(val)||0);
   } else if (field === 'bonusEnergy') {
@@ -1096,7 +1078,12 @@ function onCantinaChange(field, val){
   }
   document.getElementById('cantina-budget').textContent = getCantinaBudget();
   updateCantinaAlloc();
-  save(); updatePlanSummary();
+  updatePlanSummary();
+}
+
+function commitCantinaValue(field, element){
+  onCantinaChange(field, element.value);
+  save();
 }
 
 function updateCantinaAlloc() {
@@ -1108,24 +1095,26 @@ function updateCantinaAlloc() {
 }
 
 function updateSource(i,field,val){
-  if(!canPerformStoreEdit()){
-    showLimitNotice(`You are changing too quickly. Please wait a moment.`);
-    return;
-  }
   state.sources[i][field]=Number(val)||0;
-  save(); updatePlanSummary();
+  updatePlanSummary();
+}
+
+function commitSourceValue(i, field, element){
+  updateSource(i, field, element.value);
+  save();
 }
 
 function updateToggle(key, field, val){
-  if(!canPerformStoreEdit()){
-    showLimitNotice(`You are changing too quickly. Please wait a moment.`);
-    return;
-  }
   if(field === 'enabled') state.toggles[key].enabled = val;
   else state.toggles[key][field] = Number(val)||0;
   
   if(field === 'enabled') renderConfig(); // re-render to toggle disabled states visually
-  save(); updatePlanSummary();
+  updatePlanSummary();
+}
+
+function commitToggleValue(key, field, element){
+  updateToggle(key, field, element.value);
+  save();
 }
 
 // ═══════════════════════════════════════════════════════
