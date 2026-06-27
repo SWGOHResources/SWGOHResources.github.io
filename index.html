@@ -242,6 +242,7 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
 <div class="top-banner">Each group is one month. Set up signal data gain in Configuration and GET 2 gain in TB Setup.</div>
 <div class="topbar">
   <div class="topbar-title">Relic <span>Planner</span></div>
+  <div id="build-badge" style="margin-left:12px;font-size:11px;color:var(--text3)">Build <span id="build-version"></span></div>
   <div class="topbar-tabs">
     <button class="tab-btn active" onclick="showTab('plan')">Group Plan</button>
     <button class="tab-btn" onclick="showTab('tb')">TB Setup</button>
@@ -464,6 +465,7 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
 </div><!-- planner-shell -->
 </div><!-- .app -->
 
+<script src="./build-version.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
@@ -1162,7 +1164,12 @@ function moveGroup(id,dir){
 
 function updateGroupLabel(id,val){
   const m=state.groups.find(x=>x.id===id);
-  if(m){ m.label=val; queueSave(); }
+  if(m){ m.label=val; }
+}
+
+function commitGroupLabel(id, element){
+  const m=state.groups.find(x=>x.id===id);
+  if(m){ m.label=element.value; save(); }
 }
 
 function addUnit(groupId){
@@ -1194,11 +1201,18 @@ function updateUnit(groupId, unitId, field, val){
   const u=m.units.find(x=>x.id===unitId);
   if(!u) return;
   u[field]=val;
-  if(field === 'name') {
-    queueSave();
-    return;
+  if(field !== 'name') {
+    save(); renderPlan();
   }
-  save(); renderPlan();
+}
+
+function commitUnitName(groupId, unitId, element){
+  const m=state.groups.find(x=>x.id===groupId);
+  if(!m) return;
+  const u=m.units.find(x=>x.id===unitId);
+  if(!u) return;
+  u.name = element.value;
+  save();
 }
 
 function onGreyPurchasesChange(){
@@ -1276,6 +1290,7 @@ function buildGroupCard({m,demand,available,net,carryIn,carryOut},idx){
     <div class="upgrade-row">
       <input type="text" placeholder="Unit name" value="${escHtml(u.name)}"
         oninput="updateUnit(${m.id},${u.id},'name',this.value)"
+        onblur="commitUnitName(${m.id},${u.id},this)"
         style="font-size:12px;height:28px">
       <select onchange="updateUnit(${m.id},${u.id},'from',this.value)" style="font-size:12px;height:28px">
         ${relicOpts(1,9,u.from,'From')}
@@ -1311,6 +1326,7 @@ function buildGroupCard({m,demand,available,net,carryIn,carryOut},idx){
       <input class="group-label-input" value="${escHtml(m.label)}"
         onclick="event.stopPropagation()"
         oninput="updateGroupLabel(${m.id},this.value)"
+        onblur="commitGroupLabel(${m.id},this)"
         style="margin-left:6px">
       <div class="group-signals" style="flex-shrink:0;gap:4px">
         ${demand.grey>0?`<span class="pill pill-grey" style="font-size:11px">${demand.grey}</span>`:''}
@@ -1398,6 +1414,8 @@ function escHtml(s){
 // INIT
 // ═══════════════════════════════════════════════════════
 function init(){
+  const buildVersionEl = document.getElementById('build-version');
+  if(buildVersionEl){ buildVersionEl.textContent = window.BUILD_VERSION || 'dev'; }
   updateLimitsInfo();
   renderPlan();
   renderTB();
