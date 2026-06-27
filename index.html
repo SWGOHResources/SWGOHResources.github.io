@@ -42,9 +42,14 @@
 html{height:100%}
 body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:13px;line-height:1.5;min-height:100vh}
 
+/* ─── Sticky header ───────────────────────────── */
+.top-header{
+  position:sticky;top:0;z-index:200;
+  width:100%;
+}
+
 /* ─── Top bar ─────────────────────────────────── */
 .topbar{
-  position:sticky;top:0;z-index:200;
   background:var(--bg1);border-bottom:1px solid var(--border);
   display:flex;align-items:center;gap:0;
   height:48px;padding:0 20px;
@@ -52,7 +57,6 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-
 
 /* ─── Top banner ───────────────────────────────── */
 .top-banner{
-  position:sticky;top:48px;z-index:150;
   background:rgba(124,106,247,.14);color:#d9d4ff;border-bottom:1px solid rgba(124,106,247,.25);
   padding:10px 20px;font-size:12px;line-height:1.45;text-align:center;
 }
@@ -238,19 +242,21 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
 </head>
 <body>
 
-<div class="top-banner">Each group is one month. Set up signal data gain in Configuration and GET 2 gain in TB Setup.</div>
-<div class="topbar">
-  <div class="topbar-title">Relic <span>Planner</span></div>
-  <div id="build-badge" style="margin-left:12px;font-size:11px;color:var(--text3)">Build <span id="build-version"></span></div>
-  <div class="topbar-tabs">
-    <button class="tab-btn active" onclick="showTab('plan')">Group Plan</button>
-    <button class="tab-btn" onclick="showTab('tb')">TB Setup</button>
-    <button class="tab-btn" onclick="showTab('config')">Configuration</button>
-  </div>
-  <div class="topbar-right">
-    <div class="auth-panel">
-      <div id="auth-status" class="auth-status">Connecting…</div>
-      <div class="saved-badge"><div class="saved-dot" id="saveDot"></div><span id="saveText">Saved</span></div>
+<div class="top-header">
+  <div class="top-banner">Each group is one month. Set up signal data gain in Configuration and GET 2 gain in TB Setup.</div>
+  <div class="topbar">
+    <div class="topbar-title">Relic <span>Planner</span></div>
+    <div id="build-badge" style="margin-left:12px;font-size:11px;color:var(--text3)">Build <span id="build-version"></span></div>
+    <div class="topbar-tabs">
+      <button class="tab-btn active" onclick="showTab('plan')">Group Plan</button>
+      <button class="tab-btn" onclick="showTab('tb')">TB Setup</button>
+      <button class="tab-btn" onclick="showTab('config')">Configuration</button>
+    </div>
+    <div class="topbar-right">
+      <div class="auth-panel">
+        <div id="auth-status" class="auth-status">Connecting…</div>
+        <div class="saved-badge"><div class="saved-dot" id="saveDot"></div><span id="saveText">Saved</span></div>
+      </div>
     </div>
   </div>
 </div>
