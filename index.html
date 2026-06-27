@@ -42,20 +42,19 @@
 html{height:100%}
 body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:13px;line-height:1.5;min-height:100vh}
 
-/* ─── Top banner ───────────────────────────────── */
-.top-banner{
-  position:sticky;top:0;z-index:250;
-  background:rgba(124,106,247,.14);color:#d9d4ff;border-bottom:1px solid rgba(124,106,247,.25);
-  padding:10px 20px;font-size:12px;line-height:1.45;text-align:center;
-}
-
 /* ─── Top bar ─────────────────────────────────── */
 .topbar{
-  position:sticky;top:44px;z-index:200;
   position:sticky;top:0;z-index:200;
   background:var(--bg1);border-bottom:1px solid var(--border);
   display:flex;align-items:center;gap:0;
   height:48px;padding:0 20px;
+}
+
+/* ─── Top banner ───────────────────────────────── */
+.top-banner{
+  position:sticky;top:48px;z-index:150;
+  background:rgba(124,106,247,.14);color:#d9d4ff;border-bottom:1px solid rgba(124,106,247,.25);
+  padding:10px 20px;font-size:12px;line-height:1.45;text-align:center;
 }
 .topbar-title{font-size:14px;font-weight:600;letter-spacing:.02em;color:var(--text);margin-right:24px}
 .topbar-title span{color:var(--accent)}
