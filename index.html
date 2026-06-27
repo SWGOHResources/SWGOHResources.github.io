@@ -1393,28 +1393,6 @@ function init(){
   renderConfig();
 }
 
-function attachTextInputScrollGuard(){
-  document.addEventListener('keydown', (event) => {
-    const target = event.target;
-    if (!(target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement)) return;
-    if (target.readOnly || target.disabled) return;
-    if (event.code !== 'Space') return;
-
-    const isTextLikeField = ['text','email','password','search','url','tel',''].includes(target.type);
-    if (!isTextLikeField) return;
-
-    const isAtEnd = target.selectionStart === target.value.length && target.selectionEnd === target.value.length;
-    if (isAtEnd) {
-      event.preventDefault();
-      const value = target.value + ' ';
-      target.value = value;
-      target.dispatchEvent(new Event('input', { bubbles: true }));
-      target.setSelectionRange(value.length, value.length);
-    }
-  });
-}
-
-attachTextInputScrollGuard();
 load();
 initFirebase();
 init();
