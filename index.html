@@ -553,6 +553,7 @@ let lastSaveAt = 0;
 let storeEditTimestamps = [];
 let storeEditWarmupCount = 0;
 let storeEditWarmupStartedAt = 0;
+let saveDebounceTimer = null;
 
 let state = {
   roteStars: 24,
@@ -737,6 +738,11 @@ function save(){
   try{ localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(state)); }catch(e){}
   setSaveStatus('Saved');
   if(authUser && firebaseDb) scheduleRemoteSave();
+}
+
+function queueSave(){
+  clearTimeout(saveDebounceTimer);
+  saveDebounceTimer = setTimeout(() => save(), 250);
 }
 
 function load(){
@@ -1156,7 +1162,7 @@ function moveGroup(id,dir){
 
 function updateGroupLabel(id,val){
   const m=state.groups.find(x=>x.id===id);
-  if(m){ m.label=val; save(); }
+  if(m){ m.label=val; queueSave(); }
 }
 
 function addUnit(groupId){
@@ -1187,7 +1193,12 @@ function updateUnit(groupId, unitId, field, val){
   if(!m) return;
   const u=m.units.find(x=>x.id===unitId);
   if(!u) return;
-  u[field]=val; save(); renderPlan();
+  u[field]=val;
+  if(field === 'name') {
+    queueSave();
+    return;
+  }
+  save(); renderPlan();
 }
 
 function onGreyPurchasesChange(){
