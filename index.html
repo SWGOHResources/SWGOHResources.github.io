@@ -446,16 +446,6 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
         </div>
       </div>
 
-      <!-- Actions -->
-      <div class="section" style="margin-bottom:0">
-        <div class="section-head"><div class="section-title">Data Actions</div></div>
-        <div class="section-body" style="display:flex;gap:8px;flex-wrap:wrap">
-          <button class="btn btn-ghost" onclick="exportData()">Export JSON</button>
-          <button class="btn btn-ghost" onclick="document.getElementById('import-file').click()">Import JSON</button>
-          <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(this)">
-          <button class="btn btn-danger" style="height:30px;width:auto;padding:0 12px;color:var(--red);font-size:12px;border:1px solid rgba(224,85,85,.2)" onclick="if(confirm('Reset all data?'))resetData()">Reset all</button>
-        </div>
-      </div>
     </div>
   </div>
 </div>
@@ -840,30 +830,6 @@ function initFirebase(){
     console.error(e);
     setAuthStatus('Firebase initialization failed', true);
   }
-}
-
-function exportData(){
-  const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
-  a.download='relic_planner.json';a.click();
-}
-function importData(input){
-  const file=input.files[0]; if(!file) return;
-  const reader=new FileReader();
-  reader.onload=e=>{ try{ state=JSON.parse(e.target.result); save(); init(); }catch(x){ alert('Invalid file'); } };
-  reader.readAsText(file);
-  input.value='';
-}
-function resetData(){
-  localStorage.removeItem(LOCAL_STORAGE_KEY);
-  localStorage.removeItem('relic_planner_v3');
-  state={roteStars:24,greyPurchases:0,
-    planetCompletions:{DATHOMIR:0,TATOOINE:0,KASHYYYK:0,ZEFFO:0},
-    cantina: { refreshes: 0, bonusEnergy: false, alloc: { c8grey: 0, c8green: 0, c8blue: 0, n9b: 0, n9d: 0, n9f: 0 } },
-    toggles: JSON.parse(JSON.stringify(DEFAULT_TOGGLES)),
-    sources:JSON.parse(JSON.stringify(DEFAULT_SOURCES)),
-    groups:[],_mid:0,_uid:0};
-  init();
 }
 
 // ═══════════════════════════════════════════════════════
