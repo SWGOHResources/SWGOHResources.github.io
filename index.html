@@ -246,6 +246,8 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
 
 <div class="app">
 
+<div id="limit-banner" style="display:none;margin-bottom:12px;padding:10px 12px;border:1px solid rgba(224,85,85,.35);background:rgba(224,85,85,.12);color:#ffb3b3;border-radius:var(--radius);font-size:12px"></div>
+
 <div id="auth-screen" class="auth-card">
   <h2>Welcome back</h2>
   <p>Sign in to sync your planner across devices, or create an account to save your groups and settings.</p>
@@ -517,6 +519,15 @@ const DEFAULT_TOGGLES = {
   eraColiseum:     { enabled: false, label: 'Era Coliseum',     grey: 0,   green: 0,   blue: 100 }
 };
 
+const LIMITS = {
+  maxGroups: 8,
+  maxUnitsPerGroup: 15,
+  maxStoreEditsPerMinute: 30,
+  minSaveIntervalMs: 400,
+  warmupWindowMs: 15000,
+  warmupEditsAllowed: 20
+};
+
 // ═══════════════════════════════════════════════════════
 // STATE
 // ═══════════════════════════════════════════════════════
@@ -537,6 +548,10 @@ let authUser = null;
 let authReady = false;
 let remoteSaveTimer = null;
 let authMode = 'signin';
+let lastSaveAt = 0;
+let storeEditTimestamps = [];
+let storeEditWarmupCount = 0;
+let storeEditWarmupStartedAt = 0;
 
 let state = {
   roteStars: 24,
@@ -593,6 +608,16 @@ function setAuthMode(mode){
   }
 }
 
+function updateLimitsInfo(){
+  const el=document.getElementById('limit-banner');
+  if(!el) return;
+  el.textContent=`Limits: ${LIMITS.maxGroups} groups, ${LIMITS.maxUnitsPerGroup} units per group, and ${LIMITS.maxStoreEditsPerMinute} rapid edits/minute.`;
+  el.style.display='block';
+  el.style.borderColor='rgba(124,106,247,.35)';
+  el.style.background='rgba(124,106,247,.12)';
+  el.style.color='#cfc7ff';
+}
+
 function updateAuthUI(){
   const authScreen=document.getElementById('auth-screen');
   const plannerShell=document.getElementById('planner-shell');
@@ -612,6 +637,44 @@ function updateAuthUI(){
       if(userPanel){ userPanel.style.display='none'; }
       setAuthStatus(authReady ? 'Not signed in' : 'Connecting…', false);
     }
+  }
+}
+
+function canPerformStoreEdit(){
+  const now = Date.now();
+  if(!storeEditWarmupStartedAt){ storeEditWarmupStartedAt = now; }
+  if(now - storeEditWarmupStartedAt < LIMITS.warmupWindowMs){
+    if(storeEditWarmupCount < LIMITS.warmupEditsAllowed){
+      storeEditWarmupCount += 1;
+      return true;
+    }
+  }
+
+  storeEditTimestamps = storeEditTimestamps.filter(t => now - t < 60000);
+  if(storeEditTimestamps.length >= LIMITS.maxStoreEditsPerMinute){
+    return false;
+  }
+  storeEditTimestamps.push(now);
+  return true;
+}
+
+function canSaveNow(){
+  const now = Date.now();
+  if(now - lastSaveAt < LIMITS.minSaveIntervalMs){
+    return false;
+  }
+  lastSaveAt = now;
+  return true;
+}
+
+function showLimitNotice(message){
+  setSaveStatus(message, true);
+  const banner=document.getElementById('limit-banner');
+  if(banner){
+    banner.textContent=message;
+    banner.style.display='block';
+    clearTimeout(showLimitNotice._t);
+    showLimitNotice._t=setTimeout(()=>{ banner.style.display='none'; }, 2600);
   }
 }
 
@@ -668,6 +731,7 @@ function scheduleRemoteSave(){
 }
 
 function save(){
+  if(!canSaveNow()) return;
   try{ localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(state)); }catch(e){}
   setSaveStatus('Saved');
   if(authUser && firebaseDb) scheduleRemoteSave();
@@ -1034,6 +1098,10 @@ function renderConfig(){
 }
 
 function onCantinaChange(field, val){
+  if(!canPerformStoreEdit()){
+    showLimitNotice(`You are changing too quickly. Please wait a moment.`);
+    return;
+  }
   if (field === 'refreshes') {
     state.cantina.refreshes = Math.max(0, parseInt(val)||0);
   } else if (field === 'bonusEnergy') {
@@ -1055,11 +1123,19 @@ function updateCantinaAlloc() {
 }
 
 function updateSource(i,field,val){
+  if(!canPerformStoreEdit()){
+    showLimitNotice(`You are changing too quickly. Please wait a moment.`);
+    return;
+  }
   state.sources[i][field]=Number(val)||0;
   save(); updatePlanSummary();
 }
 
 function updateToggle(key, field, val){
+  if(!canPerformStoreEdit()){
+    showLimitNotice(`You are changing too quickly. Please wait a moment.`);
+    return;
+  }
   if(field === 'enabled') state.toggles[key].enabled = val;
   else state.toggles[key][field] = Number(val)||0;
   
@@ -1071,6 +1147,10 @@ function updateToggle(key, field, val){
 // PLAN PAGE — GROUPS
 // ═══════════════════════════════════════════════════════
 function addGroup(){
+  if(state.groups.length >= LIMITS.maxGroups){
+    showLimitNotice(`You can have up to ${LIMITS.maxGroups} groups.`);
+    return;
+  }
   state._mid++;
   state.groups.push({ id:state._mid, label:`Group ${state._mid}`, collapsed:false, units:[] });
   save(); renderPlan();
@@ -1104,6 +1184,10 @@ function updateGroupLabel(id,val){
 function addUnit(groupId){
   const m=state.groups.find(x=>x.id===groupId);
   if(!m) return;
+  if(m.units.length >= LIMITS.maxUnitsPerGroup){
+    showLimitNotice(`Each group can have up to ${LIMITS.maxUnitsPerGroup} units.`);
+    return;
+  }
   state._uid++;
   m.units.push({id:state._uid, name:'', from:'', to:''});
   save(); renderPlan();
@@ -1117,6 +1201,10 @@ function removeUnit(groupId, unitId){
 }
 
 function updateUnit(groupId, unitId, field, val){
+  if(!canPerformStoreEdit()){
+    showLimitNotice(`You are changing too quickly. Please wait a moment.`);
+    return;
+  }
   const m=state.groups.find(x=>x.id===groupId);
   if(!m) return;
   const u=m.units.find(x=>x.id===unitId);
@@ -1125,6 +1213,10 @@ function updateUnit(groupId, unitId, field, val){
 }
 
 function onGreyPurchasesChange(){
+  if(!canPerformStoreEdit()){
+    showLimitNotice(`You are changing too quickly. Please wait a moment.`);
+    return;
+  }
   const v=Math.max(0,parseInt(document.getElementById('grey-purchases').value)||0);
   state.greyPurchases=v;
   const get2=calcGet2PerMonth();
@@ -1317,6 +1409,7 @@ function escHtml(s){
 // INIT
 // ═══════════════════════════════════════════════════════
 function init(){
+  updateLimitsInfo();
   renderPlan();
   renderTB();
   renderConfig();
