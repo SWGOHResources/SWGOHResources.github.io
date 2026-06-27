@@ -93,6 +93,12 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-
 .app{max-width:1100px;margin:0 auto;padding:24px 20px}
 .page{display:none}.page.active{display:block}
 
+.confirm-modal{position:fixed;inset:0;background:rgba(0,0,0,.72);display:none;align-items:center;justify-content:center;padding:20px;z-index:300}
+.confirm-card{width:min(420px,100%);background:var(--bg1);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:0 20px 50px rgba(0,0,0,.35);padding:18px}
+.confirm-title{font-size:15px;font-weight:600;margin-bottom:8px}
+.confirm-message{font-size:13px;color:var(--text2);line-height:1.55;margin-bottom:16px}
+.confirm-actions{display:flex;justify-content:flex-end;gap:8px}
+
 /* ─── Shared components ───────────────────────── */
 .section{background:var(--bg1);border:1px solid var(--border);border-radius:var(--radius-lg);margin-bottom:16px;overflow:hidden}
 .section-head{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
@@ -268,6 +274,17 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
 </div>
 
 <div class="app">
+
+<div id="confirm-modal" class="confirm-modal" onclick="if(event.target.id==='confirm-modal') closeCustomConfirm()">
+  <div class="confirm-card" role="dialog" aria-modal="true">
+    <div class="confirm-title" id="confirm-title">Confirm</div>
+    <div class="confirm-message" id="confirm-message"></div>
+    <div class="confirm-actions">
+      <button class="btn btn-ghost" id="confirm-cancel" onclick="closeCustomConfirm()">Cancel</button>
+      <button class="btn btn-accent" id="confirm-confirm">Delete</button>
+    </div>
+  </div>
+</div>
 
 <div id="limit-banner" style="display:none;margin-bottom:12px;padding:10px 12px;border:1px solid rgba(224,85,85,.35);background:rgba(224,85,85,.12);color:#ffb3b3;border-radius:var(--radius);font-size:12px"></div>
 
@@ -678,6 +695,28 @@ function showLimitNotice(message){
     clearTimeout(showLimitNotice._t);
     showLimitNotice._t=setTimeout(()=>{ banner.style.display='none'; }, 2600);
   }
+}
+
+function closeCustomConfirm(){
+  const modal=document.getElementById('confirm-modal');
+  if(modal) modal.style.display='none';
+}
+
+function showCustomConfirm(message, onConfirm, confirmLabel='Delete'){
+  const modal=document.getElementById('confirm-modal');
+  const titleEl=document.getElementById('confirm-title');
+  const messageEl=document.getElementById('confirm-message');
+  const confirmBtn=document.getElementById('confirm-confirm');
+  if(!modal || !titleEl || !messageEl || !confirmBtn) return;
+
+  titleEl.textContent='Confirm';
+  messageEl.textContent=message;
+  confirmBtn.textContent=confirmLabel;
+  confirmBtn.onclick=()=>{
+    closeCustomConfirm();
+    if(typeof onConfirm==='function') onConfirm(true);
+  };
+  modal.style.display='flex';
 }
 
 function normalizeSources(rawSources){
@@ -1191,9 +1230,10 @@ function removeGroup(id){
   const group = state.groups.find(m => m.id === id);
   if(!group) return;
   const message = `Delete group "${group.label || 'Untitled group'}" and all of its units?`;
-  if(!window.confirm(message)) return;
-  state.groups=state.groups.filter(m=>m.id!==id);
-  save(); renderPlan();
+  showCustomConfirm(message, ()=>{
+    state.groups=state.groups.filter(m=>m.id!==id);
+    save(); renderPlan();
+  });
 }
 
 function toggleCollapse(id){
@@ -1245,9 +1285,10 @@ function removeUnit(groupId, unitId){
   if(!m) return;
   const unit = m.units.find(u=>u.id===unitId);
   const label = unit && unit.name ? unit.name : 'this unit';
-  if(!window.confirm(`Delete ${label} from this group?`)) return;
-  m.units=m.units.filter(u=>u.id!==unitId);
-  save(); renderPlan();
+  showCustomConfirm(`Delete ${label} from this group?`, ()=>{
+    m.units=m.units.filter(u=>u.id!==unitId);
+    save(); renderPlan();
+  });
 }
 
 let draggedUnit = null;
