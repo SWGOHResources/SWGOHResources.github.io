@@ -60,11 +60,21 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-
 .tab-btn.active{color:var(--text);border-bottom-color:var(--accent)}
 .topbar-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}
 .auth-panel{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
-.auth-inline{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-.auth-inline input{width:140px;height:28px;font-size:12px}
 .auth-status{font-size:11px;color:var(--text3)}
 .saved-badge{font-size:11px;color:var(--text3);display:flex;align-items:center;gap:5px}
 .saved-dot{width:6px;height:6px;border-radius:50%;background:var(--green)}
+.auth-card{max-width:420px;margin:24px auto 0;padding:22px;border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--bg1);box-shadow:0 10px 30px rgba(0,0,0,.25)}
+.auth-card h2{font-size:18px;margin-bottom:6px}
+.auth-card p{font-size:12px;color:var(--text2);margin-bottom:16px}
+.auth-toggle{display:flex;gap:8px;margin-bottom:16px}
+.auth-toggle button{flex:1;height:34px;border-radius:999px;border:1px solid var(--border2);background:transparent;color:var(--text2)}
+.auth-toggle button.active{background:var(--accent-mid);color:#fff;border-color:var(--accent)}
+.auth-grid{display:grid;gap:10px}
+.auth-grid input{height:38px;font-size:13px}
+.auth-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.auth-divider{display:flex;align-items:center;gap:10px;margin:14px 0 10px;color:var(--text3);font-size:11px;text-transform:uppercase;letter-spacing:.08em}
+.auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.auth-hint{font-size:11px;color:var(--text3);margin-top:10px}
 
 /* ─── Layout ──────────────────────────────────── */
 .app{max-width:1100px;margin:0 auto;padding:24px 20px}
@@ -228,24 +238,34 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
   </div>
   <div class="topbar-right">
     <div class="auth-panel">
-      <div class="auth-inline" id="auth-logged-out">
-        <input id="auth-email" type="email" placeholder="Email">
-        <input id="auth-password" type="password" placeholder="Password">
-        <button class="btn btn-sm btn-accent" onclick="signInWithEmail()">Sign in</button>
-        <button class="btn btn-sm btn-ghost" onclick="signUpWithEmail()">Create</button>
-        <button class="btn btn-sm btn-ghost" onclick="signInWithGoogle()">Google</button>
-      </div>
-      <div class="auth-inline" id="auth-logged-in" style="display:none">
-        <span id="auth-user-name" class="auth-status"></span>
-        <button class="btn btn-sm btn-ghost" onclick="signOut()">Sign out</button>
-      </div>
       <div id="auth-status" class="auth-status">Connecting…</div>
+      <div class="saved-badge"><div class="saved-dot" id="saveDot"></div><span id="saveText">Saved</span></div>
     </div>
-    <div class="saved-badge"><div class="saved-dot" id="saveDot"></div><span id="saveText">Saved</span></div>
   </div>
 </div>
 
 <div class="app">
+
+<div id="auth-screen" class="auth-card">
+  <h2>Welcome back</h2>
+  <p>Sign in to sync your planner across devices, or create an account to save your groups and settings.</p>
+  <div class="auth-toggle">
+    <button id="auth-mode-signin" class="active" onclick="setAuthMode('signin')">Sign in</button>
+    <button id="auth-mode-signup" onclick="setAuthMode('signup')">Create account</button>
+  </div>
+  <div class="auth-grid">
+    <input id="auth-email" type="email" placeholder="Email address">
+    <input id="auth-password" type="password" placeholder="Password">
+    <div class="auth-actions">
+      <button id="auth-submit-btn" class="btn btn-accent" onclick="submitAuthForm()">Sign in</button>
+      <button class="btn btn-ghost" onclick="signInWithGoogle()">Continue with Google</button>
+    </div>
+  </div>
+  <div class="auth-divider">or</div>
+  <div id="auth-user-panel" class="auth-hint" style="display:none"></div>
+</div>
+
+<div id="planner-shell" style="display:none">
 
 <!-- ══════════ PLAN PAGE ══════════ -->
 <div class="page active" id="page-plan">
@@ -438,6 +458,7 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
   </div>
 </div>
 
+</div><!-- planner-shell -->
 </div><!-- .app -->
 
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
@@ -515,6 +536,7 @@ let firebaseDb = null;
 let authUser = null;
 let authReady = false;
 let remoteSaveTimer = null;
+let authMode = 'signin';
 
 let state = {
   roteStars: 24,
@@ -559,21 +581,37 @@ function setAuthStatus(message, isError){
   el.style.color=isError ? 'var(--red)' : 'var(--text3)';
 }
 
+function setAuthMode(mode){
+  authMode = mode;
+  const signInBtn=document.getElementById('auth-mode-signin');
+  const signUpBtn=document.getElementById('auth-mode-signup');
+  const submitBtn=document.getElementById('auth-submit-btn');
+  if(signInBtn && signUpBtn && submitBtn){
+    signInBtn.classList.toggle('active', mode==='signin');
+    signUpBtn.classList.toggle('active', mode==='signup');
+    submitBtn.textContent = mode==='signup' ? 'Create account' : 'Sign in';
+  }
+}
+
 function updateAuthUI(){
-  const loggedOut=document.getElementById('auth-logged-out');
-  const loggedIn=document.getElementById('auth-logged-in');
-  const nameEl=document.getElementById('auth-user-name');
-  if(!loggedOut || !loggedIn || !nameEl) return;
-  if(authUser){
-    loggedOut.style.display='none';
-    loggedIn.style.display='inline-flex';
-    nameEl.textContent = authUser.displayName || authUser.email || 'Account';
-    setAuthStatus('Signed in', false);
-  } else {
-    loggedOut.style.display='inline-flex';
-    loggedIn.style.display='none';
-    nameEl.textContent='';
-    setAuthStatus(authReady ? 'Not signed in' : 'Connecting…', false);
+  const authScreen=document.getElementById('auth-screen');
+  const plannerShell=document.getElementById('planner-shell');
+  const userPanel=document.getElementById('auth-user-panel');
+  if(authScreen && plannerShell){
+    if(authUser){
+      authScreen.style.display='none';
+      plannerShell.style.display='block';
+      if(userPanel){
+        userPanel.style.display='block';
+        userPanel.innerHTML=`Signed in as <strong>${(authUser.displayName || authUser.email || 'Account').replace(/</g,'&lt;')}</strong>`;
+      }
+      setAuthStatus('Signed in', false);
+    } else {
+      authScreen.style.display='block';
+      plannerShell.style.display='none';
+      if(userPanel){ userPanel.style.display='none'; }
+      setAuthStatus(authReady ? 'Not signed in' : 'Connecting…', false);
+    }
   }
 }
 
@@ -679,29 +717,20 @@ async function loadFromFirebase(){
   }
 }
 
-async function signInWithEmail(){
+async function submitAuthForm(){
   const email=document.getElementById('auth-email').value.trim();
   const password=document.getElementById('auth-password').value;
   if(!email || !password){ setAuthStatus('Enter your email and password', true); return; }
   try{
-    setAuthStatus('Signing in…');
-    await firebaseAuth.signInWithEmailAndPassword(email, password);
+    setAuthStatus(authMode==='signup' ? 'Creating account…' : 'Signing in…');
+    if(authMode==='signup'){
+      await firebaseAuth.createUserWithEmailAndPassword(email, password);
+    } else {
+      await firebaseAuth.signInWithEmailAndPassword(email, password);
+    }
   } catch(e){
     console.error(e);
-    setAuthStatus(e.message || 'Unable to sign in', true);
-  }
-}
-
-async function signUpWithEmail(){
-  const email=document.getElementById('auth-email').value.trim();
-  const password=document.getElementById('auth-password').value;
-  if(!email || !password){ setAuthStatus('Enter your email and password', true); return; }
-  try{
-    setAuthStatus('Creating account…');
-    await firebaseAuth.createUserWithEmailAndPassword(email, password);
-  } catch(e){
-    console.error(e);
-    setAuthStatus(e.message || 'Unable to create account', true);
+    setAuthStatus(e.message || (authMode==='signup' ? 'Unable to create account' : 'Unable to sign in'), true);
   }
 }
 
