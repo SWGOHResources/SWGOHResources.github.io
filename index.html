@@ -850,11 +850,47 @@ function getCantinaBudget() {
   return 120 + (state.cantina.bonusEnergy ? 45 : 0) + (state.cantina.refreshes * 120);
 }
 
-function calcCantinaIncome(){
+function getMonthKeyList(){
+  return ['january','february','march','april','may','june','july','august','september','october','november','december'];
+}
+
+function getMonthLabel(monthKey){
+  const labels = {
+    january: 'January',
+    february: 'February',
+    march: 'March',
+    april: 'April',
+    may: 'May',
+    june: 'June',
+    july: 'July',
+    august: 'August',
+    september: 'September',
+    october: 'October',
+    november: 'November',
+    december: 'December'
+  };
+  return labels[monthKey] || 'Month';
+}
+
+function getMonthDayCount(monthKey){
+  if (!monthKey) return 30;
+  const monthIndex = getMonthKeyList().indexOf(monthKey);
+  if (monthIndex < 0) return 30;
+  const year = new Date().getFullYear();
+  return new Date(year, monthIndex + 1, 0).getDate();
+}
+
+function getMonthScale(monthKey){
+  if (!monthKey) return 1;
+  return getMonthDayCount(monthKey) / 30;
+}
+
+function calcCantinaIncome(monthKey){
   let total = { grey: 0, green: 0, blue: 0 };
+  const monthScale = getMonthScale(monthKey);
   for (const key in CANTINA_NODES) {
     const alloc = state.cantina.alloc[key] || 0;
-    const factor = (alloc / 120) * 30; // monthly calculation
+    const factor = (alloc / 120) * 30 * monthScale;
     total.grey += factor * CANTINA_NODES[key].rates.grey;
     total.green += factor * CANTINA_NODES[key].rates.green;
     total.blue += factor * CANTINA_NODES[key].rates.blue;
@@ -869,23 +905,24 @@ function sanitizeNumericValue(val){
   return Number.isFinite(parsed) ? parsed : 0;
 }
 
-function calcMonthlyIncome(){
+function calcMonthlyIncome(monthKey){
+  const monthScale = getMonthScale(monthKey);
   let grey=0,green=0,blue=0;
   
   // Base Sources
   for(const s of state.sources){
     const multiplier = (s.key === 'rote' || /rote/i.test(s.label || '')) ? 2 : 1;
-    grey+=Number(s.grey||0)*multiplier;green+=Number(s.green||0)*multiplier;blue+=Number(s.blue||0)*multiplier;
+    grey+=Number(s.grey||0)*multiplier*monthScale;green+=Number(s.green||0)*multiplier*monthScale;blue+=Number(s.blue||0)*multiplier*monthScale;
   }
   // Toggles
   for(const k in state.toggles){
     const t = state.toggles[k];
     if(t.enabled) {
-      grey+=Number(t.grey||0);green+=Number(t.green||0);blue+=Number(t.blue||0);
+      grey+=Number(t.grey||0)*monthScale;green+=Number(t.green||0)*monthScale;blue+=Number(t.blue||0)*monthScale;
     }
   }
   // Cantina
-  const cantina = calcCantinaIncome();
+  const cantina = calcCantinaIncome(monthKey);
   grey+=cantina.grey; green+=cantina.green; blue+=cantina.blue;
   
   // Grey Store Purchases
@@ -1140,7 +1177,9 @@ function addGroup(){
     return;
   }
   state._mid++;
-  state.groups.push({ id:state._mid, label:`Group ${state._mid}`, collapsed:false, units:[] });
+  const monthKey = getMonthKeyList()[state.groups.length % getMonthKeyList().length];
+  const monthLabel = getMonthLabel(monthKey);
+  state.groups.push({ id:state._mid, month:monthKey, label:monthLabel, collapsed:false, units:[] });
   save(); renderPlan();
 }
 
@@ -1167,6 +1206,14 @@ function moveGroup(id,dir){
 function updateGroupLabel(id,val){
   const m=state.groups.find(x=>x.id===id);
   if(m){ m.label=val; }
+}
+
+function updateGroupMonth(id, monthKey){
+  const m=state.groups.find(x=>x.id===id);
+  if(!m) return;
+  m.month = monthKey;
+  m.label = getMonthLabel(monthKey);
+  save(); renderPlan();
 }
 
 function commitGroupLabel(id, element){
@@ -1255,12 +1302,13 @@ function renderPlan(){
     list.innerHTML=`<div style="text-align:center;padding:48px 20px;color:var(--text3);font-size:13px">No groups yet — click "Add group" to start planning.</div>`;
   } else {
     let carry={grey:0,green:0,blue:0};
-    const groupData=state.groups.map(m=>{
+    const groupData=state.groups.map((m, index)=>{
+      const monthInc = calcMonthlyIncome(m.month);
       const demand=calcGroupDemand(m);
       const available={
-        grey: inc.grey + carry.grey,
-        green: inc.green + carry.green,
-        blue: inc.blue + carry.blue
+        grey: monthInc.grey + carry.grey,
+        green: monthInc.green + carry.green,
+        blue: monthInc.blue + carry.blue
       };
       const net={
         grey: available.grey - demand.grey,
@@ -1325,11 +1373,9 @@ function buildGroupCard({m,demand,available,net,carryIn,carryOut},idx){
         <button class="reorder-btn" onclick="event.stopPropagation();moveGroup(${m.id},-1)" ${idx===0?'disabled':''} title="Move group up">▲</button>
         <button class="reorder-btn" onclick="event.stopPropagation();moveGroup(${m.id},1)" ${idx===state.groups.length-1?'disabled':''} title="Move group down">▼</button>
       </div>
-      <input class="group-label-input" value="${escHtml(m.label)}"
-        onclick="event.stopPropagation()"
-        oninput="updateGroupLabel(${m.id},this.value)"
-        onblur="commitGroupLabel(${m.id},this)"
-        style="margin-left:6px">
+      <select class="group-label-input" onchange="updateGroupMonth(${m.id}, this.value)" onclick="event.stopPropagation()" style="margin-left:6px;max-width:180px">
+        ${getMonthKeyList().map(monthKey => `<option value="${monthKey}" ${m.month===monthKey ? 'selected' : ''}>${getMonthLabel(monthKey)} (${getMonthDayCount(monthKey)} days)</option>`).join('')}
+      </select>
       <div class="group-signals" style="flex-shrink:0;gap:4px">
         ${demand.grey>0?`<span class="pill pill-grey" style="font-size:11px">${demand.grey}</span>`:''}
         ${demand.green>0?`<span class="pill pill-green" style="font-size:11px">${demand.green}</span>`:''}
