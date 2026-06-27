@@ -930,11 +930,12 @@ function getMonthScale(monthKey){
   return getMonthDayCount(monthKey) / 30;
 }
 
-function calcCantinaIncome(){
+function calcCantinaIncome(monthKey){
   let total = { grey: 0, green: 0, blue: 0 };
+  const monthScale = getMonthScale(monthKey);
   for (const key in CANTINA_NODES) {
     const alloc = state.cantina.alloc[key] || 0;
-    const factor = (alloc / 120) * 30;
+    const factor = (alloc / 120) * 30 * monthScale;
     total.grey += factor * CANTINA_NODES[key].rates.grey;
     total.green += factor * CANTINA_NODES[key].rates.green;
     total.blue += factor * CANTINA_NODES[key].rates.blue;
@@ -949,23 +950,24 @@ function sanitizeNumericValue(val){
   return Number.isFinite(parsed) ? parsed : 0;
 }
 
-function calcMonthlyIncome(){
+function calcMonthlyIncome(monthKey){
+  const monthScale = getMonthScale(monthKey);
   let grey=0,green=0,blue=0;
   
   // Base Sources
   for(const s of state.sources){
     const multiplier = (s.key === 'rote' || /rote/i.test(s.label || '')) ? 2 : 1;
-    grey+=Number(s.grey||0)*multiplier;green+=Number(s.green||0)*multiplier;blue+=Number(s.blue||0)*multiplier;
+    grey+=Math.round(Number(s.grey||0)*multiplier*monthScale);green+=Math.round(Number(s.green||0)*multiplier*monthScale);blue+=Math.round(Number(s.blue||0)*multiplier*monthScale);
   }
   // Toggles
   for(const k in state.toggles){
     const t = state.toggles[k];
     if(t.enabled) {
-      grey+=Number(t.grey||0);green+=Number(t.green||0);blue+=Number(t.blue||0);
+      grey+=Math.round(Number(t.grey||0)*monthScale);green+=Math.round(Number(t.green||0)*monthScale);blue+=Math.round(Number(t.blue||0)*monthScale);
     }
   }
   // Cantina
-  const cantina = calcCantinaIncome();
+  const cantina = calcCantinaIncome(monthKey);
   grey+=cantina.grey; green+=cantina.green; blue+=cantina.blue;
   
   // Grey Store Purchases
@@ -1398,11 +1400,12 @@ function renderPlan(){
   } else {
     let carry={grey:0,green:0,blue:0};
     const groupData=state.groups.map((m)=>{
+      const monthInc = calcMonthlyIncome(m.month);
       const demand=calcGroupDemand(m);
       const available={
-        grey: inc.grey + carry.grey,
-        green: inc.green + carry.green,
-        blue: inc.blue + carry.blue
+        grey: monthInc.grey + carry.grey,
+        green: monthInc.green + carry.green,
+        blue: monthInc.blue + carry.blue
       };
       const net={
         grey: available.grey - demand.grey,
