@@ -187,12 +187,15 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
 }
 .group-head:hover{background:var(--bg3)}
 .group-label-input{
-  background:transparent;border:none;color:var(--text);
-  font-size:13px;font-weight:600;font-family:'Inter',sans-serif;
-  flex:1;outline:none;cursor:text;
-  border-bottom:1px solid transparent;
+  background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);
+  color:var(--text);font-size:13px;font-weight:600;font-family:'Inter',sans-serif;
+  flex:1;outline:none;cursor:pointer;padding:6px 10px 6px 10px;min-height:32px;
+  appearance:none;-webkit-appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23ffffff'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 9px center;padding-right:28px;
 }
-.group-label-input:focus{border-bottom-color:var(--accent)}
+.group-label-input:hover{border-color:var(--border2);background-color:var(--bg4)}
+.group-label-input:focus{border-color:var(--accent);box-shadow:0 0 0 1px rgba(124,106,247,.25)}
 .group-chevron{color:var(--text3);transition:transform .2s;font-size:11px;margin-left:auto}
 .group-card.collapsed .group-chevron{transform:rotate(-90deg)}
 .group-card.collapsed .group-body{display:none}
@@ -885,12 +888,11 @@ function getMonthScale(monthKey){
   return getMonthDayCount(monthKey) / 30;
 }
 
-function calcCantinaIncome(monthKey){
+function calcCantinaIncome(){
   let total = { grey: 0, green: 0, blue: 0 };
-  const monthScale = getMonthScale(monthKey);
   for (const key in CANTINA_NODES) {
     const alloc = state.cantina.alloc[key] || 0;
-    const factor = (alloc / 120) * 30 * monthScale;
+    const factor = (alloc / 120) * 30;
     total.grey += factor * CANTINA_NODES[key].rates.grey;
     total.green += factor * CANTINA_NODES[key].rates.green;
     total.blue += factor * CANTINA_NODES[key].rates.blue;
@@ -905,24 +907,23 @@ function sanitizeNumericValue(val){
   return Number.isFinite(parsed) ? parsed : 0;
 }
 
-function calcMonthlyIncome(monthKey){
-  const monthScale = getMonthScale(monthKey);
+function calcMonthlyIncome(){
   let grey=0,green=0,blue=0;
   
   // Base Sources
   for(const s of state.sources){
     const multiplier = (s.key === 'rote' || /rote/i.test(s.label || '')) ? 2 : 1;
-    grey+=Number(s.grey||0)*multiplier*monthScale;green+=Number(s.green||0)*multiplier*monthScale;blue+=Number(s.blue||0)*multiplier*monthScale;
+    grey+=Number(s.grey||0)*multiplier;green+=Number(s.green||0)*multiplier;blue+=Number(s.blue||0)*multiplier;
   }
   // Toggles
   for(const k in state.toggles){
     const t = state.toggles[k];
     if(t.enabled) {
-      grey+=Number(t.grey||0)*monthScale;green+=Number(t.green||0)*monthScale;blue+=Number(t.blue||0)*monthScale;
+      grey+=Number(t.grey||0);green+=Number(t.green||0);blue+=Number(t.blue||0);
     }
   }
   // Cantina
-  const cantina = calcCantinaIncome(monthKey);
+  const cantina = calcCantinaIncome();
   grey+=cantina.grey; green+=cantina.green; blue+=cantina.blue;
   
   // Grey Store Purchases
@@ -1302,13 +1303,12 @@ function renderPlan(){
     list.innerHTML=`<div style="text-align:center;padding:48px 20px;color:var(--text3);font-size:13px">No groups yet — click "Add group" to start planning.</div>`;
   } else {
     let carry={grey:0,green:0,blue:0};
-    const groupData=state.groups.map((m, index)=>{
-      const monthInc = calcMonthlyIncome(m.month);
+    const groupData=state.groups.map((m)=>{
       const demand=calcGroupDemand(m);
       const available={
-        grey: monthInc.grey + carry.grey,
-        green: monthInc.green + carry.green,
-        blue: monthInc.blue + carry.blue
+        grey: inc.grey + carry.grey,
+        green: inc.green + carry.green,
+        blue: inc.blue + carry.blue
       };
       const net={
         grey: available.grey - demand.grey,
