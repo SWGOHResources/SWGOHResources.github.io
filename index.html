@@ -42,8 +42,16 @@
 html{height:100%}
 body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:13px;line-height:1.5;min-height:100vh}
 
+/* ─── Top banner ───────────────────────────────── */
+.top-banner{
+  position:sticky;top:0;z-index:250;
+  background:rgba(124,106,247,.14);color:#d9d4ff;border-bottom:1px solid rgba(124,106,247,.25);
+  padding:10px 20px;font-size:12px;line-height:1.45;text-align:center;
+}
+
 /* ─── Top bar ─────────────────────────────────── */
 .topbar{
+  position:sticky;top:44px;z-index:200;
   position:sticky;top:0;z-index:200;
   background:var(--bg1);border-bottom:1px solid var(--border);
   display:flex;align-items:center;gap:0;
@@ -231,6 +239,7 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
 </head>
 <body>
 
+<div class="top-banner">Each group is one month. Set up signal data gain in Configuration and GET 2 gain in TB Setup.</div>
 <div class="topbar">
   <div class="topbar-title">Relic <span>Planner</span></div>
   <div class="topbar-tabs">
@@ -1387,15 +1396,20 @@ function init(){
 function attachTextInputScrollGuard(){
   document.addEventListener('keydown', (event) => {
     const target = event.target;
-    const isTextLikeInput = target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement;
-    const acceptsText = isTextLikeInput && !target.readOnly && !target.disabled && ['text','email','password','search','url','tel',''].includes(target.type);
+    if (!(target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement)) return;
+    if (target.readOnly || target.disabled) return;
+    if (event.code !== 'Space') return;
 
-    if (event.code === 'Space' && acceptsText) {
-      const start = target.selectionStart ?? target.value.length;
-      const end = target.selectionEnd ?? start;
+    const isTextLikeField = ['text','email','password','search','url','tel',''].includes(target.type);
+    if (!isTextLikeField) return;
+
+    const isAtEnd = target.selectionStart === target.value.length && target.selectionEnd === target.value.length;
+    if (isAtEnd) {
       event.preventDefault();
-      target.setRangeText(' ', start, end, 'end');
+      const value = target.value + ' ';
+      target.value = value;
       target.dispatchEvent(new Event('input', { bubbles: true }));
+      target.setSelectionRange(value.length, value.length);
     }
   });
 }
