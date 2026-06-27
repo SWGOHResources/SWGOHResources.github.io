@@ -204,12 +204,15 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
 .group-body{padding:14px}
 
 .upgrade-row{
-  display:grid;grid-template-columns:1fr 70px 70px auto auto;
+  display:grid;grid-template-columns:auto 1fr 70px 70px auto auto;
   gap:8px;align-items:center;padding:7px 10px;
   background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);
   margin-bottom:5px;
 }
 .upgrade-row:hover{border-color:var(--border2)}
+.upgrade-row.dragging{opacity:.55}
+.upgrade-row.drag-over{border-color:var(--accent);box-shadow:inset 0 0 0 1px rgba(124,106,247,.25)}
+.drag-handle{color:var(--text3);font-size:12px;cursor:grab;user-select:none;padding:0 2px}
 .upgrade-badges{display:flex;gap:4px}
 .upgrade-add{margin-top:8px}
 
@@ -1241,6 +1244,50 @@ function removeUnit(groupId, unitId){
   save(); renderPlan();
 }
 
+let draggedUnit = null;
+
+function startUnitDrag(groupId, unitId, event){
+  draggedUnit = { groupId, unitId };
+  if(event.dataTransfer){
+    event.dataTransfer.effectAllowed = 'move';
+    event.dataTransfer.setData('text/plain', `${groupId}:${unitId}`);
+  }
+  if(event.currentTarget) event.currentTarget.classList.add('dragging');
+}
+
+function endUnitDrag(event){
+  if(event.currentTarget) event.currentTarget.classList.remove('dragging');
+  document.querySelectorAll('.upgrade-row.drag-over').forEach(el=>el.classList.remove('drag-over'));
+  draggedUnit = null;
+}
+
+function highlightUnitDrop(element, isActive){
+  if(!element) return;
+  element.classList.toggle('drag-over', isActive);
+}
+
+function moveUnit(groupId, fromUnitId, toUnitId){
+  const m=state.groups.find(x=>x.id===groupId);
+  if(!m) return;
+  const fromIndex=m.units.findIndex(u=>u.id===fromUnitId);
+  const toIndex=m.units.findIndex(u=>u.id===toUnitId);
+  if(fromIndex<0||toIndex<0||fromIndex===toIndex) return;
+  const [moved]=m.units.splice(fromIndex,1);
+  m.units.splice(toIndex,0,moved);
+  save(); renderPlan();
+}
+
+function dropUnit(groupId, targetUnitId, event){
+  event.preventDefault();
+  if(!draggedUnit || draggedUnit.groupId !== groupId) return;
+  const targetRow = event.currentTarget;
+  if(targetRow) targetRow.classList.remove('drag-over');
+  if(draggedUnit.unitId !== targetUnitId){
+    moveUnit(groupId, draggedUnit.unitId, targetUnitId);
+  }
+  draggedUnit = null;
+}
+
 function updateUnit(groupId, unitId, field, val){
   if(!canPerformStoreEdit()){
     showLimitNotice(`You are changing too quickly. Please wait a moment.`);
@@ -1337,7 +1384,16 @@ function buildGroupCard({m,demand,available,net,carryIn,carryOut},idx){
     const valid=u.from&&u.to&&Number(u.to)>Number(u.from);
     const c=valid?costForRange(u.from,u.to):{grey:0,green:0,blue:0};
     return `
-    <div class="upgrade-row">
+    <div class="upgrade-row"
+      draggable="true"
+      data-group-id="${m.id}"
+      data-unit-id="${u.id}"
+      ondragstart="startUnitDrag(${m.id},${u.id},event)"
+      ondragover="event.preventDefault();highlightUnitDrop(this,true)"
+      ondragleave="highlightUnitDrop(this,false)"
+      ondrop="dropUnit(${m.id},${u.id},event)"
+      ondragend="endUnitDrag(event)">
+      <div class="drag-handle" title="Drag to reorder">⋮⋮</div>
       <input type="text" placeholder="Unit name" value="${escHtml(u.name)}"
         oninput="updateUnit(${m.id},${u.id},'name',this.value)"
         onblur="commitUnitName(${m.id},${u.id},this)"
@@ -1351,7 +1407,7 @@ function buildGroupCard({m,demand,available,net,carryIn,carryOut},idx){
       <div class="upgrade-badges" style="min-width:120px">
         ${valid ? `<span class="pill pill-grey" style="font-size:11px">${c.grey}</span><span class="pill pill-green" style="font-size:11px">${c.green}</span><span class="pill pill-blue" style="font-size:11px">${c.blue}</span>` : '<span style="color:var(--text3);font-size:11px">—</span>'}
       </div>
-      <div style="display:flex;gap:4px;margin-left:auto">
+      <div style="display:flex;gap:4px;margin-left:auto;align-items:center">
         <button class="btn btn-danger btn-icon" style="height:28px" onclick="removeUnit(${m.id},${u.id})">×</button>
       </div>
     </div>`;
