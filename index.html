@@ -1188,7 +1188,10 @@ function addGroup(){
 }
 
 function removeGroup(id){
-  if(!confirm('Remove this group?')) return;
+  const group = state.groups.find(m => m.id === id);
+  if(!group) return;
+  const message = `Delete group "${group.label || 'Untitled group'}" and all of its units?`;
+  if(!window.confirm(message)) return;
   state.groups=state.groups.filter(m=>m.id!==id);
   save(); renderPlan();
 }
@@ -1240,6 +1243,9 @@ function addUnit(groupId){
 function removeUnit(groupId, unitId){
   const m=state.groups.find(x=>x.id===groupId);
   if(!m) return;
+  const unit = m.units.find(u=>u.id===unitId);
+  const label = unit && unit.name ? unit.name : 'this unit';
+  if(!window.confirm(`Delete ${label} from this group?`)) return;
   m.units=m.units.filter(u=>u.id!==unitId);
   save(); renderPlan();
 }
