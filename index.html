@@ -151,6 +151,18 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
 .config-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
 @media(max-width:800px){.config-grid{grid-template-columns:1fr}}
 .field-row{display:flex;align-items:center;gap:10px}
+.config-page-intro{font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:16px}
+.config-stack{display:flex;flex-direction:column;gap:16px}
+.config-section-head{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.config-help{font-size:11px;color:var(--text3);line-height:1.5}
+.config-stat-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--border)}
+.config-stat-row:last-child{border-bottom:none}
+.config-label{font-size:12px;color:var(--text2);flex:1;min-width:0}
+.config-label-strong{font-size:12px;color:var(--text);font-weight:600}
+.config-inline-field{display:flex;align-items:center;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+.config-inline-input{width:76px;text-align:right}
+.config-inline-input-sm{width:58px;text-align:right}
+.config-inline-pill{min-width:32px;text-align:center;padding:2px 8px;border-radius:999px;background:rgba(124,106,247,.12);color:var(--accent);font-family:'JetBrains Mono',monospace;font-size:12px;border:1px solid rgba(124,106,247,.24)}
 .income-table{width:100%;border-collapse:collapse}
 .income-table th{font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--text3);padding:6px 10px;text-align:left;border-bottom:1px solid var(--border)}
 .income-table td{padding:6px 10px;border-bottom:1px solid var(--border)}
@@ -229,7 +241,7 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
   padding:8px 14px;border-bottom:1px solid var(--border);font-size:13px;
 }
 .income-stat:last-child{border-bottom:none}
-.income-stat-val{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:500}
+.income-stat-val{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;align-items:center}
 
 .cumulative-table{width:100%;border-collapse:collapse;font-size:12px}
 .cumulative-table th{
@@ -263,7 +275,8 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
     <div class="topbar-tabs">
       <button class="tab-btn active" onclick="showTab('plan')">Group Plan</button>
       <button class="tab-btn" onclick="showTab('tb')">Guild Config</button>
-      <button class="tab-btn" onclick="showTab('config')">Configuration</button>
+      <button class="tab-btn" onclick="showTab('config')">Base Setup</button>
+      <button class="tab-btn" onclick="showTab('info')">Relic Info</button>
     </div>
     <div class="topbar-right">
       <div class="auth-panel">
@@ -382,13 +395,9 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
       <div class="section">
         <div class="section-head"><div class="section-title">Territory Wars</div></div>
         <div class="section-body">
-          <div class="label">Guild win rate</div>
-          <div class="stars-input">
-            <input type="range" id="tw-winpct-range" min="0" max="100" value="50"
-              oninput="onTwWinPctChange(this.value)">
-            <div class="stars-val" id="tw-winpct-display" style="font-size:16px">50%</div>
-          </div>
-          <div style="font-size:11px;color:var(--text3);margin-top:6px">Win: 650 GET 2 · Loss: 550 GET 2 · Runs twice per month</div>
+          <div class="label">Expected outcome</div>
+          <div id="tw-outcome-buttons" style="display:flex;gap:8px"></div>
+          <div style="font-size:11px;color:var(--text3);margin-top:8px">Win: 650 GET 2 · Loss: 550 GET 2 · Runs twice per month</div>
           <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px">
             <div style="font-size:12px;color:var(--text2)">Expected GET 2 per event</div>
             <div class="pill pill-get2" id="tw-get2-per-event">600</div>
@@ -448,44 +457,48 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
   </div>
 </div>
 
-<!-- ══════════ CONFIGURATION PAGE ══════════ -->
+<!-- ══════════ BASE SETUP PAGE ══════════ -->
 <div class="page" id="page-config">
+  <div class="config-page-intro">Set your recurring income, cantina farming, and optional store sources in one place. Each section is designed to be quick to scan and easier to tweak.</div>
   <div class="config-grid">
-    <div style="display:flex; flex-direction:column; gap:16px">
-      <!-- Cantina Farming -->
+    <div class="config-stack">
       <div class="section" style="margin-bottom:0">
         <div class="section-head"><div class="section-title">Cantina Farming Strategy</div></div>
         <div class="section-body">
-          <div class="field-row" style="justify-content:space-between; margin-bottom:10px">
-            <div style="font-size:12px; color:var(--text2)">Free Daily Energy</div>
-            <div style="font-family:'JetBrains Mono',monospace;font-size:13px">120</div>
-          </div>
-          <div class="field-row" style="justify-content:space-between; margin-bottom:10px">
-            <div style="font-size:12px; color:var(--text2)">Bonus Daily Energy (45)</div>
-            <div style="display:flex; align-items:center">
-              <input type="checkbox" id="cantina-bonus" onchange="onCantinaChange('bonusEnergy', this.checked)">
+          <div class="config-stat-row">
+            <div class="config-label">Free Daily Energy</div>
+            <div class="config-inline-field">
+              <div class="config-inline-pill">120</div>
             </div>
           </div>
-          <div class="field-row" style="justify-content:space-between; margin-bottom:10px">
-            <div style="font-size:12px; color:var(--text2)">Daily Crystal Refreshes</div>
-            <input type="number" id="cantina-refreshes" min="0" max="14" value="0" style="width:70px;text-align:right" oninput="onCantinaChange('refreshes', this.value)">
+          <div class="config-stat-row">
+            <div class="config-label">Bonus Daily Energy</div>
+            <div class="config-inline-field">
+              <input type="checkbox" id="cantina-bonus" onchange="onCantinaChange('bonusEnergy', this.checked)">
+              <span class="config-help">+45 energy</span>
+            </div>
           </div>
-          <div class="field-row" style="justify-content:space-between; margin-bottom:16px; padding-bottom:10px; border-bottom:1px solid var(--border)">
-            <div style="font-size:12px; font-weight:600">Total Energy Budget / Day</div>
-            <div id="cantina-budget" style="font-family:'JetBrains Mono',monospace;font-size:13px; font-weight:600; color:var(--accent)">120</div>
+          <div class="config-stat-row">
+            <div class="config-label">Daily Crystal Refreshes</div>
+            <div class="config-inline-field">
+              <input type="number" id="cantina-refreshes" min="0" max="14" value="0" class="config-inline-input" oninput="onCantinaChange('refreshes', this.value)">
+            </div>
           </div>
-          
-          <div style="font-size:10px; text-transform:uppercase; letter-spacing:.07em; color:var(--text3); margin-bottom:8px">Energy Allocation (Per Node)</div>
+          <div class="config-stat-row">
+            <div class="config-label config-label-strong">Total Energy Budget / Day</div>
+            <div id="cantina-budget" class="config-inline-pill" style="color:var(--accent);background:rgba(124,106,247,.12)">120</div>
+          </div>
+
+          <div class="config-help" style="margin:12px 0 8px">Drop rates are shown for every 120 energy.</div>
           <table class="income-table" id="cantina-table"></table>
-          
-          <div class="field-row" style="justify-content:space-between; margin-top:12px; padding-top:12px; border-top:1px solid var(--border)">
-            <div style="font-size:12px; font-weight:600">Total Allocated</div>
-            <div id="cantina-allocated" style="font-family:'JetBrains Mono',monospace;font-size:13px; font-weight:600">0</div>
+
+          <div class="config-stat-row" style="margin-top:12px;padding-top:12px">
+            <div class="config-label config-label-strong">Total Allocated</div>
+            <div id="cantina-allocated" class="config-inline-pill" style="color:var(--text)">0</div>
           </div>
         </div>
       </div>
 
-      <!-- Base Income -->
       <div class="section" style="margin-bottom:0">
         <div class="section-head"><div class="section-title">Base Monthly Income</div></div>
         <div style="padding:0">
@@ -494,38 +507,37 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
       </div>
     </div>
 
-    <div style="display:flex; flex-direction:column; gap:16px">
-      <!-- Toggles -->
+    <div class="config-stack">
       <div class="section" style="margin-bottom:0">
         <div class="section-head"><div class="section-title">Optional Store Sources</div></div>
-        <div class="section-body" id="toggles-container">
-          <!-- Rendered via JS -->
-        </div>
+        <div class="section-body" id="toggles-container"></div>
         <div class="section-body" style="padding-top:0">
           <div style="padding-top:4px;border-top:1px solid var(--border)">
             <div style="font-size:13px;font-weight:500;margin-bottom:4px">Conquest Merchant</div>
-            <div style="font-size:11px;color:var(--text3);margin-bottom:8px">Buy 40 blue OR 40 green signals per month — not both.</div>
+            <div style="font-size:11px;color:var(--text3);margin-bottom:8px">Choose any combination of green and/or blue signals. Each option adds 40 signals per month.</div>
             <div style="display:flex;gap:8px" id="conquest-merchant-buttons"></div>
           </div>
         </div>
       </div>
+    </div>
+  </div>
+</div>
 
-      <!-- Relic Costs -->
-      <div class="section" style="margin-bottom:0">
-        <div class="section-head"><div class="section-title">Relic Signal Costs</div></div>
-        <div class="section-body" style="padding:12px 16px">
-          <table style="width:100%;border-collapse:collapse;font-size:12px">
-            <thead><tr>
-              <th style="text-align:left;padding:5px 8px;color:var(--text3);font-size:10px;letter-spacing:.07em;text-transform:uppercase;border-bottom:1px solid var(--border)">Level</th>
-              <th style="padding:5px 8px;color:var(--grey);font-size:10px;letter-spacing:.07em;text-transform:uppercase;border-bottom:1px solid var(--border)">Grey</th>
-              <th style="padding:5px 8px;color:var(--green);font-size:10px;letter-spacing:.07em;text-transform:uppercase;border-bottom:1px solid var(--border)">Green</th>
-              <th style="padding:5px 8px;color:var(--blue);font-size:10px;letter-spacing:.07em;text-transform:uppercase;border-bottom:1px solid var(--border)">Blue</th>
-            </tr></thead>
-            <tbody id="relic-cost-table"></tbody>
-          </table>
-        </div>
-      </div>
-
+<!-- ══════════ RELIC INFO PAGE ══════════ -->
+<div class="page" id="page-info">
+  <div class="config-page-intro">These relic signal costs are kept here so the main planner page stays focused on the build plan.</div>
+  <div class="section">
+    <div class="section-head"><div class="section-title">Relic Signal Costs</div></div>
+    <div class="section-body" style="padding:12px 16px">
+      <table style="width:100%;border-collapse:collapse;font-size:12px">
+        <thead><tr>
+          <th style="text-align:left;padding:5px 8px;color:var(--text3);font-size:10px;letter-spacing:.07em;text-transform:uppercase;border-bottom:1px solid var(--border)">Level</th>
+          <th style="padding:5px 8px;color:var(--grey);font-size:10px;letter-spacing:.07em;text-transform:uppercase;border-bottom:1px solid var(--border)">Grey</th>
+          <th style="padding:5px 8px;color:var(--green);font-size:10px;letter-spacing:.07em;text-transform:uppercase;border-bottom:1px solid var(--border)">Green</th>
+          <th style="padding:5px 8px;color:var(--blue);font-size:10px;letter-spacing:.07em;text-transform:uppercase;border-bottom:1px solid var(--border)">Blue</th>
+        </tr></thead>
+        <tbody id="relic-info-table"></tbody>
+      </table>
     </div>
   </div>
 </div>
@@ -533,7 +545,7 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
 </div><!-- planner-shell -->
 </div><!-- .app -->
 
-<script src="./build-version.js?v=92c5af6-38"></script>
+<script src="./build-version.js?v=1379e18-39"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
@@ -585,7 +597,7 @@ const DEFAULT_SOURCES = [
   { key:'assault',  label:'Assault Battles', grey:70, green:42, blue:42 },
   { key:'episodetrack',  label:'Episode Track', grey:75, green:65, blue:15 },
   { key:'conquest', label:'Conquest',        grey:10, green:10, blue:10 },
-  { key:'rote',     label:'ROTE (Raid)',      grey:21, green:11, blue:9  },
+  { key:'rote',     label:'ROTE (End of TB Crate)',      grey:21, green:11, blue:9  },
 ];
 
 // Weekly toggles store their GET 2 / signal value PER WEEK. The monthly
@@ -593,8 +605,8 @@ const DEFAULT_SOURCES = [
 // with more days correctly get slightly more weekly purchases than months
 // with fewer days, instead of assuming a flat "4 weeks every month".
 const DEFAULT_TOGGLES = {
-  episodeShipment: { enabled: false, label: 'Episode Shipment', cadence: 'weekly', grey: 45, green: 40, blue: 0 },
-  eraColiseum:     { enabled: false, label: 'Era Coliseum',     cadence: 'weekly', grey: 0,  green: 0,  blue: 25 }
+  episodeShipment: { enabled: false, label: 'Episode Shipment', cadence: 'monthly', grey: 45, green: 40, blue: 0, monthlyCount: 0 },
+  eraColiseum:     { enabled: false, label: 'Era Coliseum',     cadence: 'monthly', grey: 0,  green: 0,  blue: 25, monthlyCount: 0 }
 };
 
 const LIMITS = {
@@ -638,7 +650,7 @@ let storeEditWarmupStartedAt = 0;
 let saveDebounceTimer = null;
 
 function getDefaultGuild(){
-  return { twWinPct: 50 };
+  return { twWinPct: 50, twOutcome: 'win' };
 }
 
 let state = {
@@ -782,17 +794,19 @@ function migrateToggleCadence(toggles){
   for(const k in toggles){
     const t = toggles[k];
     const def = DEFAULT_TOGGLES[k];
-    if(t && def && !t.cadence){
-      // Old saves stored the FULL MONTH total assuming exactly 4 weekly
-      // purchases. Convert that back down to a per-week baseline so the
-      // new day-count-aware weekly calculation lines up with what the
-      // user had configured before.
-      t.cadence = def.cadence || 'monthly';
-      if(t.cadence === 'weekly'){
+    if(t && def){
+      if(!t.cadence){
+        t.cadence = def.cadence || 'monthly';
+      }
+      if(!Object.prototype.hasOwnProperty.call(t, 'monthlyCount')){
+        t.monthlyCount = t.cadence === 'monthly' ? 0 : 0;
+      }
+      if(t.cadence === 'weekly' && !t.monthlyCount){
         t.grey = Math.round(Number(t.grey||0)/4);
         t.green = Math.round(Number(t.green||0)/4);
         t.blue = Math.round(Number(t.blue||0)/4);
       }
+      if(t.cadence === 'weekly') t.cadence = 'monthly';
     }
   }
   return toggles;
@@ -1216,52 +1230,61 @@ function sanitizeNumericValue(val){
   return Number.isFinite(parsed) ? parsed : 0;
 }
 
-function calcMonthlyIncome(monthKey){
+function getMonthlyIncomeBreakdown(monthKey){
   const monthScale = getMonthScale(monthKey);
-  let grey=0,green=0,blue=0;
-  
-  // Base Sources
+  const baseSources = { grey:0, green:0, blue:0 };
+  const toggles = { grey:0, green:0, blue:0 };
+  const cantina = calcCantinaIncome(monthKey);
+  const conquest = { grey:0, green:0, blue:0 };
+  const greyExtra = (state.greyPurchases||0)*20;
+
   for(const s of state.sources){
     const multiplier = (s.key === 'rote' || /rote/i.test(s.label || '')) ? 2 : 1;
-    grey+=Math.round(Number(s.grey||0)*multiplier*monthScale);green+=Math.round(Number(s.green||0)*multiplier*monthScale);blue+=Math.round(Number(s.blue||0)*multiplier*monthScale);
-  }
-  // Toggles
-  for(const k in state.toggles){
-    const t = state.toggles[k];
-    if(t.enabled) {
-      if(t.cadence === 'weekly'){
-        // Value is per-week; scale by the number of weeks that actually fit
-        // in this specific month (28-31 days), rather than assuming a flat
-        // 4 purchases every month.
-        const weeksInMonth = getMonthDayCount(monthKey) / 7;
-        grey+=Math.round(Number(t.grey||0)*weeksInMonth);
-        green+=Math.round(Number(t.green||0)*weeksInMonth);
-        blue+=Math.round(Number(t.blue||0)*weeksInMonth);
-      } else {
-        grey+=Math.round(Number(t.grey||0)*monthScale);green+=Math.round(Number(t.green||0)*monthScale);blue+=Math.round(Number(t.blue||0)*monthScale);
-      }
-    }
-  }
-  // Cantina
-  const cantina = calcCantinaIncome(monthKey);
-  grey+=cantina.grey; green+=cantina.green; blue+=cantina.blue;
-  
-  // Conquest merchant — mutually exclusive one-time monthly purchase
-  if(state.conquestMerchant?.choice === 'blue'){
-    blue += CONQUEST_MERCHANT_AMOUNT;
-  } else if(state.conquestMerchant?.choice === 'green'){
-    green += CONQUEST_MERCHANT_AMOUNT;
+    baseSources.grey += Math.round(Number(s.grey||0)*multiplier*monthScale);
+    baseSources.green += Math.round(Number(s.green||0)*multiplier*monthScale);
+    baseSources.blue += Math.round(Number(s.blue||0)*multiplier*monthScale);
   }
 
-  // Grey Store Purchases
-  const greyExtra=(state.greyPurchases||0)*20;
-  
-  return { grey: grey + greyExtra, green: green, blue: blue };
+  for(const k in state.toggles){
+    const t = state.toggles[k];
+    if(!t.enabled) continue;
+    const monthlyCount = Math.max(0, Math.min(4, Number(t.monthlyCount || 0)));
+    if(monthlyCount <= 0) continue;
+    toggles.grey += Math.round(Number(t.grey||0)*monthlyCount);
+    toggles.green += Math.round(Number(t.green||0)*monthlyCount);
+    toggles.blue += Math.round(Number(t.blue||0)*monthlyCount);
+  }
+
+  if(state.conquestMerchant?.choice === 'blue'){
+    conquest.blue += CONQUEST_MERCHANT_AMOUNT;
+  } else if(state.conquestMerchant?.choice === 'green'){
+    conquest.green += CONQUEST_MERCHANT_AMOUNT;
+  } else if(state.conquestMerchant?.choice === 'both'){
+    conquest.green += CONQUEST_MERCHANT_AMOUNT;
+    conquest.blue += CONQUEST_MERCHANT_AMOUNT;
+  }
+
+  return {
+    baseSources,
+    toggles,
+    cantina,
+    conquest,
+    greyPurchases: { grey: greyExtra, green:0, blue:0 },
+    total: {
+      grey: baseSources.grey + toggles.grey + cantina.grey + conquest.grey + greyExtra,
+      green: baseSources.green + toggles.green + cantina.green + conquest.green,
+      blue: baseSources.blue + toggles.blue + cantina.blue + conquest.blue
+    }
+  };
+}
+
+function calcMonthlyIncome(monthKey){
+  return getMonthlyIncomeBreakdown(monthKey).total;
 }
 
 function calcTerritoryWarsGet2(){
-  const winPct = Math.min(100, Math.max(0, Number(state.guild?.twWinPct ?? 50))) / 100;
-  const perEvent = winPct * TERRITORY_WARS.winReward + (1 - winPct) * TERRITORY_WARS.lossReward;
+  const mode = state.guild?.twOutcome || 'win';
+  const perEvent = mode === 'loss' ? TERRITORY_WARS.lossReward : TERRITORY_WARS.winReward;
   return Math.round(perEvent * TERRITORY_WARS.eventsPerMonth);
 }
 
@@ -1320,9 +1343,11 @@ function renderTB(){
   document.getElementById('rote-get2-per-tb').textContent=rotePerTB.toLocaleString();
   document.getElementById('rote-get2-month').textContent=(rotePerTB*2).toLocaleString();
 
-  document.getElementById('tw-winpct-range').value = state.guild.twWinPct;
-  document.getElementById('tw-winpct-display').textContent = state.guild.twWinPct + '%';
-  const twPerEvent = Math.round((state.guild.twWinPct/100)*TERRITORY_WARS.winReward + (1-state.guild.twWinPct/100)*TERRITORY_WARS.lossReward);
+  document.getElementById('tw-outcome-buttons').innerHTML = ['win','loss'].map(o=>`
+    <button type="button" class="btn ${state.guild.twOutcome === o ? 'btn-accent' : 'btn-ghost'}" style="flex:1"
+      onclick="setTwOutcome('${o}')">${o === 'win' ? 'Win' : 'Loss'}</button>
+  `).join('');
+  const twPerEvent = calcTerritoryWarsGet2();
   document.getElementById('tw-get2-per-event').textContent = twPerEvent.toLocaleString();
   document.getElementById('tw-get2-month').textContent = (twPerEvent*TERRITORY_WARS.eventsPerMonth).toLocaleString();
 
@@ -1354,13 +1379,9 @@ function onStarsChange(v){
   save();
 }
 
-function onTwWinPctChange(v){
-  state.guild.twWinPct = Number(v);
-  document.getElementById('tw-winpct-display').textContent = v + '%';
-  const twPerEvent = Math.round((v/100)*TERRITORY_WARS.winReward + (1-v/100)*TERRITORY_WARS.lossReward);
-  document.getElementById('tw-get2-per-event').textContent = twPerEvent.toLocaleString();
-  document.getElementById('tw-get2-month').textContent = (twPerEvent*TERRITORY_WARS.eventsPerMonth).toLocaleString();
-  updateGet2Summary();
+function setTwOutcome(outcome){
+  state.guild.twOutcome = outcome;
+  renderTB();
   save();
 }
 
@@ -1443,20 +1464,26 @@ function renderConfig(){
       <label style="display:flex; align-items:center; gap:8px; margin-bottom:8px; cursor:pointer">
         <input type="checkbox" ${t.enabled?'checked':''} onchange="updateToggle('${k}', 'enabled', this.checked)">
         <span style="font-size:13px; font-weight:500; color:${t.enabled?'var(--text)':'var(--text2)'}">${t.label}</span>
-        ${t.cadence==='weekly' ? `<span style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em">values are per week</span>` : ''}
       </label>
-      <div style="display:flex; gap:8px; padding-left:24px; opacity:${t.enabled?'1':'0.4'}; pointer-events:${t.enabled?'auto':'none'}">
-        <div style="display:flex;align-items:center;gap:4px">
-          <span style="font-size:11px;color:var(--grey)">Gy:</span>
-          <input type="text" inputmode="numeric" pattern="[0-9]*" style="width:60px" value="${t.grey}" oninput="updateToggle('${k}','grey',this.value)" onblur="commitToggleValue('${k}','grey',this)">
+      <div style="display:grid; gap:8px; padding-left:24px; opacity:${t.enabled?'1':'0.4'}; pointer-events:${t.enabled?'auto':'none'}">
+        <div class="config-help">Set how many times per month this source is purchased. Values are per purchase and then multiplied by the count.</div>
+        <div class="config-inline-field" style="justify-content:flex-start">
+          <label class="config-help" style="min-width:90px">Times / month</label>
+          <input type="number" min="0" max="4" value="${t.monthlyCount || 0}" class="config-inline-input-sm" oninput="updateToggle('${k}','monthlyCount',this.value)" onblur="commitToggleValue('${k}','monthlyCount',this)">
         </div>
-        <div style="display:flex;align-items:center;gap:4px">
-          <span style="font-size:11px;color:var(--green)">Gr:</span>
-          <input type="text" inputmode="numeric" pattern="[0-9]*" style="width:60px" value="${t.green}" oninput="updateToggle('${k}','green',this.value)" onblur="commitToggleValue('${k}','green',this)">
-        </div>
-        <div style="display:flex;align-items:center;gap:4px">
-          <span style="font-size:11px;color:var(--blue)">Bl:</span>
-          <input type="text" inputmode="numeric" pattern="[0-9]*" style="width:60px" value="${t.blue}" oninput="updateToggle('${k}','blue',this.value)" onblur="commitToggleValue('${k}','blue',this)">
+        <div style="display:flex; gap:8px; flex-wrap:wrap">
+          <div style="display:flex;align-items:center;gap:4px">
+            <span style="font-size:11px;color:var(--grey)">Gy:</span>
+            <input type="text" inputmode="numeric" pattern="[0-9]*" style="width:60px" value="${t.grey}" oninput="updateToggle('${k}','grey',this.value)" onblur="commitToggleValue('${k}','grey',this)">
+          </div>
+          <div style="display:flex;align-items:center;gap:4px">
+            <span style="font-size:11px;color:var(--green)">Gr:</span>
+            <input type="text" inputmode="numeric" pattern="[0-9]*" style="width:60px" value="${t.green}" oninput="updateToggle('${k}','green',this.value)" onblur="commitToggleValue('${k}','green',this)">
+          </div>
+          <div style="display:flex;align-items:center;gap:4px">
+            <span style="font-size:11px;color:var(--blue)">Bl:</span>
+            <input type="text" inputmode="numeric" pattern="[0-9]*" style="width:60px" value="${t.blue}" oninput="updateToggle('${k}','blue',this.value)" onblur="commitToggleValue('${k}','blue',this)">
+          </div>
         </div>
       </div>
     </div>`).join('');
@@ -1465,7 +1492,7 @@ function renderConfig(){
   renderConquestMerchant();
 
   // --- Relic Cost UI ---
-  const rt=document.getElementById('relic-cost-table');
+  const rt=document.getElementById('relic-info-table');
   rt.innerHTML=Object.entries(RELIC_COST).reverse().map(([lvl,c])=>`
     <tr>
       <td style="padding:5px 8px;color:var(--text2);font-size:12px">→ R${lvl}</td>
@@ -1513,6 +1540,7 @@ function commitSourceValue(i, field, element){
 
 function updateToggle(key, field, val){
   if(field === 'enabled') state.toggles[key].enabled = val;
+  else if(field === 'monthlyCount') state.toggles[key][field] = Math.max(0, Math.min(4, Math.floor(sanitizeNumericValue(val))));
   else state.toggles[key][field] = Math.max(0, Math.floor(sanitizeNumericValue(val)));
   
   if(field === 'enabled') renderConfig(); // re-render to toggle disabled states visually
@@ -1529,9 +1557,10 @@ function renderConquestMerchant(){
   if(!container) return;
   const choice = state.conquestMerchant?.choice || 'none';
   const options = [
-    { value:'none',  label:'None' },
+    { value:'none', label:'None' },
     { value:'green', label:`Green ×${CONQUEST_MERCHANT_AMOUNT}` },
-    { value:'blue',  label:`Blue ×${CONQUEST_MERCHANT_AMOUNT}` }
+    { value:'blue', label:`Blue ×${CONQUEST_MERCHANT_AMOUNT}` },
+    { value:'both', label:`Green + Blue` }
   ];
   container.innerHTML = options.map(o=>`
     <button type="button" class="btn ${choice===o.value?'btn-accent':'btn-ghost'}" style="flex:1"
