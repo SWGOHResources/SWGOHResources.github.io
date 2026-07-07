@@ -501,6 +501,13 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
         <div class="section-body" id="toggles-container">
           <!-- Rendered via JS -->
         </div>
+        <div class="section-body" style="padding-top:0">
+          <div style="padding-top:4px;border-top:1px solid var(--border)">
+            <div style="font-size:13px;font-weight:500;margin-bottom:4px">Conquest Merchant</div>
+            <div style="font-size:11px;color:var(--text3);margin-bottom:8px">Buy 40 blue OR 40 green signals per month — not both.</div>
+            <div style="display:flex;gap:8px" id="conquest-merchant-buttons"></div>
+          </div>
+        </div>
       </div>
 
       <!-- Relic Costs -->
@@ -526,7 +533,7 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
 </div><!-- planner-shell -->
 </div><!-- .app -->
 
-<script src="./build-version.js?v=ffbdd1c-35"></script>
+<script src="./build-version.js?v=106d824-36"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
@@ -550,6 +557,7 @@ const PLANETS = [
 ];
 
 const TERRITORY_WARS = { winReward: 650, lossReward: 550, eventsPerMonth: 2 };
+const CONQUEST_MERCHANT_AMOUNT = 40;
 
 const RELIC_COST = {
   10:{grey:0, green:25,blue:45},
@@ -640,6 +648,7 @@ let state = {
     alloc: { c8grey: 120, c8green: 0, c8blue: 0, n9b: 0, n9d: 0, n9f: 0 }
   },
   guild: getDefaultGuild(),
+  conquestMerchant: { choice: 'none' }, // 'none' | 'blue' | 'green'
   toggles: JSON.parse(JSON.stringify(DEFAULT_TOGGLES)),
   sources: JSON.parse(JSON.stringify(DEFAULT_SOURCES)),
   groups: [],
@@ -821,6 +830,7 @@ function mergeStateWithDefaults(remoteState){
   merged.cantina.alloc = { ...base.cantina.alloc, ...(incoming.cantina?.alloc || {}) };
   merged.planetCompletions = { ...base.planetCompletions, ...(incoming.planetCompletions || {}) };
   merged.guild = { ...getDefaultGuild(), ...(incoming.guild || {}) };
+  merged.conquestMerchant = { choice: 'none', ...(incoming.conquestMerchant || {}) };
   merged.toggles = migrateToggleCadence({ ...JSON.parse(JSON.stringify(DEFAULT_TOGGLES)), ...(incoming.toggles || {}) });
   merged.sources = normalizeSources(incoming.sources);
   merged.groups = Array.isArray(incoming.groups) ? incoming.groups : base.groups;
@@ -873,6 +883,7 @@ function load(){
       if(!state.cantina) state.cantina = { refreshes: 0, bonusEnergy: false, alloc: { c8grey: 0, c8green: 0, c8blue: 0, n9b: 0, n9d: 0, n9f: 0 }};
       if(state.cantina.bonusEnergy === undefined) state.cantina.bonusEnergy = false;
       if(!state.guild) state.guild = getDefaultGuild();
+      if(!state.conquestMerchant) state.conquestMerchant = { choice: 'none' };
       if(!state.toggles) state.toggles = JSON.parse(JSON.stringify(DEFAULT_TOGGLES));
       state.toggles = migrateToggleCadence(state.toggles);
       if(!state.sources || state.sources.length===0) state.sources=JSON.parse(JSON.stringify(DEFAULT_SOURCES));
@@ -1075,6 +1086,13 @@ function calcMonthlyIncome(monthKey){
   const cantina = calcCantinaIncome(monthKey);
   grey+=cantina.grey; green+=cantina.green; blue+=cantina.blue;
   
+  // Conquest merchant — mutually exclusive one-time monthly purchase
+  if(state.conquestMerchant?.choice === 'blue'){
+    blue += CONQUEST_MERCHANT_AMOUNT;
+  } else if(state.conquestMerchant?.choice === 'green'){
+    green += CONQUEST_MERCHANT_AMOUNT;
+  }
+
   // Grey Store Purchases
   const greyExtra=(state.greyPurchases||0)*20;
   
@@ -1283,6 +1301,9 @@ function renderConfig(){
       </div>
     </div>`).join('');
 
+  // --- Conquest Merchant UI ---
+  renderConquestMerchant();
+
   // --- Relic Cost UI ---
   const rt=document.getElementById('relic-cost-table');
   rt.innerHTML=Object.entries(RELIC_COST).reverse().map(([lvl,c])=>`
@@ -1340,6 +1361,28 @@ function updateToggle(key, field, val){
 
 function commitToggleValue(key, field, element){
   updateToggle(key, field, element.value);
+  save();
+}
+
+function renderConquestMerchant(){
+  const container = document.getElementById('conquest-merchant-buttons');
+  if(!container) return;
+  const choice = state.conquestMerchant?.choice || 'none';
+  const options = [
+    { value:'none',  label:'None' },
+    { value:'green', label:`Green ×${CONQUEST_MERCHANT_AMOUNT}` },
+    { value:'blue',  label:`Blue ×${CONQUEST_MERCHANT_AMOUNT}` }
+  ];
+  container.innerHTML = options.map(o=>`
+    <button type="button" class="btn ${choice===o.value?'btn-accent':'btn-ghost'}" style="flex:1"
+      onclick="setConquestMerchantChoice('${o.value}')">${o.label}</button>
+  `).join('');
+}
+
+function setConquestMerchantChoice(choice){
+  state.conquestMerchant = { choice };
+  renderConquestMerchant();
+  updatePlanSummary();
   save();
 }
 
