@@ -172,7 +172,7 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
 .stars-input{display:flex;align-items:center;gap:10px}
 .stars-input input[type=range]{flex:1}
 .stars-val{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:600;color:var(--yellow);min-width:28px}
-.get2-summary{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:14px}
+.get2-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
 .get2-box{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px}
 .get2-box-label{font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);margin-bottom:4px}
 .get2-box-val{font-size:16px;font-weight:600;font-family:'JetBrains Mono',monospace;color:var(--yellow)}
@@ -190,6 +190,7 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
 .group-head{
   display:flex;align-items:center;gap:8px;padding:10px 14px;
   background:var(--bg2);border-bottom:1px solid var(--border);cursor:pointer;
+  flex-wrap:wrap;
 }
 .group-head:hover{background:var(--bg3)}
 .group-label-input{
@@ -255,13 +256,13 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
 <body>
 
 <div class="top-header">
-  <div class="top-banner">Each group is one month. Set up signal data gain in Configuration and GET 2 gain in TB Setup.</div>
+  <div class="top-banner">Each group is one month. Set up signal income in Configuration and GET 2 income in Guild Config.</div>
   <div class="topbar">
     <div class="topbar-title">Relic <span>Planner</span></div>
     <div id="build-badge" style="margin-left:12px;font-size:11px;color:var(--text3)">Build <span id="build-version"></span></div>
     <div class="topbar-tabs">
       <button class="tab-btn active" onclick="showTab('plan')">Group Plan</button>
-      <button class="tab-btn" onclick="showTab('tb')">TB Setup</button>
+      <button class="tab-btn" onclick="showTab('tb')">Guild Config</button>
       <button class="tab-btn" onclick="showTab('config')">Configuration</button>
     </div>
     <div class="topbar-right">
@@ -313,9 +314,12 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
 <div class="page active" id="page-plan">
   <div class="plan-layout">
     <div id="groups-col">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-        <div style="font-size:12px;color:var(--text3)">Drag groups to reorder · click header to collapse</div>
-        <button class="btn btn-accent" onclick="addGroup()">+ Add group</button>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:8px;flex-wrap:wrap">
+        <div style="font-size:12px;color:var(--text3)">Drag units to reorder · click header to collapse</div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-ghost" onclick="copyPlanSummary()">Copy summary</button>
+          <button class="btn btn-accent" onclick="addGroup()">+ Add group</button>
+        </div>
       </div>
       <div id="groups-list"></div>
     </div>
@@ -339,14 +343,18 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
           <table class="cumulative-table" id="cumulative-table"></table>
         </div>
       </div>
+      <div class="section">
+        <div class="section-head"><div class="section-title">Campaign totals</div></div>
+        <div id="campaign-totals"></div>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- ══════════ TB PAGE ══════════ -->
+<!-- ══════════ GUILD CONFIG PAGE ══════════ -->
 <div class="page" id="page-tb">
   <div style="display:flex;gap:10px;align-items:center;margin-bottom:16px;flex-wrap:wrap">
-    <div style="font-size:13px;color:var(--text2)">Configure your 2 monthly TBs. Both use the same settings (same guild, same territory).</div>
+    <div style="font-size:13px;color:var(--text2)">Configure your guild's recurring GET 2 sources: Territory Battle rewards, planet missions, and Territory Wars. TB settings assume 2 monthly TBs with the same guild and territory.</div>
   </div>
   <div class="tb-grid">
     <div>
@@ -367,6 +375,27 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
           <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
             <div style="font-size:12px;color:var(--text2)">GET 2 per month (×2 TBs)</div>
             <div class="pill pill-get2" id="rote-get2-month">12000</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-head"><div class="section-title">Territory Wars</div></div>
+        <div class="section-body">
+          <div class="label">Guild win rate</div>
+          <div class="stars-input">
+            <input type="range" id="tw-winpct-range" min="0" max="100" value="50"
+              oninput="onTwWinPctChange(this.value)">
+            <div class="stars-val" id="tw-winpct-display" style="font-size:16px">50%</div>
+          </div>
+          <div style="font-size:11px;color:var(--text3);margin-top:6px">Win: 650 GET 2 · Loss: 550 GET 2 · Runs twice per month</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px">
+            <div style="font-size:12px;color:var(--text2)">Expected GET 2 per event</div>
+            <div class="pill pill-get2" id="tw-get2-per-event">600</div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+            <div style="font-size:12px;color:var(--text2)">GET 2 per month (×2 events)</div>
+            <div class="pill pill-get2" id="tw-get2-month">1200</div>
           </div>
         </div>
       </div>
@@ -396,6 +425,10 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
             <div class="get2-box">
               <div class="get2-box-label">Missions</div>
               <div class="get2-box-val" id="g2-missions">0</div>
+            </div>
+            <div class="get2-box">
+              <div class="get2-box-label">Territory Wars</div>
+              <div class="get2-box-val" id="g2-tw">0</div>
             </div>
           </div>
           <div style="border-top:1px solid var(--border);margin-top:14px;padding-top:14px">
@@ -493,7 +526,7 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
 </div><!-- planner-shell -->
 </div><!-- .app -->
 
-<script src="./build-version.js?v=9a3d001-34"></script>
+<script src="./build-version.js?v=ffbdd1c-35"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
@@ -515,6 +548,8 @@ const PLANETS = [
   { key:'KASHYYYK',  label:'Kashyyyk', hasMissions:true },
   { key:'ZEFFO',     label:'Zeffo',    hasMissions:true },
 ];
+
+const TERRITORY_WARS = { winReward: 650, lossReward: 550, eventsPerMonth: 2 };
 
 const RELIC_COST = {
   10:{grey:0, green:25,blue:45},
@@ -542,12 +577,16 @@ const DEFAULT_SOURCES = [
   { key:'assault',  label:'Assault Battles', grey:70, green:42, blue:42 },
   { key:'episodetrack',  label:'Episode Track', grey:75, green:65, blue:15 },
   { key:'conquest', label:'Conquest',        grey:10, green:10, blue:10 },
-  { key:'rote',     label:'ROTE (30★)',      grey:21, green:11, blue:9  },
+  { key:'rote',     label:'ROTE (Raid)',      grey:21, green:11, blue:9  },
 ];
 
+// Weekly toggles store their GET 2 / signal value PER WEEK. The monthly
+// contribution is computed as value * (days in that month / 7), so months
+// with more days correctly get slightly more weekly purchases than months
+// with fewer days, instead of assuming a flat "4 weeks every month".
 const DEFAULT_TOGGLES = {
-  episodeShipment: { enabled: false, label: 'Episode Shipment', grey: 180, green: 160, blue: 0 },
-  eraColiseum:     { enabled: false, label: 'Era Coliseum',     grey: 0,   green: 0,   blue: 100 }
+  episodeShipment: { enabled: false, label: 'Episode Shipment', cadence: 'weekly', grey: 45, green: 40, blue: 0 },
+  eraColiseum:     { enabled: false, label: 'Era Coliseum',     cadence: 'weekly', grey: 0,  green: 0,  blue: 25 }
 };
 
 const LIMITS = {
@@ -587,6 +626,10 @@ let storeEditWarmupCount = 0;
 let storeEditWarmupStartedAt = 0;
 let saveDebounceTimer = null;
 
+function getDefaultGuild(){
+  return { twWinPct: 50 };
+}
+
 let state = {
   roteStars: 24,
   greyPurchases: 0,
@@ -596,6 +639,7 @@ let state = {
     bonusEnergy: false,
     alloc: { c8grey: 120, c8green: 0, c8blue: 0, n9b: 0, n9d: 0, n9f: 0 }
   },
+  guild: getDefaultGuild(),
   toggles: JSON.parse(JSON.stringify(DEFAULT_TOGGLES)),
   sources: JSON.parse(JSON.stringify(DEFAULT_SOURCES)),
   groups: [],
@@ -721,6 +765,27 @@ function showCustomConfirm(message, onConfirm, confirmLabel='Delete'){
   modal.style.display='flex';
 }
 
+function migrateToggleCadence(toggles){
+  if(!toggles) return toggles;
+  for(const k in toggles){
+    const t = toggles[k];
+    const def = DEFAULT_TOGGLES[k];
+    if(t && def && !t.cadence){
+      // Old saves stored the FULL MONTH total assuming exactly 4 weekly
+      // purchases. Convert that back down to a per-week baseline so the
+      // new day-count-aware weekly calculation lines up with what the
+      // user had configured before.
+      t.cadence = def.cadence || 'monthly';
+      if(t.cadence === 'weekly'){
+        t.grey = Math.round(Number(t.grey||0)/4);
+        t.green = Math.round(Number(t.green||0)/4);
+        t.blue = Math.round(Number(t.blue||0)/4);
+      }
+    }
+  }
+  return toggles;
+}
+
 function normalizeSources(rawSources){
   const defaults = JSON.parse(JSON.stringify(DEFAULT_SOURCES));
   if(!Array.isArray(rawSources) || rawSources.length===0) return defaults;
@@ -739,6 +804,11 @@ function normalizeSources(rawSources){
 
   return defaults.map(def => {
     const existing = byKey.get(def.key);
+    // Old builds labeled this source "ROTE (30★)", which no longer matches
+    // the 1-24 star scale used elsewhere. Let the new default label win.
+    if(existing && def.key === 'rote' && /★/.test(existing.label || '')){
+      delete existing.label;
+    }
     return existing ? { ...def, ...existing, key: def.key } : { ...def };
   });
 }
@@ -750,7 +820,8 @@ function mergeStateWithDefaults(remoteState){
   merged.cantina = { ...base.cantina, ...(incoming.cantina || {}) };
   merged.cantina.alloc = { ...base.cantina.alloc, ...(incoming.cantina?.alloc || {}) };
   merged.planetCompletions = { ...base.planetCompletions, ...(incoming.planetCompletions || {}) };
-  merged.toggles = { ...JSON.parse(JSON.stringify(DEFAULT_TOGGLES)), ...(incoming.toggles || {}) };
+  merged.guild = { ...getDefaultGuild(), ...(incoming.guild || {}) };
+  merged.toggles = migrateToggleCadence({ ...JSON.parse(JSON.stringify(DEFAULT_TOGGLES)), ...(incoming.toggles || {}) });
   merged.sources = normalizeSources(incoming.sources);
   merged.groups = Array.isArray(incoming.groups) ? incoming.groups : base.groups;
   merged._mid = Number(incoming._mid || base._mid) || base._mid;
@@ -801,7 +872,9 @@ function load(){
       
       if(!state.cantina) state.cantina = { refreshes: 0, bonusEnergy: false, alloc: { c8grey: 0, c8green: 0, c8blue: 0, n9b: 0, n9d: 0, n9f: 0 }};
       if(state.cantina.bonusEnergy === undefined) state.cantina.bonusEnergy = false;
+      if(!state.guild) state.guild = getDefaultGuild();
       if(!state.toggles) state.toggles = JSON.parse(JSON.stringify(DEFAULT_TOGGLES));
+      state.toggles = migrateToggleCadence(state.toggles);
       if(!state.sources || state.sources.length===0) state.sources=JSON.parse(JSON.stringify(DEFAULT_SOURCES));
     }
   }catch(e){}
@@ -985,7 +1058,17 @@ function calcMonthlyIncome(monthKey){
   for(const k in state.toggles){
     const t = state.toggles[k];
     if(t.enabled) {
-      grey+=Math.round(Number(t.grey||0)*monthScale);green+=Math.round(Number(t.green||0)*monthScale);blue+=Math.round(Number(t.blue||0)*monthScale);
+      if(t.cadence === 'weekly'){
+        // Value is per-week; scale by the number of weeks that actually fit
+        // in this specific month (28-31 days), rather than assuming a flat
+        // 4 purchases every month.
+        const weeksInMonth = getMonthDayCount(monthKey) / 7;
+        grey+=Math.round(Number(t.grey||0)*weeksInMonth);
+        green+=Math.round(Number(t.green||0)*weeksInMonth);
+        blue+=Math.round(Number(t.blue||0)*weeksInMonth);
+      } else {
+        grey+=Math.round(Number(t.grey||0)*monthScale);green+=Math.round(Number(t.green||0)*monthScale);blue+=Math.round(Number(t.blue||0)*monthScale);
+      }
     }
   }
   // Cantina
@@ -998,6 +1081,12 @@ function calcMonthlyIncome(monthKey){
   return { grey: grey + greyExtra, green: green, blue: blue };
 }
 
+function calcTerritoryWarsGet2(){
+  const winPct = Math.min(100, Math.max(0, Number(state.guild?.twWinPct ?? 50))) / 100;
+  const perEvent = winPct * TERRITORY_WARS.winReward + (1 - winPct) * TERRITORY_WARS.lossReward;
+  return Math.round(perEvent * TERRITORY_WARS.eventsPerMonth);
+}
+
 function calcGet2PerMonth(){
   const rote=(ROTE_TABLE[state.roteStars]||0)*2;
   let missions=0;
@@ -1007,7 +1096,8 @@ function calcGet2PerMonth(){
       missions += c * PLANET_GET2_PER_COMPLETION * 2;
     }
   }
-  return { rote, missions, total: rote+missions };
+  const territoryWars = calcTerritoryWarsGet2();
+  return { rote, missions, territoryWars, total: rote+missions+territoryWars };
 }
 
 function costForRange(from,to){
@@ -1043,7 +1133,7 @@ function showTab(name){
 }
 
 // ═══════════════════════════════════════════════════════
-// TB PAGE
+// GUILD CONFIG PAGE
 // ═══════════════════════════════════════════════════════
 function renderTB(){
   document.getElementById('rote-stars-range').value=state.roteStars;
@@ -1051,6 +1141,12 @@ function renderTB(){
   const rotePerTB=ROTE_TABLE[state.roteStars]||0;
   document.getElementById('rote-get2-per-tb').textContent=rotePerTB.toLocaleString();
   document.getElementById('rote-get2-month').textContent=(rotePerTB*2).toLocaleString();
+
+  document.getElementById('tw-winpct-range').value = state.guild.twWinPct;
+  document.getElementById('tw-winpct-display').textContent = state.guild.twWinPct + '%';
+  const twPerEvent = Math.round((state.guild.twWinPct/100)*TERRITORY_WARS.winReward + (1-state.guild.twWinPct/100)*TERRITORY_WARS.lossReward);
+  document.getElementById('tw-get2-per-event').textContent = twPerEvent.toLocaleString();
+  document.getElementById('tw-get2-month').textContent = (twPerEvent*TERRITORY_WARS.eventsPerMonth).toLocaleString();
 
   const pl=document.getElementById('planet-list');
   pl.innerHTML=PLANETS.map(p=>{
@@ -1080,6 +1176,16 @@ function onStarsChange(v){
   save();
 }
 
+function onTwWinPctChange(v){
+  state.guild.twWinPct = Number(v);
+  document.getElementById('tw-winpct-display').textContent = v + '%';
+  const twPerEvent = Math.round((v/100)*TERRITORY_WARS.winReward + (1-v/100)*TERRITORY_WARS.lossReward);
+  document.getElementById('tw-get2-per-event').textContent = twPerEvent.toLocaleString();
+  document.getElementById('tw-get2-month').textContent = (twPerEvent*TERRITORY_WARS.eventsPerMonth).toLocaleString();
+  updateGet2Summary();
+  save();
+}
+
 function updatePlanetComp(key,val){
   state.planetCompletions[key]=Math.min(50,Number(val));
   const items=document.querySelectorAll('.planet-item');
@@ -1097,6 +1203,7 @@ function updateGet2Summary(){
   const g=calcGet2PerMonth();
   document.getElementById('g2-rote').textContent=g.rote.toLocaleString();
   document.getElementById('g2-missions').textContent=g.missions.toLocaleString();
+  document.getElementById('g2-tw').textContent=g.territoryWars.toLocaleString();
   document.getElementById('g2-total').textContent=g.total.toLocaleString();
   const buys=Math.floor(g.total/1600);
   document.getElementById('g2-buys-avail').textContent=buys;
@@ -1158,6 +1265,7 @@ function renderConfig(){
       <label style="display:flex; align-items:center; gap:8px; margin-bottom:8px; cursor:pointer">
         <input type="checkbox" ${t.enabled?'checked':''} onchange="updateToggle('${k}', 'enabled', this.checked)">
         <span style="font-size:13px; font-weight:500; color:${t.enabled?'var(--text)':'var(--text2)'}">${t.label}</span>
+        ${t.cadence==='weekly' ? `<span style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em">values are per week</span>` : ''}
       </label>
       <div style="display:flex; gap:8px; padding-left:24px; opacity:${t.enabled?'1':'0.4'}; pointer-events:${t.enabled?'auto':'none'}">
         <div style="display:flex;align-items:center;gap:4px">
@@ -1250,6 +1358,29 @@ function addGroup(){
   save(); renderPlan();
 }
 
+function duplicateGroup(id){
+  if(state.groups.length >= LIMITS.maxGroups){
+    showLimitNotice(`You can have up to ${LIMITS.maxGroups} groups.`);
+    return;
+  }
+  const idx = state.groups.findIndex(m=>m.id===id);
+  if(idx<0) return;
+  const src = state.groups[idx];
+  state._mid++;
+  const clone = {
+    id: state._mid,
+    month: src.month,
+    label: (src.label || 'Untitled group') + ' (copy)',
+    collapsed: false,
+    units: src.units.map(u=>{
+      state._uid++;
+      return { id: state._uid, name: u.name, from: u.from, to: u.to };
+    })
+  };
+  state.groups.splice(idx+1, 0, clone);
+  save(); renderPlan();
+}
+
 function removeGroup(id){
   const group = state.groups.find(m => m.id === id);
   if(!group) return;
@@ -1313,6 +1444,22 @@ function removeUnit(groupId, unitId){
     m.units=m.units.filter(u=>u.id!==unitId);
     save(); renderPlan();
   });
+}
+
+function moveUnitToGroup(fromGroupId, unitId, toGroupId){
+  if(fromGroupId === toGroupId) return;
+  const from=state.groups.find(x=>x.id===fromGroupId);
+  const to=state.groups.find(x=>x.id===Number(toGroupId));
+  if(!from || !to) return;
+  if(to.units.length >= LIMITS.maxUnitsPerGroup){
+    showLimitNotice(`Each group can have up to ${LIMITS.maxUnitsPerGroup} units.`);
+    return;
+  }
+  const idx=from.units.findIndex(u=>u.id===unitId);
+  if(idx<0) return;
+  const [unit]=from.units.splice(idx,1);
+  to.units.push(unit);
+  save(); renderPlan();
 }
 
 let draggedUnit = null;
@@ -1403,6 +1550,34 @@ function onGreyPurchasesChange(){
   save(); updatePlanSummary();
 }
 
+function copyPlanSummary(){
+  if(!state.groups.length){
+    showLimitNotice('Add a group before copying a summary.');
+    return;
+  }
+  let carry={grey:0,green:0,blue:0};
+  const lines=[];
+  for(const m of state.groups){
+    const monthInc=calcMonthlyIncome(m.month);
+    const demand=calcGroupDemand(m);
+    const available={grey:monthInc.grey+carry.grey,green:monthInc.green+carry.green,blue:monthInc.blue+carry.blue};
+    const net={grey:available.grey-demand.grey,green:available.green-demand.green,blue:available.blue-demand.blue};
+    carry={grey:Math.max(0,net.grey),green:Math.max(0,net.green),blue:Math.max(0,net.blue)};
+    const unitNames = m.units.filter(u=>u.name).map(u=>`${u.name} (${u.from||'?'}→${u.to||'?'})`).join(', ') || 'no units listed';
+    lines.push(`${m.label}: ${unitNames}\n  need: G${demand.grey} / Gr${demand.green} / B${demand.blue}  |  net: G${net.grey>=0?'+':''}${net.grey} / Gr${net.green>=0?'+':''}${net.green} / B${net.blue>=0?'+':''}${net.blue}`);
+  }
+  const text = lines.join('\n\n');
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(()=>{
+      setSaveStatus('Summary copied');
+    }).catch(()=>{
+      showLimitNotice('Could not copy — clipboard blocked.');
+    });
+  } else {
+    showLimitNotice('Clipboard not available in this browser.');
+  }
+}
+
 function renderPlan(){
   const inc=calcMonthlyIncome();
   const incEl=document.getElementById('income-display');
@@ -1419,6 +1594,7 @@ function renderPlan(){
   const list=document.getElementById('groups-list');
   if(!state.groups.length){
     list.innerHTML=`<div style="text-align:center;padding:48px 20px;color:var(--text3);font-size:13px">No groups yet — click "Add group" to start planning.</div>`;
+    renderCampaignTotals([]);
   } else {
     let carry={grey:0,green:0,blue:0};
     const groupData=state.groups.map((m)=>{
@@ -1446,11 +1622,38 @@ function renderPlan(){
 
     list.innerHTML=groupData.map((d,idx)=>buildGroupCard(d,idx)).join('');
     renderCumulativeTable(groupData);
+    renderCampaignTotals(groupData);
   }
+}
+
+function renderCampaignTotals(groupData){
+  const el = document.getElementById('campaign-totals');
+  if(!el) return;
+  if(!groupData.length){
+    el.innerHTML = `<div style="padding:12px 14px;font-size:12px;color:var(--text3)">No groups yet.</div>`;
+    return;
+  }
+  const totals = groupData.reduce((acc,d)=>{
+    acc.demand.grey+=d.demand.grey; acc.demand.green+=d.demand.green; acc.demand.blue+=d.demand.blue;
+    acc.income.grey+=(d.available.grey-d.carryIn.grey); acc.income.green+=(d.available.green-d.carryIn.green); acc.income.blue+=(d.available.blue-d.carryIn.blue);
+    return acc;
+  }, { demand:{grey:0,green:0,blue:0}, income:{grey:0,green:0,blue:0} });
+  const finalCarry = groupData[groupData.length-1].carryOut;
+  const shortfallMonths = groupData.filter(d=>d.net.grey<0||d.net.green<0||d.net.blue<0).length;
+  el.innerHTML = `
+    <div style="padding:10px 14px;font-size:11px;color:var(--text3);border-bottom:1px solid var(--border)">${groupData.length} group${groupData.length!==1?'s':''} planned${shortfallMonths?` · <span style="color:var(--red)">${shortfallMonths} short</span>`:''}</div>
+    <div class="income-stat"><span style="color:var(--grey)">Grey needed</span><span class="income-stat-val" style="color:var(--grey)">${totals.demand.grey}</span></div>
+    <div class="income-stat"><span style="color:var(--green)">Green needed</span><span class="income-stat-val" style="color:var(--green)">${totals.demand.green}</span></div>
+    <div class="income-stat"><span style="color:var(--blue)">Blue needed</span><span class="income-stat-val" style="color:var(--blue)">${totals.demand.blue}</span></div>
+    <div class="income-stat" style="border-top:1px solid var(--border)"><span style="color:var(--text2)">Ending balance</span><span class="income-stat-val">G${finalCarry.grey} / Gr${finalCarry.green} / B${finalCarry.blue}</span></div>
+  `;
 }
 
 function buildGroupCard({m,demand,available,net,carryIn,carryOut},idx){
   const hasCarryIn=carryIn.grey>0||carryIn.green>0||carryIn.blue>0;
+  const hasShortfall = net.grey<0 || net.green<0 || net.blue<0;
+
+  const otherGroups = state.groups.filter(g=>g.id!==m.id);
 
   const unitRows=m.units.map(u=>{
     const valid=u.from&&u.to&&Number(u.to)>Number(u.from);
@@ -1480,6 +1683,10 @@ function buildGroupCard({m,demand,available,net,carryIn,carryOut},idx){
         ${valid ? `<span class="pill pill-grey" style="font-size:11px">${c.grey}</span><span class="pill pill-green" style="font-size:11px">${c.green}</span><span class="pill pill-blue" style="font-size:11px">${c.blue}</span>` : '<span style="color:var(--text3);font-size:11px">—</span>'}
       </div>
       <div style="display:flex;gap:4px;margin-left:auto;align-items:center">
+        ${otherGroups.length ? `<select onchange="if(this.value){moveUnitToGroup(${m.id},${u.id},this.value)} this.value=''" style="font-size:11px;height:26px;width:auto;padding:0 20px 0 6px" title="Move to another group">
+          <option value="">Move to…</option>
+          ${otherGroups.map(g=>`<option value="${g.id}">${escHtml(g.label)}</option>`).join('')}
+        </select>` : ''}
         <button class="btn btn-danger btn-icon" style="height:28px" onclick="removeUnit(${m.id},${u.id})">×</button>
       </div>
     </div>`;
@@ -1508,8 +1715,10 @@ function buildGroupCard({m,demand,available,net,carryIn,carryOut},idx){
         ${demand.grey>0?`<span class="pill pill-grey" style="font-size:11px">${demand.grey}</span>`:''}
         ${demand.green>0?`<span class="pill pill-green" style="font-size:11px">${demand.green}</span>`:''}
         ${demand.blue>0?`<span class="pill pill-blue" style="font-size:11px">${demand.blue}</span>`:''}
+        ${hasShortfall?`<span class="pill pill-red" style="font-size:11px" title="This group's demand exceeds available signals">⚠ short</span>`:''}
       </div>
-      <button class="btn btn-ghost btn-sm" style="margin-left:6px;flex-shrink:0" onclick="event.stopPropagation();toggleCollapse(${m.id})">
+      <button class="btn btn-ghost btn-sm" style="margin-left:6px;flex-shrink:0" onclick="event.stopPropagation();duplicateGroup(${m.id})" title="Duplicate this group">⧉ Duplicate</button>
+      <button class="btn btn-ghost btn-sm" style="flex-shrink:0" onclick="event.stopPropagation();toggleCollapse(${m.id})">
         ${m.collapsed?'▼ Expand':'▲ Collapse'}
       </button>
       <button class="btn btn-danger btn-sm" style="margin-left:4px;flex-shrink:0;color:var(--text3);font-size:13px" onclick="event.stopPropagation();removeGroup(${m.id})">×</button>
