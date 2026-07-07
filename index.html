@@ -533,7 +533,7 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
 </div><!-- planner-shell -->
 </div><!-- .app -->
 
-<script src="./build-version.js?v=e3edd15-37"></script>
+<script src="./build-version.js?v=92c5af6-38"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
@@ -916,7 +916,7 @@ function shouldUseLocalStateOverRemote(payload){
 
 function describeRemoteError(error){
   const code = error && error.code ? error.code : '';
-  if(code === 'permission-denied') return 'Cloud access was denied. Check your Firestore rules.';
+  if(code === 'permission-denied') return 'Cloud access was denied. Firestore rules may be blocking your data. Local changes remain saved in this browser.';
   if(code === 'unavailable' || code === 'network-request-failed') return 'The cloud service is unavailable right now. Your local copy is still available.';
   if(code === 'auth/user-not-found' || code === 'auth/wrong-password' || code === 'auth/invalid-credential' || code === 'auth/too-many-requests') return 'Authentication failed. Please sign in again.';
   return 'Cloud sync failed. Your local copy is still available.';
@@ -1848,7 +1848,7 @@ function renderCampaignTotals(groupData){
     <div class="income-stat"><span style="color:var(--grey)">Grey needed</span><span class="income-stat-val" style="color:var(--grey)">${totals.demand.grey}</span></div>
     <div class="income-stat"><span style="color:var(--green)">Green needed</span><span class="income-stat-val" style="color:var(--green)">${totals.demand.green}</span></div>
     <div class="income-stat"><span style="color:var(--blue)">Blue needed</span><span class="income-stat-val" style="color:var(--blue)">${totals.demand.blue}</span></div>
-    <div class="income-stat" style="border-top:1px solid var(--border)"><span style="color:var(--text2)">Ending balance</span><span class="income-stat-val">G${finalCarry.grey} / Gr${finalCarry.green} / B${finalCarry.blue}</span></div>
+    <div class="income-stat" style="border-top:1px solid var(--border)"><span style="color:var(--text2)">Ending balance</span><span class="income-stat-val" style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end"><span style="color:var(--grey)">G ${finalCarry.grey}</span><span style="color:var(--green)">Gr ${finalCarry.green}</span><span style="color:var(--blue)">B ${finalCarry.blue}</span></span></div>
   `;
 }
 
