@@ -577,6 +577,8 @@ let firebaseAuth = null;
 let firebaseDb = null;
 let authUser = null;
 let authReady = false;
+let authAvailable = false;
+let authDisabledReason = '';
 let remoteSaveTimer = null;
 let authMode = 'signin';
 let lastSaveAt = 0;
@@ -655,15 +657,24 @@ function updateAuthUI(){
   const plannerShell=document.getElementById('planner-shell');
   const userPanel=document.getElementById('auth-user-panel');
   if(authScreen && plannerShell){
-    if(authUser){
+    const canUsePlanner = authUser || !authAvailable;
+    if(canUsePlanner){
       authScreen.style.display='none';
       plannerShell.style.display='block';
       if(userPanel){
-        userPanel.style.display='block';
-        const displayName = authUser.displayName || authUser.email || 'Account';
-        userPanel.textContent = `Signed in as ${displayName}`;
+        userPanel.style.display = authUser ? 'block' : 'none';
+        if(authUser){
+          const displayName = authUser.displayName || authUser.email || 'Account';
+          userPanel.textContent = `Signed in as ${displayName}`;
+        }
       }
-      setAuthStatus('Signed in', false);
+      if(authUser){
+        setAuthStatus('Signed in', false);
+      } else if(!authAvailable){
+        setAuthStatus(authDisabledReason || 'Sign-in unavailable; continuing in local-only mode', false);
+      } else {
+        setAuthStatus(authReady ? 'Not signed in' : 'Connecting…', false);
+      }
     } else {
       authScreen.style.display='block';
       plannerShell.style.display='none';
@@ -831,6 +842,10 @@ async function submitAuthForm(){
   const email=document.getElementById('auth-email').value.trim();
   const password=document.getElementById('auth-password').value;
   if(!email || !password){ setAuthStatus('Enter your email and password', true); return; }
+  if(!firebaseAuth || !authAvailable){
+    setAuthStatus('Sign-in is currently unavailable. Continuing in local-only mode.', true);
+    return;
+  }
   try{
     setAuthStatus(authMode==='signup' ? 'Creating account…' : 'Signing in…');
     if(authMode==='signup'){
@@ -845,7 +860,10 @@ async function submitAuthForm(){
 }
 
 async function signInWithGoogle(){
-  if(!firebaseAuth) return;
+  if(!firebaseAuth || !authAvailable){
+    setAuthStatus('Sign-in is currently unavailable. Continuing in local-only mode.', true);
+    return;
+  }
   try{
     const provider = new firebase.auth.GoogleAuthProvider();
     setAuthStatus('Opening Google sign-in…');
@@ -862,8 +880,13 @@ async function signOut(){
 }
 
 function initFirebase(){
+  authAvailable = false;
+  authDisabledReason = '';
+  authReady = false;
+
   if(!isFirebaseConfigured()){
-    setAuthStatus('Add Firebase config to enable sign-in', true);
+    authDisabledReason = 'Sign-in unavailable: Firebase config is missing.';
+    authReady = true;
     updateAuthUI();
     return;
   }
@@ -872,19 +895,29 @@ function initFirebase(){
     firebaseApp = firebase.apps.length ? firebase.apps[0] : firebase.initializeApp(FIREBASE_CONFIG);
     firebaseAuth = firebaseApp.auth();
     firebaseDb = firebaseApp.firestore();
+    authAvailable = true;
+    authReady = true;
+    updateAuthUI();
     firebaseAuth.onAuthStateChanged((user)=>{
       authUser = user;
-      authReady = true;
       updateAuthUI();
       if(user){
         loadFromFirebase();
+      } else if(!authAvailable){
+        setAuthStatus(authDisabledReason || 'Sign-in unavailable; continuing in local-only mode', false);
       } else {
         setAuthStatus('Not signed in', false);
       }
     });
   } catch(e){
     console.error(e);
-    setAuthStatus('Firebase initialization failed', true);
+    firebaseAuth = null;
+    firebaseDb = null;
+    authAvailable = false;
+    authDisabledReason = 'Sign-in unavailable; continuing in local-only mode.';
+    authReady = true;
+    updateAuthUI();
+    setAuthStatus(authDisabledReason, false);
   }
 }
 
