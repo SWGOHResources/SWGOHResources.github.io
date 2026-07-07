@@ -533,7 +533,7 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
 </div><!-- planner-shell -->
 </div><!-- .app -->
 
-<script src="./build-version.js?v=106d824-36"></script>
+<script src="./build-version.js?v=e3edd15-37"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
@@ -610,6 +610,9 @@ const LIMITS = {
 // STATE
 // ═══════════════════════════════════════════════════════
 const LOCAL_STORAGE_KEY = 'relic_planner_v4';
+const LOCAL_STORAGE_META_KEY = 'relic_planner_v4_meta';
+const REMOTE_STORAGE_VERSION = 2;
+const REMOTE_STATE_DOC_ID = 'current';
 const FIREBASE_CONFIG = window.FIREBASE_CONFIG || {
   apiKey: 'AIzaSyBixCM0BOfOeD37ybGA0M1_6-XT3x6MVFk',
   authDomain: 'noteproject-4c78d.firebaseapp.com',
@@ -839,24 +842,149 @@ function mergeStateWithDefaults(remoteState){
   return merged;
 }
 
+function cloneStateForStorage(value){
+  if(value === undefined || value === null) return value;
+  return JSON.parse(JSON.stringify(value));
+}
+
+function getSerializedPayloadSize(value){
+  try{
+    const text = JSON.stringify(value || {});
+    return typeof Blob !== 'undefined' ? new Blob([text]).size : text.length;
+  } catch(e){
+    return 0;
+  }
+}
+
+function getRemotePayloadVersion(payload){
+  const version = Number(payload && (payload.version || payload.planVersion));
+  return Number.isFinite(version) ? version : 0;
+}
+
+function getTimestampValue(value){
+  if(!value) return null;
+  if(typeof value.toDate === 'function'){
+    const dt = value.toDate();
+    return dt && !Number.isNaN(dt.getTime()) ? dt.toISOString() : null;
+  }
+  if(value instanceof Date){ return value.toISOString(); }
+  if(typeof value === 'object' && value.seconds !== undefined){
+    const dt = new Date(Number(value.seconds) * 1000);
+    return dt.toISOString();
+  }
+  if(typeof value === 'string'){ return value; }
+  return null;
+}
+
+function readLocalStorageMeta(){
+  try{
+    const raw = localStorage.getItem(LOCAL_STORAGE_META_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch(e){
+    return null;
+  }
+}
+
+function persistLocalStateSnapshot(){
+  try{
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(cloneStateForStorage(state)));
+    localStorage.setItem(LOCAL_STORAGE_META_KEY, JSON.stringify({
+      lastModifiedAt: new Date().toISOString(),
+      version: REMOTE_STORAGE_VERSION
+    }));
+  } catch(e){
+    console.warn('Unable to persist local planner state', e);
+  }
+}
+
+function normalizeRemoteStatePayload(payload){
+  if(!payload || typeof payload !== 'object') return null;
+  const remoteState = payload.state && typeof payload.state === 'object'
+    ? payload.state
+    : (payload.data && typeof payload.data === 'object' ? payload.data : payload);
+  if(!remoteState || typeof remoteState !== 'object') return null;
+  return mergeStateWithDefaults(remoteState);
+}
+
+function shouldUseLocalStateOverRemote(payload){
+  const remoteUpdatedAt = getTimestampValue(payload && payload.updatedAt);
+  const localMeta = readLocalStorageMeta();
+  const localUpdatedAt = localMeta && localMeta.lastModifiedAt;
+  if(!remoteUpdatedAt || !localUpdatedAt) return false;
+  return new Date(localUpdatedAt).getTime() > new Date(remoteUpdatedAt).getTime();
+}
+
+function describeRemoteError(error){
+  const code = error && error.code ? error.code : '';
+  if(code === 'permission-denied') return 'Cloud access was denied. Check your Firestore rules.';
+  if(code === 'unavailable' || code === 'network-request-failed') return 'The cloud service is unavailable right now. Your local copy is still available.';
+  if(code === 'auth/user-not-found' || code === 'auth/wrong-password' || code === 'auth/invalid-credential' || code === 'auth/too-many-requests') return 'Authentication failed. Please sign in again.';
+  return 'Cloud sync failed. Your local copy is still available.';
+}
+
+function getRemoteUserRef(uid){
+  if(!firebaseDb || !uid) return null;
+  return firebaseDb.collection('users').doc(uid);
+}
+
+function getRemotePlannerRef(uid){
+  const userRef = getRemoteUserRef(uid);
+  if(!userRef) return null;
+  // The current planner snapshot lives in one document for simplicity.
+  // If the state grows beyond a comfortable size, move large sections into
+  // subcollections under users/{uid}/planner/ while keeping this document as metadata.
+  return userRef.collection('planner').doc(REMOTE_STATE_DOC_ID);
+}
+
 function scheduleRemoteSave(){
   if(!authUser || !firebaseDb) return;
   clearTimeout(remoteSaveTimer);
   remoteSaveTimer=setTimeout(async ()=>{
     try{
-      const ref = firebaseDb.collection('users').doc(authUser.uid);
-      await ref.set({ data: state }, { merge: true });
-      setSaveStatus('Saved to Firebase');
+      const userRef = getRemoteUserRef(authUser.uid);
+      const plannerRef = getRemotePlannerRef(authUser.uid);
+      if(!userRef || !plannerRef) return;
+      const snapshot = cloneStateForStorage(state);
+      const payloadSize = getSerializedPayloadSize(snapshot);
+      if(payloadSize > 900000){
+        setSaveStatus('Cloud save skipped: planner is too large for one document', true);
+        return;
+      }
+      const serverTimestamp = firebase.firestore.FieldValue.serverTimestamp();
+      const existingDoc = await plannerRef.get();
+      const existingPayload = existingDoc.exists ? existingDoc.data() : null;
+      const existingUpdatedAt = getTimestampValue(existingPayload && existingPayload.updatedAt);
+      const localMeta = readLocalStorageMeta();
+      const localUpdatedAt = localMeta && localMeta.lastModifiedAt;
+      if(existingPayload && existingUpdatedAt && localUpdatedAt && new Date(existingUpdatedAt).getTime() > new Date(localUpdatedAt).getTime()){
+        setSaveStatus('Cloud copy is newer; local changes were kept locally', true);
+        return;
+      }
+      await Promise.all([
+        userRef.set({
+          userId: authUser.uid,
+          email: authUser.email || null,
+          lastActiveAt: serverTimestamp,
+          planVersion: REMOTE_STORAGE_VERSION
+        }, { merge: true }),
+        plannerRef.set({
+          version: REMOTE_STORAGE_VERSION,
+          updatedAt: serverTimestamp,
+          state: snapshot
+        }, { merge: true })
+      ]);
+      persistLocalStateSnapshot();
+      setSaveStatus('Saved to cloud');
     } catch(e){
       console.error(e);
-      setSaveStatus('Firebase save failed', true);
+      setSaveStatus(describeRemoteError(e), true);
     }
   }, 400);
 }
 
 function save(){
   if(!canSaveNow()) return;
-  try{ localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(state)); }catch(e){}
+  persistLocalStateSnapshot();
   setSaveStatus('Saved');
   if(authUser && firebaseDb) scheduleRemoteSave();
 }
@@ -888,28 +1016,60 @@ function load(){
       state.toggles = migrateToggleCadence(state.toggles);
       if(!state.sources || state.sources.length===0) state.sources=JSON.parse(JSON.stringify(DEFAULT_SOURCES));
     }
+    persistLocalStateSnapshot();
   }catch(e){}
 }
 
 async function loadFromFirebase(){
   if(!authUser || !firebaseDb) return;
   try{
-    const ref = firebaseDb.collection('users').doc(authUser.uid);
-    const snap = await ref.get();
-    if(snap.exists){
-      const payload = snap.data();
-      if(payload && payload.data){
-        state = mergeStateWithDefaults(payload.data);
-        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(state));
-        setSaveStatus('Loaded from Firebase');
+    const userRef = getRemoteUserRef(authUser.uid);
+    const plannerRef = getRemotePlannerRef(authUser.uid);
+    if(!userRef || !plannerRef) return;
+
+    const [userSnap, plannerSnap] = await Promise.all([userRef.get(), plannerRef.get()]);
+    let remotePayload = null;
+    let remoteState = null;
+
+    if(plannerSnap.exists){
+      remotePayload = plannerSnap.data();
+      remoteState = normalizeRemoteStatePayload(remotePayload);
+    } else if(userSnap.exists){
+      remotePayload = userSnap.data();
+      remoteState = normalizeRemoteStatePayload(remotePayload);
+    }
+
+    if(remoteState){
+      const remoteVersion = getRemotePayloadVersion(remotePayload);
+      if(shouldUseLocalStateOverRemote(remotePayload)){
+        persistLocalStateSnapshot();
+        setSaveStatus('Kept local copy; cloud data was older', true);
+      } else {
+        state = remoteState;
+        persistLocalStateSnapshot();
+        setSaveStatus(remoteVersion < REMOTE_STORAGE_VERSION ? 'Loaded from cloud and migrated' : 'Loaded from cloud');
       }
     } else {
-      await ref.set({ data: state }, { merge: true });
+      const serverTimestamp = firebase.firestore.FieldValue.serverTimestamp();
+      await Promise.all([
+        userRef.set({
+          userId: authUser.uid,
+          email: authUser.email || null,
+          lastActiveAt: serverTimestamp,
+          planVersion: REMOTE_STORAGE_VERSION
+        }, { merge: true }),
+        plannerRef.set({
+          version: REMOTE_STORAGE_VERSION,
+          updatedAt: serverTimestamp,
+          state: cloneStateForStorage(state)
+        }, { merge: true })
+      ]);
+      persistLocalStateSnapshot();
     }
     init();
   } catch(e){
     console.error(e);
-    setAuthStatus('Could not load data from Firebase', true);
+    setAuthStatus(describeRemoteError(e), true);
   }
 }
 
@@ -930,7 +1090,7 @@ async function submitAuthForm(){
     }
   } catch(e){
     console.error(e);
-    setAuthStatus(e.message || (authMode==='signup' ? 'Unable to create account' : 'Unable to sign in'), true);
+    setAuthStatus(e.message || describeRemoteError(e) || (authMode==='signup' ? 'Unable to create account' : 'Unable to sign in'), true);
   }
 }
 
@@ -945,7 +1105,7 @@ async function signInWithGoogle(){
     await firebaseAuth.signInWithPopup(provider);
   } catch(e){
     console.error(e);
-    setAuthStatus(e.message || 'Google sign-in failed', true);
+    setAuthStatus(e.message || describeRemoteError(e) || 'Google sign-in failed', true);
   }
 }
 
@@ -987,7 +1147,7 @@ function initFirebase(){
     firebaseAuth = null;
     firebaseDb = null;
     authAvailable = false;
-    authDisabledReason = 'Authentication failed. Please verify the Firebase setup.';
+    authDisabledReason = describeRemoteError(e) || 'Authentication failed. Please verify the Firebase setup.';
     authReady = true;
     updateAuthUI();
     setAuthStatus(authDisabledReason, true);
