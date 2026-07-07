@@ -271,14 +271,14 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
 <body>
 
 <div class="top-header">
-  <div class="top-banner">Each group is one month. Set up signal income in Configuration and GET 2 income in Guild Config.</div>
+  <div class="top-banner">Each group is one month. Set up signal income in Configuration and GET 2 income in Guild Event Setup.</div>
   <div class="topbar">
     <div class="topbar-title">Relic <span>Planner</span></div>
     <div id="build-badge" style="margin-left:12px;font-size:11px;color:var(--text3)">Build <span id="build-version"></span></div>
     <div class="topbar-tabs">
       <button class="tab-btn active" onclick="showTab('plan')">Group Plan</button>
-      <button class="tab-btn" onclick="showTab('tb')">Guild Config</button>
-      <button class="tab-btn" onclick="showTab('config')">Base Setup</button>
+      <button class="tab-btn" onclick="showTab('tb')">Guild Event Setup</button>
+      <button class="tab-btn" onclick="showTab('config')">Other Setups</button>
       <button class="tab-btn" onclick="showTab('info')">Relic Info</button>
     </div>
     <div class="topbar-right">
@@ -366,7 +366,7 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
   </div>
 </div>
 
-<!-- ══════════ GUILD CONFIG PAGE ══════════ -->
+<!-- ══════════ GUILD EVENT SETUP PAGE ══════════ -->
 <div class="page" id="page-tb">
   <div style="display:flex;gap:10px;align-items:center;margin-bottom:16px;flex-wrap:wrap">
     <div style="font-size:13px;color:var(--text2)">Configure your guild's recurring GET 2 sources: Territory Battle rewards, planet missions, and Territory Wars. TB settings assume 2 monthly TBs with the same guild and territory.</div>
@@ -459,7 +459,7 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
   </div>
 </div>
 
-<!-- ══════════ BASE SETUP PAGE ══════════ -->
+<!-- ══════════ OTHER SETUPS PAGE ══════════ -->
 <div class="page" id="page-config">
   <div class="config-page-intro">Set your recurring income, cantina farming, and optional store sources in one place. Each section is designed to be quick to scan and easier to tweak.</div>
   <div class="config-grid">
@@ -502,7 +502,7 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
       </div>
 
       <div class="section" style="margin-bottom:0">
-        <div class="section-head"><div class="section-title">Base Monthly Income</div></div>
+        <div class="section-head"><div class="section-title">Monthly Income Sources</div></div>
         <div style="padding:0">
           <table class="income-table" id="income-edit-table"></table>
         </div>
@@ -511,7 +511,7 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
 
     <div class="config-stack">
       <div class="section" style="margin-bottom:0">
-        <div class="section-head"><div class="section-title">Optional Store Sources</div></div>
+        <div class="section-head"><div class="section-title">Optional Store Options</div></div>
         <div class="section-body" id="toggles-container"></div>
         <div class="section-body" style="padding-top:6px">
           <div style="font-size:13px;font-weight:500;margin-bottom:4px">Conquest Merchant</div>
@@ -545,7 +545,7 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
 </div><!-- planner-shell -->
 </div><!-- .app -->
 
-<script src="./build-version.js?v=9ddfa1c-40"></script>
+<script src="./build-version.js?v=ccaaa91-41"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
@@ -648,7 +648,7 @@ let storeEditWarmupStartedAt = 0;
 let saveDebounceTimer = null;
 
 function getDefaultGuild(){
-  return { twWinPct: 50, twOutcome: 'win' };
+  return { twWinPct: 50, twOutcome: 'none' };
 }
 
 let state = {
@@ -1283,10 +1283,14 @@ function calcMonthlyIncome(monthKey){
   return getMonthlyIncomeBreakdown(monthKey).total;
 }
 
-function calcTerritoryWarsGet2(){
-  const mode = state.guild?.twOutcome || 'win';
-  const perEvent = mode === 'loss' ? TERRITORY_WARS.lossReward : TERRITORY_WARS.winReward;
-  return Math.round(perEvent * TERRITORY_WARS.eventsPerMonth);
+function calcTerritoryWarsGet2PerEvent(){
+  const mode = state.guild?.twOutcome || 'none';
+  if (mode === 'none') return 0;
+  return mode === 'loss' ? TERRITORY_WARS.lossReward : TERRITORY_WARS.winReward;
+}
+
+function calcTerritoryWarsGet2PerMonth(){
+  return calcTerritoryWarsGet2PerEvent() * TERRITORY_WARS.eventsPerMonth;
 }
 
 function calcGet2PerMonth(){
@@ -1298,7 +1302,7 @@ function calcGet2PerMonth(){
       missions += c * PLANET_GET2_PER_COMPLETION * 2;
     }
   }
-  const territoryWars = calcTerritoryWarsGet2();
+  const territoryWars = calcTerritoryWarsGet2PerMonth();
   return { rote, missions, territoryWars, total: rote+missions+territoryWars };
 }
 
@@ -1335,7 +1339,7 @@ function showTab(name){
 }
 
 // ═══════════════════════════════════════════════════════
-// GUILD CONFIG PAGE
+// GUILD EVENT SETUP PAGE
 // ═══════════════════════════════════════════════════════
 function renderTB(){
   document.getElementById('rote-stars-range').value=state.roteStars;
@@ -1344,13 +1348,14 @@ function renderTB(){
   document.getElementById('rote-get2-per-tb').textContent=rotePerTB.toLocaleString();
   document.getElementById('rote-get2-month').textContent=(rotePerTB*2).toLocaleString();
 
-  document.getElementById('tw-outcome-buttons').innerHTML = ['win','loss'].map(o=>`
+  document.getElementById('tw-outcome-buttons').innerHTML = ['none','win','loss'].map(o=>`
     <button type="button" class="btn ${state.guild.twOutcome === o ? 'btn-accent' : 'btn-ghost'}" style="flex:1"
-      onclick="setTwOutcome('${o}')">${o === 'win' ? 'Win' : 'Loss'}</button>
+      onclick="setTwOutcome('${o}')">${o === 'none' ? 'None' : (o === 'win' ? 'Win' : 'Loss')}</button>
   `).join('');
-  const twPerEvent = calcTerritoryWarsGet2();
+  const twPerEvent = calcTerritoryWarsGet2PerEvent();
+  const twPerMonth = calcTerritoryWarsGet2PerMonth();
   document.getElementById('tw-get2-per-event').textContent = twPerEvent.toLocaleString();
-  document.getElementById('tw-get2-month').textContent = (twPerEvent*TERRITORY_WARS.eventsPerMonth).toLocaleString();
+  document.getElementById('tw-get2-month').textContent = twPerMonth.toLocaleString();
 
   const pl=document.getElementById('planet-list');
   pl.innerHTML=PLANETS.map(p=>{
@@ -1571,6 +1576,10 @@ function setConquestMerchantChoice(choice){
     state.conquestMerchant = { choice: selection.green ? 'none' : 'green', green: !selection.green, blue: selection.blue };
   } else if(choice === 'blue'){
     state.conquestMerchant = { choice: selection.blue ? 'none' : 'blue', green: selection.green, blue: !selection.blue };
+  }
+  if(choice === 'green' || choice === 'blue') {
+    const hasSelection = Boolean(state.conquestMerchant.green || state.conquestMerchant.blue);
+    state.conquestMerchant.choice = hasSelection ? (state.conquestMerchant.green && state.conquestMerchant.blue ? 'both' : (state.conquestMerchant.green ? 'green' : 'blue')) : 'none';
   }
   renderConquestMerchant();
   updatePlanSummary();
@@ -1856,7 +1865,12 @@ function renderCampaignTotals(groupData){
 }
 
 function buildGroupCard({m,demand,available,net,carryIn,carryOut},idx){
-  const hasCarryIn=carryIn.grey>0||carryIn.green>0||carryIn.blue>0;
+  const normalizedCarryIn = {
+    grey: Number(carryIn?.grey || 0),
+    green: Number(carryIn?.green || 0),
+    blue: Number(carryIn?.blue || 0)
+  };
+  const hasCarryIn = normalizedCarryIn.grey > 0 || normalizedCarryIn.green > 0 || normalizedCarryIn.blue > 0;
   const hasShortfall = net.grey<0 || net.green<0 || net.blue<0;
 
   const otherGroups = state.groups.filter(g=>g.id!==m.id);
@@ -1901,9 +1915,9 @@ function buildGroupCard({m,demand,available,net,carryIn,carryOut},idx){
   const carryInHtml=hasCarryIn?`
     <div style="padding:6px 14px;background:rgba(124,106,247,.06);border-bottom:1px solid var(--border);font-size:11px;color:var(--text3);display:flex;gap:8px;align-items:center">
       <span style="text-transform:uppercase;letter-spacing:.06em">Carry-in:</span>
-      ${carryIn.grey>0?`<span class="pill pill-grey" style="font-size:11px">+${carryIn.grey}</span>`:''}
-      ${carryIn.green>0?`<span class="pill pill-green" style="font-size:11px">+${carryIn.green}</span>`:''}
-      ${carryIn.blue>0?`<span class="pill pill-blue" style="font-size:11px">+${carryIn.blue}</span>`:''}
+      ${normalizedCarryIn.grey>0?`<span class="pill pill-grey" style="font-size:11px">+${normalizedCarryIn.grey}</span>`:''}
+      ${normalizedCarryIn.green>0?`<span class="pill pill-green" style="font-size:11px">+${normalizedCarryIn.green}</span>`:''}
+      ${normalizedCarryIn.blue>0?`<span class="pill pill-blue" style="font-size:11px">+${normalizedCarryIn.blue}</span>`:''}
     </div>`:'' ;
 
   return `
