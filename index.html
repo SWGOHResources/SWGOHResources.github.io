@@ -657,29 +657,20 @@ function updateAuthUI(){
   const plannerShell=document.getElementById('planner-shell');
   const userPanel=document.getElementById('auth-user-panel');
   if(authScreen && plannerShell){
-    const canUsePlanner = authUser || !authAvailable;
-    if(canUsePlanner){
+    if(authUser){
       authScreen.style.display='none';
       plannerShell.style.display='block';
       if(userPanel){
-        userPanel.style.display = authUser ? 'block' : 'none';
-        if(authUser){
-          const displayName = authUser.displayName || authUser.email || 'Account';
-          userPanel.textContent = `Signed in as ${displayName}`;
-        }
+        userPanel.style.display='block';
+        const displayName = authUser.displayName || authUser.email || 'Account';
+        userPanel.textContent = `Signed in as ${displayName}`;
       }
-      if(authUser){
-        setAuthStatus('Signed in', false);
-      } else if(!authAvailable){
-        setAuthStatus(authDisabledReason || 'Sign-in unavailable; continuing in local-only mode', false);
-      } else {
-        setAuthStatus(authReady ? 'Not signed in' : 'Connecting…', false);
-      }
+      setAuthStatus('Signed in', false);
     } else {
       authScreen.style.display='block';
       plannerShell.style.display='none';
       if(userPanel){ userPanel.style.display='none'; }
-      setAuthStatus(authReady ? 'Not signed in' : 'Connecting…', false);
+      setAuthStatus(authReady ? (authDisabledReason || 'Please sign in to continue') : 'Connecting…', authDisabledReason ? true : false);
     }
   }
 }
@@ -843,7 +834,7 @@ async function submitAuthForm(){
   const password=document.getElementById('auth-password').value;
   if(!email || !password){ setAuthStatus('Enter your email and password', true); return; }
   if(!firebaseAuth || !authAvailable){
-    setAuthStatus('Sign-in is currently unavailable. Continuing in local-only mode.', true);
+    setAuthStatus(authDisabledReason || 'Authentication is unavailable right now.', true);
     return;
   }
   try{
@@ -861,7 +852,7 @@ async function submitAuthForm(){
 
 async function signInWithGoogle(){
   if(!firebaseAuth || !authAvailable){
-    setAuthStatus('Sign-in is currently unavailable. Continuing in local-only mode.', true);
+    setAuthStatus(authDisabledReason || 'Authentication is unavailable right now.', true);
     return;
   }
   try{
@@ -903,10 +894,8 @@ function initFirebase(){
       updateAuthUI();
       if(user){
         loadFromFirebase();
-      } else if(!authAvailable){
-        setAuthStatus(authDisabledReason || 'Sign-in unavailable; continuing in local-only mode', false);
       } else {
-        setAuthStatus('Not signed in', false);
+        setAuthStatus('Please sign in to continue', true);
       }
     });
   } catch(e){
@@ -914,10 +903,10 @@ function initFirebase(){
     firebaseAuth = null;
     firebaseDb = null;
     authAvailable = false;
-    authDisabledReason = 'Sign-in unavailable; continuing in local-only mode.';
+    authDisabledReason = 'Authentication failed. Please verify the Firebase setup.';
     authReady = true;
     updateAuthUI();
-    setAuthStatus(authDisabledReason, false);
+    setAuthStatus(authDisabledReason, true);
   }
 }
 
