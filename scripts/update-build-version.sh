@@ -14,4 +14,16 @@ fi
 
 printf 'window.BUILD_VERSION = "%s";\n' "$build_value" > build-version.js
 
-git add build-version.js
+python3 - <<'PY' "$build_value"
+import pathlib, re, sys
+path = pathlib.Path('index.html')
+text = path.read_text()
+pattern = re.compile(r'<script\s+src="\./build-version\.js(?:\?v=[^"]*)?"></script>')
+new = f'<script src="./build-version.js?v={sys.argv[1]}"></script>'
+new_text, count = pattern.subn(new, text, count=1)
+if count != 1:
+    raise SystemExit('build-version script tag not found')
+path.write_text(new_text)
+PY
+
+git add build-version.js index.html
