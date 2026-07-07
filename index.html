@@ -122,6 +122,9 @@ input[type=text],input[type=number],select{
   padding:0 10px;height:32px;width:100%;outline:none;
   transition:border-color .15s;-webkit-appearance:none;appearance:none;
 }
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0; }
+input[type=number]{ -moz-appearance:textfield; appearance:textfield; }
 input:focus,select:focus{border-color:var(--accent)}
 select{
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23555'/%3E%3C/svg%3E");
@@ -330,7 +333,6 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:8px;flex-wrap:wrap">
         <div style="font-size:12px;color:var(--text3)">Drag units to reorder · click header to collapse</div>
         <div style="display:flex;gap:8px">
-          <button class="btn btn-ghost" onclick="copyPlanSummary()">Copy summary</button>
           <button class="btn btn-accent" onclick="addGroup()">+ Add group</button>
         </div>
       </div>
@@ -344,7 +346,7 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
           <div style="font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);margin-bottom:8px">GET 2 store</div>
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
             <div style="font-size:12px;color:var(--text2);flex:1">Grey ×20 purchases <span style="color:var(--text3)">(1600 each)</span></div>
-            <input type="number" id="grey-purchases" min="0" max="50" value="0"
+            <input type="text" id="grey-purchases" inputmode="numeric" pattern="[0-9]*" value="0"
               style="width:60px;text-align:center" oninput="onGreyPurchasesChange()">
           </div>
           <div style="font-size:11px;color:var(--text3)" id="grey-purchase-cost"></div>
@@ -481,7 +483,7 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
           <div class="config-stat-row">
             <div class="config-label">Daily Crystal Refreshes</div>
             <div class="config-inline-field">
-              <input type="number" id="cantina-refreshes" min="0" max="14" value="0" class="config-inline-input" oninput="onCantinaChange('refreshes', this.value)">
+              <input type="text" id="cantina-refreshes" inputmode="numeric" pattern="[0-9]*" value="0" class="config-inline-input" oninput="onCantinaChange('refreshes', this.value)">
             </div>
           </div>
           <div class="config-stat-row">
@@ -511,12 +513,10 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
       <div class="section" style="margin-bottom:0">
         <div class="section-head"><div class="section-title">Optional Store Sources</div></div>
         <div class="section-body" id="toggles-container"></div>
-        <div class="section-body" style="padding-top:0">
-          <div style="padding-top:4px;border-top:1px solid var(--border)">
-            <div style="font-size:13px;font-weight:500;margin-bottom:4px">Conquest Merchant</div>
-            <div style="font-size:11px;color:var(--text3);margin-bottom:8px">Choose any combination of green and/or blue signals. Each option adds 40 signals per month.</div>
-            <div style="display:flex;gap:8px" id="conquest-merchant-buttons"></div>
-          </div>
+        <div class="section-body" style="padding-top:6px">
+          <div style="font-size:13px;font-weight:500;margin-bottom:4px">Conquest Merchant</div>
+          <div style="font-size:11px;color:var(--text3);margin-bottom:8px">Toggle green and blue separately. Each selected option adds 40 signals per month.</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap" id="conquest-merchant-buttons"></div>
         </div>
       </div>
     </div>
@@ -545,7 +545,7 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
 </div><!-- planner-shell -->
 </div><!-- .app -->
 
-<script src="./build-version.js?v=1379e18-39"></script>
+<script src="./build-version.js?v=9ddfa1c-40"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
@@ -600,10 +600,8 @@ const DEFAULT_SOURCES = [
   { key:'rote',     label:'ROTE (End of TB Crate)',      grey:21, green:11, blue:9  },
 ];
 
-// Weekly toggles store their GET 2 / signal value PER WEEK. The monthly
-// contribution is computed as value * (days in that month / 7), so months
-// with more days correctly get slightly more weekly purchases than months
-// with fewer days, instead of assuming a flat "4 weeks every month".
+// Optional store values are weekly amounts. The monthly contribution is
+// scaled by the current month length so longer months get slightly more.
 const DEFAULT_TOGGLES = {
   episodeShipment: { enabled: false, label: 'Episode Shipment', cadence: 'monthly', grey: 45, green: 40, blue: 0, monthlyCount: 0 },
   eraColiseum:     { enabled: false, label: 'Era Coliseum',     cadence: 'monthly', grey: 0,  green: 0,  blue: 25, monthlyCount: 0 }
@@ -1230,8 +1228,18 @@ function sanitizeNumericValue(val){
   return Number.isFinite(parsed) ? parsed : 0;
 }
 
+function getConquestMerchantSelection(){
+  const cm = state.conquestMerchant || {};
+  const choice = String(cm.choice || 'none').toLowerCase();
+  if(choice === 'green') return { green:true, blue:false };
+  if(choice === 'blue') return { green:false, blue:true };
+  if(choice === 'both') return { green:true, blue:true };
+  return { green: Boolean(cm.green), blue: Boolean(cm.blue) };
+}
+
 function getMonthlyIncomeBreakdown(monthKey){
   const monthScale = getMonthScale(monthKey);
+  const weekScale = getMonthDayCount(monthKey) / 7;
   const baseSources = { grey:0, green:0, blue:0 };
   const toggles = { grey:0, green:0, blue:0 };
   const cantina = calcCantinaIncome(monthKey);
@@ -1248,21 +1256,14 @@ function getMonthlyIncomeBreakdown(monthKey){
   for(const k in state.toggles){
     const t = state.toggles[k];
     if(!t.enabled) continue;
-    const monthlyCount = Math.max(0, Math.min(4, Number(t.monthlyCount || 0)));
-    if(monthlyCount <= 0) continue;
-    toggles.grey += Math.round(Number(t.grey||0)*monthlyCount);
-    toggles.green += Math.round(Number(t.green||0)*monthlyCount);
-    toggles.blue += Math.round(Number(t.blue||0)*monthlyCount);
+    toggles.grey += Math.round(Number(t.grey||0) * weekScale);
+    toggles.green += Math.round(Number(t.green||0) * weekScale);
+    toggles.blue += Math.round(Number(t.blue||0) * weekScale);
   }
 
-  if(state.conquestMerchant?.choice === 'blue'){
-    conquest.blue += CONQUEST_MERCHANT_AMOUNT;
-  } else if(state.conquestMerchant?.choice === 'green'){
-    conquest.green += CONQUEST_MERCHANT_AMOUNT;
-  } else if(state.conquestMerchant?.choice === 'both'){
-    conquest.green += CONQUEST_MERCHANT_AMOUNT;
-    conquest.blue += CONQUEST_MERCHANT_AMOUNT;
-  }
+  const selection = getConquestMerchantSelection();
+  if(selection.green){ conquest.green += CONQUEST_MERCHANT_AMOUNT; }
+  if(selection.blue){ conquest.blue += CONQUEST_MERCHANT_AMOUNT; }
 
   return {
     baseSources,
@@ -1466,11 +1467,7 @@ function renderConfig(){
         <span style="font-size:13px; font-weight:500; color:${t.enabled?'var(--text)':'var(--text2)'}">${t.label}</span>
       </label>
       <div style="display:grid; gap:8px; padding-left:24px; opacity:${t.enabled?'1':'0.4'}; pointer-events:${t.enabled?'auto':'none'}">
-        <div class="config-help">Set how many times per month this source is purchased. Values are per purchase and then multiplied by the count.</div>
-        <div class="config-inline-field" style="justify-content:flex-start">
-          <label class="config-help" style="min-width:90px">Times / month</label>
-          <input type="number" min="0" max="4" value="${t.monthlyCount || 0}" class="config-inline-input-sm" oninput="updateToggle('${k}','monthlyCount',this.value)" onblur="commitToggleValue('${k}','monthlyCount',this)">
-        </div>
+        <div class="config-help">These values are per week. Monthly totals scale automatically by the current month length.</div>
         <div style="display:flex; gap:8px; flex-wrap:wrap">
           <div style="display:flex;align-items:center;gap:4px">
             <span style="font-size:11px;color:var(--grey)">Gy:</span>
@@ -1540,7 +1537,6 @@ function commitSourceValue(i, field, element){
 
 function updateToggle(key, field, val){
   if(field === 'enabled') state.toggles[key].enabled = val;
-  else if(field === 'monthlyCount') state.toggles[key][field] = Math.max(0, Math.min(4, Math.floor(sanitizeNumericValue(val))));
   else state.toggles[key][field] = Math.max(0, Math.floor(sanitizeNumericValue(val)));
   
   if(field === 'enabled') renderConfig(); // re-render to toggle disabled states visually
@@ -1555,21 +1551,27 @@ function commitToggleValue(key, field, element){
 function renderConquestMerchant(){
   const container = document.getElementById('conquest-merchant-buttons');
   if(!container) return;
-  const choice = state.conquestMerchant?.choice || 'none';
+  const selection = getConquestMerchantSelection();
   const options = [
-    { value:'none', label:'None' },
-    { value:'green', label:`Green ×${CONQUEST_MERCHANT_AMOUNT}` },
-    { value:'blue', label:`Blue ×${CONQUEST_MERCHANT_AMOUNT}` },
-    { value:'both', label:`Green + Blue` }
+    { value:'none', label:'None', active: !selection.green && !selection.blue },
+    { value:'green', label:`Green ×${CONQUEST_MERCHANT_AMOUNT}`, active: selection.green },
+    { value:'blue', label:`Blue ×${CONQUEST_MERCHANT_AMOUNT}`, active: selection.blue }
   ];
   container.innerHTML = options.map(o=>`
-    <button type="button" class="btn ${choice===o.value?'btn-accent':'btn-ghost'}" style="flex:1"
+    <button type="button" class="btn ${o.active?'btn-accent':'btn-ghost'}" style="flex:1"
       onclick="setConquestMerchantChoice('${o.value}')">${o.label}</button>
   `).join('');
 }
 
 function setConquestMerchantChoice(choice){
-  state.conquestMerchant = { choice };
+  const selection = getConquestMerchantSelection();
+  if(choice === 'none'){
+    state.conquestMerchant = { choice:'none', green:false, blue:false };
+  } else if(choice === 'green'){
+    state.conquestMerchant = { choice: selection.green ? 'none' : 'green', green: !selection.green, blue: selection.blue };
+  } else if(choice === 'blue'){
+    state.conquestMerchant = { choice: selection.blue ? 'none' : 'blue', green: selection.green, blue: !selection.blue };
+  }
   renderConquestMerchant();
   updatePlanSummary();
   save();
@@ -1780,34 +1782,6 @@ function onGreyPurchasesChange(){
   document.getElementById('grey-purchase-cost').textContent=
     state.greyPurchases>0 ? `${state.greyPurchases}×1600 = ${cost.toLocaleString()} GET 2 spent` : '';
   save(); updatePlanSummary();
-}
-
-function copyPlanSummary(){
-  if(!state.groups.length){
-    showLimitNotice('Add a group before copying a summary.');
-    return;
-  }
-  let carry={grey:0,green:0,blue:0};
-  const lines=[];
-  for(const m of state.groups){
-    const monthInc=calcMonthlyIncome(m.month);
-    const demand=calcGroupDemand(m);
-    const available={grey:monthInc.grey+carry.grey,green:monthInc.green+carry.green,blue:monthInc.blue+carry.blue};
-    const net={grey:available.grey-demand.grey,green:available.green-demand.green,blue:available.blue-demand.blue};
-    carry={grey:Math.max(0,net.grey),green:Math.max(0,net.green),blue:Math.max(0,net.blue)};
-    const unitNames = m.units.filter(u=>u.name).map(u=>`${u.name} (${u.from||'?'}→${u.to||'?'})`).join(', ') || 'no units listed';
-    lines.push(`${m.label}: ${unitNames}\n  need: G${demand.grey} / Gr${demand.green} / B${demand.blue}  |  net: G${net.grey>=0?'+':''}${net.grey} / Gr${net.green>=0?'+':''}${net.green} / B${net.blue>=0?'+':''}${net.blue}`);
-  }
-  const text = lines.join('\n\n');
-  if(navigator.clipboard && navigator.clipboard.writeText){
-    navigator.clipboard.writeText(text).then(()=>{
-      setSaveStatus('Summary copied');
-    }).catch(()=>{
-      showLimitNotice('Could not copy — clipboard blocked.');
-    });
-  } else {
-    showLimitNotice('Clipboard not available in this browser.');
-  }
 }
 
 function renderPlan(){
