@@ -545,7 +545,7 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
 </div><!-- planner-shell -->
 </div><!-- .app -->
 
-<script src="./build-version.js?v=ccaaa91-41"></script>
+<script src="./build-version.js?v=ea46a4c-42"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
@@ -922,7 +922,9 @@ function shouldUseLocalStateOverRemote(payload){
   const remoteUpdatedAt = getTimestampValue(payload && payload.updatedAt);
   const localMeta = readLocalStorageMeta();
   const localUpdatedAt = localMeta && localMeta.lastModifiedAt;
+  const localRaw = localStorage.getItem(LOCAL_STORAGE_KEY) || localStorage.getItem('relic_planner_v3');
   if(!remoteUpdatedAt || !localUpdatedAt) return false;
+  if(!localRaw) return false;
   return new Date(localUpdatedAt).getTime() > new Date(remoteUpdatedAt).getTime();
 }
 
@@ -1027,8 +1029,8 @@ function load(){
       if(!state.toggles) state.toggles = JSON.parse(JSON.stringify(DEFAULT_TOGGLES));
       state.toggles = migrateToggleCadence(state.toggles);
       if(!state.sources || state.sources.length===0) state.sources=JSON.parse(JSON.stringify(DEFAULT_SOURCES));
+      persistLocalStateSnapshot();
     }
-    persistLocalStateSnapshot();
   }catch(e){}
 }
 
