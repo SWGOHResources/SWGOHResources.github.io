@@ -346,8 +346,12 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
           <div style="font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);margin-bottom:8px">GET 2 store</div>
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
             <div style="font-size:12px;color:var(--text2);flex:1">Grey ×20 purchases <span style="color:var(--text3)">(1600 each)</span></div>
-            <input type="text" id="grey-purchases" inputmode="numeric" pattern="[0-9]*" value="0"
-              style="width:60px;text-align:center" oninput="onGreyPurchasesChange()">
+            <div style="display:flex;align-items:center;gap:2px">
+              <button type="button" class="btn btn-ghost btn-icon" style="width:24px;height:24px;font-size:11px" onclick="adjustGreyPurchases(-1)">−</button>
+              <input type="text" id="grey-purchases" inputmode="numeric" pattern="[0-9]*" value="0"
+                style="width:40px;text-align:center;height:24px;padding:0" oninput="onGreyPurchasesChange()">
+              <button type="button" class="btn btn-ghost btn-icon" style="width:24px;height:24px;font-size:11px" onclick="adjustGreyPurchases(1)">+</button>
+            </div>
           </div>
           <div style="font-size:11px;color:var(--text3)" id="grey-purchase-cost"></div>
         </div>
@@ -554,7 +558,7 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
 </div><!-- planner-shell -->
 </div><!-- .app -->
 
-<script src="./build-version.js?v=92da550-44"></script>
+<script src="./build-version.js?v=e6ac9c0-45"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
@@ -698,6 +702,9 @@ function setSaveStatus(message, isError){
   },1500);
 }
 
+// ═══════════════════════════════════════════════════════
+// AUTH AND UTILITY FUNCS
+// ═══════════════════════════════════════════════════════
 function setAuthStatus(message, isError){
   const el=document.getElementById('auth-status');
   if(!el) return;
@@ -1688,6 +1695,9 @@ function toggleCollapse(id){
   if(m){ m.collapsed=!m.collapsed; save(); renderPlan(); }
 }
 
+// ═══════════════════════════════════════════════════════
+// REORDER & DRAG AND DROP
+// ═══════════════════════════════════════════════════════
 function moveGroup(id,dir){
   const idx=state.groups.findIndex(m=>m.id===id);
   const newIdx=idx+dir;
@@ -1822,26 +1832,68 @@ function commitUnitName(groupId, unitId, element){
   save();
 }
 
+// ═══════════════════════════════════════════════════════
+// GET 2 STORE PURCHASES
+// ═══════════════════════════════════════════════════════
+function updateGreyPurchasesUI() {
+  const inputEl = document.getElementById('grey-purchases');
+  if (!inputEl) return;
+  
+  const v = state.greyPurchases || 0;
+  inputEl.value = v;
+  
+  const get2 = calcGet2PerMonth();
+  const maxBuys = Math.floor(get2.total / 1600);
+  
+  // Style red when purchases exceed affordable limit
+  if (v > maxBuys) {
+    inputEl.style.borderColor = 'var(--red)';
+    inputEl.style.color = 'var(--red)';
+    inputEl.style.boxShadow = '0 0 0 1px rgba(224, 85, 85, 0.25)';
+  } else {
+    inputEl.style.borderColor = '';
+    inputEl.style.color = '';
+    inputEl.style.boxShadow = '';
+  }
+  
+  const cost = v * 1600;
+  const costEl = document.getElementById('grey-purchase-cost');
+  if (costEl) {
+    if (v > 0) {
+      const maybeRedStyle = v > maxBuys ? 'color:var(--red);font-weight:600' : '';
+      costEl.innerHTML = `${v}×1600 = <span style="${maybeRedStyle}">${cost.toLocaleString()}</span> / ${get2.total.toLocaleString()} GET 2`;
+    } else {
+      costEl.innerHTML = '';
+    }
+  }
+}
+
 function onGreyPurchasesChange(){
   if(!canPerformStoreEdit()){
     showLimitNotice(`You are changing too quickly. Please wait a moment.`);
     return;
   }
-  const v=Math.max(0,parseInt(document.getElementById('grey-purchases').value)||0);
-  state.greyPurchases=v;
-  const get2=calcGet2PerMonth();
-  const maxBuys=Math.floor(get2.total/1600);
-  const clamped=Math.min(v,maxBuys);
-  if(clamped!==v){
-    state.greyPurchases=clamped;
-    document.getElementById('grey-purchases').value=clamped;
-  }
-  const cost=state.greyPurchases*1600;
-  document.getElementById('grey-purchase-cost').textContent=
-    state.greyPurchases>0 ? `${state.greyPurchases}×1600 = ${cost.toLocaleString()} GET 2 spent` : '';
-  save(); updatePlanSummary();
+  const inputEl = document.getElementById('grey-purchases');
+  if (!inputEl) return;
+  const v = Math.max(0, parseInt(inputEl.value) || 0);
+  state.greyPurchases = v;
+  
+  updateGreyPurchasesUI();
+  save();
+  updatePlanSummary();
 }
 
+function adjustGreyPurchases(amount) {
+  const inputEl = document.getElementById('grey-purchases');
+  if (!inputEl) return;
+  let v = Math.max(0, (parseInt(inputEl.value) || 0) + amount);
+  inputEl.value = v;
+  onGreyPurchasesChange();
+}
+
+// ═══════════════════════════════════════════════════════
+// UI RENDERING PLANNER
+// ═══════════════════════════════════════════════════════
 function renderPlan(){
   const inc=calcMonthlyIncome();
   const incEl=document.getElementById('income-display');
@@ -1850,10 +1902,7 @@ function renderPlan(){
     <div class="income-stat"><span style="color:var(--green)">Green</span><span class="income-stat-val" style="color:var(--green)">${inc.green}</span></div>
     <div class="income-stat" style="border-bottom:none"><span style="color:var(--blue)">Blue</span><span class="income-stat-val" style="color:var(--blue)">${inc.blue}</span></div>`;
 
-  document.getElementById('grey-purchases').value=state.greyPurchases||0;
-  const cost=(state.greyPurchases||0)*1600;
-  document.getElementById('grey-purchase-cost').textContent=
-    state.greyPurchases>0 ? `${state.greyPurchases}×1600 = ${cost.toLocaleString()} GET 2` : '';
+  updateGreyPurchasesUI();
 
   const list=document.getElementById('groups-list');
   if(!state.groups.length){
