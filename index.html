@@ -1,3 +1,5 @@
+--- START OF FILE Paste July 10, 2026 - 10:07PM ---
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -91,7 +93,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-
 
 /* ─── Layout ──────────────────────────────────── */
 .app{max-width:1100px;margin:0 auto;padding:24px 20px}
-.page{display:none}.page.active{display:block}
+.page{display:none} .page.active{display:block}
 
 .confirm-modal{position:fixed;inset:0;background:rgba(0,0,0,.72);display:none;align-items:center;justify-content:center;padding:20px;z-index:300}
 .confirm-card{width:min(420px,100%);background:var(--bg1);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:0 20px 50px rgba(0,0,0,.35);padding:18px}
@@ -524,6 +526,14 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
 
     <div class="config-stack">
       <div class="section" style="margin-bottom:0">
+        <div class="section-head"><div class="section-title">Assault Battles Tiers</div></div>
+        <div class="section-body">
+          <div class="config-help" style="margin-bottom:12px">Configure how many tiers (Challenge Tier 1 & 2) you can beat for each event. Each tier rewards 5 grey, 3 green, and 3 blue signals once a month.</div>
+          <div id="assault-battles-container"></div>
+        </div>
+      </div>
+
+      <div class="section" style="margin-bottom:0">
         <div class="section-head"><div class="section-title">Optional Store Options</div></div>
         <div class="section-body" id="toggles-container"></div>
         <div class="section-body" style="padding-top:6px">
@@ -558,7 +568,7 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
 </div><!-- planner-shell -->
 </div><!-- .app -->
 
-<script src="./build-version.js?v=953e36b-49"></script>
+<script src="./build-version.js?v=cd71775-50"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
@@ -608,11 +618,30 @@ const CANTINA_NODES = {
 };
 
 const DEFAULT_SOURCES = [
-  { key:'assault',  label:'Assault Battles', grey:70, green:42, blue:42 },
   { key:'episodetrack',  label:'Episode Track', grey:75, green:65, blue:15 },
   { key:'conquest', label:'Conquest',        grey:10, green:10, blue:10 },
   { key:'rote',     label:'ROTE (End of TB Crate)',      grey:21, green:11, blue:9  },
 ];
+
+const DEFAULT_ASSAULT_BATTLES = {
+  militaryMight: 2,
+  forestMoon: 2,
+  groundWar: 2,
+  placesOfPower: 2,
+  secretsAndShadows: 2,
+  rebelRoundup: 2,
+  fanaticalDevotion: 2
+};
+
+const ASSAULT_BATTLE_LABELS = {
+  militaryMight: 'Military Might',
+  forestMoon: 'Forest Moon',
+  groundWar: 'Ground War',
+  placesOfPower: 'Places of Power',
+  secretsAndShadows: 'Secrets & Shadows',
+  rebelRoundup: 'Rebel Round-up',
+  fanaticalDevotion: 'Fanatical Devotion'
+};
 
 // Optional store values are weekly amounts. The monthly contribution is
 // scaled by the current month length so longer months get slightly more.
@@ -678,6 +707,7 @@ let state = {
   conquestMerchant: { choice: 'none' }, // 'none' | 'blue' | 'green'
   toggles: JSON.parse(JSON.stringify(DEFAULT_TOGGLES)),
   sources: JSON.parse(JSON.stringify(DEFAULT_SOURCES)),
+  assaultBattles: { ...DEFAULT_ASSAULT_BATTLES },
   groups: [],
   _mid: 0,
   _uid: 0,
@@ -835,7 +865,7 @@ function normalizeSources(rawSources){
   for(const s of rawSources){
     if(!s || !s.key) continue;
     const key = String(s.key).toLowerCase();
-    if(['cantina','era_store','episode_store','episode_track'].includes(key)) continue;
+    if(['cantina','era_store','episode_store','episode_track','assault'].includes(key)) continue;
 
     const normalizedKey = key === 'episodetrack' || key === 'episode_track' ? 'episodetrack' : key;
     if(!byKey.has(normalizedKey)) {
@@ -876,6 +906,7 @@ function mergeStateWithDefaults(remoteState){
   merged.conquestMerchant = { choice: 'none', ...(incoming.conquestMerchant || {}) };
   merged.toggles = migrateToggleCadence({ ...JSON.parse(JSON.stringify(DEFAULT_TOGGLES)), ...(incoming.toggles || {}) });
   merged.sources = normalizeSources(incoming.sources);
+  merged.assaultBattles = { ...DEFAULT_ASSAULT_BATTLES, ...(incoming.assaultBattles || {}) };
   merged.groups = Array.isArray(incoming.groups) ? incoming.groups : base.groups;
   merged._mid = Number(incoming._mid || base._mid) || base._mid;
   merged._uid = Number(incoming._uid || base._uid) || base._uid;
@@ -1064,6 +1095,7 @@ function load(){
       if(!state.toggles) state.toggles = JSON.parse(JSON.stringify(DEFAULT_TOGGLES));
       state.toggles = migrateToggleCadence(state.toggles);
       if(!state.sources || state.sources.length===0) state.sources=JSON.parse(JSON.stringify(DEFAULT_SOURCES));
+      if(!state.assaultBattles) state.assaultBattles = { ...DEFAULT_ASSAULT_BATTLES };
       persistLocalStateSnapshot();
     }
   }catch(e){}
@@ -1282,12 +1314,22 @@ function getMonthlyIncomeBreakdown(monthKey){
   const cantina = calcCantinaIncome(monthKey);
   const conquest = { grey:0, green:0, blue:0 };
   const greyExtra = (state.greyPurchases||0)*20;
+  const assault = { grey:0, green:0, blue:0 };
 
   for(const s of state.sources){
     const multiplier = (s.key === 'rote' || /rote/i.test(s.label || '')) ? 2 : 1;
     baseSources.grey += Math.round(Number(s.grey||0)*multiplier*monthScale);
     baseSources.green += Math.round(Number(s.green||0)*multiplier*monthScale);
     baseSources.blue += Math.round(Number(s.blue||0)*multiplier*monthScale);
+  }
+
+  // Calculate Assault Battles (flat per month, no monthScale scaling)
+  const ab = state.assaultBattles || {};
+  for(const key in ab) {
+    const tiers = Number(ab[key] || 0);
+    assault.grey += tiers * 5;
+    assault.green += tiers * 3;
+    assault.blue += tiers * 3;
   }
 
   for(const k in state.toggles){
@@ -1307,11 +1349,12 @@ function getMonthlyIncomeBreakdown(monthKey){
     toggles,
     cantina,
     conquest,
+    assault,
     greyPurchases: { grey: greyExtra, green:0, blue:0 },
     total: {
-      grey: baseSources.grey + toggles.grey + cantina.grey + conquest.grey + greyExtra,
-      green: baseSources.green + toggles.green + cantina.green + conquest.green,
-      blue: baseSources.blue + toggles.blue + cantina.blue + conquest.blue
+      grey: baseSources.grey + toggles.grey + cantina.grey + conquest.grey + greyExtra + assault.grey,
+      green: baseSources.green + toggles.green + cantina.green + conquest.green + assault.green,
+      blue: baseSources.blue + toggles.blue + cantina.blue + conquest.blue + assault.blue
     }
   };
 }
@@ -1550,6 +1593,9 @@ function renderConfig(){
   // --- Conquest Merchant UI ---
   renderConquestMerchant();
 
+  // --- Assault Battles UI ---
+  renderAssaultBattles();
+
   // --- Relic Cost UI ---
   const rt=document.getElementById('relic-info-table');
   rt.innerHTML=Object.entries(RELIC_COST).reverse().map(([lvl,c])=>`
@@ -1639,6 +1685,35 @@ function setConquestMerchantChoice(choice){
     state.conquestMerchant.choice = hasSelection ? (state.conquestMerchant.green && state.conquestMerchant.blue ? 'both' : (state.conquestMerchant.green ? 'green' : 'blue')) : 'none';
   }
   renderConquestMerchant();
+  updatePlanSummary();
+  save();
+}
+
+function renderAssaultBattles(){
+  const container = document.getElementById('assault-battles-container');
+  if(!container) return;
+  
+  const ab = state.assaultBattles || {};
+  container.innerHTML = Object.entries(ASSAULT_BATTLE_LABELS).map(([key, label]) => {
+    const val = ab[key] !== undefined ? ab[key] : 2;
+    return `
+      <div class="config-stat-row">
+        <div class="config-label">${label}</div>
+        <div class="config-inline-field">
+          <select onchange="updateAssaultBattle('${key}', this.value)" style="width: 100px; height: 28px;">
+            <option value="0" ${Number(val) === 0 ? 'selected' : ''}>0 Tiers</option>
+            <option value="1" ${Number(val) === 1 ? 'selected' : ''}>1 Tier</option>
+            <option value="2" ${Number(val) === 2 ? 'selected' : ''}>2 Tiers</option>
+          </select>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function updateAssaultBattle(key, val){
+  if(!state.assaultBattles) state.assaultBattles = {};
+  state.assaultBattles[key] = Number(val);
   updatePlanSummary();
   save();
 }
