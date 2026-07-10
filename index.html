@@ -604,7 +604,7 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
           </div>
 
           <!-- Era Coliseum Purchase Count & choice -->
-          <div style="font-size:13px;font-weight:500;margin-bottom:4px; border-top:1px solid var(--border); padding-top:12px">Era Coliseum Store</div>
+          <div style="font-size:13px;font-weight:500;margin-bottom:4px; border-top:1px solid var(--border); padding-top:12px">Era Store</div>
           <div style="display:flex; gap:12px; align-items:center; margin-bottom:14px; flex-wrap:wrap">
             <div style="display:flex; align-items:center; gap:6px">
               <span style="font-size:12px;color:var(--text2)">Times / month:</span>
@@ -841,7 +841,7 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
 </div><!-- planner-shell -->
 </div><!-- .app -->
 
-<script src="./build-version.js?v=eae4e62-54"></script>
+<script src="./build-version.js?v=69e8f50-55"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
@@ -1625,7 +1625,6 @@ function getMonthlyIncomeBreakdown(monthKey){
         if (choice === 'grey' || choice === 'both') g = times * 45;
         if (choice === 'green' || choice === 'both') gr = times * 40;
       } else if (k === 'eraColiseum') {
-        if (choice === 'grey' || choice === 'both') g = times * 45;
         if (choice === 'blue' || choice === 'both') bl = times * 25;
       }
       toggles.grey += g;
@@ -1907,9 +1906,7 @@ function renderConfig(){
     const choice = state.toggles.eraColiseum.choice || 'none';
     const opts = [
       { value: 'none', label: 'None' },
-      { value: 'grey', label: 'Grey (45)' },
       { value: 'blue', label: 'Blue (25)' },
-      { value: 'both', label: 'Both' }
     ];
     eraBtnContainer.innerHTML = opts.map(o => `
       <button type="button" class="btn btn-sm ${choice === o.value ? 'btn-accent' : 'btn-ghost'}"
