@@ -277,6 +277,45 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
 .reorder-btn:hover:not(:disabled){background:var(--accent-mid);color:#fff;border-color:var(--accent);}
 .reorder-btn:disabled{background:transparent;opacity:.3;cursor:default;color:var(--text3);border-color:var(--border);}
 
+/* ─── Relic Info scrollable responsive tables ────────────────── */
+.relic-info-scroll {
+  overflow-x: auto;
+  margin-top: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.relic-materials-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+}
+.relic-materials-table th {
+  background: var(--bg2);
+  color: var(--text2);
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  padding: 8px 10px;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+}
+.relic-materials-table td {
+  padding: 8px 10px;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+  font-family: 'JetBrains Mono', monospace;
+  white-space: nowrap;
+}
+.relic-materials-table tr:hover {
+  background: var(--bg3);
+}
+.relic-materials-table th:first-child, .relic-materials-table td:first-child {
+  text-align: left;
+  padding-left: 12px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+}
 </style>
 </head>
 <body>
@@ -343,7 +382,11 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
     <div id="groups-col">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:8px;flex-wrap:wrap">
         <div style="font-size:12px;color:var(--text3)">Drag units to reorder · click header to collapse</div>
-        <div style="display:flex;gap:8px">
+        <div style="display:flex;gap:12px;align-items:center">
+          <label style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--text2);cursor:pointer;user-select:none">
+            <input type="checkbox" id="toggle-high-end" onchange="toggleHighEndMaterials(this.checked)">
+            <span>Show Electrium+ Materials</span>
+          </label>
           <button class="btn btn-accent" onclick="addGroup()">+ Add group</button>
         </div>
       </div>
@@ -543,7 +586,39 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
 
       <div class="section" style="margin-bottom:0">
         <div class="section-head"><div class="section-title">Optional Store Options</div></div>
-        <div class="section-body" id="toggles-container"></div>
+        <div class="section-body">
+          <!-- Episode Shipment Purchase Count & choice -->
+          <div style="font-size:13px;font-weight:500;margin-bottom:4px">Episode Shipment Store</div>
+          <div style="display:flex; gap:12px; align-items:center; margin-bottom:14px; flex-wrap:wrap">
+            <div style="display:flex; align-items:center; gap:6px">
+              <span style="font-size:12px;color:var(--text2)">Times / month:</span>
+              <select id="episode-purchases-select" onchange="updateStorePurchaseCount('episodeShipment', this.value)" style="width:65px; height: 28px">
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+              </select>
+            </div>
+            <div style="display:flex; gap:6px" id="episode-store-buttons"></div>
+          </div>
+
+          <!-- Era Coliseum Purchase Count & choice -->
+          <div style="font-size:13px;font-weight:500;margin-bottom:4px; border-top:1px solid var(--border); padding-top:12px">Era Coliseum Store</div>
+          <div style="display:flex; gap:12px; align-items:center; margin-bottom:14px; flex-wrap:wrap">
+            <div style="display:flex; align-items:center; gap:6px">
+              <span style="font-size:12px;color:var(--text2)">Times / month:</span>
+              <select id="era-purchases-select" onchange="updateStorePurchaseCount('eraColiseum', this.value)" style="width:65px; height: 28px">
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+              </select>
+            </div>
+            <div style="display:flex; gap:6px" id="era-store-buttons"></div>
+          </div>
+        </div>
         <div class="section-body" style="padding-top:6px">
           <div style="font-size:13px;font-weight:500;margin-bottom:4px">Conquest Merchant</div>
           <div style="font-size:11px;color:var(--text3);margin-bottom:8px">Toggle green and blue separately. Each selected option adds 40 signals per month.</div>
@@ -570,12 +645,203 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
       </table>
     </div>
   </div>
+
+  <!-- Relic Materials Cost Table -->
+  <div class="section" style="margin-top:24px">
+    <div class="section-head"><div class="section-title">Relic Materials Cost</div></div>
+    <div class="section-body" style="padding:0">
+      <div class="relic-info-scroll">
+        <table class="relic-materials-table">
+          <thead>
+            <tr>
+              <th>Level [1-10]</th>
+              <th>Credits</th>
+              <th>Signals (Frag/Inc/Flaw/Corr)</th>
+              <th>Carbonite Circuit Boards</th>
+              <th>Bronzium Wiring</th>
+              <th>Chromium Transistor</th>
+              <th>Aurodium Heatsinks</th>
+              <th>Electrium Conductors</th>
+              <th>Zinbiddle Cards</th>
+              <th>Impulse Detectors</th>
+              <th>Aeromagnifiers</th>
+              <th>Gyrda Keypads</th>
+              <th>Droid Brains</th>
+              <th>Coaxial Servomotors</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Relic 1</td>
+              <td>10K</td>
+              <td>—</td>
+              <td style="color:var(--grey)">40</td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+            </tr>
+            <tr>
+              <td>Relic 2</td>
+              <td>25K</td>
+              <td>15 Fr</td>
+              <td style="color:var(--grey)">30</td>
+              <td style="color:var(--text2)">40</td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+            </tr>
+            <tr>
+              <td>Relic 3</td>
+              <td>50K</td>
+              <td>20 Fr / 15 Inc</td>
+              <td style="color:var(--grey)">30</td>
+              <td style="color:var(--text2)">40</td>
+              <td style="color:var(--text3)">20</td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+            </tr>
+            <tr>
+              <td>Relic 4</td>
+              <td>75K</td>
+              <td>20 Fr / 25 Inc</td>
+              <td style="color:var(--grey)">30</td>
+              <td style="color:var(--text2)">40</td>
+              <td style="color:var(--text3)">40</td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+            </tr>
+            <tr>
+              <td>Relic 5</td>
+              <td>100K</td>
+              <td>20 Fr / 25 Inc / 15 Fl</td>
+              <td style="color:var(--grey)">30</td>
+              <td style="color:var(--text2)">40</td>
+              <td style="color:var(--text3)">30</td>
+              <td style="color:var(--yellow)">20</td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+            </tr>
+            <tr>
+              <td>Relic 6</td>
+              <td>250K</td>
+              <td>20 Fr / 25 Inc / 25 Fl</td>
+              <td style="color:var(--grey)">20</td>
+              <td style="color:var(--text2)">30</td>
+              <td style="color:var(--text3)">30</td>
+              <td style="color:var(--yellow)">20</td>
+              <td style="color:var(--green)">20</td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+            </tr>
+            <tr>
+              <td>Relic 7</td>
+              <td>500K</td>
+              <td>20 Fr / 25 Inc / 35 Fl</td>
+              <td style="color:var(--grey)">20</td>
+              <td style="color:var(--text2)">30</td>
+              <td style="color:var(--text3)">20</td>
+              <td style="color:var(--yellow)">20</td>
+              <td style="color:var(--green)">20</td>
+              <td style="color:var(--accent)">10</td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+            </tr>
+            <tr>
+              <td>Relic 8</td>
+              <td>1M</td>
+              <td>20 Fr / 25 Inc / 45 Fl</td>
+              <td>—</td>
+              <td>—</td>
+              <td style="color:var(--text3)">20</td>
+              <td style="color:var(--yellow)">20</td>
+              <td style="color:var(--green)">20</td>
+              <td style="color:var(--accent)">20</td>
+              <td style="color:var(--red)">20</td>
+              <td style="color:var(--blue)">20</td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+            </tr>
+            <tr>
+              <td>Relic 9</td>
+              <td>1.5M</td>
+              <td>30 Inc / 55 Fl</td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+              <td style="color:var(--accent)">20</td>
+              <td style="color:var(--red)">20</td>
+              <td style="color:var(--blue)">20</td>
+              <td style="color:var(--yellow)">20</td>
+              <td style="color:var(--green)">20</td>
+              <td>—</td>
+            </tr>
+            <tr>
+              <td>Relic 10</td>
+              <td>2M</td>
+              <td>25 Inc / 45 Fl / 15 Co</td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+              <td style="color:var(--red)">20</td>
+              <td style="color:var(--blue)">20</td>
+              <td style="color:var(--yellow)">20</td>
+              <td style="color:var(--green)">20</td>
+              <td style="color:var(--accent)">20</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 </div>
 
 </div><!-- planner-shell -->
 </div><!-- .app -->
 
-<script src="./build-version.js?v=f0ec73f-53"></script>
+<script src="./build-version.js?v=eae4e62-54"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
@@ -615,6 +881,14 @@ const RELIC_COST = {
   1:{grey:0,  green:0, blue:0}
 };
 
+const HIGH_END_COSTS = {
+  6:  { electrium: 20, zinbiddle: 0,  impulse: 0,  aeromagnifier: 0,  gyrda: 0,  droidbrain: 0,  coaxial: 0 },
+  7:  { electrium: 20, zinbiddle: 10, impulse: 0,  aeromagnifier: 0,  gyrda: 0,  droidbrain: 0,  coaxial: 0 },
+  8:  { electrium: 20, zinbiddle: 20, impulse: 20, aeromagnifier: 20, gyrda: 0,  droidbrain: 0,  coaxial: 0 },
+  9:  { electrium: 0,  zinbiddle: 20, impulse: 20, aeromagnifier: 20, gyrda: 20, droidbrain: 20, coaxial: 0 },
+  10: { electrium: 0,  zinbiddle: 0,  impulse: 20, aeromagnifier: 20, gyrda: 20, droidbrain: 20, coaxial: 20 }
+};
+
 const CANTINA_NODES = {
   c8grey:  { label: 'Cantina 8C', rates: { grey: 9.90, green: 0,    blue: 0    } },
   c8green: { label: 'Cantina 8F', rates: { grey: 0,    green: 7.43, blue: 0    } },
@@ -650,11 +924,9 @@ const ASSAULT_BATTLE_LABELS = {
   fanaticalDevotion: 'Fanatical Devotion (Inquisitors)'
 };
 
-// Optional store values are weekly amounts. The monthly contribution is
-// scaled by the current month length so longer months get slightly more.
 const DEFAULT_TOGGLES = {
-  episodeShipment: { enabled: false, label: 'Episode Shipment', cadence: 'monthly', grey: 45, green: 40, blue: 0, monthlyCount: 0 },
-  eraColiseum:     { enabled: false, label: 'Era Coliseum',     cadence: 'monthly', grey: 0,  green: 0,  blue: 25, monthlyCount: 0 }
+  episodeShipment: { label: 'Episode Shipment', purchasesPerMonth: 0, choice: 'none' },
+  eraColiseum:     { label: 'Era Coliseum',     purchasesPerMonth: 0, choice: 'none' }
 };
 
 const LIMITS = {
@@ -718,6 +990,7 @@ let state = {
   groups: [],
   _mid: 0,
   _uid: 0,
+  showHighEnd: false,
 };
 
 // ═══════════════════════════════════════════════════════
@@ -841,29 +1114,6 @@ function showCustomConfirm(message, onConfirm, confirmLabel='Delete'){
   modal.style.display='flex';
 }
 
-function migrateToggleCadence(toggles){
-  if(!toggles) return toggles;
-  for(const k in toggles){
-    const t = toggles[k];
-    const def = DEFAULT_TOGGLES[k];
-    if(t && def){
-      if(!t.cadence){
-        t.cadence = def.cadence || 'monthly';
-      }
-      if(!Object.prototype.hasOwnProperty.call(t, 'monthlyCount')){
-        t.monthlyCount = t.cadence === 'monthly' ? 0 : 0;
-      }
-      if(t.cadence === 'weekly' && !t.monthlyCount){
-        t.grey = Math.round(Number(t.grey||0)/4);
-        t.green = Math.round(Number(t.green||0)/4);
-        t.blue = Math.round(Number(t.blue||0)/4);
-      }
-      if(t.cadence === 'weekly') t.cadence = 'monthly';
-    }
-  }
-  return toggles;
-}
-
 function normalizeSources(rawSources){
   const defaults = JSON.parse(JSON.stringify(DEFAULT_SOURCES));
   if(!Array.isArray(rawSources) || rawSources.length===0) return defaults;
@@ -882,8 +1132,6 @@ function normalizeSources(rawSources){
 
   return defaults.map(def => {
     const existing = byKey.get(def.key);
-    // Old builds labeled this source "ROTE (30★)", which no longer matches
-    // the 1-24 star scale used elsewhere. Let the new default label win.
     if(existing && def.key === 'rote' && /★/.test(existing.label || '')){
       delete existing.label;
     }
@@ -900,7 +1148,6 @@ function mergeStateWithDefaults(remoteState){
   merged.planetCompletions = { ...base.planetCompletions, ...(incoming.planetCompletions || {}) };
   merged.guild = { ...getDefaultGuild(), ...(incoming.guild || {}) };
 
-  // Migrate older twOutcome state structure if needed
   if (incoming.guild && incoming.guild.twOutcome) {
     if (incoming.guild.twOutcome1 === undefined) {
       merged.guild.twOutcome1 = incoming.guild.twOutcome;
@@ -911,12 +1158,29 @@ function mergeStateWithDefaults(remoteState){
   }
 
   merged.conquestMerchant = { choice: 'none', ...(incoming.conquestMerchant || {}) };
-  merged.toggles = migrateToggleCadence({ ...JSON.parse(JSON.stringify(DEFAULT_TOGGLES)), ...(incoming.toggles || {}) });
+  
+  merged.toggles = { ...JSON.parse(JSON.stringify(DEFAULT_TOGGLES)), ...(incoming.toggles || {}) };
+  if (!merged.toggles.episodeShipment) {
+    merged.toggles.episodeShipment = { label: 'Episode Shipment', purchasesPerMonth: 0, choice: 'none' };
+  }
+  if (merged.toggles.episodeShipment.purchasesPerMonth === undefined) {
+    merged.toggles.episodeShipment.purchasesPerMonth = 0;
+    merged.toggles.episodeShipment.choice = 'none';
+  }
+  if (!merged.toggles.eraColiseum) {
+    merged.toggles.eraColiseum = { label: 'Era Coliseum', purchasesPerMonth: 0, choice: 'none' };
+  }
+  if (merged.toggles.eraColiseum.purchasesPerMonth === undefined) {
+    merged.toggles.eraColiseum.purchasesPerMonth = 0;
+    merged.toggles.eraColiseum.choice = 'none';
+  }
+
   merged.sources = normalizeSources(incoming.sources);
   merged.assaultBattles = { ...DEFAULT_ASSAULT_BATTLES, ...(incoming.assaultBattles || {}) };
   merged.groups = Array.isArray(incoming.groups) ? incoming.groups : base.groups;
   merged._mid = Number(incoming._mid || base._mid) || base._mid;
   merged._uid = Number(incoming._uid || base._uid) || base._uid;
+  merged.showHighEnd = incoming.showHighEnd !== undefined ? Boolean(incoming.showHighEnd) : false;
   return merged;
 }
 
@@ -1007,12 +1271,12 @@ function getRemoteUserRef(uid){
   return firebaseDb.collection('users').doc(uid);
 }
 
+// The current planner snapshot lives in one document for simplicity.
+// If the state grows beyond a comfortable size, move large sections into
+// subcollections under users/{uid}/planner/ while keeping this document as metadata.
 function getRemotePlannerRef(uid){
   const userRef = getRemoteUserRef(uid);
   if(!userRef) return null;
-  // The current planner snapshot lives in one document for simplicity.
-  // If the state grows beyond a comfortable size, move large sections into
-  // subcollections under users/{uid}/planner/ while keeping this document as metadata.
   return userRef.collection('planner').doc(REMOTE_STATE_DOC_ID);
 }
 
@@ -1080,10 +1344,7 @@ function load(){
     if(raw){
       const p=JSON.parse(raw);
       
-      // Migrate old months to groups
       if(p.months) { p.groups = p.months; delete p.months; }
-      
-      // Normalize legacy sources so older saved data still includes the current defaults
       p.sources = normalizeSources(p.sources);
 
       state={ ...state, ...p };
@@ -1092,17 +1353,32 @@ function load(){
       if(state.cantina.bonusEnergy === undefined) state.cantina.bonusEnergy = false;
       if(!state.guild) state.guild = getDefaultGuild();
 
-      // Local storage migration for existing single TW outcomes to dual TW setup
       if (state.guild.twOutcome) {
         if (state.guild.twOutcome1 === undefined) state.guild.twOutcome1 = state.guild.twOutcome;
         if (state.guild.twOutcome2 === undefined) state.guild.twOutcome2 = state.guild.twOutcome;
       }
 
       if(!state.conquestMerchant) state.conquestMerchant = { choice: 'none' };
+      
       if(!state.toggles) state.toggles = JSON.parse(JSON.stringify(DEFAULT_TOGGLES));
-      state.toggles = migrateToggleCadence(state.toggles);
+      if(!state.toggles.episodeShipment) {
+        state.toggles.episodeShipment = { label: 'Episode Shipment', purchasesPerMonth: 0, choice: 'none' };
+      }
+      if (state.toggles.episodeShipment.purchasesPerMonth === undefined) {
+        state.toggles.episodeShipment.purchasesPerMonth = 0;
+        state.toggles.episodeShipment.choice = 'none';
+      }
+      if(!state.toggles.eraColiseum) {
+        state.toggles.eraColiseum = { label: 'Era Coliseum', purchasesPerMonth: 0, choice: 'none' };
+      }
+      if (state.toggles.eraColiseum.purchasesPerMonth === undefined) {
+        state.toggles.eraColiseum.purchasesPerMonth = 0;
+        state.toggles.eraColiseum.choice = 'none';
+      }
+
       if(!state.sources || state.sources.length===0) state.sources=JSON.parse(JSON.stringify(DEFAULT_SOURCES));
       if(!state.assaultBattles) state.assaultBattles = { ...DEFAULT_ASSAULT_BATTLES };
+      if(state.showHighEnd === undefined) state.showHighEnd = false;
       persistLocalStateSnapshot();
     }
   }catch(e){}
@@ -1304,8 +1580,6 @@ function sanitizeNumericValue(val){
   return Number.isFinite(parsed) ? parsed : 0;
 }
 
-// Optional store values are weekly amounts. The monthly contribution is
-// scaled by the current month length so longer months get slightly more.
 function getConquestMerchantSelection(){
   const cm = state.conquestMerchant || {};
   const choice = String(cm.choice || 'none').toLowerCase();
@@ -1317,7 +1591,6 @@ function getConquestMerchantSelection(){
 
 function getMonthlyIncomeBreakdown(monthKey){
   const monthScale = getMonthScale(monthKey);
-  const weekScale = getMonthDayCount(monthKey) / 7;
   const baseSources = { grey:0, green:0, blue:0 };
   const toggles = { grey:0, green:0, blue:0 };
   const cantina = calcCantinaIncome(monthKey);
@@ -1341,12 +1614,30 @@ function getMonthlyIncomeBreakdown(monthKey){
     assault.blue += tiers * 3;
   }
 
+  // Calculate Episode Shipment & Era Coliseum (no weekScale scaling, calculated flatly from purchases per month)
   for(const k in state.toggles){
     const t = state.toggles[k];
-    if(!t.enabled) continue;
-    toggles.grey += Math.round(Number(t.grey||0) * weekScale);
-    toggles.green += Math.round(Number(t.green||0) * weekScale);
-    toggles.blue += Math.round(Number(t.blue||0) * weekScale);
+    if(k === 'episodeShipment' || k === 'eraColiseum') {
+      const times = Number(t.purchasesPerMonth || 0);
+      const choice = String(t.choice || 'none').toLowerCase();
+      let g = 0, gr = 0, bl = 0;
+      if (k === 'episodeShipment') {
+        if (choice === 'grey' || choice === 'both') g = times * 45;
+        if (choice === 'green' || choice === 'both') gr = times * 40;
+      } else if (k === 'eraColiseum') {
+        if (choice === 'grey' || choice === 'both') g = times * 45;
+        if (choice === 'blue' || choice === 'both') bl = times * 25;
+      }
+      toggles.grey += g;
+      toggles.green += gr;
+      toggles.blue += bl;
+    } else {
+      if(!t.enabled) continue;
+      const weekScale = getMonthDayCount(monthKey) / 7;
+      toggles.grey += Math.round(Number(t.grey||0) * weekScale);
+      toggles.green += Math.round(Number(t.green||0) * weekScale);
+      toggles.blue += Math.round(Number(t.blue||0) * weekScale);
+    }
   }
 
   const selection = getConquestMerchantSelection();
@@ -1398,7 +1689,7 @@ function calcGet2PerMonth(){
 }
 
 // ═══════════════════════════════════════════════════════
-// RELIC COSTS CALCULATOR
+// RELIC COSTS CALCULATORS
 // ═══════════════════════════════════════════════════════
 function costForRange(from,to){
   let grey=0,green=0,blue=0;
@@ -1407,6 +1698,23 @@ function costForRange(from,to){
     grey+=c.grey;green+=c.green;blue+=c.blue;
   }
   return {grey,green,blue};
+}
+
+function calcHighEndCostForRange(from, to) {
+  let totals = { electrium: 0, zinbiddle: 0, impulse: 0, aeromagnifier: 0, gyrda: 0, droidbrain: 0, coaxial: 0 };
+  for(let r = Number(from) + 1; r <= Number(to); r++) {
+    const c = HIGH_END_COSTS[r];
+    if(c) {
+      totals.electrium += c.electrium;
+      totals.zinbiddle += c.zinbiddle;
+      totals.impulse += c.impulse;
+      totals.aeromagnifier += c.aeromagnifier;
+      totals.gyrda += c.gyrda;
+      totals.droidbrain += c.droidbrain;
+      totals.coaxial += c.coaxial;
+    }
+  }
+  return totals;
 }
 
 function calcGroupDemand(group){
@@ -1449,13 +1757,11 @@ function renderTB(){
   document.getElementById('rote-get2-per-tb').textContent=rotePerTB.toLocaleString();
   document.getElementById('rote-get2-month').textContent=(rotePerTB*2).toLocaleString();
 
-  // Render buttons for TW 1
   document.getElementById('tw1-outcome-buttons').innerHTML = ['none','win','loss'].map(o=>`
     <button type="button" class="btn ${(state.guild.twOutcome1 || 'none') === o ? 'btn-accent' : 'btn-ghost'}" style="flex:1"
       onclick="setTwOutcome(1, '${o}')">${o === 'none' ? 'None' : (o === 'win' ? 'Win' : 'Loss')}</button>
   `).join('');
 
-  // Render buttons for TW 2
   document.getElementById('tw2-outcome-buttons').innerHTML = ['none','win','loss'].map(o=>`
     <button type="button" class="btn ${(state.guild.twOutcome2 || 'none') === o ? 'btn-accent' : 'btn-ghost'}" style="flex:1"
       onclick="setTwOutcome(2, '${o}')">${o === 'none' ? 'None' : (o === 'win' ? 'Win' : 'Loss')}</button>
@@ -1536,7 +1842,6 @@ function updateGet2Summary(){
 // CONFIGURATION PAGE
 // ═══════════════════════════════════════════════════════
 function renderConfig(){
-  // --- Cantina Farming UI ---
   document.getElementById('cantina-refreshes').value = state.cantina.refreshes;
   document.getElementById('cantina-bonus').checked = state.cantina.bonusEnergy;
   document.getElementById('cantina-budget').textContent = getCantinaBudget();
@@ -1561,7 +1866,6 @@ function renderConfig(){
     </tbody>`;
   updateCantinaAlloc();
 
-  // --- Base Income UI ---
   const tbody=document.getElementById('income-edit-table');
   tbody.innerHTML=`
     <thead><tr>
@@ -1579,40 +1883,43 @@ function renderConfig(){
       </tr>`).join('')}
     </tbody>`;
 
-  // --- Toggles UI ---
-  const tgContainer = document.getElementById('toggles-container');
-  tgContainer.innerHTML = Object.entries(state.toggles).map(([k, t]) => `
-    <div style="margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid var(--border)">
-      <label style="display:flex; align-items:center; gap:8px; margin-bottom:8px; cursor:pointer">
-        <input type="checkbox" ${t.enabled?'checked':''} onchange="updateToggle('${k}', 'enabled', this.checked)">
-        <span style="font-size:13px; font-weight:500; color:${t.enabled?'var(--text)':'var(--text2)'}">${t.label}</span>
-      </label>
-      <div style="display:grid; gap:8px; padding-left:24px; opacity:${t.enabled?'1':'0.4'}; pointer-events:${t.enabled?'auto':'none'}">
-        <div class="config-help">These values are per week. Monthly totals scale automatically by the current month length.</div>
-        <div style="display:flex; gap:8px; flex-wrap:wrap">
-          <div style="display:flex;align-items:center;gap:4px">
-            <span style="font-size:11px;color:var(--grey)">Gy:</span>
-            <input type="text" inputmode="numeric" pattern="[0-9]*" style="width:60px" value="${t.grey}" oninput="updateToggle('${k}','grey',this.value)" onblur="commitToggleValue('${k}','grey',this)">
-          </div>
-          <div style="display:flex;align-items:center;gap:4px">
-            <span style="font-size:11px;color:var(--green)">Gr:</span>
-            <input type="text" inputmode="numeric" pattern="[0-9]*" style="width:60px" value="${t.green}" oninput="updateToggle('${k}','green',this.value)" onblur="commitToggleValue('${k}','green',this)">
-          </div>
-          <div style="display:flex;align-items:center;gap:4px">
-            <span style="font-size:11px;color:var(--blue)">Bl:</span>
-            <input type="text" inputmode="numeric" pattern="[0-9]*" style="width:60px" value="${t.blue}" oninput="updateToggle('${k}','blue',this.value)" onblur="commitToggleValue('${k}','blue',this)">
-          </div>
-        </div>
-      </div>
-    </div>`).join('');
+  // Render Episode Store values 
+  document.getElementById('episode-purchases-select').value = state.toggles.episodeShipment.purchasesPerMonth || 0;
+  const epBtnContainer = document.getElementById('episode-store-buttons');
+  if (epBtnContainer) {
+    const choice = state.toggles.episodeShipment.choice || 'none';
+    const opts = [
+      { value: 'none', label: 'None' },
+      { value: 'grey', label: 'Grey (45)' },
+      { value: 'green', label: 'Green (40)' },
+      { value: 'both', label: 'Both' }
+    ];
+    epBtnContainer.innerHTML = opts.map(o => `
+      <button type="button" class="btn btn-sm ${choice === o.value ? 'btn-accent' : 'btn-ghost'}"
+        onclick="setStoreChoice('episodeShipment', '${o.value}')">${o.label}</button>
+    `).join('');
+  }
 
-  // --- Conquest Merchant UI ---
+  // Render Era Coliseum values
+  document.getElementById('era-purchases-select').value = state.toggles.eraColiseum.purchasesPerMonth || 0;
+  const eraBtnContainer = document.getElementById('era-store-buttons');
+  if (eraBtnContainer) {
+    const choice = state.toggles.eraColiseum.choice || 'none';
+    const opts = [
+      { value: 'none', label: 'None' },
+      { value: 'grey', label: 'Grey (45)' },
+      { value: 'blue', label: 'Blue (25)' },
+      { value: 'both', label: 'Both' }
+    ];
+    eraBtnContainer.innerHTML = opts.map(o => `
+      <button type="button" class="btn btn-sm ${choice === o.value ? 'btn-accent' : 'btn-ghost'}"
+        onclick="setStoreChoice('eraColiseum', '${o.value}')">${o.label}</button>
+    `).join('');
+  }
+
   renderConquestMerchant();
-
-  // --- Assault Battles UI ---
   renderAssaultBattles();
 
-  // --- Relic Cost UI ---
   const rt=document.getElementById('relic-info-table');
   rt.innerHTML=Object.entries(RELIC_COST).reverse().map(([lvl,c])=>`
     <tr>
@@ -1623,11 +1930,24 @@ function renderConfig(){
     </tr>`).join('');
 }
 
+function updateStorePurchaseCount(key, val) {
+  state.toggles[key].purchasesPerMonth = Number(val);
+  updatePlanSummary();
+  save();
+}
+
+function setStoreChoice(key, choice) {
+  state.toggles[key].choice = choice;
+  renderConfig();
+  updatePlanSummary();
+  save();
+}
+
 function onCantinaChange(field, val){
   if (field === 'refreshes') {
     state.cantina.refreshes = Math.max(0, parseInt(val)||0);
   } else if (field === 'bonusEnergy') {
-    state.cantina.bonusEnergy = val; // boolean
+    state.cantina.bonusEnergy = val; 
   } else {
     state.cantina.alloc[field] = Math.max(0, Math.floor(sanitizeNumericValue(val)));
   }
@@ -1656,19 +1976,6 @@ function updateSource(i,field,val){
 
 function commitSourceValue(i, field, element){
   updateSource(i, field, element.value);
-  save();
-}
-
-function updateToggle(key, field, val){
-  if(field === 'enabled') state.toggles[key].enabled = val;
-  else state.toggles[key][field] = Math.max(0, Math.floor(sanitizeNumericValue(val)));
-  
-  if(field === 'enabled') renderConfig(); // re-render to toggle disabled states visually
-  updatePlanSummary();
-}
-
-function commitToggleValue(key, field, element){
-  updateToggle(key, field, element.value);
   save();
 }
 
@@ -1749,29 +2056,6 @@ function addGroup(){
   save(); renderPlan();
 }
 
-function duplicateGroup(id){
-  if(state.groups.length >= LIMITS.maxGroups){
-    showLimitNotice(`You can have up to ${LIMITS.maxGroups} groups.`);
-    return;
-  }
-  const idx = state.groups.findIndex(m=>m.id===id);
-  if(idx<0) return;
-  const src = state.groups[idx];
-  state._mid++;
-  const clone = {
-    id: state._mid,
-    month: src.month,
-    label: (src.label || 'Untitled group') + ' (copy)',
-    collapsed: false,
-    units: src.units.map(u=>{
-      state._uid++;
-      return { id: state._uid, name: u.name, from: u.from, to: u.to };
-    })
-  };
-  state.groups.splice(idx+1, 0, clone);
-  save(); renderPlan();
-}
-
 function removeGroup(id){
   const group = state.groups.find(m => m.id === id);
   if(!group) return;
@@ -1785,6 +2069,12 @@ function removeGroup(id){
 function toggleCollapse(id){
   const m=state.groups.find(x=>x.id===id);
   if(m){ m.collapsed=!m.collapsed; save(); renderPlan(); }
+}
+
+function toggleHighEndMaterials(checked) {
+  state.showHighEnd = checked;
+  renderPlan();
+  save();
 }
 
 // ═══════════════════════════════════════════════════════
@@ -1937,7 +2227,6 @@ function updateGreyPurchasesUI() {
   const get2 = calcGet2PerMonth();
   const maxBuys = Math.floor(get2.total / 1600);
   
-  // Style red when purchases exceed affordable limit
   if (v > maxBuys) {
     inputEl.style.borderColor = 'var(--red)';
     inputEl.style.color = 'var(--red)';
@@ -2045,12 +2334,49 @@ function renderCampaignTotals(groupData){
   }, { demand:{grey:0,green:0,blue:0}, income:{grey:0,green:0,blue:0} });
   const finalCarry = groupData[groupData.length-1].carryOut;
   const shortfallMonths = groupData.filter(d=>d.net.grey<0||d.net.green<0||d.net.blue<0).length;
+
+  let highEndTotalsHtml = '';
+  if (state.showHighEnd) {
+    let totalsHighEnd = { electrium: 0, zinbiddle: 0, impulse: 0, aeromagnifier: 0, gyrda: 0, droidbrain: 0, coaxial: 0 };
+    for (const d of groupData) {
+      for (const u of d.m.units) {
+        if(!u.from||!u.to||Number(u.to)<=Number(u.from)) continue;
+        const h = calcHighEndCostForRange(u.from, u.to);
+        totalsHighEnd.electrium += h.electrium;
+        totalsHighEnd.zinbiddle += h.zinbiddle;
+        totalsHighEnd.impulse += h.impulse;
+        totalsHighEnd.aeromagnifier += h.aeromagnifier;
+        totalsHighEnd.gyrda += h.gyrda;
+        totalsHighEnd.droidbrain += h.droidbrain;
+        totalsHighEnd.coaxial += h.coaxial;
+      }
+    }
+    const hasAnyHighEnd = Object.values(totalsHighEnd).some(v => v > 0);
+    if (hasAnyHighEnd) {
+      highEndTotalsHtml = `
+        <div style="padding:10px 14px; border-top:1px solid var(--border); background:rgba(255,255,255,0.02)">
+          <div style="font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:6px">Total Electrium+ Needed</div>
+          <div style="display:flex; flex-direction:column; gap:4px">
+            ${totalsHighEnd.electrium > 0 ? `<div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text2)">Electrium Conductors</span><span style="font-family:monospace;font-weight:600">${totalsHighEnd.electrium}</span></div>` : ''}
+            ${totalsHighEnd.zinbiddle > 0 ? `<div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text2)">Zinbiddle Cards</span><span style="font-family:monospace;font-weight:600">${totalsHighEnd.zinbiddle}</span></div>` : ''}
+            ${totalsHighEnd.impulse > 0 ? `<div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text2)">Impulse Detectors</span><span style="font-family:monospace;font-weight:600">${totalsHighEnd.impulse}</span></div>` : ''}
+            ${totalsHighEnd.aeromagnifier > 0 ? `<div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text2)">Aeromagnifiers</span><span style="font-family:monospace;font-weight:600">${totalsHighEnd.aeromagnifier}</span></div>` : ''}
+            ${totalsHighEnd.gyrda > 0 ? `<div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text2)">Gyrda Keypads</span><span style="font-family:monospace;font-weight:600">${totalsHighEnd.gyrda}</span></div>` : ''}
+            ${totalsHighEnd.droidbrain > 0 ? `<div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text2)">Droid Brains</span><span style="font-family:monospace;font-weight:600">${totalsHighEnd.droidbrain}</span></div>` : ''}
+            ${totalsHighEnd.coaxial > 0 ? `<div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text2)">Coaxial Servomotors</span><span style="font-family:monospace;font-weight:600">${totalsHighEnd.coaxial}</span></div>` : ''}
+          </div>
+        </div>
+      `;
+    }
+  }
+
   el.innerHTML = `
     <div style="padding:10px 14px;font-size:11px;color:var(--text3);border-bottom:1px solid var(--border)">${groupData.length} group${groupData.length!==1?'s':''} planned${shortfallMonths?` · <span style="color:var(--red)">${shortfallMonths} short</span>`:''}</div>
     <div class="income-stat"><span style="color:var(--grey)">Grey needed</span><span class="income-stat-val" style="color:var(--grey)">${totals.demand.grey}</span></div>
     <div class="income-stat"><span style="color:var(--green)">Green needed</span><span class="income-stat-val" style="color:var(--green)">${totals.demand.green}</span></div>
     <div class="income-stat"><span style="color:var(--blue)">Blue needed</span><span class="income-stat-val" style="color:var(--blue)">${totals.demand.blue}</span></div>
     <div class="income-stat" style="border-top:1px solid var(--border)"><span style="color:var(--text2)">Ending balance</span><span class="income-stat-val" style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end"><span style="color:var(--grey)">G ${finalCarry.grey}</span><span style="color:var(--green)">Gr ${finalCarry.green}</span><span style="color:var(--blue)">B ${finalCarry.blue}</span></span></div>
+    ${highEndTotalsHtml}
   `;
 }
 
@@ -2110,6 +2436,39 @@ function buildGroupCard({m,demand,available,net,carryIn,carryOut},idx){
       ${normalizedCarryIn.blue>0?`<span class="pill pill-blue" style="font-size:11px">+${normalizedCarryIn.blue}</span>`:''}
     </div>`:'' ;
 
+  let highEndHtml = '';
+  if (state.showHighEnd) {
+    let highEndDemand = { electrium: 0, zinbiddle: 0, impulse: 0, aeromagnifier: 0, gyrda: 0, droidbrain: 0, coaxial: 0 };
+    for(const u of m.units) {
+      if(!u.from||!u.to||Number(u.to)<=Number(u.from)) continue;
+      const h = calcHighEndCostForRange(u.from, u.to);
+      highEndDemand.electrium += h.electrium;
+      highEndDemand.zinbiddle += h.zinbiddle;
+      highEndDemand.impulse += h.impulse;
+      highEndDemand.aeromagnifier += h.aeromagnifier;
+      highEndDemand.gyrda += h.gyrda;
+      highEndDemand.droidbrain += h.droidbrain;
+      highEndDemand.coaxial += h.coaxial;
+    }
+    const hasHighEnd = Object.values(highEndDemand).some(v => v > 0);
+    if (hasHighEnd) {
+      highEndHtml = `
+        <div style="margin-top:12px; padding-top:10px; border-top:1px dashed var(--border)">
+          <div style="font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:6px">Electrium & Upward Materials</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            ${highEndDemand.electrium > 0 ? `<span class="pill pill-accent" style="font-size:11px">EC: ${highEndDemand.electrium}</span>` : ''}
+            ${highEndDemand.zinbiddle > 0 ? `<span class="pill pill-accent" style="font-size:11px">ZC: ${highEndDemand.zinbiddle}</span>` : ''}
+            ${highEndDemand.impulse > 0 ? `<span class="pill pill-accent" style="font-size:11px">ID: ${highEndDemand.impulse}</span>` : ''}
+            ${highEndDemand.aeromagnifier > 0 ? `<span class="pill pill-accent" style="font-size:11px">AM: ${highEndDemand.aeromagnifier}</span>` : ''}
+            ${highEndDemand.gyrda > 0 ? `<span class="pill pill-accent" style="font-size:11px">GK: ${highEndDemand.gyrda}</span>` : ''}
+            ${highEndDemand.droidbrain > 0 ? `<span class="pill pill-accent" style="font-size:11px">DB: ${highEndDemand.droidbrain}</span>` : ''}
+            ${highEndDemand.coaxial > 0 ? `<span class="pill pill-accent" style="font-size:11px">CS: ${highEndDemand.coaxial}</span>` : ''}
+          </div>
+        </div>
+      `;
+    }
+  }
+
   return `
   <div class="group-card${m.collapsed?' collapsed':''}" id="gc-${m.id}">
     ${carryInHtml}
@@ -2127,8 +2486,7 @@ function buildGroupCard({m,demand,available,net,carryIn,carryOut},idx){
         ${demand.blue>0?`<span class="pill pill-blue" style="font-size:11px">${demand.blue}</span>`:''}
         ${hasShortfall?`<span class="pill pill-red" style="font-size:11px" title="This group's demand exceeds available signals">⚠ short</span>`:''}
       </div>
-      <button class="btn btn-ghost btn-sm" style="margin-left:6px;flex-shrink:0" onclick="event.stopPropagation();duplicateGroup(${m.id})" title="Duplicate this group">⧉ Duplicate</button>
-      <button class="btn btn-ghost btn-sm" style="flex-shrink:0" onclick="event.stopPropagation();toggleCollapse(${m.id})">
+      <button class="btn btn-ghost btn-sm" style="flex-shrink:0; margin-left: 6px" onclick="event.stopPropagation();toggleCollapse(${m.id})">
         ${m.collapsed?'▼ Expand':'▲ Collapse'}
       </button>
       <button class="btn btn-danger btn-sm" style="margin-left:4px;flex-shrink:0;color:var(--text3);font-size:13px" onclick="event.stopPropagation();removeGroup(${m.id})">×</button>
@@ -2165,6 +2523,7 @@ function buildGroupCard({m,demand,available,net,carryIn,carryOut},idx){
             </div>
           </div>
         </div>
+        ${highEndHtml}
       </div>
     </div>
   </div>`;
@@ -2212,11 +2571,16 @@ function init(){
   const buildVersionEl = document.getElementById('build-version');
   if(buildVersionEl){ buildVersionEl.textContent = window.BUILD_VERSION || 'dev'; }
   updateLimitsInfo();
+
+  const toggleHighEndEl = document.getElementById('toggle-high-end');
+  if (toggleHighEndEl) {
+    toggleHighEndEl.checked = !!state.showHighEnd;
+  }
+
   renderPlan();
   renderTB();
   renderConfig();
 
-  // Restore persistent active tab from storage
   const activeTab = localStorage.getItem('active_tab') || 'plan';
   showTab(activeTab);
 }
