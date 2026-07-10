@@ -558,7 +558,7 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
 </div><!-- planner-shell -->
 </div><!-- .app -->
 
-<script src="./build-version.js?v=82c084f-48"></script>
+<script src="./build-version.js?v=953e36b-49"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
@@ -575,10 +575,11 @@ const ROTE_TABLE = {
 
 const PLANET_GET2_PER_COMPLETION = 50;
 const PLANETS = [
-  { key:'DATHOMIR',  label:'Dathomir SM', hasMissions:true },
-  { key:'TATOOINE',  label:'Tatooine', hasMissions:true },
-  { key:'KASHYYYK',  label:'Kashyyyk', hasMissions:true },
-  { key:'ZEFFO',     label:'Zeffo',    hasMissions:true },
+  { key:'BRACCA',     label:'Bracca (Zeffo Unlock)',    hasMissions:true },  
+  { key:'ZEFFO',  label:'Dathomir (Merrin NS)', hasMissions:true },
+  { key:'TATOOINE',  label:'Tatooine (Mandalore Unlock)', hasMissions:true },
+  { key:'KASHYYYK',  label:'Kashyyyk (Rebel Fighters)', hasMissions:true },
+  { key:'DATHOMIR',     label:'Zeffo (Clones)',    hasMissions:true },
 ];
 
 const TERRITORY_WARS = { winReward: 650, lossReward: 550, eventsPerMonth: 2 };
@@ -667,7 +668,7 @@ function getDefaultGuild(){
 let state = {
   roteStars: 24,
   greyPurchases: 0,
-  planetCompletions: { DATHOMIR:0, TATOOINE:0, KASHYYYK:0, ZEFFO:0 },
+  planetCompletions: { BRACCA:0, ZEFFO:0, TATOOINE:0, KASHYYYK:0, DATHOMIR:0, },
   cantina: {
     refreshes: 0,
     bonusEnergy: false,
