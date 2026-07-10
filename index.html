@@ -397,16 +397,25 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
       <div class="section">
         <div class="section-head"><div class="section-title">Territory Wars</div></div>
         <div class="section-body">
-          <div class="label">Expected outcome</div>
-          <div id="tw-outcome-buttons" style="display:flex;gap:8px"></div>
-          <div style="font-size:11px;color:var(--text3);margin-top:8px">Win: 650 GET 2 · Loss: 550 GET 2 · Runs twice per month</div>
+          <div class="label">TW 1 Expected Outcome</div>
+          <div id="tw1-outcome-buttons" style="display:flex;gap:8px;margin-bottom:12px"></div>
+          
+          <div class="label">TW 2 Expected Outcome</div>
+          <div id="tw2-outcome-buttons" style="display:flex;gap:8px;margin-bottom:12px"></div>
+          
+          <div style="font-size:11px;color:var(--text3);margin-top:8px">Win: 650 GET 2 · Loss: 550 GET 2 · Configured individually</div>
+          
           <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px">
-            <div style="font-size:12px;color:var(--text2)">Expected GET 2 per event</div>
-            <div class="pill pill-get2" id="tw-get2-per-event">600</div>
+            <div style="font-size:12px;color:var(--text2)">TW 1 GET 2</div>
+            <div class="pill pill-get2" id="tw1-get2-val">0</div>
           </div>
           <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
-            <div style="font-size:12px;color:var(--text2)">GET 2 per month (×2 events)</div>
-            <div class="pill pill-get2" id="tw-get2-month">1200</div>
+            <div style="font-size:12px;color:var(--text2)">TW 2 GET 2</div>
+            <div class="pill pill-get2" id="tw2-get2-val">0</div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+            <div style="font-size:12px;color:var(--text2)">Total GET 2 per month</div>
+            <div class="pill pill-get2" id="tw-get2-month">0</div>
           </div>
         </div>
       </div>
@@ -545,7 +554,7 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
 </div><!-- planner-shell -->
 </div><!-- .app -->
 
-<script src="./build-version.js?v=124e75b-43"></script>
+<script src="./build-version.js?v=92da550-44"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
@@ -648,7 +657,7 @@ let storeEditWarmupStartedAt = 0;
 let saveDebounceTimer = null;
 
 function getDefaultGuild(){
-  return { twWinPct: 50, twOutcome: 'none' };
+  return { twWinPct: 50, twOutcome: 'none', twOutcome1: 'none', twOutcome2: 'none' };
 }
 
 let state = {
@@ -845,6 +854,17 @@ function mergeStateWithDefaults(remoteState){
   merged.cantina.alloc = { ...base.cantina.alloc, ...(incoming.cantina?.alloc || {}) };
   merged.planetCompletions = { ...base.planetCompletions, ...(incoming.planetCompletions || {}) };
   merged.guild = { ...getDefaultGuild(), ...(incoming.guild || {}) };
+
+  // Migrate older twOutcome state structure if needed
+  if (incoming.guild && incoming.guild.twOutcome) {
+    if (incoming.guild.twOutcome1 === undefined) {
+      merged.guild.twOutcome1 = incoming.guild.twOutcome;
+    }
+    if (incoming.guild.twOutcome2 === undefined) {
+      merged.guild.twOutcome2 = incoming.guild.twOutcome;
+    }
+  }
+
   merged.conquestMerchant = { choice: 'none', ...(incoming.conquestMerchant || {}) };
   merged.toggles = migrateToggleCadence({ ...JSON.parse(JSON.stringify(DEFAULT_TOGGLES)), ...(incoming.toggles || {}) });
   merged.sources = normalizeSources(incoming.sources);
@@ -1025,6 +1045,13 @@ function load(){
       if(!state.cantina) state.cantina = { refreshes: 0, bonusEnergy: false, alloc: { c8grey: 0, c8green: 0, c8blue: 0, n9b: 0, n9d: 0, n9f: 0 }};
       if(state.cantina.bonusEnergy === undefined) state.cantina.bonusEnergy = false;
       if(!state.guild) state.guild = getDefaultGuild();
+
+      // Local storage migration for existing single TW outcomes to dual TW setup
+      if (state.guild.twOutcome) {
+        if (state.guild.twOutcome1 === undefined) state.guild.twOutcome1 = state.guild.twOutcome;
+        if (state.guild.twOutcome2 === undefined) state.guild.twOutcome2 = state.guild.twOutcome;
+      }
+
       if(!state.conquestMerchant) state.conquestMerchant = { choice: 'none' };
       if(!state.toggles) state.toggles = JSON.parse(JSON.stringify(DEFAULT_TOGGLES));
       state.toggles = migrateToggleCadence(state.toggles);
@@ -1285,14 +1312,16 @@ function calcMonthlyIncome(monthKey){
   return getMonthlyIncomeBreakdown(monthKey).total;
 }
 
-function calcTerritoryWarsGet2PerEvent(){
-  const mode = state.guild?.twOutcome || 'none';
+function getTwRewardForOutcome(outcome) {
+  const mode = outcome || 'none';
   if (mode === 'none') return 0;
   return mode === 'loss' ? TERRITORY_WARS.lossReward : TERRITORY_WARS.winReward;
 }
 
 function calcTerritoryWarsGet2PerMonth(){
-  return calcTerritoryWarsGet2PerEvent() * TERRITORY_WARS.eventsPerMonth;
+  const r1 = getTwRewardForOutcome(state.guild?.twOutcome1 || 'none');
+  const r2 = getTwRewardForOutcome(state.guild?.twOutcome2 || 'none');
+  return r1 + r2;
 }
 
 function calcGet2PerMonth(){
@@ -1308,6 +1337,9 @@ function calcGet2PerMonth(){
   return { rote, missions, territoryWars, total: rote+missions+territoryWars };
 }
 
+// ═══════════════════════════════════════════════════════
+// RELIC COSTS CALCULATOR
+// ═══════════════════════════════════════════════════════
 function costForRange(from,to){
   let grey=0,green=0,blue=0;
   for(let r=Number(from)+1;r<=Number(to);r++){
@@ -1350,13 +1382,24 @@ function renderTB(){
   document.getElementById('rote-get2-per-tb').textContent=rotePerTB.toLocaleString();
   document.getElementById('rote-get2-month').textContent=(rotePerTB*2).toLocaleString();
 
-  document.getElementById('tw-outcome-buttons').innerHTML = ['none','win','loss'].map(o=>`
-    <button type="button" class="btn ${state.guild.twOutcome === o ? 'btn-accent' : 'btn-ghost'}" style="flex:1"
-      onclick="setTwOutcome('${o}')">${o === 'none' ? 'None' : (o === 'win' ? 'Win' : 'Loss')}</button>
+  // Render buttons for TW 1
+  document.getElementById('tw1-outcome-buttons').innerHTML = ['none','win','loss'].map(o=>`
+    <button type="button" class="btn ${(state.guild.twOutcome1 || 'none') === o ? 'btn-accent' : 'btn-ghost'}" style="flex:1"
+      onclick="setTwOutcome(1, '${o}')">${o === 'none' ? 'None' : (o === 'win' ? 'Win' : 'Loss')}</button>
   `).join('');
-  const twPerEvent = calcTerritoryWarsGet2PerEvent();
+
+  // Render buttons for TW 2
+  document.getElementById('tw2-outcome-buttons').innerHTML = ['none','win','loss'].map(o=>`
+    <button type="button" class="btn ${(state.guild.twOutcome2 || 'none') === o ? 'btn-accent' : 'btn-ghost'}" style="flex:1"
+      onclick="setTwOutcome(2, '${o}')">${o === 'none' ? 'None' : (o === 'win' ? 'Win' : 'Loss')}</button>
+  `).join('');
+
+  const tw1Reward = getTwRewardForOutcome(state.guild.twOutcome1 || 'none');
+  const tw2Reward = getTwRewardForOutcome(state.guild.twOutcome2 || 'none');
   const twPerMonth = calcTerritoryWarsGet2PerMonth();
-  document.getElementById('tw-get2-per-event').textContent = twPerEvent.toLocaleString();
+
+  document.getElementById('tw1-get2-val').textContent = tw1Reward.toLocaleString();
+  document.getElementById('tw2-get2-val').textContent = tw2Reward.toLocaleString();
   document.getElementById('tw-get2-month').textContent = twPerMonth.toLocaleString();
 
   const pl=document.getElementById('planet-list');
@@ -1387,8 +1430,12 @@ function onStarsChange(v){
   save();
 }
 
-function setTwOutcome(outcome){
-  state.guild.twOutcome = outcome;
+function setTwOutcome(twNum, outcome){
+  if (twNum === 1) {
+    state.guild.twOutcome1 = outcome;
+  } else if (twNum === 2) {
+    state.guild.twOutcome2 = outcome;
+  }
   renderTB();
   save();
 }
