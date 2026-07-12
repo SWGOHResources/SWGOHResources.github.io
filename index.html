@@ -35,6 +35,9 @@
   --red-dim: #2a1515;
   --yellow: #d4a84b;
   --yellow-dim: #2a2010;
+  --teal: #14b8a6;
+  --teal-dim: #112a27;
+  --teal-mid: #1d5c56;
   --radius: 6px;
   --radius-lg: 10px;
 }
@@ -123,6 +126,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-
 .pill-green{background:rgba(76,175,80,.12);color:var(--green);border:1px solid rgba(76,175,80,.2)}
 .pill-blue{background:rgba(91,155,213,.12);color:var(--blue);border:1px solid rgba(91,155,213,.2)}
 .pill-get2{background:rgba(212,168,75,.12);color:var(--yellow);border:1px solid rgba(212,168,75,.2)}
+.pill-get3{background:rgba(20,184,166,.12);color:var(--teal);border:1px solid rgba(20,184,166,.2)}
 .pill-red{background:rgba(224,85,85,.12);color:var(--red);border:1px solid rgba(224,85,85,.2)}
 .pill-accent{background:var(--accent-dim);color:#a89df9;border:1px solid rgba(124,106,247,.3)}
 
@@ -190,12 +194,12 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
 @media(max-width:640px){.tb-grid{grid-template-columns:1fr}}
 .planet-item{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border)}
 .planet-item:last-child{border-bottom:none}
-.planet-name{font-size:13px;font-weight:500;flex:1;min-width:80px}
-.planet-completions{display:flex;align-items:center;gap:8px;flex:2}
+.planet-name{font-size:12px;font-weight:500;flex:1;min-width:80px}
+.planet-completions{display:flex;align-items:center;gap:4px;flex:2}
 .planet-completions input[type=range]{flex:1}
 .planet-val{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--yellow);min-width:28px;text-align:right}
 .planet-get2{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text2);min-width:50px;text-align:right}
-.stars-input{display:flex;align-items:center;gap:10px}
+.stars-input{display:flex;align-items:center;gap:6px;width:100%}
 .stars-input input[type=range]{flex:1}
 .stars-val{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:600;color:var(--yellow);min-width:28px}
 .get2-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
@@ -524,6 +528,8 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
       <div class="section">
         <div class="section-head"><div class="section-title">Monthly income</div></div>
         <div id="income-display"></div>
+        
+        <!-- GET 2 Store Purchases Panel -->
         <div style="padding:10px 14px;border-top:1px solid var(--border)">
           <div style="font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);margin-bottom:8px">GET 2 store</div>
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
@@ -536,6 +542,21 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
             </div>
           </div>
           <div style="font-size:11px;color:var(--text3)" id="grey-purchase-cost"></div>
+        </div>
+
+        <!-- GET 3 Store Purchases Panel (Replicated) -->
+        <div style="padding:10px 14px;border-top:1px solid var(--border)">
+          <div style="font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);margin-bottom:8px">GET 3 store</div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+            <div style="font-size:12px;color:var(--text2);flex:1">Kyrotech ×5 purchases <span style="color:var(--text3)">(500 each)</span></div>
+            <div style="display:flex;align-items:center;gap:2px">
+              <button type="button" class="btn btn-ghost btn-icon" style="width:24px;height:24px;font-size:11px" onclick="adjustKyroPurchases(-1)">−</button>
+              <input type="text" id="kyro-purchases" inputmode="numeric" pattern="[0-9]*" value="0"
+                style="width:40px;text-align:center;height:24px;padding:0" oninput="onKyroPurchasesChange()">
+              <button type="button" class="btn btn-ghost btn-icon" style="width:24px;height:24px;font-size:11px" onclick="adjustKyroPurchases(1)">+</button>
+            </div>
+          </div>
+          <div style="font-size:11px;color:var(--text3)" id="kyro-purchase-cost"></div>
         </div>
       </div>
       <div class="section">
@@ -555,17 +576,24 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
 <!-- ══════════ GUILD EVENT SETUP PAGE ══════════ -->
 <div class="page" id="page-tb">
   <div style="display:flex;gap:10px;align-items:center;margin-bottom:16px;flex-wrap:wrap">
-    <div style="font-size:13px;color:var(--text2)">Configure your guild's recurring GET 2 sources: Territory Battle rewards, planet missions, and Territory Wars. TB settings assume 2 monthly TBs with the same guild and territory.</div>
+    <div style="font-size:13px;color:var(--text2)">Configure your guild's recurring GET 2 and GET 3 sources: Territory Battle rewards, planet missions, and Territory Wars. TB settings assume 2 monthly TBs with the same guild and territory.</div>
   </div>
-  <div class="tb-grid">
-    <div>
-      <div class="section">
-        <div class="section-head"><div class="section-title">ROTE star rewards</div></div>
+  
+  <div class="tb-grid" style="align-items: start; gap: 24px;">
+    
+    <!-- ─── GET 2 SETUP COLUMN ─── -->
+    <div style="display:flex; flex-direction:column; gap:16px">
+      <h3 style="font-size:14px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:var(--yellow); border-bottom:1px solid var(--border); padding-bottom:8px">GET 2 Setup</h3>
+      
+      <div class="section" style="margin-bottom:0">
+        <div class="section-head"><div class="section-title">ROTE star rewards (GET 2)</div></div>
         <div class="section-body">
           <div class="label">Stars achieved</div>
           <div class="stars-input">
+            <button type="button" class="btn btn-ghost btn-icon" style="width:24px;height:24px;font-size:11px" onclick="adjustStars(-1)">−</button>
             <input type="range" id="rote-stars-range" min="1" max="24" value="24"
               oninput="onStarsChange(this.value)">
+            <button type="button" class="btn btn-ghost btn-icon" style="width:24px;height:24px;font-size:11px" onclick="adjustStars(1)">+</button>
             <div class="stars-val" id="stars-display">24+</div>
             <div style="font-size:11px;color:var(--text3)">★</div>
           </div>
@@ -580,7 +608,7 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
         </div>
       </div>
 
-      <div class="section">
+      <div class="section" style="margin-bottom:0">
         <div class="section-head"><div class="section-title">Territory Wars</div></div>
         <div class="section-body">
           <div class="label">TW 1 Expected Outcome</div>
@@ -606,8 +634,8 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
         </div>
       </div>
 
-      <div class="section">
-        <div class="section-head"><div class="section-title">Planet missions</div></div>
+      <div class="section" style="margin-bottom:0">
+        <div class="section-head"><div class="section-title">Planet missions (GET 2)</div></div>
         <div class="section-body">
           <div style="display:grid;grid-template-columns:1fr 120px 70px;gap:6px;margin-bottom:8px">
             <div class="label">Planet</div>
@@ -617,10 +645,8 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
           <div id="planet-list"></div>
         </div>
       </div>
-    </div>
 
-    <div>
-      <div class="section">
+      <div class="section" style="margin-bottom:0">
         <div class="section-head"><div class="section-title">Monthly GET 2 summary</div></div>
         <div class="section-body">
           <div class="get2-summary">
@@ -651,6 +677,74 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
         </div>
       </div>
     </div>
+
+    <!-- ─── GET 3 SETUP COLUMN (Replicated) ─── -->
+    <div style="display:flex; flex-direction:column; gap:16px">
+      <h3 style="font-size:14px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:var(--teal); border-bottom:1px solid var(--border); padding-bottom:8px">GET 3 Setup</h3>
+      
+      <div class="section" style="margin-bottom:0">
+        <div class="section-head"><div class="section-title">ROTE star rewards (GET 3)</div></div>
+        <div class="section-body">
+          <div class="label">Stars achieved</div>
+          <div class="stars-input">
+            <button type="button" class="btn btn-ghost btn-icon" style="width:24px;height:24px;font-size:11px" onclick="adjustStars3(-1)">−</button>
+            <input type="range" id="rote3-stars-range" min="1" max="56" value="1"
+              oninput="onStars3Change(this.value)">
+            <button type="button" class="btn btn-ghost btn-icon" style="width:24px;height:24px;font-size:11px" onclick="adjustStars3(1)">+</button>
+            <div class="stars-val" id="stars3-display" style="color:var(--teal)">1</div>
+            <div style="font-size:11px;color:var(--text3)">★</div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px">
+            <div style="font-size:12px;color:var(--text2)">GET 3 per TB</div>
+            <div class="pill pill-get3" id="rote3-get3-per-tb">1000</div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+            <div style="font-size:12px;color:var(--text2)">GET 3 per month (×2 TBs)</div>
+            <div class="pill pill-get3" id="rote3-get3-month">2000</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section" style="margin-bottom:0">
+        <div class="section-head"><div class="section-title">Planet missions (GET 3)</div></div>
+        <div class="section-body">
+          <div style="display:grid;grid-template-columns:1fr 120px 70px;gap:6px;margin-bottom:8px">
+            <div class="label">Planet (Special Mission)</div>
+            <div class="label" style="text-align:center">Completions / TB</div>
+            <div class="label" style="text-align:right">GET 3</div>
+          </div>
+          <div id="planet3-list"></div>
+        </div>
+      </div>
+
+      <div class="section" style="margin-bottom:0">
+        <div class="section-head"><div class="section-title">Monthly GET 3 summary</div></div>
+        <div class="section-body">
+          <div class="get2-summary" style="grid-template-columns: repeat(2, 1fr)">
+            <div class="get2-box">
+              <div class="get2-box-label">ROTE reward</div>
+              <div class="get2-box-val" id="g3-rote" style="color:var(--teal)">0</div>
+            </div>
+            <div class="get2-box">
+              <div class="get2-box-label">Missions</div>
+              <div class="get2-box-val" id="g3-missions" style="color:var(--teal)">0</div>
+            </div>
+          </div>
+          <div style="border-top:1px solid var(--border);margin-top:14px;padding-top:14px">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div style="font-size:13px;font-weight:600">Total GET 3 / month</div>
+              <div class="pill pill-get3" style="font-size:15px;padding:4px 12px" id="g3-total">0</div>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px">
+              <div style="font-size:12px;color:var(--text2)">Kyrotech ×5 buys available <span style="color:var(--text3)">(500 ea)</span></div>
+              <div class="pill pill-teal" style="background:rgba(20,184,166,.12);color:var(--teal);border:1px solid rgba(20,184,166,.2)" id="g3-buys-avail">0</div>
+            </div>
+            <div style="font-size:11px;color:var(--text3);margin-top:6px" id="g3-spend-note"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -986,7 +1080,7 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
 </div><!-- planner-shell -->
 </div><!-- .app -->
 
-<script src="./build-version.js?v=501ae91-60"></script>
+<script src="./build-version.js?v=0157446-61"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
@@ -1008,6 +1102,14 @@ const PLANETS = [
   { key:'TATOOINE',  label:'Tatooine (Mandalore Unlock)', hasMissions:true },
   { key:'KASHYYYK',  label:'Kashyyyk (Rebel Fighters)', hasMissions:true },
   { key:'DATHOMIR',     label:'Zeffo (Clones)',    hasMissions:true },
+];
+
+// GET 3 Special Missions Constant [Replicated]
+const PLANETS_GET3 = [
+  { key: 'CORELLIA', label: 'Corellia (Qi\'ra)', reward: 15 },
+  { key: 'HAVEN',    label: 'Haven Medical Station (Inquisitors)', reward: 20 },
+  { key: 'KESSEL',   label: 'Kessel (Qi\'ra)', reward: 20 },
+  { key: 'VANDOR',   label: 'Vandor (Young Han)', reward: 20 }
 ];
 
 const TERRITORY_WARS = { winReward: 650, lossReward: 550, eventsPerMonth: 2 };
@@ -1120,8 +1222,11 @@ function getDefaultGuild(){
 
 let state = {
   roteStars: 24,
+  rote3Stars: 1, // Replicated
   greyPurchases: 0,
+  get3Purchases: 0, // Replicated
   planetCompletions: { BRACCA:0, ZEFFO:0, TATOOINE:0, KASHYYYK:0, DATHOMIR:0, },
+  planet3Completions: { CORELLIA:0, HAVEN:0, KESSEL:0, VANDOR:0 }, // Replicated
   cantina: {
     refreshes: 0,
     bonusEnergy: false,
@@ -1240,7 +1345,7 @@ function showLimitNotice(message){
     banner.textContent=message;
     banner.style.display='block';
     clearTimeout(showLimitNotice._t);
-    showLimitNotice._t=setTimeout(()=>{ banner.style.display='none'; }, 2600);
+    showNoticeTimer = setTimeout(()=>{ banner.style.display='none'; }, 2600);
   }
 }
 
@@ -1296,6 +1401,12 @@ function mergeStateWithDefaults(remoteState){
   merged.cantina = { ...base.cantina, ...(incoming.cantina || {}) };
   merged.cantina.alloc = { ...base.cantina.alloc, ...(incoming.cantina?.alloc || {}) };
   merged.planetCompletions = { ...base.planetCompletions, ...(incoming.planetCompletions || {}) };
+  
+  // Replicated merge for GET 3 variables
+  merged.rote3Stars = incoming.rote3Stars !== undefined ? Number(incoming.rote3Stars) : 1;
+  merged.planet3Completions = { ...base.planet3Completions, ...(incoming.planet3Completions || {}) };
+  merged.get3Purchases = incoming.get3Purchases !== undefined ? Number(incoming.get3Purchases) : 0;
+
   merged.guild = { ...getDefaultGuild(), ...(incoming.guild || {}) };
 
   if (incoming.guild && incoming.guild.twOutcome) {
@@ -1507,6 +1618,11 @@ function load(){
 
       if(!state.conquestMerchant) state.conquestMerchant = { choice: 'none' };
       
+      // Ensure replicated GET 3 variables are initialized if loading legacy state files
+      if(state.rote3Stars === undefined) state.rote3Stars = 1;
+      if(!state.planet3Completions) state.planet3Completions = { CORELLIA:0, HAVEN:0, KESSEL:0, VANDOR:0 };
+      if(state.get3Purchases === undefined) state.get3Purchases = 0;
+
       if(!state.toggles) state.toggles = JSON.parse(JSON.stringify(DEFAULT_TOGGLES));
       if(!state.toggles.episodeShipment) {
         state.toggles.episodeShipment = { label: 'Episode Shipment', purchasesPerMonth: 0, choice: 'none' };
@@ -1832,6 +1948,20 @@ function calcGet2PerMonth(){
   return { rote, missions, territoryWars, total: rote+missions+territoryWars };
 }
 
+// Monthly GET 3 Calculation Engine [Replicated]
+function calcGet3PerMonth(){
+  const stars = Number(state.rote3Stars || 1);
+  const rotePerTB = stars >= 1 ? 1000 + (stars - 1) * 150 : 0;
+  const rote = rotePerTB * 2;
+
+  let missions = 0;
+  for(const p of PLANETS_GET3){
+    const c = Math.min(50, Number(state.planet3Completions[p.key]||0));
+    missions += c * p.reward * 2;
+  }
+  return { rote, missions, total: rote + missions };
+}
+
 // ═══════════════════════════════════════════════════════
 // RELIC COSTS CALCULATORS
 // ═══════════════════════════════════════════════════════
@@ -1895,6 +2025,7 @@ function showTab(name){
 // GUILD EVENT SETUP PAGE
 // ═══════════════════════════════════════════════════════
 function renderTB(){
+  // --- GET 2 setup init ---
   document.getElementById('rote-stars-range').value=state.roteStars;
   document.getElementById('stars-display').textContent = state.roteStars == 24 ? "24+" : state.roteStars;
   const rotePerTB=ROTE_TABLE[state.roteStars]||0;
@@ -1924,7 +2055,9 @@ function renderTB(){
     const c=p.hasMissions ? Math.min(50,Number(state.planetCompletions[p.key]||0)) : 0;
     const get2perTB=c*PLANET_GET2_PER_COMPLETION;
     const completionsHtml = p.hasMissions 
-      ? `<input type="range" min="0" max="50" value="${c}" step="1" oninput="updatePlanetComp('${p.key}',this.value)">
+      ? `<button type="button" class="btn btn-ghost btn-icon" style="width:20px;height:20px;font-size:11px" onclick="adjustPlanetComp('${p.key}',-1)">−</button>
+         <input type="range" min="0" max="50" value="${c}" step="1" oninput="updatePlanetComp('${p.key}',this.value)">
+         <button type="button" class="btn btn-ghost btn-icon" style="width:20px;height:20px;font-size:11px" onclick="adjustPlanetComp('${p.key}',1)">+</button>
          <div class="planet-val">${c}</div>`
       : `<div style="font-size:12px;color:var(--text3);text-align:right;padding-right:12px;flex:1">—</div>`;
     return `
@@ -1934,7 +2067,39 @@ function renderTB(){
       <div class="planet-get2">${p.hasMissions ? get2perTB : '—'}</div>
     </div>`;
   }).join('');
+
+  // --- GET 3 setup init [Replicated] ---
+  const stars3Range = document.getElementById('rote3-stars-range');
+  if (stars3Range) {
+    stars3Range.value = state.rote3Stars || 1;
+    document.getElementById('stars3-display').textContent = state.rote3Stars == 56 ? "56+" : (state.rote3Stars || 1);
+    const stars3 = Number(state.rote3Stars || 1);
+    const rote3PerTB = stars3 >= 1 ? 1000 + (stars3 - 1) * 150 : 0;
+    document.getElementById('rote3-get3-per-tb').textContent = rote3PerTB.toLocaleString();
+    document.getElementById('rote3-get3-month').textContent = (rote3PerTB * 2).toLocaleString();
+  }
+
+  const pl3 = document.getElementById('planet3-list');
+  if (pl3) {
+    pl3.innerHTML = PLANETS_GET3.map(p => {
+      const c = Math.min(50, Number(state.planet3Completions[p.key] || 0));
+      const get3perTB = c * p.reward;
+      const completionsHtml = `
+         <button type="button" class="btn btn-ghost btn-icon" style="width:20px;height:20px;font-size:11px" onclick="adjustPlanet3Comp('${p.key}',-1)">−</button>
+         <input type="range" min="0" max="50" value="${c}" step="1" oninput="updatePlanet3Comp('${p.key}',this.value)">
+         <button type="button" class="btn btn-ghost btn-icon" style="width:20px;height:20px;font-size:11px" onclick="adjustPlanet3Comp('${p.key}',1)">+</button>
+         <div class="planet-val">${c}</div>`;
+      return `
+      <div class="planet-item">
+        <div class="planet-name">${p.label}</div>
+        <div class="planet-completions">${completionsHtml}</div>
+        <div class="planet-get2" style="color:var(--teal)">${get3perTB}</div>
+      </div>`;
+    }).join('');
+  }
+
   updateGet2Summary();
+  updateGet3Summary();
 }
 
 function onStarsChange(v){
@@ -1945,6 +2110,35 @@ function onStarsChange(v){
   document.getElementById('rote-get2-month').textContent=(rotePerTB*2).toLocaleString();
   updateGet2Summary();
   save();
+}
+
+// Programmatic stars adjustment with +/- buttons
+function adjustStars(amount) {
+  const el = document.getElementById('rote-stars-range');
+  if (!el) return;
+  let v = Math.max(1, Math.min(24, (parseInt(el.value) || 24) + amount));
+  el.value = v;
+  onStarsChange(v);
+}
+
+// Replicated stars adjustments and triggers for GET 3
+function onStars3Change(v){
+  state.rote3Stars=Number(v);
+  document.getElementById('stars3-display').textContent = v == 56 ? "56+" : v;
+  const stars3 = Number(v);
+  const rote3PerTB = stars3 >= 1 ? 1000 + (stars3 - 1) * 150 : 0;
+  document.getElementById('rote3-get3-per-tb').textContent=rote3PerTB.toLocaleString();
+  document.getElementById('rote3-get3-month').textContent=(rote3PerTB*2).toLocaleString();
+  updateGet3Summary();
+  save();
+}
+
+function adjustStars3(amount) {
+  const el = document.getElementById('rote3-stars-range');
+  if (!el) return;
+  let v = Math.max(1, Math.min(56, (parseInt(el.value) || 1) + amount));
+  el.value = v;
+  onStars3Change(v);
 }
 
 function setTwOutcome(twNum, outcome){
@@ -1959,15 +2153,51 @@ function setTwOutcome(twNum, outcome){
 
 function updatePlanetComp(key,val){
   state.planetCompletions[key]=Math.min(50,Number(val));
-  const items=document.querySelectorAll('.planet-item');
-  PLANETS.forEach((p,i)=>{
-    if(p.key!==key || !p.hasMissions) return;
-    const c=state.planetCompletions[key];
-    items[i].querySelector('.planet-val').textContent=c;
-    items[i].querySelector('.planet-get2').textContent=c*PLANET_GET2_PER_COMPLETION;
-  });
+  const pl=document.getElementById('planet-list');
+  if (pl) {
+    const items=pl.querySelectorAll('.planet-item');
+    PLANETS.forEach((p,i)=>{
+      if(p.key!==key || !p.hasMissions) return;
+      const c=state.planetCompletions[key];
+      items[i].querySelector('.planet-val').textContent=c;
+      items[i].querySelector('.planet-get2').textContent=c*PLANET_GET2_PER_COMPLETION;
+      const slider = items[i].querySelector('input[type=range]');
+      if (slider) slider.value = c;
+    });
+  }
   updateGet2Summary();
   save();
+}
+
+function adjustPlanetComp(key, amount) {
+  let c = Math.min(50, Number(state.planetCompletions[key] || 0));
+  let newVal = Math.max(0, Math.min(50, c + amount));
+  updatePlanetComp(key, newVal);
+}
+
+// Replicated planet updates and triggers for GET 3
+function updatePlanet3Comp(key,val){
+  state.planet3Completions[key]=Math.min(50,Number(val));
+  const pl3=document.getElementById('planet3-list');
+  if (pl3) {
+    const items=pl3.querySelectorAll('.planet-item');
+    PLANETS_GET3.forEach((p,i)=>{
+      if(p.key!==key) return;
+      const c=state.planet3Completions[key];
+      items[i].querySelector('.planet-val').textContent=c;
+      items[i].querySelector('.planet-get2').textContent=c*p.reward;
+      const slider = items[i].querySelector('input[type=range]');
+      if (slider) slider.value = c;
+    });
+  }
+  updateGet3Summary();
+  save();
+}
+
+function adjustPlanet3Comp(key, amount) {
+  let c = Math.min(50, Number(state.planet3Completions[key] || 0));
+  let newVal = Math.max(0, Math.min(50, c + amount));
+  updatePlanet3Comp(key, newVal);
 }
 
 function updateGet2Summary(){
@@ -1980,6 +2210,18 @@ function updateGet2Summary(){
   document.getElementById('g2-buys-avail').textContent=buys;
   document.getElementById('g2-spend-note').textContent=`${buys} × 1600 = ${(buys*1600).toLocaleString()} GET 2 spent · ${(g.total-buys*1600).toLocaleString()} remaining`;
   updatePlanSummary();
+}
+
+// Replicated summary logic for GET 3
+function updateGet3Summary(){
+  const g=calcGet3PerMonth();
+  document.getElementById('g3-rote').textContent=g.rote.toLocaleString();
+  document.getElementById('g3-missions').textContent=g.missions.toLocaleString();
+  document.getElementById('g3-total').textContent=g.total.toLocaleString();
+  const buys=Math.floor(g.total/500);
+  document.getElementById('g3-buys-avail').textContent=buys;
+  document.getElementById('g3-spend-note').textContent=`${buys} × 500 = ${(buys*500).toLocaleString()} GET 3 spent · ${(g.total-buys*500).toLocaleString()} remaining`;
+  updateKyroPurchasesUI();
 }
 
 // ═══════════════════════════════════════════════════════
@@ -2417,6 +2659,64 @@ function adjustGreyPurchases(amount) {
 }
 
 // ═══════════════════════════════════════════════════════
+// GET 3 STORE PURCHASES [Replicated]
+// ═══════════════════════════════════════════════════════
+function updateKyroPurchasesUI() {
+  const inputEl = document.getElementById('kyro-purchases');
+  if (!inputEl) return;
+  
+  const v = state.get3Purchases || 0;
+  inputEl.value = v;
+  
+  const get3 = calcGet3PerMonth();
+  const maxBuys = Math.floor(get3.total / 500);
+  
+  if (v > maxBuys) {
+    inputEl.style.borderColor = 'var(--red)';
+    inputEl.style.color = 'var(--red)';
+    inputEl.style.boxShadow = '0 0 0 1px rgba(224, 85, 85, 0.25)';
+  } else {
+    inputEl.style.borderColor = '';
+    inputEl.style.color = '';
+    inputEl.style.boxShadow = '';
+  }
+  
+  const cost = v * 500;
+  const costEl = document.getElementById('kyro-purchase-cost');
+  if (costEl) {
+    if (v > 0) {
+      const maybeRedStyle = v > maxBuys ? 'color:var(--red);font-weight:600' : '';
+      costEl.innerHTML = `${v}×500 = <span style="${maybeRedStyle}">${cost.toLocaleString()}</span> / ${get3.total.toLocaleString()} GET 3`;
+    } else {
+      costEl.innerHTML = '';
+    }
+  }
+}
+
+function onKyroPurchasesChange(){
+  if(!canPerformStoreEdit()){
+    showLimitNotice(`You are changing too quickly. Please wait a moment.`);
+    return;
+  }
+  const inputEl = document.getElementById('kyro-purchases');
+  if (!inputEl) return;
+  const v = Math.max(0, parseInt(inputEl.value) || 0);
+  state.get3Purchases = v;
+  
+  updateKyroPurchasesUI();
+  save();
+  updatePlanSummary();
+}
+
+function adjustKyroPurchases(amount) {
+  const inputEl = document.getElementById('kyro-purchases');
+  if (!inputEl) return;
+  let v = Math.max(0, (parseInt(inputEl.value) || 0) + amount);
+  inputEl.value = v;
+  onKyroPurchasesChange();
+}
+
+// ═══════════════════════════════════════════════════════
 // UI RENDERING PLANNER
 // ═══════════════════════════════════════════════════════
 function renderPlan(){
@@ -2428,6 +2728,7 @@ function renderPlan(){
     <div class="income-stat" style="border-bottom:none"><span style="color:var(--blue)">Blue</span><span class="income-stat-val" style="color:var(--blue)">${inc.blue}</span></div>`;
 
   updateGreyPurchasesUI();
+  updateKyroPurchasesUI(); // Keeps GET 3 Store purchases updated inside plan tab sidebar
 
   const list=document.getElementById('groups-list');
   if(!state.groups.length){
