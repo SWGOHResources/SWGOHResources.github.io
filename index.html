@@ -819,7 +819,7 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
 </div><!-- planner-shell -->
 </div><!-- .app -->
 
-<script src="./build-version.js?v=a2cb63d-58"></script>
+<script src="./build-version.js?v=af501ef-59"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
@@ -958,7 +958,7 @@ let state = {
   cantina: {
     refreshes: 0,
     bonusEnergy: false,
-    alloc: { c8grey: 120, c8green: 0, c8blue: 0, n9b: 0, n9d: 0, n9f: 0 }
+    alloc: { c8grey: 0, c8green: 0, c8blue: 0, n9b: 0, n9d: 0, n9f: 0 }
   },
   guild: getDefaultGuild(),
   conquestMerchant: { choice: 'none' }, // 'none' | 'blue' | 'green'
@@ -1110,10 +1110,8 @@ function normalizeSources(rawSources){
 
   return defaults.map(def => {
     const existing = byKey.get(def.key);
-    if(existing && def.key === 'rote' && /★/.test(existing.label || '')){
-      delete existing.label;
-    }
-    return existing ? { ...def, ...existing, key: def.key } : { ...def };
+    // Force the merged object to always use def.label from the code
+    return existing ? { ...def, ...existing, key: def.key, label: def.label } : { ...def };
   });
 }
 
