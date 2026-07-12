@@ -277,13 +277,111 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
 .reorder-btn:hover:not(:disabled){background:var(--accent-mid);color:#fff;border-color:var(--accent);}
 .reorder-btn:disabled{background:transparent;opacity:.3;cursor:default;color:var(--text3);border-color:var(--border);}
 
-/* ─── Relic Info scrollable responsive tables ────────────────── */
+/* ─── Relic Info Improvements ────────────────── */
+.relic-info-header {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  background: var(--bg1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+}
+.relic-info-intro {
+  flex: 1;
+  min-width: 280px;
+}
+.relic-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 250px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+}
+.legend-color {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.legend-grey { background: var(--grey); box-shadow: 0 0 6px var(--grey); }
+.legend-green { background: var(--green); box-shadow: 0 0 6px var(--green); }
+.legend-blue { background: var(--blue); box-shadow: 0 0 6px var(--blue); }
+
+.relic-grid-layout {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 20px;
+  align-items: start;
+}
+@media (max-width: 960px) {
+  .relic-grid-layout {
+    grid-template-columns: 1fr;
+  }
+}
+.relic-signals-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.relic-signals-table th {
+  padding: 10px 12px;
+  color: var(--text3);
+  font-size: 10px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  border-bottom: 2px solid var(--border);
+  text-align: right;
+}
+.relic-signals-table th:first-child {
+  text-align: left;
+}
+.relic-signals-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  text-align: right;
+}
+.relic-signals-table td:first-child {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  color: var(--text2);
+  text-align: left;
+}
+.relic-signals-table tr:hover {
+  background: var(--bg2);
+}
+
 .relic-info-scroll {
   overflow-x: auto;
   margin-top: 12px;
   border: 1px solid var(--border);
   border-radius: var(--radius);
 }
+.relic-info-scroll::-webkit-scrollbar {
+  height: 6px;
+}
+.relic-info-scroll::-webkit-scrollbar-track {
+  background: var(--bg2);
+}
+.relic-info-scroll::-webkit-scrollbar-thumb {
+  background: var(--border2);
+  border-radius: 3px;
+}
+.relic-info-scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
+
 .relic-materials-table {
   width: 100%;
   border-collapse: collapse;
@@ -296,12 +394,13 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: .05em;
-  padding: 8px 10px;
+  padding: 10px 8px;
   text-align: center;
   border-bottom: 1px solid var(--border);
+  white-space: nowrap;
 }
 .relic-materials-table td {
-  padding: 8px 10px;
+  padding: 10px 8px;
   text-align: center;
   border-bottom: 1px solid var(--border);
   font-family: 'JetBrains Mono', monospace;
@@ -310,11 +409,39 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
 .relic-materials-table tr:hover {
   background: var(--bg3);
 }
-.relic-materials-table th:first-child, .relic-materials-table td:first-child {
+
+/* Frozen left column for Material Table scrollability */
+.relic-materials-table th:first-child, 
+.relic-materials-table td:first-child {
+  position: sticky;
+  left: 0;
+  background: var(--bg1);
+  z-index: 2;
+  border-right: 1px solid var(--border2);
+  box-shadow: 2px 0 5px rgba(0,0,0,0.35);
   text-align: left;
   padding-left: 12px;
   font-family: 'Inter', sans-serif;
   font-weight: 600;
+  min-width: 76px;
+}
+.relic-materials-table th:first-child {
+  background: var(--bg2);
+  z-index: 3;
+}
+.relic-materials-table tr:hover td:first-child {
+  background: var(--bg3);
+}
+
+/* Highlight key levels (R5, R7, R8, R9, R10) */
+.relic-row-highlight {
+  background: rgba(124, 106, 247, 0.04);
+}
+.relic-row-highlight:hover {
+  background: rgba(124, 106, 247, 0.08) !important;
+}
+.relic-row-highlight td:first-child {
+  color: var(--accent) !important;
 }
 </style>
 </head>
@@ -333,6 +460,7 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
       <div class="auth-panel">
         <div id="auth-status" class="auth-status">Connecting…</div>
         <div class="saved-badge"><div class="saved-dot" id="saveDot"></div><span id="saveText">Saved</span></div>
+        <button id="signout-btn" class="btn btn-ghost btn-sm" style="display:none; margin-left: 8px" onclick="signOut()">Sign Out</button>
       </div>
       <div class="topbar-divider"></div>
       <div id="build-badge" style="font-size:11px;color:var(--text3)">Build <span id="build-version"></span></div>
@@ -631,186 +759,225 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
 
 <!-- ══════════ RELIC INFO PAGE ══════════ -->
 <div class="page" id="page-info">
-  <div class="section">
-    <div class="section-head"><div class="section-title">Relic Signal Costs</div></div>
-    <div class="section-body" style="padding:12px 16px">
-      <table style="width:100%;border-collapse:collapse;font-size:12px">
-        <thead><tr>
-          <th style="text-align:left;padding:5px 8px;color:var(--text3);font-size:10px;letter-spacing:.07em;text-transform:uppercase;border-bottom:1px solid var(--border)">Level</th>
-          <th style="padding:5px 8px;color:var(--grey);font-size:10px;letter-spacing:.07em;text-transform:uppercase;border-bottom:1px solid var(--border)">Grey</th>
-          <th style="padding:5px 8px;color:var(--green);font-size:10px;letter-spacing:.07em;text-transform:uppercase;border-bottom:1px solid var(--border)">Green</th>
-          <th style="padding:5px 8px;color:var(--blue);font-size:10px;letter-spacing:.07em;text-transform:uppercase;border-bottom:1px solid var(--border)">Blue</th>
-        </tr></thead>
-        <tbody id="relic-info-table"></tbody>
-      </table>
+  <!-- Info Header Dashboard Card -->
+  <div class="relic-info-header">
+    <div class="relic-info-intro">
+      <h3 style="font-size:15px; font-weight:600; margin-bottom: 6px; color:var(--text)">Relic Costs & Materials Reference</h3>
+      <p style="font-size:12px; color:var(--text2); line-height: 1.5;">
+        Complete material and signal breakdown to transition characters between Relic tiers. Upgrades require a combination of Scavenger scrap, Cantina Signal Data, and high-end materials.
+      </p>
+    </div>
+    <div class="relic-legend">
+      <div style="font-size:9px; font-weight:600; text-transform:uppercase; letter-spacing: .08em; color:var(--text3); margin-bottom: 4px;">Signal Data Key</div>
+      <div class="legend-item">
+        <span class="legend-color legend-grey"></span>
+        <span style="color:var(--grey); font-weight:500;">Grey</span>
+        <span style="color:var(--text2); font-size:10px;">— Fragmented Signal Data</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-color legend-green"></span>
+        <span style="color:var(--green); font-weight:500;">Green</span>
+        <span style="color:var(--text2); font-size:10px;">— Incomplete Signal Data</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-color legend-blue"></span>
+        <span style="color:var(--blue); font-weight:500;">Blue</span>
+        <span style="color:var(--text2); font-size:10px;">— Flawed Signal Data</span>
+      </div>
     </div>
   </div>
 
-  <!-- Relic Materials Cost Table -->
-  <div class="section" style="margin-top:24px">
-    <div class="section-head"><div class="section-title">Relic Materials Cost</div></div>
-    <div class="section-body" style="padding:0">
-      <div class="relic-info-scroll">
-        <table class="relic-materials-table">
+  <div class="relic-grid-layout">
+    <!-- Signal Requirements Table -->
+    <div class="section" style="margin-bottom:0">
+      <div class="section-head"><div class="section-title">Signal Data Requirements</div></div>
+      <div class="section-body" style="padding:16px">
+        <p style="font-size:11px; color:var(--text3); margin-bottom:12px; line-height:1.4">
+          Shows the baseline signal currency required to reach each respective Relic tier from the previous level.
+        </p>
+        <table class="relic-signals-table">
           <thead>
             <tr>
-              <th>Level [1-10]</th>
-              <th>Carbonite Circuit Boards</th>
-              <th>Bronzium Wiring</th>
-              <th>Chromium Transistor</th>
-              <th>Aurodium Heatsinks</th>
-              <th>Electrium Conductors</th>
-              <th>Zinbiddle Cards</th>
-              <th>Impulse Detectors</th>
-              <th>Aeromagnifiers</th>
-              <th>Gyrda Keypads</th>
-              <th>Droid Brains</th>
-              <th>Coaxial Servomotors</th>
+              <th>To Level</th>
+              <th style="color:var(--grey)">Grey</th>
+              <th style="color:var(--green)">Green</th>
+              <th style="color:var(--blue)">Blue</th>
             </tr>
           </thead>
-          <tbody>
-            <tr>
-              <td>Relic 1</td>
-              <td style="color:var(--grey)">40</td>
-              <td>—</td>
-              <td>—</td>
-              <td>—</td>
-              <td>—</td>
-              <td>—</td>
-              <td>—</td>
-              <td>—</td>
-              <td>—</td>
-              <td>—</td>
-              <td>—</td>
-            </tr>
-            <tr>
-              <td>Relic 2</td>
-              <td style="color:var(--grey)">30</td>
-              <td style="color:var(--text2)">40</td>
-              <td>—</td>
-              <td>—</td>
-              <td>—</td>
-              <td>—</td>
-              <td>—</td>
-              <td>—</td>
-              <td>—</td>
-              <td>—</td>
-              <td>—</td>
-            </tr>
-            <tr>
-              <td>Relic 3</td>
-              <td style="color:var(--grey)">30</td>
-              <td style="color:var(--text2)">40</td>
-              <td style="color:var(--text3)">20</td>
-              <td>—</td>
-              <td>—</td>
-              <td>—</td>
-              <td>—</td>
-              <td>—</td>
-              <td>—</td>
-              <td>—</td>
-              <td>—</td>
-            </tr>
-            <tr>
-              <td>Relic 4</td>
-              <td style="color:var(--grey)">30</td>
-              <td style="color:var(--text2)">40</td>
-              <td style="color:var(--text3)">40</td>
-              <td>—</td>
-              <td>—</td>
-              <td>—</td>
-              <td>—</td>
-              <td>—</td>
-              <td>—</td>
-              <td>—</td>
-              <td>—</td>
-            </tr>
-            <tr>
-              <td>Relic 5</td>
-              <td style="color:var(--grey)">30</td>
-              <td style="color:var(--text2)">40</td>
-              <td style="color:var(--text3)">30</td>
-              <td style="color:var(--yellow)">20</td>
-              <td>—</td>
-              <td>—</td>
-              <td>—</td>
-              <td>—</td>
-              <td>—</td>
-              <td>—</td>
-              <td>—</td>
-            </tr>
-            <tr>
-              <td>Relic 6</td>
-              <td style="color:var(--grey)">20</td>
-              <td style="color:var(--text2)">30</td>
-              <td style="color:var(--text3)">30</td>
-              <td style="color:var(--yellow)">20</td>
-              <td style="color:var(--green)">20</td>
-              <td>—</td>
-              <td>—</td>
-              <td>—</td>
-              <td>—</td>
-              <td>—</td>
-              <td>—</td>
-            </tr>
-            <tr>
-              <td>Relic 7</td>
-              <td style="color:var(--grey)">20</td>
-              <td style="color:var(--text2)">30</td>
-              <td style="color:var(--text3)">20</td>
-              <td style="color:var(--yellow)">20</td>
-              <td style="color:var(--green)">20</td>
-              <td style="color:var(--accent)">10</td>
-              <td>—</td>
-              <td>—</td>
-              <td>—</td>
-              <td>—</td>
-              <td>—</td>
-            </tr>
-            <tr>
-              <td>Relic 8</td>
-              <td>—</td>
-              <td>—</td>
-              <td style="color:var(--text3)">20</td>
-              <td style="color:var(--yellow)">20</td>
-              <td style="color:var(--green)">20</td>
-              <td style="color:var(--accent)">20</td>
-              <td style="color:var(--red)">20</td>
-              <td style="color:var(--blue)">20</td>
-              <td>—</td>
-              <td>—</td>
-              <td>—</td>
-            </tr>
-            <tr>
-              <td>Relic 9</td>
-              <td>—</td>
-              <td>—</td>
-              <td>—</td>
-              <td>—</td>
-              <td>—</td>
-              <td style="color:var(--accent)">20</td>
-              <td style="color:var(--red)">20</td>
-              <td style="color:var(--blue)">20</td>
-              <td style="color:var(--yellow)">20</td>
-              <td style="color:var(--green)">20</td>
-              <td>—</td>
-            </tr>
-            <tr>
-              <td>Relic 10</td>
-              <td>—</td>
-              <td>—</td>
-              <td>—</td>
-              <td>—</td>
-              <td>—</td>
-              <td>—</td>
-              <td style="color:var(--red)">20</td>
-              <td style="color:var(--blue)">20</td>
-              <td style="color:var(--yellow)">20</td>
-              <td style="color:var(--green)">20</td>
-              <td style="color:var(--accent)">20</td>
-            </tr>
-          </tbody>
+          <tbody id="relic-info-table"></tbody>
         </table>
+      </div>
+    </div>
+
+    <!-- Scavenger Materials Table -->
+    <div class="section" style="margin-bottom:0">
+      <div class="section-head"><div class="section-title">Scavenger & Salvage Materials Cost</div></div>
+      <div class="section-body" style="padding:16px">
+        <p style="font-size:11px; color:var(--text3); margin-bottom:12px; line-height:1.4">
+          Shows scavenger counts per transition. Highlighted levels represent standard milestone upgrades. Swipe or scroll horizontally to reveal high-end materials. Hover over table headers to view full item names.
+        </p>
+        <div class="relic-info-scroll" style="margin-top:0">
+          <table class="relic-materials-table">
+            <thead>
+              <tr>
+                <th>Level</th>
+                <th title="Carbonite Circuit Boards">CCB</th>
+                <th title="Bronzium Wiring">BW</th>
+                <th title="Chromium Transistor">CT</th>
+                <th title="Aurodium Heatsinks">AH</th>
+                <th title="Electrium Conductors">EC</th>
+                <th title="Zinbiddle Cards">ZC</th>
+                <th title="Impulse Detectors">ID</th>
+                <th title="Aeromagnifiers">AM</th>
+                <th title="Gyrda Keypads">GK</th>
+                <th title="Droid Brains">DB</th>
+                <th title="Coaxial Servomotors">CS</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Relic 1</td>
+                <td style="color:var(--grey)">40</td>
+                <td>—</td>
+                <td>—</td>
+                <td>—</td>
+                <td>—</td>
+                <td>—</td>
+                <td>—</td>
+                <td>—</td>
+                <td>—</td>
+                <td>—</td>
+                <td>—</td>
+              </tr>
+              <tr>
+                <td>Relic 2</td>
+                <td style="color:var(--grey)">30</td>
+                <td style="color:var(--text2)">40</td>
+                <td>—</td>
+                <td>—</td>
+                <td>—</td>
+                <td>—</td>
+                <td>—</td>
+                <td>—</td>
+                <td>—</td>
+                <td>—</td>
+                <td>—</td>
+              </tr>
+              <tr>
+                <td>Relic 3</td>
+                <td style="color:var(--grey)">30</td>
+                <td style="color:var(--text2)">40</td>
+                <td style="color:var(--text3)">20</td>
+                <td>—</td>
+                <td>—</td>
+                <td>—</td>
+                <td>—</td>
+                <td>—</td>
+                <td>—</td>
+                <td>—</td>
+                <td>—</td>
+              </tr>
+              <tr>
+                <td>Relic 4</td>
+                <td style="color:var(--grey)">30</td>
+                <td style="color:var(--text2)">40</td>
+                <td style="color:var(--text3)">40</td>
+                <td>—</td>
+                <td>—</td>
+                <td>—</td>
+                <td>—</td>
+                <td>—</td>
+                <td>—</td>
+                <td>—</td>
+                <td>—</td>
+              </tr>
+              <tr class="relic-row-highlight">
+                <td>Relic 5</td>
+                <td style="color:var(--grey)">30</td>
+                <td style="color:var(--text2)">40</td>
+                <td style="color:var(--text3)">30</td>
+                <td style="color:var(--yellow)">20</td>
+                <td>—</td>
+                <td>—</td>
+                <td>—</td>
+                <td>—</td>
+                <td>—</td>
+                <td>—</td>
+                <td>—</td>
+              </tr>
+              <tr>
+                <td>Relic 6</td>
+                <td style="color:var(--grey)">20</td>
+                <td style="color:var(--text2)">30</td>
+                <td style="color:var(--text3)">30</td>
+                <td style="color:var(--yellow)">20</td>
+                <td style="color:var(--green)">20</td>
+                <td>—</td>
+                <td>—</td>
+                <td>—</td>
+                <td>—</td>
+                <td>—</td>
+                <td>—</td>
+              </tr>
+              <tr class="relic-row-highlight">
+                <td>Relic 7</td>
+                <td style="color:var(--grey)">20</td>
+                <td style="color:var(--text2)">30</td>
+                <td style="color:var(--text3)">20</td>
+                <td style="color:var(--yellow)">20</td>
+                <td style="color:var(--green)">20</td>
+                <td style="color:var(--accent)">10</td>
+                <td>—</td>
+                <td>—</td>
+                <td>—</td>
+                <td>—</td>
+                <td>—</td>
+              </tr>
+              <tr class="relic-row-highlight">
+                <td>Relic 8</td>
+                <td>—</td>
+                <td>—</td>
+                <td style="color:var(--text3)">20</td>
+                <td style="color:var(--yellow)">20</td>
+                <td style="color:var(--green)">20</td>
+                <td style="color:var(--accent)">20</td>
+                <td style="color:var(--red)">20</td>
+                <td style="color:var(--blue)">20</td>
+                <td>—</td>
+                <td>—</td>
+                <td>—</td>
+              </tr>
+              <tr class="relic-row-highlight">
+                <td>Relic 9</td>
+                <td>—</td>
+                <td>—</td>
+                <td>—</td>
+                <td>—</td>
+                <td>—</td>
+                <td style="color:var(--accent)">20</td>
+                <td style="color:var(--red)">20</td>
+                <td style="color:var(--blue)">20</td>
+                <td style="color:var(--yellow)">20</td>
+                <td style="color:var(--green)">20</td>
+                <td>—</td>
+              </tr>
+              <tr class="relic-row-highlight">
+                <td>Relic 10</td>
+                <td>—</td>
+                <td>—</td>
+                <td>—</td>
+                <td>—</td>
+                <td>—</td>
+                <td>—</td>
+                <td style="color:var(--red)">20</td>
+                <td style="color:var(--blue)">20</td>
+                <td style="color:var(--yellow)">20</td>
+                <td style="color:var(--green)">20</td>
+                <td style="color:var(--accent)">20</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
@@ -819,7 +986,7 @@ input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:po
 </div><!-- planner-shell -->
 </div><!-- .app -->
 
-<script src="./build-version.js?v=af501ef-59"></script>
+<script src="./build-version.js?v=501ae91-60"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
@@ -1027,6 +1194,7 @@ function updateAuthUI(){
   const authScreen=document.getElementById('auth-screen');
   const plannerShell=document.getElementById('planner-shell');
   const userPanel=document.getElementById('auth-user-panel');
+  const signoutBtn=document.getElementById('signout-btn');
   if(authScreen && plannerShell){
     if(authUser){
       authScreen.style.display='none';
@@ -1036,11 +1204,17 @@ function updateAuthUI(){
         const displayName = authUser.displayName || authUser.email || 'Account';
         userPanel.textContent = `Signed in as ${displayName}`;
       }
+      if(signoutBtn) {
+        signoutBtn.style.display = 'inline-flex';
+        const displayName = authUser.displayName || authUser.email || 'Account';
+        signoutBtn.title = `Sign out from ${displayName}`;
+      }
       setAuthStatus('Signed in', false);
     } else {
       authScreen.style.display='block';
       plannerShell.style.display='none';
       if(userPanel){ userPanel.style.display='none'; }
+      if(signoutBtn){ signoutBtn.style.display = 'none'; }
       setAuthStatus(authReady ? (authDisabledReason || 'Please sign in to continue') : 'Connecting…', authDisabledReason ? true : false);
     }
   }
@@ -1247,9 +1421,6 @@ function getRemoteUserRef(uid){
   return firebaseDb.collection('users').doc(uid);
 }
 
-// The current planner snapshot lives in one document for simplicity.
-// If the state grows beyond a comfortable size, move large sections into
-// subcollections under users/{uid}/planner/ while keeping this document as metadata.
 function getRemotePlannerRef(uid){
   const userRef = getRemoteUserRef(uid);
   if(!userRef) return null;
@@ -1581,7 +1752,6 @@ function getMonthlyIncomeBreakdown(monthKey){
     baseSources.blue += Math.round(Number(s.blue||0)*multiplier*monthScale);
   }
 
-  // Calculate Assault Battles (flat per month, no monthScale scaling)
   const ab = state.assaultBattles || {};
   for(const key in ab) {
     const tiers = Number(ab[key] || 0);
@@ -1590,7 +1760,6 @@ function getMonthlyIncomeBreakdown(monthKey){
     assault.blue += tiers * 3;
   }
 
-  // Calculate Episode Shipment & Era Coliseum (no weekScale scaling, calculated flatly from purchases per month)
   for(const k in state.toggles){
     const t = state.toggles[k];
     if(k === 'episodeShipment' || k === 'eraColiseum') {
@@ -1894,13 +2063,15 @@ function renderConfig(){
   renderAssaultBattles();
 
   const rt=document.getElementById('relic-info-table');
-  rt.innerHTML=Object.entries(RELIC_COST).reverse().map(([lvl,c])=>`
-    <tr>
-      <td style="padding:5px 8px;color:var(--text2);font-size:12px">→ R${lvl}</td>
-      <td style="padding:5px 8px;text-align:right;color:var(--grey);font-family:'JetBrains Mono',monospace">${c.grey}</td>
-      <td style="padding:5px 8px;text-align:right;color:var(--green);font-family:'JetBrains Mono',monospace">${c.green}</td>
-      <td style="padding:5px 8px;text-align:right;color:var(--blue);font-family:'JetBrains Mono',monospace">${c.blue}</td>
-    </tr>`).join('');
+  if (rt) {
+    rt.innerHTML=Object.entries(RELIC_COST).reverse().map(([lvl,c])=>`
+      <tr>
+        <td>→ R${lvl}</td>
+        <td style="color:var(--grey)">${c.grey || '—'}</td>
+        <td style="color:var(--green)">${c.green || '—'}</td>
+        <td style="color:var(--blue)">${c.blue || '—'}</td>
+      </tr>`).join('');
+  }
 }
 
 function updateStorePurchaseCount(key, val) {
