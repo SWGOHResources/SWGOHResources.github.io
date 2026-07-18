@@ -121,6 +121,67 @@ body {
   border-bottom-color: var(--accent);
   background: rgba(139, 92, 246, 0.04);
 }
+
+/* ─── Site nav (top-header) ───────────────────── */
+.nav-tab {
+  height: 100%;
+  padding: 0 16px;
+  background: none;
+  border: none;
+  color: var(--text2);
+  font-size: 13px;
+  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+}
+.nav-tab:hover { color: var(--text); }
+.nav-tab.active {
+  color: var(--text);
+  border-bottom-color: var(--accent);
+}
+
+/* ─── Sub-header (on-page tabs) ───────────────── */
+.sub-header {
+  position: sticky;
+  top: 56px;
+  z-index: 190;
+  width: 100%;
+  background: rgba(18, 18, 20, 0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+.sub-tabs {
+  display: flex;
+  gap: 4px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+  height: 44px;
+  align-items: center;
+  overflow-x: auto;
+}
+.sub-tabs .tab-btn {
+  height: 30px;
+  padding: 0 14px;
+  border-radius: var(--radius);
+  border-bottom: none;
+  font-size: 12px;
+}
+.sub-tabs .tab-btn:hover {
+  background: var(--bg2);
+  color: var(--text);
+}
+.sub-tabs .tab-btn.active {
+  background: var(--accent-dim);
+  color: var(--text);
+  box-shadow: inset 0 0 0 1px rgba(139, 92, 246, 0.25);
+}
 .topbar-right {
   display: flex;
   align-items: center;
@@ -999,10 +1060,8 @@ input[type=checkbox]:checked::after {
   <div class="topbar">
     <a href="index.html" class="topbar-title">Swgoh<span>Resources</span></a>
     <div class="topbar-tabs">
-      <button class="tab-btn" data-tab="plan" onclick="showTab('plan')">Group Plan</button>
-      <button class="tab-btn" data-tab="tb" onclick="showTab('tb')">Guild Event Setup</button>
-      <button class="tab-btn" data-tab="config" onclick="showTab('config')">Other Setups</button>
-      <button class="tab-btn" data-tab="info" onclick="showTab('info')">Relic Info</button>
+      <a class="nav-tab" href="index.html">Home</a>
+      <a class="nav-tab active" href="relic.html">Relic Planner</a>
     </div>
     <div class="topbar-right">
       <div class="auth-panel">
@@ -1013,6 +1072,15 @@ input[type=checkbox]:checked::after {
       <div class="topbar-divider"></div>
       <div id="build-badge" style="font-size:11px;color:var(--text3)">Build <span id="build-version"></span></div>
     </div>
+  </div>
+</div>
+
+<div id="page-tabs" class="sub-header">
+  <div class="sub-tabs">
+    <button class="tab-btn active" data-tab="plan" onclick="showTab('plan')">Group Plan</button>
+    <button class="tab-btn" data-tab="tb" onclick="showTab('tb')">Guild Event Setup</button>
+    <button class="tab-btn" data-tab="config" onclick="showTab('config')">Other Setups</button>
+    <button class="tab-btn" data-tab="info" onclick="showTab('info')">Relic Info</button>
   </div>
 </div>
 
