@@ -118,6 +118,12 @@ a { color: inherit; }
   color: var(--text3);
   white-space: nowrap;
 }
+.topbar-divider {
+  width: 1px;
+  height: 16px;
+  background: var(--border);
+  margin: 0 2px;
+}
 
 /* ─── Buttons ─────────────────────────────────── */
 .btn {
@@ -355,7 +361,6 @@ footer {
 </style>
 </head>
 <body>
-<script src="./build-version.js?v=08d5ac6-68"></script>
 
 <div class="top-header">
   <div class="topbar">
@@ -368,6 +373,8 @@ footer {
       <div id="auth-status" class="auth-status">Connecting…</div>
       <button id="signin-btn" class="btn btn-ghost btn-sm" onclick="openAuthModal()">Sign In</button>
       <button id="signout-btn" class="btn btn-ghost btn-sm" style="display:none" onclick="signOut()">Sign Out</button>
+      <div class="topbar-divider"></div>
+      <div id="build-badge" style="font-size:11px;color:var(--text3)">Build <span id="build-version"></span></div>
     </div>
   </div>
 </div>
@@ -463,6 +470,7 @@ footer {
   SwgohResources is an unofficial, fan-made resource and is not affiliated with Lucasfilm, EA, or Capital Games.
 </footer>
 
+<script src="./build-version.js?v=39195c6-69"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
 <script>
@@ -613,6 +621,9 @@ function initFirebase(){
     updateAuthUI();
   }
 }
+
+const buildVersionEl = document.getElementById('build-version');
+if(buildVersionEl){ buildVersionEl.textContent = window.BUILD_VERSION || 'dev'; }
 
 initFirebase();
 </script>
