@@ -1,780 +1,620 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Revo Idle Guides & Resources</title>
-    <link rel="stylesheet" href="assets/css/style.css">
-    <link rel="icon" type="image/x-icon" href="assets/img/Main.ico">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' https:;script-src 'self' https://www.gstatic.com https://www.googleapis.com https://apis.google.com https://fonts.googleapis.com 'unsafe-inline'; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' https://fonts.gstatic.com data:; connect-src 'self' https://www.googleapis.com https://firestore.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com; frame-src https://accounts.google.com https://noteproject-4c78d.firebaseapp.com; object-src 'none'; base-uri 'self'; form-action 'self' https://accounts.google.com">
+<meta name="referrer-policy" content="strict-origin-when-cross-origin">
+<title>SwgohResources</title>
+<link rel="icon" href="/favicon.ico" type="image/x-icon">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-
-@font-face {
-    font-family: 'Yuruka';
-    src: url('../fonts/FOT-Yuruka Std.otf') format('opentype');
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
+:root {
+  --bg: #09090b;
+  --bg1: #121214;
+  --bg2: #18181b;
+  --bg3: #222227;
+  --border: rgba(255, 255, 255, 0.06);
+  --border2: rgba(255, 255, 255, 0.12);
+  --text: #fafafa;
+  --text2: #a1a1aa;
+  --text3: #71717a;
+  --accent: #8b5cf6;
+  --accent-dim: rgba(139, 92, 246, 0.08);
+  --red: #ef4444;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --shadow: 0 4px 20px rgba(0,0,0,0.4);
+  --font-mono: 'JetBrains Mono', monospace;
 }
 
-/* General Reset */
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
-
+html { height: 100%; }
 body {
-    font-family: 'Yuruka', 'Roboto', sans-serif;
-    background-color: #121212; /* Dark background for reading */
-    color: #e0e0e0;
-    line-height: 1.6;
-    display: flex; /* Creates the Sidebar + Main layout */
-    min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; }
+
+/* ─── Header ─────────────────────────────────── */
+.top-header {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  width: 100%;
+  background: rgba(18, 18, 20, 0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+.topbar {
+  display: flex;
+  align-items: center;
+  height: 56px;
+  padding: 0 24px;
+  max-width: 960px;
+  margin: 0 auto;
+}
+.topbar-title {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--text);
+  margin-right: 28px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+}
+.topbar-title span {
+  color: var(--accent);
+  text-shadow: 0 0 10px rgba(139, 92, 246, 0.3);
+}
+.topbar-tabs {
+  display: flex;
+  gap: 4px;
+  flex: 1;
+  height: 100%;
+}
+.tab-btn {
+  height: 100%;
+  padding: 0 16px;
+  background: none;
+  border: none;
+  color: var(--text2);
+  font-size: 13px;
+  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+}
+.tab-btn:hover { color: var(--text); }
+.tab-btn.active {
+  color: var(--text);
+  border-bottom-color: var(--accent);
+}
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: nowrap;
+  justify-content: flex-end;
+}
+.auth-status {
+  font-size: 11px;
+  color: var(--text3);
+  white-space: nowrap;
 }
 
-/* Sidebar Styling */
-#sidebar {
-    width: 280px;
-    background-color: #0a0a0a;
-    border-right: 1px solid #333;
-    display: flex;
-    flex-direction: column;
-    position: fixed; /* Stays in place while scrolling */
-    height: 100vh;
-    overflow-y: auto; /* Scroll sidebar if list is too long */
-    z-index: 1000;
+/* ─── Buttons ─────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 14px;
+  border-radius: var(--radius);
+  border: none;
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.btn-accent {
+  background: var(--accent);
+  color: var(--text);
+}
+.btn-accent:hover { opacity: 0.92; }
+.btn-ghost {
+  background: var(--bg2);
+  color: var(--text2);
+  border: 1px solid var(--border);
+}
+.btn-ghost:hover:not(:disabled) { background: var(--bg3); color: var(--text); }
+.btn-sm { height: 28px; padding: 0 10px; font-size: 11px; }
+
+/* ─── Layout ──────────────────────────────────── */
+.app {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 40px 24px 64px;
+}
+.page-intro { margin-bottom: 28px; }
+.page-intro h1 {
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin-bottom: 6px;
+}
+.page-intro p {
+  font-size: 13px;
+  color: var(--text2);
+  max-width: 640px;
 }
 
-.sidebar-header {
-    padding: 2rem;
-    background-color: #050505;
-    border-bottom: 1px solid #222;
+/* ─── Card Sections (matches relic.html) ─────── */
+.section {
+  background: var(--bg1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  margin-bottom: 20px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
-
-.sidebar-header h1 {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 1.4rem;
-    color: #4ade80; /* Grass Green */
+.section-head {
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  background: rgba(255,255,255,0.01);
 }
-
-.sidebar-header p {
-    font-size: 0.8rem;
-    color: #888;
-}
-
-/* Navigation Links */
-#sidebar nav {
-    padding: 1rem;
-}
-
-#sidebar a {
-    display: block;
-    padding: 12px 15px;
-    margin-bottom: 5px;
-    border-radius: 6px;
-    text-decoration: none;
-    color: #bbb;
-    font-weight: 500;
-    transition: all 0.2s;
-}
-
-/* External link buttons (Wiki) */
-.external-buttons {
-    padding: 0 1rem 1rem 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-top: 0.5rem;
-}
-.external-buttons .btn {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 12px;
-    border-radius: 8px;
-    color: #fff;
-    text-decoration: none;
-    font-weight: 600;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-}
-.external-buttons .btn .btn-icon {
-    width: 18px;
-    height: 18px;
-    display: inline-block;
-}
-.external-buttons .btn.wiki { background: linear-gradient(180deg,#16a34a,#15803d); }
-.external-buttons .btn.wiki img { width: 18px; height: 18px; }
-.external-buttons .btn:hover { transform: translateY(-2px); }
-
-@media (max-width: 768px) {
-    .external-buttons { padding-left: 0.75rem; padding-right: 0.75rem; }
-}
-
-
-#sidebar a:hover {
-    background-color: #1f2937;
-    color: #4ade80;
-    padding-left: 20px; /* Slide effect */
-}
-
-/* Active Link Styling */
-#sidebar a.active {
-    background-color: #1f2937;
-    color: #4ade80;
-    border-left: 4px solid #4ade80;
-}
-
-/* Main Content Area */
-main {
-    margin-left: 280px; /* Pushes content right of sidebar */
-    width: 100%;
-    min-height: 100vh;
-    position: relative;
-}
-
-/* GUIDE PAGE STYLING */
-.guide-container {
-    max-width: 900px; /* Limits text width for readability */
-    margin: 0 auto;
-    padding: 4rem 2rem;
-}
-
-.guide-container h1 {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 3rem;
-    color: var(--theme-color);
-    margin-bottom: 2rem;
-    border-bottom: 2px solid #333;
-    padding-bottom: 1rem;
-}
-
-/* Shared guide theme base (applies across pages using --theme-color variable) */
-h2 {
-    font-family: 'Orbitron', sans-serif;
-    color: #fff;
-    font-size: 2rem;
-    margin-top: 3rem;
-    margin-bottom: 1.5rem;
-    padding-bottom: 10px;
-    border-bottom: 2px solid #333;
-    position: relative;
-}
-
-h2::after {
-    content: '';
-    position: absolute;
-    bottom: -2px;
-    left: 0;
-    width: 100px;
-    height: 2px;
-    background-color: var(--theme-color);
-    box-shadow: 0 0 10px var(--theme-color);
-}
-
-h2.major-checkpoint {
-    font-size: 2.5rem;
-    color: var(--theme-color);
-    border-bottom: 4px solid var(--theme-color);
-    text-shadow: 0 0 10px rgba(0,0,0,0.2);
-}
-
-h3 {
-    font-family: 'Orbitron', sans-serif;
-    color: var(--theme-color);
-    font-size: 1.4rem;
-    margin-top: 2rem;
-    margin-bottom: 1rem;
-    font-weight: 400; /* subheadings: not bold for readability */
-}
-
-.credits-box {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid #333;
-    border-left: 4px solid var(--theme-color);
-    border-radius: 6px;
-    padding: 1.5rem;
-    margin-bottom: 3rem;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.credits-header {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 0.9rem;
-    color: var(--theme-color);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 0.5rem;
-}
-
-.note {
-    background-color: #151515;
-    border-left: 2px solid var(--theme-color);
-    padding: 1rem 1.5rem;
-    margin: 1.5rem 0;
-    border-radius: 0 6px 6px 0;
-    font-size: 0.95rem;
-    color: #cccccc;
-    transition: transform 0.2s;
-}
-.note:hover { background-color: #1a1a1a; }
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 2rem 0;
-    background-color: #111;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-    border-radius: 8px;
-    overflow: hidden;
-    font-size: 0.9rem;
-}
-th, td {
-    padding: 12px;
-    text-align: left;
-    border-bottom: 1px solid #222;
-}
-th {
-    background-color: #1f1f1f;
-    color: var(--theme-color);
-    font-family: 'Orbitron', sans-serif;
-    text-transform: uppercase;
-}
-
-/* Warning Text styling */
-.warning-text {
-    color: #ff5555;
-    font-weight: bold;
-    text-transform: uppercase;
-}
-
-/* List Styling */
-ul { margin-left: 20px; margin-bottom: 1.5rem; }
-li { margin-bottom: 8px; color: #ddd; }
-
-/* Sidebar Active Color Override */
-#sidebar a.active {
-    color: var(--theme-color) !important;
-    border-left-color: var(--theme-color) !important;
-}
-#sidebar a:hover {
-    color: var(--theme-color) !important;
-}
-
-
-/* HOME PAGE STYLING */
-/* This makes the image cover the whole area to the right */
-.home-bg {
-    width: 100%;
-    height: 100vh;
-    /* CHANGE 'bg.jpg' TO YOUR IMAGE FILENAME */
-    background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('../img/bg.jpg'); 
-    background-size: cover;
-    background-position: center;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-}
-
-.home-content h1 {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 4rem;
-    color: #fff;
-    text-shadow: 0 0 20px #4ade80;
-}
-
-.home-content p {
-    font-size: 1.5rem;
-    color: #ddd;
-}
-
-/* Mobile Header (Hidden on Desktop) */
-.mobile-header {
-    display: none;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-    body { display: block; }
-    
-    #sidebar {
-        transform: translateX(-100%);
-        transition: transform 0.3s ease;
-        width: 100%;
-    }
-
-    #sidebar.active { transform: translateX(0); }
-
-    main { margin-left: 0; }
-
-    .mobile-header {
-        display: flex;
-        justify-content: space-between;
-        padding: 1rem;
-        background: #0a0a0a;
-        position: sticky;
-        top: 0;
-        z-index: 2000;
-    }
-
-    .home-content h1 { font-size: 2.5rem; }
-}
-
-/* Add to bottom of style.css */
-
 .section-title {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    color: #666; /* Muted gray */
-    margin-top: 1.5rem; /* Space before new section */
-    margin-bottom: 0.5rem;
-    padding-left: 15px;
-    letter-spacing: 1px;
-    border-bottom: 1px solid #222;
-    padding-bottom: 5px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text);
+}
+.section-head .section-note {
+  font-size: 11px;
+  color: var(--text3);
+}
+.section-body { padding: 0; }
+
+/* ─── Tool rows ───────────────────────────────── */
+.tool-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+  text-decoration: none;
+  color: inherit;
+  transition: background 0.15s ease;
+}
+.tool-row:last-child { border-bottom: none; }
+a.tool-row:hover { background: rgba(255,255,255,0.015); }
+.tool-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 7px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.tool-icon img { width: 16px; height: 16px; object-fit: contain; }
+.tool-icon svg { width: 15px; height: 15px; }
+.tool-info { flex: 1; min-width: 0; }
+.tool-info .name {
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.tool-info .desc {
+  font-size: 12px;
+  color: var(--text3);
+  margin-top: 2px;
+}
+.tool-badge {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text3);
+  border: 1px solid var(--border2);
+  border-radius: 4px;
+  padding: 1px 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.tool-go {
+  font-size: 11px;
+  color: var(--text3);
+  flex-shrink: 0;
+}
+a.tool-row:hover .tool-go { color: var(--accent); }
+.tool-row.muted { color: var(--text3); }
+.tool-row.muted .tool-icon { opacity: 0.6; }
+
+/* ─── Auth Modal ──────────────────────────────── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.8);
+  backdrop-filter: blur(4px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 300;
+}
+.modal-overlay.open { display: flex; }
+.auth-card {
+  width: min(380px, 100%);
+  padding: 28px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--bg1);
+  box-shadow: var(--shadow);
+  text-align: center;
+  position: relative;
+}
+.auth-card h2 { font-size: 17px; font-weight: 600; margin-bottom: 6px; }
+.auth-card p { font-size: 12px; color: var(--text2); margin-bottom: 20px; line-height: 1.5; }
+.auth-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: transparent;
+  border: none;
+  color: var(--text3);
+  font-size: 16px;
+  cursor: pointer;
+  line-height: 1;
+}
+.auth-close:hover { color: var(--text); }
+.auth-toggle {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 18px;
+  background: var(--bg2);
+  padding: 4px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+.auth-toggle button {
+  flex: 1;
+  height: 30px;
+  border-radius: 5px;
+  border: none;
+  background: transparent;
+  color: var(--text2);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.auth-toggle button.active { background: var(--bg3); color: var(--text); }
+.auth-grid { display: grid; gap: 10px; }
+.auth-grid input {
+  height: 38px;
+  font-size: 13px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  padding: 0 12px;
+  width: 100%;
+  outline: none;
+}
+.auth-grid input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.15);
+  background: var(--bg3);
+}
+.auth-actions { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+.auth-actions button { width: 100%; height: 36px; }
+.auth-hint { font-size: 11px; color: var(--text3); margin-top: 12px; }
+
+/* ─── Footer ──────────────────────────────────── */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 20px 24px;
+  text-align: center;
+  font-size: 11px;
+  color: var(--text3);
 }
 
-/* caret indicator */
-.section-title .section-caret {
-    width: 12px;
-    height: 12px;
-    border-left: 2px solid #888;
-    border-bottom: 2px solid #888;
-    transform: rotate(-45deg);
-    display: inline-block;
-    margin-left: 10px;
-    transition: transform 0.2s ease, border-color 0.2s ease;
+@media (max-width: 640px) {
+  .topbar { padding: 0 16px; }
+  .tool-badge { display: none; }
 }
-
-/* collapsed links container */
-.sidebar-section .section-links {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.28s ease, padding 0.2s ease;
-    padding-left: 4px;
-}
-
-/* open state */
-.sidebar-section.open .section-links {
-    max-height: 2000px; /* large enough for content */
-    padding-top: 8px;
-    padding-bottom: 8px;
-}
-
-/* rotate caret when open */
-.sidebar-section.open .section-title .section-caret {
-    transform: rotate(45deg);
-    border-color: var(--theme-color);
-}
-
-/* small spacing for links inside section */
-.sidebar-section .section-links a { padding-left: 24px; }
-
-/* Section title color variants */
-.section-title.w1 { color: #4ade80; }
-.section-title.w2 { color: #15803d; }
-.section-title.bonus { color: #00e1ff; }
-
-/* Caret color per section */
-.section-title.w1 .section-caret { border-left-color: #4ade80; border-bottom-color: #4ade80; }
-.section-title.w2 .section-caret { border-left-color: #15803d; border-bottom-color: #15803d; }
-.section-title.bonus .section-caret { border-left-color: #00e1ff; border-bottom-color: #00e1ff; }
-
-/* Keep title color obvious when open */
-.sidebar-section.open .section-title.w1 { color: #4ade80; }
-.sidebar-section.open .section-title.w2 { color: #15803d; }
-.sidebar-section.open .section-title.bonus { color: #00e1ff; }
-
-/* --- Sidebar section color themes --- */
-.sidebar-section.w1 .section-title { color: #9AE6B4 !important; }
-.sidebar-section.w2 .section-title { color: #16A34A !important; }
-.sidebar-section.bonus .section-title { color: #06B6D4 !important; }
-
-/* caret color per section when open */
-.sidebar-section.w1.open .section-title .section-caret { border-color: #9AE6B4; }
-.sidebar-section.w2.open .section-title .section-caret { border-color: #16A34A; }
-.sidebar-section.bonus.open .section-title .section-caret { border-color: #06B6D4; }
-
-/* ensure links in section use theme on hover */
-.sidebar-section.w1 .section-links a:hover { color: #9AE6B4; }
-.sidebar-section.w2 .section-links a:hover { color: #16A34A; }
-.sidebar-section.bonus .section-links a:hover { color: #06B6D4; }
-
-/* Maintainer note styles */
-.sidebar-maintainer {
-    margin: 1rem;
-    padding: 0.6rem 0.9rem;
-    background: rgba(255,255,255,0.02);
-    border: 1px solid #222;
-    border-radius: 8px;
-    color: #ddd;
-    font-size: 0.85rem;
-    text-align: center;
-}
-.sidebar-maintainer strong { color: #4ade80; font-weight:700; }
-
-.maintained-note {
-    margin-top: 1.25rem;
-    font-size: 1rem;
-    color: #cfd8cc;
-}
-.maintained-note strong { color: #4ade80; font-weight:600; }
-
-
-
-/* --- DOT NAVIGATION (Left Side) --- */
-#dot-nav {
-    position: fixed;
-    left: 300px; /* Sidebar width (280px) + 20px gap */
-    top: 50%;
-    transform: translateY(-50%);
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    z-index: 900;
-}
-
-.dot-item {
-    display: grid;
-    grid-template-columns: 20px 3ch 1fr; /* circle | number | label */
-    align-items: center;
-    text-decoration: none;
-    opacity: 0.9; /* high default visibility */
-    transition: all 0.22s ease;
-    -webkit-tap-highlight-color: transparent;
-}
-
-.dot-item:hover, .dot-item.active {
-    opacity: 1;
-    transform: scale(1.12);
-}
-
-.dot-circle {
-    width: 16px; /* larger and easier to see */
-    height: 16px;
-    border-radius: 50%;
-    border: 3px solid var(--theme-color); /* use theme color */
-    background-color: var(--theme-color); /* theme fill, controlled by opacity */
-    opacity: 0.22; /* subtle by default */
-    transition: all 0.22s ease;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.6) inset;
-}
-
-.dot-item:hover .dot-circle {
-    opacity: 0.45; /* brighter on hover */
-}
-
-.dot-item.active .dot-circle {
-    opacity: 1; /* fully bright when active */
-    border-color: var(--theme-color);
-    background-color: var(--theme-color);
-    box-shadow: 0 0 18px var(--theme-color), 0 8px 22px rgba(0,0,0,0.45);
-}
-
-.dot-label {
-    margin-left: 12px;
-    font-family: 'Yuruka', 'Orbitron', sans-serif;
-    font-size: 0.75rem;
-    color: var(--theme-color); /* label uses theme color */
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    text-shadow: 0 0 10px rgba(0,0,0,0.6);
-    /* keep labels visible for accessibility */
-    font-weight: 400; /* sublabels normal to improve scanability */
-}
-
-/* Make top-level dot labels bold for emphasis */
-.dot-item.level-1 .dot-label { font-weight: 700; }
-
-.dot-item.level-2 .dot-label { font-weight: 400; }
-.dot-item.level-3 .dot-label { font-weight: 400; }
-.dot-item.level-4 .dot-label { font-weight: 400; }
-
-.dot-item.active .dot-label {
-    text-shadow: 0 0 14px var(--theme-color);
-    color: var(--theme-color);
-}
-
-/* Grouped dot nav layout (parent + children) */
-.dot-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
-.dot-children { margin-left: 0; display: flex; flex-direction: column; gap: 6px; }
-.dot-children.sub-level { margin-left: 0; }
-
-/* Base dot item layout */
-.dot-item { display: flex; align-items: center; gap: 8px; text-decoration: none; }
-.dot-item .dot-num { color: var(--theme-color); font-weight: 700; width: 3ch; text-align: right; margin-left: 6px; }
-.dot-item .dot-label { display: block; text-align: left; }
-
-/* Indentation and hierarchy for dot nav levels */
-.dot-item.level-1 { padding-left: 0; }
-.dot-item.level-1 .dot-label { font-size: 0.95rem; text-transform: uppercase; letter-spacing: 1px; }
-
-.dot-item.level-2 { padding-left: 0; }
-.dot-item.level-2 .dot-circle { width: 12px; height: 12px; border-width: 2px; }
-.dot-item.level-2 .dot-label { font-size: 0.88rem; opacity: 0.98; font-weight: 700; text-transform: none; letter-spacing: 0.2px; }
-
-.dot-item.level-3 { padding-left: 0; }
-.dot-item.level-3 .dot-circle { width: 10px; height: 10px; border-width: 2px; }
-.dot-item.level-3 .dot-label { font-size: 0.82rem; opacity: 0.95; font-weight: 700; }
-
-.dot-item.level-4 { padding-left: 0; }
-.dot-item.level-4 .dot-circle { width: 8px; height: 8px; border-width: 2px; }
-.dot-item.level-4 .dot-label { font-size: 0.76rem; opacity: 0.9; font-weight: 700; }
-
-
-/* Uncomment below if you only want text on hover/active */
-/* .dot-item:hover .dot-label, .dot-item.active .dot-label { opacity: 1; } */
-
-/* Uncomment below if you only want text on hover/active */
-/* .dot-item:hover .dot-label, .dot-item.active .dot-label { opacity: 1; } */
-
-/* Hide dots on mobile/tablets where space is tight */
-@media (max-width: 1100px) {
-    #dot-nav { display: none; }
-}
-
-/* Optional content override: ensure bonus sections are not highlighted with theme color */
-.bonus-section,
-.bonus-section * {
-    background: transparent !important;
-    border-left: none !important;
-    box-shadow: none !important;
-    outline: none !important;
-}
-
-/* --- CUSTOM SCROLLBAR STYLING --- */
-
-/* For Webkit Browsers (Chrome, Edge, Safari) */
-::-webkit-scrollbar {
-    width: 8px; /* Width of the vertical scrollbar */
-    height: 8px; /* Height of the horizontal scrollbar */
-}
-
-/* The Track (Background) */
-::-webkit-scrollbar-track {
-    background: #0a0a0a; /* Matches your Sidebar background */
-}
-
-/* The Handle (The moving part) */
-::-webkit-scrollbar-thumb {
-    background: #333; /* Dark Grey */
-    border-radius: 4px; /* Soft edges */
-}
-
-/* Handle on hover (When you mouse over it) */
-::-webkit-scrollbar-thumb:hover {
-    background: #555; /* Slightly lighter grey */
-}
-
-/* For Firefox (different syntax) */
-* {
-    scrollbar-width: thin; /* Makes it skinnier */
-    scrollbar-color: #333 #0a0a0a; /* Thumb Color | Track Color */
-}
-
-/* --- COLLAPSIBLE SIDEBAR STYLES --- */
-
-/* Desktop Toggle Button (Visible when sidebar is closed) */
-#desktop-expand-btn {
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    z-index: 2000;
-    background-color: #1a1c29;
-    border: 1px solid #333;
-    color: var(--theme-color);
-    font-size: 1.5rem;
-    padding: 5px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-    display: none; /* Hidden by default (sidebar is open) */
-    transition: all 0.3s;
-}
-
-#desktop-expand-btn:hover {
-    background-color: #2a2d42;
-    box-shadow: 0 0 10px var(--theme-color);
-}
-
-/* Sidebar Collapse Button (Inside the sidebar) */
-#sidebar-collapse-btn {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    background: transparent;
-    border: none;
-    color: #888;
-    font-size: 1.2rem;
-    cursor: pointer;
-    transition: color 0.3s;
-}
-
-#sidebar-collapse-btn:hover {
-    color: var(--theme-color);
-}
-
-/* Transitions for smooth movement */
-#sidebar, main, #dot-nav {
-    transition: all 0.3s ease-in-out;
-}
-
-/* Force heading and UI font to use Yuruka where appropriate (headings, sidebar, dots) */
-/* Keep body and content readable using Roboto */
-#sidebar, .sidebar-header h1, .sidebar-header p, #sidebar a, h1, h2, h3, .credits-header, .section-title, .dot-label {
-    font-family: 'Yuruka', 'Orbitron', sans-serif !important;
-}
-
-/* Ensure content like paragraphs, TOC, tables use Roboto (readable) */
-body, p, li, .toc-list, table, th, td, .note, .qa-box, .credits-grid {
-    font-family: 'Roboto', 'Yuruka', sans-serif;
-}
-
-/* --- COLLAPSED STATE (Applied via JS) --- */
-body.collapsed #sidebar {
-    transform: translateX(-100%); /* Hides sidebar to the left */
-}
-
-body.collapsed main {
-    margin-left: 0; /* Expands content to fill screen */
-}
-
-body.collapsed #desktop-expand-btn {
-    display: block; /* Show the open button */
-}
-
-/* Move dots to the left when sidebar is gone */
-body.collapsed #dot-nav {
-    left: 40px; 
-}
-
-/* --- CLEAN TABLE OF CONTENTS --- */
-.toc-box {
-    background-color: #151515;
-    border: 1px solid #333;
-    border-left: 4px solid var(--theme-color);
-    padding: 1.5rem;
-    margin-bottom: 3rem;
-    border-radius: 6px;
-    width: 100%; /* Ensures it uses full available space */
-}
-
-.toc-title {
-    font-family: 'Yuruka', 'Orbitron', sans-serif;
-    color: var(--theme-color);
-    margin-bottom: 15px;
-    font-size: 1.2rem;
-    font-weight: 700;
-}
-
-.toc-list {
-    list-style: none !important;
-    padding-left: 0 !important;
-    margin: 0 !important;
-    display: block !important; /* Kills any inherited grids */
-}
-
-/* Base items */
-.toc-list li {
-    display: block !important; /* Force text to use full width */
-    margin-bottom: 10px;
-    width: 100%;
-}
-
-/* Sub-list (The container div you used in HTML) */
-.toc-list .sub-list {
-    display: block !important;
-    margin: 5px 0 10px 25px !important; /* Indent */
-    padding-left: 15px !important;
-    border-left: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.toc-list a {
-    color: #ddd;
-    text-decoration: none;
-    font-size: 0.95rem;
-    font-weight: 700;
-    line-height: 1.4;
-    display: inline-block; /* Allows width to be calculated correctly */
-    transition: color 0.2s;
-}
-
-.toc-list a:hover {
-    color: var(--theme-color);
-    text-decoration: underline;
-}
-
-/* Desktop: Allow two columns ONLY if the box is wide enough */
-@media (min-width: 1200px) {
-    /* Optional: Uncomment below if you want two columns back */
-    /* .toc-list { column-count: 1; } */
-}
-
 </style>
 </head>
-
-
 <body>
-<script src="./build-version.js?v=8d56f21-65"></script>
+<script src="./build-version.js?v=6f67686-66"></script>
 
-    <!-- Mobile Header -->
-    <header class="mobile-header">
-        <div class="logo" style="color:#4ade80; font-weight:bold;">Revo Idle Guides</div>
-        <button id="menu-toggle" style="background:none; border:none; color:#fff; font-size:1.5rem;">☰</button>
-    </header>
+<div class="top-header">
+  <div class="topbar">
+    <a href="index.html" class="topbar-title">Swgoh<span>Resources</span></a>
+    <div class="topbar-tabs">
+      <a class="tab-btn active" href="index.html">Home</a>
+      <a class="tab-btn" href="relic.html">Relic Planner</a>
+    </div>
+    <div class="topbar-right">
+      <div id="auth-status" class="auth-status">Connecting…</div>
+      <button id="signin-btn" class="btn btn-ghost btn-sm" onclick="openAuthModal()">Sign In</button>
+      <button id="signout-btn" class="btn btn-ghost btn-sm" style="display:none" onclick="signOut()">Sign Out</button>
+    </div>
+  </div>
+</div>
 
-<aside id="sidebar">
-        <div class="sidebar-header">
-            <h1>REVO</h1>
-            <p>Revolution Idle</p>
+<div class="app">
+
+  <div class="page-intro">
+    <h1>Tools & resources</h1>
+    <p>Planners built for SWGOH, plus links to the community sites worth bookmarking.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-head">
+      <div class="section-title">SwgohResources tools</div>
+      <div class="section-note">Sign in to sync across devices</div>
+    </div>
+    <div class="section-body">
+      <a href="relic.html" class="tool-row">
+        <div class="tool-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#c0b8ff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 15l4-6 3 4 5-8"/></svg>
         </div>
-        <nav>
-            <!-- General -->
-            <a href="index.html">Home</a>
-            <a href="https://revolutionidle.wiki.gg" target="_blank" rel="noopener noreferrer">Tools (External)</a>
-
-            <div class="section-title">Pre-Unity</div>
-            <a href="relic.html">Beginning</a>
-            <a href="pages/misc.html">Achievements, Souls, Time Flux and Shop</a>
-            <a href="pages/infinity.html">Infinity</a>
-            <a href="pages/break-infinity.html">Break Infinity</a>
-            <a href="pages/eternity.html">Eternity</a>
-            <a href="pages/dilation.html">Dilation</a>
-            <a href="pages/dilation-tree.html">Dilation Tree</a>
-
-            <div class="section-title">Unity</div>
-            <a href="pages/early-unity.html">Early Unity</a>           
-            <a href="pages/unity-trials.html">Unity Trials</a>
-            <a href="pages/attacks.html">Attacks</a>
-            <a href="pages/minerals.html">Minerals</a>
-            <a href="pages/refinement.html">Refinement</a>
-            <a href="pages/elements.html">Elements</a>
-            <a href="pages/tarot.html">Tarot</a>
-            <a href="pages/tarot-challenges.html">Tarot Challenges</a>
-            <a href="pages/plague.html">Plague</a>
-            <a href="pages/singularity.html">Singularity</a>
-
-        </nav>
-    </aside>
-
-    <!-- Main Content -->
-    <main>
-        <!-- The class 'home-bg' triggers the image background in CSS -->
-        <div class="home-bg">
-            <div class="home-content">
-                <h1><strong>Select a guide from the sidebar to begin.</strong></h1>
-                <p class="maintained-note">Maintained by <strong>Dom (Actiari)</strong></p>
-            </div>
+        <div class="tool-info">
+          <div class="name">Relic &amp; Farming Planner <span class="tool-badge">Planner</span></div>
+          <div class="desc">Track relic material income vs. demand, plan monthly farming groups, and manage guild event and cantina setups.</div>
         </div>
-    </main>
+        <div class="tool-go">Open →</div>
+      </a>
+      <div class="tool-row muted">
+        <div class="tool-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 2"/></svg>
+        </div>
+        <div class="tool-info">
+          <div class="name">More tools in development</div>
+          <div class="desc">Additional planners and calculators are on the way.</div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-    <script src="assets/js/script.js"></script>
+  <div class="section">
+    <div class="section-head">
+      <div class="section-title">Other SWGOH sites</div>
+      <div class="section-note">Not affiliated with SwgohResources</div>
+    </div>
+    <div class="section-body">
+      <a href="https://holotables.xyz" target="_blank" rel="noopener noreferrer" class="tool-row">
+        <div class="tool-icon">
+          <img src="https://www.google.com/s2/favicons?sz=64&domain=holotables.xyz" alt="" loading="lazy">
+        </div>
+        <div class="tool-info">
+          <div class="name">HoloTables <span class="tool-badge">Coliseum</span></div>
+          <div class="desc">Squad Arena and Grand Arena counters, defense analysis, and matchup planning.</div>
+        </div>
+        <div class="tool-go">holotables.xyz ↗</div>
+      </a>
+      <a href="https://swgoh.gg" target="_blank" rel="noopener noreferrer" class="tool-row">
+        <div class="tool-icon">
+          <img src="https://www.google.com/s2/favicons?sz=64&domain=swgoh.gg" alt="" loading="lazy">
+        </div>
+        <div class="tool-info">
+          <div class="name">SWGOH.GG <span class="tool-badge">Everything else</span></div>
+          <div class="desc">Character and ship stats, mod optimization, guild lookups, teams, and events.</div>
+        </div>
+        <div class="tool-go">swgoh.gg ↗</div>
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<div id="auth-modal" class="modal-overlay" onclick="if(event.target.id==='auth-modal') closeAuthModal()">
+  <div class="auth-card">
+    <button class="auth-close" onclick="closeAuthModal()">×</button>
+    <h2 id="auth-title">Welcome back</h2>
+    <p id="auth-desc">Sign in to sync your planner across devices, or create an account to save your groups and settings.</p>
+    <div class="auth-toggle">
+      <button id="auth-mode-signin" class="active" onclick="setAuthMode('signin')">Sign in</button>
+      <button id="auth-mode-signup" onclick="setAuthMode('signup')">Create account</button>
+    </div>
+    <div class="auth-grid">
+      <input id="auth-email" type="email" placeholder="Email address">
+      <input id="auth-password" type="password" placeholder="Password">
+      <div class="auth-actions">
+        <button id="auth-submit-btn" class="btn btn-accent" onclick="submitAuthForm()">Sign in</button>
+        <button class="btn btn-ghost" onclick="signInWithGoogle()">Continue with Google</button>
+      </div>
+    </div>
+    <div id="auth-user-panel" class="auth-hint" style="display:none"></div>
+  </div>
+</div>
+
+<footer>
+  SwgohResources is an unofficial, fan-made resource and is not affiliated with Lucasfilm, EA, or Capital Games.
+</footer>
+
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+<script>
+const FIREBASE_CONFIG = window.FIREBASE_CONFIG || {
+  apiKey: 'AIzaSyBixCM0BOfOeD37ybGA0M1_6-XT3x6MVFk',
+  authDomain: 'noteproject-4c78d.firebaseapp.com',
+  projectId: 'noteproject-4c78d',
+  storageBucket: 'noteproject-4c78d.firebasestorage.app',
+  messagingSenderId: '791609826482',
+  appId: '1:791609826482:web:6a7c2e4ed6c5147a623dab'
+};
+
+let firebaseApp = null;
+let firebaseAuth = null;
+let authUser = null;
+let authReady = false;
+let authAvailable = false;
+let authDisabledReason = '';
+let authMode = 'signin';
+
+function isFirebaseConfigured(){
+  return Boolean(FIREBASE_CONFIG.apiKey && FIREBASE_CONFIG.projectId);
+}
+
+function setAuthStatus(message, isError){
+  const el = document.getElementById('auth-status');
+  if(!el) return;
+  el.textContent = message;
+  el.style.color = isError ? 'var(--red)' : 'var(--text3)';
+}
+
+function openAuthModal(){
+  document.getElementById('auth-modal').classList.add('open');
+}
+function closeAuthModal(){
+  document.getElementById('auth-modal').classList.remove('open');
+}
+
+function setAuthMode(mode){
+  authMode = mode;
+  const signInBtn = document.getElementById('auth-mode-signin');
+  const signUpBtn = document.getElementById('auth-mode-signup');
+  const submitBtn = document.getElementById('auth-submit-btn');
+  const title = document.getElementById('auth-title');
+  const desc = document.getElementById('auth-desc');
+  signInBtn.classList.toggle('active', mode === 'signin');
+  signUpBtn.classList.toggle('active', mode === 'signup');
+  submitBtn.textContent = mode === 'signup' ? 'Create account' : 'Sign in';
+  title.textContent = mode === 'signup' ? 'Create your account' : 'Welcome back';
+  desc.textContent = mode === 'signup'
+    ? 'Create an account to save your relic planner groups and settings across devices.'
+    : 'Sign in to sync your planner across devices, or create an account to save your groups and settings.';
+}
+
+async function submitAuthForm(){
+  const email = document.getElementById('auth-email').value.trim();
+  const password = document.getElementById('auth-password').value;
+  if(!email || !password){ setAuthStatus('Enter your email and password', true); return; }
+  if(!firebaseAuth || !authAvailable){
+    setAuthStatus(authDisabledReason || 'Authentication is unavailable right now.', true);
+    return;
+  }
+  try{
+    setAuthStatus(authMode === 'signup' ? 'Creating account…' : 'Signing in…');
+    if(authMode === 'signup'){
+      await firebaseAuth.createUserWithEmailAndPassword(email, password);
+    } else {
+      await firebaseAuth.signInWithEmailAndPassword(email, password);
+    }
+    closeAuthModal();
+  } catch(e){
+    console.error(e);
+    setAuthStatus(e.message || (authMode === 'signup' ? 'Unable to create account' : 'Unable to sign in'), true);
+  }
+}
+
+async function signInWithGoogle(){
+  if(!firebaseAuth || !authAvailable){
+    setAuthStatus(authDisabledReason || 'Authentication is unavailable right now.', true);
+    return;
+  }
+  try{
+    const provider = new firebase.auth.GoogleAuthProvider();
+    setAuthStatus('Opening Google sign-in…');
+    await firebaseAuth.signInWithPopup(provider);
+    closeAuthModal();
+  } catch(e){
+    console.error(e);
+    setAuthStatus(e.message || 'Google sign-in failed', true);
+  }
+}
+
+async function signOut(){
+  if(!firebaseAuth) return;
+  try{ await firebaseAuth.signOut(); } catch(e){ console.error(e); }
+}
+
+function updateAuthUI(){
+  const signinBtn = document.getElementById('signin-btn');
+  const signoutBtn = document.getElementById('signout-btn');
+  const userPanel = document.getElementById('auth-user-panel');
+  if(authUser){
+    const displayName = authUser.displayName || authUser.email || 'Account';
+    setAuthStatus(`Signed in as ${displayName}`, false);
+    signinBtn.style.display = 'none';
+    signoutBtn.style.display = 'inline-flex';
+    signoutBtn.title = `Sign out from ${displayName}`;
+    if(userPanel){
+      userPanel.style.display = 'block';
+      userPanel.textContent = `Signed in as ${displayName}`;
+    }
+  } else {
+    signinBtn.style.display = 'inline-flex';
+    signoutBtn.style.display = 'none';
+    if(userPanel) userPanel.style.display = 'none';
+    setAuthStatus(authReady ? (authDisabledReason || 'Not signed in') : 'Connecting…', Boolean(authDisabledReason));
+  }
+}
+
+function initFirebase(){
+  authAvailable = false;
+  authDisabledReason = '';
+  authReady = false;
+
+  if(!isFirebaseConfigured()){
+    authDisabledReason = 'Sign-in unavailable: Firebase config is missing.';
+    authReady = true;
+    updateAuthUI();
+    return;
+  }
+
+  try{
+    firebaseApp = firebase.apps.length ? firebase.apps[0] : firebase.initializeApp(FIREBASE_CONFIG);
+    firebaseAuth = firebaseApp.auth();
+    authAvailable = true;
+    authReady = true;
+    updateAuthUI();
+    firebaseAuth.onAuthStateChanged((user) => {
+      authUser = user;
+      updateAuthUI();
+    });
+  } catch(e){
+    console.error(e);
+    firebaseAuth = null;
+    authAvailable = false;
+    authDisabledReason = 'Authentication failed. Please verify the Firebase setup.';
+    authReady = true;
+    updateAuthUI();
+  }
+}
+
+initFirebase();
+</script>
 </body>
 </html>
