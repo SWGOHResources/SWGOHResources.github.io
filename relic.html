@@ -77,8 +77,6 @@ body {
   gap: 0;
   height: 56px;
   padding: 0 24px;
-  max-width: 960px;
-  margin: 0 auto;
 }
 .topbar-title {
   font-size: 15px;
@@ -148,41 +146,36 @@ body {
   border-bottom-color: var(--accent);
 }
 
-/* ─── Sub-header (on-page tabs) ───────────────── */
-.sub-header {
-  position: sticky;
-  top: 56px;
-  z-index: 190;
-  width: 100%;
-  background: rgba(18, 18, 20, 0.85);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--border);
-}
-.sub-tabs {
-  display: flex;
+/* ─── Segmented page tabs (inline, non-sticky) ─ */
+.segmented-tabs {
+  display: inline-flex;
   gap: 4px;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 24px;
-  height: 44px;
-  align-items: center;
+  background: var(--bg2);
+  padding: 4px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  margin-bottom: 20px;
+  max-width: 100%;
   overflow-x: auto;
 }
-.sub-tabs .tab-btn {
-  height: 30px;
-  padding: 0 14px;
-  border-radius: var(--radius);
+.segmented-tabs .tab-btn {
+  height: 32px;
+  padding: 0 16px;
+  border-radius: 6px;
   border-bottom: none;
   font-size: 12px;
+  flex-shrink: 0;
 }
-.sub-tabs .tab-btn:hover {
-  background: var(--bg2);
+.segmented-tabs .tab-btn:hover {
   color: var(--text);
 }
-.sub-tabs .tab-btn.active {
-  background: var(--accent-dim);
+.segmented-tabs .tab-btn.active {
+  background: var(--bg3);
   color: var(--text);
-  box-shadow: inset 0 0 0 1px rgba(139, 92, 246, 0.25);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+@media (max-width: 640px) {
+  .segmented-tabs { display: flex; width: 100%; }
 }
 .topbar-right {
   display: flex;
@@ -1077,15 +1070,6 @@ input[type=checkbox]:checked::after {
   </div>
 </div>
 
-<div id="page-tabs" class="sub-header">
-  <div class="sub-tabs">
-    <button class="tab-btn active" data-tab="plan" onclick="showTab('plan')">Group Plan</button>
-    <button class="tab-btn" data-tab="tb" onclick="showTab('tb')">Guild Event Setup</button>
-    <button class="tab-btn" data-tab="config" onclick="showTab('config')">Other Setups</button>
-    <button class="tab-btn" data-tab="info" onclick="showTab('info')">Relic Info</button>
-  </div>
-</div>
-
 <div class="app">
 
 <div id="confirm-modal" class="confirm-modal" onclick="if(event.target.id==='confirm-modal') closeCustomConfirm()">
@@ -1121,6 +1105,13 @@ input[type=checkbox]:checked::after {
 </div>
 
 <div id="planner-shell" style="display:none">
+
+<div id="page-tabs" class="segmented-tabs">
+  <button class="tab-btn active" data-tab="plan" onclick="showTab('plan')">Group Plan</button>
+  <button class="tab-btn" data-tab="tb" onclick="showTab('tb')">Guild Event Setup</button>
+  <button class="tab-btn" data-tab="config" onclick="showTab('config')">Other Setups</button>
+  <button class="tab-btn" data-tab="info" onclick="showTab('info')">Relic Info</button>
+</div>
 
 <!-- ══════════ PLAN PAGE ══════════ -->
 <div class="page active" id="page-plan">
