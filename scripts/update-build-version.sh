@@ -26,4 +26,4 @@ if count != 1:
 path.write_text(new_text)
 PY
 
-git add build-version.js index.html
+git add build-version.js *.html
