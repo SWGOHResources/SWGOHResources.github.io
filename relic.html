@@ -38,6 +38,9 @@
   --teal: #14b8a6;
   --teal-dim: rgba(20, 184, 166, 0.08);
   --teal-mid: rgba(20, 184, 166, 0.15);
+  --pink: #d946ef;
+  --pink-dim: rgba(217, 70, 239, 0.08);
+  --pink-mid: rgba(217, 70, 239, 0.15);
   --radius: 8px;
   --radius-lg: 12px;
   --shadow: 0 4px 20px rgba(0,0,0,0.4);
@@ -414,6 +417,7 @@ body {
 .pill-get3 { background: var(--teal-dim); color: var(--teal); border: 1px solid rgba(20, 184, 166, 0.15); }
 .pill-red { background: var(--red-dim); color: var(--red); border: 1px solid rgba(239, 68, 68, 0.15); }
 .pill-accent { background: var(--accent-dim); color: #c0b8ff; border: 1px solid rgba(139, 92, 246, 0.2); }
+.pill-pink { background: var(--pink-dim); color: var(--pink); border: 1px solid rgba(217, 70, 239, 0.2); }
 
 /* ─── Inputs & Controls ───────────────────────── */
 input[type=text], input[type=number], select {
@@ -1570,12 +1574,14 @@ input[type=checkbox]:checked::after {
                 <th title="Gyrda Keypads">GK</th>
                 <th title="Droid Brains">DB</th>
                 <th title="Coaxial Servomotors">CS</th>
+                <th title="Corrupted Signal Data">CSD</th>
               </tr>
             </thead>
             <tbody>
               <tr>
                 <td>Relic 1</td>
                 <td style="color:var(--grey)">40</td>
+                <td>—</td>
                 <td>—</td>
                 <td>—</td>
                 <td>—</td>
@@ -1600,12 +1606,14 @@ input[type=checkbox]:checked::after {
                 <td>—</td>
                 <td>—</td>
                 <td>—</td>
+                <td>—</td>
               </tr>
               <tr>
                 <td>Relic 3</td>
                 <td style="color:var(--grey)">30</td>
                 <td style="color:var(--text2)">40</td>
                 <td style="color:var(--text3)">20</td>
+                <td>—</td>
                 <td>—</td>
                 <td>—</td>
                 <td>—</td>
@@ -1628,6 +1636,7 @@ input[type=checkbox]:checked::after {
                 <td>—</td>
                 <td>—</td>
                 <td>—</td>
+                <td>—</td>
               </tr>
               <tr class="relic-row-highlight">
                 <td>Relic 5</td>
@@ -1635,6 +1644,7 @@ input[type=checkbox]:checked::after {
                 <td style="color:var(--text2)">40</td>
                 <td style="color:var(--text3)">30</td>
                 <td style="color:var(--yellow)">20</td>
+                <td>—</td>
                 <td>—</td>
                 <td>—</td>
                 <td>—</td>
@@ -1656,6 +1666,7 @@ input[type=checkbox]:checked::after {
                 <td>—</td>
                 <td>—</td>
                 <td>—</td>
+                <td>—</td>
               </tr>
               <tr class="relic-row-highlight">
                 <td>Relic 7</td>
@@ -1665,6 +1676,7 @@ input[type=checkbox]:checked::after {
                 <td style="color:var(--yellow)">20</td>
                 <td style="color:var(--green)">20</td>
                 <td style="color:var(--accent)">10</td>
+                <td>—</td>
                 <td>—</td>
                 <td>—</td>
                 <td>—</td>
@@ -1684,6 +1696,7 @@ input[type=checkbox]:checked::after {
                 <td>—</td>
                 <td>—</td>
                 <td>—</td>
+                <td>—</td>
               </tr>
               <tr class="relic-row-highlight">
                 <td>Relic 9</td>
@@ -1697,6 +1710,7 @@ input[type=checkbox]:checked::after {
                 <td style="color:var(--blue)">20</td>
                 <td style="color:var(--yellow)">20</td>
                 <td style="color:var(--green)">20</td>
+                <td>—</td>
                 <td>—</td>
               </tr>
               <tr class="relic-row-highlight">
@@ -1712,6 +1726,7 @@ input[type=checkbox]:checked::after {
                 <td style="color:var(--yellow)">20</td>
                 <td style="color:var(--green)">20</td>
                 <td style="color:var(--accent)">20</td>
+                <td style="color:var(--pink)">15</td>
               </tr>
             </tbody>
           </table>
@@ -1772,11 +1787,11 @@ const RELIC_COST = {
 };
 
 const HIGH_END_COSTS = {
-  6:  { electrium: 20, zinbiddle: 0,  impulse: 0,  aeromagnifier: 0,  gyrda: 0,  droidbrain: 0,  coaxial: 0 },
-  7:  { electrium: 20, zinbiddle: 10, impulse: 0,  aeromagnifier: 0,  gyrda: 0,  droidbrain: 0,  coaxial: 0 },
-  8:  { electrium: 20, zinbiddle: 20, impulse: 20, aeromagnifier: 20, gyrda: 0,  droidbrain: 0,  coaxial: 0 },
-  9:  { electrium: 0,  zinbiddle: 20, impulse: 20, aeromagnifier: 20, gyrda: 20, droidbrain: 20, coaxial: 0 },
-  10: { electrium: 0,  zinbiddle: 0,  impulse: 20, aeromagnifier: 20, gyrda: 20, droidbrain: 20, coaxial: 20 }
+  6:  { electrium: 20, zinbiddle: 0,  impulse: 0,  aeromagnifier: 0,  gyrda: 0,  droidbrain: 0,  coaxial: 0,  corruptedSignal: 0 },
+  7:  { electrium: 20, zinbiddle: 10, impulse: 0,  aeromagnifier: 0,  gyrda: 0,  droidbrain: 0,  coaxial: 0,  corruptedSignal: 0 },
+  8:  { electrium: 20, zinbiddle: 20, impulse: 20, aeromagnifier: 20, gyrda: 0,  droidbrain: 0,  coaxial: 0,  corruptedSignal: 0 },
+  9:  { electrium: 0,  zinbiddle: 20, impulse: 20, aeromagnifier: 20, gyrda: 20, droidbrain: 20, coaxial: 0,  corruptedSignal: 0 },
+  10: { electrium: 0,  zinbiddle: 0,  impulse: 20, aeromagnifier: 20, gyrda: 20, droidbrain: 20, coaxial: 20, corruptedSignal: 15 }
 };
 
 const CANTINA_NODES = {
@@ -2640,7 +2655,7 @@ function costForRange(from,to){
 }
 
 function calcHighEndCostForRange(from, to) {
-  let totals = { electrium: 0, zinbiddle: 0, impulse: 0, aeromagnifier: 0, gyrda: 0, droidbrain: 0, coaxial: 0 };
+  let totals = { electrium: 0, zinbiddle: 0, impulse: 0, aeromagnifier: 0, gyrda: 0, droidbrain: 0, coaxial: 0, corruptedSignal: 0 };
   for(let r = Number(from) + 1; r <= Number(to); r++) {
     const c = HIGH_END_COSTS[r];
     if(c) {
@@ -2651,6 +2666,7 @@ function calcHighEndCostForRange(from, to) {
       totals.gyrda += c.gyrda;
       totals.droidbrain += c.droidbrain;
       totals.coaxial += c.coaxial;
+      totals.corruptedSignal += c.corruptedSignal;
     }
   }
   return totals;
@@ -3452,7 +3468,7 @@ function renderCampaignTotals(groupData){
 
   let highEndTotalsHtml = '';
   if (state.showHighEnd) {
-    let totalsHighEnd = { electrium: 0, zinbiddle: 0, impulse: 0, aeromagnifier: 0, gyrda: 0, droidbrain: 0, coaxial: 0 };
+    let totalsHighEnd = { electrium: 0, zinbiddle: 0, impulse: 0, aeromagnifier: 0, gyrda: 0, droidbrain: 0, coaxial: 0, corruptedSignal: 0 };
     for (const d of groupData) {
       for (const u of d.m.units) {
         if(!u.from||!u.to||Number(u.to)<=Number(u.from)) continue;
@@ -3464,6 +3480,7 @@ function renderCampaignTotals(groupData){
         totalsHighEnd.gyrda += h.gyrda;
         totalsHighEnd.droidbrain += h.droidbrain;
         totalsHighEnd.coaxial += h.coaxial;
+        totalsHighEnd.corruptedSignal += h.corruptedSignal;
       }
     }
     const hasAnyHighEnd = Object.values(totalsHighEnd).some(v => v > 0);
@@ -3479,6 +3496,7 @@ function renderCampaignTotals(groupData){
             ${totalsHighEnd.gyrda > 0 ? `<div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text2)">Gyrda Keypads</span><span style="font-family:var(--font-mono);font-weight:600">${totalsHighEnd.gyrda}</span></div>` : ''}
             ${totalsHighEnd.droidbrain > 0 ? `<div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text2)">Droid Brains</span><span style="font-family:var(--font-mono);font-weight:600">${totalsHighEnd.droidbrain}</span></div>` : ''}
             ${totalsHighEnd.coaxial > 0 ? `<div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text2)">Coaxial Servomotors</span><span style="font-family:var(--font-mono);font-weight:600">${totalsHighEnd.coaxial}</span></div>` : ''}
+            ${totalsHighEnd.corruptedSignal > 0 ? `<div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--pink)">Corrupted Signal Data</span><span style="font-family:var(--font-mono);font-weight:600;color:var(--pink)">${totalsHighEnd.corruptedSignal}</span></div>` : ''}
           </div>
         </div>
       `;
@@ -3553,7 +3571,7 @@ function buildGroupCard({m,demand,available,net,carryIn,carryOut},idx){
 
   let highEndHtml = '';
   if (state.showHighEnd) {
-    let highEndDemand = { electrium: 0, zinbiddle: 0, impulse: 0, aeromagnifier: 0, gyrda: 0, droidbrain: 0, coaxial: 0 };
+    let highEndDemand = { electrium: 0, zinbiddle: 0, impulse: 0, aeromagnifier: 0, gyrda: 0, droidbrain: 0, coaxial: 0, corruptedSignal: 0 };
     for(const u of m.units) {
       if(!u.from||!u.to||Number(u.to)<=Number(u.from)) continue;
       const h = calcHighEndCostForRange(u.from, u.to);
@@ -3564,6 +3582,7 @@ function buildGroupCard({m,demand,available,net,carryIn,carryOut},idx){
       highEndDemand.gyrda += h.gyrda;
       highEndDemand.droidbrain += h.droidbrain;
       highEndDemand.coaxial += h.coaxial;
+      highEndDemand.corruptedSignal += h.corruptedSignal;
     }
     const hasHighEnd = Object.values(highEndDemand).some(v => v > 0);
     if (hasHighEnd) {
@@ -3578,6 +3597,7 @@ function buildGroupCard({m,demand,available,net,carryIn,carryOut},idx){
             ${highEndDemand.gyrda > 0 ? `<span class="pill pill-accent" style="font-size:11px">GK: ${highEndDemand.gyrda}</span>` : ''}
             ${highEndDemand.droidbrain > 0 ? `<span class="pill pill-accent" style="font-size:11px">DB: ${highEndDemand.droidbrain}</span>` : ''}
             ${highEndDemand.coaxial > 0 ? `<span class="pill pill-accent" style="font-size:11px">CS: ${highEndDemand.coaxial}</span>` : ''}
+            ${highEndDemand.corruptedSignal > 0 ? `<span class="pill pill-pink" style="font-size:11px" title="Corrupted Signal Data">CSD: ${highEndDemand.corruptedSignal}</span>` : ''}
           </div>
         </div>
       `;
