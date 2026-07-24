@@ -595,6 +595,9 @@ input[type=checkbox]:checked::after {
 .group-card:hover {
   border-color: var(--border2);
 }
+.group-card.collapsed > *:not(.group-head) {
+  display: none !important;
+}
 .group-head {
   display: flex;
   align-items: center;
@@ -1218,6 +1221,12 @@ input[type=checkbox]:checked::after {
               <div class="pill pill-grey" id="g2-buys-avail">0</div>
             </div>
             <div style="font-size:11px;color:var(--text3);margin-top:8px" id="g2-spend-note"></div>
+            
+            <!-- Equivalent GET 2 Purchases -->
+            <div style="margin-top:14px; padding-top:14px; border-top:1px dashed var(--border)">
+              <div style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:8px">Potential Monthly Purchases</div>
+              <div style="display:flex;flex-direction:column;gap:6px" id="g2-potential-purchases"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -1316,6 +1325,12 @@ input[type=checkbox]:checked::after {
               <div class="pill pill-teal" id="g3-buys-avail">0</div>
             </div>
             <div style="font-size:11px;color:var(--text3);margin-top:8px" id="g3-spend-note"></div>
+            
+            <!-- Equivalent GET 3 Purchases -->
+            <div style="margin-top:14px; padding-top:14px; border-top:1px dashed var(--border)">
+              <div style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:8px">Potential Monthly Purchases</div>
+              <div style="display:flex;flex-direction:column;gap:6px" id="g3-potential-purchases"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -2804,6 +2819,9 @@ function adjustStars(amount) {
   onStarsChange(v);
 }
 
+// ═══════════════════════════════════════════════════════
+// OTHER CALCULATIONS / STATE SETTERS (NEW PURCHASES)
+// ═══════════════════════════════════════════════════════
 function onStars3Change(v){
   state.rote3Stars=Number(v);
   document.getElementById('stars3-display').textContent = v == 56 ? "56+" : v;
@@ -2897,6 +2915,25 @@ function updateGet2Summary(){
   const buys=Math.floor(g.total/1600);
   document.getElementById('g2-buys-avail').textContent=buys;
   document.getElementById('g2-spend-note').textContent=`${buys} × 1600 = ${(buys*1600).toLocaleString()} GET 2 spent · ${(g.total-buys*1600).toLocaleString()} remaining`;
+  
+  // Potential Monthly Purchases Display
+  const potentialEl = document.getElementById('g2-potential-purchases');
+  if (potentialEl) {
+    const kyroBuys = Math.floor(g.total / 325);
+    const g12Buys = Math.floor(g.total / 400);
+    
+    potentialEl.innerHTML = `
+      <div style="display:flex;justify-content:space-between;font-size:12px;align-items:center">
+        <span style="color:var(--text2)">Kyrotech <span style="color:var(--text3)">(5 for 325)</span></span>
+        <span style="font-family:var(--font-mono);font-weight:600">${kyroBuys} buys <span style="color:var(--yellow)">(${kyroBuys * 5} Kyro)</span></span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;align-items:center">
+        <span style="color:var(--text2)">G12 Pieces <span style="color:var(--text3)">(4 for 400)</span></span>
+        <span style="font-family:var(--font-mono);font-weight:600">${g12Buys} buys <span style="color:var(--yellow)">(${g12Buys * 4} pcs)</span></span>
+      </div>
+    `;
+  }
+
   updatePlanSummary();
 }
 
@@ -2909,6 +2946,50 @@ function updateGet3Summary(){
   const buys=Math.floor(g.total/2000);
   document.getElementById('g3-buys-avail').textContent=buys;
   document.getElementById('g3-spend-note').textContent=`${buys} × 2000 = ${(buys*2000).toLocaleString()} GET 3 spent · ${(g.total-buys*2000).toLocaleString()} remaining`;
+  
+  // Potential Monthly Purchases Display
+  const potentialEl = document.getElementById('g3-potential-purchases');
+  if (potentialEl) {
+    const kamBuys = Math.floor(g.total / 2125);
+    const ecBuys = Math.floor(g.total / 720);
+    const zcBuys = Math.floor(g.total / 850);
+    const idBuys = Math.floor(g.total / 1230);
+    const gkBuys = Math.floor(g.total / 1200);
+    const maBuys = Math.floor(g.total / 125);
+    const kyroBuys = Math.floor(g.total / 300);
+    
+    potentialEl.innerHTML = `
+      <div style="display:flex;justify-content:space-between;font-size:12px;align-items:center">
+        <span style="color:var(--text2)">KAM Shards <span style="color:var(--text3)">(5 for 2125)</span></span>
+        <span style="font-family:var(--font-mono);font-weight:600">${kamBuys} buys <span style="color:var(--teal)">(${kamBuys * 5} Shards)</span></span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;align-items:center">
+        <span style="color:var(--text2)">Electrium Conductors <span style="color:var(--text3)">(2 for 720)</span></span>
+        <span style="font-family:var(--font-mono);font-weight:600">${ecBuys} buys <span style="color:var(--teal)">(${ecBuys * 2} EC)</span></span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;align-items:center">
+        <span style="color:var(--text2)">Zinbiddle Cards <span style="color:var(--text3)">(2 for 850)</span></span>
+        <span style="font-family:var(--font-mono);font-weight:600">${zcBuys} buys <span style="color:var(--teal)">(${zcBuys * 2} ZC)</span></span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;align-items:center">
+        <span style="color:var(--text2)">Impulse Detectors <span style="color:var(--text3)">(2 for 1230)</span></span>
+        <span style="font-family:var(--font-mono);font-weight:600">${idBuys} buys <span style="color:var(--teal)">(${idBuys * 2} ID)</span></span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;align-items:center">
+        <span style="color:var(--text2)">Gyrda Keypads <span style="color:var(--text3)">(1 for 1200)</span></span>
+        <span style="font-family:var(--font-mono);font-weight:600">${gkBuys} buys <span style="color:var(--teal)">(${gkBuys * 1} GK)</span></span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;align-items:center">
+        <span style="color:var(--text2)">Micro Attenuators <span style="color:var(--text3)">(5 for 125)</span></span>
+        <span style="font-family:var(--font-mono);font-weight:600">${maBuys} buys <span style="color:var(--teal)">(${maBuys * 5} MA)</span></span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;align-items:center">
+        <span style="color:var(--text2)">Kyrotech <span style="color:var(--text3)">(5 for 300)</span></span>
+        <span style="font-family:var(--font-mono);font-weight:600">${kyroBuys} buys <span style="color:var(--teal)">(${kyroBuys * 5} Kyro)</span></span>
+      </div>
+    `;
+  }
+
   updateKyroPurchasesUI();
 }
 
@@ -3436,9 +3517,9 @@ function renderPlan(){
         blue: available.blue - demand.blue
       };
       const newCarry={
-        grey: Math.max(0,net.grey),
-        green: Math.max(0,net.green),
-        blue: Math.max(0,net.blue)
+        grey: net.grey,
+        green: net.green,
+        blue: net.blue
       };
       const result={ m, demand, available, net, carryIn:{...carry}, carryOut:{...newCarry} };
       carry=newCarry;
@@ -3508,7 +3589,14 @@ function renderCampaignTotals(groupData){
     <div class="income-stat"><span style="color:var(--grey)">Grey needed</span><span class="income-stat-val" style="color:var(--grey)">${totals.demand.grey}</span></div>
     <div class="income-stat"><span style="color:var(--green)">Green needed</span><span class="income-stat-val" style="color:var(--green)">${totals.demand.green}</span></div>
     <div class="income-stat"><span style="color:var(--blue)">Blue needed</span><span class="income-stat-val" style="color:var(--blue)">${totals.demand.blue}</span></div>
-    <div class="income-stat" style="border-top:1px solid var(--border)"><span style="color:var(--text2)">Ending balance</span><span class="income-stat-val" style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end"><span style="color:var(--grey)">G ${finalCarry.grey}</span><span style="color:var(--green)">Gr ${finalCarry.green}</span><span style="color:var(--blue)">B ${finalCarry.blue}</span></span></div>
+    <div class="income-stat" style="border-top:1px solid var(--border)">
+      <span style="color:var(--text2)">Ending balance</span>
+      <span class="income-stat-val" style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">
+        <span class="${finalCarry.grey >= 0 ? 'pos' : 'neg'}">G ${finalCarry.grey >= 0 ? '+' : ''}${finalCarry.grey}</span>
+        <span class="${finalCarry.green >= 0 ? 'pos' : 'neg'}">Gr ${finalCarry.green >= 0 ? '+' : ''}${finalCarry.green}</span>
+        <span class="${finalCarry.blue >= 0 ? 'pos' : 'neg'}">B ${finalCarry.blue >= 0 ? '+' : ''}${finalCarry.blue}</span>
+      </span>
+    </div>
     ${highEndTotalsHtml}
   `;
 }
@@ -3519,7 +3607,7 @@ function buildGroupCard({m,demand,available,net,carryIn,carryOut},idx){
     green: Number(carryIn?.green || 0),
     blue: Number(carryIn?.blue || 0)
   };
-  const hasCarryIn = normalizedCarryIn.grey > 0 || normalizedCarryIn.green > 0 || normalizedCarryIn.blue > 0;
+  const hasCarryIn = normalizedCarryIn.grey !== 0 || normalizedCarryIn.green !== 0 || normalizedCarryIn.blue !== 0;
   const hasShortfall = net.grey<0 || net.green<0 || net.blue<0;
 
   const otherGroups = state.groups.filter(g=>g.id!==m.id);
@@ -3564,9 +3652,9 @@ function buildGroupCard({m,demand,available,net,carryIn,carryOut},idx){
   const carryInHtml=hasCarryIn?`
     <div style="padding:8px 16px;background:rgba(139,92,246,.04);border-bottom:1px solid var(--border);font-size:11px;color:var(--text3);display:flex;gap:8px;align-items:center">
       <span style="text-transform:uppercase;letter-spacing:.08em;font-weight:600">Carry-in:</span>
-      ${normalizedCarryIn.grey>0?`<span class="pill pill-grey" style="font-size:11px">+${normalizedCarryIn.grey}</span>`:''}
-      ${normalizedCarryIn.green>0?`<span class="pill pill-green" style="font-size:11px">+${normalizedCarryIn.green}</span>`:''}
-      ${normalizedCarryIn.blue>0?`<span class="pill pill-blue" style="font-size:11px">+${normalizedCarryIn.blue}</span>`:''}
+      ${normalizedCarryIn.grey !== 0?`<span class="pill pill-${normalizedCarryIn.grey > 0 ? 'grey' : 'red'}" style="font-size:11px">${normalizedCarryIn.grey > 0 ? '+' : ''}${normalizedCarryIn.grey}</span>`:''}
+      ${normalizedCarryIn.green !== 0?`<span class="pill pill-${normalizedCarryIn.green > 0 ? 'green' : 'red'}" style="font-size:11px">${normalizedCarryIn.green > 0 ? '+' : ''}${normalizedCarryIn.green}</span>`:''}
+      ${normalizedCarryIn.blue !== 0?`<span class="pill pill-${normalizedCarryIn.blue > 0 ? 'blue' : 'red'}" style="font-size:11px">${normalizedCarryIn.blue > 0 ? '+' : ''}${normalizedCarryIn.blue}</span>`:''}
     </div>`:'' ;
 
   let highEndHtml = '';
@@ -3651,9 +3739,9 @@ function buildGroupCard({m,demand,available,net,carryIn,carryOut},idx){
           <div>
             <div style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:8px">Carry out →</div>
             <div style="display:flex;flex-direction:column;gap:4px">
-              ${carryOut.grey>0?`<span class="pill pill-grey" style="font-size:11px">+${carryOut.grey}</span>`:''}
-              ${carryOut.green>0?`<span class="pill pill-green" style="font-size:11px">+${carryOut.green}</span>`:''}
-              ${carryOut.blue>0?`<span class="pill pill-blue" style="font-size:11px">+${carryOut.blue}</span>`:''}
+              ${carryOut.grey !== 0?`<span class="pill pill-${carryOut.grey > 0 ? 'grey' : 'red'}" style="font-size:11px">${carryOut.grey > 0 ? '+' : ''}${carryOut.grey}</span>`:''}
+              ${carryOut.green !== 0?`<span class="pill pill-${carryOut.green > 0 ? 'green' : 'red'}" style="font-size:11px">${carryOut.green > 0 ? '+' : ''}${carryOut.green}</span>`:''}
+              ${carryOut.blue !== 0?`<span class="pill pill-${carryOut.blue > 0 ? 'blue' : 'red'}" style="font-size:11px">${carryOut.blue > 0 ? '+' : ''}${carryOut.blue}</span>`:''}
               ${carryOut.grey===0&&carryOut.green===0&&carryOut.blue===0?`<span style="color:var(--text3);font-size:12px">none</span>`:''}
             </div>
           </div>
