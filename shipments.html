@@ -222,7 +222,7 @@ body {
 .btn-ghost:hover { background: var(--bg3); color: var(--text); }
 .btn-sm { height: 26px; padding: 0 10px; font-size: 11px; }
 
-input[type=text], input[type=number], select {
+input[type=text], input[type=number], input[type=email], input[type=password], select {
   background: var(--bg2);
   border: 1px solid var(--border);
   border-radius: var(--radius);
@@ -266,7 +266,94 @@ input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 2px r
 .budget-val { font-family: var(--font-mono); font-weight: 600; font-size: 12px; }
 .neg-budget { color: var(--red) !important; font-weight: 700; }
 
-.auth-card { max-width: 400px; margin: 80px auto 0; padding: 32px; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--bg1); box-shadow: var(--shadow); text-align: center; }
+/* ─── Auth Card ─────────────────────────────── */
+.auth-card {
+  max-width: 400px;
+  margin: 80px auto 0;
+  padding: 32px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--bg1);
+  box-shadow: var(--shadow);
+  text-align: center;
+}
+.auth-card h2 {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.auth-card p {
+  font-size: 12px;
+  color: var(--text2);
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
+.auth-toggle {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 20px;
+  background: var(--bg2);
+  padding: 4px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+.auth-toggle button {
+  flex: 1;
+  height: 32px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: var(--text2);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.auth-toggle button.active {
+  background: var(--bg3);
+  color: var(--text);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+.auth-grid {
+  display: grid;
+  gap: 12px;
+}
+.auth-grid input {
+  height: 40px;
+  font-size: 13px;
+  background: var(--bg2);
+}
+.auth-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+.auth-actions button {
+  width: 100%;
+  height: 38px;
+}
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 20px 0;
+  color: var(--text3);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+.auth-divider::before, .auth-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+.auth-hint {
+  font-size: 11px;
+  color: var(--text3);
+  margin-top: 14px;
+}
 </style>
 </head>
 <body>
@@ -283,6 +370,7 @@ input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 2px r
       <div class="auth-panel">
         <div id="auth-status" class="auth-status">Connecting…</div>
         <div class="saved-badge"><div class="saved-dot" id="saveDot"></div><span id="saveText">Saved</span></div>
+        <button id="signin-btn" class="btn btn-accent btn-sm" style="display:none; margin-left: 8px" onclick="signInWithGoogle()">Sign In</button>
         <button id="signout-btn" class="btn btn-ghost btn-sm" style="display:none; margin-left: 8px" onclick="signOut()">Sign Out</button>
       </div>
       <div class="topbar-divider"></div>
@@ -293,13 +381,26 @@ input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 2px r
 
 <div class="app">
 
-<div id="auth-screen" class="auth-card" style="display:none">
-  <h2 style="font-size:20px; font-weight:600; margin-bottom:8px">Welcome back</h2>
-  <p style="font-size:12px; color:var(--text2); margin-bottom:24px">Sign in to sync your shipments planner across devices.</p>
-  <button class="btn btn-accent" style="width:100%" onclick="signInWithGoogle()">Continue with Google</button>
+<div id="auth-screen" class="auth-card">
+  <h2>Welcome back</h2>
+  <p>Sign in to sync your planner across devices, or create an account to save your shipments and settings.</p>
+  <div class="auth-toggle">
+    <button id="auth-mode-signin" class="active" onclick="setAuthMode('signin')">Sign in</button>
+    <button id="auth-mode-signup" onclick="setAuthMode('signup')">Create account</button>
+  </div>
+  <div class="auth-grid">
+    <input id="auth-email" type="email" placeholder="Email address">
+    <input id="auth-password" type="password" placeholder="Password">
+    <div class="auth-actions">
+      <button id="auth-submit-btn" class="btn btn-accent" onclick="submitAuthForm()">Sign in</button>
+      <button class="btn btn-ghost" onclick="signInWithGoogle()">Continue with Google</button>
+    </div>
+  </div>
+  <div class="auth-divider">or</div>
+  <div id="auth-user-panel" class="auth-hint" style="display:none"></div>
 </div>
 
-<div id="planner-shell">
+<div id="planner-shell" style="display:none">
 
 <div id="page-tabs" class="segmented-tabs">
   <button class="tab-btn active" data-tab="raid-setup" onclick="showTab('raid-setup')">Raid & GET Setup</button>
@@ -618,9 +719,9 @@ const STORE_ITEMS = [
   { id:'mk2_ipd_shards', cat:'shards', name:'Imperial Probe Droid Shards', sub:'5 Shards', cost:1250, curr:'mk2', icon:'assets/IPD.PNG', itemIcon:'assets/IPD.PNG', yieldQty:5, yieldUnit:'IPD Shards' },
   { id:'mk2_gas_shards', cat:'shards', name:'General Skywalker Shards', sub:'5 Shards', cost:1750, curr:'mk2', icon:'assets/GAS.PNG', itemIcon:'assets/GAS.PNG', yieldQty:5, yieldUnit:'GAS Shards' },
   { id:'mk2_malak_shards', cat:'shards', name:'Darth Malak Shards', sub:'5 Shards', cost:1750, curr:'mk2', icon:'assets/MALAK.PNG', itemIcon:'assets/MALAK.PNG', yieldQty:5, yieldUnit:'Malak Shards' },
-  { id:'mk1_raid_shards', cat:'shards', name:'Raid Character Shards', sub:'10 Shards', cost:700, curr:'mk1', icon:'assets/RAIDCHAR.PNG', itemIcon:'assets/RAIDCHAR.PNG', yieldQty:10, yieldUnit:'Raid Character Shards' },
-  { id:'mk1_accel_shards', cat:'shards', name:'Accelerated Character Shards', sub:'10 Shards', cost:200, curr:'mk1', icon:'assets/ACCELCHAR.PNG', itemIcon:'assets/ACCELCHAR.PNG', yieldQty:10, yieldUnit:'Accelerated Shards' },
-  { id:'mk1_ship_blueprints', cat:'shards', name:'Ship Blueprints', sub:'4 Blueprints', cost:440, curr:'mk1', icon:'assets/SHIPBLUEPRINT.PNG', itemIcon:'assets/SHIPBLUEPRINT.PNG', yieldQty:4, yieldUnit:'Ship Blueprints' },
+  { id:'mk1_raid_shards', cat:'shards', name:'Raid Character Shards', sub:'10 Shards', cost:700, curr:'mk1', icon:null, itemIcon:null, yieldQty:10, yieldUnit:'Raid Character Shards' },
+  { id:'mk1_accel_shards', cat:'shards', name:'Accelerated Character Shards', sub:'10 Shards', cost:200, curr:'mk1', icon:null, itemIcon:null, yieldQty:10, yieldUnit:'Accelerated Shards' },
+  { id:'mk1_ship_blueprints', cat:'shards', name:'Ship Blueprints', sub:'4 Blueprints', cost:440, curr:'mk1', icon:null, itemIcon:null, yieldQty:4, yieldUnit:'Ship Blueprints' },
   { id:'get2_nego_blueprints', cat:'shards', name:'Negotiator Blueprints', sub:'5 Blueprints', cost:1350, curr:'get2', icon:'assets/NEGOTIATOR.PNG', itemIcon:'assets/NEGOTIATOR.PNG', yieldQty:5, yieldUnit:'Negotiator Blueprints' },
   { id:'get2_malev_blueprints', cat:'shards', name:'Malevolence Blueprints', sub:'5 Blueprints', cost:1350, curr:'get2', icon:'assets/MALEVOLENCE.PNG', itemIcon:'assets/MALEVOLENCE.PNG', yieldQty:5, yieldUnit:'Malevolence Blueprints' },
   { id:'get3_kam_shards', cat:'shards', name:'Ki-Adi-Mundi (KAM) Shards', sub:'5 Shards', cost:2125, curr:'get3', icon:'assets/KAM.PNG', itemIcon:'assets/KAM.PNG', yieldQty:5, yieldUnit:'KAM Shards' },
@@ -681,6 +782,7 @@ let firebaseApp = null;
 let firebaseAuth = null;
 let firebaseDb = null;
 let authUser = null;
+let authMode = 'signin';
 
 let state = {
   bank: { mk1: 0, mk2: 0, mk3: 0, get1: 0, get2: 0, get3: 0 },
@@ -1126,6 +1228,25 @@ function initBankInputs() {
 // ═══════════════════════════════════════════════════════
 let remoteSaveTimer = null;
 
+function setAuthStatus(message, isError) {
+  const el = document.getElementById('auth-status');
+  if (!el) return;
+  el.textContent = message;
+  el.style.color = isError ? 'var(--red)' : 'var(--text3)';
+}
+
+function setAuthMode(mode) {
+  authMode = mode;
+  const signInBtn = document.getElementById('auth-mode-signin');
+  const signUpBtn = document.getElementById('auth-mode-signup');
+  const submitBtn = document.getElementById('auth-submit-btn');
+  if (signInBtn && signUpBtn && submitBtn) {
+    signInBtn.classList.toggle('active', mode === 'signin');
+    signUpBtn.classList.toggle('active', mode === 'signup');
+    submitBtn.textContent = mode === 'signup' ? 'Create account' : 'Sign in';
+  }
+}
+
 function initFirebase() {
   if (!FIREBASE_CONFIG.apiKey) return;
   try {
@@ -1136,23 +1257,68 @@ function initFirebase() {
     firebaseAuth.onAuthStateChanged((user) => {
       authUser = user;
       updateAuthUI();
-      if (user) loadFromFirebase();
+      if (user) {
+        loadFromFirebase();
+      } else {
+        setAuthStatus('Please sign in to continue', true);
+      }
     });
-  } catch(e){}
+  } catch(e){
+    setAuthStatus('Auth initialization failed', true);
+  }
 }
 
 function updateAuthUI() {
   const authScreen = document.getElementById('auth-screen');
   const plannerShell = document.getElementById('planner-shell');
+  const signinBtn = document.getElementById('signin-btn');
   const signoutBtn = document.getElementById('signout-btn');
+  const userPanel = document.getElementById('auth-user-panel');
 
   if (authUser) {
     if (authScreen) authScreen.style.display = 'none';
     if (plannerShell) plannerShell.style.display = 'block';
+    if (signinBtn) signinBtn.style.display = 'none';
     if (signoutBtn) signoutBtn.style.display = 'inline-flex';
-    document.getElementById('auth-status').textContent = 'Signed in';
+    if (userPanel) {
+      userPanel.style.display = 'block';
+      const displayName = authUser.displayName || authUser.email || 'Account';
+      userPanel.textContent = `Signed in as ${displayName}`;
+    }
+    setAuthStatus('Signed in', false);
   } else {
-    document.getElementById('auth-status').textContent = 'Not signed in';
+    if (authScreen) authScreen.style.display = 'block';
+    if (plannerShell) plannerShell.style.display = 'none';
+    if (signinBtn) signinBtn.style.display = 'inline-flex';
+    if (signoutBtn) signoutBtn.style.display = 'none';
+    if (userPanel) userPanel.style.display = 'none';
+    setAuthStatus('Please sign in to continue', true);
+  }
+}
+
+async function submitAuthForm() {
+  const emailInput = document.getElementById('auth-email');
+  const passwordInput = document.getElementById('auth-password');
+  const email = emailInput ? emailInput.value.trim() : '';
+  const password = passwordInput ? passwordInput.value : '';
+
+  if (!email || !password) {
+    setAuthStatus('Enter your email and password', true);
+    return;
+  }
+  if (!firebaseAuth) {
+    setAuthStatus('Authentication is unavailable right now.', true);
+    return;
+  }
+  try {
+    setAuthStatus(authMode === 'signup' ? 'Creating account…' : 'Signing in…');
+    if (authMode === 'signup') {
+      await firebaseAuth.createUserWithEmailAndPassword(email, password);
+    } else {
+      await firebaseAuth.signInWithEmailAndPassword(email, password);
+    }
+  } catch(e) {
+    setAuthStatus(e.message || (authMode === 'signup' ? 'Unable to create account' : 'Unable to sign in'), true);
   }
 }
 
@@ -1160,8 +1326,11 @@ async function signInWithGoogle() {
   if (!firebaseAuth) return;
   try {
     const provider = new firebase.auth.GoogleAuthProvider();
+    setAuthStatus('Opening Google sign-in…');
     await firebaseAuth.signInWithPopup(provider);
-  } catch(e){}
+  } catch(e){
+    setAuthStatus('Google sign-in failed', true);
+  }
 }
 
 async function signOut() {
