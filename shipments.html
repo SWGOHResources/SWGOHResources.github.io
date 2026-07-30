@@ -661,8 +661,8 @@ input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 2px r
 <script>
 // Image Error Fallback Helper (Safe execution against infinite loops)
 function imgErrFallback(img) {
-  if (img.dataset.failed) return;
-  if (!img.dataset.triedLower && (img.src.includes('.PNG') || img.src.includes('.png'))) {
+  if (!img) return;
+  if (!img.dataset.triedLower && img.src && (img.src.includes('.PNG') || img.src.includes('.png'))) {
     img.dataset.triedLower = 'true';
     if (img.src.includes('.PNG')) {
       img.src = img.src.replace('.PNG', '.png');
@@ -670,9 +670,22 @@ function imgErrFallback(img) {
       img.src = img.src.replace('.png', '.PNG');
     }
   } else {
-    img.dataset.failed = 'true';
-    img.style.display = 'none';
+    img.style.opacity = '0.3';
   }
+}
+
+// Parses string input numbers including shorthand (1.5M, 500k) and formatted numbers (65,000)
+function parseScore(val) {
+  if (val === null || val === undefined) return 0;
+  let str = String(val).trim().toLowerCase().replace(/,/g, '');
+  if (!str) return 0;
+  if (str.endsWith('m')) {
+    return Math.round((parseFloat(str.slice(0, -1)) || 0) * 1000000);
+  }
+  if (str.endsWith('k')) {
+    return Math.round((parseFloat(str.slice(0, -1)) || 0) * 1000);
+  }
+  return Math.max(0, parseInt(str, 10) || 0);
 }
 
 // ═══════════════════════════════════════════════════════
@@ -712,28 +725,28 @@ const PERSONAL_TRACK = [
 ];
 
 const STORE_ITEMS = [
-  // ─── SHARDS & BLUEPRINTS (SEPARATED) ───
+  // ─── SHARDS & BLUEPRINTS ───
   { id:'mk2_hoda_shards', cat:'shards', name:'Hermit Yoda Shards', sub:'5 Shards', cost:1250, curr:'mk2', icon:'assets/HERMITYODA.PNG', itemIcon:'assets/HERMITYODA.PNG', yieldQty:5, yieldUnit:'Hermit Yoda Shards' },
   { id:'mk2_wampa_shards', cat:'shards', name:'Wampa Shards', sub:'5 Shards', cost:1250, curr:'mk2', icon:'assets/WAMPA.PNG', itemIcon:'assets/WAMPA.PNG', yieldQty:5, yieldUnit:'Wampa Shards' },
   { id:'mk2_rolo_shards', cat:'shards', name:'Rebel Officer Leia Organa Shards', sub:'5 Shards', cost:1250, curr:'mk2', icon:'assets/ROLO.PNG', itemIcon:'assets/ROLO.PNG', yieldQty:5, yieldUnit:'ROLO Shards' },
   { id:'mk2_ipd_shards', cat:'shards', name:'Imperial Probe Droid Shards', sub:'5 Shards', cost:1250, curr:'mk2', icon:'assets/IPD.PNG', itemIcon:'assets/IPD.PNG', yieldQty:5, yieldUnit:'IPD Shards' },
   { id:'mk2_gas_shards', cat:'shards', name:'General Skywalker Shards', sub:'5 Shards', cost:1750, curr:'mk2', icon:'assets/GAS.PNG', itemIcon:'assets/GAS.PNG', yieldQty:5, yieldUnit:'GAS Shards' },
   { id:'mk2_malak_shards', cat:'shards', name:'Darth Malak Shards', sub:'5 Shards', cost:1750, curr:'mk2', icon:'assets/MALAK.PNG', itemIcon:'assets/MALAK.PNG', yieldQty:5, yieldUnit:'Malak Shards' },
-  { id:'mk1_raid_shards', cat:'shards', name:'Raid Character Shards', sub:'10 Shards', cost:700, curr:'mk1', icon:null, itemIcon:null, yieldQty:10, yieldUnit:'Raid Character Shards' },
-  { id:'mk1_accel_shards', cat:'shards', name:'Accelerated Character Shards', sub:'10 Shards', cost:200, curr:'mk1', icon:null, itemIcon:null, yieldQty:10, yieldUnit:'Accelerated Shards' },
-  { id:'mk1_ship_blueprints', cat:'shards', name:'Ship Blueprints', sub:'4 Blueprints', cost:440, curr:'mk1', icon:null, itemIcon:null, yieldQty:4, yieldUnit:'Ship Blueprints' },
+  { id:'mk1_raid_shards', cat:'shards', name:'Raid Character Shards', sub:'10 Shards', cost:700, curr:'mk1', icon:'assets/HERMITYODA.PNG', itemIcon:'assets/HERMITYODA.PNG', yieldQty:10, yieldUnit:'Raid Character Shards' },
+  { id:'mk1_accel_shards', cat:'shards', name:'Accelerated Character Shards', sub:'10 Shards', cost:200, curr:'mk1', icon:'assets/ROLO.PNG', itemIcon:'assets/ROLO.PNG', yieldQty:10, yieldUnit:'Accelerated Shards' },
+  { id:'mk1_ship_blueprints', cat:'shards', name:'Ship Blueprints', sub:'4 Blueprints', cost:440, curr:'mk1', icon:'assets/NEGOTIATOR.PNG', itemIcon:'assets/NEGOTIATOR.PNG', yieldQty:4, yieldUnit:'Ship Blueprints' },
   { id:'get2_nego_blueprints', cat:'shards', name:'Negotiator Blueprints', sub:'5 Blueprints', cost:1350, curr:'get2', icon:'assets/NEGOTIATOR.PNG', itemIcon:'assets/NEGOTIATOR.PNG', yieldQty:5, yieldUnit:'Negotiator Blueprints' },
   { id:'get2_malev_blueprints', cat:'shards', name:'Malevolence Blueprints', sub:'5 Blueprints', cost:1350, curr:'get2', icon:'assets/MALEVOLENCE.PNG', itemIcon:'assets/MALEVOLENCE.PNG', yieldQty:5, yieldUnit:'Malevolence Blueprints' },
   { id:'get3_kam_shards', cat:'shards', name:'Ki-Adi-Mundi (KAM) Shards', sub:'5 Shards', cost:2125, curr:'get3', icon:'assets/KAM.PNG', itemIcon:'assets/KAM.PNG', yieldQty:5, yieldUnit:'KAM Shards' },
 
   // ─── GEAR ───
-  { id:'mk2_g12_purple', cat:'gear', name:'Purple Gear 12 Pieces', sub:'5 Pieces', cost:475, curr:'mk2', icon:null, yieldQty:5, yieldUnit:'G12 Purple Pieces' },
-  { id:'mk2_g12_left_prim', cat:'gear', name:'Primary Left Side G12 (e.g. Bayonets)', sub:'5 Pieces', cost:425, curr:'mk2', icon:null, yieldQty:5, yieldUnit:'G12 Left Primary Pieces' },
-  { id:'mk2_g12_right_prim', cat:'gear', name:'Primary Right Side G12 (e.g. Stun Guns)', sub:'5 Pieces', cost:335, curr:'mk2', icon:null, yieldQty:5, yieldUnit:'G12 Right Primary Pieces' },
-  { id:'mk2_g12_right_sec', cat:'gear', name:'Secondary Right Side G12 (e.g. Sensor Arrays)', sub:'5 Pieces', cost:285, curr:'mk2', icon:null, yieldQty:5, yieldUnit:'G12 Right Secondary Pieces' },
-  { id:'get2_kyro', cat:'gear', name:'Kyrotech Salvage (GET 2)', sub:'5 Pieces', cost:325, curr:'get2', icon:null, yieldQty:5, yieldUnit:'Kyrotech Salvage' },
-  { id:'get2_g12', cat:'gear', name:'G12 Gear Salvage (GET 2)', sub:'4 Pieces', cost:400, curr:'get2', icon:null, yieldQty:4, yieldUnit:'G12 Gear Salvage' },
-  { id:'get3_kyro', cat:'gear', name:'Kyrotech Salvage (GET 3)', sub:'5 Pieces', cost:300, curr:'get3', icon:null, yieldQty:5, yieldUnit:'Kyrotech Salvage' },
+  { id:'mk2_g12_purple', cat:'gear', name:'Purple Gear 12 Pieces', sub:'5 Pieces', cost:475, curr:'mk2', icon:'assets/ELECTRIUM.PNG', itemIcon:'assets/ELECTRIUM.PNG', yieldQty:5, yieldUnit:'G12 Purple Pieces' },
+  { id:'mk2_g12_left_prim', cat:'gear', name:'Primary Left Side G12 (e.g. Bayonets)', sub:'5 Pieces', cost:425, curr:'mk2', icon:'assets/GYRDA.PNG', itemIcon:'assets/GYRDA.PNG', yieldQty:5, yieldUnit:'G12 Left Primary Pieces' },
+  { id:'mk2_g12_right_prim', cat:'gear', name:'Primary Right Side G12 (e.g. Stun Guns)', sub:'5 Pieces', cost:335, curr:'mk2', icon:'assets/AERO.PNG', itemIcon:'assets/AERO.PNG', yieldQty:5, yieldUnit:'G12 Right Primary Pieces' },
+  { id:'mk2_g12_right_sec', cat:'gear', name:'Secondary Right Side G12 (e.g. Sensor Arrays)', sub:'5 Pieces', cost:285, curr:'mk2', icon:'assets/IMPULSE.PNG', itemIcon:'assets/IMPULSE.PNG', yieldQty:5, yieldUnit:'G12 Right Secondary Pieces' },
+  { id:'get2_kyro', cat:'gear', name:'Kyrotech Salvage (GET 2)', sub:'5 Pieces', cost:325, curr:'get2', icon:'assets/CARBONITE.PNG', itemIcon:'assets/CARBONITE.PNG', yieldQty:5, yieldUnit:'Kyrotech Salvage' },
+  { id:'get2_g12', cat:'gear', name:'G12 Gear Salvage (GET 2)', sub:'4 Pieces', cost:400, curr:'get2', icon:'assets/AURODIUM.PNG', itemIcon:'assets/AURODIUM.PNG', yieldQty:4, yieldUnit:'G12 Gear Salvage' },
+  { id:'get3_kyro', cat:'gear', name:'Kyrotech Salvage (GET 3)', sub:'5 Pieces', cost:300, curr:'get3', icon:'assets/CARBONITE.PNG', itemIcon:'assets/CARBONITE.PNG', yieldQty:5, yieldUnit:'Kyrotech Salvage' },
 
   // ─── RELIC MATERIALS ───
   { id:'mk3_gyrda', cat:'relics', name:'Gyrda Keypads', sub:'2 Keypads', cost:1170, curr:'mk3', icon:'assets/GYRDA.PNG', itemIcon:'assets/GYRDA.PNG', yieldQty:2, yieldUnit:'Gyrda Keypads' },
@@ -750,12 +763,12 @@ const STORE_ITEMS = [
   { id:'get3_impulse', cat:'relics', name:'Impulse Detectors (GET 3)', sub:'2 Impulse Detectors', cost:1230, curr:'get3', icon:'assets/IMPULSE.PNG', itemIcon:'assets/IMPULSE.PNG', yieldQty:2, yieldUnit:'Impulse Detectors' },
   { id:'get3_gyrda', cat:'relics', name:'Gyrda Keypads (GET 3)', sub:'1 Keypad', cost:1200, curr:'get3', icon:'assets/GYRDA.PNG', itemIcon:'assets/GYRDA.PNG', yieldQty:1, yieldUnit:'Gyrda Keypads' },
 
-  // ─── SIGNAL DATA (DEDICATED TAB) ───
-  { id:'mk3_corrupted_signal', cat:'signal', name:'Corrupted Signal Data', sub:'1 Signal Data', cost:750, curr:'mk3', icon:'assets/CORRUPTED.PNG', itemIcon:'assets/CORRUPTED.PNG', yieldQty:1, yieldUnit:'Corrupted Signal Data' },
-  { id:'get2_grey_signal', cat:'signal', name:'Fragmented (Grey) Signal Data', sub:'20 Signal Data', cost:1600, curr:'get2', icon:'assets/FRAGMENTED.PNG', itemIcon:'assets/FRAGMENTED.PNG', yieldQty:20, yieldUnit:'Fragmented Signal Data' },
-  { id:'get3_green_signal', cat:'signal', name:'Incomplete (Green) Signal Data', sub:'20 Signal Data', cost:2000, curr:'get3', icon:'assets/INCOMPLETE.PNG', itemIcon:'assets/INCOMPLETE.PNG', yieldQty:20, yieldUnit:'Incomplete Signal Data' },
+  // ─── SIGNAL DATA ───
+  { id:'mk3_corrupted_signal', cat:'signal', name:'Corrupted Signal Data', sub:'1 Signal Data', cost:750, curr:'mk3', icon:'assets/CORRUPTEDSIGNAL.PNG', itemIcon:'assets/CORRUPTEDSIGNAL.PNG', yieldQty:1, yieldUnit:'Corrupted' },
+  { id:'get2_grey_signal', cat:'signal', name:'Fragmented (Grey) Signal Data', sub:'20 Signal Data', cost:1600, curr:'get2', icon:'assets/GREYSIGNAL.PNG', itemIcon:'assets/GREYSIGNAL.PNG', yieldQty:20, yieldUnit:'Fragmented' },
+  { id:'get3_green_signal', cat:'signal', name:'Incomplete (Green) Signal Data', sub:'20 Signal Data', cost:2000, curr:'get3', icon:'assets/GREENSIGNAL.PNG', itemIcon:'assets/GREENSIGNAL.PNG', yieldQty:20, yieldUnit:'Incomplete' },
 
-  // ─── ABILITY MATERIALS & MODS (SPLIT MOD MATS) ───
+  // ─── ABILITY MATERIALS & MODS ───
   { id:'mk3_zetas', cat:'ability', name:'Zeta Ability Materials', sub:'2 Zetas', cost:2350, curr:'mk3', icon:'assets/ZETA.PNG', itemIcon:'assets/ZETA.PNG', yieldQty:2, yieldUnit:'Zeta Ability Materials' },
   { id:'mk1_omegas', cat:'ability', name:'Omega Ability Materials', sub:'5 Omegas', cost:825, curr:'mk1', icon:'assets/OMEGA.PNG', itemIcon:'assets/OMEGA.PNG', yieldQty:5, yieldUnit:'Omega Ability Materials', limitText: 'Weekly Limit: 1 (Max 4/mo)', maxMonthly: 4 },
   { id:'mk1_mod_bonding', cat:'ability', name:'Bonding Pins', sub:'100 Materials', cost:1000, curr:'mk1', icon:'assets/BONDINGPINS.PNG', itemIcon:'assets/BONDINGPINS.PNG', yieldQty:100, yieldUnit:'Bonding Pins' },
@@ -879,8 +892,9 @@ function setSaveStatus(message, isError) {
 // ═══════════════════════════════════════════════════════
 function calcPersonalRewards(score) {
   let mk1 = 0, mk2 = 0, mk3 = 0;
+  const numScore = parseScore(score);
   for (const t of PERSONAL_TRACK) {
-    if (score >= t.score) {
+    if (numScore >= t.score) {
       mk1 += t.mk1;
       mk2 += t.mk2;
       mk3 += t.mk3;
@@ -893,12 +907,12 @@ function calcTotalIncome() {
   const syncedGET = getRelicPlannerGetValues();
 
   let inc = {
-    mk1: Number(state.bank.mk1 || 0),
-    mk2: Number(state.bank.mk2 || 0),
-    mk3: Number(state.bank.mk3 || 0),
-    get1: Number(state.bank.get1 || 0),
-    get2: Number(state.bank.get2 || 0) + syncedGET.get2,
-    get3: Number(state.bank.get3 || 0) + syncedGET.get3
+    mk1: parseScore(state.bank.mk1),
+    mk2: parseScore(state.bank.mk2),
+    mk3: parseScore(state.bank.mk3),
+    get1: parseScore(state.bank.get1),
+    get2: parseScore(state.bank.get2) + syncedGET.get2,
+    get3: parseScore(state.bank.get3) + syncedGET.get3
   };
 
   for (const r of state.raids) {
@@ -909,7 +923,7 @@ function calcTotalIncome() {
       inc.mk2 += box.mk2;
       inc.mk3 += box.mk3;
     }
-    const pers = calcPersonalRewards(Number(r.score || 0));
+    const pers = calcPersonalRewards(r.score);
     inc.mk1 += pers.mk1;
     inc.mk2 += pers.mk2;
     inc.mk3 += pers.mk3;
@@ -919,7 +933,7 @@ function calcTotalIncome() {
 }
 
 function calcTotalSpent() {
-  let spent = { mk1: Number(state.customMk1Allocation || 0), mk2: 0, mk3: 0, get1: 0, get2: 0, get3: 0 };
+  let spent = { mk1: parseScore(state.customMk1Allocation), mk2: 0, mk3: 0, get1: 0, get2: 0, get3: 0 };
   for (const item of STORE_ITEMS) {
     const count = Number(state.purchases[item.id] || 0);
     if (count > 0) {
@@ -978,7 +992,7 @@ function renderRaids() {
   if (!container) return;
 
   container.innerHTML = state.raids.map((r, idx) => {
-    const pers = calcPersonalRewards(Number(r.score || 0));
+    const pers = calcPersonalRewards(r.score);
     const boxId = Number(r.boxId || 1);
     const box = RAID_BOXES.find(b => b.id === boxId) || RAID_BOXES[0];
 
@@ -990,7 +1004,7 @@ function renderRaids() {
           <div style="display:flex; align-items:center; gap:12px">
             <div style="display:flex; align-items:center; gap:6px">
               <span style="font-size:11px; color:var(--text3)">Personal Score:</span>
-              <input type="text" inputmode="numeric" pattern="[0-9]*" value="${r.score}" style="width:110px; height:28px"
+              <input type="text" value="${r.score}" style="width:110px; height:28px"
                 oninput="updateRaidScore(${idx}, this.value)">
             </div>
 
@@ -1116,17 +1130,26 @@ function updateSummary() {
     for (const item of STORE_ITEMS) {
       const qty = Number(state.purchases[item.id] || 0);
       if (qty > 0) {
-        yieldTotals[item.yieldUnit] = (yieldTotals[item.yieldUnit] || 0) + (qty * item.yieldQty);
+        if (!yieldTotals[item.yieldUnit]) {
+          yieldTotals[item.yieldUnit] = {
+            total: 0,
+            icon: item.itemIcon || item.icon
+          };
+        }
+        yieldTotals[item.yieldUnit].total += (qty * item.yieldQty);
       }
     }
 
     if (Object.keys(yieldTotals).length === 0) {
       yieldContainer.innerHTML = `<span style="color:var(--text3)">No store purchases planned.</span>`;
     } else {
-      yieldContainer.innerHTML = Object.entries(yieldTotals).map(([unit, total]) => `
+      yieldContainer.innerHTML = Object.entries(yieldTotals).map(([unit, data]) => `
         <div style="display:flex; justify-content:space-between; align-items:center">
-          <span style="color:var(--text2)">${unit}</span>
-          <span style="font-family:var(--font-mono); font-weight:600; color:var(--accent)">Total: ${total.toLocaleString()}</span>
+          <span style="color:var(--text2); display:inline-flex; align-items:center; gap:6px">
+            ${data.icon ? `<img src="${data.icon}" class="item-icon" style="width:18px; height:18px" onerror="imgErrFallback(this)">` : ''}
+            ${unit}
+          </span>
+          <span style="font-family:var(--font-mono); font-weight:600; color:var(--accent)">Total: ${data.total.toLocaleString()}</span>
         </div>
       `).join('');
     }
@@ -1148,7 +1171,7 @@ function showTab(tabId) {
 }
 
 function onBankChange(curr, val) {
-  state.bank[curr] = Math.max(0, parseInt(val) || 0);
+  state.bank[curr] = val;
   saveState();
   updateSummary();
 }
@@ -1167,8 +1190,9 @@ function adjustRaidCount(delta) {
 }
 
 function updateRaidScore(idx, val) {
-  state.raids[idx].score = Math.max(0, parseInt(val) || 0);
+  state.raids[idx].score = val;
   saveState();
+  renderRaids();
   updateSummary();
 }
 
@@ -1211,7 +1235,7 @@ function adjustPurchase(id, delta) {
 }
 
 function updateCustomAllocation(val) {
-  state.customMk1Allocation = Math.max(0, parseInt(val) || 0);
+  state.customMk1Allocation = val;
   saveState();
   updateSummary();
 }
