@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' https://www.gstatic.com https://www.googleapis.com https://apis.google.com https://fonts.googleapis.com 'unsafe-inline'; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' https://fonts.gstatic.com data:; connect-src 'self' https://www.googleapis.com https://firestore.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com; frame-src https://accounts.google.com https://noteproject-4c78d.firebaseapp.com; object-src 'none'; base-uri 'self'; form-action 'self' https://accounts.google.com">
+<meta name="referrer-policy" content="strict-origin-when-cross-origin">
+<title>SwgohResources - Shipments Planner</title>
+<link rel="icon" href="/favicon.ico" type="image/x-icon">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #09090b;
+  --bg1: #121214;
+  --bg2: #18181b;
+  --bg3: #222227;
+  --bg4: #2d2d34;
+  --border: rgba(255, 255, 255, 0.06);
+  --border2: rgba(255, 255, 255, 0.12);
+  --text: #fafafa;
+  --text2: #a1a1aa;
+  --text3: #71717a;
+  --grey: #a1a1aa;
+  --grey-dim: rgba(161, 161, 170, 0.08);
+  --green: #10b981;
+  --green-dim: rgba(16, 185, 129, 0.08);
+  --blue: #3b82f6;
+  --blue-dim: rgba(59, 130, 246, 0.08);
+  --accent: #8b5cf6;
+  --accent-dim: rgba(139, 92, 246, 0.08);
+  --red: #ef4444;
+  --red-dim: rgba(239, 68, 68, 0.08);
+  --yellow: #f59e0b;
+  --yellow-dim: rgba(245, 158, 11, 0.08);
+  --teal: #14b8a6;
+  --teal-dim: rgba(20, 184, 166, 0.08);
+  --pink: #d946ef;
+  --pink-dim: rgba(217, 70, 239, 0.08);
+  --orange: #f97316;
+  --orange-dim: rgba(249, 115, 22, 0.08);
+  --font-mono: 'JetBrains Mono', monospace;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --shadow: 0 4px 20px rgba(0,0,0,0.4);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+html { height: 100%; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── Header ─────────────────────────────────── */
+.top-header {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  width: 100%;
+  background: rgba(18, 18, 20, 0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  height: 56px;
+  padding: 0 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.topbar-title {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--text);
+  margin-right: 32px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+}
+.topbar-title span {
+  color: var(--accent);
+  text-shadow: 0 0 10px rgba(139, 92, 246, 0.3);
+}
+.topbar-tabs {
+  display: flex;
+  gap: 4px;
+  flex: 1;
+  height: 100%;
+}
+.nav-tab {
+  height: 100%;
+  padding: 0 16px;
+  background: none;
+  border: none;
+  color: var(--text2);
+  font-size: 13px;
+  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+}
+.nav-tab:hover { color: var(--text); }
+.nav-tab.active {
+  color: var(--text);
+  border-bottom-color: var(--accent);
+}
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.topbar-divider {
+  width: 1px;
+  height: 16px;
+  background: var(--border);
+  margin: 0 4px;
+}
+.auth-panel {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.auth-status { font-size: 11px; color: var(--text3); }
+.saved-badge {
+  font-size: 11px;
+  color: var(--text3);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg2);
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+}
+.saved-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 6px var(--green);
+}
+
+/* ─── App & Segmented Tabs ──────────────────── */
+.app {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 24px;
+}
+.segmented-tabs {
+  display: inline-flex;
+  gap: 4px;
+  background: var(--bg2);
+  padding: 4px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  margin-bottom: 20px;
+  max-width: 100%;
+  overflow-x: auto;
+}
+.tab-btn {
+  height: 32px;
+  padding: 0 16px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: var(--text2);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+.tab-btn:hover { color: var(--text); }
+.tab-btn.active {
+  background: var(--bg3);
+  color: var(--text);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* ─── Layout & Cards ────────────────────────── */
+.shipments-layout {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 24px;
+  align-items: start;
+}
+@media (max-width: 960px) {
+  .shipments-layout { grid-template-columns: 1fr; }
+}
+
+.section {
+  background: var(--bg1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  margin-bottom: 20px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+.section-head {
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255,255,255,0.01);
+}
+.section-title {
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text);
+  flex: 1;
+}
+.section-body { padding: 20px; }
+
+/* ─── Buttons & Inputs ───────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 14px;
+  border-radius: var(--radius);
+  border: none;
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.btn-accent { background: var(--accent); color: var(--text); }
+.btn-accent:hover { opacity: 0.95; }
+.btn-ghost { background: var(--bg2); color: var(--text2); border: 1px solid var(--border); }
+.btn-ghost:hover { background: var(--bg3); color: var(--text); }
+.btn-sm { height: 26px; padding: 0 10px; font-size: 11px; }
+
+input[type=text], input[type=number], select {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  padding: 0 10px;
+  height: 32px;
+  outline: none;
+  transition: all 0.2s ease;
+}
+input:focus, select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.15);
+}
+
+/* ─── Pills & Currency Badges ─────────────────── */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: var(--font-mono);
+}
+.pill-mk1 { background: rgba(59, 130, 246, 0.1); color: var(--blue); border: 1px solid rgba(59, 130, 246, 0.2); }
+.pill-mk2 { background: rgba(245, 158, 11, 0.1); color: var(--yellow); border: 1px solid rgba(245, 158, 11, 0.2); }
+.pill-mk3 { background: rgba(239, 68, 68, 0.1); color: var(--red); border: 1px solid rgba(239, 68, 68, 0.2); }
+.pill-get1 { background: rgba(16, 185, 129, 0.1); color: var(--green); border: 1px solid rgba(16, 185, 129, 0.2); }
+.pill-get2 { background: rgba(249, 115, 22, 0.1); color: var(--orange); border: 1px solid rgba(249, 115, 22, 0.2); }
+.pill-get3 { background: rgba(20, 184, 166, 0.1); color: var(--teal); border: 1px solid rgba(20, 184, 166, 0.2); }
+
+/* ─── Raid Box Selector Cards ────────────────── */
+.raid-box-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+.raid-box-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+.raid-box-card:hover { border-color: var(--border2); background: var(--bg3); }
+.raid-box-card.active {
+  border-color: var(--accent);
+  background: rgba(139, 92, 246, 0.08);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+.raid-box-name { font-size: 12px; font-weight: 700; color: var(--text); }
+.raid-box-score { font-size: 10px; color: var(--text3); font-family: var(--font-mono); margin-bottom: 6px; }
+.raid-box-rewards { font-size: 10px; font-family: var(--font-mono); display: flex; flex-direction: column; gap: 2px; }
+
+/* ─── Store Items Table / Rows ────────────────── */
+.store-item-row {
+  display: grid;
+  grid-template-columns: 1fr auto 110px 80px;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 14px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 8px;
+}
+@media (max-width: 600px) {
+  .store-item-row { grid-template-columns: 1fr auto; gap: 8px; }
+}
+.store-item-title { font-weight: 600; font-size: 12px; }
+.store-item-sub { font-size: 11px; color: var(--text3); }
+.store-qty-ctrl { display: flex; align-items: center; gap: 4px; }
+.store-qty-btn { width: 24px; height: 24px; padding: 0; font-weight: bold; }
+
+/* ─── Sticky Summary Sidebar ─────────────────── */
+.summary-sticky { position: sticky; top: 80px; }
+.budget-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.budget-val { font-family: var(--font-mono); font-weight: 600; font-size: 12px; }
+.neg-budget { color: var(--red) !important; }
+
+/* ─── Auth Card ─────────────────────────────── */
+.auth-card {
+  max-width: 400px;
+  margin: 80px auto 0;
+  padding: 32px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--bg1);
+  box-shadow: var(--shadow);
+  text-align: center;
+}
+</style>
+</head>
+<body>
+
+<div class="top-header">
+  <div class="topbar">
+    <a href="index.html" class="topbar-title">Swgoh<span>Resources</span></a>
+    <div class="topbar-tabs">
+      <a class="nav-tab" href="index.html">Home</a>
+      <a class="nav-tab" href="relic.html">Relic Planner</a>
+      <a class="nav-tab active" href="shipments.html">Shipments Planner</a>
+    </div>
+    <div class="topbar-right">
+      <div class="auth-panel">
+        <div id="auth-status" class="auth-status">Connecting…</div>
+        <div class="saved-badge"><div class="saved-dot" id="saveDot"></div><span id="saveText">Saved</span></div>
+        <button id="signout-btn" class="btn btn-ghost btn-sm" style="display:none; margin-left: 8px" onclick="signOut()">Sign Out</button>
+      </div>
+      <div class="topbar-divider"></div>
+      <div id="build-badge" style="font-size:11px;color:var(--text3)">Build <span id="build-version">v1.0</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="app">
+
+<div id="auth-screen" class="auth-card" style="display:none">
+  <h2 style="font-size:20px; font-weight:600; margin-bottom:8px">Welcome back</h2>
+  <p style="font-size:12px; color:var(--text2); margin-bottom:24px">Sign in to sync your shipments planner across devices.</p>
+  <button class="btn btn-accent" style="width:100%" onclick="signInWithGoogle()">Continue with Google</button>
+</div>
+
+<div id="planner-shell">
+
+<div id="page-tabs" class="segmented-tabs">
+  <button class="tab-btn active" data-tab="raid-setup" onclick="showTab('raid-setup')">Raid & Guild Setup</button>
+  <button class="tab-btn" data-tab="shards" onclick="showTab('shards')">Shards & Blueprints</button>
+  <button class="tab-btn" data-tab="gear" onclick="showTab('gear')">Gear</button>
+  <button class="tab-btn" data-tab="relics" onclick="showTab('relics')">Relic Material & Signal Data</button>
+  <button class="tab-btn" data-tab="ability" onclick="showTab('ability')">Ability Materials & Modding</button>
+</div>
+
+<div class="shipments-layout">
+
+  <!-- LEFT COLUMN: MAIN TAB CONTENT -->
+  <div id="main-content-col">
+
+    <!-- ══════════ TAB 1: RAID & GUILD SETUP ══════════ -->
+    <div class="tab-content" id="tab-raid-setup">
+      <!-- Starting Banked Balances -->
+      <div class="section">
+        <div class="section-head"><div class="section-title">Starting Banked Currencies (Unspent Tokens)</div></div>
+        <div class="section-body">
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap:12px">
+            <div>
+              <div style="font-size:10px; color:var(--text3); text-transform:uppercase; margin-bottom:4px">Mk I Tokens</div>
+              <input type="text" id="bank-mk1" inputmode="numeric" pattern="[0-9]*" value="0" style="width:100%" oninput="onBankChange('mk1', this.value)">
+            </div>
+            <div>
+              <div style="font-size:10px; color:var(--text3); text-transform:uppercase; margin-bottom:4px">Mk II Tokens</div>
+              <input type="text" id="bank-mk2" inputmode="numeric" pattern="[0-9]*" value="0" style="width:100%" oninput="onBankChange('mk2', this.value)">
+            </div>
+            <div>
+              <div style="font-size:10px; color:var(--text3); text-transform:uppercase; margin-bottom:4px">Mk III Tokens</div>
+              <input type="text" id="bank-mk3" inputmode="numeric" pattern="[0-9]*" value="0" style="width:100%" oninput="onBankChange('mk3', this.value)">
+            </div>
+            <div>
+              <div style="font-size:10px; color:var(--text3); text-transform:uppercase; margin-bottom:4px">GET 1</div>
+              <input type="text" id="bank-get1" inputmode="numeric" pattern="[0-9]*" value="0" style="width:100%" oninput="onBankChange('get1', this.value)">
+            </div>
+            <div>
+              <div style="font-size:10px; color:var(--text3); text-transform:uppercase; margin-bottom:4px">GET 2</div>
+              <input type="text" id="bank-get2" inputmode="numeric" pattern="[0-9]*" value="0" style="width:100%" oninput="onBankChange('get2', this.value)">
+            </div>
+            <div>
+              <div style="font-size:10px; color:var(--text3); text-transform:uppercase; margin-bottom:4px">GET 3</div>
+              <input type="text" id="bank-get3" inputmode="numeric" pattern="[0-9]*" value="0" style="width:100%" oninput="onBankChange('get3', this.value)">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Raid Run Setup -->
+      <div class="section">
+        <div class="section-head">
+          <div class="section-title">Monthly Raid Runs Setup</div>
+          <div style="display:flex; align-items:center; gap:8px">
+            <span style="font-size:12px; color:var(--text2)">Raids per Month:</span>
+            <button class="btn btn-ghost btn-sm" onclick="adjustRaidCount(-1)">−</button>
+            <span id="raid-count-display" style="font-family:var(--font-mono); font-weight:600">3</span>
+            <button class="btn btn-ghost btn-sm" onclick="adjustRaidCount(1)">+</button>
+          </div>
+        </div>
+        <div class="section-body" id="raids-container">
+          <!-- Dynamic Raid Cards injected here -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ TAB 2: SHARDS & BLUEPRINTS ══════════ -->
+    <div class="tab-content" id="tab-shards" style="display:none">
+      <div class="section">
+        <div class="section-head"><div class="section-title">Raid & Guild Event Shards & Blueprints</div></div>
+        <div class="section-body" id="shards-store-list"></div>
+      </div>
+    </div>
+
+    <!-- ══════════ TAB 3: GEAR ══════════ -->
+    <div class="tab-content" id="tab-gear" style="display:none">
+      <div class="section">
+        <div class="section-head"><div class="section-title">Gear Purchases</div></div>
+        <div class="section-body" id="gear-store-list"></div>
+      </div>
+    </div>
+
+    <!-- ══════════ TAB 4: RELIC MATERIAL & SIGNAL DATA ══════════ -->
+    <div class="tab-content" id="tab-relics" style="display:none">
+      <div class="section">
+        <div class="section-head"><div class="section-title">Relic Scavenger & Signal Data Materials</div></div>
+        <div class="section-body" id="relics-store-list"></div>
+      </div>
+    </div>
+
+    <!-- ══════════ TAB 5: ABILITY MATERIALS & MODDING ══════════ -->
+    <div class="tab-content" id="tab-ability" style="display:none">
+      <div class="section">
+        <div class="section-head"><div class="section-title">Ability Materials, Mods & Custom Allocations</div></div>
+        <div class="section-body" id="ability-store-list"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RIGHT COLUMN: STICKY BUDGET & SUMMARY -->
+  <div class="summary-sticky">
+    <div class="section">
+      <div class="section-head"><div class="section-title">Raid Currency Budget</div></div>
+      <div id="raid-budget-display">
+        <div class="budget-row">
+          <span style="color:var(--text2)">Mk I Tokens</span>
+          <span class="budget-val" id="b-mk1">0</span>
+        </div>
+        <div class="budget-row">
+          <span style="color:var(--text2)">Mk II Tokens</span>
+          <span class="budget-val" id="b-mk2">0</span>
+        </div>
+        <div class="budget-row" style="border-bottom:none">
+          <span style="color:var(--text2)">Mk III Tokens</span>
+          <span class="budget-val" id="b-mk3">0</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><div class="section-title">Guild Event Currency Budget</div></div>
+      <div id="get-budget-display">
+        <div class="budget-row">
+          <span style="color:var(--text2)">GET 1</span>
+          <span class="budget-val" id="b-get1">0</span>
+        </div>
+        <div class="budget-row">
+          <span style="color:var(--text2)">GET 2</span>
+          <span class="budget-val" id="b-get2">0</span>
+        </div>
+        <div class="budget-row" style="border-bottom:none">
+          <span style="color:var(--text2)">GET 3</span>
+          <span class="budget-val" id="b-get3">0</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><div class="section-title">Planned Items Yield</div></div>
+      <div id="items-yield-display" style="padding:14px 16px; font-size:12px; display:flex; flex-direction:column; gap:6px">
+        <!-- Summary yield items -->
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+<script>
+// ═══════════════════════════════════════════════════════
+// CONSTANTS & RAID DATA
+// ═══════════════════════════════════════════════════════
+const RAID_BOXES = [
+  { id: 1, score: '10M', mk1: 12500, mk2: 5500, mk3: 500 },
+  { id: 2, score: '14.5M', mk1: 16500, mk2: 8400, mk3: 1000 },
+  { id: 3, score: '20.5M', mk1: 16500, mk2: 9700, mk3: 1250 },
+  { id: 4, score: '28.5M', mk1: 16500, mk2: 9700, mk3: 1750 },
+  { id: 5, score: '41.5M', mk1: 16500, mk2: 9700, mk3: 2000 },
+  { id: 6, score: '63.5M', mk1: 16500, mk2: 9700, mk3: 2500 },
+  { id: 7, score: '98.5M', mk1: 16500, mk2: 9700, mk3: 3000 },
+  { id: 8, score: '148M', mk1: 16500, mk2: 9700, mk3: 4000 },
+  { id: 9, score: '245M', mk1: 16500, mk2: 9700, mk3: 5250 },
+  { id: 10, score: '375M', mk1: 16500, mk2: 9700, mk3: 6770 },
+  { id: 11, score: '520M', mk1: 16500, mk2: 9700, mk3: 8770 }
+];
+
+const PERSONAL_TRACK = [
+  { score: 65000, mk1: 450, mk2: 0, mk3: 0 },
+  { score: 85000, mk1: 0, mk2: 100, mk3: 40 },
+  { score: 170000, mk1: 0, mk2: 100, mk3: 40 },
+  { score: 255000, mk1: 0, mk2: 100, mk3: 40 },
+  { score: 340000, mk1: 0, mk2: 200, mk3: 80 },
+  { score: 500000, mk1: 0, mk2: 200, mk3: 80 },
+  { score: 1000000, mk1: 0, mk2: 200, mk3: 80 },
+  { score: 1700000, mk1: 0, mk2: 200, mk3: 80 },
+  { score: 2200000, mk1: 0, mk2: 200, mk3: 80 },
+  { score: 3000000, mk1: 0, mk2: 0, mk3: 100 },
+  { score: 4250000, mk1: 0, mk2: 0, mk3: 100 },
+  { score: 5470000, mk1: 0, mk2: 0, mk3: 100 },
+  { score: 6200000, mk1: 0, mk2: 0, mk3: 100 },
+  { score: 8510000, mk1: 0, mk2: 0, mk3: 100 },
+  { score: 9720000, mk1: 0, mk2: 0, mk3: 100 },
+  { score: 12150000, mk1: 0, mk2: 0, mk3: 100 }
+];
+
+const STORE_ITEMS = [
+  // ─── SHARDS & BLUEPRINTS ───
+  { id:'mk2_hero_shards', cat:'shards', name:'HODA / Wampa / ROLO / IPD Shards', sub:'5 Shards', cost:1250, curr:'mk2', yieldQty:5, yieldUnit:'Shards' },
+  { id:'mk2_epic_shards', cat:'shards', name:'GAS / Malak Shards', sub:'5 Shards', cost:1750, curr:'mk2', yieldQty:5, yieldUnit:'Shards' },
+  { id:'mk1_raid_shards', cat:'shards', name:'Raid Character Shards', sub:'10 Shards', cost:700, curr:'mk1', yieldQty:10, yieldUnit:'Shards' },
+  { id:'mk1_accel_shards', cat:'shards', name:'Accelerated Character Shards', sub:'10 Shards', cost:200, curr:'mk1', yieldQty:10, yieldUnit:'Shards' },
+  { id:'mk1_ship_blueprints', cat:'shards', name:'Ship Blueprints', sub:'4 Blueprints', cost:440, curr:'mk1', yieldQty:4, yieldUnit:'Blueprints' },
+  { id:'get2_capital_ships', cat:'shards', name:'Negotiator / Malevolence Blueprints', sub:'5 Blueprints', cost:1350, curr:'get2', yieldQty:5, yieldUnit:'Blueprints' },
+  { id:'get3_kam_shards', cat:'shards', name:'Ki-Adi-Mundi (KAM) Shards', sub:'5 Shards', cost:2125, curr:'get3', yieldQty:5, yieldUnit:'Shards' },
+
+  // ─── GEAR ───
+  { id:'mk2_g12_purple', cat:'gear', name:'Purple Gear 12 Pieces', sub:'5 Pieces', cost:475, curr:'mk2', yieldQty:5, yieldUnit:'G12 Pcs' },
+  { id:'mk2_g12_left_prim', cat:'gear', name:'Primary Left Side G12 (e.g. Bayonets)', sub:'5 Pieces', cost:425, curr:'mk2', yieldQty:5, yieldUnit:'G12 Pcs' },
+  { id:'mk2_g12_right_prim', cat:'gear', name:'Primary Right Side G12 (e.g. Stun Guns)', sub:'5 Pieces', cost:335, curr:'mk2', yieldQty:5, yieldUnit:'G12 Pcs' },
+  { id:'mk2_g12_right_sec', cat:'gear', name:'Secondary Right Side G12 (e.g. Sensor Arrays)', sub:'5 Pieces', cost:285, curr:'mk2', yieldQty:5, yieldUnit:'G12 Pcs' },
+  { id:'get2_kyro', cat:'gear', name:'Kyrotech (GET 2)', sub:'5 Pieces', cost:325, curr:'get2', yieldQty:5, yieldUnit:'Kyrotech' },
+  { id:'get2_g12', cat:'gear', name:'G12 Gear (GET 2)', sub:'4 Pieces', cost:400, curr:'get2', yieldQty:4, yieldUnit:'G12 Pcs' },
+  { id:'get3_kyro', cat:'gear', name:'Kyrotech (GET 3)', sub:'5 Pieces', cost:300, curr:'get3', yieldQty:5, yieldUnit:'Kyrotech' },
+
+  // ─── RELIC MATERIAL & SIGNAL DATA ───
+  { id:'mk3_corrupted_signal', cat:'relics', name:'Corrupted Signal Data', sub:'1 Signal Data', cost:750, curr:'mk3', yieldQty:1, yieldUnit:'Corrupted Signal' },
+  { id:'mk3_gyrda', cat:'relics', name:'Gyrda Keypads', sub:'2 Keypads', cost:1170, curr:'mk3', yieldQty:2, yieldUnit:'Gyrda Keypads' },
+  { id:'mk3_aero', cat:'relics', name:'Aeromagnifiers', sub:'2 Aeromagnifiers', cost:400, curr:'mk3', yieldQty:2, yieldUnit:'Aeromagnifiers' },
+  { id:'mk3_impulse', cat:'relics', name:'Impulse Detectors', sub:'2 Impulse Detectors', cost:530, curr:'mk3', yieldQty:2, yieldUnit:'Impulse Detectors' },
+  { id:'mk2_zinbiddle', cat:'relics', name:'Zinbiddle Cards', sub:'4 Cards', cost:400, curr:'mk2', yieldQty:4, yieldUnit:'Zinbiddle Cards' },
+  { id:'mk2_electrium', cat:'relics', name:'Electrium Conductors', sub:'4 Conductors', cost:300, curr:'mk2', yieldQty:4, yieldUnit:'Electrium' },
+  { id:'mk1_aurodium', cat:'relics', name:'Aurodium Heatsinks', sub:'10 Heatsinks', cost:550, curr:'mk1', yieldQty:10, yieldUnit:'Aurodium' },
+  { id:'mk1_chromium', cat:'relics', name:'Chromium Transistors', sub:'10 Transistors', cost:500, curr:'mk1', yieldQty:10, yieldUnit:'Chromium' },
+  { id:'mk1_bronzium', cat:'relics', name:'Bronzium Wiring', sub:'10 Wirings', cost:400, curr:'mk1', yieldQty:10, yieldUnit:'Bronzium Wiring' },
+  { id:'mk1_carbonite', cat:'relics', name:'Carbonite Circuit Boards', sub:'10 Circuit Boards', cost:350, curr:'mk1', yieldQty:10, yieldUnit:'Carbonite CB' },
+  { id:'get2_grey_signal', cat:'relics', name:'Fragmented (Grey) Signal Data', sub:'20 Signal Data', cost:1600, curr:'get2', yieldQty:20, yieldUnit:'Grey Signal' },
+  { id:'get3_green_signal', cat:'relics', name:'Incomplete (Green) Signal Data', sub:'20 Signal Data', cost:2000, curr:'get3', yieldQty:20, yieldUnit:'Green Signal' },
+  { id:'get3_electrium', cat:'relics', name:'Electrium Conductors (GET 3)', sub:'2 Conductors', cost:720, curr:'get3', yieldQty:2, yieldUnit:'Electrium' },
+  { id:'get3_zinbiddle', cat:'relics', name:'Zinbiddle Cards (GET 3)', sub:'2 Cards', cost:850, curr:'get3', yieldQty:2, yieldUnit:'Zinbiddle Cards' },
+  { id:'get3_impulse', cat:'relics', name:'Impulse Detectors (GET 3)', sub:'2 Impulse Detectors', cost:1230, curr:'get3', yieldQty:2, yieldUnit:'Impulse Detectors' },
+  { id:'get3_gyrda', cat:'relics', name:'Gyrda Keypads (GET 3)', sub:'1 Keypad', cost:1200, curr:'get3', yieldQty:1, yieldUnit:'Gyrda Keypads' },
+
+  // ─── ABILITY MATERIALS & MODDING ───
+  { id:'mk3_zetas', cat:'ability', name:'Zeta Ability Materials', sub:'2 Zetas', cost:2350, curr:'mk3', yieldQty:2, yieldUnit:'Zetas' },
+  { id:'mk1_omegas', cat:'ability', name:'Omega Ability Materials', sub:'5 Omegas', cost:825, curr:'mk1', yieldQty:5, yieldUnit:'Omegas' },
+  { id:'mk1_mods', cat:'ability', name:'Random Modding Materials', sub:'100 Materials', cost:1000, curr:'mk1', yieldQty:100, yieldUnit:'Mod Mats' },
+  { id:'get3_micro_attenuators', cat:'ability', name:'Micro Attenuators', sub:'5 Attenuators', cost:125, curr:'get3', yieldQty:5, yieldUnit:'Micro Attenuators' },
+];
+
+// ═══════════════════════════════════════════════════════
+// STATE MANAGEMENT
+// ═══════════════════════════════════════════════════════
+const STORAGE_KEY = 'swgoh_shipments_v1';
+let state = {
+  bank: { mk1: 0, mk2: 0, mk3: 0, get1: 0, get2: 0, get3: 0 },
+  raids: [
+    { boxId: 6, score: 500000 },
+    { boxId: 6, score: 500000 },
+    { boxId: 6, score: 500000 }
+  ],
+  purchases: {},
+  customMk1Allocation: 0
+};
+
+function saveState() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    const dot = document.getElementById('saveDot');
+    const txt = document.getElementById('saveText');
+    if (dot && txt) {
+      dot.style.background = 'var(--green)';
+      txt.textContent = 'Saved';
+    }
+  } catch(e){}
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const p = JSON.parse(raw);
+      state = { ...state, ...p };
+    }
+  } catch(e){}
+}
+
+// ═══════════════════════════════════════════════════════
+// CALCULATIONS
+// ═══════════════════════════════════════════════════════
+function calcPersonalRewards(score) {
+  let mk1 = 0, mk2 = 0, mk3 = 0;
+  for (const t of PERSONAL_TRACK) {
+    if (score >= t.score) {
+      mk1 += t.mk1;
+      mk2 += t.mk2;
+      mk3 += t.mk3;
+    }
+  }
+  return { mk1, mk2, mk3 };
+}
+
+function calcTotalIncome() {
+  let inc = {
+    mk1: Number(state.bank.mk1 || 0),
+    mk2: Number(state.bank.mk2 || 0),
+    mk3: Number(state.bank.mk3 || 0),
+    get1: Number(state.bank.get1 || 0),
+    get2: Number(state.bank.get2 || 0),
+    get3: Number(state.bank.get3 || 0)
+  };
+
+  for (const r of state.raids) {
+    const box = RAID_BOXES.find(b => b.id === Number(r.boxId));
+    if (box) {
+      inc.mk1 += box.mk1;
+      inc.mk2 += box.mk2;
+      inc.mk3 += box.mk3;
+    }
+    const pers = calcPersonalRewards(Number(r.score || 0));
+    inc.mk1 += pers.mk1;
+    inc.mk2 += pers.mk2;
+    inc.mk3 += pers.mk3;
+  }
+
+  return inc;
+}
+
+function calcTotalSpent() {
+  let spent = { mk1: Number(state.customMk1Allocation || 0), mk2: 0, mk3: 0, get1: 0, get2: 0, get3: 0 };
+  
+  for (const item of STORE_ITEMS) {
+    const count = Number(state.purchases[item.id] || 0);
+    if (count > 0) {
+      spent[item.curr] += count * item.cost;
+    }
+  }
+
+  return spent;
+}
+
+// ═══════════════════════════════════════════════════════
+// RENDERERS
+// ═══════════════════════════════════════════════════════
+function renderRaids() {
+  const container = document.getElementById('raids-container');
+  if (!container) return;
+
+  container.innerHTML = state.raids.map((r, idx) => {
+    const pers = calcPersonalRewards(Number(r.score || 0));
+    const activeBox = RAID_BOXES.find(b => b.id === Number(r.boxId)) || RAID_BOXES[0];
+
+    return `
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:var(--radius-lg); padding:16px; margin-bottom:16px">
+        <div style="display:flex; justify-size:space-between; align-items:center; margin-bottom:12px">
+          <div style="font-weight:700; font-size:13px; color:var(--text)">Raid Run #${idx + 1}</div>
+          <div style="font-size:11px; color:var(--text3)">
+            Personal Earned: <span class="pill pill-mk1">+${pers.mk1}</span> <span class="pill pill-mk2">+${pers.mk2}</span> <span class="pill pill-mk3">+${pers.mk3}</span>
+          </div>
+        </div>
+
+        <div style="margin-bottom:12px">
+          <label style="font-size:11px; color:var(--text2); display:block; margin-bottom:4px">Your Personal Score:</label>
+          <input type="text" inputmode="numeric" pattern="[0-9]*" value="${r.score}" style="width:200px"
+            oninput="updateRaidScore(${idx}, this.value)">
+        </div>
+
+        <div>
+          <label style="font-size:11px; color:var(--text2); display:block">Guild Raid Crate Achieved:</label>
+          <div class="raid-box-grid">
+            ${RAID_BOXES.map(b => `
+              <div class="raid-box-card ${b.id === activeBox.id ? 'active' : ''}" onclick="setRaidBox(${idx}, ${b.id})">
+                <div class="raid-box-name">Box ${b.id}</div>
+                <div class="raid-box-score">${b.score}</div>
+                <div class="raid-box-rewards">
+                  <span style="color:var(--blue)">Mk1: ${b.mk1.toLocaleString()}</span>
+                  <span style="color:var(--yellow)">Mk2: ${b.mk2.toLocaleString()}</span>
+                  <span style="color:var(--red)">Mk3: ${b.mk3.toLocaleString()}</span>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  document.getElementById('raid-count-display').textContent = state.raids.length;
+}
+
+function renderStoreCategory(catId, containerId) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+
+  const items = STORE_ITEMS.filter(i => i.cat === catId);
+  
+  let html = items.map(item => {
+    const qty = Number(state.purchases[item.id] || 0);
+    const currBadgeClass = `pill-${item.curr}`;
+
+    return `
+      <div class="store-item-row">
+        <div>
+          <div class="store-item-title">${item.name}</div>
+          <div class="store-item-sub">${item.sub} · <span class="pill ${currBadgeClass}">${item.cost} ${item.curr.toUpperCase()}</span></div>
+        </div>
+        <div class="store-qty-ctrl">
+          <button class="btn btn-ghost store-qty-btn" onclick="adjustPurchase('${item.id}', -1)">−</button>
+          <input type="text" inputmode="numeric" pattern="[0-9]*" value="${qty}" style="width:48px; text-align:center; height:28px"
+            oninput="updatePurchase('${item.id}', this.value)">
+          <button class="btn btn-ghost store-qty-btn" onclick="adjustPurchase('${item.id}', 1)">+</button>
+        </div>
+        <div style="text-align:right; font-family:var(--font-mono); font-weight:600; font-size:12px" class="pill ${currBadgeClass}">
+          ${(qty * item.cost).toLocaleString()} ${item.curr.toUpperCase()}
+        </div>
+        <div style="text-align:right; font-size:11px; color:var(--text2)">
+          +${(qty * item.yieldQty).toLocaleString()} ${item.yieldUnit}
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  if (catId === 'ability') {
+    html += `
+      <div class="store-item-row" style="margin-top:16px; border-top:1px dashed var(--border); padding-top:14px">
+        <div>
+          <div class="store-item-title">Other Items / Custom Allocation</div>
+          <div class="store-item-sub">Reserve Mk I tokens for unspecified gear or store items</div>
+        </div>
+        <div></div>
+        <div style="display:flex; align-items:center; gap:6px">
+          <input type="text" inputmode="numeric" pattern="[0-9]*" value="${state.customMk1Allocation || 0}" style="width:90px; text-align:right"
+            oninput="updateCustomAllocation(this.value)">
+          <span style="font-size:11px; color:var(--blue)">MK I</span>
+        </div>
+        <div></div>
+      </div>
+    `;
+  }
+
+  container.innerHTML = html;
+}
+
+function renderAllStores() {
+  renderStoreCategory('shards', 'shards-store-list');
+  renderStoreCategory('gear', 'gear-store-list');
+  renderStoreCategory('relics', 'relics-store-list');
+  renderStoreCategory('ability', 'ability-store-list');
+}
+
+function updateSummary() {
+  const inc = calcTotalIncome();
+  const spent = calcTotalSpent();
+
+  const currencies = ['mk1', 'mk2', 'mk3', 'get1', 'get2', 'get3'];
+
+  for (const c of currencies) {
+    const rem = inc[c] - spent[c];
+    const el = document.getElementById(`b-${c}`);
+    if (el) {
+      el.textContent = `${rem.toLocaleString()} / ${inc[c].toLocaleString()}`;
+      if (rem < 0) {
+        el.classList.add('neg-budget');
+      } else {
+        el.classList.remove('neg-budget');
+      }
+    }
+  }
+
+  // Yield Summary
+  const yieldContainer = document.getElementById('items-yield-display');
+  if (yieldContainer) {
+    const yieldTotals = {};
+    for (const item of STORE_ITEMS) {
+      const qty = Number(state.purchases[item.id] || 0);
+      if (qty > 0) {
+        const totalYield = qty * item.yieldQty;
+        yieldTotals[item.yieldUnit] = (yieldTotals[item.yieldUnit] || 0) + totalYield;
+      }
+    }
+
+    if (Object.keys(yieldTotals).length === 0) {
+      yieldContainer.innerHTML = `<span style="color:var(--text3)">No store purchases planned.</span>`;
+    } else {
+      yieldContainer.innerHTML = Object.entries(yieldTotals).map(([unit, total]) => `
+        <div style="display:flex; justify-content:space-between; align-items:center">
+          <span style="color:var(--text2)">${unit}</span>
+          <span style="font-family:var(--font-mono); font-weight:600; color:var(--accent)">+${total.toLocaleString()}</span>
+        </div>
+      `).join('');
+    }
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+// INTERACTION HANDLERS
+// ═══════════════════════════════════════════════════════
+function showTab(tabId) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
+
+  const btn = document.querySelector(`.tab-btn[data-tab="${tabId}"]`);
+  if (btn) btn.classList.add('active');
+
+  const content = document.getElementById(`tab-${tabId}`);
+  if (content) content.style.display = 'block';
+}
+
+function onBankChange(curr, val) {
+  state.bank[curr] = Math.max(0, parseInt(val) || 0);
+  saveState();
+  updateSummary();
+}
+
+function adjustRaidCount(delta) {
+  const newCount = Math.max(1, Math.min(6, state.raids.length + delta));
+  while (state.raids.length < newCount) {
+    state.raids.push({ boxId: 6, score: 500000 });
+  }
+  while (state.raids.length > newCount) {
+    state.raids.pop();
+  }
+  renderRaids();
+  saveState();
+  updateSummary();
+}
+
+function updateRaidScore(idx, val) {
+  state.raids[idx].score = Math.max(0, parseInt(val) || 0);
+  renderRaids();
+  saveState();
+  updateSummary();
+}
+
+function setRaidBox(idx, boxId) {
+  state.raids[idx].boxId = boxId;
+  renderRaids();
+  saveState();
+  updateSummary();
+}
+
+function updatePurchase(id, val) {
+  state.purchases[id] = Math.max(0, parseInt(val) || 0);
+  renderAllStores();
+  saveState();
+  updateSummary();
+}
+
+function adjustPurchase(id, delta) {
+  const current = Number(state.purchases[id] || 0);
+  updatePurchase(id, current + delta);
+}
+
+function updateCustomAllocation(val) {
+  state.customMk1Allocation = Math.max(0, parseInt(val) || 0);
+  saveState();
+  updateSummary();
+}
+
+function initBankInputs() {
+  for (const c of ['mk1', 'mk2', 'mk3', 'get1', 'get2', 'get3']) {
+    const el = document.getElementById(`bank-${c}`);
+    if (el) el.value = state.bank[c] || 0;
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+// INITIALIZATION
+// ═══════════════════════════════════════════════════════
+loadState();
+initBankInputs();
+renderRaids();
+renderAllStores();
+updateSummary();
+</script>
+</body>
+</html>
