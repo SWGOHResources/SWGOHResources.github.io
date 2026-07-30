@@ -1,1 +1,14 @@
 python3 -m http.server 5500
+
+  { id:'mk2_hoda_shards', cat:'shards', name:'Hermit Yoda Shards', sub:'5 Shards', cost:1250, curr:'mk2', icon:'assets/HERMITYODA.PNG', itemIcon:'assets/HERMITYODA.PNG', yieldQty:5, yieldUnit:'Hermit Yoda Shards' },
+  { id:'mk2_wampa_shards', cat:'shards', name:'Wampa Shards', sub:'5 Shards', cost:1250, curr:'mk2', icon:'assets/WAMPA.PNG', itemIcon:'assets/WAMPA.PNG', yieldQty:5, yieldUnit:'Wampa Shards' },
+  { id:'mk2_rolo_shards', cat:'shards', name:'Rebel Officer Leia Organa Shards', sub:'5 Shards', cost:1250, curr:'mk2', icon:'assets/ROLO.PNG', itemIcon:'assets/ROLO.PNG', yieldQty:5, yieldUnit:'ROLO Shards' },
+  { id:'mk2_ipd_shards', cat:'shards', name:'Imperial Probe Droid Shards', sub:'5 Shards', cost:1250, curr:'mk2', icon:'assets/IPD.PNG', itemIcon:'assets/IPD.PNG', yieldQty:5, yieldUnit:'IPD Shards' },
+  { id:'mk2_gas_shards', cat:'shards', name:'General Skywalker Shards', sub:'5 Shards', cost:1750, curr:'mk2', icon:'assets/GAS.PNG', itemIcon:'assets/GAS.PNG', yieldQty:5, yieldUnit:'GAS Shards' },
+  { id:'mk2_malak_shards', cat:'shards', name:'Darth Malak Shards', sub:'5 Shards', cost:1750, curr:'mk2', icon:'assets/MALAK.PNG', itemIcon:'assets/MALAK.PNG', yieldQty:5, yieldUnit:'Malak Shards' },
+  { id:'mk1_raid_shards', cat:'shards', name:'Raid Character Shards', sub:'10 Shards', cost:700, curr:'mk1', icon:'assets/RAIDCHAR.PNG', itemIcon:'assets/RAIDCHAR.PNG', yieldQty:10, yieldUnit:'Raid Character Shards' },
+  { id:'mk1_accel_shards', cat:'shards', name:'Accelerated Character Shards', sub:'10 Shards', cost:200, curr:'mk1', icon:null, itemIcon:null, yieldQty:10, yieldUnit:'Accelerated Shards' },
+  { id:'mk1_ship_blueprints', cat:'shards', name:'Ship Blueprints', sub:'4 Blueprints', cost:440, curr:'mk1', icon:null, itemIcon:null, yieldQty:4, yieldUnit:'Ship Blueprints' },
+  { id:'get2_nego_blueprints', cat:'shards', name:'Negotiator Blueprints', sub:'5 Blueprints', cost:1350, curr:'get2', icon:'assets/NEGOTIATOR.PNG', itemIcon:'assets/NEGOTIATOR.PNG', yieldQty:5, yieldUnit:'Negotiator Blueprints' },
+  { id:'get2_malev_blueprints', cat:'shards', name:'Malevolence Blueprints', sub:'5 Blueprints', cost:1350, curr:'get2', icon:'assets/MALEVOLENCE.PNG', itemIcon:'assets/MALEVOLENCE.PNG', yieldQty:5, yieldUnit:'Malevolence Blueprints' },
+  { id:'get3_kam_shards', cat:'shards', name:'Ki-Adi-Mundi (KAM) Shards', sub:'5 Shards', cost:2125, curr:'get3', icon:'assets/KAM.PNG', itemIcon:'assets/KAM.PNG', yieldQty:5, yieldUnit:'KAM Shards' },

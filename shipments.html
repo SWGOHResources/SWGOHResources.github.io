@@ -326,8 +326,8 @@ input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 2px r
             <div style="font-weight:600; color:var(--text)">GET 2 & GET 3 Auto-Sync</div>
             <div style="font-size:11px; color:var(--text2); margin-top:4px; display:flex; align-items:center; gap:8px">
               Calculated automatically from your Relic Planner Guild Event Setup: 
-              <span id="synced-get2-val" class="curr-tag tag-get2"><img src="assets/GET2.PNG" class="curr-icon" onerror="imgErrFallback(this)"> 0 GET 2</span>
-              <span id="synced-get3-val" class="curr-tag tag-get3"><img src="assets/GET3.PNG" class="curr-icon" onerror="imgErrFallback(this)"> 0 GET 3</span>
+              <span id="synced-get2-val" class="curr-tag tag-get2"><img src="assets/GET2.PNG" class="curr-icon" onerror="imgErrFallback(this)"> <span id="synced-get2-text">0 GET 2</span></span>
+              <span id="synced-get3-val" class="curr-tag tag-get3"><img src="assets/GET3.PNG" class="curr-icon" onerror="imgErrFallback(this)"> <span id="synced-get3-text">0 GET 3</span></span>
             </div>
           </div>
           <a href="relic.html" class="btn btn-ghost btn-sm" style="text-decoration:none">Setup Guild Events →</a>
@@ -558,13 +558,18 @@ input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 2px r
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
 <script>
-// Image Error Fallback Helper
+// Image Error Fallback Helper (Safe execution against infinite loops)
 function imgErrFallback(img) {
-  if (img.src.endsWith('.PNG')) {
-    img.src = img.src.replace('.PNG', '.png');
-  } else if (img.src.endsWith('.png')) {
-    img.src = img.src.replace('.png', '.PNG');
+  if (img.dataset.failed) return;
+  if (!img.dataset.triedLower && (img.src.includes('.PNG') || img.src.includes('.png'))) {
+    img.dataset.triedLower = 'true';
+    if (img.src.includes('.PNG')) {
+      img.src = img.src.replace('.PNG', '.png');
+    } else {
+      img.src = img.src.replace('.png', '.PNG');
+    }
   } else {
+    img.dataset.failed = 'true';
     img.style.display = 'none';
   }
 }
@@ -825,7 +830,7 @@ function calcTotalSpent() {
 // ═══════════════════════════════════════════════════════
 // UI RENDERERS
 // ═══════════════════════════════════════════════════════
-function getCurrencyTag(curr, costText) {
+function getCurrencyTag(curr, costText, valSpanId) {
   const map = {
     mk1: { class: 'tag-raid1', name: 'Mk I', icon: 'assets/RAID1.PNG' },
     mk2: { class: 'tag-raid2', name: 'Mk II', icon: 'assets/RAID2.PNG' },
@@ -835,7 +840,8 @@ function getCurrencyTag(curr, costText) {
     get3: { class: 'tag-get3', name: 'GET 3', icon: 'assets/GET3.PNG' }
   };
   const conf = map[curr] || { class: 'tag-raid1', name: curr, icon: '' };
-  return `<span class="curr-tag ${conf.class}"><img src="${conf.icon}" class="curr-icon" onerror="imgErrFallback(this)"> ${costText}</span>`;
+  const valAttr = valSpanId ? `id="${valSpanId}"` : '';
+  return `<span class="curr-tag ${conf.class}"><img src="${conf.icon}" class="curr-icon" onerror="imgErrFallback(this)"> <span ${valAttr}>${costText}</span></span>`;
 }
 
 function renderReferenceTables() {
@@ -939,8 +945,8 @@ function renderStoreCategory(catId, containerId) {
           <button class="btn btn-ghost btn-sm" style="width:24px; padding:0" onclick="adjustPurchase('${item.id}', 1)">+</button>
         </div>
 
-        <div style="text-align:right" id="cost-${item.id}">
-          ${getCurrencyTag(item.curr, (qty * item.cost).toLocaleString())}
+        <div style="text-align:right">
+          ${getCurrencyTag(item.curr, (qty * item.cost).toLocaleString(), `cost-val-${item.id}`)}
         </div>
 
         <div style="text-align:right; font-size:11px; color:var(--text2); font-family:var(--font-mono)" id="yield-${item.id}">
@@ -983,10 +989,10 @@ function updateSummary() {
   const spent = calcTotalSpent();
 
   const syncedGET = getRelicPlannerGetValues();
-  const syncGet2El = document.getElementById('synced-get2-val');
-  const syncGet3El = document.getElementById('synced-get3-val');
-  if (syncGet2El) syncGet2El.innerHTML = `<img src="assets/GET2.PNG" class="curr-icon" onerror="imgErrFallback(this)"> ${syncedGET.get2.toLocaleString()} GET 2`;
-  if (syncGet3El) syncGet3El.innerHTML = `<img src="assets/GET3.PNG" class="curr-icon" onerror="imgErrFallback(this)"> ${syncedGET.get3.toLocaleString()} GET 3`;
+  const syncGet2Text = document.getElementById('synced-get2-text');
+  const syncGet3Text = document.getElementById('synced-get3-text');
+  if (syncGet2Text) syncGet2Text.textContent = `${syncedGET.get2.toLocaleString()} GET 2`;
+  if (syncGet3Text) syncGet3Text.textContent = `${syncedGET.get3.toLocaleString()} GET 3`;
 
   for (const c of ['mk1', 'mk2', 'mk3', 'get1', 'get2', 'get3']) {
     const rem = inc[c] - spent[c];
@@ -1075,12 +1081,12 @@ function updatePurchase(id, val) {
   const qty = Math.max(0, parseInt(val) || 0);
   state.purchases[id] = qty;
   
-  // Anti-flicker row update
+  // Clean DOM update (No image flickering or DOM destruction)
   const item = STORE_ITEMS.find(i => i.id === id);
   if (item) {
-    const costEl = document.getElementById(`cost-${id}`);
+    const costValEl = document.getElementById(`cost-val-${id}`);
     const yieldEl = document.getElementById(`yield-${id}`);
-    if (costEl) costEl.innerHTML = getCurrencyTag(item.curr, (qty * item.cost).toLocaleString());
+    if (costValEl) costValEl.textContent = (qty * item.cost).toLocaleString();
     if (yieldEl) yieldEl.textContent = `Total: ${(qty * item.yieldQty).toLocaleString()}`;
   }
 
@@ -1092,7 +1098,7 @@ function adjustPurchase(id, delta) {
   const current = Number(state.purchases[id] || 0);
   const qty = Math.max(0, current + delta);
   
-  // Update input DOM value directly without full re-render
+  // Direct input field update
   const row = document.getElementById(`row-${id}`);
   if (row) {
     const input = row.querySelector('input');
@@ -1173,7 +1179,7 @@ function scheduleRemoteSave() {
     } catch(e) {
       setSaveStatus('Cloud save failed', true);
     }
-  }, 1000); // 1000ms delay matching relic.html logic
+  }, 1000);
 }
 
 async function loadFromFirebase() {
