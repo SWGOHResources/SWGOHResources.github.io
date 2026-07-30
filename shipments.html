@@ -127,7 +127,7 @@ body {
 }
 .saved-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 6px var(--green); }
 
-/* ─── App Container & Tabs ──────────────────── */
+/* ─── App Container & Segmented Tabs ──────────── */
 .app { max-width: 1200px; margin: 0 auto; padding: 32px 24px; }
 .segmented-tabs {
   display: inline-flex;
@@ -179,23 +179,19 @@ body {
 .section-title { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text); flex: 1; }
 .section-body { padding: 20px; }
 
-/* Collapsible Box Card */
-.group-card { background: var(--bg1); border: 1px solid var(--border); border-radius: var(--radius-lg); margin-bottom: 16px; overflow: hidden; }
-.group-card.collapsed > *:not(.group-head) { display: none !important; }
-.group-head { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--border); cursor: pointer; }
-
 /* ─── Currency Icons & Badges ────────────────── */
 .curr-tag {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  padding: 2px 8px;
+  padding: 3px 8px;
   border-radius: 4px;
   font-size: 11px;
   font-weight: 600;
   font-family: var(--font-mono);
 }
 .curr-icon { width: 16px; height: 16px; object-fit: contain; vertical-align: middle; }
+.item-icon { width: 24px; height: 24px; object-fit: contain; vertical-align: middle; border-radius: 4px; }
 
 .tag-raid1 { background: var(--blue-dim); color: var(--blue); border: 1px solid rgba(59, 130, 246, 0.2); }
 .tag-raid2 { background: var(--yellow-dim); color: var(--yellow); border: 1px solid rgba(245, 158, 11, 0.2); }
@@ -240,17 +236,10 @@ input[type=text], input[type=number], select {
 }
 input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.15); }
 
-/* ─── Raid Box Reference Grid ────────────────── */
-.raid-box-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; margin-top: 10px; }
-.raid-box-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px; text-align: center; }
-.raid-box-card.active { border-color: var(--accent); background: rgba(139, 92, 246, 0.08); }
-.raid-box-name { font-size: 12px; font-weight: 700; color: var(--text); }
-.raid-box-score { font-size: 10px; color: var(--text3); font-family: var(--font-mono); margin-bottom: 6px; }
-
 /* ─── Store Item Row Layout ──────────────────── */
 .store-item-row {
   display: grid;
-  grid-template-columns: 1fr auto 130px 100px;
+  grid-template-columns: 1fr auto 130px 110px;
   gap: 12px;
   align-items: center;
   padding: 10px 14px;
@@ -260,15 +249,22 @@ input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 2px r
   margin-bottom: 8px;
 }
 @media (max-width: 680px) { .store-item-row { grid-template-columns: 1fr auto; gap: 8px; } }
-.store-item-title { font-weight: 600; font-size: 12px; }
+.store-item-title { font-weight: 600; font-size: 12px; display: flex; align-items: center; gap: 8px; }
 .store-item-sub { font-size: 11px; color: var(--text3); margin-top: 2px; }
 .store-qty-ctrl { display: flex; align-items: center; gap: 4px; }
+
+/* ─── Tables & Reference Cards ───────────────── */
+.ref-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.ref-table th, .ref-table td { padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border); }
+.ref-table th { background: rgba(255,255,255,0.02); font-weight: 600; color: var(--text2); text-transform: uppercase; font-size: 10px; letter-spacing: 0.05em; }
+.ref-table tr:last-child td { border-bottom: none; }
 
 /* ─── Summary Sidebar ────────────────────────── */
 .summary-sticky { position: sticky; top: 80px; }
 .budget-row { display: flex; justify-content: space-between; align-items: center; padding: 9px 16px; border-bottom: 1px solid var(--border); }
+.budget-label { display: flex; align-items: center; gap: 6px; font-weight: 500; font-size: 12px; }
 .budget-val { font-family: var(--font-mono); font-weight: 600; font-size: 12px; }
-.neg-budget { color: var(--red) !important; }
+.neg-budget { color: var(--red) !important; font-weight: 700; }
 
 .auth-card { max-width: 400px; margin: 80px auto 0; padding: 32px; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--bg1); box-shadow: var(--shadow); text-align: center; }
 </style>
@@ -306,11 +302,13 @@ input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 2px r
 <div id="planner-shell">
 
 <div id="page-tabs" class="segmented-tabs">
-  <button class="tab-btn active" data-tab="raid-setup" onclick="showTab('raid-setup')">Raid & Guild Setup</button>
+  <button class="tab-btn active" data-tab="raid-setup" onclick="showTab('raid-setup')">Raid & GET Setup</button>
   <button class="tab-btn" data-tab="shards" onclick="showTab('shards')">Shards & Blueprints</button>
   <button class="tab-btn" data-tab="gear" onclick="showTab('gear')">Gear</button>
-  <button class="tab-btn" data-tab="relics" onclick="showTab('relics')">Relic Material & Signals</button>
+  <button class="tab-btn" data-tab="relics" onclick="showTab('relics')">Relic Materials</button>
+  <button class="tab-btn" data-tab="signal" onclick="showTab('signal')">Signal Data</button>
   <button class="tab-btn" data-tab="ability" onclick="showTab('ability')">Ability Materials & Mods</button>
+  <button class="tab-btn" data-tab="reference" onclick="showTab('reference')">Reference Guide</button>
 </div>
 
 <div class="shipments-layout">
@@ -318,67 +316,83 @@ input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 2px r
   <!-- LEFT COLUMN -->
   <div id="main-content-col">
 
-    <!-- ══════════ TAB 1: RAID & GUILD SETUP ══════════ -->
+    <!-- ══════════ TAB 1: RAID & GET SETUP ══════════ -->
     <div class="tab-content" id="tab-raid-setup">
       
-      <!-- Starting Banked Balances -->
-      <div class="section">
-        <div class="section-head"><div class="section-title">Starting Unspent Currencies (Banked)</div></div>
-        <div class="section-body">
-          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap:12px">
-            <div>
-              <div style="font-size:10px; color:var(--text3); text-transform:uppercase; margin-bottom:4px">Raid Mk I</div>
-              <input type="text" id="bank-mk1" inputmode="numeric" pattern="[0-9]*" value="0" style="width:100%" oninput="onBankChange('mk1', this.value)">
-            </div>
-            <div>
-              <div style="font-size:10px; color:var(--text3); text-transform:uppercase; margin-bottom:4px">Raid Mk II</div>
-              <input type="text" id="bank-mk2" inputmode="numeric" pattern="[0-9]*" value="0" style="width:100%" oninput="onBankChange('mk2', this.value)">
-            </div>
-            <div>
-              <div style="font-size:10px; color:var(--text3); text-transform:uppercase; margin-bottom:4px">Raid Mk III</div>
-              <input type="text" id="bank-mk3" inputmode="numeric" pattern="[0-9]*" value="0" style="width:100%" oninput="onBankChange('mk3', this.value)">
-            </div>
-            <div>
-              <div style="font-size:10px; color:var(--text3); text-transform:uppercase; margin-bottom:4px">GET 1</div>
-              <input type="text" id="bank-get1" inputmode="numeric" pattern="[0-9]*" value="0" style="width:100%" oninput="onBankChange('get1', this.value)">
-            </div>
-            <div>
-              <div style="font-size:10px; color:var(--text3); text-transform:uppercase; margin-bottom:4px">GET 2</div>
-              <input type="text" id="bank-get2" inputmode="numeric" pattern="[0-9]*" value="0" style="width:100%" oninput="onBankChange('get2', this.value)">
-            </div>
-            <div>
-              <div style="font-size:10px; color:var(--text3); text-transform:uppercase; margin-bottom:4px">GET 3</div>
-              <input type="text" id="bank-get3" inputmode="numeric" pattern="[0-9]*" value="0" style="width:100%" oninput="onBankChange('get3', this.value)">
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- GET Sync Banner -->
+      <!-- Auto-Sync Banner (Placed at top of Tab 1) -->
       <div class="section" style="border-color: rgba(139, 92, 246, 0.3); background: rgba(139, 92, 246, 0.04);">
         <div class="section-body" style="padding:14px 18px; display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap">
           <div>
             <div style="font-weight:600; color:var(--text)">GET 2 & GET 3 Auto-Sync</div>
-            <div style="font-size:11px; color:var(--text2); margin-top:2px">
+            <div style="font-size:11px; color:var(--text2); margin-top:4px; display:flex; align-items:center; gap:8px">
               Calculated automatically from your Relic Planner Guild Event Setup: 
-              <span id="synced-get2-val" class="curr-tag tag-get2">0 GET 2</span>
-              <span id="synced-get3-val" class="curr-tag tag-get3">0 GET 3</span>
+              <span id="synced-get2-val" class="curr-tag tag-get2"><img src="assets/GET2.PNG" class="curr-icon" onerror="imgErrFallback(this)"> 0 GET 2</span>
+              <span id="synced-get3-val" class="curr-tag tag-get3"><img src="assets/GET3.PNG" class="curr-icon" onerror="imgErrFallback(this)"> 0 GET 3</span>
             </div>
           </div>
           <a href="relic.html" class="btn btn-ghost btn-sm" style="text-decoration:none">Setup Guild Events →</a>
         </div>
       </div>
 
+      <!-- Starting Banked Balances (Divided by Rows) -->
+      <div class="section">
+        <div class="section-head"><div class="section-title">Starting Unspent Currencies (Banked)</div></div>
+        <div class="section-body">
+          <div style="margin-bottom:14px">
+            <div style="font-size:11px; font-weight:600; color:var(--text2); margin-bottom:6px">Raid Store Tokens</div>
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap:12px">
+              <div>
+                <div style="font-size:10px; color:var(--blue); text-transform:uppercase; margin-bottom:4px; display:flex; align-items:center; gap:4px">
+                  <img src="assets/RAID1.PNG" class="curr-icon" onerror="imgErrFallback(this)"> Raid Mk I
+                </div>
+                <input type="text" id="bank-mk1" inputmode="numeric" pattern="[0-9]*" value="0" style="width:100%" oninput="onBankChange('mk1', this.value)">
+              </div>
+              <div>
+                <div style="font-size:10px; color:var(--yellow); text-transform:uppercase; margin-bottom:4px; display:flex; align-items:center; gap:4px">
+                  <img src="assets/RAID2.PNG" class="curr-icon" onerror="imgErrFallback(this)"> Raid Mk II
+                </div>
+                <input type="text" id="bank-mk2" inputmode="numeric" pattern="[0-9]*" value="0" style="width:100%" oninput="onBankChange('mk2', this.value)">
+              </div>
+              <div>
+                <div style="font-size:10px; color:var(--red); text-transform:uppercase; margin-bottom:4px; display:flex; align-items:center; gap:4px">
+                  <img src="assets/RAID3.PNG" class="curr-icon" onerror="imgErrFallback(this)"> Raid Mk III
+                </div>
+                <input type="text" id="bank-mk3" inputmode="numeric" pattern="[0-9]*" value="0" style="width:100%" oninput="onBankChange('mk3', this.value)">
+              </div>
+            </div>
+          </div>
+
+          <div style="border-top:1px dashed var(--border); padding-top:14px">
+            <div style="font-size:11px; font-weight:600; color:var(--text2); margin-bottom:6px">Guild Event Store Tokens</div>
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap:12px">
+              <div>
+                <div style="font-size:10px; color:var(--green); text-transform:uppercase; margin-bottom:4px; display:flex; align-items:center; gap:4px">
+                  <img src="assets/GET1.PNG" class="curr-icon" onerror="imgErrFallback(this)"> GET 1
+                </div>
+                <input type="text" id="bank-get1" inputmode="numeric" pattern="[0-9]*" value="0" style="width:100%" oninput="onBankChange('get1', this.value)">
+              </div>
+              <div>
+                <div style="font-size:10px; color:var(--orange); text-transform:uppercase; margin-bottom:4px; display:flex; align-items:center; gap:4px">
+                  <img src="assets/GET2.PNG" class="curr-icon" onerror="imgErrFallback(this)"> GET 2
+                </div>
+                <input type="text" id="bank-get2" inputmode="numeric" pattern="[0-9]*" value="0" style="width:100%" oninput="onBankChange('get2', this.value)">
+              </div>
+              <div>
+                <div style="font-size:10px; color:var(--teal); text-transform:uppercase; margin-bottom:4px; display:flex; align-items:center; gap:4px">
+                  <img src="assets/GET3.PNG" class="curr-icon" onerror="imgErrFallback(this)"> GET 3
+                </div>
+                <input type="text" id="bank-get3" inputmode="numeric" pattern="[0-9]*" value="0" style="width:100%" oninput="onBankChange('get3', this.value)">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Raid Run Setup -->
       <div class="section">
         <div class="section-head">
-          <div class="section-title">Monthly Raid Runs</div>
-          <div style="display:flex; align-items:center; gap:10px">
-            <span style="font-size:12px; color:var(--text2)">Global Default Box:</span>
-            <select id="default-box-select" onchange="updateDefaultBox(this.value)" style="height:28px">
-              <!-- Rendered via JS -->
-            </select>
-            <div style="width:1px; height:16px; background:var(--border)"></div>
+          <div class="section-title">Monthly Raid Runs (Max 5)</div>
+          <div style="display:flex; align-items:center; gap:8px">
             <span style="font-size:12px; color:var(--text2)">Raids/mo:</span>
             <button class="btn btn-ghost btn-sm" onclick="adjustRaidCount(-1)">−</button>
             <span id="raid-count-display" style="font-family:var(--font-mono); font-weight:600">3</span>
@@ -387,24 +401,6 @@ input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 2px r
         </div>
         <div class="section-body" id="raids-container">
           <!-- Dynamic Raid Cards injected here -->
-        </div>
-      </div>
-
-      <!-- Collapsible Raid Crate Reference -->
-      <div class="group-card collapsed" id="crate-ref-card">
-        <div class="group-head" onclick="toggleCrateRefCard()">
-          <div style="font-weight:600; font-size:12px; color:var(--text); flex:1">
-            📊 View Raid Crate Rewards Reference (Boxes 1 - 11)
-          </div>
-          <div style="font-size:11px; color:var(--text3)" id="crate-ref-toggle-label">▼ Expand Extra Info</div>
-        </div>
-        <div class="section-body">
-          <div style="font-size:11px; color:var(--text3); margin-bottom:10px">
-            Note: Only the highest achieved box reward crate is received per raid run (not cumulative).
-          </div>
-          <div class="raid-box-grid" id="crate-reference-grid">
-            <!-- Box cards rendered via JS -->
-          </div>
         </div>
       </div>
 
@@ -426,19 +422,69 @@ input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 2px r
       </div>
     </div>
 
-    <!-- ══════════ TAB 4: RELIC MATERIAL & SIGNAL DATA ══════════ -->
+    <!-- ══════════ TAB 4: RELIC MATERIALS ══════════ -->
     <div class="tab-content" id="tab-relics" style="display:none">
       <div class="section">
-        <div class="section-head"><div class="section-title">Relic Scavenger & Signal Data Store</div></div>
+        <div class="section-head"><div class="section-title">Relic Scavenger Materials</div></div>
         <div class="section-body" id="relics-store-list"></div>
       </div>
     </div>
 
-    <!-- ══════════ TAB 5: ABILITY MATERIALS & MODS ══════════ -->
+    <!-- ══════════ TAB 5: SIGNAL DATA ══════════ -->
+    <div class="tab-content" id="tab-signal" style="display:none">
+      <div class="section">
+        <div class="section-head"><div class="section-title">Signal Data Store</div></div>
+        <div class="section-body" id="signal-store-list"></div>
+      </div>
+    </div>
+
+    <!-- ══════════ TAB 6: ABILITY MATERIALS & MODS ══════════ -->
     <div class="tab-content" id="tab-ability" style="display:none">
       <div class="section">
-        <div class="section-head"><div class="section-title">Ability Materials, Mods & Custom Allocations</div></div>
+        <div class="section-head"><div class="section-title">Ability Materials, Mods & Allocations</div></div>
         <div class="section-body" id="ability-store-list"></div>
+      </div>
+    </div>
+
+    <!-- ══════════ TAB 7: REFERENCE GUIDE ══════════ -->
+    <div class="tab-content" id="tab-reference" style="display:none">
+      <div class="section">
+        <div class="section-head"><div class="section-title">Raid Guild Crate Rewards Reference (Boxes 1 - 11)</div></div>
+        <div class="section-body" style="padding:0">
+          <table class="ref-table">
+            <thead>
+              <tr>
+                <th>Crate</th>
+                <th>Guild Score</th>
+                <th>Mk I Rewards</th>
+                <th>Mk II Rewards</th>
+                <th>Mk III Rewards</th>
+              </tr>
+            </thead>
+            <tbody id="crate-ref-tbody">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-head"><div class="section-title">Personal Score Track Rewards Reference</div></div>
+        <div class="section-body" style="padding:0">
+          <table class="ref-table">
+            <thead>
+              <tr>
+                <th>Score Threshold</th>
+                <th>Mk I Tokens</th>
+                <th>Mk II Tokens</th>
+                <th>Mk III Tokens</th>
+              </tr>
+            </thead>
+            <tbody id="personal-ref-tbody">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
 
@@ -447,22 +493,22 @@ input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 2px r
   <!-- RIGHT COLUMN: STICKY BUDGET SUMMARY -->
   <div class="summary-sticky">
     <div class="section">
-      <div class="section-head"><div class="section-title">Raid Currency Budget</div></div>
+      <div class="section-head"><div class="section-title">Raid Currency Budget (Monthly Plan)</div></div>
       <div id="raid-budget-display">
         <div class="budget-row">
-          <span style="color:var(--text2); display:flex; align-items:center; gap:6px">
+          <span class="budget-label" style="color:var(--blue)">
             <img src="assets/RAID1.PNG" class="curr-icon" onerror="imgErrFallback(this)"> Mk I Tokens
           </span>
           <span class="budget-val" id="b-mk1">0</span>
         </div>
         <div class="budget-row">
-          <span style="color:var(--text2); display:flex; align-items:center; gap:6px">
+          <span class="budget-label" style="color:var(--yellow)">
             <img src="assets/RAID2.PNG" class="curr-icon" onerror="imgErrFallback(this)"> Mk II Tokens
           </span>
           <span class="budget-val" id="b-mk2">0</span>
         </div>
         <div class="budget-row" style="border-bottom:none">
-          <span style="color:var(--text2); display:flex; align-items:center; gap:6px">
+          <span class="budget-label" style="color:var(--red)">
             <img src="assets/RAID3.PNG" class="curr-icon" onerror="imgErrFallback(this)"> Mk III Tokens
           </span>
           <span class="budget-val" id="b-mk3">0</span>
@@ -471,22 +517,22 @@ input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 2px r
     </div>
 
     <div class="section">
-      <div class="section-head"><div class="section-title">Guild Event Budget</div></div>
+      <div class="section-head"><div class="section-title">Guild Event Budget (Monthly Plan)</div></div>
       <div id="get-budget-display">
         <div class="budget-row">
-          <span style="color:var(--text2); display:flex; align-items:center; gap:6px">
+          <span class="budget-label" style="color:var(--green)">
             <img src="assets/GET1.PNG" class="curr-icon" onerror="imgErrFallback(this)"> GET 1
           </span>
           <span class="budget-val" id="b-get1">0</span>
         </div>
         <div class="budget-row">
-          <span style="color:var(--text2); display:flex; align-items:center; gap:6px">
+          <span class="budget-label" style="color:var(--orange)">
             <img src="assets/GET2.PNG" class="curr-icon" onerror="imgErrFallback(this)"> GET 2
           </span>
           <span class="budget-val" id="b-get2">0</span>
         </div>
         <div class="budget-row" style="border-bottom:none">
-          <span style="color:var(--text2); display:flex; align-items:center; gap:6px">
+          <span class="budget-label" style="color:var(--teal)">
             <img src="assets/GET3.PNG" class="curr-icon" onerror="imgErrFallback(this)"> GET 3
           </span>
           <span class="budget-val" id="b-get3">0</span>
@@ -495,7 +541,7 @@ input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 2px r
     </div>
 
     <div class="section">
-      <div class="section-head"><div class="section-title">Planned Items Yield</div></div>
+      <div class="section-head"><div class="section-title">Planned Items (per Month)</div></div>
       <div id="items-yield-display" style="padding:14px 16px; font-size:12px; display:flex; flex-direction:column; gap:6px">
         <!-- Summary items rendered here -->
       </div>
@@ -560,53 +606,63 @@ const PERSONAL_TRACK = [
 ];
 
 const STORE_ITEMS = [
-  // ─── SHARDS & BLUEPRINTS ───
-  { id:'mk2_hero_shards', cat:'shards', name:'HODA / Wampa / ROLO / IPD Shards', sub:'5 Shards', cost:1250, curr:'mk2', icon:'assets/RAID2.PNG', yieldQty:5, yieldUnit:'Shards' },
-  { id:'mk2_epic_shards', cat:'shards', name:'GAS / Malak Shards', sub:'5 Shards', cost:1750, curr:'mk2', icon:'assets/RAID2.PNG', yieldQty:5, yieldUnit:'Shards' },
-  { id:'mk1_raid_shards', cat:'shards', name:'Raid Character Shards', sub:'10 Shards', cost:700, curr:'mk1', icon:'assets/RAID1.PNG', yieldQty:10, yieldUnit:'Shards' },
-  { id:'mk1_accel_shards', cat:'shards', name:'Accelerated Character Shards', sub:'10 Shards', cost:200, curr:'mk1', icon:'assets/RAID1.PNG', yieldQty:10, yieldUnit:'Shards' },
-  { id:'mk1_ship_blueprints', cat:'shards', name:'Ship Blueprints', sub:'4 Blueprints', cost:440, curr:'mk1', icon:'assets/RAID1.PNG', yieldQty:4, yieldUnit:'Blueprints' },
-  { id:'get2_capital_ships', cat:'shards', name:'Negotiator / Malevolence Blueprints', sub:'5 Blueprints', cost:1350, curr:'get2', icon:'assets/GET2.PNG', yieldQty:5, yieldUnit:'Blueprints' },
-  { id:'get3_kam_shards', cat:'shards', name:'Ki-Adi-Mundi (KAM) Shards', sub:'5 Shards', cost:2125, curr:'get3', icon:'assets/GET3.PNG', yieldQty:5, yieldUnit:'Shards' },
+  // ─── SHARDS & BLUEPRINTS (SEPARATED) ───
+  { id:'mk2_hoda_shards', cat:'shards', name:'Hermit Yoda Shards', sub:'5 Shards', cost:1250, curr:'mk2', icon:'assets/HERMITYODA.PNG', itemIcon:'assets/HERMITYODA.PNG', yieldQty:5, yieldUnit:'Hermit Yoda Shards' },
+  { id:'mk2_wampa_shards', cat:'shards', name:'Wampa Shards', sub:'5 Shards', cost:1250, curr:'mk2', icon:'assets/WAMPA.PNG', itemIcon:'assets/WAMPA.PNG', yieldQty:5, yieldUnit:'Wampa Shards' },
+  { id:'mk2_rolo_shards', cat:'shards', name:'Rebel Officer Leia Organa Shards', sub:'5 Shards', cost:1250, curr:'mk2', icon:'assets/ROLO.PNG', itemIcon:'assets/ROLO.PNG', yieldQty:5, yieldUnit:'ROLO Shards' },
+  { id:'mk2_ipd_shards', cat:'shards', name:'Imperial Probe Droid Shards', sub:'5 Shards', cost:1250, curr:'mk2', icon:'assets/IPD.PNG', itemIcon:'assets/IPD.PNG', yieldQty:5, yieldUnit:'IPD Shards' },
+  { id:'mk2_gas_shards', cat:'shards', name:'General Skywalker Shards', sub:'5 Shards', cost:1750, curr:'mk2', icon:'assets/GAS.PNG', itemIcon:'assets/GAS.PNG', yieldQty:5, yieldUnit:'GAS Shards' },
+  { id:'mk2_malak_shards', cat:'shards', name:'Darth Malak Shards', sub:'5 Shards', cost:1750, curr:'mk2', icon:'assets/MALAK.PNG', itemIcon:'assets/MALAK.PNG', yieldQty:5, yieldUnit:'Malak Shards' },
+  { id:'mk1_raid_shards', cat:'shards', name:'Raid Character Shards', sub:'10 Shards', cost:700, curr:'mk1', icon:'assets/RAIDCHAR.PNG', itemIcon:'assets/RAIDCHAR.PNG', yieldQty:10, yieldUnit:'Raid Character Shards' },
+  { id:'mk1_accel_shards', cat:'shards', name:'Accelerated Character Shards', sub:'10 Shards', cost:200, curr:'mk1', icon:'assets/ACCELCHAR.PNG', itemIcon:'assets/ACCELCHAR.PNG', yieldQty:10, yieldUnit:'Accelerated Shards' },
+  { id:'mk1_ship_blueprints', cat:'shards', name:'Ship Blueprints', sub:'4 Blueprints', cost:440, curr:'mk1', icon:'assets/SHIPBLUEPRINT.PNG', itemIcon:'assets/SHIPBLUEPRINT.PNG', yieldQty:4, yieldUnit:'Ship Blueprints' },
+  { id:'get2_nego_blueprints', cat:'shards', name:'Negotiator Blueprints', sub:'5 Blueprints', cost:1350, curr:'get2', icon:'assets/NEGOTIATOR.PNG', itemIcon:'assets/NEGOTIATOR.PNG', yieldQty:5, yieldUnit:'Negotiator Blueprints' },
+  { id:'get2_malev_blueprints', cat:'shards', name:'Malevolence Blueprints', sub:'5 Blueprints', cost:1350, curr:'get2', icon:'assets/MALEVOLENCE.PNG', itemIcon:'assets/MALEVOLENCE.PNG', yieldQty:5, yieldUnit:'Malevolence Blueprints' },
+  { id:'get3_kam_shards', cat:'shards', name:'Ki-Adi-Mundi (KAM) Shards', sub:'5 Shards', cost:2125, curr:'get3', icon:'assets/KAM.PNG', itemIcon:'assets/KAM.PNG', yieldQty:5, yieldUnit:'KAM Shards' },
 
   // ─── GEAR ───
-  { id:'mk2_g12_purple', cat:'gear', name:'Purple Gear 12 Pieces', sub:'5 Pieces', cost:475, curr:'mk2', icon:'assets/RAID2.PNG', yieldQty:5, yieldUnit:'G12 Pcs' },
-  { id:'mk2_g12_left_prim', cat:'gear', name:'Primary Left Side G12 (e.g. Bayonets)', sub:'5 Pieces', cost:425, curr:'mk2', icon:'assets/RAID2.PNG', yieldQty:5, yieldUnit:'G12 Pcs' },
-  { id:'mk2_g12_right_prim', cat:'gear', name:'Primary Right Side G12 (e.g. Stun Guns)', sub:'5 Pieces', cost:335, curr:'mk2', icon:'assets/RAID2.PNG', yieldQty:5, yieldUnit:'G12 Pcs' },
-  { id:'mk2_g12_right_sec', cat:'gear', name:'Secondary Right Side G12 (e.g. Sensor Arrays)', sub:'5 Pieces', cost:285, curr:'mk2', icon:'assets/RAID2.PNG', yieldQty:5, yieldUnit:'G12 Pcs' },
-  { id:'get2_kyro', cat:'gear', name:'Kyrotech (GET 2)', sub:'5 Pieces', cost:325, curr:'get2', icon:'assets/GET2.PNG', yieldQty:5, yieldUnit:'Kyrotech' },
-  { id:'get2_g12', cat:'gear', name:'G12 Gear (GET 2)', sub:'4 Pieces', cost:400, curr:'get2', icon:'assets/GET2.PNG', yieldQty:4, yieldUnit:'G12 Pcs' },
-  { id:'get3_kyro', cat:'gear', name:'Kyrotech (GET 3)', sub:'5 Pieces', cost:300, curr:'get3', icon:'assets/GET3.PNG', yieldQty:5, yieldUnit:'Kyrotech' },
+  { id:'mk2_g12_purple', cat:'gear', name:'Purple Gear 12 Pieces', sub:'5 Pieces', cost:475, curr:'mk2', icon:null, yieldQty:5, yieldUnit:'G12 Purple Pieces' },
+  { id:'mk2_g12_left_prim', cat:'gear', name:'Primary Left Side G12 (e.g. Bayonets)', sub:'5 Pieces', cost:425, curr:'mk2', icon:null, yieldQty:5, yieldUnit:'G12 Left Primary Pieces' },
+  { id:'mk2_g12_right_prim', cat:'gear', name:'Primary Right Side G12 (e.g. Stun Guns)', sub:'5 Pieces', cost:335, curr:'mk2', icon:null, yieldQty:5, yieldUnit:'G12 Right Primary Pieces' },
+  { id:'mk2_g12_right_sec', cat:'gear', name:'Secondary Right Side G12 (e.g. Sensor Arrays)', sub:'5 Pieces', cost:285, curr:'mk2', icon:null, yieldQty:5, yieldUnit:'G12 Right Secondary Pieces' },
+  { id:'get2_kyro', cat:'gear', name:'Kyrotech Salvage (GET 2)', sub:'5 Pieces', cost:325, curr:'get2', icon:null, yieldQty:5, yieldUnit:'Kyrotech Salvage' },
+  { id:'get2_g12', cat:'gear', name:'G12 Gear Salvage (GET 2)', sub:'4 Pieces', cost:400, curr:'get2', icon:null, yieldQty:4, yieldUnit:'G12 Gear Salvage' },
+  { id:'get3_kyro', cat:'gear', name:'Kyrotech Salvage (GET 3)', sub:'5 Pieces', cost:300, curr:'get3', icon:null, yieldQty:5, yieldUnit:'Kyrotech Salvage' },
 
-  // ─── RELIC MATERIAL & SIGNAL DATA ───
-  { id:'mk3_corrupted_signal', cat:'relics', name:'Corrupted Signal Data', sub:'1 Signal Data', cost:750, curr:'mk3', icon:'assets/RAID3.PNG', yieldQty:1, yieldUnit:'Corrupted Signal' },
-  { id:'mk3_gyrda', cat:'relics', name:'Gyrda Keypads', sub:'2 Keypads', cost:1170, curr:'mk3', icon:'assets/RAID3.PNG', yieldQty:2, yieldUnit:'Gyrda Keypads' },
-  { id:'mk3_aero', cat:'relics', name:'Aeromagnifiers', sub:'2 Aeromagnifiers', cost:400, curr:'mk3', icon:'assets/RAID3.PNG', yieldQty:2, yieldUnit:'Aeromagnifiers' },
-  { id:'mk3_impulse', cat:'relics', name:'Impulse Detectors', sub:'2 Impulse Detectors', cost:530, curr:'mk3', icon:'assets/RAID3.PNG', yieldQty:2, yieldUnit:'Impulse Detectors' },
-  { id:'mk2_zinbiddle', cat:'relics', name:'Zinbiddle Cards', sub:'4 Cards', cost:400, curr:'mk2', icon:'assets/RAID2.PNG', yieldQty:4, yieldUnit:'Zinbiddle Cards' },
-  { id:'mk2_electrium', cat:'relics', name:'Electrium Conductors', sub:'4 Conductors', cost:300, curr:'mk2', icon:'assets/RAID2.PNG', yieldQty:4, yieldUnit:'Electrium' },
-  { id:'mk1_aurodium', cat:'relics', name:'Aurodium Heatsinks', sub:'10 Heatsinks', cost:550, curr:'mk1', icon:'assets/RAID1.PNG', yieldQty:10, yieldUnit:'Aurodium' },
-  { id:'mk1_chromium', cat:'relics', name:'Chromium Transistors', sub:'10 Transistors', cost:500, curr:'mk1', icon:'assets/RAID1.PNG', yieldQty:10, yieldUnit:'Chromium' },
-  { id:'mk1_bronzium', cat:'relics', name:'Bronzium Wiring', sub:'10 Wirings', cost:400, curr:'mk1', icon:'assets/RAID1.PNG', yieldQty:10, yieldUnit:'Bronzium Wiring' },
-  { id:'mk1_carbonite', cat:'relics', name:'Carbonite Circuit Boards', sub:'10 Circuit Boards', cost:350, curr:'mk1', icon:'assets/RAID1.PNG', yieldQty:10, yieldUnit:'Carbonite CB' },
-  { id:'get2_grey_signal', cat:'relics', name:'Fragmented (Grey) Signal Data', sub:'20 Signal Data', cost:1600, curr:'get2', icon:'assets/GET2.PNG', yieldQty:20, yieldUnit:'Grey Signal' },
-  { id:'get3_green_signal', cat:'relics', name:'Incomplete (Green) Signal Data', sub:'20 Signal Data', cost:2000, curr:'get3', icon:'assets/GET3.PNG', yieldQty:20, yieldUnit:'Green Signal' },
-  { id:'get3_electrium', cat:'relics', name:'Electrium Conductors (GET 3)', sub:'2 Conductors', cost:720, curr:'get3', icon:'assets/GET3.PNG', yieldQty:2, yieldUnit:'Electrium' },
-  { id:'get3_zinbiddle', cat:'relics', name:'Zinbiddle Cards (GET 3)', sub:'2 Cards', cost:850, curr:'get3', icon:'assets/GET3.PNG', yieldQty:2, yieldUnit:'Zinbiddle Cards' },
-  { id:'get3_impulse', cat:'relics', name:'Impulse Detectors (GET 3)', sub:'2 Impulse Detectors', cost:1230, curr:'get3', icon:'assets/GET3.PNG', yieldQty:2, yieldUnit:'Impulse Detectors' },
-  { id:'get3_gyrda', cat:'relics', name:'Gyrda Keypads (GET 3)', sub:'1 Keypad', cost:1200, curr:'get3', icon:'assets/GET3.PNG', yieldQty:1, yieldUnit:'Gyrda Keypads' },
+  // ─── RELIC MATERIALS ───
+  { id:'mk3_gyrda', cat:'relics', name:'Gyrda Keypads', sub:'2 Keypads', cost:1170, curr:'mk3', icon:'assets/GYRDA.PNG', itemIcon:'assets/GYRDA.PNG', yieldQty:2, yieldUnit:'Gyrda Keypads' },
+  { id:'mk3_aero', cat:'relics', name:'Aeromagnifiers', sub:'2 Aeromagnifiers', cost:400, curr:'mk3', icon:'assets/AERO.PNG', itemIcon:'assets/AERO.PNG', yieldQty:2, yieldUnit:'Aeromagnifiers' },
+  { id:'mk3_impulse', cat:'relics', name:'Impulse Detectors', sub:'2 Impulse Detectors', cost:530, curr:'mk3', icon:'assets/IMPULSE.PNG', itemIcon:'assets/IMPULSE.PNG', yieldQty:2, yieldUnit:'Impulse Detectors' },
+  { id:'mk2_zinbiddle', cat:'relics', name:'Zinbiddle Cards', sub:'4 Cards', cost:400, curr:'mk2', icon:'assets/ZINBIDDLE.PNG', itemIcon:'assets/ZINBIDDLE.PNG', yieldQty:4, yieldUnit:'Zinbiddle Cards' },
+  { id:'mk2_electrium', cat:'relics', name:'Electrium Conductors', sub:'4 Conductors', cost:300, curr:'mk2', icon:'assets/ELECTRIUM.PNG', itemIcon:'assets/ELECTRIUM.PNG', yieldQty:4, yieldUnit:'Electrium Conductors' },
+  { id:'mk1_aurodium', cat:'relics', name:'Aurodium Heatsinks', sub:'10 Heatsinks', cost:550, curr:'mk1', icon:'assets/AURODIUM.PNG', itemIcon:'assets/AURODIUM.PNG', yieldQty:10, yieldUnit:'Aurodium Heatsinks' },
+  { id:'mk1_chromium', cat:'relics', name:'Chromium Transistors', sub:'10 Transistors', cost:500, curr:'mk1', icon:'assets/CHROMIUM.PNG', itemIcon:'assets/CHROMIUM.PNG', yieldQty:10, yieldUnit:'Chromium Transistors' },
+  { id:'mk1_bronzium', cat:'relics', name:'Bronzium Wiring', sub:'10 Wirings', cost:400, curr:'mk1', icon:'assets/BRONZIUM.PNG', itemIcon:'assets/BRONZIUM.PNG', yieldQty:10, yieldUnit:'Bronzium Wiring' },
+  { id:'mk1_carbonite', cat:'relics', name:'Carbonite Circuit Boards', sub:'10 Circuit Boards', cost:350, curr:'mk1', icon:'assets/CARBONITE.PNG', itemIcon:'assets/CARBONITE.PNG', yieldQty:10, yieldUnit:'Carbonite Circuit Boards' },
+  { id:'get3_electrium', cat:'relics', name:'Electrium Conductors (GET 3)', sub:'2 Conductors', cost:720, curr:'get3', icon:'assets/ELECTRIUM.PNG', itemIcon:'assets/ELECTRIUM.PNG', yieldQty:2, yieldUnit:'Electrium Conductors' },
+  { id:'get3_zinbiddle', cat:'relics', name:'Zinbiddle Cards (GET 3)', sub:'2 Cards', cost:850, curr:'get3', icon:'assets/ZINBIDDLE.PNG', itemIcon:'assets/ZINBIDDLE.PNG', yieldQty:2, yieldUnit:'Zinbiddle Cards' },
+  { id:'get3_impulse', cat:'relics', name:'Impulse Detectors (GET 3)', sub:'2 Impulse Detectors', cost:1230, curr:'get3', icon:'assets/IMPULSE.PNG', itemIcon:'assets/IMPULSE.PNG', yieldQty:2, yieldUnit:'Impulse Detectors' },
+  { id:'get3_gyrda', cat:'relics', name:'Gyrda Keypads (GET 3)', sub:'1 Keypad', cost:1200, curr:'get3', icon:'assets/GYRDA.PNG', itemIcon:'assets/GYRDA.PNG', yieldQty:1, yieldUnit:'Gyrda Keypads' },
 
-  // ─── ABILITY MATERIALS & MODS ───
-  { id:'mk3_zetas', cat:'ability', name:'Zeta Ability Materials', sub:'2 Zetas', cost:2350, curr:'mk3', icon:'assets/RAID3.PNG', yieldQty:2, yieldUnit:'Zetas' },
-  { id:'mk1_omegas', cat:'ability', name:'Omega Ability Materials', sub:'5 Omegas (Limit: 1/week, max 4/mo)', cost:825, curr:'mk1', icon:'assets/RAID1.PNG', yieldQty:5, yieldUnit:'Omegas', maxMonthly: 4 },
-  { id:'mk1_mods', cat:'ability', name:'Random Modding Materials', sub:'100 Materials', cost:1000, curr:'mk1', icon:'assets/RAID1.PNG', yieldQty:100, yieldUnit:'Mod Mats' },
-  { id:'get3_micro_attenuators', cat:'ability', name:'Micro Attenuators', sub:'5 Attenuators', cost:125, curr:'get3', icon:'assets/GET3.PNG', yieldQty:5, yieldUnit:'Micro Attenuators' },
+  // ─── SIGNAL DATA (DEDICATED TAB) ───
+  { id:'mk3_corrupted_signal', cat:'signal', name:'Corrupted Signal Data', sub:'1 Signal Data', cost:750, curr:'mk3', icon:'assets/CORRUPTEDSIGNAL.PNG', itemIcon:'assets/CORRUPTEDSIGNAL.PNG', yieldQty:1, yieldUnit:'Corrupted Signal Data' },
+  { id:'get2_grey_signal', cat:'signal', name:'Fragmented (Grey) Signal Data', sub:'20 Signal Data', cost:1600, curr:'get2', icon:'assets/GREYSIGNAL.PNG', itemIcon:'assets/GREYSIGNAL.PNG', yieldQty:20, yieldUnit:'Fragmented Signal Data' },
+  { id:'get3_green_signal', cat:'signal', name:'Incomplete (Green) Signal Data', sub:'20 Signal Data', cost:2000, curr:'get3', icon:'assets/GREENSIGNAL.PNG', itemIcon:'assets/GREENSIGNAL.PNG', yieldQty:20, yieldUnit:'Incomplete Signal Data' },
+
+  // ─── ABILITY MATERIALS & MODS (SPLIT MOD MATS) ───
+  { id:'mk3_zetas', cat:'ability', name:'Zeta Ability Materials', sub:'2 Zetas', cost:2350, curr:'mk3', icon:'assets/ZETA.PNG', itemIcon:'assets/ZETA.PNG', yieldQty:2, yieldUnit:'Zeta Ability Materials' },
+  { id:'mk1_omegas', cat:'ability', name:'Omega Ability Materials', sub:'5 Omegas', cost:825, curr:'mk1', icon:'assets/OMEGA.PNG', itemIcon:'assets/OMEGA.PNG', yieldQty:5, yieldUnit:'Omega Ability Materials', limitText: 'Weekly Limit: 1 (Max 4/mo)', maxMonthly: 4 },
+  { id:'mk1_mod_bonding', cat:'ability', name:'Bonding Pins', sub:'100 Materials', cost:1000, curr:'mk1', icon:'assets/BONDINGPINS.PNG', itemIcon:'assets/BONDINGPINS.PNG', yieldQty:100, yieldUnit:'Bonding Pins' },
+  { id:'mk1_mod_coils', cat:'ability', name:'Fusion Coils', sub:'100 Materials', cost:1000, curr:'mk1', icon:'assets/FUSIONCOILS.PNG', itemIcon:'assets/FUSIONCOILS.PNG', yieldQty:100, yieldUnit:'Fusion Coils' },
+  { id:'mk1_mod_disks', cat:'ability', name:'Fusion Disks', sub:'100 Materials', cost:1000, curr:'mk1', icon:'assets/FUSIONDISKS.PNG', itemIcon:'assets/FUSIONDISKS.PNG', yieldQty:100, yieldUnit:'Fusion Disks' },
+  { id:'mk1_mod_chips', cat:'ability', name:'Control Chips', sub:'100 Materials', cost:1000, curr:'mk1', icon:'assets/CONTROLCHIPS.PNG', itemIcon:'assets/CONTROLCHIPS.PNG', yieldQty:100, yieldUnit:'Control Chips' },
+  { id:'get3_micro_attenuators', cat:'ability', name:'Micro Attenuators', sub:'5 Attenuators', cost:125, curr:'get3', icon:'assets/MICROATTENUATOR.PNG', itemIcon:'assets/MICROATTENUATOR.PNG', yieldQty:5, yieldUnit:'Micro Attenuators' }
 ];
 
 // ═══════════════════════════════════════════════════════
-// FIREBASE & STATE MANAGEMENT
+// STATE MANAGEMENT & FIREBASE
 // ═══════════════════════════════════════════════════════
-const LOCAL_STORAGE_KEY = 'swgoh_shipments_v2';
+const LOCAL_STORAGE_KEY = 'swgoh_shipments_v3';
 const FIREBASE_CONFIG = window.FIREBASE_CONFIG || {
   apiKey: 'AIzaSyBixCM0BOfOeD37ybGA0M1_6-XT3x6MVFk',
   authDomain: 'noteproject-4c78d.firebaseapp.com',
@@ -622,12 +678,11 @@ let firebaseDb = null;
 let authUser = null;
 
 let state = {
-  defaultBoxId: 6,
   bank: { mk1: 0, mk2: 0, mk3: 0, get1: 0, get2: 0, get3: 0 },
   raids: [
-    { boxId: null, score: 500000 },
-    { boxId: null, score: 500000 },
-    { boxId: null, score: 500000 }
+    { boxId: 1, score: 0 },
+    { boxId: 1, score: 0 },
+    { boxId: 1, score: 0 }
   ],
   purchases: {},
   customMk1Allocation: 0
@@ -740,7 +795,7 @@ function calcTotalIncome() {
   };
 
   for (const r of state.raids) {
-    const boxId = r.boxId !== null ? Number(r.boxId) : Number(state.defaultBoxId || 6);
+    const boxId = Number(r.boxId || 1);
     const box = RAID_BOXES.find(b => b.id === boxId);
     if (box) {
       inc.mk1 += box.mk1;
@@ -783,48 +838,50 @@ function getCurrencyTag(curr, costText) {
   return `<span class="curr-tag ${conf.class}"><img src="${conf.icon}" class="curr-icon" onerror="imgErrFallback(this)"> ${costText}</span>`;
 }
 
-function renderDefaultBoxSelector() {
-  const sel = document.getElementById('default-box-select');
-  if (!sel) return;
-  sel.innerHTML = RAID_BOXES.map(b => `
-    <option value="${b.id}" ${Number(state.defaultBoxId || 6) === b.id ? 'selected' : ''}>Box ${b.id} (${b.score})</option>
-  `).join('');
-}
+function renderReferenceTables() {
+  const crateTbody = document.getElementById('crate-ref-tbody');
+  if (crateTbody) {
+    crateTbody.innerHTML = RAID_BOXES.map(b => `
+      <tr>
+        <td style="font-weight:700">Box ${b.id}</td>
+        <td style="font-family:var(--font-mono); color:var(--text2)">${b.score}</td>
+        <td>${getCurrencyTag('mk1', b.mk1.toLocaleString())}</td>
+        <td>${getCurrencyTag('mk2', b.mk2.toLocaleString())}</td>
+        <td>${getCurrencyTag('mk3', b.mk3.toLocaleString())}</td>
+      </tr>
+    `).join('');
+  }
 
-function renderCrateReference() {
-  const container = document.getElementById('crate-reference-grid');
-  if (!container) return;
-  container.innerHTML = RAID_BOXES.map(b => `
-    <div class="raid-box-card ${b.id === Number(state.defaultBoxId || 6) ? 'active' : ''}">
-      <div class="raid-box-name">Box ${b.id}</div>
-      <div class="raid-box-score">${b.score}</div>
-      <div style="font-size:10px; font-family:var(--font-mono); display:flex; flex-direction:column; gap:2px">
-        <span style="color:var(--blue)">Mk I: ${b.mk1.toLocaleString()}</span>
-        <span style="color:var(--yellow)">Mk II: ${b.mk2.toLocaleString()}</span>
-        <span style="color:var(--red)">Mk III: ${b.mk3.toLocaleString()}</span>
-      </div>
-    </div>
-  `).join('');
+  const persTbody = document.getElementById('personal-ref-tbody');
+  if (persTbody) {
+    persTbody.innerHTML = PERSONAL_TRACK.map(t => `
+      <tr>
+        <td style="font-family:var(--font-mono); font-weight:600">${t.score.toLocaleString()} Score</td>
+        <td>${t.mk1 ? getCurrencyTag('mk1', '+' + t.mk1) : '<span style="color:var(--text3)">—</span>'}</td>
+        <td>${t.mk2 ? getCurrencyTag('mk2', '+' + t.mk2) : '<span style="color:var(--text3)">—</span>'}</td>
+        <td>${t.mk3 ? getCurrencyTag('mk3', '+' + t.mk3) : '<span style="color:var(--text3)">—</span>'}</td>
+      </tr>
+    `).join('');
+  }
 }
 
 function renderRaids() {
   const container = document.getElementById('raids-container');
   if (!container) return;
 
-  renderDefaultBoxSelector();
-
   container.innerHTML = state.raids.map((r, idx) => {
     const pers = calcPersonalRewards(Number(r.score || 0));
-    const effectiveBoxId = r.boxId !== null ? Number(r.boxId) : Number(state.defaultBoxId || 6);
+    const boxId = Number(r.boxId || 1);
+    const box = RAID_BOXES.find(b => b.id === boxId) || RAID_BOXES[0];
 
     return `
       <div style="background:var(--bg2); border:1px solid var(--border); border-radius:var(--radius); padding:12px 16px; margin-bottom:10px">
-        <div style="display:flex; justify-space:between; align-items:center; gap:12px; flex-wrap:wrap">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap">
           <div style="font-weight:600; font-size:12px; color:var(--text)">Raid Run #${idx + 1}</div>
           
           <div style="display:flex; align-items:center; gap:12px">
             <div style="display:flex; align-items:center; gap:6px">
-              <span style="font-size:11px; color:var(--text3)">Score:</span>
+              <span style="font-size:11px; color:var(--text3)">Personal Score:</span>
               <input type="text" inputmode="numeric" pattern="[0-9]*" value="${r.score}" style="width:110px; height:28px"
                 oninput="updateRaidScore(${idx}, this.value)">
             </div>
@@ -832,18 +889,17 @@ function renderRaids() {
             <div style="display:flex; align-items:center; gap:6px">
               <span style="font-size:11px; color:var(--text3)">Guild Crate:</span>
               <select style="height:28px" onchange="updateRaidBoxOverride(${idx}, this.value)">
-                <option value="default" ${r.boxId === null ? 'selected' : ''}>Default (Box ${state.defaultBoxId || 6})</option>
-                ${RAID_BOXES.map(b => `<option value="${b.id}" ${r.boxId === b.id ? 'selected' : ''}>Box ${b.id} (${b.score})</option>`).join('')}
+                ${RAID_BOXES.map(b => `<option value="${b.id}" ${boxId === b.id ? 'selected' : ''}>Box ${b.id} (${b.score})</option>`).join('')}
               </select>
             </div>
           </div>
         </div>
 
-        <div style="display:flex; gap:8px; margin-top:8px; align-items:center; font-size:11px; color:var(--text3)">
-          <span>Run Total:</span>
-          ${getCurrencyTag('mk1', '+' + (pers.mk1 + RAID_BOXES.find(b=>b.id===effectiveBoxId).mk1).toLocaleString())}
-          ${getCurrencyTag('mk2', '+' + (pers.mk2 + RAID_BOXES.find(b=>b.id===effectiveBoxId).mk2).toLocaleString())}
-          ${getCurrencyTag('mk3', '+' + (pers.mk3 + RAID_BOXES.find(b=>b.id===effectiveBoxId).mk3).toLocaleString())}
+        <div style="display:flex; gap:8px; margin-top:10px; align-items:center; font-size:11px; color:var(--text3); border-top:1px dashed var(--border); padding-top:8px">
+          <span>Run Earned:</span>
+          ${getCurrencyTag('mk1', '+' + (pers.mk1 + box.mk1).toLocaleString())}
+          ${getCurrencyTag('mk2', '+' + (pers.mk2 + box.mk2).toLocaleString())}
+          ${getCurrencyTag('mk3', '+' + (pers.mk3 + box.mk3).toLocaleString())}
         </div>
       </div>
     `;
@@ -863,12 +919,16 @@ function renderStoreCategory(catId, containerId) {
     const isOverLimit = item.maxMonthly && qty > item.maxMonthly;
 
     return `
-      <div class="store-item-row" style="${isOverLimit ? 'border-color: rgba(239, 68, 68, 0.4);' : ''}">
+      <div class="store-item-row" id="row-${item.id}" style="${isOverLimit ? 'border-color: rgba(239, 68, 68, 0.4);' : ''}">
         <div>
-          <div class="store-item-title">${item.name}</div>
+          <div class="store-item-title">
+            ${item.itemIcon ? `<img src="${item.itemIcon}" class="item-icon" onerror="imgErrFallback(this)">` : ''}
+            <span>${item.name}</span>
+          </div>
           <div class="store-item-sub">
             ${item.sub} · ${getCurrencyTag(item.curr, item.cost + ' / purchase')}
-            ${isOverLimit ? `<span class="curr-tag tag-raid3" style="margin-left:6px">⚠ Exceeds limit (${item.maxMonthly}/mo)</span>` : ''}
+            ${item.limitText ? `<span class="curr-tag tag-get1" style="margin-left:6px">${item.limitText}</span>` : ''}
+            ${isOverLimit ? `<span class="curr-tag tag-raid3" style="margin-left:6px">Limit Exceeded: Max ${item.maxMonthly}/mo</span>` : ''}
           </div>
         </div>
 
@@ -879,12 +939,12 @@ function renderStoreCategory(catId, containerId) {
           <button class="btn btn-ghost btn-sm" style="width:24px; padding:0" onclick="adjustPurchase('${item.id}', 1)">+</button>
         </div>
 
-        <div style="text-align:right">
+        <div style="text-align:right" id="cost-${item.id}">
           ${getCurrencyTag(item.curr, (qty * item.cost).toLocaleString())}
         </div>
 
-        <div style="text-align:right; font-size:11px; color:var(--text2); font-family:var(--font-mono)">
-          +${(qty * item.yieldQty).toLocaleString()} ${item.yieldUnit}
+        <div style="text-align:right; font-size:11px; color:var(--text2); font-family:var(--font-mono)" id="yield-${item.id}">
+          Total: ${(qty * item.yieldQty).toLocaleString()}
         </div>
       </div>
     `;
@@ -895,7 +955,7 @@ function renderStoreCategory(catId, containerId) {
       <div class="store-item-row" style="margin-top:16px; border-top:1px dashed var(--border); padding-top:14px">
         <div>
           <div class="store-item-title">Other Items / Reserved Budget</div>
-          <div class="store-item-sub">Reserve Mk I tokens for random gear or store refreshes</div>
+          <div class="store-item-sub">Reserve Mk I tokens for unspecified gear or store items</div>
         </div>
         <div></div>
         <div style="display:flex; align-items:center; gap:6px; justify-content:flex-end">
@@ -914,6 +974,7 @@ function renderAllStores() {
   renderStoreCategory('shards', 'shards-store-list');
   renderStoreCategory('gear', 'gear-store-list');
   renderStoreCategory('relics', 'relics-store-list');
+  renderStoreCategory('signal', 'signal-store-list');
   renderStoreCategory('ability', 'ability-store-list');
 }
 
@@ -922,15 +983,21 @@ function updateSummary() {
   const spent = calcTotalSpent();
 
   const syncedGET = getRelicPlannerGetValues();
-  document.getElementById('synced-get2-val').textContent = `${syncedGET.get2.toLocaleString()} GET 2`;
-  document.getElementById('synced-get3-val').textContent = `${syncedGET.get3.toLocaleString()} GET 3`;
+  const syncGet2El = document.getElementById('synced-get2-val');
+  const syncGet3El = document.getElementById('synced-get3-val');
+  if (syncGet2El) syncGet2El.innerHTML = `<img src="assets/GET2.PNG" class="curr-icon" onerror="imgErrFallback(this)"> ${syncedGET.get2.toLocaleString()} GET 2`;
+  if (syncGet3El) syncGet3El.innerHTML = `<img src="assets/GET3.PNG" class="curr-icon" onerror="imgErrFallback(this)"> ${syncedGET.get3.toLocaleString()} GET 3`;
 
   for (const c of ['mk1', 'mk2', 'mk3', 'get1', 'get2', 'get3']) {
     const rem = inc[c] - spent[c];
     const el = document.getElementById(`b-${c}`);
     if (el) {
-      el.textContent = `${rem.toLocaleString()} / ${inc[c].toLocaleString()}`;
-      el.classList.toggle('neg-budget', rem < 0);
+      if (rem < 0) {
+        el.innerHTML = `<span class="neg-budget">Short: ${Math.abs(rem).toLocaleString()}</span> <span style="font-size:10px; color:var(--text3); font-weight:normal">(${spent[c].toLocaleString()} / ${inc[c].toLocaleString()})</span>`;
+      } else {
+        el.textContent = `${rem.toLocaleString()} / ${inc[c].toLocaleString()}`;
+        el.classList.remove('neg-budget');
+      }
     }
   }
 
@@ -951,7 +1018,7 @@ function updateSummary() {
       yieldContainer.innerHTML = Object.entries(yieldTotals).map(([unit, total]) => `
         <div style="display:flex; justify-content:space-between; align-items:center">
           <span style="color:var(--text2)">${unit}</span>
-          <span style="font-family:var(--font-mono); font-weight:600; color:var(--accent)">+${total.toLocaleString()}</span>
+          <span style="font-family:var(--font-mono); font-weight:600; color:var(--accent)">Total: ${total.toLocaleString()}</span>
         </div>
       `).join('');
     }
@@ -972,23 +1039,6 @@ function showTab(tabId) {
   if (content) content.style.display = 'block';
 }
 
-function toggleCrateRefCard() {
-  const card = document.getElementById('crate-ref-card');
-  const label = document.getElementById('crate-ref-toggle-label');
-  if (card) {
-    card.classList.toggle('collapsed');
-    label.textContent = card.classList.contains('collapsed') ? '▼ Expand Extra Info' : '▲ Collapse Extra Info';
-  }
-}
-
-function updateDefaultBox(val) {
-  state.defaultBoxId = Number(val);
-  renderRaids();
-  renderCrateReference();
-  saveState();
-  updateSummary();
-}
-
 function onBankChange(curr, val) {
   state.bank[curr] = Math.max(0, parseInt(val) || 0);
   saveState();
@@ -996,9 +1046,9 @@ function onBankChange(curr, val) {
 }
 
 function adjustRaidCount(delta) {
-  const newCount = Math.max(1, Math.min(6, state.raids.length + delta));
+  const newCount = Math.max(1, Math.min(5, state.raids.length + delta));
   while (state.raids.length < newCount) {
-    state.raids.push({ boxId: null, score: 500000 });
+    state.raids.push({ boxId: 1, score: 0 });
   }
   while (state.raids.length > newCount) {
     state.raids.pop();
@@ -1010,28 +1060,46 @@ function adjustRaidCount(delta) {
 
 function updateRaidScore(idx, val) {
   state.raids[idx].score = Math.max(0, parseInt(val) || 0);
-  renderRaids();
   saveState();
   updateSummary();
 }
 
 function updateRaidBoxOverride(idx, val) {
-  state.raids[idx].boxId = val === 'default' ? null : Number(val);
+  state.raids[idx].boxId = Number(val);
   renderRaids();
   saveState();
   updateSummary();
 }
 
 function updatePurchase(id, val) {
-  state.purchases[id] = Math.max(0, parseInt(val) || 0);
-  renderAllStores();
+  const qty = Math.max(0, parseInt(val) || 0);
+  state.purchases[id] = qty;
+  
+  // Anti-flicker row update
+  const item = STORE_ITEMS.find(i => i.id === id);
+  if (item) {
+    const costEl = document.getElementById(`cost-${id}`);
+    const yieldEl = document.getElementById(`yield-${id}`);
+    if (costEl) costEl.innerHTML = getCurrencyTag(item.curr, (qty * item.cost).toLocaleString());
+    if (yieldEl) yieldEl.textContent = `Total: ${(qty * item.yieldQty).toLocaleString()}`;
+  }
+
   saveState();
   updateSummary();
 }
 
 function adjustPurchase(id, delta) {
   const current = Number(state.purchases[id] || 0);
-  updatePurchase(id, current + delta);
+  const qty = Math.max(0, current + delta);
+  
+  // Update input DOM value directly without full re-render
+  const row = document.getElementById(`row-${id}`);
+  if (row) {
+    const input = row.querySelector('input');
+    if (input) input.value = qty;
+  }
+
+  updatePurchase(id, qty);
 }
 
 function updateCustomAllocation(val) {
@@ -1048,7 +1116,7 @@ function initBankInputs() {
 }
 
 // ═══════════════════════════════════════════════════════
-// FIREBASE AUTH & FIRESTORE SYNC
+// FIREBASE AUTH & FIRESTORE SYNC (1000ms Debounce)
 // ═══════════════════════════════════════════════════════
 let remoteSaveTimer = null;
 
@@ -1105,7 +1173,7 @@ function scheduleRemoteSave() {
     } catch(e) {
       setSaveStatus('Cloud save failed', true);
     }
-  }, 500);
+  }, 1000); // 1000ms delay matching relic.html logic
 }
 
 async function loadFromFirebase() {
@@ -1134,7 +1202,7 @@ function init() {
 
   loadState();
   initBankInputs();
-  renderCrateReference();
+  renderReferenceTables();
   renderRaids();
   renderAllStores();
   updateSummary();
