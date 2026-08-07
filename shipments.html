@@ -7,653 +7,769 @@
 <meta name="referrer-policy" content="strict-origin-when-cross-origin">
 <title>SwgohResources - Shipments Planner</title>
 <link rel="icon" href="/favicon.ico" type="image/x-icon">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #09090b;
-  --bg1: #121214;
-  --bg2: #18181b;
-  --bg3: #222227;
-  --bg4: #2d2d34;
-  --border: rgba(255, 255, 255, 0.06);
-  --border2: rgba(255, 255, 255, 0.12);
-  --text: #fafafa;
-  --text2: #a1a1aa;
-  --text3: #71717a;
-  --grey: #a1a1aa;
-  --green: #10b981;
-  --green-dim: rgba(16, 185, 129, 0.1);
-  --blue: #3b82f6;
-  --blue-dim: rgba(59, 130, 246, 0.1);
-  --accent: #8b5cf6;
-  --accent-dim: rgba(139, 92, 246, 0.1);
-  --red: #ef4444;
-  --red-dim: rgba(239, 68, 68, 0.1);
-  --yellow: #f59e0b;
-  --yellow-dim: rgba(245, 158, 11, 0.1);
-  --teal: #14b8a6;
-  --teal-dim: rgba(20, 184, 166, 0.1);
-  --orange: #f97316;
-  --orange-dim: rgba(249, 115, 22, 0.1);
-  --font-mono: 'JetBrains Mono', monospace;
-  --radius: 8px;
-  --radius-lg: 12px;
-  --shadow: 0 4px 20px rgba(0,0,0,0.4);
+--void: #0a0c10;
+--void1: #0e1116;
+--void2: #12161c;
+--void3: #191e26;
+--border: rgba(232, 227, 216, 0.08);
+--border2: rgba(232, 227, 216, 0.14);
+--amber-border: rgba(232, 163, 61, 0.4);
+--text: #eae7e0;
+--text2: #8f96a3;
+--text3: #565f6d;
+--amber: #e8a33d;
+--amber-dim: rgba(232, 163, 61, 0.1);
+--cyan: #4fd1c5;
+--cyan-dim: rgba(79, 209, 197, 0.1);
+--blue: #3b82f6;
+--blue-dim: rgba(59, 130, 246, 0.12);
+--green: #10b981;
+--green-dim: rgba(16, 185, 129, 0.12);
+--yellow: #f59e0b;
+--yellow-dim: rgba(245, 158, 11, 0.12);
+--red: #ef4444;
+--red-dim: rgba(239, 68, 68, 0.12);
+--orange: #f97316;
+--orange-dim: rgba(249, 115, 22, 0.12);
+--purple: #8b5cf6;
+--purple-dim: rgba(139, 92, 246, 0.12);
+--radius: 8px;
+--radius-lg: 14px;
+--shadow: 0 12px 40px rgba(0,0,0,0.5);
+--font-display: 'Chakra Petch', sans-serif;
+--font-body: 'Inter', sans-serif;
+--font-mono: 'JetBrains Mono', monospace;
 }
-
 *, *::before, *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+box-sizing: border-box;
+margin: 0;
+padding: 0;
 }
-html { height: 100%; }
+html { height: 100%; scroll-behavior: smooth; }
 body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'Inter', sans-serif;
-  font-size: 13px;
-  line-height: 1.5;
-  min-height: 100vh;
-  -webkit-font-smoothing: antialiased;
+background: var(--void);
+color: var(--text);
+font-family: var(--font-body);
+font-size: 13px;
+line-height: 1.5;
+min-height: 100vh;
+-webkit-font-smoothing: antialiased;
+position: relative;
 }
-
-/* ─── Header Navigation ──────────────────────── */
+a { color: inherit; }
+::selection { background: var(--amber-dim); color: var(--amber); }
+/* ─── Starfield Background ───────────────────── */
+.starfield {
+position: fixed;
+inset: 0;
+pointer-events: none;
+z-index: 0;
+}
+.starfield span {
+position: absolute;
+width: 2px;
+height: 2px;
+border-radius: 50%;
+background: #eae7e0;
+animation: twinkle 4.5s ease-in-out infinite;
+}
+@keyframes twinkle {
+0%, 100% { opacity: 0.15; }
+50% { opacity: 0.9; }
+}
+/* ─── Top Header Navigation ──────────────────── */
 .top-header {
-  position: sticky;
-  top: 0;
-  z-index: 200;
-  width: 100%;
-  background: rgba(18, 18, 20, 0.85);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--border);
+position: sticky;
+top: 0;
+z-index: 200;
+width: 100%;
+background: rgba(10, 12, 16, 0.85);
+backdrop-filter: blur(14px);
+border-bottom: 1px solid var(--border);
 }
 .topbar {
-  display: flex;
-  align-items: center;
-  gap: 0;
-  height: 56px;
-  padding: 0 24px;
-  max-width: 1200px;
-  margin: 0 auto;
+display: flex;
+align-items: center;
+height: 56px;
+padding: 0 24px;
+max-width: 1240px;
+margin: 0 auto;
 }
 .topbar-title {
-  font-size: 15px;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  color: var(--text);
-  margin-right: 32px;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
+font-family: var(--font-display);
+font-size: 16px;
+font-weight: 700;
+letter-spacing: 0.01em;
+color: var(--text);
+margin-right: 32px;
+text-decoration: none;
+display: inline-flex;
+align-items: center;
+white-space: nowrap;
 }
-.topbar-title span {
-  color: var(--accent);
-  text-shadow: 0 0 10px rgba(139, 92, 246, 0.3);
-}
+.topbar-title span { color: var(--amber); }
+.topbar-title .divider-glyph { color: var(--text3); margin: 0 1px; font-weight: 400; }
 .topbar-tabs { display: flex; gap: 4px; flex: 1; height: 100%; }
 .nav-tab {
-  height: 100%;
-  padding: 0 16px;
-  background: none;
-  border: none;
-  color: var(--text2);
-  font-size: 13px;
-  font-weight: 500;
-  font-family: 'Inter', sans-serif;
-  cursor: pointer;
-  border-bottom: 2px solid transparent;
-  transition: all 0.15s ease;
-  white-space: nowrap;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
+height: 100%;
+padding: 0 16px;
+background: none;
+border: none;
+color: var(--text2);
+font-size: 12px;
+font-weight: 500;
+font-family: var(--font-mono);
+letter-spacing: 0.02em;
+cursor: pointer;
+border-bottom: 2px solid transparent;
+transition: all 0.15s ease;
+white-space: nowrap;
+text-decoration: none;
+display: inline-flex;
+align-items: center;
 }
 .nav-tab:hover { color: var(--text); }
-.nav-tab.active { color: var(--text); border-bottom-color: var(--accent); }
-.topbar-right { display: flex; align-items: center; gap: 16px; justify-content: flex-end; }
-.topbar-divider { width: 1px; height: 16px; background: var(--border); margin: 0 4px; }
-.auth-panel { display: flex; align-items: center; gap: 12px; }
-.auth-status { font-size: 11px; color: var(--text3); }
+.nav-tab.active { color: var(--amber); border-bottom-color: var(--amber); }
+.topbar-right { display: flex; align-items: center; gap: 12px; justify-content: flex-end; }
+.auth-panel { display: flex; align-items: center; gap: 10px; }
+.auth-status { font-size: 11px; font-family: var(--font-mono); color: var(--text3); white-space: nowrap; }
 .saved-badge {
-  font-size: 11px;
-  color: var(--text3);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background: var(--bg2);
-  padding: 4px 10px;
-  border-radius: 999px;
-  border: 1px solid var(--border);
+font-size: 11px;
+font-family: var(--font-mono);
+color: var(--text2);
+display: flex;
+align-items: center;
+gap: 6px;
+background: var(--void2);
+padding: 4px 10px;
+border-radius: 999px;
+border: 1px solid var(--border);
 }
-.saved-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 6px var(--green); }
-
-/* ─── App Container & Segmented Tabs ──────────── */
-.app { max-width: 1200px; margin: 0 auto; padding: 32px 24px; }
+.saved-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 6px var(--cyan); }
+.topbar-divider { width: 1px; height: 16px; background: var(--border); margin: 0 2px; }
+/* ─── Buttons & Controls ──────────────────────── */
+.btn {
+display: inline-flex;
+align-items: center;
+justify-content: center;
+gap: 6px;
+height: 32px;
+padding: 0 14px;
+border-radius: var(--radius);
+border: none;
+font-family: var(--font-body);
+font-size: 12px;
+font-weight: 500;
+cursor: pointer;
+transition: all 0.15s ease;
+text-decoration: none;
+white-space: nowrap;
+}
+.btn-accent { background: var(--amber); color: #1a1104; font-weight: 600; }
+.btn-accent:hover { box-shadow: 0 0 0 3px var(--amber-dim), 0 0 18px rgba(232,163,61,0.35); transform: translateY(-1px); }
+.btn-ghost { background: var(--void2); color: var(--text2); border: 1px solid var(--border); }
+.btn-ghost:hover:not(:disabled) { background: var(--void3); color: var(--text); border-color: var(--border2); }
+.btn-sm { height: 28px; padding: 0 10px; font-size: 11px; }
+.btn-outline { background: transparent; color: var(--text); border: 1px solid var(--border2); }
+.btn-outline:hover { border-color: var(--amber-border); color: var(--amber); }
+input[type=text], input[type=number], input[type=email], input[type=password], select {
+background: var(--void2);
+border: 1px solid var(--border);
+border-radius: var(--radius);
+color: var(--text);
+font-family: var(--font-mono);
+font-size: 12px;
+padding: 0 10px;
+height: 32px;
+outline: none;
+transition: all 0.2s ease;
+}
+input:focus, select:focus { border-color: var(--amber-border); box-shadow: 0 0 0 2px var(--amber-dim); background: var(--void3); }
+/* ─── Layout ──────────────────────────────────── */
+.app { max-width: 1240px; margin: 0 auto; padding: 24px 24px 40px; position: relative; z-index: 1; }
+.page-header {
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 16px;
+margin-bottom: 20px;
+flex-wrap: wrap;
+}
+.page-title-group h1 {
+font-family: var(--font-display);
+font-size: 24px;
+font-weight: 700;
+letter-spacing: -0.01em;
+color: var(--text);
+display: flex;
+align-items: center;
+gap: 10px;
+}
+.page-title-group h1 span { color: var(--amber); }
+.page-subtitle { font-size: 12.5px; color: var(--text2); margin-top: 4px; }
+/* ─── Segmented Tabs & Filters Bar ───────────── */
+.controls-bar {
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 16px;
+margin-bottom: 20px;
+flex-wrap: wrap;
+}
 .segmented-tabs {
-  display: inline-flex;
-  gap: 4px;
-  background: var(--bg2);
-  padding: 4px;
-  border-radius: var(--radius);
-  border: 1px solid var(--border);
-  margin-bottom: 20px;
-  max-width: 100%;
-  overflow-x: auto;
+display: inline-flex;
+gap: 4px;
+background: var(--void1);
+padding: 4px;
+border-radius: var(--radius);
+border: 1px solid var(--border);
+overflow-x: auto;
+max-width: 100%;
 }
 .tab-btn {
-  height: 32px;
-  padding: 0 16px;
-  border-radius: 6px;
-  border: none;
-  background: transparent;
-  color: var(--text2);
-  font-size: 12px;
-  font-weight: 500;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: all 0.2s ease;
+height: 32px;
+padding: 0 14px;
+border-radius: 6px;
+border: none;
+background: transparent;
+color: var(--text2);
+font-size: 12px;
+font-weight: 500;
+font-family: var(--font-mono);
+cursor: pointer;
+white-space: nowrap;
+transition: all 0.15s ease;
+display: inline-flex;
+align-items: center;
+gap: 6px;
 }
-.tab-btn:hover { color: var(--text); }
-.tab-btn.active { background: var(--bg3); color: var(--text); box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-
-/* ─── Layout & Cards ────────────────────────── */
-.shipments-layout { display: grid; grid-template-columns: 1fr 360px; gap: 24px; align-items: start; }
-@media (max-width: 960px) { .shipments-layout { grid-template-columns: 1fr; } }
-
+.tab-btn:hover { color: var(--text); background: var(--void2); }
+.tab-btn.active { background: var(--void3); color: var(--amber); border: 1px solid var(--amber-border); box-shadow: 0 2px 8px rgba(0,0,0,0.4); }
+.tab-count-badge {
+font-size: 10px;
+background: var(--amber-dim);
+color: var(--amber);
+padding: 1px 6px;
+border-radius: 99px;
+border: 1px solid var(--amber-border);
+}
+.search-filter-box {
+display: flex;
+align-items: center;
+gap: 8px;
+}
+.search-input {
+width: 220px;
+height: 34px;
+background: var(--void1);
+border: 1px solid var(--border);
+border-radius: var(--radius);
+padding: 0 12px;
+font-size: 12px;
+color: var(--text);
+}
+/* ─── Grid & Cards ────────────────────────────── */
+.shipments-layout { display: grid; grid-template-columns: 1fr 370px; gap: 20px; align-items: start; }
+@media (max-width: 1024px) { .shipments-layout { grid-template-columns: 1fr; } }
 .section {
-  background: var(--bg1);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  margin-bottom: 20px;
-  overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+background: var(--void1);
+border: 1px solid var(--border);
+border-radius: var(--radius-lg);
+margin-bottom: 20px;
+overflow: hidden;
+box-shadow: 0 4px 20px rgba(0,0,0,0.2);
 }
 .section-head {
-  padding: 14px 20px;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: rgba(255,255,255,0.01);
+padding: 14px 18px;
+border-bottom: 1px solid var(--border);
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 12px;
+background: rgba(255,255,255,0.01);
 }
-.section-title { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text); flex: 1; }
-.section-body { padding: 20px; }
-
-/* ─── Currency Icons & Badges ────────────────── */
+.section-title {
+font-family: var(--font-mono);
+font-size: 11.5px;
+font-weight: 600;
+text-transform: uppercase;
+letter-spacing: 0.06em;
+color: var(--amber);
+display: flex;
+align-items: center;
+gap: 8px;
+}
+.section-title .bracket { color: var(--text3); }
+.section-body { padding: 18px; }
+/* ─── Currency Badges ────────────────────────── */
 .curr-tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 3px 8px;
-  border-radius: 4px;
-  font-size: 11px;
-  font-weight: 600;
-  font-family: var(--font-mono);
+display: inline-flex;
+align-items: center;
+gap: 5px;
+padding: 3px 8px;
+border-radius: 4px;
+font-size: 11px;
+font-weight: 600;
+font-family: var(--font-mono);
+white-space: nowrap;
 }
-.curr-icon { width: 16px; height: 16px; object-fit: contain; vertical-align: middle; }
-.item-icon { width: 24px; height: 24px; object-fit: contain; vertical-align: middle; border-radius: 4px; }
-
-.tag-raid1 { background: var(--blue-dim); color: var(--blue); border: 1px solid rgba(59, 130, 246, 0.2); }
-.tag-raid2 { background: var(--yellow-dim); color: var(--yellow); border: 1px solid rgba(245, 158, 11, 0.2); }
-.tag-raid3 { background: var(--red-dim); color: var(--red); border: 1px solid rgba(239, 68, 68, 0.2); }
-.tag-get1 { background: var(--green-dim); color: var(--green); border: 1px solid rgba(16, 185, 129, 0.2); }
-.tag-get2 { background: var(--orange-dim); color: var(--orange); border: 1px solid rgba(249, 115, 22, 0.2); }
-.tag-get3 { background: var(--teal-dim); color: var(--teal); border: 1px solid rgba(20, 184, 166, 0.2); }
-
-/* ─── Buttons & Inputs ───────────────────────── */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  height: 32px;
-  padding: 0 14px;
-  border-radius: var(--radius);
-  border: none;
-  font-family: 'Inter', sans-serif;
-  font-size: 12px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-.btn-accent { background: var(--accent); color: var(--text); }
-.btn-accent:hover { opacity: 0.95; }
-.btn-ghost { background: var(--bg2); color: var(--text2); border: 1px solid var(--border); }
-.btn-ghost:hover { background: var(--bg3); color: var(--text); }
-.btn-sm { height: 26px; padding: 0 10px; font-size: 11px; }
-
-input[type=text], input[type=number], input[type=email], input[type=password], select {
-  background: var(--bg2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  color: var(--text);
-  font-family: 'Inter', sans-serif;
-  font-size: 13px;
-  padding: 0 10px;
-  height: 32px;
-  outline: none;
-  transition: all 0.2s ease;
-}
-input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.15); }
-
-/* ─── Store Item Row Layout ──────────────────── */
+.curr-icon { width: 15px; height: 15px; object-fit: contain; vertical-align: middle; }
+.item-icon { width: 26px; height: 26px; object-fit: contain; vertical-align: middle; border-radius: 4px; background: var(--void2); border: 1px solid var(--border); padding: 1px; }
+.tag-raid1 { background: var(--blue-dim); color: #60a5fa; border: 1px solid rgba(96, 165, 250, 0.3); }
+.tag-raid2 { background: var(--yellow-dim); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.3); }
+.tag-raid3 { background: var(--red-dim); color: #f87171; border: 1px solid rgba(248, 113, 113, 0.3); }
+.tag-get1 { background: var(--green-dim); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.3); }
+.tag-get2 { background: var(--orange-dim); color: #fb923c; border: 1px solid rgba(251, 146, 60, 0.3); }
+.tag-get3 { background: var(--cyan-dim); color: var(--cyan); border: 1px solid rgba(79, 209, 197, 0.3); }
+/* ─── Store Item Rows ────────────────────────── */
 .store-item-row {
-  display: grid;
-  grid-template-columns: 1fr auto 130px 110px;
-  gap: 12px;
-  align-items: center;
-  padding: 10px 14px;
-  background: var(--bg2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  margin-bottom: 8px;
+display: grid;
+grid-template-columns: 1fr auto 130px 110px;
+gap: 12px;
+align-items: center;
+padding: 12px 14px;
+background: var(--void2);
+border: 1px solid var(--border);
+border-radius: var(--radius);
+margin-bottom: 8px;
+transition: border-color 0.15s ease, background 0.15s ease;
 }
+.store-item-row:hover { border-color: var(--border2); background: var(--void3); }
+.store-item-row.active-buy { border-color: var(--amber-border); background: rgba(232, 163, 61, 0.03); }
 @media (max-width: 680px) { .store-item-row { grid-template-columns: 1fr auto; gap: 8px; } }
-.store-item-title { font-weight: 600; font-size: 12px; display: flex; align-items: center; gap: 8px; }
-.store-item-sub { font-size: 11px; color: var(--text3); margin-top: 2px; }
+.store-item-title { font-weight: 600; font-size: 12.5px; display: flex; align-items: center; gap: 10px; }
+.store-item-sub { font-size: 11px; color: var(--text3); margin-top: 3px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .store-qty-ctrl { display: flex; align-items: center; gap: 4px; }
-
-/* ─── Tables & Reference Cards ───────────────── */
+/* ─── Tables & Reference ─────────────────────── */
 .ref-table { width: 100%; border-collapse: collapse; font-size: 12px; }
 .ref-table th, .ref-table td { padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border); }
-.ref-table th { background: rgba(255,255,255,0.02); font-weight: 600; color: var(--text2); text-transform: uppercase; font-size: 10px; letter-spacing: 0.05em; }
+.ref-table th { background: rgba(255,255,255,0.02); font-family: var(--font-mono); font-weight: 600; color: var(--text2); text-transform: uppercase; font-size: 10px; letter-spacing: 0.05em; }
 .ref-table tr:last-child td { border-bottom: none; }
-
-/* ─── Summary Sidebar ────────────────────────── */
-.summary-sticky { position: sticky; top: 80px; }
-.budget-row { display: flex; justify-content: space-between; align-items: center; padding: 9px 16px; border-bottom: 1px solid var(--border); }
+/* ─── Sticky Budget Sidebar ──────────────────── */
+.summary-sticky { position: sticky; top: 76px; }
+.budget-row {
+display: flex;
+flex-direction: column;
+gap: 6px;
+padding: 11px 16px;
+border-bottom: 1px solid var(--border);
+}
+.budget-row-top { display: flex; justify-content: space-between; align-items: center; }
 .budget-label { display: flex; align-items: center; gap: 6px; font-weight: 500; font-size: 12px; }
 .budget-val { font-family: var(--font-mono); font-weight: 600; font-size: 12px; }
 .neg-budget { color: var(--red) !important; font-weight: 700; }
-
-/* ─── Auth Card ─────────────────────────────── */
+.budget-bar-bg {
+width: 100%;
+height: 5px;
+background: var(--void3);
+border-radius: 99px;
+overflow: hidden;
+}
+.budget-bar-fill {
+height: 100%;
+border-radius: 99px;
+transition: width 0.3s ease, background 0.3s ease;
+}
+/* ─── Modal Overlay (Auth) ───────────────────── */
+.modal-overlay {
+position: fixed; inset: 0; background: rgba(0,0,0,0.82); backdrop-filter: blur(6px);
+display: none; align-items: center; justify-content: center; padding: 20px; z-index: 300;
+}
+.modal-overlay.open { display: flex; }
 .auth-card {
-  max-width: 400px;
-  margin: 80px auto 0;
-  padding: 32px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  background: var(--bg1);
-  box-shadow: var(--shadow);
-  text-align: center;
+width: min(400px, 100%);
+padding: 28px;
+border: 1px solid var(--border2);
+border-radius: var(--radius-lg);
+background: var(--void1);
+box-shadow: var(--shadow);
+text-align: center;
+position: relative;
 }
-.auth-card h2 {
-  font-size: 20px;
-  font-weight: 600;
-  margin-bottom: 8px;
-}
-.auth-card p {
-  font-size: 12px;
-  color: var(--text2);
-  margin-bottom: 24px;
-  line-height: 1.5;
-}
-.auth-toggle {
-  display: flex;
-  gap: 4px;
-  margin-bottom: 20px;
-  background: var(--bg2);
-  padding: 4px;
-  border-radius: var(--radius);
-  border: 1px solid var(--border);
-}
-.auth-toggle button {
-  flex: 1;
-  height: 32px;
-  border-radius: 6px;
-  border: none;
-  background: transparent;
-  color: var(--text2);
-  font-size: 12px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-.auth-toggle button.active {
-  background: var(--bg3);
-  color: var(--text);
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-}
-.auth-grid {
-  display: grid;
-  gap: 12px;
-}
+.auth-card h2 { font-family: var(--font-display); font-size: 20px; font-weight: 600; margin-bottom: 6px; }
+.auth-card p { font-size: 12px; color: var(--text2); margin-bottom: 20px; line-height: 1.5; }
+.auth-close { position: absolute; top: 14px; right: 14px; background: transparent; border: none; color: var(--text3); font-size: 18px; cursor: pointer; line-height: 1; }
+.auth-close:hover { color: var(--text); }
+.auth-toggle { display: flex; gap: 4px; margin-bottom: 18px; background: var(--void2); padding: 4px; border-radius: var(--radius); border: 1px solid var(--border); }
+.auth-toggle button { flex: 1; height: 30px; border-radius: 5px; border: none; background: transparent; color: var(--text2); font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.15s ease; }
+.auth-toggle button.active { background: var(--void3); color: var(--amber); }
+.auth-grid { display: grid; gap: 10px; }
 .auth-grid input {
-  height: 40px;
-  font-size: 13px;
-  background: var(--bg2);
+height: 38px; font-size: 13px; background: var(--void2); border: 1px solid var(--border);
+border-radius: var(--radius); color: var(--text); font-family: var(--font-body); padding: 0 12px; width: 100%; outline: none;
 }
-.auth-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-top: 12px;
+.auth-grid input:focus { border-color: var(--amber-border); box-shadow: 0 0 0 2px var(--amber-dim); background: var(--void3); }
+.auth-actions { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+.auth-actions button { width: 100%; height: 36px; }
+.auth-hint { font-size: 11px; color: var(--text3); margin-top: 12px; }
+/* Quick Presets Pill Bar */
+.presets-pill-bar { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 6px; }
+.preset-pill {
+font-family: var(--font-mono);
+font-size: 10px;
+padding: 2px 7px;
+background: var(--void3);
+border: 1px solid var(--border);
+border-radius: 4px;
+color: var(--text2);
+cursor: pointer;
+transition: all 0.15s ease;
 }
-.auth-actions button {
-  width: 100%;
-  height: 38px;
-}
-.auth-divider {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin: 20px 0;
-  color: var(--text3);
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: .08em;
-}
-.auth-divider::before, .auth-divider::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: var(--border);
-}
-.auth-hint {
-  font-size: 11px;
-  color: var(--text3);
-  margin-top: 14px;
-}
+.preset-pill:hover { border-color: var(--amber-border); color: var(--amber); }
 </style>
 </head>
 <body>
-
+<div class="starfield" id="starfield"></div>
 <div class="top-header">
-  <div class="topbar">
-    <a href="index.html" class="topbar-title">Swgoh<span>Resources</span></a>
-    <div class="topbar-tabs">
-      <a class="nav-tab" href="index.html">Home</a>
-      <a class="nav-tab" href="relic.html">Relic Planner</a>
-      <a class="nav-tab active" href="shipments.html">Shipments Planner</a>
-    </div>
-    <div class="topbar-right">
-      <div class="auth-panel">
-        <div id="auth-status" class="auth-status">Connecting…</div>
-        <div class="saved-badge"><div class="saved-dot" id="saveDot"></div><span id="saveText">Saved</span></div>
-        <button id="signin-btn" class="btn btn-accent btn-sm" style="display:none; margin-left: 8px" onclick="signInWithGoogle()">Sign In</button>
-        <button id="signout-btn" class="btn btn-ghost btn-sm" style="display:none; margin-left: 8px" onclick="signOut()">Sign Out</button>
-      </div>
-      <div class="topbar-divider"></div>
-      <div id="build-badge" style="font-size:11px;color:var(--text3)">Build <span id="build-version"></span></div>
-    </div>
-  </div>
+<div class="topbar">
+<a href="index.html" class="topbar-title">SWGOH<span class="divider-glyph">::</span><span>RESOURCES</span></a>
+<div class="topbar-tabs">
+<a class="nav-tab" href="index.html">home</a>
+<a class="nav-tab" href="relic.html">relic planner</a>
+<a class="nav-tab active" href="shipments.html">shipment planner</a>
 </div>
-
+<div class="topbar-right">
+<div class="auth-panel">
+<div id="auth-status" class="auth-status">Connecting…</div>
+<div class="saved-badge"><div class="saved-dot" id="saveDot"></div><span id="saveText">Saved</span></div>
+<button id="signin-btn" class="btn btn-ghost btn-sm" onclick="openAuthModal()">Sign In</button>
+<button id="signout-btn" class="btn btn-ghost btn-sm" style="display:none" onclick="signOut()">Sign Out</button>
+</div>
+<div class="topbar-divider"></div>
+<div id="build-badge" style="font-size:11px;color:var(--text3);font-family:var(--font-mono)">build <span id="build-version"></span></div>
+</div>
+</div>
+</div>
 <div class="app">
-
-<div id="auth-screen" class="auth-card">
-  <h2>Welcome back</h2>
-  <p>Sign in to sync your planner across devices, or create an account to save your shipments and settings.</p>
-  <div class="auth-toggle">
-    <button id="auth-mode-signin" class="active" onclick="setAuthMode('signin')">Sign in</button>
-    <button id="auth-mode-signup" onclick="setAuthMode('signup')">Create account</button>
-  </div>
-  <div class="auth-grid">
-    <input id="auth-email" type="email" placeholder="Email address">
-    <input id="auth-password" type="password" placeholder="Password">
-    <div class="auth-actions">
-      <button id="auth-submit-btn" class="btn btn-accent" onclick="submitAuthForm()">Sign in</button>
-      <button class="btn btn-ghost" onclick="signInWithGoogle()">Continue with Google</button>
-    </div>
-  </div>
-  <div class="auth-divider">or</div>
-  <div id="auth-user-panel" class="auth-hint" style="display:none"></div>
+<div class="page-header">
+<div class="page-title-group">
+<h1>Shipments <span>Planner</span></h1>
+<div class="page-subtitle">Monthly Raid & Guild Event currency budget planner for shards, gear, signal data & relic materials.</div>
 </div>
-
-<div id="planner-shell" style="display:none">
-
+<div style="display:flex; gap:8px">
+<button class="btn btn-ghost btn-sm" onclick="resetAllPurchases()" title="Reset all store purchases to 0">Reset Purchases</button>
+<button class="btn btn-outline btn-sm" onclick="exportPlanJSON()" title="Export configuration to JSON">Export Data</button>
+</div>
+</div>
+<div class="controls-bar">
 <div id="page-tabs" class="segmented-tabs">
-  <button class="tab-btn active" data-tab="raid-setup" onclick="showTab('raid-setup')">Raid & GET Setup</button>
-  <button class="tab-btn" data-tab="shards" onclick="showTab('shards')">Shards & Blueprints</button>
-  <button class="tab-btn" data-tab="gear" onclick="showTab('gear')">Gear</button>
-  <button class="tab-btn" data-tab="relics" onclick="showTab('relics')">Relic Materials</button>
-  <button class="tab-btn" data-tab="signal" onclick="showTab('signal')">Signal Data</button>
-  <button class="tab-btn" data-tab="ability" onclick="showTab('ability')">Ability Materials & Mods</button>
-  <button class="tab-btn" data-tab="reference" onclick="showTab('reference')">Reference Guide</button>
+<button class="tab-btn active" data-tab="raid-setup" onclick="showTab('raid-setup')">
+<span>Raid & GET Setup</span>
+</button>
+<button class="tab-btn" data-tab="shards" onclick="showTab('shards')">
+<span>Shards & Blueprints</span>
+<span class="tab-count-badge" id="badge-shards">0</span>
+</button>
+<button class="tab-btn" data-tab="gear" onclick="showTab('gear')">
+<span>Gear</span>
+<span class="tab-count-badge" id="badge-gear">0</span>
+</button>
+<button class="tab-btn" data-tab="relics" onclick="showTab('relics')">
+<span>Relic Materials</span>
+<span class="tab-count-badge" id="badge-relics">0</span>
+</button>
+<button class="tab-btn" data-tab="signal" onclick="showTab('signal')">
+<span>Signal Data</span>
+<span class="tab-count-badge" id="badge-signal">0</span>
+</button>
+<button class="tab-btn" data-tab="ability" onclick="showTab('ability')">
+<span>Ability & Mods</span>
+<span class="tab-count-badge" id="badge-ability">0</span>
+</button>
+<button class="tab-btn" data-tab="reference" onclick="showTab('reference')">
+<span>Reference Guide</span>
+</button>
 </div>
-
+code
+Code
+<div class="search-filter-box">
+  <input type="text" id="store-search-input" class="search-input" placeholder="Search store items..." oninput="onSearchFilterChange(this.value)">
+</div>
+</div>
 <div class="shipments-layout">
+code
+Code
+<!-- MAIN CONTENT COLUMN -->
+<div id="main-content-col">
 
-  <!-- LEFT COLUMN -->
-  <div id="main-content-col">
-
-    <!-- ══════════ TAB 1: RAID & GET SETUP ══════════ -->
-    <div class="tab-content" id="tab-raid-setup">
-      
-      <!-- Auto-Sync Banner (Placed at top of Tab 1) -->
-      <div class="section" style="border-color: rgba(139, 92, 246, 0.3); background: rgba(139, 92, 246, 0.04);">
-        <div class="section-body" style="padding:14px 18px; display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap">
-          <div>
-            <div style="font-weight:600; color:var(--text)">GET 2 & GET 3 Auto-Sync</div>
-            <div style="font-size:11px; color:var(--text2); margin-top:4px; display:flex; align-items:center; gap:8px">
-              Calculated automatically from your Relic Planner Guild Event Setup: 
-              <span id="synced-get2-val" class="curr-tag tag-get2"><img src="assets/GET2.png" class="curr-icon" onerror="imgErrFallback(this)"> <span id="synced-get2-text">0 GET 2</span></span>
-              <span id="synced-get3-val" class="curr-tag tag-get3"><img src="assets/GET3.png" class="curr-icon" onerror="imgErrFallback(this)"> <span id="synced-get3-text">0 GET 3</span></span>
-            </div>
+  <!-- TAB 1: RAID & GET SETUP -->
+  <div class="tab-content" id="tab-raid-setup">
+    
+    <!-- Auto-Sync Banner -->
+    <div class="section" style="border-color: rgba(79, 209, 197, 0.3); background: rgba(79, 209, 197, 0.03);">
+      <div class="section-body" style="padding:14px 18px; display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap">
+        <div>
+          <div style="font-weight:600; color:var(--text); font-family:var(--font-display); font-size:14px">GET 2 & GET 3 Auto-Sync</div>
+          <div style="font-size:11.5px; color:var(--text2); margin-top:4px; display:flex; align-items:center; gap:8px; flex-wrap:wrap">
+            Calculated automatically from your Relic Planner Guild Event Setup: 
+            <span id="synced-get2-val" class="curr-tag tag-get2"><img src="assets/GET2.png" class="curr-icon" onerror="imgErrFallback(this)"> <span id="synced-get2-text">0 GET 2</span></span>
+            <span id="synced-get3-val" class="curr-tag tag-get3"><img src="assets/GET3.png" class="curr-icon" onerror="imgErrFallback(this)"> <span id="synced-get3-text">0 GET 3</span></span>
           </div>
-          <a href="relic.html" class="btn btn-ghost btn-sm" style="text-decoration:none">Setup Guild Events →</a>
         </div>
+        <a href="relic.html" class="btn btn-outline btn-sm">Setup Guild Events →</a>
       </div>
+    </div>
 
-      <!-- Starting Banked Balances (Divided by Rows) -->
-      <div class="section">
-        <div class="section-head"><div class="section-title">Starting Unspent Currencies (Banked)</div></div>
-        <div class="section-body">
-          <div style="margin-bottom:14px">
-            <div style="font-size:11px; font-weight:600; color:var(--text2); margin-bottom:6px">Raid Store Tokens</div>
-            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap:12px">
-              <div>
-                <div style="font-size:10px; color:var(--blue); text-transform:uppercase; margin-bottom:4px; display:flex; align-items:center; gap:4px">
-                  <img src="assets/RAID1.png" class="curr-icon" onerror="imgErrFallback(this)"> Raid Mk I
-                </div>
-                <input type="text" id="bank-mk1" inputmode="numeric" pattern="[0-9]*" value="0" style="width:100%" oninput="onBankChange('mk1', this.value)">
+    <!-- Starting Banked Balances -->
+    <div class="section">
+      <div class="section-head">
+        <div class="section-title"><span class="bracket">[</span>Starting Banked Balances<span class="bracket">]</span></div>
+        <button class="btn btn-ghost btn-sm" onclick="clearBankBalances()">Clear Balances</button>
+      </div>
+      <div class="section-body">
+        <div style="margin-bottom:16px">
+          <div style="font-size:11px; font-family:var(--font-mono); font-weight:600; color:var(--text2); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.05em">Raid Store Tokens</div>
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap:12px">
+            <div>
+              <div style="font-size:10px; font-family:var(--font-mono); color:#60a5fa; text-transform:uppercase; margin-bottom:4px; display:flex; align-items:center; gap:4px">
+                <img src="assets/RAID1.png" class="curr-icon" onerror="imgErrFallback(this)"> Raid Mk I
               </div>
-              <div>
-                <div style="font-size:10px; color:var(--yellow); text-transform:uppercase; margin-bottom:4px; display:flex; align-items:center; gap:4px">
-                  <img src="assets/RAID2.png" class="curr-icon" onerror="imgErrFallback(this)"> Raid Mk II
-                </div>
-                <input type="text" id="bank-mk2" inputmode="numeric" pattern="[0-9]*" value="0" style="width:100%" oninput="onBankChange('mk2', this.value)">
-              </div>
-              <div>
-                <div style="font-size:10px; color:var(--red); text-transform:uppercase; margin-bottom:4px; display:flex; align-items:center; gap:4px">
-                  <img src="assets/RAID3.png" class="curr-icon" onerror="imgErrFallback(this)"> Raid Mk III
-                </div>
-                <input type="text" id="bank-mk3" inputmode="numeric" pattern="[0-9]*" value="0" style="width:100%" oninput="onBankChange('mk3', this.value)">
-              </div>
+              <input type="text" id="bank-mk1" inputmode="numeric" value="0" style="width:100%" oninput="onBankChange('mk1', this.value)">
             </div>
-          </div>
-
-          <div style="border-top:1px dashed var(--border); padding-top:14px">
-            <div style="font-size:11px; font-weight:600; color:var(--text2); margin-bottom:6px">Guild Event Store Tokens</div>
-            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap:12px">
-              <div>
-                <div style="font-size:10px; color:var(--green); text-transform:uppercase; margin-bottom:4px; display:flex; align-items:center; gap:4px">
-                  <img src="assets/GET1.png" class="curr-icon" onerror="imgErrFallback(this)"> GET 1
-                </div>
-                <input type="text" id="bank-get1" inputmode="numeric" pattern="[0-9]*" value="0" style="width:100%" oninput="onBankChange('get1', this.value)">
+            <div>
+              <div style="font-size:10px; font-family:var(--font-mono); color:#fbbf24; text-transform:uppercase; margin-bottom:4px; display:flex; align-items:center; gap:4px">
+                <img src="assets/RAID2.png" class="curr-icon" onerror="imgErrFallback(this)"> Raid Mk II
               </div>
-              <div>
-                <div style="font-size:10px; color:var(--orange); text-transform:uppercase; margin-bottom:4px; display:flex; align-items:center; gap:4px">
-                  <img src="assets/GET2.png" class="curr-icon" onerror="imgErrFallback(this)"> GET 2
-                </div>
-                <input type="text" id="bank-get2" inputmode="numeric" pattern="[0-9]*" value="0" style="width:100%" oninput="onBankChange('get2', this.value)">
+              <input type="text" id="bank-mk2" inputmode="numeric" value="0" style="width:100%" oninput="onBankChange('mk2', this.value)">
+            </div>
+            <div>
+              <div style="font-size:10px; font-family:var(--font-mono); color:#f87171; text-transform:uppercase; margin-bottom:4px; display:flex; align-items:center; gap:4px">
+                <img src="assets/RAID3.png" class="curr-icon" onerror="imgErrFallback(this)"> Raid Mk III
               </div>
-              <div>
-                <div style="font-size:10px; color:var(--teal); text-transform:uppercase; margin-bottom:4px; display:flex; align-items:center; gap:4px">
-                  <img src="assets/GET3.png" class="curr-icon" onerror="imgErrFallback(this)"> GET 3
-                </div>
-                <input type="text" id="bank-get3" inputmode="numeric" pattern="[0-9]*" value="0" style="width:100%" oninput="onBankChange('get3', this.value)">
-              </div>
+              <input type="text" id="bank-mk3" inputmode="numeric" value="0" style="width:100%" oninput="onBankChange('mk3', this.value)">
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- Raid Run Setup -->
-      <div class="section">
-        <div class="section-head">
-          <div class="section-title">Monthly Raid Runs (Max 5)</div>
-          <div style="display:flex; align-items:center; gap:8px">
-            <span style="font-size:12px; color:var(--text2)">Raids/mo:</span>
-            <button class="btn btn-ghost btn-sm" onclick="adjustRaidCount(-1)">−</button>
-            <span id="raid-count-display" style="font-family:var(--font-mono); font-weight:600">3</span>
-            <button class="btn btn-ghost btn-sm" onclick="adjustRaidCount(1)">+</button>
+        <div style="border-top:1px dashed var(--border); padding-top:16px">
+          <div style="font-size:11px; font-family:var(--font-mono); font-weight:600; color:var(--text2); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.05em">Guild Event Store Tokens</div>
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap:12px">
+            <div>
+              <div style="font-size:10px; font-family:var(--font-mono); color:#34d399; text-transform:uppercase; margin-bottom:4px; display:flex; align-items:center; gap:4px">
+                <img src="assets/GET1.png" class="curr-icon" onerror="imgErrFallback(this)"> GET 1
+              </div>
+              <input type="text" id="bank-get1" inputmode="numeric" value="0" style="width:100%" oninput="onBankChange('get1', this.value)">
+            </div>
+            <div>
+              <div style="font-size:10px; font-family:var(--font-mono); color:#fb923c; text-transform:uppercase; margin-bottom:4px; display:flex; align-items:center; gap:4px">
+                <img src="assets/GET2.png" class="curr-icon" onerror="imgErrFallback(this)"> GET 2
+              </div>
+              <input type="text" id="bank-get2" inputmode="numeric" value="0" style="width:100%" oninput="onBankChange('get2', this.value)">
+            </div>
+            <div>
+              <div style="font-size:10px; font-family:var(--font-mono); color:var(--cyan); text-transform:uppercase; margin-bottom:4px; display:flex; align-items:center; gap:4px">
+                <img src="assets/GET3.png" class="curr-icon" onerror="imgErrFallback(this)"> GET 3
+              </div>
+              <input type="text" id="bank-get3" inputmode="numeric" value="0" style="width:100%" oninput="onBankChange('get3', this.value)">
+            </div>
           </div>
         </div>
-        <div class="section-body" id="raids-container">
-          <!-- Dynamic Raid Cards injected here -->
+      </div>
+    </div>
+
+    <!-- Raid Runs Setup -->
+    <div class="section">
+      <div class="section-head">
+        <div class="section-title"><span class="bracket">[</span>Monthly Raid Runs<span class="bracket">]</span></div>
+        <div style="display:flex; align-items:center; gap:8px">
+          <span style="font-size:11px; font-family:var(--font-mono); color:var(--text2)">Raids/mo:</span>
+          <button class="btn btn-ghost btn-sm" style="width:26px" onclick="adjustRaidCount(-1)">−</button>
+          <span id="raid-count-display" style="font-family:var(--font-mono); font-weight:600; min-width:16px; text-align:center">3</span>
+          <button class="btn btn-ghost btn-sm" style="width:26px" onclick="adjustRaidCount(1)">+</button>
         </div>
       </div>
-
-    </div>
-
-    <!-- ══════════ TAB 2: SHARDS & BLUEPRINTS ══════════ -->
-    <div class="tab-content" id="tab-shards" style="display:none">
-      <div class="section">
-        <div class="section-head"><div class="section-title">Shards & Blueprints Store</div></div>
-        <div class="section-body" id="shards-store-list"></div>
-      </div>
-    </div>
-
-    <!-- ══════════ TAB 3: GEAR ══════════ -->
-    <div class="tab-content" id="tab-gear" style="display:none">
-      <div class="section">
-        <div class="section-head"><div class="section-title">Gear Store</div></div>
-        <div class="section-body" id="gear-store-list"></div>
-      </div>
-    </div>
-
-    <!-- ══════════ TAB 4: RELIC MATERIALS ══════════ -->
-    <div class="tab-content" id="tab-relics" style="display:none">
-      <div class="section">
-        <div class="section-head"><div class="section-title">Relic Scavenger Materials</div></div>
-        <div class="section-body" id="relics-store-list"></div>
-      </div>
-    </div>
-
-    <!-- ══════════ TAB 5: SIGNAL DATA ══════════ -->
-    <div class="tab-content" id="tab-signal" style="display:none">
-      <div class="section">
-        <div class="section-head"><div class="section-title">Signal Data Store</div></div>
-        <div class="section-body" id="signal-store-list"></div>
-      </div>
-    </div>
-
-    <!-- ══════════ TAB 6: ABILITY MATERIALS & MODS ══════════ -->
-    <div class="tab-content" id="tab-ability" style="display:none">
-      <div class="section">
-        <div class="section-head"><div class="section-title">Ability Materials, Mods & Allocations</div></div>
-        <div class="section-body" id="ability-store-list"></div>
-      </div>
-    </div>
-
-    <!-- ══════════ TAB 7: REFERENCE GUIDE ══════════ -->
-    <div class="tab-content" id="tab-reference" style="display:none">
-      <div class="section">
-        <div class="section-head"><div class="section-title">Raid Guild Crate Rewards Reference (Boxes 1 - 11)</div></div>
-        <div class="section-body" style="padding:0">
-          <table class="ref-table">
-            <thead>
-              <tr>
-                <th>Crate</th>
-                <th>Guild Score</th>
-                <th>Mk I Rewards</th>
-                <th>Mk II Rewards</th>
-                <th>Mk III Rewards</th>
-              </tr>
-            </thead>
-            <tbody id="crate-ref-tbody">
-              <!-- Rendered via JS -->
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <div class="section">
-        <div class="section-head"><div class="section-title">Personal Score Track Rewards Reference</div></div>
-        <div class="section-body" style="padding:0">
-          <table class="ref-table">
-            <thead>
-              <tr>
-                <th>Score Threshold</th>
-                <th>Mk I Tokens</th>
-                <th>Mk II Tokens</th>
-                <th>Mk III Tokens</th>
-              </tr>
-            </thead>
-            <tbody id="personal-ref-tbody">
-              <!-- Rendered via JS -->
-            </tbody>
-          </table>
-        </div>
+      <div class="section-body" id="raids-container">
+        <!-- Dynamic Raid Cards Injected Here -->
       </div>
     </div>
 
   </div>
 
-  <!-- RIGHT COLUMN: STICKY BUDGET SUMMARY -->
-  <div class="summary-sticky">
+  <!-- TAB 2: SHARDS & BLUEPRINTS -->
+  <div class="tab-content" id="tab-shards" style="display:none">
     <div class="section">
-      <div class="section-head"><div class="section-title">Raid Currency Budget (Monthly Plan)</div></div>
-      <div id="raid-budget-display">
-        <div class="budget-row">
-          <span class="budget-label" style="color:var(--blue)">
-            <img src="assets/RAID1.png" class="curr-icon" onerror="imgErrFallback(this)"> Mk I Tokens
+      <div class="section-head"><div class="section-title"><span class="bracket">[</span>Shards & Blueprints Store<span class="bracket">]</span></div></div>
+      <div class="section-body" id="shards-store-list"></div>
+    </div>
+  </div>
+
+  <!-- TAB 3: GEAR -->
+  <div class="tab-content" id="tab-gear" style="display:none">
+    <div class="section">
+      <div class="section-head"><div class="section-title"><span class="bracket">[</span>Gear Store<span class="bracket">]</span></div></div>
+      <div class="section-body" id="gear-store-list"></div>
+    </div>
+  </div>
+
+  <!-- TAB 4: RELIC MATERIALS -->
+  <div class="tab-content" id="tab-relics" style="display:none">
+    <div class="section">
+      <div class="section-head"><div class="section-title"><span class="bracket">[</span>Relic Scavenger Materials<span class="bracket">]</span></div></div>
+      <div class="section-body" id="relics-store-list"></div>
+    </div>
+  </div>
+
+  <!-- TAB 5: SIGNAL DATA -->
+  <div class="tab-content" id="tab-signal" style="display:none">
+    <div class="section">
+      <div class="section-head"><div class="section-title"><span class="bracket">[</span>Signal Data Store<span class="bracket">]</span></div></div>
+      <div class="section-body" id="signal-store-list"></div>
+    </div>
+  </div>
+
+  <!-- TAB 6: ABILITY MATERIALS & MODS -->
+  <div class="tab-content" id="tab-ability" style="display:none">
+    <div class="section">
+      <div class="section-head"><div class="section-title"><span class="bracket">[</span>Ability Materials & Mods<span class="bracket">]</span></div></div>
+      <div class="section-body" id="ability-store-list"></div>
+    </div>
+  </div>
+
+  <!-- TAB 7: REFERENCE GUIDE -->
+  <div class="tab-content" id="tab-reference" style="display:none">
+    <div class="section">
+      <div class="section-head"><div class="section-title"><span class="bracket">[</span>Raid Guild Crate Rewards (Boxes 1–11)<span class="bracket">]</span></div></div>
+      <div class="section-body" style="padding:0">
+        <table class="ref-table">
+          <thead>
+            <tr>
+              <th>Crate</th>
+              <th>Guild Score</th>
+              <th>Mk I Rewards</th>
+              <th>Mk II Rewards</th>
+              <th>Mk III Rewards</th>
+            </tr>
+          </thead>
+          <tbody id="crate-ref-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><div class="section-title"><span class="bracket">[</span>Personal Track Thresholds<span class="bracket">]</span></div></div>
+      <div class="section-body" style="padding:0">
+        <table class="ref-table">
+          <thead>
+            <tr>
+              <th>Score Threshold</th>
+              <th>Mk I Tokens</th>
+              <th>Mk II Tokens</th>
+              <th>Mk III Tokens</th>
+            </tr>
+          </thead>
+          <tbody id="personal-ref-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- RIGHT COLUMN: STICKY BUDGET SUMMARY -->
+<div class="summary-sticky">
+  
+  <!-- Raid Currency Budget Card -->
+  <div class="section">
+    <div class="section-head"><div class="section-title"><span class="bracket">[</span>Raid Token Budget<span class="bracket">]</span></div></div>
+    <div id="raid-budget-display">
+      <div class="budget-row">
+        <div class="budget-row-top">
+          <span class="budget-label" style="color:#60a5fa">
+            <img src="assets/RAID1.png" class="curr-icon" onerror="imgErrFallback(this)"> Mk I
           </span>
           <span class="budget-val" id="b-mk1">0</span>
         </div>
-        <div class="budget-row">
-          <span class="budget-label" style="color:var(--yellow)">
-            <img src="assets/RAID2.png" class="curr-icon" onerror="imgErrFallback(this)"> Mk II Tokens
+        <div class="budget-bar-bg"><div class="budget-bar-fill" id="bar-mk1" style="background:#60a5fa; width:0%"></div></div>
+      </div>
+      <div class="budget-row">
+        <div class="budget-row-top">
+          <span class="budget-label" style="color:#fbbf24">
+            <img src="assets/RAID2.png" class="curr-icon" onerror="imgErrFallback(this)"> Mk II
           </span>
           <span class="budget-val" id="b-mk2">0</span>
         </div>
-        <div class="budget-row" style="border-bottom:none">
-          <span class="budget-label" style="color:var(--red)">
-            <img src="assets/RAID3.png" class="curr-icon" onerror="imgErrFallback(this)"> Mk III Tokens
+        <div class="budget-bar-bg"><div class="budget-bar-fill" id="bar-mk2" style="background:#fbbf24; width:0%"></div></div>
+      </div>
+      <div class="budget-row" style="border-bottom:none">
+        <div class="budget-row-top">
+          <span class="budget-label" style="color:#f87171">
+            <img src="assets/RAID3.png" class="curr-icon" onerror="imgErrFallback(this)"> Mk III
           </span>
           <span class="budget-val" id="b-mk3">0</span>
         </div>
+        <div class="budget-bar-bg"><div class="budget-bar-fill" id="bar-mk3" style="background:#f87171; width:0%"></div></div>
       </div>
     </div>
+  </div>
 
-    <div class="section">
-      <div class="section-head"><div class="section-title">Guild Event Budget (Monthly Plan)</div></div>
-      <div id="get-budget-display">
-        <div class="budget-row">
-          <span class="budget-label" style="color:var(--green)">
+  <!-- Guild Event Budget Card -->
+  <div class="section">
+    <div class="section-head"><div class="section-title"><span class="bracket">[</span>Guild Event Budget<span class="bracket">]</span></div></div>
+    <div id="get-budget-display">
+      <div class="budget-row">
+        <div class="budget-row-top">
+          <span class="budget-label" style="color:#34d399">
             <img src="assets/GET1.png" class="curr-icon" onerror="imgErrFallback(this)"> GET 1
           </span>
           <span class="budget-val" id="b-get1">0</span>
         </div>
-        <div class="budget-row">
-          <span class="budget-label" style="color:var(--orange)">
+        <div class="budget-bar-bg"><div class="budget-bar-fill" id="bar-get1" style="background:#34d399; width:0%"></div></div>
+      </div>
+      <div class="budget-row">
+        <div class="budget-row-top">
+          <span class="budget-label" style="color:#fb923c">
             <img src="assets/GET2.png" class="curr-icon" onerror="imgErrFallback(this)"> GET 2
           </span>
           <span class="budget-val" id="b-get2">0</span>
         </div>
-        <div class="budget-row" style="border-bottom:none">
-          <span class="budget-label" style="color:var(--teal)">
+        <div class="budget-bar-bg"><div class="budget-bar-fill" id="bar-get2" style="background:#fb923c; width:0%"></div></div>
+      </div>
+      <div class="budget-row" style="border-bottom:none">
+        <div class="budget-row-top">
+          <span class="budget-label" style="color:var(--cyan)">
             <img src="assets/GET3.png" class="curr-icon" onerror="imgErrFallback(this)"> GET 3
           </span>
           <span class="budget-val" id="b-get3">0</span>
         </div>
+        <div class="budget-bar-bg"><div class="budget-bar-fill" id="bar-get3" style="background:var(--cyan); width:0%"></div></div>
       </div>
     </div>
+  </div>
 
-    <div class="section">
-      <div class="section-head"><div class="section-title">Planned Items (per Month)</div></div>
-      <div id="items-yield-display" style="padding:14px 16px; font-size:12px; display:flex; flex-direction:column; gap:6px">
-        <!-- Summary items rendered here -->
-      </div>
+  <!-- Planned Items Summary Card -->
+  <div class="section">
+    <div class="section-head"><div class="section-title"><span class="bracket">[</span>Monthly Planned Yield<span class="bracket">]</span></div></div>
+    <div id="items-yield-display" style="padding:14px 16px; font-size:12px; display:flex; flex-direction:column; gap:8px">
+      <!-- Yield Items rendered dynamically -->
     </div>
   </div>
 
 </div>
 </div>
-
 </div>
-
+<div id="auth-modal" class="modal-overlay" onclick="if(event.target.id==='auth-modal') closeAuthModal()">
+<div class="auth-card">
+<button class="auth-close" onclick="closeAuthModal()">×</button>
+<h2 id="auth-title">Welcome back</h2>
+<p id="auth-desc">Sign in to sync your planner across devices, or create an account to save your shipments and settings.</p>
+<div class="auth-toggle">
+<button id="auth-mode-signin" class="active" onclick="setAuthMode('signin')">Sign in</button>
+<button id="auth-mode-signup" onclick="setAuthMode('signup')">Create account</button>
+</div>
+<div class="auth-grid">
+<input id="auth-email" type="email" placeholder="Email address">
+<input id="auth-password" type="password" placeholder="Password">
+<div class="auth-actions">
+<button id="auth-submit-btn" class="btn btn-accent" onclick="submitAuthForm()">Sign in</button>
+<button class="btn btn-ghost" onclick="signInWithGoogle()">Continue with Google</button>
+</div>
+</div>
+<div id="auth-user-panel" class="auth-hint" style="display:none"></div>
+</div>
+</div>
 <script src="./build-version.js?v=601fbb5-64"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
@@ -661,119 +777,119 @@ input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 2px r
 <script>
 // Image Error Fallback Helper
 function imgErrFallback(img) {
-  if (!img || img.dataset.failed) return;
-  img.dataset.failed = "true";
-  if (img.src.includes('.PNG')) {
-    img.src = img.src.replace('.PNG', '.png');
-  } else if (img.src.includes('.png')) {
-    img.src = img.src.replace('.png', '.PNG');
-  } else {
-    img.style.opacity = '0.3';
-  }
+if (!img || img.dataset.failed) return;
+img.dataset.failed = "true";
+if (img.src.includes('.PNG')) {
+img.src = img.src.replace('.PNG', '.png');
+} else if (img.src.includes('.png')) {
+img.src = img.src.replace('.png', '.PNG');
+} else {
+img.style.opacity = '0.3';
+}
 }
 
-// Parses numeric string inputs including shorthand (1.5M, 500k) and formatted numbers (65,000)
+// Parses numeric string inputs including shorthand (1.5M, 500k) and formatted numbers
 function parseScore(val) {
-  if (val === null || val === undefined) return 0;
-  let str = String(val).trim().toLowerCase().replace(/,/g, '');
-  if (!str) return 0;
-  if (str.endsWith('m')) {
-    return Math.round((parseFloat(str.slice(0, -1)) || 0) * 1000000);
-  }
-  if (str.endsWith('k')) {
-    return Math.round((parseFloat(str.slice(0, -1)) || 0) * 1000);
-  }
-  return Math.max(0, parseInt(str, 10) || 0);
+if (val === null || val === undefined) return 0;
+let str = String(val).trim().toLowerCase().replace(/,/g, '');
+if (!str) return 0;
+if (str.endsWith('m')) {
+return Math.round((parseFloat(str.slice(0, -1)) || 0) * 1000000);
+}
+if (str.endsWith('k')) {
+return Math.round((parseFloat(str.slice(0, -1)) || 0) * 1000);
+}
+return Math.max(0, parseInt(str, 10) || 0);
 }
 
 // ═══════════════════════════════════════════════════════
-// CONSTANTS & STORE ITEMS
+// CONSTANTS & STORE DATA
 // ═══════════════════════════════════════════════════════
 const RAID_BOXES = [
-  { id: 1, score: '10M', mk1: 12500, mk2: 5500, mk3: 500 },
-  { id: 2, score: '14.5M', mk1: 16500, mk2: 8400, mk3: 1000 },
-  { id: 3, score: '20.5M', mk1: 16500, mk2: 9700, mk3: 1250 },
-  { id: 4, score: '28.5M', mk1: 16500, mk2: 9700, mk3: 1750 },
-  { id: 5, score: '41.5M', mk1: 16500, mk2: 9700, mk3: 2000 },
-  { id: 6, score: '63.5M', mk1: 16500, mk2: 9700, mk3: 2500 },
-  { id: 7, score: '98.5M', mk1: 16500, mk2: 9700, mk3: 3000 },
-  { id: 8, score: '148M', mk1: 16500, mk2: 9700, mk3: 4000 },
-  { id: 9, score: '245M', mk1: 16500, mk2: 9700, mk3: 5250 },
-  { id: 10, score: '375M', mk1: 16500, mk2: 9700, mk3: 6770 },
-  { id: 11, score: '520M', mk1: 16500, mk2: 9700, mk3: 8770 }
+{ id: 1, score: '10M', mk1: 12500, mk2: 5500, mk3: 500 },
+{ id: 2, score: '14.5M', mk1: 16500, mk2: 8400, mk3: 1000 },
+{ id: 3, score: '20.5M', mk1: 16500, mk2: 9700, mk3: 1250 },
+{ id: 4, score: '28.5M', mk1: 16500, mk2: 9700, mk3: 1750 },
+{ id: 5, score: '41.5M', mk1: 16500, mk2: 9700, mk3: 2000 },
+{ id: 6, score: '63.5M', mk1: 16500, mk2: 9700, mk3: 2500 },
+{ id: 7, score: '98.5M', mk1: 16500, mk2: 9700, mk3: 3000 },
+{ id: 8, score: '148M', mk1: 16500, mk2: 9700, mk3: 4000 },
+{ id: 9, score: '245M', mk1: 16500, mk2: 9700, mk3: 5250 },
+{ id: 10, score: '375M', mk1: 16500, mk2: 9700, mk3: 6770 },
+{ id: 11, score: '520M', mk1: 16500, mk2: 9700, mk3: 8770 }
 ];
 
 const PERSONAL_TRACK = [
-  { score: 65000, mk1: 450, mk2: 0, mk3: 0 },
-  { score: 85000, mk1: 0, mk2: 100, mk3: 40 },
-  { score: 170000, mk1: 0, mk2: 100, mk3: 40 },
-  { score: 255000, mk1: 0, mk2: 100, mk3: 40 },
-  { score: 340000, mk1: 0, mk2: 200, mk3: 80 },
-  { score: 500000, mk1: 0, mk2: 200, mk3: 80 },
-  { score: 1000000, mk1: 0, mk2: 200, mk3: 80 },
-  { score: 1700000, mk1: 0, mk2: 200, mk3: 80 },
-  { score: 2200000, mk1: 0, mk2: 200, mk3: 80 },
-  { score: 3000000, mk1: 0, mk2: 0, mk3: 100 },
-  { score: 4250000, mk1: 0, mk2: 0, mk3: 100 },
-  { score: 5470000, mk1: 0, mk2: 0, mk3: 100 },
-  { score: 6200000, mk1: 0, mk2: 0, mk3: 100 },
-  { score: 8510000, mk1: 0, mk2: 0, mk3: 100 },
-  { score: 9720000, mk1: 0, mk2: 0, mk3: 100 },
-  { score: 12150000, mk1: 0, mk2: 0, mk3: 100 }
+{ score: 65000, mk1: 450, mk2: 0, mk3: 0 },
+{ score: 85000, mk1: 0, mk2: 100, mk3: 40 },
+{ score: 170000, mk1: 0, mk2: 100, mk3: 40 },
+{ score: 255000, mk1: 0, mk2: 100, mk3: 40 },
+{ score: 340000, mk1: 0, mk2: 200, mk3: 80 },
+{ score: 500000, mk1: 0, mk2: 200, mk3: 80 },
+{ score: 1000000, mk1: 0, mk2: 200, mk3: 80 },
+{ score: 1700000, mk1: 0, mk2: 200, mk3: 80 },
+{ score: 2200000, mk1: 0, mk2: 200, mk3: 80 },
+{ score: 3000000, mk1: 0, mk2: 0, mk3: 100 },
+{ score: 4250000, mk1: 0, mk2: 0, mk3: 100 },
+{ score: 5470000, mk1: 0, mk2: 0, mk3: 100 },
+{ score: 6200000, mk1: 0, mk2: 0, mk3: 100 },
+{ score: 8510000, mk1: 0, mk2: 0, mk3: 100 },
+{ score: 9720000, mk1: 0, mk2: 0, mk3: 100 },
+{ score: 12150000, mk1: 0, mk2: 0, mk3: 100 }
 ];
 
 const STORE_ITEMS = [
-  // ─── SHARDS & BLUEPRINTS ───
-  { id:'mk2_hoda_shards', cat:'shards', name:'Hermit Yoda Shards', sub:'5 Shards', cost:1250, curr:'mk2', icon:'assets/HERMITYODA.PNG', itemIcon:'assets/HERMITYODA.PNG', yieldQty:5, yieldUnit:'Hermit Yoda Shards' },
-  { id:'mk2_wampa_shards', cat:'shards', name:'Wampa Shards', sub:'5 Shards', cost:1250, curr:'mk2', icon:'assets/WAMPA.PNG', itemIcon:'assets/WAMPA.PNG', yieldQty:5, yieldUnit:'Wampa Shards' },
-  { id:'mk2_rolo_shards', cat:'shards', name:'Rebel Officer Leia Organa Shards', sub:'5 Shards', cost:1250, curr:'mk2', icon:'assets/ROLO.PNG', itemIcon:'assets/ROLO.PNG', yieldQty:5, yieldUnit:'ROLO Shards' },
-  { id:'mk2_ipd_shards', cat:'shards', name:'Imperial Probe Droid Shards', sub:'5 Shards', cost:1250, curr:'mk2', icon:'assets/IPD.PNG', itemIcon:'assets/IPD.PNG', yieldQty:5, yieldUnit:'IPD Shards' },
-  { id:'mk2_gas_shards', cat:'shards', name:'General Skywalker Shards', sub:'5 Shards', cost:1750, curr:'mk2', icon:'assets/GAS.PNG', itemIcon:'assets/GAS.PNG', yieldQty:5, yieldUnit:'GAS Shards' },
-  { id:'mk2_malak_shards', cat:'shards', name:'Darth Malak Shards', sub:'5 Shards', cost:1750, curr:'mk2', icon:'assets/MALAK.PNG', itemIcon:'assets/MALAK.PNG', yieldQty:5, yieldUnit:'Malak Shards' },
-  { id:'mk1_raid_shards', cat:'shards', name:'Raid Character Shards', sub:'10 Shards', cost:700, curr:'mk1', icon:'assets/HERMITYODA.PNG', itemIcon:'assets/HERMITYODA.PNG', yieldQty:10, yieldUnit:'Raid Character Shards' },
-  { id:'mk1_accel_shards', cat:'shards', name:'Accelerated Character Shards', sub:'10 Shards', cost:200, curr:'mk1', icon:'assets/ROLO.PNG', itemIcon:'assets/ROLO.PNG', yieldQty:10, yieldUnit:'Accelerated Shards' },
-  { id:'mk1_ship_blueprints', cat:'shards', name:'Ship Blueprints', sub:'4 Blueprints', cost:440, curr:'mk1', icon:'assets/NEGOTIATOR.PNG', itemIcon:'assets/NEGOTIATOR.PNG', yieldQty:4, yieldUnit:'Ship Blueprints' },
-  { id:'get2_nego_blueprints', cat:'shards', name:'Negotiator Blueprints', sub:'5 Blueprints', cost:1350, curr:'get2', icon:'assets/NEGOTIATOR.PNG', itemIcon:'assets/NEGOTIATOR.PNG', yieldQty:5, yieldUnit:'Negotiator Blueprints' },
-  { id:'get2_malev_blueprints', cat:'shards', name:'Malevolence Blueprints', sub:'5 Blueprints', cost:1350, curr:'get2', icon:'assets/MALEVOLENCE.PNG', itemIcon:'assets/MALEVOLENCE.PNG', yieldQty:5, yieldUnit:'Malevolence Blueprints' },
-  { id:'get3_kam_shards', cat:'shards', name:'Ki-Adi-Mundi (KAM) Shards', sub:'5 Shards', cost:2125, curr:'get3', icon:'assets/KAM.PNG', itemIcon:'assets/KAM.PNG', yieldQty:5, yieldUnit:'KAM Shards' },
+// SHARDS & BLUEPRINTS
+{ id:'mk2_hoda_shards', cat:'shards', name:'Hermit Yoda Shards', sub:'5 Shards', cost:1250, curr:'mk2', icon:'assets/HERMITYODA.PNG', itemIcon:'assets/HERMITYODA.PNG', yieldQty:5, yieldUnit:'Hermit Yoda Shards' },
+{ id:'mk2_wampa_shards', cat:'shards', name:'Wampa Shards', sub:'5 Shards', cost:1250, curr:'mk2', icon:'assets/WAMPA.PNG', itemIcon:'assets/WAMPA.PNG', yieldQty:5, yieldUnit:'Wampa Shards' },
+{ id:'mk2_rolo_shards', cat:'shards', name:'Rebel Officer Leia Organa Shards', sub:'5 Shards', cost:1250, curr:'mk2', icon:'assets/ROLO.PNG', itemIcon:'assets/ROLO.PNG', yieldQty:5, yieldUnit:'ROLO Shards' },
+{ id:'mk2_ipd_shards', cat:'shards', name:'Imperial Probe Droid Shards', sub:'5 Shards', cost:1250, curr:'mk2', icon:'assets/IPD.PNG', itemIcon:'assets/IPD.PNG', yieldQty:5, yieldUnit:'IPD Shards' },
+{ id:'mk2_gas_shards', cat:'shards', name:'General Skywalker Shards', sub:'5 Shards', cost:1750, curr:'mk2', icon:'assets/GAS.PNG', itemIcon:'assets/GAS.PNG', yieldQty:5, yieldUnit:'GAS Shards' },
+{ id:'mk2_malak_shards', cat:'shards', name:'Darth Malak Shards', sub:'5 Shards', cost:1750, curr:'mk2', icon:'assets/MALAK.PNG', itemIcon:'assets/MALAK.PNG', yieldQty:5, yieldUnit:'Malak Shards' },
+{ id:'mk1_raid_shards', cat:'shards', name:'Raid Character Shards', sub:'10 Shards', cost:700, curr:'mk1', icon:'assets/HERMITYODA.PNG', itemIcon:'assets/HERMITYODA.PNG', yieldQty:10, yieldUnit:'Raid Character Shards' },
+{ id:'mk1_accel_shards', cat:'shards', name:'Accelerated Character Shards', sub:'10 Shards', cost:200, curr:'mk1', icon:'assets/ROLO.PNG', itemIcon:'assets/ROLO.PNG', yieldQty:10, yieldUnit:'Accelerated Shards' },
+{ id:'mk1_ship_blueprints', cat:'shards', name:'Ship Blueprints', sub:'4 Blueprints', cost:440, curr:'mk1', icon:'assets/NEGOTIATOR.PNG', itemIcon:'assets/NEGOTIATOR.PNG', yieldQty:4, yieldUnit:'Ship Blueprints' },
+{ id:'get2_nego_blueprints', cat:'shards', name:'Negotiator Blueprints', sub:'5 Blueprints', cost:1350, curr:'get2', icon:'assets/NEGOTIATOR.PNG', itemIcon:'assets/NEGOTIATOR.PNG', yieldQty:5, yieldUnit:'Negotiator Blueprints' },
+{ id:'get2_malev_blueprints', cat:'shards', name:'Malevolence Blueprints', sub:'5 Blueprints', cost:1350, curr:'get2', icon:'assets/MALEVOLENCE.PNG', itemIcon:'assets/MALEVOLENCE.PNG', yieldQty:5, yieldUnit:'Malevolence Blueprints' },
+{ id:'get3_kam_shards', cat:'shards', name:'Ki-Adi-Mundi (KAM) Shards', sub:'5 Shards', cost:2125, curr:'get3', icon:'assets/KAM.PNG', itemIcon:'assets/KAM.PNG', yieldQty:5, yieldUnit:'KAM Shards' },
 
-  // ─── GEAR ───
-  { id:'mk2_g12_purple', cat:'gear', name:'Purple Gear 12 Pieces', sub:'5 Pieces', cost:475, curr:'mk2', icon:null, itemIcon:null, yieldQty:5, yieldUnit:'G12 Purple Pieces' },
-  { id:'mk2_g12_left_prim', cat:'gear', name:'Primary Left Side G12 (e.g. Bayonets)', sub:'5 Pieces', cost:425, curr:'mk2', icon:null, itemIcon:null, yieldQty:5, yieldUnit:'G12 Left Primary Pieces' },
-  { id:'mk2_g12_right_prim', cat:'gear', name:'Primary Right Side G12 (e.g. Stun Guns)', sub:'5 Pieces', cost:335, curr:'mk2', icon:null, itemIcon:null, yieldQty:5, yieldUnit:'G12 Right Primary Pieces' },
-  { id:'mk2_g12_right_sec', cat:'gear', name:'Secondary Right Side G12 (e.g. Sensor Arrays)', sub:'5 Pieces', cost:285, curr:'mk2', icon:null, itemIcon:null, yieldQty:5, yieldUnit:'G12 Right Secondary Pieces' },
-  { id:'get2_kyro', cat:'gear', name:'Kyrotech Salvage (GET 2)', sub:'5 Pieces', cost:325, curr:'get2', icon:null, itemIcon:null, yieldQty:5, yieldUnit:'Kyrotech Salvage' },
-  { id:'get2_g12', cat:'gear', name:'G12 Gear Salvage (GET 2)', sub:'4 Pieces', cost:400, curr:'get2', icon:null, itemIcon:null, yieldQty:4, yieldUnit:'G12 Gear Salvage' },
-  { id:'get3_kyro', cat:'gear', name:'Kyrotech Salvage (GET 3)', sub:'5 Pieces', cost:300, curr:'get3', icon:null, itemIcon:null, yieldQty:5, yieldUnit:'Kyrotech Salvage' },
+// GEAR
+{ id:'mk2_g12_purple', cat:'gear', name:'Purple Gear 12 Pieces', sub:'5 Pieces', cost:475, curr:'mk2', icon:null, itemIcon:null, yieldQty:5, yieldUnit:'G12 Purple Pieces' },
+{ id:'mk2_g12_left_prim', cat:'gear', name:'Primary Left Side G12 (e.g. Bayonets)', sub:'5 Pieces', cost:425, curr:'mk2', icon:null, itemIcon:null, yieldQty:5, yieldUnit:'G12 Left Primary Pieces' },
+{ id:'mk2_g12_right_prim', cat:'gear', name:'Primary Right Side G12 (e.g. Stun Guns)', sub:'5 Pieces', cost:335, curr:'mk2', icon:null, itemIcon:null, yieldQty:5, yieldUnit:'G12 Right Primary Pieces' },
+{ id:'mk2_g12_right_sec', cat:'gear', name:'Secondary Right Side G12 (e.g. Sensor Arrays)', sub:'5 Pieces', cost:285, curr:'mk2', icon:null, itemIcon:null, yieldQty:5, yieldUnit:'G12 Right Secondary Pieces' },
+{ id:'get2_kyro', cat:'gear', name:'Kyrotech Salvage (GET 2)', sub:'5 Pieces', cost:325, curr:'get2', icon:null, itemIcon:null, yieldQty:5, yieldUnit:'Kyrotech Salvage' },
+{ id:'get2_g12', cat:'gear', name:'G12 Gear Salvage (GET 2)', sub:'4 Pieces', cost:400, curr:'get2', icon:null, itemIcon:null, yieldQty:4, yieldUnit:'G12 Gear Salvage' },
+{ id:'get3_kyro', cat:'gear', name:'Kyrotech Salvage (GET 3)', sub:'5 Pieces', cost:300, curr:'get3', icon:null, itemIcon:null, yieldQty:5, yieldUnit:'Kyrotech Salvage' },
 
-  // ─── RELIC MATERIALS ───
-  { id:'mk3_gyrda', cat:'relics', name:'Gyrda Keypads', sub:'2 Keypads', cost:1170, curr:'mk3', icon:'assets/GYRDA.PNG', itemIcon:'assets/GYRDA.PNG', yieldQty:2, yieldUnit:'Gyrda Keypads' },
-  { id:'mk3_aero', cat:'relics', name:'Aeromagnifiers', sub:'2 Aeromagnifiers', cost:400, curr:'mk3', icon:'assets/AERO.PNG', itemIcon:'assets/AERO.PNG', yieldQty:2, yieldUnit:'Aeromagnifiers' },
-  { id:'mk3_impulse', cat:'relics', name:'Impulse Detectors', sub:'2 Impulse Detectors', cost:530, curr:'mk3', icon:'assets/IMPULSE.PNG', itemIcon:'assets/IMPULSE.PNG', yieldQty:2, yieldUnit:'Impulse Detectors' },
-  { id:'mk2_zinbiddle', cat:'relics', name:'Zinbiddle Cards', sub:'4 Cards', cost:400, curr:'mk2', icon:'assets/ZINBIDDLE.PNG', itemIcon:'assets/ZINBIDDLE.PNG', yieldQty:4, yieldUnit:'Zinbiddle Cards' },
-  { id:'mk2_electrium', cat:'relics', name:'Electrium Conductors', sub:'4 Conductors', cost:300, curr:'mk2', icon:'assets/ELECTRIUM.PNG', itemIcon:'assets/ELECTRIUM.PNG', yieldQty:4, yieldUnit:'Electrium Conductors' },
-  { id:'mk1_aurodium', cat:'relics', name:'Aurodium Heatsinks', sub:'10 Heatsinks', cost:550, curr:'mk1', icon:'assets/AURODIUM.PNG', itemIcon:'assets/AURODIUM.PNG', yieldQty:10, yieldUnit:'Aurodium Heatsinks' },
-  { id:'mk1_chromium', cat:'relics', name:'Chromium Transistors', sub:'10 Transistors', cost:500, curr:'mk1', icon:'assets/CHROMIUM.PNG', itemIcon:'assets/CHROMIUM.PNG', yieldQty:10, yieldUnit:'Chromium Transistors' },
-  { id:'mk1_bronzium', cat:'relics', name:'Bronzium Wiring', sub:'10 Wirings', cost:400, curr:'mk1', icon:'assets/BRONZIUM.PNG', itemIcon:'assets/BRONZIUM.PNG', yieldQty:10, yieldUnit:'Bronzium Wiring' },
-  { id:'mk1_carbonite', cat:'relics', name:'Carbonite Circuit Boards', sub:'10 Circuit Boards', cost:350, curr:'mk1', icon:'assets/CARBONITE.PNG', itemIcon:'assets/CARBONITE.PNG', yieldQty:10, yieldUnit:'Carbonite Circuit Boards' },
-  { id:'get3_electrium', cat:'relics', name:'Electrium Conductors (GET 3)', sub:'2 Conductors', cost:720, curr:'get3', icon:'assets/ELECTRIUM.PNG', itemIcon:'assets/ELECTRIUM.PNG', yieldQty:2, yieldUnit:'Electrium Conductors' },
-  { id:'get3_zinbiddle', cat:'relics', name:'Zinbiddle Cards (GET 3)', sub:'2 Cards', cost:850, curr:'get3', icon:'assets/ZINBIDDLE.PNG', itemIcon:'assets/ZINBIDDLE.PNG', yieldQty:2, yieldUnit:'Zinbiddle Cards' },
-  { id:'get3_impulse', cat:'relics', name:'Impulse Detectors (GET 3)', sub:'2 Impulse Detectors', cost:1230, curr:'get3', icon:'assets/IMPULSE.PNG', itemIcon:'assets/IMPULSE.PNG', yieldQty:2, yieldUnit:'Impulse Detectors' },
-  { id:'get3_gyrda', cat:'relics', name:'Gyrda Keypads (GET 3)', sub:'1 Keypad', cost:1200, curr:'get3', icon:'assets/GYRDA.PNG', itemIcon:'assets/GYRDA.PNG', yieldQty:1, yieldUnit:'Gyrda Keypads' },
+// RELIC MATERIALS
+{ id:'mk3_gyrda', cat:'relics', name:'Gyrda Keypads', sub:'2 Keypads', cost:1170, curr:'mk3', icon:'assets/GYRDA.PNG', itemIcon:'assets/GYRDA.PNG', yieldQty:2, yieldUnit:'Gyrda Keypads' },
+{ id:'mk3_aero', cat:'relics', name:'Aeromagnifiers', sub:'2 Aeromagnifiers', cost:400, curr:'mk3', icon:'assets/AERO.PNG', itemIcon:'assets/AERO.PNG', yieldQty:2, yieldUnit:'Aeromagnifiers' },
+{ id:'mk3_impulse', cat:'relics', name:'Impulse Detectors', sub:'2 Impulse Detectors', cost:530, curr:'mk3', icon:'assets/IMPULSE.PNG', itemIcon:'assets/IMPULSE.PNG', yieldQty:2, yieldUnit:'Impulse Detectors' },
+{ id:'mk2_zinbiddle', cat:'relics', name:'Zinbiddle Cards', sub:'4 Cards', cost:400, curr:'mk2', icon:'assets/ZINBIDDLE.PNG', itemIcon:'assets/ZINBIDDLE.PNG', yieldQty:4, yieldUnit:'Zinbiddle Cards' },
+{ id:'mk2_electrium', cat:'relics', name:'Electrium Conductors', sub:'4 Conductors', cost:300, curr:'mk2', icon:'assets/ELECTRIUM.PNG', itemIcon:'assets/ELECTRIUM.PNG', yieldQty:4, yieldUnit:'Electrium Conductors' },
+{ id:'mk1_aurodium', cat:'relics', name:'Aurodium Heatsinks', sub:'10 Heatsinks', cost:550, curr:'mk1', icon:'assets/AURODIUM.PNG', itemIcon:'assets/AURODIUM.PNG', yieldQty:10, yieldUnit:'Aurodium Heatsinks' },
+{ id:'mk1_chromium', cat:'relics', name:'Chromium Transistors', sub:'10 Transistors', cost:500, curr:'mk1', icon:'assets/CHROMIUM.PNG', itemIcon:'assets/CHROMIUM.PNG', yieldQty:10, yieldUnit:'Chromium Transistors' },
+{ id:'mk1_bronzium', cat:'relics', name:'Bronzium Wiring', sub:'10 Wirings', cost:400, curr:'mk1', icon:'assets/BRONZIUM.PNG', itemIcon:'assets/BRONZIUM.PNG', yieldQty:10, yieldUnit:'Bronzium Wiring' },
+{ id:'mk1_carbonite', cat:'relics', name:'Carbonite Circuit Boards', sub:'10 Circuit Boards', cost:350, curr:'mk1', icon:'assets/CARBONITE.PNG', itemIcon:'assets/CARBONITE.PNG', yieldQty:10, yieldUnit:'Carbonite Circuit Boards' },
+{ id:'get3_electrium', cat:'relics', name:'Electrium Conductors (GET 3)', sub:'2 Conductors', cost:720, curr:'get3', icon:'assets/ELECTRIUM.PNG', itemIcon:'assets/ELECTRIUM.PNG', yieldQty:2, yieldUnit:'Electrium Conductors' },
+{ id:'get3_zinbiddle', cat:'relics', name:'Zinbiddle Cards (GET 3)', sub:'2 Cards', cost:850, curr:'get3', icon:'assets/ZINBIDDLE.PNG', itemIcon:'assets/ZINBIDDLE.PNG', yieldQty:2, yieldUnit:'Zinbiddle Cards' },
+{ id:'get3_impulse', cat:'relics', name:'Impulse Detectors (GET 3)', sub:'2 Impulse Detectors', cost:1230, curr:'get3', icon:'assets/IMPULSE.PNG', itemIcon:'assets/IMPULSE.PNG', yieldQty:2, yieldUnit:'Impulse Detectors' },
+{ id:'get3_gyrda', cat:'relics', name:'Gyrda Keypads (GET 3)', sub:'1 Keypad', cost:1200, curr:'get3', icon:'assets/GYRDA.PNG', itemIcon:'assets/GYRDA.PNG', yieldQty:1, yieldUnit:'Gyrda Keypads' },
 
-  // ─── SIGNAL DATA ───
-  { id:'mk3_corrupted_signal', cat:'signal', name:'Corrupted Signal Data', sub:'1 Signal Data', cost:750, curr:'mk3', icon:'assets/CORRUPTED.png', itemIcon:'assets/CORRUPTED.png', yieldQty:1, yieldUnit:'Corrupted' },
-  { id:'get2_grey_signal', cat:'signal', name:'Fragmented (Grey) Signal Data', sub:'20 Signal Data', cost:1600, curr:'get2', icon:'assets/FRAGMENTED.png', itemIcon:'assets/FRAGMENTED.png', yieldQty:20, yieldUnit:'Fragmented' },
-  { id:'get3_green_signal', cat:'signal', name:'Incomplete (Green) Signal Data', sub:'20 Signal Data', cost:2000, curr:'get3', icon:'assets/INCOMPLETE.png', itemIcon:'assets/INCOMPLETE.png', yieldQty:20, yieldUnit:'Incomplete' },
+// SIGNAL DATA
+{ id:'mk3_corrupted_signal', cat:'signal', name:'Corrupted Signal Data', sub:'1 Signal Data', cost:750, curr:'mk3', icon:'assets/CORRUPTED.png', itemIcon:'assets/CORRUPTED.png', yieldQty:1, yieldUnit:'Corrupted' },
+{ id:'get2_grey_signal', cat:'signal', name:'Fragmented (Grey) Signal Data', sub:'20 Signal Data', cost:1600, curr:'get2', icon:'assets/FRAGMENTED.png', itemIcon:'assets/FRAGMENTED.png', yieldQty:20, yieldUnit:'Fragmented' },
+{ id:'get3_green_signal', cat:'signal', name:'Incomplete (Green) Signal Data', sub:'20 Signal Data', cost:2000, curr:'get3', icon:'assets/INCOMPLETE.png', itemIcon:'assets/INCOMPLETE.png', yieldQty:20, yieldUnit:'Incomplete' },
 
-  // ─── ABILITY MATERIALS & MODS ───
-  { id:'mk3_zetas', cat:'ability', name:'Zeta Ability Materials', sub:'2 Zetas', cost:2350, curr:'mk3', icon:'assets/ZETA.PNG', itemIcon:'assets/ZETA.PNG', yieldQty:2, yieldUnit:'Zeta Ability Materials' },
-  { id:'mk1_omegas', cat:'ability', name:'Omega Ability Materials', sub:'5 Omegas', cost:825, curr:'mk1', icon:'assets/OMEGA.PNG', itemIcon:'assets/OMEGA.PNG', yieldQty:5, yieldUnit:'Omega Ability Materials'},
-  { id:'mk1_mod_bonding', cat:'ability', name:'Bonding Pins', sub:'100 Materials', cost:1000, curr:'mk1', icon:'assets/BONDINGPINS.PNG', itemIcon:'assets/BONDINGPINS.PNG', yieldQty:100, yieldUnit:'Bonding Pins' },
-  { id:'mk1_mod_coils', cat:'ability', name:'Fusion Coils', sub:'100 Materials', cost:1000, curr:'mk1', icon:'assets/FUSIONCOILS.PNG', itemIcon:'assets/FUSIONCOILS.PNG', yieldQty:100, yieldUnit:'Fusion Coils' },
-  { id:'mk1_mod_disks', cat:'ability', name:'Fusion Disks', sub:'100 Materials', cost:1000, curr:'mk1', icon:'assets/FUSIONDISKS.PNG', itemIcon:'assets/FUSIONDISKS.PNG', yieldQty:100, yieldUnit:'Fusion Disks' },
-  { id:'mk1_mod_chips', cat:'ability', name:'Control Chips', sub:'100 Materials', cost:1000, curr:'mk1', icon:'assets/CONTROLCHIPS.PNG', itemIcon:'assets/CONTROLCHIPS.PNG', yieldQty:100, yieldUnit:'Control Chips' },
-  { id:'get3_micro_attenuators', cat:'ability', name:'Micro Attenuators', sub:'5 Attenuators', cost:125, curr:'get3', icon:'assets/MICROATTENUATOR.PNG', itemIcon:'assets/MICROATTENUATOR.PNG', yieldQty:5, yieldUnit:'Micro Attenuators' }
+// ABILITY MATERIALS & MODS
+{ id:'mk3_zetas', cat:'ability', name:'Zeta Ability Materials', sub:'2 Zetas', cost:2350, curr:'mk3', icon:'assets/ZETA.PNG', itemIcon:'assets/ZETA.PNG', yieldQty:2, yieldUnit:'Zeta Ability Materials' },
+{ id:'mk1_omegas', cat:'ability', name:'Omega Ability Materials', sub:'5 Omegas', cost:825, curr:'mk1', icon:'assets/OMEGA.PNG', itemIcon:'assets/OMEGA.PNG', yieldQty:5, yieldUnit:'Omega Ability Materials'},
+{ id:'mk1_mod_bonding', cat:'ability', name:'Bonding Pins', sub:'100 Materials', cost:1000, curr:'mk1', icon:'assets/BONDINGPINS.PNG', itemIcon:'assets/BONDINGPINS.PNG', yieldQty:100, yieldUnit:'Bonding Pins' },
+{ id:'mk1_mod_coils', cat:'ability', name:'Fusion Coils', sub:'100 Materials', cost:1000, curr:'mk1', icon:'assets/FUSIONCOILS.PNG', itemIcon:'assets/FUSIONCOILS.PNG', yieldQty:100, yieldUnit:'Fusion Coils' },
+{ id:'mk1_mod_disks', cat:'ability', name:'Fusion Disks', sub:'100 Materials', cost:1000, curr:'mk1', icon:'assets/FUSIONDISKS.PNG', itemIcon:'assets/FUSIONDISKS.PNG', yieldQty:100, yieldUnit:'Fusion Disks' },
+{ id:'mk1_mod_chips', cat:'ability', name:'Control Chips', sub:'100 Materials', cost:1000, curr:'mk1', icon:'assets/CONTROLCHIPS.PNG', itemIcon:'assets/CONTROLCHIPS.PNG', yieldQty:100, yieldUnit:'Control Chips' },
+{ id:'get3_micro_attenuators', cat:'ability', name:'Micro Attenuators', sub:'5 Attenuators', cost:125, curr:'get3', icon:'assets/MICROATTENUATOR.PNG', itemIcon:'assets/MICROATTENUATOR.PNG', yieldQty:5, yieldUnit:'Micro Attenuators' }
 ];
 
 // ═══════════════════════════════════════════════════════
@@ -781,12 +897,12 @@ const STORE_ITEMS = [
 // ═══════════════════════════════════════════════════════
 const LOCAL_STORAGE_KEY = 'swgoh_shipments_v3';
 const FIREBASE_CONFIG = window.FIREBASE_CONFIG || {
-  apiKey: 'AIzaSyBixCM0BOfOeD37ybGA0M1_6-XT3x6MVFk',
-  authDomain: 'noteproject-4c78d.firebaseapp.com',
-  projectId: 'noteproject-4c78d',
-  storageBucket: 'noteproject-4c78d.firebasestorage.app',
-  messagingSenderId: '791609826482',
-  appId: '1:791609826482:web:6a7c2e4ed6c5147a623dab'
+apiKey: 'AIzaSyBixCM0BOfOeD37ybGA0M1_6-XT3x6MVFk',
+authDomain: 'noteproject-4c78d.firebaseapp.com',
+projectId: 'noteproject-4c78d',
+storageBucket: 'noteproject-4c78d.firebasestorage.app',
+messagingSenderId: '791609826482',
+appId: '1:791609826482:web:6a7c2e4ed6c5147a623dab'
 };
 
 let firebaseApp = null;
@@ -794,628 +910,745 @@ let firebaseAuth = null;
 let firebaseDb = null;
 let authUser = null;
 let authMode = 'signin';
+let searchQuery = '';
 
 let state = {
-  bank: { mk1: 0, mk2: 0, mk3: 0, get1: 0, get2: 0, get3: 0 },
-  raids: [
-    { boxId: 1, score: 0 },
-    { boxId: 1, score: 0 },
-    { boxId: 1, score: 0 }
-  ],
-  purchases: {},
-  customMk1Allocation: 0
+bank: { mk1: 0, mk2: 0, mk3: 0, get1: 0, get2: 0, get3: 0 },
+raids: [
+{ boxId: 1, score: 0 },
+{ boxId: 1, score: 0 },
+{ boxId: 1, score: 0 }
+],
+purchases: {},
+customMk1Allocation: 0
 };
 
-// Reads GET 2 & GET 3 directly from Relic Planner's local storage schema
+// Reads GET 2 & GET 3 values from Relic Planner's local storage schema
 function getRelicPlannerGetValues() {
-  try {
-    const raw = localStorage.getItem('relic_planner_v4');
-    if(!raw) return { get2: 0, get3: 0 };
-    const p = JSON.parse(raw);
-    
-    // GET 2
-    const ROTE_TABLE = { 24:6000,23:5850,22:5675,21:5500,20:5325,19:5150,18:4975,17:4800,16:4625,15:4450,14:4275,13:4100,12:3925,11:3750,10:3575,9:3400,8:3225,7:3050,6:2875,5:2700,4:2525,3:2350,2:2175,1:2000 };
-    let roteStars = p.roteStars || 24;
-    let roteG2 = (ROTE_TABLE[roteStars] || 0) * 2;
-    let missionsG2 = 0;
-    if(p.planetCompletions) {
-      for(const key of ['BRACCA','ZEFFO','TATOOINE','KASHYYYK','DATHOMIR']) {
-        const c = Math.min(50, Number(p.planetCompletions[key] || 0));
-        missionsG2 += c * 50 * 2;
-      }
-    }
-    let twG2 = 0;
-    if(p.guild) {
-      const r1 = p.guild.twOutcome1 === 'loss' ? 550 : (p.guild.twOutcome1 === 'win' ? 650 : 0);
-      const r2 = p.guild.twOutcome2 === 'loss' ? 550 : (p.guild.twOutcome2 === 'win' ? 650 : 0);
-      twG2 = r1 + r2;
-    }
+try {
+const raw = localStorage.getItem('relic_planner_v4');
+if(!raw) return { get2: 0, get3: 0 };
+const p = JSON.parse(raw);
 
-    // GET 3
-    let stars3 = Number(p.rote3Stars || 1);
-    let rote3PerTB = stars3 >= 1 ? 1000 + (stars3 - 1) * 150 : 0;
-    let roteG3 = rote3PerTB * 2;
-    
-    let missionsG3 = 0;
-    if(p.planet3Completions) {
-      const map = { CORELLIA:15, HAVEN:20, KESSEL:20, VANDOR:20 };
-      for(const key in map) {
-        const c = Math.min(50, Number(p.planet3Completions[key] || 0));
-        missionsG3 += c * map[key] * 2;
-      }
-    }
-    let bonusG3 = 0;
-    if (p.zeffoBox1) bonusG3 += 50;
-    if (p.zeffoBox2) bonusG3 += 300;
-    if (p.mandaloreBox1) bonusG3 += 175;
-    if (p.mandaloreBox2) bonusG3 += 350;
+// GET 2
+const ROTE_TABLE = { 24:6000,23:5850,22:5675,21:5500,20:5325,19:5150,18:4975,17:4800,16:4625,15:4450,14:4275,13:4100,12:3925,11:3750,10:3575,9:3400,8:3225,7:3050,6:2875,5:2700,4:2525,3:2350,2:2175,1:2000 };
+let roteStars = p.roteStars || 24;
+let roteG2 = (ROTE_TABLE[roteStars] || 0) * 2;
+let missionsG2 = 0;
+if(p.planetCompletions) {
+for(const key of ['BRACCA','ZEFFO','TATOOINE','KASHYYYK','DATHOMIR']) {
+const c = Math.min(50, Number(p.planetCompletions[key] || 0));
+missionsG2 += c * 50 * 2;
+}
+}
+let twG2 = 0;
+if(p.guild) {
+const r1 = p.guild.twOutcome1 === 'loss' ? 550 : (p.guild.twOutcome1 === 'win' ? 650 : 0);
+const r2 = p.guild.twOutcome2 === 'loss' ? 550 : (p.guild.twOutcome2 === 'win' ? 650 : 0);
+twG2 = r1 + r2;
+}
 
-    return {
-      get2: roteG2 + missionsG2 + twG2,
-      get3: roteG3 + missionsG3 + (bonusG3 * 2)
-    };
-  } catch(e) {
-    return { get2: 0, get3: 0 };
-  }
+// GET 3
+let stars3 = Number(p.rote3Stars || 1);
+let rote3PerTB = stars3 >= 1 ? 1000 + (stars3 - 1) * 150 : 0;
+let roteG3 = rote3PerTB * 2;
+
+let missionsG3 = 0;
+if(p.planet3Completions) {
+const map = { CORELLIA:15, HAVEN:20, KESSEL:20, VANDOR:20 };
+for(const key in map) {
+const c = Math.min(50, Number(p.planet3Completions[key] || 0));
+missionsG3 += c * map[key] * 2;
+}
+}
+let bonusG3 = 0;
+if (p.zeffoBox1) bonusG3 += 50;
+if (p.zeffoBox2) bonusG3 += 300;
+if (p.mandaloreBox1) bonusG3 += 175;
+if (p.mandaloreBox2) bonusG3 += 350;
+
+return {
+get2: roteG2 + missionsG2 + twG2,
+get3: roteG3 + missionsG3 + (bonusG3 * 2)
+};
+} catch(e) {
+return { get2: 0, get3: 0 };
+}
 }
 
 function saveState() {
-  try {
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(state));
-    setSaveStatus('Saved');
-    if (authUser && firebaseDb) scheduleRemoteSave();
-  } catch(e){}
+try {
+localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(state));
+setSaveStatus('Saved');
+if (authUser && firebaseDb) scheduleRemoteSave();
+} catch(e){}
 }
 
 function loadState() {
-  try {
-    const raw = localStorage.getItem(LOCAL_STORAGE_KEY);
-    if (raw) {
-      const p = JSON.parse(raw);
-      state = { ...state, ...p };
-    }
-  } catch(e){}
+try {
+const raw = localStorage.getItem(LOCAL_STORAGE_KEY);
+if (raw) {
+const p = JSON.parse(raw);
+state = { ...state, ...p };
+}
+} catch(e){}
 }
 
 function setSaveStatus(message, isError) {
-  const dot = document.getElementById('saveDot');
-  const txt = document.getElementById('saveText');
-  if (!dot || !txt) return;
-  dot.style.background = isError ? 'var(--red)' : 'var(--green)';
-  txt.textContent = message;
+const dot = document.getElementById('saveDot');
+const txt = document.getElementById('saveText');
+if (!dot || !txt) return;
+dot.style.background = isError ? 'var(--red)' : 'var(--cyan)';
+txt.textContent = message;
 }
 
 // ═══════════════════════════════════════════════════════
 // CALCULATIONS & BUDGET
 // ═══════════════════════════════════════════════════════
 function calcPersonalRewards(score) {
-  let mk1 = 0, mk2 = 0, mk3 = 0;
-  const numScore = parseScore(score);
-  for (const t of PERSONAL_TRACK) {
-    if (numScore >= t.score) {
-      mk1 += t.mk1;
-      mk2 += t.mk2;
-      mk3 += t.mk3;
-    }
-  }
-  return { mk1, mk2, mk3 };
+let mk1 = 0, mk2 = 0, mk3 = 0;
+const numScore = parseScore(score);
+for (const t of PERSONAL_TRACK) {
+if (numScore >= t.score) {
+mk1 += t.mk1;
+mk2 += t.mk2;
+mk3 += t.mk3;
+}
+}
+return { mk1, mk2, mk3 };
 }
 
 function calcTotalIncome() {
-  const syncedGET = getRelicPlannerGetValues();
+const syncedGET = getRelicPlannerGetValues();
 
-  let inc = {
-    mk1: parseScore(state.bank.mk1),
-    mk2: parseScore(state.bank.mk2),
-    mk3: parseScore(state.bank.mk3),
-    get1: parseScore(state.bank.get1),
-    get2: parseScore(state.bank.get2) + syncedGET.get2,
-    get3: parseScore(state.bank.get3) + syncedGET.get3
-  };
+let inc = {
+mk1: parseScore(state.bank.mk1),
+mk2: parseScore(state.bank.mk2),
+mk3: parseScore(state.bank.mk3),
+get1: parseScore(state.bank.get1),
+get2: parseScore(state.bank.get2) + syncedGET.get2,
+get3: parseScore(state.bank.get3) + syncedGET.get3
+};
 
-  for (const r of state.raids) {
-    const boxId = Number(r.boxId || 1);
-    const box = RAID_BOXES.find(b => b.id === boxId);
-    if (box) {
-      inc.mk1 += box.mk1;
-      inc.mk2 += box.mk2;
-      inc.mk3 += box.mk3;
-    }
-    const pers = calcPersonalRewards(r.score);
-    inc.mk1 += pers.mk1;
-    inc.mk2 += pers.mk2;
-    inc.mk3 += pers.mk3;
-  }
+for (const r of state.raids) {
+const boxId = Number(r.boxId || 1);
+const box = RAID_BOXES.find(b => b.id === boxId);
+if (box) {
+inc.mk1 += box.mk1;
+inc.mk2 += box.mk2;
+inc.mk3 += box.mk3;
+}
+const pers = calcPersonalRewards(r.score);
+inc.mk1 += pers.mk1;
+inc.mk2 += pers.mk2;
+inc.mk3 += pers.mk3;
+}
 
-  return inc;
+return inc;
 }
 
 function calcTotalSpent() {
-  let spent = { mk1: parseScore(state.customMk1Allocation), mk2: 0, mk3: 0, get1: 0, get2: 0, get3: 0 };
-  for (const item of STORE_ITEMS) {
-    const count = Number(state.purchases[item.id] || 0);
-    if (count > 0) {
-      spent[item.curr] += count * item.cost;
-    }
-  }
-  return spent;
+let spent = { mk1: parseScore(state.customMk1Allocation), mk2: 0, mk3: 0, get1: 0, get2: 0, get3: 0 };
+for (const item of STORE_ITEMS) {
+const count = Number(state.purchases[item.id] || 0);
+if (count > 0) {
+spent[item.curr] += count * item.cost;
+}
+}
+return spent;
 }
 
 // ═══════════════════════════════════════════════════════
 // UI RENDERERS
 // ═══════════════════════════════════════════════════════
 function getCurrencyTag(curr, costText, valSpanId) {
-  const map = {
-    mk1: { class: 'tag-raid1', name: 'Mk I', icon: 'assets/RAID1.png' },
-    mk2: { class: 'tag-raid2', name: 'Mk II', icon: 'assets/RAID2.png' },
-    mk3: { class: 'tag-raid3', name: 'Mk III', icon: 'assets/RAID3.png' },
-    get1: { class: 'tag-get1', name: 'GET 1', icon: 'assets/GET1.png' },
-    get2: { class: 'tag-get2', name: 'GET 2', icon: 'assets/GET2.png' },
-    get3: { class: 'tag-get3', name: 'GET 3', icon: 'assets/GET3.png' }
-  };
-  const conf = map[curr] || { class: 'tag-raid1', name: curr, icon: '' };
-  const valAttr = valSpanId ? `id="${valSpanId}"` : '';
-  return `<span class="curr-tag ${conf.class}"><img src="${conf.icon}" class="curr-icon" onerror="imgErrFallback(this)"> <span ${valAttr}>${costText}</span></span>`;
+const map = {
+mk1: { class: 'tag-raid1', name: 'Mk I', icon: 'assets/RAID1.png' },
+mk2: { class: 'tag-raid2', name: 'Mk II', icon: 'assets/RAID2.png' },
+mk3: { class: 'tag-raid3', name: 'Mk III', icon: 'assets/RAID3.png' },
+get1: { class: 'tag-get1', name: 'GET 1', icon: 'assets/GET1.png' },
+get2: { class: 'tag-get2', name: 'GET 2', icon: 'assets/GET2.png' },
+get3: { class: 'tag-get3', name: 'GET 3', icon: 'assets/GET3.png' }
+};
+const conf = map[curr] || { class: 'tag-raid1', name: curr, icon: '' };
+const valAttr = valSpanId ? `id="${valSpanId}"` : '';
+return `<span class="curr-tag ${conf.class}"><img src="${conf.icon}" class="curr-icon" onerror="imgErrFallback(this)"> <span ${valAttr}>${costText}</span></span>`;
 }
 
 function renderReferenceTables() {
-  const crateTbody = document.getElementById('crate-ref-tbody');
-  if (crateTbody) {
-    crateTbody.innerHTML = RAID_BOXES.map(b => `
-      <tr>
-        <td style="font-weight:700">Box ${b.id}</td>
-        <td style="font-family:var(--font-mono); color:var(--text2)">${b.score}</td>
-        <td>${getCurrencyTag('mk1', b.mk1.toLocaleString())}</td>
-        <td>${getCurrencyTag('mk2', b.mk2.toLocaleString())}</td>
-        <td>${getCurrencyTag('mk3', b.mk3.toLocaleString())}</td>
-      </tr>
-    `).join('');
-  }
+const crateTbody = document.getElementById('crate-ref-tbody');
+if (crateTbody) {
+crateTbody.innerHTML = RAID_BOXES.map(b => `
+<tr>
+<td style="font-weight:700">Box ${b.id}</td>
+<td style="font-family:var(--font-mono); color:var(--text2)">${b.score}</td>
+<td>${getCurrencyTag('mk1', b.mk1.toLocaleString())}</td>
+<td>${getCurrencyTag('mk2', b.mk2.toLocaleString())}</td>
+<td>${getCurrencyTag('mk3', b.mk3.toLocaleString())}</td>
+</tr>
+`).join('');
+}
 
-  const persTbody = document.getElementById('personal-ref-tbody');
-  if (persTbody) {
-    persTbody.innerHTML = PERSONAL_TRACK.map(t => `
-      <tr>
-        <td style="font-family:var(--font-mono); font-weight:600">${t.score.toLocaleString()} Score</td>
-        <td>${t.mk1 ? getCurrencyTag('mk1', '+' + t.mk1) : '<span style="color:var(--text3)">—</span>'}</td>
-        <td>${t.mk2 ? getCurrencyTag('mk2', '+' + t.mk2) : '<span style="color:var(--text3)">—</span>'}</td>
-        <td>${t.mk3 ? getCurrencyTag('mk3', '+' + t.mk3) : '<span style="color:var(--text3)">—</span>'}</td>
-      </tr>
-    `).join('');
-  }
+const persTbody = document.getElementById('personal-ref-tbody');
+if (persTbody) {
+persTbody.innerHTML = PERSONAL_TRACK.map(t => `
+<tr>
+<td style="font-family:var(--font-mono); font-weight:600">${t.score.toLocaleString()} Score</td>
+<td>${t.mk1 ? getCurrencyTag('mk1', '+' + t.mk1) : '<span style="color:var(--text3)">—</span>'}</td>
+<td>${t.mk2 ? getCurrencyTag('mk2', '+' + t.mk2) : '<span style="color:var(--text3)">—</span>'}</td>
+<td>${t.mk3 ? getCurrencyTag('mk3', '+' + t.mk3) : '<span style="color:var(--text3)">—</span>'}</td>
+</tr>
+`).join('');
+}
 }
 
 function renderRaids() {
-  const container = document.getElementById('raids-container');
-  if (!container) return;
+const container = document.getElementById('raids-container');
+if (!container) return;
 
-  container.innerHTML = state.raids.map((r, idx) => {
-    const pers = calcPersonalRewards(r.score);
-    const boxId = Number(r.boxId || 1);
-    const box = RAID_BOXES.find(b => b.id === boxId) || RAID_BOXES[0];
+const PRESET_SCORES = ['500k', '1M', '2.2M', '5.47M', '12.15M'];
 
-    return `
-      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:var(--radius); padding:12px 16px; margin-bottom:10px">
-        <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap">
-          <div style="font-weight:600; font-size:12px; color:var(--text)">Raid Run #${idx + 1}</div>
-          
-          <div style="display:flex; align-items:center; gap:12px">
-            <div style="display:flex; align-items:center; gap:6px">
-              <span style="font-size:11px; color:var(--text3)">Personal Score:</span>
-              <input type="text" value="${r.score}" style="width:110px; height:28px" id="raid-score-input-${idx}"
-                oninput="updateRaidScore(${idx}, this.value)">
-            </div>
+container.innerHTML = state.raids.map((r, idx) => {
+const pers = calcPersonalRewards(r.score);
+const boxId = Number(r.boxId || 1);
+const box = RAID_BOXES.find(b => b.id === boxId) || RAID_BOXES[0];
 
-            <div style="display:flex; align-items:center; gap:6px">
-              <span style="font-size:11px; color:var(--text3)">Guild Crate:</span>
-              <select style="height:28px" onchange="updateRaidBoxOverride(${idx}, this.value)">
-                ${RAID_BOXES.map(b => `<option value="${b.id}" ${boxId === b.id ? 'selected' : ''}>Box ${b.id} (${b.score})</option>`).join('')}
-              </select>
-            </div>
-          </div>
-        </div>
+return `
+<div style="background:var(--void2); border:1px solid var(--border); border-radius:var(--radius-lg); padding:14px 16px; margin-bottom:12px">
+<div style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap">
+<div style="font-weight:600; font-family:var(--font-display); font-size:14px; color:var(--text)">Raid Run #${idx + 1}</div>
 
-        <div id="raid-earned-${idx}" style="display:flex; gap:8px; margin-top:10px; align-items:center; font-size:11px; color:var(--text3); border-top:1px dashed var(--border); padding-top:8px">
-          <span>Run Earned:</span>
-          ${getCurrencyTag('mk1', '+' + (pers.mk1 + box.mk1).toLocaleString())}
-          ${getCurrencyTag('mk2', '+' + (pers.mk2 + box.mk2).toLocaleString())}
-          ${getCurrencyTag('mk3', '+' + (pers.mk3 + box.mk3).toLocaleString())}
-        </div>
-      </div>
-    `;
-  }).join('');
+<div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap">
+<div style="display:flex; align-items:center; gap:6px">
+<span style="font-size:11px; font-family:var(--font-mono); color:var(--text3)">Score:</span>
+<input type="text" value="${r.score}" style="width:100px; height:28px" id="raid-score-input-${idx}"
+oninput="updateRaidScore(${idx}, this.value)">
+</div>
 
-  document.getElementById('raid-count-display').textContent = state.raids.length;
+<div style="display:flex; align-items:center; gap:6px">
+<span style="font-size:11px; font-family:var(--font-mono); color:var(--text3)">Guild Crate:</span>
+<select style="height:28px" onchange="updateRaidBoxOverride(${idx}, this.value)">
+${RAID_BOXES.map(b => `<option value="${b.id}" ${boxId === b.id ? 'selected' : ''}>Box ${b.id} (${b.score})</option>`).join('')}
+</select>
+</div>
+</div>
+</div>
+
+<div style="display:flex; align-items:center; gap:6px; margin-top:8px">
+<span style="font-size:10px; font-family:var(--font-mono); color:var(--text3)">Quick Presets:</span>
+<div class="presets-pill-bar">
+${PRESET_SCORES.map(s => `<span class="preset-pill" onclick="setRaidPresetScore(${idx}, '${s}')">${s}</span>`).join('')}
+</div>
+</div>
+
+<div id="raid-earned-${idx}" style="display:flex; gap:8px; margin-top:10px; align-items:center; font-size:11px; color:var(--text2); border-top:1px dashed var(--border); padding-top:8px; flex-wrap:wrap">
+<span style="font-family:var(--font-mono)">Run Yield:</span>
+${getCurrencyTag('mk1', '+' + (pers.mk1 + box.mk1).toLocaleString())}
+${getCurrencyTag('mk2', '+' + (pers.mk2 + box.mk2).toLocaleString())}
+${getCurrencyTag('mk3', '+' + (pers.mk3 + box.mk3).toLocaleString())}
+</div>
+</div>
+`;
+}).join('');
+
+document.getElementById('raid-count-display').textContent = state.raids.length;
+}
+
+function setRaidPresetScore(idx, presetStr) {
+const input = document.getElementById(`raid-score-input-${idx}`);
+if (input) input.value = presetStr;
+updateRaidScore(idx, presetStr);
 }
 
 function renderStoreCategory(catId, containerId) {
-  const container = document.getElementById(containerId);
-  if (!container) return;
+const container = document.getElementById(containerId);
+if (!container) return;
 
-  const items = STORE_ITEMS.filter(i => i.cat === catId);
-  
-  let html = items.map(item => {
-    const qty = Number(state.purchases[item.id] || 0);
-    const isOverLimit = item.maxMonthly && qty > item.maxMonthly;
+const q = searchQuery.toLowerCase().trim();
+let items = STORE_ITEMS.filter(i => i.cat === catId);
 
-    return `
-      <div class="store-item-row" id="row-${item.id}" style="${isOverLimit ? 'border-color: rgba(239, 68, 68, 0.4);' : ''}">
-        <div>
-          <div class="store-item-title">
-            ${item.itemIcon ? `<img src="${item.itemIcon}" class="item-icon" onerror="imgErrFallback(this)">` : ''}
-            <span>${item.name}</span>
-          </div>
-          <div class="store-item-sub">
-            ${item.sub} · ${getCurrencyTag(item.curr, item.cost + ' / purchase')}
-            ${item.limitText ? `<span class="curr-tag tag-get1" style="margin-left:6px">${item.limitText}</span>` : ''}
-            ${isOverLimit ? `<span class="curr-tag tag-raid3" style="margin-left:6px">Limit Exceeded: Max ${item.maxMonthly}/mo</span>` : ''}
-          </div>
-        </div>
+if (q) {
+items = items.filter(i => i.name.toLowerCase().includes(q) || i.curr.toLowerCase().includes(q) || i.yieldUnit.toLowerCase().includes(q));
+}
 
-        <div class="store-qty-ctrl">
-          <button class="btn btn-ghost btn-sm" style="width:24px; padding:0" onclick="adjustPurchase('${item.id}', -1)">−</button>
-          <input type="text" inputmode="numeric" pattern="[0-9]*" value="${qty}" style="width:48px; text-align:center; height:28px"
-            oninput="updatePurchase('${item.id}', this.value)">
-          <button class="btn btn-ghost btn-sm" style="width:24px; padding:0" onclick="adjustPurchase('${item.id}', 1)">+</button>
-        </div>
+if (items.length === 0) {
+container.innerHTML = `<div style="padding:20px; text-align:center; color:var(--text3); font-size:12px">No store items match your search.</div>`;
+return;
+}
 
-        <div style="text-align:right">
-          ${getCurrencyTag(item.curr, (qty * item.cost).toLocaleString(), `cost-val-${item.id}`)}
-        </div>
+let html = items.map(item => {
+const qty = Number(state.purchases[item.id] || 0);
 
-        <div style="text-align:right; font-size:11px; color:var(--text2); font-family:var(--font-mono)" id="yield-${item.id}">
-          Total: ${(qty * item.yieldQty).toLocaleString()}
-        </div>
-      </div>
-    `;
-  }).join('');
+return `
+<div class="store-item-row ${qty > 0 ? 'active-buy' : ''}" id="row-${item.id}">
+<div>
+<div class="store-item-title">
+${item.itemIcon ? `<img src="${item.itemIcon}" class="item-icon" onerror="imgErrFallback(this)">` : ''}
+<span>${item.name}</span>
+</div>
+<div class="store-item-sub">
+<span>${item.sub}</span>
+<span>·</span>
+${getCurrencyTag(item.curr, item.cost + ' / buy')}
+</div>
+</div>
 
-  if (catId === 'ability') {
-    html += `
-      <div class="store-item-row" style="margin-top:16px; border-top:1px dashed var(--border); padding-top:14px">
-        <div>
-          <div class="store-item-title">Other Items / Reserved Budget</div>
-          <div class="store-item-sub">Reserve Mk I tokens for unspecified gear or store items</div>
-        </div>
-        <div></div>
-        <div style="display:flex; align-items:center; gap:6px; justify-content:flex-end">
-          <input type="text" inputmode="numeric" pattern="[0-9]*" value="${state.customMk1Allocation || 0}" style="width:90px; text-align:right; height:28px"
-            oninput="updateCustomAllocation(this.value)">
-        </div>
-        <div style="text-align:right">${getCurrencyTag('mk1', (state.customMk1Allocation || 0).toLocaleString())}</div>
-      </div>
-    `;
-  }
+<div class="store-qty-ctrl">
+<button class="btn btn-ghost btn-sm" style="width:26px; padding:0" onclick="adjustPurchase('${item.id}', -1)">−</button>
+<input type="text" inputmode="numeric" value="${qty}" style="width:48px; text-align:center; height:28px"
+oninput="updatePurchase('${item.id}', this.value)">
+<button class="btn btn-ghost btn-sm" style="width:26px; padding:0" onclick="adjustPurchase('${item.id}', 1)">+</button>
+<button class="btn btn-ghost btn-sm" style="height:28px; padding:0 6px; font-size:10px; color:var(--text3)" onclick="adjustPurchase('${item.id}', 5)">+5</button>
+</div>
 
-  container.innerHTML = html;
+<div style="text-align:right">
+${getCurrencyTag(item.curr, (qty * item.cost).toLocaleString(), `cost-val-${item.id}`)}
+</div>
+
+<div style="text-align:right; font-size:11px; color:var(--text2); font-family:var(--font-mono)" id="yield-${item.id}">
+Total: ${(qty * item.yieldQty).toLocaleString()}
+</div>
+</div>
+`;
+}).join('');
+
+if (catId === 'ability') {
+html += `
+<div class="store-item-row" style="margin-top:16px; border-top:1px dashed var(--border); padding-top:14px">
+<div>
+<div class="store-item-title">Other Items / Custom Reserved Budget</div>
+<div class="store-item-sub">Reserve Mk I tokens for unspecified gear or store items</div>
+</div>
+<div></div>
+<div style="display:flex; align-items:center; gap:6px; justify-content:flex-end">
+<input type="text" inputmode="numeric" value="${state.customMk1Allocation || 0}" style="width:90px; text-align:right; height:28px"
+oninput="updateCustomAllocation(this.value)">
+</div>
+<div style="text-align:right">${getCurrencyTag('mk1', (state.customMk1Allocation || 0).toLocaleString())}</div>
+</div>
+`;
+}
+
+container.innerHTML = html;
 }
 
 function renderAllStores() {
-  renderStoreCategory('shards', 'shards-store-list');
-  renderStoreCategory('gear', 'gear-store-list');
-  renderStoreCategory('relics', 'relics-store-list');
-  renderStoreCategory('signal', 'signal-store-list');
-  renderStoreCategory('ability', 'ability-store-list');
+renderStoreCategory('shards', 'shards-store-list');
+renderStoreCategory('gear', 'gear-store-list');
+renderStoreCategory('relics', 'relics-store-list');
+renderStoreCategory('signal', 'signal-store-list');
+renderStoreCategory('ability', 'ability-store-list');
+updateCategoryBadges();
+}
+
+function updateCategoryBadges() {
+const cats = ['shards', 'gear', 'relics', 'signal', 'ability'];
+cats.forEach(c => {
+const items = STORE_ITEMS.filter(i => i.cat === c);
+let count = 0;
+items.forEach(i => {
+if (Number(state.purchases[i.id] || 0) > 0) count++;
+});
+const badge = document.getElementById(`badge-${c}`);
+if (badge) {
+badge.textContent = count;
+badge.style.display = count > 0 ? 'inline-block' : 'none';
+}
+});
 }
 
 function updateSummary() {
-  const inc = calcTotalIncome();
-  const spent = calcTotalSpent();
+const inc = calcTotalIncome();
+const spent = calcTotalSpent();
 
-  const syncedGET = getRelicPlannerGetValues();
-  const syncGet2Text = document.getElementById('synced-get2-text');
-  const syncGet3Text = document.getElementById('synced-get3-text');
-  if (syncGet2Text) syncGet2Text.textContent = `${syncedGET.get2.toLocaleString()} GET 2`;
-  if (syncGet3Text) syncGet3Text.textContent = `${syncedGET.get3.toLocaleString()} GET 3`;
+const syncedGET = getRelicPlannerGetValues();
+const syncGet2Text = document.getElementById('synced-get2-text');
+const syncGet3Text = document.getElementById('synced-get3-text');
+if (syncGet2Text) syncGet2Text.textContent = `${syncedGET.get2.toLocaleString()} GET 2`;
+if (syncGet3Text) syncGet3Text.textContent = `${syncedGET.get3.toLocaleString()} GET 3`;
 
-  for (const c of ['mk1', 'mk2', 'mk3', 'get1', 'get2', 'get3']) {
-    const rem = inc[c] - spent[c];
-    const el = document.getElementById(`b-${c}`);
-    if (el) {
-      if (rem < 0) {
-        el.innerHTML = `<span class="neg-budget">Short: ${Math.abs(rem).toLocaleString()}</span> <span style="font-size:10px; color:var(--text3); font-weight:normal">(${spent[c].toLocaleString()} / ${inc[c].toLocaleString()})</span>`;
-      } else {
-        el.textContent = `${rem.toLocaleString()} / ${inc[c].toLocaleString()}`;
-        el.classList.remove('neg-budget');
-      }
-    }
-  }
+for (const c of ['mk1', 'mk2', 'mk3', 'get1', 'get2', 'get3']) {
+const rem = inc[c] - spent[c];
+const el = document.getElementById(`b-${c}`);
+const bar = document.getElementById(`bar-${c}`);
 
-  // Yield Summary
-  const yieldContainer = document.getElementById('items-yield-display');
-  if (yieldContainer) {
-    const yieldTotals = {};
-    for (const item of STORE_ITEMS) {
-      const qty = Number(state.purchases[item.id] || 0);
-      if (qty > 0) {
-        if (!yieldTotals[item.yieldUnit]) {
-          yieldTotals[item.yieldUnit] = {
-            total: 0,
-            icon: item.itemIcon || item.icon
-          };
-        }
-        yieldTotals[item.yieldUnit].total += (qty * item.yieldQty);
-      }
-    }
+if (el) {
+if (rem < 0) {
+el.innerHTML = `<span class="neg-budget">Short: ${Math.abs(rem).toLocaleString()}</span> <span style="font-size:10px; color:var(--text3); font-weight:normal">(${spent[c].toLocaleString()} / ${inc[c].toLocaleString()})</span>`;
+} else {
+el.textContent = `${rem.toLocaleString()} / ${inc[c].toLocaleString()}`;
+el.classList.remove('neg-budget');
+}
+}
 
-    if (Object.keys(yieldTotals).length === 0) {
-      yieldContainer.innerHTML = `<span style="color:var(--text3)">No store purchases planned.</span>`;
-    } else {
-      yieldContainer.innerHTML = Object.entries(yieldTotals).map(([unit, data]) => `
-        <div style="display:flex; justify-content:space-between; align-items:center">
-          <span style="color:var(--text2); display:inline-flex; align-items:center; gap:6px">
-            ${data.icon ? `<img src="${data.icon}" class="item-icon" style="width:18px; height:18px" onerror="imgErrFallback(this)">` : ''}
-            ${unit}
-          </span>
-          <span style="font-family:var(--font-mono); font-weight:600; color:var(--accent)">Total: ${data.total.toLocaleString()}</span>
-        </div>
-      `).join('');
-    }
-  }
+if (bar) {
+const pct = inc[c] > 0 ? Math.min(100, Math.round((spent[c] / inc[c]) * 100)) : 0;
+bar.style.width = pct + '%';
+if (rem < 0) {
+bar.style.background = 'var(--red)';
+} else if (pct > 85) {
+bar.style.background = 'var(--amber)';
+} else {
+bar.style.background = (c.startsWith('mk') ? (c === 'mk1' ? '#60a5fa' : c === 'mk2' ? '#fbbf24' : '#f87171') : (c === 'get1' ? '#34d399' : c === 'get2' ? '#fb923c' : 'var(--cyan)'));
+}
+}
+}
+
+// Yield Summary
+const yieldContainer = document.getElementById('items-yield-display');
+if (yieldContainer) {
+const yieldTotals = {};
+for (const item of STORE_ITEMS) {
+const qty = Number(state.purchases[item.id] || 0);
+if (qty > 0) {
+if (!yieldTotals[item.yieldUnit]) {
+yieldTotals[item.yieldUnit] = {
+total: 0,
+icon: item.itemIcon || item.icon
+};
+}
+yieldTotals[item.yieldUnit].total += (qty * item.yieldQty);
+}
+}
+
+if (Object.keys(yieldTotals).length === 0) {
+yieldContainer.innerHTML = `<span style="color:var(--text3)">No store purchases planned.</span>`;
+} else {
+yieldContainer.innerHTML = Object.entries(yieldTotals).map(([unit, data]) => `
+<div style="display:flex; justify-content:space-between; align-items:center; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.03)">
+<span style="color:var(--text2); display:inline-flex; align-items:center; gap:6px">
+${data.icon ? `<img src="${data.icon}" class="item-icon" style="width:18px; height:18px" onerror="imgErrFallback(this)">` : ''}
+${unit}
+</span>
+<span style="font-family:var(--font-mono); font-weight:600; color:var(--amber)">${data.total.toLocaleString()}</span>
+</div>
+`).join('');
+}
+}
+
+updateCategoryBadges();
 }
 
 // ═══════════════════════════════════════════════════════
-// HANDLERS
+// HANDLERS & QOL
 // ═══════════════════════════════════════════════════════
 function showTab(tabId) {
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
+document.querySelectorAll('#page-tabs .tab-btn').forEach(b => b.classList.remove('active'));
+document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
 
-  const btn = document.querySelector(`.tab-btn[data-tab="${tabId}"]`);
-  if (btn) btn.classList.add('active');
+const btn = document.querySelector(`#page-tabs .tab-btn[data-tab="${tabId}"]`);
+if (btn) btn.classList.add('active');
 
-  const content = document.getElementById(`tab-${tabId}`);
-  if (content) content.style.display = 'block';
+const content = document.getElementById(`tab-${tabId}`);
+if (content) content.style.display = 'block';
+}
+
+function onSearchFilterChange(val) {
+searchQuery = val;
+renderAllStores();
+}
+
+function clearBankBalances() {
+state.bank = { mk1: 0, mk2: 0, mk3: 0, get1: 0, get2: 0, get3: 0 };
+initBankInputs();
+saveState();
+updateSummary();
+}
+
+function resetAllPurchases() {
+if (confirm("Are you sure you want to clear all planned store purchases?")) {
+state.purchases = {};
+state.customMk1Allocation = 0;
+renderAllStores();
+saveState();
+updateSummary();
+}
+}
+
+function exportPlanJSON() {
+const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state, null, 2));
+const dlAnchor = document.createElement('a');
+dlAnchor.setAttribute("href", dataStr);
+dlAnchor.setAttribute("download", "swgoh_shipments_plan.json");
+document.body.appendChild(dlAnchor);
+dlAnchor.click();
+dlAnchor.remove();
 }
 
 function onBankChange(curr, val) {
-  state.bank[curr] = val;
-  saveState();
-  updateSummary();
+state.bank[curr] = val;
+saveState();
+updateSummary();
 }
 
 function adjustRaidCount(delta) {
-  const newCount = Math.max(1, Math.min(5, state.raids.length + delta));
-  while (state.raids.length < newCount) {
-    state.raids.push({ boxId: 1, score: 0 });
-  }
-  while (state.raids.length > newCount) {
-    state.raids.pop();
-  }
-  renderRaids();
-  saveState();
-  updateSummary();
+const newCount = Math.max(1, Math.min(5, state.raids.length + delta));
+while (state.raids.length < newCount) {
+state.raids.push({ boxId: 1, score: 0 });
+}
+while (state.raids.length > newCount) {
+state.raids.pop();
+}
+renderRaids();
+saveState();
+updateSummary();
 }
 
 function updateRaidScore(idx, val) {
-  state.raids[idx].score = val;
-  const pers = calcPersonalRewards(val);
-  const boxId = Number(state.raids[idx].boxId || 1);
-  const box = RAID_BOXES.find(b => b.id === boxId) || RAID_BOXES[0];
-  
-  const earnedEl = document.getElementById(`raid-earned-${idx}`);
-  if (earnedEl) {
-    earnedEl.innerHTML = `
-      <span>Run Earned:</span>
-      ${getCurrencyTag('mk1', '+' + (pers.mk1 + box.mk1).toLocaleString())}
-      ${getCurrencyTag('mk2', '+' + (pers.mk2 + box.mk2).toLocaleString())}
-      ${getCurrencyTag('mk3', '+' + (pers.mk3 + box.mk3).toLocaleString())}
-    `;
-  }
-  saveState();
-  updateSummary();
+state.raids[idx].score = val;
+const pers = calcPersonalRewards(val);
+const boxId = Number(state.raids[idx].boxId || 1);
+const box = RAID_BOXES.find(b => b.id === boxId) || RAID_BOXES[0];
+
+const earnedEl = document.getElementById(`raid-earned-${idx}`);
+if (earnedEl) {
+earnedEl.innerHTML = `
+<span style="font-family:var(--font-mono)">Run Yield:</span>
+${getCurrencyTag('mk1', '+' + (pers.mk1 + box.mk1).toLocaleString())}
+${getCurrencyTag('mk2', '+' + (pers.mk2 + box.mk2).toLocaleString())}
+${getCurrencyTag('mk3', '+' + (pers.mk3 + box.mk3).toLocaleString())}
+`;
+}
+saveState();
+updateSummary();
 }
 
 function updateRaidBoxOverride(idx, val) {
-  state.raids[idx].boxId = Number(val);
-  renderRaids();
-  saveState();
-  updateSummary();
+state.raids[idx].boxId = Number(val);
+renderRaids();
+saveState();
+updateSummary();
 }
 
 function updatePurchase(id, val) {
-  const qty = Math.max(0, parseInt(val) || 0);
-  state.purchases[id] = qty;
-  
-  // Clean DOM update (No image flickering or DOM destruction)
-  const item = STORE_ITEMS.find(i => i.id === id);
-  if (item) {
-    const costValEl = document.getElementById(`cost-val-${id}`);
-    const yieldEl = document.getElementById(`yield-${id}`);
-    if (costValEl) costValEl.textContent = (qty * item.cost).toLocaleString();
-    if (yieldEl) yieldEl.textContent = `Total: ${(qty * item.yieldQty).toLocaleString()}`;
-  }
+const qty = Math.max(0, parseInt(val) || 0);
+state.purchases[id] = qty;
 
-  saveState();
-  updateSummary();
+const item = STORE_ITEMS.find(i => i.id === id);
+if (item) {
+const costValEl = document.getElementById(`cost-val-${id}`);
+const yieldEl = document.getElementById(`yield-${id}`);
+const rowEl = document.getElementById(`row-${id}`);
+if (costValEl) costValEl.textContent = (qty * item.cost).toLocaleString();
+if (yieldEl) yieldEl.textContent = `Total: ${(qty * item.yieldQty).toLocaleString()}`;
+if (rowEl) rowEl.classList.toggle('active-buy', qty > 0);
+}
+
+saveState();
+updateSummary();
 }
 
 function adjustPurchase(id, delta) {
-  const current = Number(state.purchases[id] || 0);
-  const qty = Math.max(0, current + delta);
-  
-  // Direct input field update
-  const row = document.getElementById(`row-${id}`);
-  if (row) {
-    const input = row.querySelector('input');
-    if (input) input.value = qty;
-  }
+const current = Number(state.purchases[id] || 0);
+const qty = Math.max(0, current + delta);
 
-  updatePurchase(id, qty);
+const row = document.getElementById(`row-${id}`);
+if (row) {
+const input = row.querySelector('input');
+if (input) input.value = qty;
+}
+
+updatePurchase(id, qty);
 }
 
 function updateCustomAllocation(val) {
-  state.customMk1Allocation = val;
-  saveState();
-  updateSummary();
+state.customMk1Allocation = val;
+saveState();
+updateSummary();
 }
 
 function initBankInputs() {
-  for (const c of ['mk1', 'mk2', 'mk3', 'get1', 'get2', 'get3']) {
-    const el = document.getElementById(`bank-${c}`);
-    if (el) el.value = state.bank[c] || 0;
-  }
+for (const c of ['mk1', 'mk2', 'mk3', 'get1', 'get2', 'get3']) {
+const el = document.getElementById(`bank-${c}`);
+if (el) el.value = state.bank[c] || 0;
+}
 }
 
 // ═══════════════════════════════════════════════════════
-// FIREBASE AUTH & FIRESTORE SYNC (1000ms Debounce)
+// FIREBASE AUTH & FIRESTORE SYNC
 // ═══════════════════════════════════════════════════════
 let remoteSaveTimer = null;
 
 function setAuthStatus(message, isError) {
-  const el = document.getElementById('auth-status');
-  if (!el) return;
-  el.textContent = message;
-  el.style.color = isError ? 'var(--red)' : 'var(--text3)';
+const el = document.getElementById('auth-status');
+if (!el) return;
+el.textContent = message;
+el.style.color = isError ? 'var(--red)' : 'var(--text3)';
+}
+
+function openAuthModal() {
+document.getElementById('auth-modal').classList.add('open');
+}
+function closeAuthModal() {
+document.getElementById('auth-modal').classList.remove('open');
 }
 
 function setAuthMode(mode) {
-  authMode = mode;
-  const signInBtn = document.getElementById('auth-mode-signin');
-  const signUpBtn = document.getElementById('auth-mode-signup');
-  const submitBtn = document.getElementById('auth-submit-btn');
-  if (signInBtn && signUpBtn && submitBtn) {
-    signInBtn.classList.toggle('active', mode === 'signin');
-    signUpBtn.classList.toggle('active', mode === 'signup');
-    submitBtn.textContent = mode === 'signup' ? 'Create account' : 'Sign in';
-  }
+authMode = mode;
+const signInBtn = document.getElementById('auth-mode-signin');
+const signUpBtn = document.getElementById('auth-mode-signup');
+const submitBtn = document.getElementById('auth-submit-btn');
+const title = document.getElementById('auth-title');
+const desc = document.getElementById('auth-desc');
+if (signInBtn && signUpBtn && submitBtn) {
+signInBtn.classList.toggle('active', mode === 'signin');
+signUpBtn.classList.toggle('active', mode === 'signup');
+submitBtn.textContent = mode === 'signup' ? 'Create account' : 'Sign in';
+if(title) title.textContent = mode === 'signup' ? 'Create your account' : 'Welcome back';
+if(desc) desc.textContent = mode === 'signup'
+? 'Create an account to save your shipment plans and settings across devices.'
+: 'Sign in to sync your planner across devices, or create an account to save your shipments and settings.';
+}
 }
 
 function initFirebase() {
-  if (!FIREBASE_CONFIG.apiKey) return;
-  try {
-    firebaseApp = firebase.apps.length ? firebase.apps[0] : firebase.initializeApp(FIREBASE_CONFIG);
-    firebaseAuth = firebaseApp.auth();
-    firebaseDb = firebaseApp.firestore();
+if (!FIREBASE_CONFIG.apiKey) return;
+try {
+firebaseApp = firebase.apps.length ? firebase.apps[0] : firebase.initializeApp(FIREBASE_CONFIG);
+firebaseAuth = firebaseApp.auth();
+firebaseDb = firebaseApp.firestore();
 
-    firebaseAuth.onAuthStateChanged((user) => {
-      authUser = user;
-      updateAuthUI();
-      if (user) {
-        loadFromFirebase();
-      } else {
-        setAuthStatus('Please sign in to continue', true);
-      }
-    });
-  } catch(e){
-    setAuthStatus('Auth initialization failed', true);
-  }
+firebaseAuth.onAuthStateChanged((user) => {
+authUser = user;
+updateAuthUI();
+if (user) {
+loadFromFirebase();
+} else {
+setAuthStatus('Not signed in', false);
+}
+});
+} catch(e){
+setAuthStatus('Auth unavailable', true);
+}
 }
 
 function updateAuthUI() {
-  const authScreen = document.getElementById('auth-screen');
-  const plannerShell = document.getElementById('planner-shell');
-  const signinBtn = document.getElementById('signin-btn');
-  const signoutBtn = document.getElementById('signout-btn');
-  const userPanel = document.getElementById('auth-user-panel');
+const signinBtn = document.getElementById('signin-btn');
+const signoutBtn = document.getElementById('signout-btn');
+const userPanel = document.getElementById('auth-user-panel');
 
-  if (authUser) {
-    if (authScreen) authScreen.style.display = 'none';
-    if (plannerShell) plannerShell.style.display = 'block';
-    if (signinBtn) signinBtn.style.display = 'none';
-    if (signoutBtn) signoutBtn.style.display = 'inline-flex';
-    if (userPanel) {
-      userPanel.style.display = 'block';
-      const displayName = authUser.displayName || authUser.email || 'Account';
-      userPanel.textContent = `Signed in as ${displayName}`;
-    }
-    setAuthStatus('Signed in', false);
-  } else {
-    if (authScreen) authScreen.style.display = 'block';
-    if (plannerShell) plannerShell.style.display = 'none';
-    if (signinBtn) signinBtn.style.display = 'inline-flex';
-    if (signoutBtn) signoutBtn.style.display = 'none';
-    if (userPanel) userPanel.style.display = 'none';
-    setAuthStatus('Please sign in to continue', true);
-  }
+if (authUser) {
+if (signinBtn) signinBtn.style.display = 'none';
+if (signoutBtn) signoutBtn.style.display = 'inline-flex';
+if (userPanel) {
+userPanel.style.display = 'block';
+const displayName = authUser.displayName || authUser.email || 'Account';
+userPanel.textContent = `Signed in as ${displayName}`;
+}
+setAuthStatus(`Signed in as ${authUser.displayName || authUser.email || 'User'}`, false);
+} else {
+if (signinBtn) signinBtn.style.display = 'inline-flex';
+if (signoutBtn) signoutBtn.style.display = 'none';
+if (userPanel) userPanel.style.display = 'none';
+setAuthStatus('Not signed in', false);
+}
 }
 
 async function submitAuthForm() {
-  const emailInput = document.getElementById('auth-email');
-  const passwordInput = document.getElementById('auth-password');
-  const email = emailInput ? emailInput.value.trim() : '';
-  const password = passwordInput ? passwordInput.value : '';
+const emailInput = document.getElementById('auth-email');
+const passwordInput = document.getElementById('auth-password');
+const email = emailInput ? emailInput.value.trim() : '';
+const password = passwordInput ? passwordInput.value : '';
 
-  if (!email || !password) {
-    setAuthStatus('Enter your email and password', true);
-    return;
-  }
-  if (!firebaseAuth) {
-    setAuthStatus('Authentication is unavailable right now.', true);
-    return;
-  }
-  try {
-    setAuthStatus(authMode === 'signup' ? 'Creating account…' : 'Signing in…');
-    if (authMode === 'signup') {
-      await firebaseAuth.createUserWithEmailAndPassword(email, password);
-    } else {
-      await firebaseAuth.signInWithEmailAndPassword(email, password);
-    }
-  } catch(e) {
-    setAuthStatus(e.message || (authMode === 'signup' ? 'Unable to create account' : 'Unable to sign in'), true);
-  }
+if (!email || !password) {
+setAuthStatus('Enter your email and password', true);
+return;
+}
+if (!firebaseAuth) {
+setAuthStatus('Authentication unavailable.', true);
+return;
+}
+try {
+setAuthStatus(authMode === 'signup' ? 'Creating account…' : 'Signing in…');
+if (authMode === 'signup') {
+await firebaseAuth.createUserWithEmailAndPassword(email, password);
+} else {
+await firebaseAuth.signInWithEmailAndPassword(email, password);
+}
+closeAuthModal();
+} catch(e) {
+setAuthStatus(e.message || (authMode === 'signup' ? 'Unable to create account' : 'Unable to sign in'), true);
+}
 }
 
 async function signInWithGoogle() {
-  if (!firebaseAuth) return;
-  try {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    setAuthStatus('Opening Google sign-in…');
-    await firebaseAuth.signInWithPopup(provider);
-  } catch(e){
-    setAuthStatus('Google sign-in failed', true);
-  }
+if (!firebaseAuth) return;
+try {
+const provider = new firebase.auth.GoogleAuthProvider();
+setAuthStatus('Opening Google sign-in…');
+await firebaseAuth.signInWithPopup(provider);
+closeAuthModal();
+} catch(e){
+setAuthStatus('Google sign-in failed', true);
+}
 }
 
 async function signOut() {
-  if (firebaseAuth) await firebaseAuth.signOut();
+if (firebaseAuth) await firebaseAuth.signOut();
 }
 
 function scheduleRemoteSave() {
-  if (!authUser || !firebaseDb) return;
-  clearTimeout(remoteSaveTimer);
-  remoteSaveTimer = setTimeout(async () => {
-    try {
-      const docRef = firebaseDb.collection('users').doc(authUser.uid).collection('shipments').doc('current');
-      await docRef.set({ state: JSON.parse(JSON.stringify(state)), updatedAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true });
-      setSaveStatus('Saved to cloud');
-    } catch(e) {
-      setSaveStatus('Cloud save failed', true);
-    }
-  }, 1000);
+if (!authUser || !firebaseDb) return;
+clearTimeout(remoteSaveTimer);
+remoteSaveTimer = setTimeout(async () => {
+try {
+const docRef = firebaseDb.collection('users').doc(authUser.uid).collection('shipments').doc('current');
+await docRef.set({ state: JSON.parse(JSON.stringify(state)), updatedAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true });
+setSaveStatus('Saved to cloud');
+} catch(e) {
+setSaveStatus('Cloud save failed', true);
+}
+}, 1000);
 }
 
 async function loadFromFirebase() {
-  if (!authUser || !firebaseDb) return;
-  try {
-    const docRef = firebaseDb.collection('users').doc(authUser.uid).collection('shipments').doc('current');
-    const snap = await docRef.get();
-    if (snap.exists && snap.data().state) {
-      state = { ...state, ...snap.data().state };
-      saveState();
-      initBankInputs();
-      renderRaids();
-      renderAllStores();
-      updateSummary();
-      setSaveStatus('Loaded from cloud');
-    }
-  } catch(e){}
+if (!authUser || !firebaseDb) return;
+try {
+const docRef = firebaseDb.collection('users').doc(authUser.uid).collection('shipments').doc('current');
+const snap = await docRef.get();
+if (snap.exists && snap.data().state) {
+state = { ...state, ...snap.data().state };
+saveState();
+initBankInputs();
+renderRaids();
+renderAllStores();
+updateSummary();
+setSaveStatus('Loaded from cloud');
+}
+} catch(e){}
 }
 
 // ═══════════════════════════════════════════════════════
 // INITIALIZATION
 // ═══════════════════════════════════════════════════════
 function init() {
-  const buildVersionEl = document.getElementById('build-version');
-  if (buildVersionEl) buildVersionEl.textContent = window.BUILD_VERSION || 'dev';
+const buildVersionEl = document.getElementById('build-version');
+if (buildVersionEl) buildVersionEl.textContent = window.BUILD_VERSION || 'dev';
 
-  loadState();
-  initBankInputs();
-  renderReferenceTables();
-  renderRaids();
-  renderAllStores();
-  updateSummary();
-  initFirebase();
+loadState();
+initBankInputs();
+renderReferenceTables();
+renderRaids();
+renderAllStores();
+updateSummary();
+initFirebase();
+
+// Generate starfield
+const field = document.getElementById('starfield');
+if (field) {
+for (let i = 0; i < 60; i++) {
+const s = document.createElement('span');
+s.style.left = Math.random() * 100 + '%';
+s.style.top = Math.random() * 100 + '%';
+s.style.animationDelay = (Math.random() * 4.5).toFixed(2) + 's';
+s.style.animationDuration = (3.5 + Math.random() * 3).toFixed(2) + 's';
+if (Math.random() > 0.7) {
+s.style.width = '1px';
+s.style.height = '1px';
+}
+field.appendChild(s);
+}
+}
 }
 
 init();
