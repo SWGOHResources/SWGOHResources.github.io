@@ -511,63 +511,6 @@ transition: all 0.15s ease;
       </div>
     </div>
 
-    <!-- Starting Banked Balances -->
-    <div class="section">
-      <div class="section-head">
-        <div class="section-title"><span class="bracket">[</span>Starting Banked Balances<span class="bracket">]</span></div>
-        <button class="btn btn-ghost btn-sm" onclick="clearBankBalances()">Clear Balances</button>
-      </div>
-      <div class="section-body">
-        <div style="margin-bottom:16px">
-          <div style="font-size:11px; font-family:var(--font-mono); font-weight:600; color:var(--text2); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.05em">Raid Store Tokens</div>
-          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap:12px">
-            <div>
-              <div style="font-size:10px; font-family:var(--font-mono); color:#60a5fa; text-transform:uppercase; margin-bottom:4px; display:flex; align-items:center; gap:4px">
-                <img src="assets/RAID1.png" class="curr-icon" onerror="imgErrFallback(this)"> Raid Mk I
-              </div>
-              <input type="text" id="bank-mk1" inputmode="numeric" value="0" style="width:100%" oninput="onBankChange('mk1', this.value)">
-            </div>
-            <div>
-              <div style="font-size:10px; font-family:var(--font-mono); color:#fbbf24; text-transform:uppercase; margin-bottom:4px; display:flex; align-items:center; gap:4px">
-                <img src="assets/RAID2.png" class="curr-icon" onerror="imgErrFallback(this)"> Raid Mk II
-              </div>
-              <input type="text" id="bank-mk2" inputmode="numeric" value="0" style="width:100%" oninput="onBankChange('mk2', this.value)">
-            </div>
-            <div>
-              <div style="font-size:10px; font-family:var(--font-mono); color:#f87171; text-transform:uppercase; margin-bottom:4px; display:flex; align-items:center; gap:4px">
-                <img src="assets/RAID3.png" class="curr-icon" onerror="imgErrFallback(this)"> Raid Mk III
-              </div>
-              <input type="text" id="bank-mk3" inputmode="numeric" value="0" style="width:100%" oninput="onBankChange('mk3', this.value)">
-            </div>
-          </div>
-        </div>
-
-        <div style="border-top:1px dashed var(--border); padding-top:16px">
-          <div style="font-size:11px; font-family:var(--font-mono); font-weight:600; color:var(--text2); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.05em">Guild Event Store Tokens</div>
-          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap:12px">
-            <div>
-              <div style="font-size:10px; font-family:var(--font-mono); color:#34d399; text-transform:uppercase; margin-bottom:4px; display:flex; align-items:center; gap:4px">
-                <img src="assets/GET1.png" class="curr-icon" onerror="imgErrFallback(this)"> GET 1
-              </div>
-              <input type="text" id="bank-get1" inputmode="numeric" value="0" style="width:100%" oninput="onBankChange('get1', this.value)">
-            </div>
-            <div>
-              <div style="font-size:10px; font-family:var(--font-mono); color:#fb923c; text-transform:uppercase; margin-bottom:4px; display:flex; align-items:center; gap:4px">
-                <img src="assets/GET2.png" class="curr-icon" onerror="imgErrFallback(this)"> GET 2
-              </div>
-              <input type="text" id="bank-get2" inputmode="numeric" value="0" style="width:100%" oninput="onBankChange('get2', this.value)">
-            </div>
-            <div>
-              <div style="font-size:10px; font-family:var(--font-mono); color:var(--cyan); text-transform:uppercase; margin-bottom:4px; display:flex; align-items:center; gap:4px">
-                <img src="assets/GET3.png" class="curr-icon" onerror="imgErrFallback(this)"> GET 3
-              </div>
-              <input type="text" id="bank-get3" inputmode="numeric" value="0" style="width:100%" oninput="onBankChange('get3', this.value)">
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <!-- Raid Runs Setup -->
     <div class="section">
       <div class="section-head">
