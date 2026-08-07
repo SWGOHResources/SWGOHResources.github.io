@@ -186,7 +186,9 @@ white-space: nowrap;
 .qty-action { height:30px; border-radius:6px; padding:0 10px; font-size:13px; border:1px solid var(--border); background:var(--void3); color:var(--text); cursor:pointer; }
 .qty-action:hover { border-color:var(--border2); background:var(--void2); }
 .qty-action.add { background:var(--amber); color:#1a1104; border-color: rgba(232,163,61,0.18); }
-.qty-action.sub { background:transparent; color:var(--text); border-color:var(--border); }
+.qty-action.sub { background:var(--amber); color:#1a1104; border-color: rgba(232,163,61,0.18); }
+/* Simple subheaders for grouping items by currency in each tab */
+.category-subheader { font-family:var(--font-mono); font-size:11px; color:var(--text2); padding:8px 4px; border-bottom:1px dashed rgba(255,255,255,0.03); margin-top:6px; }
 input[type=text], input[type=number], input[type=email], input[type=password], select {
 background: var(--void2);
 border: 1px solid var(--border);
@@ -231,12 +233,11 @@ gap: 16px;
 margin-bottom: 20px;
 flex-wrap: wrap;
 }
-/* Keep the controls bar fixed under the top header to avoid layout shifts
-  when the right-column budget bars animate or change size. */
+/* Keep controls in normal flow to avoid overlap/formatting issues */
 .controls-bar {
-  position: sticky;
-  top: 56px;
-  z-index: 150;
+  position: relative;
+  top: auto;
+  z-index: 1;
 }
 .segmented-tabs {
 display: inline-flex;
@@ -249,9 +250,8 @@ overflow-x: auto;
 max-width: 100%;
 }
 
-/* Allow the tabs to shrink properly while keeping the search box a fixed
-  size so it doesn't jump around when other elements reflow. */
-.segmented-tabs { flex: 1; }
+/* Allow the tabs to flex and avoid overflow */
+.segmented-tabs { flex: 1 1 auto; min-width: 0; }
 .tab-btn {
 height: 32px;
 padding: 0 14px;
@@ -1159,10 +1159,24 @@ function renderStoreCategory(catId, containerId) {
     return;
   }
 
-let html = items.map(item => {
-const qty = Number(state.purchases[item.id] || 0);
+  // Sort items by currency then name for easier scanning
+  items.sort((a, b) => {
+    const ca = (a.curr || '').toString();
+    const cb = (b.curr || '').toString();
+    if (ca !== cb) return ca.localeCompare(cb);
+    return (a.name || '').localeCompare(b.name || '');
+  });
 
-return `
+  let html = '';
+  let lastCurr = null;
+  for (const item of items) {
+    const qty = Number(state.purchases[item.id] || 0);
+    if (item.curr !== lastCurr) {
+      lastCurr = item.curr;
+      html += `<div class="category-subheader">${(lastCurr || '').toUpperCase()}</div>`;
+    }
+
+    html += `
 <div class="store-item-row ${qty > 0 ? 'active-buy' : ''}" id="row-${item.id}">
 <div>
 <div class="store-item-title">
@@ -1180,8 +1194,8 @@ ${getCurrencyTag(item.curr, item.cost + ' / buy')}
   <button class="qty-btn" title="Decrease" onclick="adjustPurchase('${item.id}', -1)">−</button>
   <input class="qty-input" type="text" inputmode="numeric" value="${qty}" oninput="updatePurchase('${item.id}', this.value)" aria-label="Quantity for ${item.name}">
   <button class="qty-btn" title="Increase" onclick="adjustPurchase('${item.id}', 1)">+</button>
-    <button class="qty-action add" title="Add 5" onclick="adjustPurchase('${item.id}', 5)">+5</button>
-    <button class="qty-action sub" title="Remove 5" onclick="adjustPurchase('${item.id}', -5)">−5</button>
+  <button class="qty-action add" title="Add 5" onclick="adjustPurchase('${item.id}', 5)">+5</button>
+  <button class="qty-action sub" title="Remove 5" onclick="adjustPurchase('${item.id}', -5)">−5</button>
 </div>
 
 <div style="text-align:right">
@@ -1193,7 +1207,7 @@ Total: ${(qty * item.yieldQty).toLocaleString()}
 </div>
 </div>
 `;
-}).join('');
+  }
 
 // Removed custom MK I reserved budget UI for Ability tab per request.
 
