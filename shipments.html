@@ -1181,11 +1181,11 @@ function renderStoreCategory(catId, containerId) {
   </div>
 
   <div class="store-qty-ctrl">
-    <button class="qty-btn" title="Decrease" onclick="adjustPurchase('${item.id}', -1)">−</button>
-    <input class="qty-input" type="text" inputmode="numeric" value="${qty}" oninput="updatePurchase('${item.id}', this.value)" aria-label="Quantity for ${item.name}">
     <button class="qty-btn" title="Increase" onclick="adjustPurchase('${item.id}', 1)">+</button>
     <button class="qty-action" title="Add 5" onclick="adjustPurchase('${item.id}', 5)">+5</button>
+    <input class="qty-input" type="text" inputmode="numeric" value="${qty}" oninput="updatePurchase('${item.id}', this.value)" aria-label="Quantity for ${item.name}">
     <button class="qty-action" title="Remove 5" onclick="adjustPurchase('${item.id}', -5)">−5</button>
+    <button class="qty-btn" title="Decrease" onclick="adjustPurchase('${item.id}', -1)">−</button>
   </div>
 
   <div style="text-align:right">
