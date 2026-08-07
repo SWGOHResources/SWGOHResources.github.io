@@ -182,6 +182,11 @@ white-space: nowrap;
 .qty-input { width:56px; text-align:center; height:30px; border-radius:6px; border:1px solid var(--border); background:var(--void2); color:var(--text); font-family:var(--font-mono); }
 .qty-input:focus { border-color:var(--amber-border); box-shadow:0 0 0 2px var(--amber-dim); background:var(--void3); }
 .btn-accent-small { background: var(--amber); color: #1a1104; font-weight:600; height:30px; border-radius:6px; padding:0 8px; font-size:12px; }
+/* Specialized small action pills for +/-5 actions */
+.qty-action { height:30px; border-radius:6px; padding:0 10px; font-size:13px; border:1px solid var(--border); background:var(--void3); color:var(--text); cursor:pointer; }
+.qty-action:hover { border-color:var(--border2); background:var(--void2); }
+.qty-action.add { background:var(--amber); color:#1a1104; border-color: rgba(232,163,61,0.18); }
+.qty-action.sub { background:transparent; color:var(--text); border-color:var(--border); }
 input[type=text], input[type=number], input[type=email], input[type=password], select {
 background: var(--void2);
 border: 1px solid var(--border);
@@ -548,6 +553,14 @@ transition: all 0.15s ease;
 
   </div>
 
+  <!-- TAB: SEARCH RESULTS (renders across all categories when searching) -->
+  <div class="tab-content" id="tab-search" style="display:none">
+    <div class="section">
+      <div class="section-head"><div class="section-title"><span class="bracket">[</span>Search Results<span class="bracket">]</span></div></div>
+      <div class="section-body" id="search-results-list"></div>
+    </div>
+  </div>
+
   <!-- TAB 2: SHARDS & BLUEPRINTS -->
   <div class="tab-content" id="tab-shards" style="display:none">
     <div class="section">
@@ -901,6 +914,9 @@ purchases: {},
 customMk1Allocation: 0
 };
 
+// Track the currently active tab (used to restore after a search)
+let activeTab = 'raid-setup';
+
 // Reads GET 2 & GET 3 values from Relic Planner's local storage schema
 function getRelicPlannerGetValues() {
 try {
@@ -1151,6 +1167,60 @@ if (q) {
 items = items.filter(i => i.name.toLowerCase().includes(q) || i.curr.toLowerCase().includes(q) || i.yieldUnit.toLowerCase().includes(q));
 }
 
+function renderSearchResults(q) {
+  const container = document.getElementById('search-results-list');
+  if (!container) return;
+  const query = String(q || '').toLowerCase();
+  const items = STORE_ITEMS.filter(i => {
+    return (i.name && i.name.toLowerCase().includes(query)) ||
+      (i.curr && i.curr.toLowerCase().includes(query)) ||
+      (i.yieldUnit && i.yieldUnit.toLowerCase().includes(query)) ||
+      (i.sub && i.sub.toLowerCase().includes(query));
+  });
+
+  if (items.length === 0) {
+    container.innerHTML = `<div style="padding:20px; text-align:center; color:var(--text3); font-size:12px">No store items match your search.</div>`;
+    return;
+  }
+
+  const html = items.map(item => {
+    const qty = Number(state.purchases[item.id] || 0);
+    return `
+<div class="store-item-row ${qty > 0 ? 'active-buy' : ''}" id="row-${item.id}">
+<div>
+  <div class="store-item-title">
+    ${item.itemIcon ? `<img src="${resolveIconPath(item.itemIcon)}" data-orig="${item.itemIcon}" width="26" height="26" class="item-icon" onerror="imgErrFallback(this)">` : ''}
+    <span>${item.name}</span>
+  </div>
+  <div class="store-item-sub">
+    <span>${item.sub}</span>
+    <span>·</span>
+    ${getCurrencyTag(item.curr, item.cost + ' / buy')}
+  </div>
+</div>
+
+<div class="store-qty-ctrl">
+  <button class="qty-btn" title="Decrease" onclick="adjustPurchase('${item.id}', -1)">−</button>
+  <input class="qty-input" type="text" inputmode="numeric" value="${qty}" oninput="updatePurchase('${item.id}', this.value)" aria-label="Quantity for ${item.name}">
+  <button class="qty-btn" title="Increase" onclick="adjustPurchase('${item.id}', 1)">+</button>
+  <button class="qty-action sub" title="Remove 5" onclick="adjustPurchase('${item.id}', -5)">−5</button>
+  <button class="qty-action add" title="Add 5" onclick="adjustPurchase('${item.id}', 5)">+5</button>
+</div>
+
+<div style="text-align:right">
+  ${getCurrencyTag(item.curr, (qty * item.cost).toLocaleString(), `cost-val-${item.id}`)}
+</div>
+
+<div style="text-align:right; font-size:11px; color:var(--text2); font-family:var(--font-mono)" id="yield-${item.id}">
+  Total: ${(qty * item.yieldQty).toLocaleString()}
+</div>
+</div>
+`;
+  }).join('');
+
+  container.innerHTML = html;
+}
+
 if (items.length === 0) {
 container.innerHTML = `<div style="padding:20px; text-align:center; color:var(--text3); font-size:12px">No store items match your search.</div>`;
 return;
@@ -1177,7 +1247,8 @@ ${getCurrencyTag(item.curr, item.cost + ' / buy')}
   <button class="qty-btn" title="Decrease" onclick="adjustPurchase('${item.id}', -1)">−</button>
   <input class="qty-input" type="text" inputmode="numeric" value="${qty}" oninput="updatePurchase('${item.id}', this.value)" aria-label="Quantity for ${item.name}">
   <button class="qty-btn" title="Increase" onclick="adjustPurchase('${item.id}', 1)">+</button>
-  <button class="btn-accent-small" title="Add 5" onclick="adjustPurchase('${item.id}', 5)">+5</button>
+  <button class="qty-action sub" title="Remove 5" onclick="adjustPurchase('${item.id}', -5)">−5</button>
+  <button class="qty-action add" title="Add 5" onclick="adjustPurchase('${item.id}', 5)">+5</button>
 </div>
 
 <div style="text-align:right">
@@ -1297,19 +1368,32 @@ updateCategoryBadges();
 // HANDLERS & QOL
 // ═══════════════════════════════════════════════════════
 function showTab(tabId) {
-document.querySelectorAll('#page-tabs .tab-btn').forEach(b => b.classList.remove('active'));
-document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
+  document.querySelectorAll('#page-tabs .tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
 
-const btn = document.querySelector(`#page-tabs .tab-btn[data-tab="${tabId}"]`);
-if (btn) btn.classList.add('active');
+  const btn = document.querySelector(`#page-tabs .tab-btn[data-tab="${tabId}"]`);
+  if (btn) {
+    btn.classList.add('active');
+    // remember only real tab buttons as the active tab
+    activeTab = tabId;
+  }
 
-const content = document.getElementById(`tab-${tabId}`);
-if (content) content.style.display = 'block';
+  const content = document.getElementById(`tab-${tabId}`);
+  if (content) content.style.display = 'block';
 }
 
 function onSearchFilterChange(val) {
-searchQuery = val;
-renderAllStores();
+  searchQuery = val;
+  const q = String(searchQuery || '').trim();
+  if (q) {
+    renderSearchResults(q);
+    showTab('search');
+  } else {
+    // clear search results and restore previous tab
+    const sr = document.getElementById('search-results-list');
+    if (sr) sr.innerHTML = '';
+    showTab(activeTab || 'raid-setup');
+  }
 }
 
 function clearBankBalances() {
