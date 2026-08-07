@@ -175,6 +175,13 @@ white-space: nowrap;
 .btn-sm { height: 28px; padding: 0 10px; font-size: 11px; }
 .btn-outline { background: transparent; color: var(--text); border: 1px solid var(--border2); }
 .btn-outline:hover { border-color: var(--amber-border); color: var(--amber); }
+/* Quantity control styles to improve visibility and reduce flicker */
+.store-qty-ctrl { display: flex; align-items: center; gap: 8px; }
+.qty-btn { background: var(--void3); color: var(--text); border: 1px solid var(--border); border-radius: 6px; height: 30px; min-width: 34px; display:inline-flex; align-items:center; justify-content:center; font-size:14px; cursor:pointer; }
+.qty-btn:hover { background: var(--void2); color: var(--text); border-color: var(--border2); }
+.qty-input { width:56px; text-align:center; height:30px; border-radius:6px; border:1px solid var(--border); background:var(--void2); color:var(--text); font-family:var(--font-mono); }
+.qty-input:focus { border-color:var(--amber-border); box-shadow:0 0 0 2px var(--amber-dim); background:var(--void3); }
+.btn-accent-small { background: var(--amber); color: #1a1104; font-weight:600; height:30px; border-radius:6px; padding:0 8px; font-size:12px; }
 input[type=text], input[type=number], input[type=email], input[type=password], select {
 background: var(--void2);
 border: 1px solid var(--border);
@@ -219,6 +226,13 @@ gap: 16px;
 margin-bottom: 20px;
 flex-wrap: wrap;
 }
+/* Keep the controls bar fixed under the top header to avoid layout shifts
+  when the right-column budget bars animate or change size. */
+.controls-bar {
+  position: sticky;
+  top: 56px;
+  z-index: 150;
+}
 .segmented-tabs {
 display: inline-flex;
 gap: 4px;
@@ -229,6 +243,11 @@ border: 1px solid var(--border);
 overflow-x: auto;
 max-width: 100%;
 }
+
+/* Allow the tabs to shrink properly while keeping the search box a fixed
+  size so it doesn't jump around when other elements reflow. */
+.segmented-tabs { flex: 1 1 auto; min-width: 0; }
+.search-filter-box { flex: 0 0 auto; }
 .tab-btn {
 height: 32px;
 padding: 0 14px;
@@ -718,15 +737,33 @@ transition: all 0.15s ease;
 <script>
 // Image Error Fallback Helper
 function imgErrFallback(img) {
-if (!img || img.dataset.failed) return;
+if (!img) return;
+// If this image was already marked as failed, don't toggle repeatedly.
+if (img.dataset.failed) return;
+const orig = img.getAttribute('data-orig') || img.src;
 img.dataset.failed = "true";
+let newSrc = null;
 if (img.src.includes('.PNG')) {
-img.src = img.src.replace('.PNG', '.png');
+  newSrc = img.src.replace('.PNG', '.png');
 } else if (img.src.includes('.png')) {
-img.src = img.src.replace('.png', '.PNG');
-} else {
-img.style.opacity = '0.3';
+  newSrc = img.src.replace('.png', '.PNG');
 }
+if (newSrc) {
+  img.src = newSrc;
+  // Cache resolved mapping so future renders use working path and avoid flicker.
+  if (orig) ICON_RESOLVED[orig] = newSrc;
+} else {
+  img.style.opacity = '0.3';
+  if (orig) ICON_RESOLVED[orig] = img.src;
+}
+}
+
+// Cache for resolved icon paths to avoid repeatedly toggling image srcs
+const ICON_RESOLVED = {};
+
+function resolveIconPath(path) {
+  if (!path) return '';
+  return ICON_RESOLVED[path] || path;
 }
 
 // Parses numeric string inputs including shorthand (1.5M, 500k) and formatted numbers
@@ -788,7 +825,7 @@ const STORE_ITEMS = [
 { id:'mk2_gas_shards', cat:'shards', name:'General Skywalker Shards', sub:'5 Shards', cost:1750, curr:'mk2', icon:'assets/GAS.PNG', itemIcon:'assets/GAS.PNG', yieldQty:5, yieldUnit:'GAS Shards' },
 { id:'mk2_malak_shards', cat:'shards', name:'Darth Malak Shards', sub:'5 Shards', cost:1750, curr:'mk2', icon:'assets/MALAK.PNG', itemIcon:'assets/MALAK.PNG', yieldQty:5, yieldUnit:'Malak Shards' },
 { id:'mk1_raid_shards', cat:'shards', name:'Raid Character Shards', sub:'10 Shards', cost:700, curr:'mk1', icon:'assets/HERMITYODA.PNG', itemIcon:'assets/HERMITYODA.PNG', yieldQty:10, yieldUnit:'Raid Character Shards' },
-{ id:'mk1_accel_shards', cat:'shards', name:'Accelerated Character Shards', sub:'10 Shards', cost:200, curr:'mk1', icon:'assets/ROLO.PNG', itemIcon:'assets/ROLO.PNG', yieldQty:10, yieldUnit:'Accelerated Shards' },
+{ id:'mk1_accel_shards', cat:'shards', name:'Accelerated Character Shards', sub:'10 Shards', cost:200, curr:'mk1', icon:null, itemIcon:null, yieldQty:10, yieldUnit:'Accelerated Shards' },
 { id:'mk1_ship_blueprints', cat:'shards', name:'Ship Blueprints', sub:'4 Blueprints', cost:440, curr:'mk1', icon:'assets/NEGOTIATOR.PNG', itemIcon:'assets/NEGOTIATOR.PNG', yieldQty:4, yieldUnit:'Ship Blueprints' },
 { id:'get2_nego_blueprints', cat:'shards', name:'Negotiator Blueprints', sub:'5 Blueprints', cost:1350, curr:'get2', icon:'assets/NEGOTIATOR.PNG', itemIcon:'assets/NEGOTIATOR.PNG', yieldQty:5, yieldUnit:'Negotiator Blueprints' },
 { id:'get2_malev_blueprints', cat:'shards', name:'Malevolence Blueprints', sub:'5 Blueprints', cost:1350, curr:'get2', icon:'assets/MALEVOLENCE.PNG', itemIcon:'assets/MALEVOLENCE.PNG', yieldQty:5, yieldUnit:'Malevolence Blueprints' },
@@ -1013,7 +1050,9 @@ get3: { class: 'tag-get3', name: 'GET 3', icon: 'assets/GET3.png' }
 };
 const conf = map[curr] || { class: 'tag-raid1', name: curr, icon: '' };
 const valAttr = valSpanId ? `id="${valSpanId}"` : '';
-return `<span class="curr-tag ${conf.class}"><img src="${conf.icon}" class="curr-icon" onerror="imgErrFallback(this)"> <span ${valAttr}>${costText}</span></span>`;
+const iconSrc = resolveIconPath(conf.icon);
+const imgTag = conf.icon ? `<img src="${iconSrc}" data-orig="${conf.icon}" width="15" height="15" class="curr-icon" onerror="imgErrFallback(this)">` : '';
+return `<span class="curr-tag ${conf.class}">${imgTag} <span ${valAttr}>${costText}</span></span>`;
 }
 
 function renderReferenceTables() {
@@ -1124,7 +1163,7 @@ return `
 <div class="store-item-row ${qty > 0 ? 'active-buy' : ''}" id="row-${item.id}">
 <div>
 <div class="store-item-title">
-${item.itemIcon ? `<img src="${item.itemIcon}" class="item-icon" onerror="imgErrFallback(this)">` : ''}
+${item.itemIcon ? `<img src="${resolveIconPath(item.itemIcon)}" data-orig="${item.itemIcon}" width="26" height="26" class="item-icon" onerror="imgErrFallback(this)">` : ''}
 <span>${item.name}</span>
 </div>
 <div class="store-item-sub">
@@ -1135,11 +1174,10 @@ ${getCurrencyTag(item.curr, item.cost + ' / buy')}
 </div>
 
 <div class="store-qty-ctrl">
-<button class="btn btn-ghost btn-sm" style="width:26px; padding:0" onclick="adjustPurchase('${item.id}', -1)">−</button>
-<input type="text" inputmode="numeric" value="${qty}" style="width:48px; text-align:center; height:28px"
-oninput="updatePurchase('${item.id}', this.value)">
-<button class="btn btn-ghost btn-sm" style="width:26px; padding:0" onclick="adjustPurchase('${item.id}', 1)">+</button>
-<button class="btn btn-ghost btn-sm" style="height:28px; padding:0 6px; font-size:10px; color:var(--text3)" onclick="adjustPurchase('${item.id}', 5)">+5</button>
+  <button class="qty-btn" title="Decrease" onclick="adjustPurchase('${item.id}', -1)">−</button>
+  <input class="qty-input" type="text" inputmode="numeric" value="${qty}" oninput="updatePurchase('${item.id}', this.value)" aria-label="Quantity for ${item.name}">
+  <button class="qty-btn" title="Increase" onclick="adjustPurchase('${item.id}', 1)">+</button>
+  <button class="btn-accent-small" title="Add 5" onclick="adjustPurchase('${item.id}', 5)">+5</button>
 </div>
 
 <div style="text-align:right">
@@ -1153,22 +1191,7 @@ Total: ${(qty * item.yieldQty).toLocaleString()}
 `;
 }).join('');
 
-if (catId === 'ability') {
-html += `
-<div class="store-item-row" style="margin-top:16px; border-top:1px dashed var(--border); padding-top:14px">
-<div>
-<div class="store-item-title">Other Items / Custom Reserved Budget</div>
-<div class="store-item-sub">Reserve Mk I tokens for unspecified gear or store items</div>
-</div>
-<div></div>
-<div style="display:flex; align-items:center; gap:6px; justify-content:flex-end">
-<input type="text" inputmode="numeric" value="${state.customMk1Allocation || 0}" style="width:90px; text-align:right; height:28px"
-oninput="updateCustomAllocation(this.value)">
-</div>
-<div style="text-align:right">${getCurrencyTag('mk1', (state.customMk1Allocation || 0).toLocaleString())}</div>
-</div>
-`;
-}
+// Removed custom MK I reserved budget UI for Ability tab per request.
 
 container.innerHTML = html;
 }
@@ -1258,7 +1281,7 @@ yieldContainer.innerHTML = `<span style="color:var(--text3)">No store purchases 
 yieldContainer.innerHTML = Object.entries(yieldTotals).map(([unit, data]) => `
 <div style="display:flex; justify-content:space-between; align-items:center; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.03)">
 <span style="color:var(--text2); display:inline-flex; align-items:center; gap:6px">
-${data.icon ? `<img src="${data.icon}" class="item-icon" style="width:18px; height:18px" onerror="imgErrFallback(this)">` : ''}
+${data.icon ? `<img src="${resolveIconPath(data.icon)}" data-orig="${data.icon}" width="18" height="18" class="item-icon" style="width:18px; height:18px" onerror="imgErrFallback(this)">` : ''}
 ${unit}
 </span>
 <span style="font-family:var(--font-mono); font-weight:600; color:var(--amber)">${data.total.toLocaleString()}</span>
