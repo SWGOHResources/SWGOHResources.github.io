@@ -368,7 +368,7 @@ const EPISODE_OVERRIDES = {
 // Bosses cycle Krayt Dragon (Tue) -> Zeffo (Wed) -> Jotaz (Thu) -> Dryax (Fri),
 // each one runs until the next one starts, then the sequence repeats the
 // following Tuesday. So Dryax stays active Fri through Mon.
-const BOSS_START_WEEKDAY = { 2:ev('boss_krayt_dragon','Krayt Dragon'), 3:ev('boss_zeffo_tomb_guardians','Zeffo Tomb Guardians'), 4:ev('boss_jotaz','Jotaz'), 5:ev('boss_dryax','Dryax') };
+const BOSS_START_WEEKDAY = { 2:ev('krayt','Krayt Dragon'), 3:ev('zeffo','Zeffo Tomb Guardians'), 4:ev('jotaz','Jotaz'), 5:ev('dryax','Dryax') };
 const ACTIVE_BOSS_BY_WEEKDAY = { 0:BOSS_START_WEEKDAY[5], 1:BOSS_START_WEEKDAY[5], 2:BOSS_START_WEEKDAY[2], 3:BOSS_START_WEEKDAY[3], 4:BOSS_START_WEEKDAY[4], 5:BOSS_START_WEEKDAY[5], 6:BOSS_START_WEEKDAY[5] };
 const DEFAULT_ERA_START = '2026-07-28';
 const WEEKDAY_NAMES = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
@@ -501,7 +501,7 @@ function renderTimeline(eraStartUTC, todayIndex){
 const ASSET_KEYS = ['marquee_event','journey_reruns','era_changeover','gac_signup','gac_attack','gac_defense',
   'tw_attack','tw_defense','tw_signup','tw_payout','smugglers_run','tb_phase','tb_ends','era_battle',
   'era_challenge','conquest_start','conquest_end','proving_ground','ultimate_journey','journey_guide',
-  'tw_offense','boss_krayt_dragon','boss_zeffo_tomb_guardians','boss_jotaz','boss_dryax'];
+  'tw_offense','krayt','zeffo','jotaz','dryax'];
 
 function glyphFor(label){
   return label.split(' ').filter(w=>/^[A-Za-z]/.test(w)).slice(0,2).map(w=>w[0].toUpperCase()).join('');
