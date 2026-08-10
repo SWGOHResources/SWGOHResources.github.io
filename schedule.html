@@ -65,12 +65,6 @@
   .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.25em;color:var(--cyan);text-transform:uppercase;margin:0 0 4px;}
   h1{font-family:var(--disp);font-weight:700;font-size:26px;margin:0;letter-spacing:.02em;}
   h1 span{color:var(--text-dim);font-weight:500;}
-  .gear-btn{
-    background:var(--bg-panel);border:1px solid var(--line);color:var(--text-dim);
-    font-family:var(--mono);font-size:12px;letter-spacing:.08em;padding:9px 14px;border-radius:var(--radius);
-    cursor:pointer;transition:.15s;display:flex;align-items:center;gap:8px;
-  }
-  .gear-btn:hover{border-color:var(--cyan-dim);color:var(--cyan);}
 
   /* ---------- hero readout ---------- */
   .hero{
@@ -86,7 +80,6 @@
   .countdown-box{text-align:right;}
   .countdown-box .k{font-family:var(--mono);font-size:10px;letter-spacing:.15em;color:var(--text-faint);text-transform:uppercase;}
   .countdown{font-family:var(--mono);font-size:34px;color:var(--amber);letter-spacing:.05em;text-shadow:0 0 18px var(--amber-dim);}
-  .countdown .u{font-size:15px;color:var(--text-faint);margin:0 2px 0 0;}
 
   /* ---------- section headers ---------- */
   .section-head{display:flex;align-items:baseline;gap:10px;margin:32px 0 14px;}
@@ -114,8 +107,6 @@
   }
   .ecard figcaption{font-family:var(--body);font-size:12.5px;font-weight:500;line-height:1.3;color:var(--text);}
   .ecard.tomorrow{opacity:.72;}
-  .ecard.boss .art{background:linear-gradient(160deg,#241221 0%, #10141d 100%);}
-  .ecard.boss figcaption{color:var(--magenta);}
 
   .empty-note{
     font-family:var(--mono);font-size:12.5px;color:var(--text-faint);padding:14px 0;
@@ -172,15 +163,14 @@
   .fchip ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px;}
   .fchip li{font-size:11px;color:var(--text-dim);line-height:1.35;padding-left:9px;position:relative;}
   .fchip li::before{content:"";position:absolute;left:0;top:5px;width:4px;height:4px;background:var(--cyan-dim);}
-  .fchip .boss-tag{display:inline-block;margin-top:6px;font-family:var(--mono);font-size:10px;color:var(--magenta);}
 
   /* ---------- boss rotation ---------- */
-  .boss-strip{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;}
-  .bcell{background:var(--bg-panel);border:1px solid var(--line);padding:10px 8px;text-align:center;}
-  .bcell.active{border-color:var(--magenta);}
-  .bcell .day{font-family:var(--mono);font-size:10px;color:var(--text-faint);letter-spacing:.1em;text-transform:uppercase;}
-  .bcell .name{font-family:var(--disp);font-size:12px;margin-top:6px;color:var(--text);}
-  .bcell .name.none{color:var(--text-faint);font-family:var(--mono);}
+  .boss-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+  .bcell{background:var(--bg-panel);border:1px solid var(--line);padding:12px 10px;text-align:center;}
+  .bcell.active{border-color:var(--magenta);box-shadow:0 0 10px rgba(255,63,216,.2);}
+  .bcell .day{font-family:var(--mono);font-size:11px;color:var(--cyan);letter-spacing:.1em;text-transform:uppercase;}
+  .bcell.active .day{color:var(--magenta);}
+  .bcell .name{font-family:var(--disp);font-size:14px;font-weight:600;margin-top:6px;color:var(--text);}
 
   /* ---------- footer / asset guide ---------- */
   details.guide{margin-top:40px;border:1px solid var(--line);background:var(--bg-panel);padding:14px 18px;}
@@ -194,33 +184,10 @@
     font-family:var(--mono);font-size:12.5px;padding:12px 16px;margin-bottom:20px;
   }
 
-  /* ---------- modal ---------- */
-  .modal-backdrop{
-    position:fixed;inset:0;background:#000c;display:none;align-items:center;justify-content:center;z-index:50;padding:16px;
-  }
-  .modal-backdrop.open{display:flex;}
-  .modal{
-    background:var(--bg-panel);border:1px solid var(--line-bright);max-width:380px;width:100%;padding:26px;
-  }
-  .modal h3{font-family:var(--disp);font-size:16px;margin:0 0 6px;letter-spacing:.05em;}
-  .modal p{font-size:12.5px;color:var(--text-dim);line-height:1.55;margin:0 0 16px;}
-  .modal label{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--text-faint);text-transform:uppercase;display:block;margin-bottom:6px;}
-  .modal input[type=date]{
-    width:100%;background:var(--bg);border:1px solid var(--line);color:var(--text);padding:10px 12px;
-    font-family:var(--mono);font-size:14px;margin-bottom:8px;
-  }
-  .hint{font-family:var(--mono);font-size:11px;color:var(--text-faint);margin-bottom:18px;}
-  .modal-actions{display:flex;gap:10px;justify-content:flex-end;}
-  .btn{font-family:var(--mono);font-size:12px;letter-spacing:.08em;padding:9px 16px;cursor:pointer;border:1px solid var(--line);background:transparent;color:var(--text-dim);text-transform:uppercase;}
-  .btn.primary{border-color:var(--cyan);color:var(--cyan);}
-  .btn.primary:hover{background:var(--cyan);color:#031017;}
-  .btn.ghost:hover{color:var(--text);}
-
   @media(max-width:640px){
     .hero{grid-template-columns:1fr;}
     .countdown-box{text-align:left;}
-    .boss-strip{grid-template-columns:repeat(4,1fr);}
-    .boss-strip .bcell:nth-child(n+5){display:none;}
+    .boss-strip{grid-template-columns:repeat(2,1fr);}
   }
 </style>
 </head>
@@ -312,9 +279,7 @@
 /* =========================================================
    EVENT DATA MODEL
    Each era = 84 days = 3 episodes of 28 days.
-   Episodes are identical in structure; only days 1, 7, 8, 15
-   and 21 of each episode carry episode-specific text
-   (marquee events / conquest volume language).
+   Era starts on Tuesday (Day 1).
    ========================================================= */
 
 function ev(icon,label){ return {icon,label}; }
@@ -337,10 +302,10 @@ const COMMON_DAYS = {
   19: [ev('gac_attack','GAC Attack'), ev('tw_attack','TW Attack Starts')],
   20: [ev('gac_defense','GAC Defense'), ev('tw_payout','TW Payout')],
   22: [ev('era_challenge','Era Challenge'), ev('gac_signup','GAC Signup Starts'), ev('rote','Territory Battles Phase 2')],
-  23: [ev('gac_defense','GAC Defense'), ev('era_battle','New Era Battle 1'), ev('rote','Territory Battles Phase 2')],
+  23: [ev('gac_defense','GAC Defense'), ev('era_battle','New Era Battle 1'), ev('rote','Territory Battles Phase 3')],
   24: [ev('rote','Territory Battles Phase 4'), ev('gac_attack','GAC Attack')],
   25: [ev('gac_defense','GAC Defense'), ev('rote','Territory Battles Phase 5')],
-  26: [ev('gac_defense','GAC Defense'), ev('rote','Territory Battles Phase 6')],
+  26: [ev('gac_attack','GAC Attack'), ev('rote','Territory Battles Phase 6')],
   27: [ev('gac_defense','GAC Defense'), ev('tb_ends','Territory Battles Ends'), ev('tw_signup','TW Signup Starts')],
   28: [ev('era_battle','Era Battle 2'), ev('tw_defense','TW Defense Starts')],
 };
@@ -369,19 +334,22 @@ const EPISODE_OVERRIDES = {
   }
 };
 
-// Bosses cycle every era day in a repeating 4-day cycle:
-// day 1 = Krayt Dragon, day 2 = Zeffo Tomb Guardians,
-// day 3 = Jotaz, day 4 = Dryax, then repeat.
-const BOSS_CYCLE = [
-  ev('krayt','Krayt Dragon'),
-  ev('zeffo','Zeffo Tomb Guardians'),
-  ev('jotaz','Jotaz'),
-  ev('dryax','Dryax')
+// Bosses cycle on specific weekdays (Tue-Fri)
+const BOSS_SCHEDULE = [
+  { day: 'Tuesday', label: 'Krayt Dragon', icon: 'krayt' },
+  { day: 'Wednesday', label: 'Zeffo Tomb Guardians', icon: 'zeffo' },
+  { day: 'Thursday', label: 'Jotaz', icon: 'jotaz' },
+  { day: 'Friday', label: 'Dryax', icon: 'dryax' }
 ];
-function bossForDayIndex(dayIndex){
-  if(dayIndex < 1 || dayIndex > 84) return BOSS_CYCLE[3];
-  return BOSS_CYCLE[(dayIndex - 1) % BOSS_CYCLE.length];
+
+function getActiveBossDayForUTCDay(utcDayIndex){
+  // 0 = Sun, 1 = Mon, 2 = Tue, 3 = Wed, 4 = Thu, 5 = Fri, 6 = Sat
+  if(utcDayIndex === 2) return 'Tuesday';
+  if(utcDayIndex === 3) return 'Wednesday';
+  if(utcDayIndex === 4) return 'Thursday';
+  return 'Friday'; // Friday, Saturday, Sunday, Monday (Dryax)
 }
+
 const DEFAULT_ERA_START = '2026-07-29';
 const WEEKDAY_NAMES = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 const WEEKDAY_SHORT = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
@@ -392,8 +360,7 @@ function getDayEvents(episode, dayInEp){
 }
 
 /* =========================================================
-   TIME / DATE MATH — everything keyed to Europe/London,
-   with the game day rolling over at 19:00 UK time.
+   TIME / DATE MATH
    ========================================================= */
 
 function ukParts(d){
@@ -406,7 +373,6 @@ function ukParts(d){
 
 function dateUTC(y,m,d){ return Date.UTC(y, m-1, d); }
 
-// "effective game date" (UTC-midnight-tagged) given real now, per 7pm UK rollover rule
 function effectiveGameDateUTC(now){
   const p = ukParts(now);
   const today = dateUTC(p.year,p.month,p.day);
@@ -416,13 +382,12 @@ function effectiveGameDateUTC(now){
 }
 
 function parseEraStart(str){
-  // str = "YYYY-MM-DD"
   const [y,m,d] = str.split('-').map(Number);
   return dateUTC(y,m,d);
 }
 
 function dayIndexFor(gameDateUTC, eraStartUTC){
-  return Math.floor((gameDateUTC - eraStartUTC)/86400000) + 1; // 1-based
+  return Math.floor((gameDateUTC - eraStartUTC)/86400000) + 1;
 }
 
 function scheduleForIndex(dayIndex){
@@ -439,8 +404,7 @@ function fmtDate(utcMs){
 }
 
 /* =========================================================
-   ERA TIMELINE — marquees, journey events, era challenges
-   plotted across all 84 days, with a today indicator.
+   ERA TIMELINE
    ========================================================= */
 
 function timelineCategory(icon){
@@ -465,7 +429,6 @@ function collectTimelineMarkers(){
       markers.push({ dayIndex: idx, cat, label: e.label, assetIcon });
     });
   }
-  // stack markers that land on the same day
   const seen = {};
   markers.forEach(m=>{
     seen[m.dayIndex] = (seen[m.dayIndex]||0);
@@ -521,7 +484,6 @@ function renderTimeline(eraStartUTC, todayIndex){
   document.getElementById('tlDaysLeft').textContent = Math.max(0, 84 - todayIndex);
 }
 
-
 const ASSET_KEYS = ['marquee_event','journey_reruns','era_changeover','gac_signup','gac_attack','gac_defense',
   'tw_attack','tw_defense','tw_signup','tw_payout','smugglersrun','rote','tb_ends','era_battle',
   'era_challenge','conquest_start','conquest_end','proving_ground','ultimate_journey','journey_guide',
@@ -541,7 +503,7 @@ function assetFileForCard(item){
 }
 
 function cardHTML(item, extraClass){
-  const cls = [extraClass||'', item.boss ? 'boss' : ''].join(' ');
+  const cls = extraClass || '';
   const assetBase = assetFileForCard(item);
   return `<figure class="ecard bracket ${cls}" data-glyph="${glyphFor(item.label)}">
     <span class="bl"></span><span class="br"></span>
@@ -604,22 +566,18 @@ function render(){
     <div class="readout"><div class="k">Today Is</div><div class="v">${todayWeekday}</div></div>
   ` : `<div class="readout"><div class="k">Status</div><div class="v accent">Out of range</div></div>`;
 
-  // today / tomorrow
+  // today / tomorrow event cards (bosses removed from cards)
   document.getElementById('todayHeading').textContent = `Today — ${todayWeekday}`;
   document.getElementById('todaySub').textContent = fmtDate(gameDateUTC);
   const todayEvents = todaySched ? getDayEvents(todaySched.episode, todaySched.dayInEp) : [];
-  const todayBoss = bossForDayIndex(todayIndex);
-  const todayBossLabel = `${todayBoss.label} (active)`;
-  renderCards(document.getElementById('todayCards'), [...todayEvents, {icon:todayBoss.icon, label:todayBossLabel, boss:true}]);
+  renderCards(document.getElementById('todayCards'), todayEvents);
 
   const tmrwDateUTC = gameDateUTC + 86400000;
   const tmrwWeekday = WEEKDAY_NAMES[new Date(tmrwDateUTC).getUTCDay()];
   document.getElementById('tmrwHeading').textContent = `Tomorrow — ${tmrwWeekday}`;
   document.getElementById('tmrwSub').textContent = fmtDate(tmrwDateUTC);
   const tmrwEvents = tmrwSched ? getDayEvents(tmrwSched.episode, tmrwSched.dayInEp) : [];
-  const tmrwBoss = bossForDayIndex(todayIndex + 1);
-  const tmrwBossLabel = `${tmrwBoss.label} (starts tomorrow)`;
-  renderCards(document.getElementById('tmrwCards'), [...tmrwEvents, {icon:tmrwBoss.icon, label:tmrwBossLabel, boss:true}], 'tomorrow');
+  renderCards(document.getElementById('tmrwCards'), tmrwEvents, 'tomorrow');
 
   // 7-day forecast
   const forecastEl = document.getElementById('forecastRow');
@@ -629,28 +587,30 @@ function render(){
     const idx = todayIndex + i;
     const sched = scheduleForIndex(idx);
     const items = sched ? getDayEvents(sched.episode, sched.dayInEp) : [];
-    const boss = bossForDayIndex(idx);
     const chip = document.createElement('div');
     chip.className = 'fchip' + (i===0 ? ' today' : '');
     chip.innerHTML = `
       <div class="day">${WEEKDAY_SHORT[new Date(dUTC).getUTCDay()]}${i===0?' · today':''}</div>
       <div class="date">${new Date(dUTC).toLocaleDateString('en-GB',{timeZone:'UTC',day:'numeric',month:'short'})}</div>
       <ul>${items.length ? items.map(it=>`<li>${it.label}</li>`).join('') : '<li>—</li>'}</ul>
-      <span class="boss-tag">▲ ${boss.label}</span>
     `;
     forecastEl.appendChild(chip);
   }
 
-  // boss rotation strip (4-day era cycle)
+  // boss rotation strip at bottom
   const bossEl = document.getElementById('bossStrip');
   bossEl.innerHTML = '';
-  BOSS_CYCLE.forEach((b, idx)=>{
-    const cycleDay = idx + 1;
+  const currentUTCDay = new Date(gameDateUTC).getUTCDay();
+  const activeBossDay = getActiveBossDayForUTCDay(currentUTCDay);
+
+  BOSS_SCHEDULE.forEach((b) => {
+    const isActive = b.day === activeBossDay;
     const cell = document.createElement('div');
-    cell.className = 'bcell' + (((todayIndex - 1) % 4) === idx ? ' active' : '');
-    cell.innerHTML = `<div class="day">Day ${cycleDay}${((todayIndex - 1) % 4) === idx ? ' · today' : ''}</div>
+    cell.className = 'bcell' + (isActive ? ' active' : '');
+    cell.innerHTML = `
+      <div class="day">${b.day}${isActive ? ' · active' : ''}</div>
       <div class="name">${b.label}</div>
-      <div class="name none">cycle ${cycleDay}/4</div>`;
+    `;
     bossEl.appendChild(cell);
   });
 }
@@ -681,7 +641,7 @@ buildAssetGuide();
 render();
 tickCountdown();
 setInterval(tickCountdown, 1000);
-setInterval(render, 60000); // re-check date/episode roll each minute
+setInterval(render, 60000);
 </script>
 
 </body>
