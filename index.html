@@ -69,6 +69,8 @@
   --magenta: #d1698f;
   --magenta-dim: rgba(209, 105, 143, 0.14);
   --red: #ef4444;
+  --red-dim: rgba(239, 68, 68, 0.14);
+  --red-border: rgba(239, 68, 68, 0.45);
   --green: #5cad82;
   --green-dim: rgba(92, 173, 130, 0.14);
   --steel: #7c94c9;
@@ -200,24 +202,24 @@ body {
 }
 .mh-left { display: flex; flex-direction: column; gap: 14px; position: relative; z-index: 1; }
 .mh-tag { font-family: var(--disp); font-size: 20px; font-weight: 700; color: var(--text); letter-spacing: 0; text-transform: none; margin-bottom: 4px; }
-  .mh-tag .live-dot { display: none; }
-  .mh-title-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
-  .mh-main-val { font-family: var(--disp); font-size: 34px; font-weight: 700; color: var(--text); line-height: 1; white-space: nowrap; }
-  .mh-main-val .mh-of { font-size: 16px; font-weight: 600; color: var(--text3); margin-left: 4px; }
-  .mh-main-val span:not(.mh-of) { color: var(--amber); }
+.mh-tag .live-dot { display: none; }
+.mh-title-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.mh-main-val { font-family: var(--disp); font-size: 34px; font-weight: 700; color: var(--text); line-height: 1; white-space: nowrap; }
+.mh-main-val .mh-of { font-size: 16px; font-weight: 600; color: var(--text3); margin-left: 4px; }
+.mh-main-val span:not(.mh-of) { color: var(--amber); }
 
-  .mh-meta-strip {
-    display: flex; align-items: center; gap: 16px;
-    background: var(--void2); border: 1px solid var(--border2); border-radius: var(--radius);
-    padding: 8px 16px;
-  }
-  .mh-meta-item { display: flex; flex-direction: column; gap: 3px; }
-  .mh-meta-label {
-    font-family: var(--body); font-size: 9.5px; font-weight: 600; text-transform: uppercase;
-    letter-spacing: 0.08em; color: var(--text3); white-space: nowrap;
-  }
-  .mh-meta-val { font-family: var(--mono); font-size: 13px; font-weight: 600; color: var(--text); white-space: nowrap; }
-  .mh-meta-divider { width: 1px; height: 26px; background: var(--border2); flex: 0 0 auto; }
+.mh-meta-strip {
+  display: flex; align-items: center; gap: 16px;
+  background: var(--void2); border: 1px solid var(--border2); border-radius: var(--radius);
+  padding: 8px 16px;
+}
+.mh-meta-item { display: flex; flex-direction: column; gap: 3px; }
+.mh-meta-label {
+  font-family: var(--body); font-size: 9.5px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.08em; color: var(--text3); white-space: nowrap;
+}
+.mh-meta-val { font-family: var(--mono); font-size: 13px; font-weight: 600; color: var(--text); white-space: nowrap; }
+.mh-meta-divider { width: 1px; height: 26px; background: var(--border2); flex: 0 0 auto; }
 
 .mh-progress-wrap { width: 100%; max-width: 560px; }
 .mh-progress-bar {
@@ -249,9 +251,9 @@ body {
   padding: 16px; display: flex; flex-direction: column; justify-content: space-between;
   position: relative; overflow: hidden;
 }
-.status-card.cyan-card { border-color: var(--cyan-border); box-shadow: 0 0 14px rgba(86, 184, 173, 0.06); }
-.status-card.amber-card { border-color: var(--amber-border); box-shadow: 0 0 14px rgba(224, 165, 82, 0.06); }
-.status-card.purple-card { border-color: var(--purple-border); box-shadow: 0 0 14px rgba(150, 134, 214, 0.06); }
+.status-card.red-card { border-color: var(--red-border); box-shadow: 0 0 14px rgba(239, 68, 68, 0.12); }
+.status-card.purple-card { border-color: var(--purple-border); box-shadow: 0 0 14px rgba(150, 134, 214, 0.12); }
+.status-card.amber-card { border-color: var(--amber-border); box-shadow: 0 0 14px rgba(224, 165, 82, 0.12); }
 
 .sc-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
 .sc-title { font-family: var(--body); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text3); }
@@ -259,10 +261,29 @@ body {
   font-family: var(--body); font-size: 9.5px; padding: 2px 7px; border-radius: 12px;
   font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
 }
+.sc-badge.red { background: var(--red-dim); color: var(--red); border: 1px solid var(--red-border); }
+.sc-badge.purple { background: var(--purple-dim); color: var(--purple); border: 1px solid var(--purple-border); }
+.sc-badge.amber { background: var(--amber-dim); color: var(--amber); border: 1px solid var(--amber-border); }
 .sc-badge.running { background: var(--green-dim); color: var(--green); border: 1px solid rgba(92, 173, 130, 0.3); }
 .sc-badge.off { background: var(--void3); color: var(--text3); border: 1px solid var(--border); }
-.sc-badge.warning { background: var(--amber-dim); color: var(--amber); border: 1px solid var(--amber-border); }
-.sc-badge.purple { background: var(--purple-dim); color: var(--purple); border: 1px solid var(--purple-border); }
+/* Keeps badge pills colored to match the card theme even during OFF-WEEK / IDLE */
+.status-card.red-card .sc-badge.off { 
+  background: var(--red-dim); 
+  color: var(--red); 
+  border-color: var(--red-border); 
+}
+
+.status-card.purple-card .sc-badge.off { 
+  background: var(--purple-dim); 
+  color: var(--purple); 
+  border-color: var(--purple-border); 
+}
+
+.status-card.amber-card .sc-badge.off { 
+  background: var(--amber-dim); 
+  color: var(--amber); 
+  border-color: var(--amber-border); 
+}
 
 .sc-main { margin-bottom: 8px; }
 .sc-val { font-family: var(--disp); font-size: 17px; font-weight: 700; color: var(--text); line-height: 1.25; }
@@ -398,8 +419,8 @@ body {
   position: absolute; top: 50%; left: 50%; width: 12px; height: 1.5px; background: var(--text2);
   border-radius: 2px; transition: background 0.15s;
 }
-.modal-close-x span:nth-child(1) { transform: translate(-50%,-50%) rotate(45deg); }
-.modal-close-x span:nth-child(2) { transform: translate(-50%,-50%) rotate(-45deg); }
+.modal-close-x span:nth-child(1) { transform: translate(-50%, -50%) rotate(45deg); }
+.modal-close-x span:nth-child(2) { transform: translate(-50%, -50%) rotate(-45deg); }
 .modal-close-x:hover { border-color: var(--amber-border); }
 .modal-close-x:hover span { background: var(--amber); }
 
@@ -726,12 +747,12 @@ const BOSS_ICONS = {
 
 /* ICON / CATEGORY SYSTEM */
 const CATEGORY_META = {
-  gac:      { label: 'GAC',    glyph: 'GAC', accent: 'var(--cyan)',    dim: 'var(--cyan-dim)',    border: 'var(--cyan-border)' },
+  gac:      { label: 'GAC',    glyph: 'GAC', accent: 'var(--red)',     dim: 'var(--red-dim)',     border: 'var(--red-border)' },
   tw:       { label: 'TW',     glyph: 'TW',  accent: 'var(--purple)',  dim: 'var(--purple-dim)',  border: 'var(--purple-border)' },
   tb:       { label: 'TB',     glyph: 'TB',  accent: 'var(--magenta)', dim: 'var(--magenta-dim)', border: 'var(--magenta)' },
   era:      { label: 'ERA',    glyph: 'ERA', accent: 'var(--amber)',   dim: 'var(--amber-dim)',   border: 'var(--amber-border)' },
-  conquest: { label: 'CONQUEST', glyph: 'CQ', accent: 'var(--amber)',  dim: 'var(--amber-dim)',   border: 'var(--amber-border)' },
-  guild:    { label: 'GUILD',  glyph: 'SR',  accent: 'var(--green)',   dim: 'var(--green-dim)',   border: 'rgba(16,185,129,0.4)' },
+  conquest: { label: 'CONQUEST', glyph: 'CQ', accent: 'var(--purple)', dim: 'var(--purple-dim)', border: 'var(--purple-border)' },
+  guild:    { label: 'GUILD',  glyph: 'SR',  accent: 'var(--amber)',   dim: 'var(--amber-dim)',   border: 'var(--amber-border)' },
   journey:  { label: 'JOURNEY',glyph: 'JRN', accent: 'var(--cyan)',    dim: 'var(--cyan-dim)',    border: 'var(--cyan-border)' },
   marquee:  { label: 'MARQUEE',glyph: 'MQ',  accent: 'var(--amber)',   dim: 'var(--amber-dim)',   border: 'var(--amber-border)' },
   fleet:    { label: 'FLEET',  glyph: 'FLT', accent: 'var(--steel)',   dim: 'var(--steel-dim)',   border: 'var(--steel-border)' },
@@ -878,50 +899,41 @@ function fmtDateUTC(ms){
   return d.toLocaleDateString('en-GB', { timeZone: 'UTC', weekday: 'short', day: 'numeric', month: 'short' });
 }
 
-/* =========================================================
-   UPDATED GAC STATUS CALCULATOR
-   Explicitly tracks Signup, Defense, Attack, Mid-Season Off-Weeks,
-   and Season Intermissions with exact target launch dates.
-   ========================================================= */
 function getGacStatus(st){
   const d = st.dayInEp;
   const format = (st.episode % 2 === 1) ? '5v5' : '3v3';
   const nextFormat = format === '5v5' ? '3v3' : '5v5';
 
-  // 1. Signup Days (Days 1, 15, 22)
   if(d === 1 || d === 15 || d === 22){
     return {
       status: 'SIGNUP PHASE',
-      badgeClass: 'purple',
+      badgeClass: 'red',
       title: `Grand Arena (${format})`,
       main: 'Signup Phase Open',
       sub: 'Set Defense Phase starts tomorrow'
     };
   }
 
-  // 2. Active Defense Days
   if(d === 2 || d === 4 || d === 6 || d === 16 || d === 18 || d === 20 || d === 23 || d === 25 || d === 27){
     return {
       status: 'DEFENSE PHASE',
-      badgeClass: 'warning',
+      badgeClass: 'red',
       title: `Grand Arena (${format})`,
       main: 'Defense Phase Active',
       sub: 'Attack Phase begins tomorrow'
     };
   }
 
-  // 3. Active Attack Days
   if(d === 3 || d === 5 || d === 7 || d === 17 || d === 19 || d === 21 || d === 24 || d === 26){
     return {
       status: 'ATTACK PHASE',
-      badgeClass: 'running',
+      badgeClass: 'red',
       title: `Grand Arena (${format})`,
       main: 'Attack Phase Active',
       sub: 'Clear enemy sectors before payout'
     };
   }
 
-  // 4. Mid-Season Off-Week (Days 8 to 14)
   if(d >= 8 && d <= 14){
     const daysUntilNext = 15 - d;
     const nextDateMs = st.currentDayStartMs + (daysUntilNext * 86400000);
@@ -937,8 +949,7 @@ function getGacStatus(st){
     };
   }
 
-  // 5. Final Round Attack/Payout & Season Intermission (Days 28+)
-  const daysUntilNext = 29 - d; // Days until Day 1 of next Episode
+  const daysUntilNext = 29 - d;
   const nextDateMs = st.currentDayStartMs + (daysUntilNext * 86400000);
   const dateStr = fmtDateUTC(nextDateMs);
   const dayLabel = daysUntilNext === 1 ? 'tomorrow' : `in ${daysUntilNext} days`;
@@ -964,7 +975,7 @@ function getConquestStatus(st){
     const daysRemaining = 21 - d;
     return {
       status: 'ACTIVE',
-      badgeClass: 'warning',
+      badgeClass: 'purple',
       title: titleNote,
       main: `Conquest Day ${conquestDay} of 14`,
       sub: daysRemaining === 0 ? 'Ends Today! Proving Grounds Active' : `Ends in ${daysRemaining} days`
@@ -1030,21 +1041,21 @@ function renderStatusDashboard(st){
   const isGuildActive = todayGuildSummary.includes('ROTE') || todayGuildSummary.includes('TW');
 
   container.innerHTML = `
-    <div class="status-card ${gac.badgeClass === 'running' ? 'cyan-card' : ''}">
+    <div class="status-card red-card">
       <div class="sc-header"><span class="sc-title">${gac.title}</span><span class="sc-badge ${gac.badgeClass}">${gac.status}</span></div>
       <div class="sc-main" style="margin-bottom:0"><div class="sc-val">${gac.main}</div><div class="sc-sub">${gac.sub}</div></div>
     </div>
 
-    <div class="status-card ${conq.badgeClass === 'warning' ? 'amber-card' : ''}">
+    <div class="status-card purple-card">
       <div class="sc-header"><span class="sc-title">${conq.title}</span><span class="sc-badge ${conq.badgeClass}">${conq.status}</span></div>
       <div class="sc-main" style="margin-bottom:0"><div class="sc-val">${conq.main}</div><div class="sc-sub">${conq.sub}</div></div>
     </div>
 
-    <div class="status-card ${isGuildActive ? 'purple-card' : ''}">
-      <div class="sc-header"><span class="sc-title">Guild Events</span><span class="sc-badge ${isGuildActive ? 'running' : 'off'}">${isGuildActive ? 'ACTIVE' : 'IDLE'}</span></div>
+    <div class="status-card amber-card">
+      <div class="sc-header"><span class="sc-title">Guild Events</span><span class="sc-badge ${isGuildActive ? 'amber' : 'off'}">${isGuildActive ? 'ACTIVE' : 'IDLE'}</span></div>
       <div class="sc-main" style="margin-bottom:0">
         <div class="sc-val" style="font-size:15px;margin-bottom:2px">Today: <span style="color:var(--text);font-weight:600">${todayGuildSummary}</span></div>
-        <div class="sc-sub" style="font-size:12px">Tomorrow: <span style="color:var(--cyan)">${tmrwGuildSummary}</span></div>
+        <div class="sc-sub" style="font-size:12px">Tomorrow: <span style="color:var(--amber)">${tmrwGuildSummary}</span></div>
       </div>
     </div>
   `;
@@ -1263,7 +1274,7 @@ tickCountdown();
 setInterval(tickCountdown, 1000);
 setInterval(renderAll, 60000);
 </script>
-<script src="./build-version.js?v=dc36c0f-136"></script>
+<script src="./build-version.js?v=476f007-137"></script>
 
 </body>
 </html>
