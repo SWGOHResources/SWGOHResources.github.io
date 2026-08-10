@@ -583,15 +583,6 @@ body {
   </div>
   <div class="boss-strip" id="bossStrip"></div>
 
-  <!-- Full Era Schedule Access -->
-  <div class="schedule-access">
-    <div class="sa-text">
-      <div class="sa-title">Looking for the full 84-day breakdown?</div>
-      <div class="sa-sub">Every day of the Era, mapped Episode → Week → Day, in one searchable table.</div>
-    </div>
-    <button class="btn primary" id="openFullScheduleBtn2">Open Full Schedule</button>
-  </div>
-
 </div>
 
 <footer class="site-footer">
@@ -1283,7 +1274,6 @@ const openAbout = () => { aboutModal.classList.add('open'); closeMobilePanel(); 
 const closeAbout = () => aboutModal.classList.remove('open');
 
 document.getElementById('openFullScheduleBtn').onclick = openSchedule;
-document.getElementById('openFullScheduleBtn2').onclick = openSchedule;
 document.getElementById('openFullScheduleBtnMobile').onclick = openSchedule;
 document.getElementById('footerFullScheduleBtn').onclick = openSchedule;
 document.getElementById('closeFullScheduleBtn').onclick = closeSchedule;
@@ -1291,7 +1281,6 @@ document.getElementById('closeFullScheduleBtn').onclick = closeSchedule;
 document.getElementById('openAboutBtnHeader').onclick = openAbout;
 document.getElementById('openAboutBtnMobile').onclick = openAbout;
 document.getElementById('closeAboutBtn').onclick = closeAbout;
-document.getElementById('closeAboutBtn2').onclick = closeAbout;
 
 scheduleModal.addEventListener('click', e => { if(e.target === scheduleModal) closeSchedule(); });
 aboutModal.addEventListener('click', e => { if(e.target === aboutModal) closeAbout(); });
@@ -1344,7 +1333,7 @@ tickCountdown();
 setInterval(tickCountdown, 1000);
 setInterval(renderAll, 60000);
 </script>
-<script src="./build-version.js?v=7140ba0-144"></script>
+<script src="./build-version.js?v=ef4857e-145"></script>
 
 </body>
 </html>
