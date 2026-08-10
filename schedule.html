@@ -399,8 +399,8 @@ function effectiveGameDateUTC(now){
   const p = ukParts(now);
   const today = dateUTC(p.year,p.month,p.day);
   const msSinceUKMidnight = p.hour*3600000 + p.minute*60000 + p.second*1000;
-  const rolled = msSinceUKMidnight < 19*3600000;
-  return { gameDateUTC: rolled ? today - 86400000 : today, msSinceUKMidnight };
+  const pastReset = msSinceUKMidnight >= 19*3600000;
+  return { gameDateUTC: pastReset ? today + 86400000 : today, msSinceUKMidnight };
 }
 
 function parseEraStart(str){
