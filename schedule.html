@@ -3,281 +3,403 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Era Terminal — SWGOH Schedule</title>
+<title>SWGOH Schedule // SwgohResources</title>
+<link rel="icon" href="/favicon.ico" type="image/x-icon">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --bg: #0a0d14;
-    --bg-panel: #10141d;
-    --bg-panel-2: #151a25;
-    --line: #232b3a;
-    --line-bright: #34506080;
-    --cyan: #5ee3f0;
-    --cyan-dim: #5ee3f055;
-    --amber: #ffb454;
-    --amber-dim: #ffb45455;
-    --text: #e7ecf5;
-    --text-dim: #8792a8;
-    --text-faint: #545e72;
-    --magenta: #ff3fd8;
-    --purple: #b073ff;
-    --purple-dim: #b073ff55;
-    --red: #ff5c5c;
-    --red-dim: #ff5c5c55;
-    --radius: 2px;
-    --disp: 'Chakra Petch', sans-serif;
-    --body: 'Inter', sans-serif;
-    --mono: 'Share Tech Mono', monospace;
-  }
+:root {
+  --void: #0a0c10;
+  --void1: #0e1116;
+  --void2: #12161c;
+  --void3: #191e26;
+  --border: rgba(232, 227, 216, 0.08);
+  --border2: rgba(232, 227, 216, 0.16);
+  --amber: #e8a33d;
+  --amber-dim: rgba(232, 163, 61, 0.12);
+  --amber-border: rgba(232, 163, 61, 0.4);
+  --cyan: #4fd1c5;
+  --cyan-dim: rgba(79, 209, 197, 0.12);
+  --cyan-border: rgba(79, 209, 197, 0.4);
+  --purple: #b073ff;
+  --purple-dim: rgba(176, 115, 255, 0.12);
+  --purple-border: rgba(176, 115, 255, 0.4);
+  --magenta: #ff3fd8;
+  --magenta-dim: rgba(255, 63, 216, 0.12);
+  --red: #ef4444;
+  --red-dim: rgba(239, 68, 68, 0.12);
+  --green: #10b981;
+  --green-dim: rgba(16, 185, 129, 0.12);
+  --text: #eae7e0;
+  --text2: #8f96a3;
+  --text3: #565f6d;
+  --radius: 8px;
+  --radius-lg: 14px;
+  --disp: 'Chakra Petch', sans-serif;
+  --body: 'Inter', sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+}
 
-  *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;}
-  body{
-    background:
-      radial-gradient(ellipse 1200px 600px at 50% -10%, #131c2a 0%, transparent 60%),
-      repeating-linear-gradient(180deg, #ffffff03 0px, #ffffff03 1px, transparent 1px, transparent 3px),
-      var(--bg);
-    color:var(--text);
-    font-family:var(--body);
-    min-height:100vh;
-    padding:24px 18px 60px;
-  }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { height: 100%; scroll-behavior: smooth; }
+body {
+  background: var(--void);
+  color: var(--text);
+  font-family: var(--body);
+  font-size: 13px;
+  line-height: 1.5;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  position: relative;
+  padding-bottom: 60px;
+}
 
-  .wrap{max-width:1080px;margin:0 auto;}
+/* ─── Starfield ─── */
+.starfield { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+.starfield span {
+  position: absolute; width: 2px; height: 2px; border-radius: 50%; background: #eae7e0;
+  animation: twinkle 4.5s ease-in-out infinite;
+}
+@keyframes twinkle { 0%, 100% { opacity: 0.15; } 50% { opacity: 0.85; } }
 
-  /* ---------- corner-bracket frame ---------- */
-  .bracket{position:relative;}
-  .bracket::before,.bracket::after,
-  .bracket .bl::before,.bracket .br::before{
-    content:"";position:absolute;width:10px;height:10px;
-    border-color:var(--cyan-dim);border-style:solid;border-width:0;
-    pointer-events:none;
-  }
-  .bracket::before{top:-1px;left:-1px;border-top-width:2px;border-left-width:2px;}
-  .bracket::after{top:-1px;right:-1px;border-top-width:2px;border-right-width:2px;}
-  .bracket .bl::before{bottom:-1px;left:-1px;border-bottom-width:2px;border-left-width:2px;position:absolute;}
-  .bracket .br::before{bottom:-1px;right:-1px;border-bottom-width:2px;border-right-width:2px;position:absolute;}
+/* ─── Top Header & Navigation ─── */
+.top-header {
+  position: sticky; top: 0; z-index: 200; width: 100%;
+  background: rgba(10, 12, 16, 0.85); backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border);
+}
+.topbar {
+  display: flex; align-items: center; height: 56px; padding: 0 24px;
+  max-width: 1180px; margin: 0 auto;
+}
+.topbar-title {
+  font-family: var(--disp); font-size: 16px; font-weight: 700;
+  color: var(--text); margin-right: 32px; text-decoration: none;
+  display: inline-flex; align-items: center; white-space: nowrap;
+}
+.topbar-title span { color: var(--amber); }
+.topbar-title .divider-glyph { color: var(--text3); margin: 0 2px; font-weight: 400; }
+.topbar-tabs { display: flex; gap: 4px; flex: 1; height: 100%; }
+.tab-btn {
+  height: 100%; padding: 0 16px; background: none; border: none;
+  color: var(--text2); font-size: 12px; font-weight: 500; font-family: var(--mono);
+  cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.15s ease;
+  text-decoration: none; display: inline-flex; align-items: center; white-space: nowrap;
+}
+.tab-btn:hover { color: var(--text); }
+.tab-btn.active { color: var(--amber); border-bottom-color: var(--amber); }
 
-  /* ---------- top bar ---------- */
-  .topbar{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:22px;gap:12px;flex-wrap:wrap;}
-  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.25em;color:var(--cyan);text-transform:uppercase;margin:0 0 4px;}
-  h1{font-family:var(--disp);font-weight:700;font-size:26px;margin:0;letter-spacing:.02em;}
-  h1 span{color:var(--text-dim);font-weight:500;}
-  .gear-btn{
-    background:var(--bg-panel);border:1px solid var(--line);color:var(--text-dim);
-    font-family:var(--mono);font-size:12px;letter-spacing:.08em;padding:9px 14px;border-radius:var(--radius);
-    cursor:pointer;transition:.15s;display:flex;align-items:center;gap:8px;
-  }
-  .gear-btn:hover{border-color:var(--cyan-dim);color:var(--cyan);}
+.gear-btn {
+  background: var(--void2); border: 1px solid var(--border2); color: var(--text2);
+  font-family: var(--mono); font-size: 11px; padding: 6px 12px; border-radius: var(--radius);
+  cursor: pointer; transition: 0.15s; display: inline-flex; align-items: center; gap: 6px;
+}
+.gear-btn:hover { border-color: var(--amber-border); color: var(--amber); }
 
-  /* ---------- hero readout ---------- */
-  .hero{
-    background:linear-gradient(180deg,var(--bg-panel) 0%, var(--bg-panel-2) 100%);
-    border:1px solid var(--line);padding:22px 24px;margin-bottom:20px;
-    display:grid;grid-template-columns:1fr auto;gap:20px;align-items:center;
-  }
-  .readout-row{display:flex;gap:28px;flex-wrap:wrap;}
-  .readout{display:flex;flex-direction:column;gap:2px;}
-  .readout .k{font-family:var(--mono);font-size:10px;letter-spacing:.15em;color:var(--text-faint);text-transform:uppercase;}
-  .readout .v{font-family:var(--disp);font-size:22px;font-weight:600;color:var(--text);}
-  .readout .v.accent{color:var(--cyan);}
-  .countdown-box{text-align:right;}
-  .countdown-box .k{font-family:var(--mono);font-size:10px;letter-spacing:.15em;color:var(--text-faint);text-transform:uppercase;}
-  .countdown{font-family:var(--mono);font-size:34px;color:var(--amber);letter-spacing:.05em;text-shadow:0 0 18px var(--amber-dim);}
+/* ─── Layout ─── */
+.wrap { max-width: 1180px; margin: 0 auto; padding: 24px; position: relative; z-index: 1; }
 
-  /* ---------- section headers ---------- */
-  .section-head{display:flex;align-items:baseline;gap:10px;margin:32px 0 14px;}
-  .section-head h2{font-family:var(--disp);font-size:15px;letter-spacing:.14em;text-transform:uppercase;margin:0;color:var(--text);}
-  .section-head .sub{font-family:var(--mono);font-size:12px;color:var(--text-faint);}
-  .section-head .rule{flex:1;height:1px;background:linear-gradient(90deg,var(--line-bright),transparent);}
-  .section-head.tomorrow h2{color:var(--text-dim);}
+/* ─── Corner Brackets ─── */
+.bracket { position: relative; }
+.bracket::before, .bracket::after,
+.bracket .bl::before, .bracket .br::before {
+  content: ""; position: absolute; width: 8px; height: 8px;
+  border-color: var(--cyan-border); border-style: solid; border-width: 0; pointer-events: none;
+}
+.bracket::before { top: -1px; left: -1px; border-top-width: 2px; border-left-width: 2px; }
+.bracket::after { top: -1px; right: -1px; border-top-width: 2px; border-right-width: 2px; }
+.bracket .bl::before { bottom: -1px; left: -1px; border-bottom-width: 2px; border-left-width: 2px; position: absolute; }
+.bracket .br::before { bottom: -1px; right: -1px; border-bottom-width: 2px; border-right-width: 2px; position: absolute; }
 
-  /* ---------- event cards ---------- */
-  .card-row{display:flex;gap:14px;flex-wrap:wrap;}
-  .ecard{
-    width:150px;margin:0;padding:8px 8px 10px;background:var(--bg-panel);border:1px solid var(--line);
-  }
-  .ecard .art{
-    aspect-ratio:2/3;width:100%;overflow:hidden;background:
-      linear-gradient(160deg,#182234 0%, #0d121c 100%);
-    display:flex;align-items:center;justify-content:center;margin-bottom:8px;position:relative;
-  }
-  .ecard .art img{width:100%;height:100%;object-fit:cover;display:block;}
-  .ecard.noimg .art::before{
-    content:attr(data-glyph);font-family:var(--disp);font-size:26px;color:var(--cyan-dim);letter-spacing:.05em;
-  }
-  .ecard.noimg .art::after{
-    content:"";position:absolute;inset:8px;border:1px dashed var(--line-bright);
-  }
-  .ecard figcaption{font-family:var(--body);font-size:12.5px;font-weight:500;line-height:1.3;color:var(--text);}
-  .ecard.tomorrow{opacity:.72;}
+/* ─── Hero / Quick Status Cards Grid ─── */
+.hero-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px;
+}
+.status-card {
+  background: linear-gradient(160deg, var(--void1), var(--void2));
+  border: 1px solid var(--border); border-radius: var(--radius-lg);
+  padding: 16px; display: flex; flex-direction: column; justify-content: space-between;
+  position: relative; overflow: hidden;
+}
+.status-card.active-card { border-color: var(--cyan-border); box-shadow: 0 0 20px rgba(79, 209, 197, 0.08); }
+.status-card.amber-card { border-color: var(--amber-border); box-shadow: 0 0 20px rgba(232, 163, 61, 0.08); }
+.status-card.purple-card { border-color: var(--purple-border); box-shadow: 0 0 20px rgba(176, 115, 255, 0.08); }
 
-  .empty-note{
-    font-family:var(--mono);font-size:12.5px;color:var(--text-faint);padding:14px 0;
-  }
+.sc-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.sc-title { font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text3); }
+.sc-badge {
+  font-family: var(--mono); font-size: 9.5px; padding: 2px 7px; border-radius: 12px;
+  font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+}
+.sc-badge.running { background: var(--green-dim); color: var(--green); border: 1px solid rgba(16, 185, 129, 0.3); }
+.sc-badge.off { background: var(--void3); color: var(--text3); border: 1px solid var(--border); }
+.sc-badge.warning { background: var(--amber-dim); color: var(--amber); border: 1px solid var(--amber-border); }
+.sc-badge.purple { background: var(--purple-dim); color: var(--purple); border: 1px solid var(--purple-border); }
 
-  /* ---------- era timeline ---------- */
-  .timeline-wrap{background:linear-gradient(180deg,var(--bg-panel) 0%, var(--bg-panel-2) 100%);border:1px solid var(--line);padding:50px 30px 20px;margin-bottom:8px;}
-  .timeline-track{position:relative;height:64px;margin:0 6px;}
-  .tl-baseline{position:absolute;left:0;right:0;top:50%;height:2px;background:var(--line-bright);transform:translateY(-50%);}
-  .tl-progress{position:absolute;left:0;top:50%;height:2px;background:var(--cyan);transform:translateY(-50%);box-shadow:0 0 8px var(--cyan-dim);}
-  .tl-marker{
-    --c: var(--cyan);
-    position:absolute;top:50%;width:40px;height:40px;margin-left:-20px;margin-top:-20px;
-    border-radius:50%;border:2px solid var(--c);background:var(--bg-panel-2);
-    display:flex;align-items:center;justify-content:center;
-    font-family:var(--disp);font-size:11px;font-weight:600;color:var(--text-dim);
-    cursor:default;transition:.15s;
-  }
-  .tl-marker.with-icon{background-color:transparent;color:transparent;border-color:var(--line-bright);}
-  .tl-marker.marquee{--c:var(--cyan);}
-  .tl-marker.journey{--c:var(--purple);border-style:dashed;}
-  .tl-marker.challenge{--c:var(--red);}
-  .tl-marker.past{opacity:.4;}
-  .tl-marker.today-ring{box-shadow:0 0 0 3px var(--bg-panel-2),0 0 0 5px var(--c),0 0 16px var(--c);}
-  .tl-marker:hover{transform:scale(1.12);z-index:5;}
-  .tl-today-tick{position:absolute;top:calc(50% - 34px);width:2px;height:20px;background:var(--cyan);}
-  .tl-today-label{
-    position:absolute;top:calc(50% - 56px);transform:translateX(-50%);
-    font-family:var(--mono);font-size:10px;letter-spacing:.15em;color:var(--cyan);white-space:nowrap;
-  }
-  .timeline-dates{display:flex;justify-content:space-between;margin-top:14px;font-family:var(--mono);font-size:11px;color:var(--text-faint);}
-  .timeline-meta{display:flex;justify-content:center;gap:22px;margin-top:2px;font-family:var(--mono);font-size:11.5px;color:var(--cyan);flex-wrap:wrap;}
-  .timeline-meta span.dim{color:var(--text-dim);}
-  .legend{display:flex;gap:22px;flex-wrap:wrap;margin:12px 2px 26px;font-family:var(--mono);font-size:11px;color:var(--text-dim);}
-  .legend .item{display:flex;align-items:center;gap:7px;}
-  .legend .sw{width:11px;height:11px;border-radius:50%;border:2px solid var(--c);}
-  .legend .sw.marquee{--c:var(--cyan);}
-  .legend .sw.journey{--c:var(--purple);border-style:dashed;}
-  .legend .sw.challenge{--c:var(--red);}
+.sc-main { margin-bottom: 8px; }
+.sc-val { font-family: var(--disp); font-size: 20px; font-weight: 700; color: var(--text); line-height: 1.2; }
+.sc-sub { font-size: 11.5px; color: var(--text2); margin-top: 2px; }
 
-  .forecast{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;}
-  .full-schedule-wrap{background:var(--bg-panel);border:1px solid var(--line);padding:14px 12px;margin-top:12px;overflow:auto;max-height:520px;}
-  .schedule-table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12px;color:var(--text-dim);}
-  .schedule-table th,.schedule-table td{padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top;text-align:left;}
-  .schedule-table th{color:var(--text);font-size:11px;text-transform:uppercase;letter-spacing:.08em;}
-  .schedule-table tbody tr.active{background:rgba(94,227,240,.08);}
-  .schedule-table td .event-tag{display:inline-block;margin:0 4px 4px 0;padding:2px 6px;border-radius:999px;background:rgba(94,227,240,.14);color:var(--cyan);font-size:11px;}
-  .fchip{
-    min-width:118px;background:var(--bg-panel);border:1px solid var(--line);padding:10px 10px 12px;flex:0 0 auto;
-  }
-  .fchip.today{border-color:var(--cyan-dim);}
-  .fchip .day{font-family:var(--mono);font-size:10px;color:var(--text-faint);letter-spacing:.1em;text-transform:uppercase;}
-  .fchip .date{font-family:var(--disp);font-size:15px;font-weight:600;margin:2px 0 8px;}
-  .fchip ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px;}
-  .fchip li{font-size:11px;color:var(--text-dim);line-height:1.35;padding-left:9px;position:relative;}
-  .fchip li::before{content:"";position:absolute;left:0;top:5px;width:4px;height:4px;background:var(--cyan-dim);}
+.sc-footer { font-family: var(--mono); font-size: 10.5px; color: var(--text3); border-top: 1px solid var(--border); padding-top: 8px; display: flex; justify-content: space-between; }
+.sc-footer .highlight { color: var(--amber); font-weight: 500; }
 
-  /* ---------- boss rotation ---------- */
-  .boss-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
-  .bcell{background:var(--bg-panel);border:1px solid var(--line);padding:12px 10px;text-align:center;}
-  .bcell.active{border-color:var(--magenta);box-shadow:0 0 10px rgba(255,63,216,.2);}
-  .bcell .day{font-family:var(--mono);font-size:11px;color:var(--cyan);letter-spacing:.1em;text-transform:uppercase;}
-  .bcell.active .day{color:var(--magenta);}
-  .bcell .name{font-family:var(--disp);font-size:14px;font-weight:600;margin-top:6px;color:var(--text);}
+/* ─── Countdown Big Box ─── */
+.changeover-box {
+  background: linear-gradient(135deg, rgba(232,163,61,0.06), var(--void1));
+  border: 1px solid var(--amber-border); border-radius: var(--radius-lg);
+  padding: 16px 20px; display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 28px;
+}
+.cb-info h2 { font-family: var(--disp); font-size: 18px; font-weight: 700; color: var(--amber); margin-bottom: 2px; }
+.cb-info p { font-size: 12px; color: var(--text2); }
+.cb-timer { font-family: var(--mono); font-size: 32px; font-weight: 700; color: var(--amber); text-shadow: 0 0 16px rgba(232, 163, 61, 0.3); letter-spacing: 0.05em; }
 
-  /* ---------- footer / asset guide ---------- */
-  details.guide{margin-top:40px;border:1px solid var(--line);background:var(--bg-panel);padding:14px 18px;}
-  details.guide summary{cursor:pointer;font-family:var(--mono);font-size:12px;letter-spacing:.1em;color:var(--cyan);text-transform:uppercase;}
-  .guide-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:6px 20px;margin-top:14px;font-family:var(--mono);font-size:11.5px;color:var(--text-dim);}
-  .guide-grid code{color:var(--amber);}
-  .guide p{font-size:12.5px;color:var(--text-dim);line-height:1.6;font-family:var(--body);}
+/* ─── Section Labels ─── */
+.section-head { display: flex; align-items: center; gap: 12px; margin: 32px 0 16px; }
+.section-head h2 { font-family: var(--disp); font-size: 16px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text); }
+.section-head .sub { font-family: var(--mono); font-size: 11.5px; color: var(--text3); }
+.section-head .rule { flex: 1; height: 1px; background: linear-gradient(90deg, var(--border2), transparent); }
 
-  .warn{
-    border:1px solid var(--amber-dim);background:#221a0f;color:var(--amber);
-    font-family:var(--mono);font-size:12.5px;padding:12px 16px;margin-bottom:20px;
-  }
+/* ─── Multi-Lane Interactive Timeline ─── */
+.tl-container {
+  background: var(--void1); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  padding: 20px; margin-bottom: 28px; position: relative; overflow-x: auto;
+}
+.tl-header-bar {
+  display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;
+}
+.tl-legend { display: flex; gap: 16px; font-family: var(--mono); font-size: 11px; flex-wrap: wrap; }
+.tl-legend-item { display: flex; align-items: center; gap: 6px; color: var(--text2); }
+.tl-legend-dot { width: 10px; height: 10px; border-radius: 3px; }
 
-  /* ---------- modal ---------- */
-  .modal-backdrop{
-    position:fixed;inset:0;background:#000c;display:none;align-items:center;justify-content:center;z-index:50;padding:16px;
-  }
-  .modal-backdrop.open{display:flex;}
-  .modal{
-    background:var(--bg-panel);border:1px solid var(--line-bright);max-width:380px;width:100%;padding:26px;
-  }
-  .modal h3{font-family:var(--disp);font-size:16px;margin:0 0 6px;letter-spacing:.05em;}
-  .modal p{font-size:12.5px;color:var(--text-dim);line-height:1.55;margin:0 0 16px;}
-  .modal label{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--text-faint);text-transform:uppercase;display:block;margin-bottom:6px;}
-  .modal input[type=date]{
-    width:100%;background:var(--bg);border:1px solid var(--line);color:var(--text);padding:10px 12px;
-    font-family:var(--mono);font-size:14px;margin-bottom:8px;
-  }
-  .hint{font-family:var(--mono);font-size:11px;color:var(--text-faint);margin-bottom:18px;}
-  .modal-actions{display:flex;gap:10px;justify-content:flex-end;}
-  .btn{font-family:var(--mono);font-size:12px;letter-spacing:.08em;padding:9px 16px;cursor:pointer;border:1px solid var(--line);background:transparent;color:var(--text-dim);text-transform:uppercase;}
-  .btn.primary{border-color:var(--cyan);color:var(--cyan);}
-  .btn.primary:hover{background:var(--cyan);color:#031017;}
-  .btn.ghost:hover{color:var(--text);}
+.tl-controls { display: flex; gap: 6px; }
+.tl-btn {
+  background: var(--void2); border: 1px solid var(--border); color: var(--text2);
+  font-family: var(--mono); font-size: 11px; padding: 4px 10px; border-radius: var(--radius); cursor: pointer; transition: 0.15s;
+}
+.tl-btn:hover, .tl-btn.active { background: var(--void3); border-color: var(--cyan-border); color: var(--cyan); }
 
-  @media(max-width:640px){
-    .hero{grid-template-columns:1fr;}
-    .countdown-box{text-align:left;}
-    .boss-strip{grid-template-columns:repeat(2,1fr);}
-  }
+.tl-grid-wrap { position: relative; min-width: 800px; }
+.tl-axis-days { display: flex; border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 12px; margin-left: 120px; }
+.tl-day-col { flex: 1; text-align: center; font-family: var(--mono); font-size: 9.5px; color: var(--text3); }
+.tl-day-col.is-today { color: var(--cyan); font-weight: 700; }
+
+.tl-lane { display: flex; align-items: center; margin-bottom: 10px; height: 32px; position: relative; }
+.tl-lane-title { width: 120px; font-family: var(--mono); font-size: 11px; color: var(--text2); font-weight: 500; flex-shrink: 0; padding-right: 10px; }
+.tl-lane-track { flex: 1; height: 100%; background: rgba(255,255,255,0.015); border-radius: 6px; position: relative; border: 1px dashed var(--border); }
+
+.tl-bar {
+  position: absolute; top: 3px; bottom: 3px; border-radius: 4px; padding: 0 8px;
+  display: flex; align-items: center; font-family: var(--mono); font-size: 10px; font-weight: 600;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; transition: transform 0.15s ease, filter 0.15s ease;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+}
+.tl-bar:hover { transform: translateY(-1px) scaleY(1.05); filter: brightness(1.25); z-index: 10; }
+.tl-bar.conquest { background: rgba(232, 163, 61, 0.22); border: 1px solid var(--amber); color: var(--amber); }
+.tl-bar.gac { background: rgba(79, 209, 197, 0.2); border: 1px solid var(--cyan); color: var(--cyan); }
+.tl-bar.tb { background: rgba(176, 115, 255, 0.2); border: 1px solid var(--purple); color: var(--purple); }
+.tl-bar.marquee { background: rgba(255, 63, 216, 0.2); border: 1px solid var(--magenta); color: var(--magenta); }
+
+.tl-now-marker {
+  position: absolute; top: 0; bottom: 0; width: 2px; background: var(--cyan);
+  box-shadow: 0 0 10px var(--cyan); z-index: 20; pointer-events: none;
+}
+.tl-now-label {
+  position: absolute; top: -20px; transform: translateX(-50%);
+  background: var(--cyan); color: var(--void); font-family: var(--mono); font-size: 9px; font-weight: 700;
+  padding: 1px 5px; border-radius: 3px; white-space: nowrap;
+}
+
+/* ─── Feed Cards Layout ─── */
+.card-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; }
+.ecard {
+  background: var(--void1); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  padding: 10px; display: flex; flex-direction: column; transition: border-color 0.2s, transform 0.2s;
+  position: relative;
+}
+.ecard:hover { border-color: var(--cyan-border); transform: translateY(-2px); }
+.ecard .art {
+  aspect-ratio: 2/3; width: 100%; border-radius: 6px; overflow: hidden;
+  background: linear-gradient(160deg, var(--void2), var(--void3));
+  display: flex; align-items: center; justify-content: center; margin-bottom: 8px; position: relative;
+}
+.ecard .art img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.ecard.noimg .art::before {
+  content: attr(data-glyph); font-family: var(--disp); font-size: 24px; color: var(--cyan); font-weight: 700;
+}
+.ecard.noimg .art::after {
+  content: ""; position: absolute; inset: 6px; border: 1px dashed var(--border2); border-radius: 4px;
+}
+.ecard figcaption { font-size: 12px; font-weight: 600; color: var(--text); line-height: 1.35; }
+.ecard .tag { font-family: var(--mono); font-size: 9.5px; color: var(--cyan); margin-top: 4px; }
+
+.empty-note { font-family: var(--mono); font-size: 12px; color: var(--text3); padding: 16px 0; }
+
+/* ─── Forecast Strip ─── */
+.forecast { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: thin; }
+.fchip {
+  min-width: 135px; background: var(--void1); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 12px; flex: 0 0 auto; display: flex; flex-direction: column;
+}
+.fchip.today { border-color: var(--cyan-border); background: linear-gradient(180deg, rgba(79, 209, 197, 0.05), var(--void1)); }
+.fchip .day { font-family: var(--mono); font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.05em; }
+.fchip .date { font-family: var(--disp); font-size: 14px; font-weight: 600; margin: 2px 0 8px; color: var(--text); }
+.fchip ul { list-style: none; display: flex; flex-direction: column; gap: 4px; }
+.fchip li { font-size: 11px; color: var(--text2); line-height: 1.3; padding-left: 8px; position: relative; }
+.fchip li::before { content: ""; position: absolute; left: 0; top: 5px; width: 3px; height: 3px; border-radius: 50%; background: var(--cyan); }
+
+/* ─── Full Schedule Table ─── */
+.full-schedule-wrap {
+  background: var(--void1); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  padding: 16px; overflow-x: auto; max-height: 480px; scrollbar-width: thin;
+}
+.schedule-table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 12px; }
+.schedule-table th, .schedule-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; }
+.schedule-table th { color: var(--text3); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; position: sticky; top: 0; background: var(--void1); z-index: 5; }
+.schedule-table tbody tr.active { background: rgba(79, 209, 197, 0.08); }
+.schedule-table td .event-tag {
+  display: inline-block; margin: 0 4px 4px 0; padding: 2px 7px; border-radius: 4px;
+  background: var(--void2); border: 1px solid var(--border); color: var(--cyan); font-size: 10.5px;
+}
+
+/* ─── Coliseum Boss Strip ─── */
+.boss-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.bcell {
+  background: var(--void1); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  padding: 16px; text-align: center; position: relative; transition: all 0.2s;
+}
+.bcell.active { border-color: var(--magenta); box-shadow: 0 0 16px rgba(255, 63, 216, 0.15); background: linear-gradient(180deg, rgba(255, 63, 216, 0.06), var(--void1)); }
+.bcell .day { font-family: var(--mono); font-size: 10.5px; color: var(--cyan); text-transform: uppercase; letter-spacing: 0.06em; }
+.bcell.active .day { color: var(--magenta); font-weight: 700; }
+.bcell .name { font-family: var(--disp); font-size: 15px; font-weight: 600; margin-top: 6px; color: var(--text); }
+
+/* ─── Modal ─── */
+.modal-backdrop {
+  position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(4px);
+  display: none; align-items: center; justify-content: center; z-index: 300; padding: 16px;
+}
+.modal-backdrop.open { display: flex; }
+.modal {
+  background: var(--void1); border: 1px solid var(--border2); border-radius: var(--radius-lg);
+  max-width: 400px; width: 100%; padding: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+}
+.modal h3 { font-family: var(--disp); font-size: 18px; margin-bottom: 8px; }
+.modal p { font-size: 12px; color: var(--text2); margin-bottom: 16px; line-height: 1.5; }
+.modal label { font-family: var(--mono); font-size: 11px; color: var(--text3); text-transform: uppercase; display: block; margin-bottom: 6px; }
+.modal input[type=date] {
+  width: 100%; background: var(--void2); border: 1px solid var(--border2); color: var(--text); padding: 10px 12px;
+  border-radius: var(--radius); font-family: var(--mono); font-size: 13px; margin-bottom: 8px; outline: none;
+}
+.modal input[type=date]:focus { border-color: var(--amber-border); }
+.modal .hint { font-family: var(--mono); font-size: 11px; color: var(--text3); margin-bottom: 20px; }
+.modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+
+.btn {
+  font-family: var(--mono); font-size: 11.5px; padding: 8px 16px; border-radius: var(--radius);
+  cursor: pointer; border: 1px solid var(--border); background: var(--void2); color: var(--text2); transition: 0.15s;
+}
+.btn.primary { background: var(--amber); color: #1a1104; border-color: var(--amber); font-weight: 600; }
+.btn.primary:hover { box-shadow: 0 0 12px rgba(232,163,61,0.4); }
+
+@media (max-width: 900px) {
+  .hero-grid { grid-template-columns: repeat(2, 1fr); }
+  .boss-strip { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 600px) {
+  .hero-grid { grid-template-columns: 1fr; }
+  .topbar { padding: 0 16px; }
+  .wrap { padding: 16px; }
+  .changeover-box { flex-direction: column; align-items: flex-start; gap: 10px; }
+}
 </style>
 </head>
 <body>
 
+<div class="starfield" id="starfield"></div>
+
+<div class="top-header">
+  <div class="topbar">
+    <a href="index.html" class="topbar-title">SWGOH<span class="divider-glyph">::</span><span>RESOURCES</span></a>
+    <div class="topbar-tabs">
+      <a class="tab-btn" href="index.html">home</a>
+      <a class="tab-btn" href="relic.html">relic planner</a>
+      <a class="tab-btn" href="shipments.html">shipment planner</a>
+      <a class="tab-btn active" href="schedule.html">schedule</a>
+    </div>
+    <button class="gear-btn" id="openSettingsBtn">⚙ ERA START</button>
+  </div>
+</div>
+
 <div class="wrap">
 
-  <div class="topbar">
-    <div>
-      <p class="eyebrow">Galaxy of Heroes // Live Schedule Feed</p>
-      <h1>Era Terminal <span>84-day cycle</span></h1>
+  <!-- Status Dashboard Cards -->
+  <div class="hero-grid" id="statusDashboard">
+    <!-- Rendered dynamically -->
+  </div>
+
+  <!-- Countdown Banner -->
+  <div class="changeover-box bracket">
+    <span class="bl"></span><span class="br"></span>
+    <div class="cb-info">
+      <h2>Daily Holotable Changeover</h2>
+      <p>Official SWGOH Event Reset Standard Time: 19:00 UTC</p>
     </div>
-    <button class="gear-btn" id="openSettingsBtn">⚙ ERA START DATE</button>
+    <div class="cb-timer" id="countdown">--:--:--</div>
   </div>
 
-  <div id="warnBox"></div>
+  <!-- Multi-Lane Gantt Timeline -->
+  <div class="section-head">
+    <h2>Era Roadmap & Phase Timeline</h2>
+    <span class="sub">84-day live cycle overview</span>
+    <div class="rule"></div>
+  </div>
 
-  <div class="hero bracket"><span class="bl"></span><span class="br"></span>
-    <div class="readout-row" id="readoutRow"><!-- filled by JS --></div>
-    <div class="countdown-box">
-      <div class="k">Next changeover · 7:00pm UTC</div>
-      <div class="countdown" id="countdown">--:--:--</div>
+  <div class="tl-container bracket">
+    <span class="bl"></span><span class="br"></span>
+    <div class="tl-header-bar">
+      <div class="tl-legend">
+        <span class="tl-legend-item"><span class="tl-legend-dot" style="background:var(--amber)"></span> Conquest</span>
+        <span class="tl-legend-item"><span class="tl-legend-dot" style="background:var(--cyan)"></span> Grand Arena (GAC)</span>
+        <span class="tl-legend-item"><span class="tl-legend-dot" style="background:var(--purple)"></span> ROTE / TB</span>
+        <span class="tl-legend-item"><span class="tl-legend-dot" style="background:var(--magenta)"></span> Marquee / Era Events</span>
+      </div>
+      <div class="tl-controls">
+        <button class="tl-btn active" id="tlViewAllBtn">Full Era (84d)</button>
+        <button class="tl-btn" id="tlViewEpBtn">Current Episode (28d)</button>
+      </div>
+    </div>
+
+    <div class="tl-grid-wrap" id="tlGridWrap">
+      <!-- Generated via JS -->
     </div>
   </div>
 
-  <div class="timeline-wrap bracket"><span class="bl"></span><span class="br"></span>
-    <div class="timeline-track" id="timelineTrack"></div>
-    <div class="timeline-dates"><span id="tlStartDate"></span><span id="tlEndDate"></span></div>
-    <div class="timeline-meta">
-      <span>Next changeover in <b id="tlRotates">--</b></span>
-      <span class="dim">·</span>
-      <span class="dim"><b id="tlDaysLeft">--</b> days left in era</span>
-    </div>
-  </div>
-  <div class="legend">
-    <span class="item"><span class="sw marquee"></span>Marquee release</span>
-    <span class="item"><span class="sw journey"></span>Journey event</span>
-    <span class="item"><span class="sw challenge"></span>Era challenge</span>
-  </div>
-
-  <div class="section-head today">
-    <h2 id="todayHeading">Today</h2>
+  <!-- Today & Tomorrow Event Cards -->
+  <div class="section-head">
+    <h2 id="todayHeading">Today's Schedule</h2>
     <span class="sub" id="todaySub"></span>
     <div class="rule"></div>
   </div>
   <div class="card-row" id="todayCards"></div>
 
-  <div class="section-head tomorrow">
+  <div class="section-head" style="opacity:0.85">
     <h2 id="tmrwHeading">Tomorrow</h2>
     <span class="sub" id="tmrwSub"></span>
     <div class="rule"></div>
   </div>
   <div class="card-row" id="tmrwCards"></div>
 
+  <!-- 7-Day Forecast -->
   <div class="section-head">
-    <h2>Next 7 Days</h2>
+    <h2>7-Day Outlook</h2>
     <div class="rule"></div>
   </div>
   <div class="forecast" id="forecastRow"></div>
 
+  <!-- Full Era Schedule -->
   <div class="section-head">
-    <h2>Full Era Schedule</h2>
+    <h2>Full Era Schedule Breakdown</h2>
     <div class="rule"></div>
   </div>
   <div class="full-schedule-wrap">
@@ -289,31 +411,26 @@
     </table>
   </div>
 
+  <!-- Coliseum Rotation -->
   <div class="section-head">
     <h2>Coliseum Boss Rotation</h2>
-    <span class="sub">new boss starts Tue–Fri</span>
+    <span class="sub">Rotates Tue–Fri at 19:00 UTC</span>
     <div class="rule"></div>
   </div>
   <div class="boss-strip" id="bossStrip"></div>
 
-  <details class="guide">
-    <summary>Banner asset guide (for uploading images later)</summary>
-    <p>Drop image files into an <code>assets/schedule/</code> folder next to this HTML file, named exactly as below (<code>.png</code>, <code>.jpg</code>, or <code>.webp</code> — first match wins). Vertical banners around a 2:3 ratio (e.g. 400×600px) work best. Any event without a matching file will show a placeholder card instead of breaking.</p>
-    <div class="guide-grid" id="assetGuide"></div>
-  </details>
-
 </div>
 
-<!-- Settings Modal -->
+<!-- Modal -->
 <div class="modal-backdrop" id="settingsModal">
-  <div class="modal bracket"><span class="bl"></span><span class="br"></span>
+  <div class="modal">
     <h3>Configure Era Start Date</h3>
-    <p>Select the Tuesday when Day 1 of the current Era began.</p>
-    <label for="startDateInput">Era Start Date (Tuesday)</label>
+    <p>Select the Tuesday when Day 1 of the Era began. The schedule automatically calculates cycles from this baseline.</p>
+    <label for="startDateInput">Era Start Baseline (Tuesday)</label>
     <input type="date" id="startDateInput">
-    <div class="hint" id="modalHint">Day 1 of an Era always falls on a Tuesday.</div>
+    <div class="hint">Day 1 always starts on a Tuesday at 19:00 UTC.</div>
     <div class="modal-actions">
-      <button class="btn ghost" id="closeModalBtn">Cancel</button>
+      <button class="btn" id="closeModalBtn">Cancel</button>
       <button class="btn primary" id="saveDateBtn">Save & Refresh</button>
     </div>
   </div>
@@ -321,12 +438,12 @@
 
 <script>
 /* =========================================================
-   EVENT DATA MODEL
-   Each era = 84 days = 3 episodes of 28 days.
-   Era starts on Tuesday (Day 1).
+   EVENT DATA MODEL & CYCLE CONSTANTS
+   84-Day Cycle = 3 Episodes x 28 Days
+   Changeovers happen at 19:00 UTC daily.
    ========================================================= */
 
-function ev(icon,label){ return {icon,label}; }
+function ev(icon, label){ return {icon, label}; }
 
 const COMMON_DAYS = {
   2:  [ev('gac_defense','GAC Defense'), ev('smugglersrun','Smugglers Run II'), ev('tw_payout','TW Payout')],
@@ -367,7 +484,7 @@ const EPISODE_OVERRIDES = {
     7:  [ev('rote','Territory Battles Phase 1'), ev('conquest_start','3rd Conquest of Volume Starts'), ev('smugglersrun','Smugglers Run I'), ev('gac_attack','GAC Attack')],
     8:  [ev('era_challenge','Era Challenge'), ev('rote','Territory Battles Phase 2')],
     15: [ev('marquee_event','Marquee Event'), ev('tw_offense','TW Offense Starts'), ev('gac_signup','GAC Signup Starts')],
-    21: [ev('conquest_end','Conquest Volume Ends (unit now usable)'), ev('gac_attack','GAC Attack'), ev('proving_ground','Proving Ground'), ev('ultimate_journey','Ultimate Journey'), ev('smugglersrun','Smugglers Run I'), ev('rote','Territory Battles Phase 1')],
+    21: [ev('conquest_end','Conquest Volume Ends'), ev('gac_attack','GAC Attack'), ev('proving_ground','Proving Ground'), ev('ultimate_journey','Ultimate Journey'), ev('smugglersrun','Smugglers Run I'), ev('rote','Territory Battles Phase 1')],
   },
   3: {
     1:  [ev('marquee_event','Marquee Event'), ev('journey_guide','4/5* Journey Guide Event Unlock'), ev('gac_signup','GAC Signup Starts'), ev('tw_attack','TW Attack Starts')],
@@ -379,25 +496,70 @@ const EPISODE_OVERRIDES = {
 };
 
 const BOSS_SCHEDULE = [
-  { day: 'Tuesday', label: 'Krayt Dragon', icon: 'krayt' },
-  { day: 'Wednesday', label: 'Zeffo Tomb Guardians', icon: 'zeffo' },
-  { day: 'Thursday', label: 'Jotaz', icon: 'jotaz' },
-  { day: 'Friday', label: 'Dryax', icon: 'dryax' }
+  { day: 'Tuesday', label: 'Krayt Dragon' },
+  { day: 'Wednesday', label: 'Zeffo Tomb Guardians' },
+  { day: 'Thursday', label: 'Jotaz' },
+  { day: 'Friday', label: 'Dryax' }
 ];
 
-function getActiveBossDayForUTCDay(utcDayIndex){
-  if(utcDayIndex === 2) return 'Tuesday';
-  if(utcDayIndex === 3) return 'Wednesday';
-  if(utcDayIndex === 4) return 'Thursday';
-  return 'Friday'; // Friday, Saturday, Sunday, Monday (Dryax)
-}
-
-const DEFAULT_ERA_START = '2026-07-28'; // Must be a Tuesday!
+const DEFAULT_ERA_START = '2026-01-20'; // Tuesday
 const WEEKDAY_NAMES = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 const WEEKDAY_SHORT = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 
+let timelineScope = 'all'; // 'all' or 'ep'
+
+/* =========================================================
+   EXACT UTC TIME & CALCULATION ENGINE
+   ========================================================= */
+
 function getStoredEraStart(){
   return localStorage.getItem('era_start_date') || DEFAULT_ERA_START;
+}
+
+function parseEraStart(str){
+  const [y,m,d] = str.split('-').map(Number);
+  // Era starts at 19:00 UTC on Tuesday
+  return Date.UTC(y, m-1, d, 19, 0, 0);
+}
+
+function getGameStatus(){
+  const now = new Date();
+  const nowMs = now.getTime();
+  const eraStartMs = parseEraStart(getStoredEraStart());
+
+  // Difference in milliseconds from baseline era start
+  const diffMs = nowMs - eraStartMs;
+
+  // Day index relative to baseline start
+  let rawDayIndex = Math.floor(diffMs / 86400000) + 1;
+
+  // Modulo 84 days so day is always between 1 and 84
+  let eraDay = ((rawDayIndex - 1) % 84) + 1;
+  if(eraDay < 1) eraDay += 84;
+
+  // Cycle count
+  let cycleNum = Math.floor((rawDayIndex - 1) / 84);
+
+  // Active Era start timestamp for current cycle
+  const currentEraStartMs = eraStartMs + (cycleNum * 84 * 86400000);
+
+  // Current day timestamp
+  const currentDayStartMs = currentEraStartMs + ((eraDay - 1) * 86400000);
+
+  const episode = Math.floor((eraDay - 1) / 28) + 1;
+  const dayInEp = ((eraDay - 1) % 28) + 1;
+  const week = Math.floor((dayInEp - 1) / 7) + 1;
+
+  return {
+    nowMs,
+    eraDay,
+    episode,
+    dayInEp,
+    week,
+    currentEraStartMs,
+    currentDayStartMs,
+    cycleNum
+  };
 }
 
 function getDayEvents(episode, dayInEp){
@@ -405,157 +567,264 @@ function getDayEvents(episode, dayInEp){
   return o || COMMON_DAYS[dayInEp] || [];
 }
 
-/* =========================================================
-   TIME / DATE MATH
-   ========================================================= */
-
-function ukParts(d){
-  const fmt = new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/London',hour12:false,
-    year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'});
-  const p = {};
-  fmt.formatToParts(d).forEach(x=>{ if(x.type!=='literal') p[x.type]=parseInt(x.value,10); });
-  return p;
-}
-
-function dateUTC(y,m,d){ return Date.UTC(y, m-1, d); }
-
-function effectiveGameDateUTC(now){
-  const p = ukParts(now);
-  const today = dateUTC(p.year,p.month,p.day);
-  const msSinceUKMidnight = p.hour*3600000 + p.minute*60000 + p.second*1000;
-  const pastReset = msSinceUKMidnight >= 19*3600000;
-  return { gameDateUTC: pastReset ? today + 86400000 : today, msSinceUKMidnight };
-}
-
-function parseEraStart(str){
-  const [y,m,d] = str.split('-').map(Number);
-  return dateUTC(y,m,d);
-}
-
-function dayIndexFor(gameDateUTC, eraStartUTC){
-  return Math.floor((gameDateUTC - eraStartUTC)/86400000) + 1;
-}
-
-function scheduleForIndex(dayIndex){
-  if(dayIndex < 1 || dayIndex > 84) return null;
-  const episode = Math.floor((dayIndex-1)/28) + 1;
-  const dayInEp = ((dayIndex-1)%28) + 1;
-  const week = Math.floor((dayInEp-1)/7) + 1;
-  return { episode, dayInEp, week, dayIndex };
-}
-
-function fmtDate(utcMs){
-  const d = new Date(utcMs);
-  return d.toLocaleDateString('en-GB',{ timeZone:'UTC', weekday:'short', day:'numeric', month:'short' });
+function fmtDateUTC(ms){
+  const d = new Date(ms);
+  return d.toLocaleDateString('en-GB', { timeZone: 'UTC', weekday: 'short', day: 'numeric', month: 'short' });
 }
 
 /* =========================================================
-   ERA TIMELINE
+   STATUS DASHBOARD BUILDER (GAC, CONQUEST, TB, ERA)
    ========================================================= */
 
-function timelineCategory(icon){
-  if(icon === 'marquee_event') return 'marquee';
-  if(icon === 'journey_reruns' || icon === 'journey_guide') return 'journey';
-  if(icon === 'era_challenge') return 'challenge';
-  return null;
+function renderStatusDashboard(st){
+  const container = document.getElementById('statusDashboard');
+
+  // 1. GAC Status Logic
+  // GAC is active Days 1-21 of each Episode (Weeks 1, 2, 3). Day 22-28 is Off-Week.
+  let gacState = { status: 'OFF-WEEK', badgeClass: 'off', title: 'Grand Arena', main: 'Off-Week Active', sub: 'Next GAC starts Ep ' + st.episode + ' Day 22 / Ep next Day 1' };
+  if(st.dayInEp <= 21){
+    const gacWeek = Math.floor((st.dayInEp - 1) / 7) + 1;
+    const daysLeftInGac = 21 - st.dayInEp + 1;
+    gacState = {
+      status: 'RUNNING',
+      badgeClass: 'running',
+      title: 'Grand Arena (GAC)',
+      main: `Week ${gacWeek} Active`,
+      sub: `${daysLeftInGac} days left in 3-week season`
+    };
+  } else {
+    const daysUntilGac = 28 - st.dayInEp + 1;
+    gacState = {
+      status: 'OFF-WEEK',
+      badgeClass: 'off',
+      title: 'Grand Arena (GAC)',
+      main: 'Intermission / Off-Week',
+      sub: `Next season in ${daysUntilGac} days`
+    };
+  }
+
+  // 2. Conquest Status Logic
+  // Conquest runs 14 days starting on Day 7 of each Episode (Days 7 to 20).
+  let conquestState = { status: 'INACTIVE', badgeClass: 'off', title: 'Conquest', main: 'Inactive', sub: 'Starts Ep Day 7' };
+  if(st.dayInEp >= 7 && st.dayInEp <= 20){
+    const conquestDay = st.dayInEp - 6;
+    const daysLeft = 14 - conquestDay + 1;
+    conquestState = {
+      status: 'ACTIVE',
+      badgeClass: 'warning',
+      title: 'Conquest Event',
+      main: `Day ${conquestDay} of 14`,
+      sub: `Ends in ~${daysLeft} days`
+    };
+  } else if(st.dayInEp < 7){
+    const daysUntil = 7 - st.dayInEp;
+    conquestState = {
+      status: 'UPCOMING',
+      badgeClass: 'purple',
+      title: 'Conquest Event',
+      main: `Starts in ${daysUntil}d`,
+      sub: `Ep ${st.episode} Conquest launch`
+    };
+  } else {
+    const daysUntil = (28 - st.dayInEp) + 7;
+    conquestState = {
+      status: 'UPCOMING',
+      badgeClass: 'purple',
+      title: 'Conquest Event',
+      main: `Starts in ${daysUntil}d`,
+      sub: `Ep ${st.episode === 3 ? 1 : st.episode + 1} Conquest`
+    };
+  }
+
+  // 3. ROTE / Territory Battle Status
+  // TB occurs Day 7-13 and Day 21-27
+  let tbState = { status: 'OFF-WEEK', badgeClass: 'off', title: 'Territory Battle', main: 'No TB Active', sub: 'Rotates twice per episode' };
+  if(st.dayInEp >= 7 && st.dayInEp <= 13){
+    const phase = st.dayInEp - 6;
+    tbState = {
+      status: 'RUNNING',
+      badgeClass: 'running',
+      title: 'ROTE / TB',
+      main: `Phase ${phase} of 6`,
+      sub: `Active Territory Battle`
+    };
+  } else if(st.dayInEp >= 21 && st.dayInEp <= 27){
+    const phase = st.dayInEp - 20;
+    tbState = {
+      status: 'RUNNING',
+      badgeClass: 'running',
+      title: 'ROTE / TB',
+      main: `Phase ${phase} of 6`,
+      sub: `Active Territory Battle`
+    };
+  } else {
+    tbState = {
+      status: 'PREPARATION',
+      badgeClass: 'off',
+      title: 'ROTE / TB',
+      main: 'Intermission',
+      sub: 'Next TB coming up soon'
+    };
+  }
+
+  // 4. Era Overview
+  const eraDaysRemaining = 84 - st.eraDay;
+
+  container.innerHTML = `
+    <div class="status-card ${gacState.badgeClass === 'running' ? 'active-card' : ''}">
+      <div class="sc-header"><span class="sc-title">${gacState.title}</span><span class="sc-badge ${gacState.badgeClass}">${gacState.status}</span></div>
+      <div class="sc-main"><div class="sc-val">${gacState.main}</div><div class="sc-sub">${gacState.sub}</div></div>
+      <div class="sc-footer"><span>Mode: 5v5 / 3v3</span><span class="highlight">Ep ${st.episode}</span></div>
+    </div>
+
+    <div class="status-card ${conquestState.badgeClass === 'warning' ? 'amber-card' : ''}">
+      <div class="sc-header"><span class="sc-title">${conquestState.title}</span><span class="sc-badge ${conquestState.badgeClass}">${conquestState.status}</span></div>
+      <div class="sc-main"><div class="sc-val">${conquestState.main}</div><div class="sc-sub">${conquestState.sub}</div></div>
+      <div class="sc-footer"><span>Duration: 14 Days</span><span class="highlight">Proving Grounds at end</span></div>
+    </div>
+
+    <div class="status-card ${tbState.badgeClass === 'running' ? 'purple-card' : ''}">
+      <div class="sc-header"><span class="sc-title">${tbState.title}</span><span class="sc-badge ${tbState.badgeClass}">${tbState.status}</span></div>
+      <div class="sc-main"><div class="sc-val">${tbState.main}</div><div class="sc-sub">${tbState.sub}</div></div>
+      <div class="sc-footer"><span>Cycle: 6 Phases</span><span class="highlight">Guild Focus</span></div>
+    </div>
+
+    <div class="status-card">
+      <div class="sc-header"><span class="sc-title">Era Progress</span><span class="sc-badge running">Day ${st.eraDay}/84</span></div>
+      <div class="sc-main"><div class="sc-val">Episode ${st.episode} of 3</div><div class="sc-sub">Week ${st.week} of 4 · ${eraDaysRemaining} days left</div></div>
+      <div class="sc-footer"><span>Cycle #${st.cycleNum + 1}</span><span class="highlight">${fmtDateUTC(st.currentDayStartMs)}</span></div>
+    </div>
+  `;
 }
 
-function collectTimelineMarkers(){
-  const markers = [];
-  let marqueeCount = 0;
-  for(let idx=1; idx<=84; idx++){
-    const sched = scheduleForIndex(idx);
-    getDayEvents(sched.episode, sched.dayInEp).forEach(e=>{
-      const cat = timelineCategory(e.icon);
-      if(!cat) return;
-      let assetIcon;
-      if(e.icon === 'marquee_event') assetIcon = `marquee${++marqueeCount}icon`;
-      else if(e.icon === 'journey_guide') assetIcon = 'journeyicon';
-      else if(e.icon === 'era_battle') assetIcon = e.label.includes('1') ? 'erabattle1' : 'erabattle2';
-      markers.push({ dayIndex: idx, cat, label: e.label, assetIcon });
+/* =========================================================
+   MULTI-LANE GANTT TIMELINE RENDERER
+   ========================================================= */
+
+function renderTimeline(st){
+  const wrap = document.getElementById('tlGridWrap');
+  wrap.innerHTML = '';
+
+  const totalDays = timelineScope === 'ep' ? 28 : 84;
+  const startDayOffset = timelineScope === 'ep' ? (st.episode - 1) * 28 : 0;
+
+  // Day columns header
+  const axis = document.createElement('div');
+  axis.className = 'tl-axis-days';
+  for(let i = 1; i <= totalDays; i++){
+    const dayNum = startDayOffset + i;
+    const isToday = dayNum === st.eraDay;
+    const col = document.createElement('div');
+    col.className = 'tl-day-col' + (isToday ? ' is-today' : '');
+    col.textContent = dayNum % 7 === 1 ? `D${dayNum}` : '.';
+    axis.appendChild(col);
+  }
+  wrap.appendChild(axis);
+
+  // Lanes definition
+  const lanes = [
+    { id: 'conquest', title: 'Conquest', color: 'conquest' },
+    { id: 'gac', title: 'Grand Arena', color: 'gac' },
+    { id: 'tb', title: 'TB / ROTE', color: 'tb' },
+    { id: 'marquee', title: 'Era & Marquees', color: 'marquee' }
+  ];
+
+  // Prepare event spans for each lane
+  const spans = { conquest: [], gac: [], tb: [], marquee: [] };
+
+  for(let ep = 1; ep <= 3; ep++){
+    const epOffset = (ep - 1) * 28;
+    // Conquest: Days 7-20
+    spans.conquest.push({ start: epOffset + 7, duration: 14, label: `Ep ${ep} Conquest` });
+    // GAC: Days 1-21
+    spans.gac.push({ start: epOffset + 1, duration: 21, label: `Ep ${ep} GAC Season` });
+    // TB: Days 7-13 and Days 21-27
+    spans.tb.push({ start: epOffset + 7, duration: 7, label: `Ep ${ep} TB #1` });
+    spans.tb.push({ start: epOffset + 21, duration: 7, label: `Ep ${ep} TB #2` });
+  }
+
+  // Populate marquee / era battle points
+  for(let d = 1; d <= 84; d++){
+    const ep = Math.floor((d - 1) / 28) + 1;
+    const dInEp = ((d - 1) % 28) + 1;
+    const events = getDayEvents(ep, dInEp);
+    events.forEach(e => {
+      if(e.icon === 'marquee_event' || e.icon === 'era_challenge' || e.icon === 'journey_guide'){
+        spans.marquee.push({ start: d, duration: 1, label: e.label });
+      }
     });
   }
-  const seen = {};
-  markers.forEach(m=>{
-    seen[m.dayIndex] = (seen[m.dayIndex]||0);
-    m.stack = seen[m.dayIndex]++;
-  });
-  return markers;
-}
 
-function initials(label){
-  return label.replace(/[^A-Za-z ]/g,'').split(' ').filter(Boolean).slice(0,2).map(w=>w[0].toUpperCase()).join('');
-}
+  // Render lanes
+  lanes.forEach(lane => {
+    const row = document.createElement('div');
+    row.className = 'tl-lane';
 
-function renderTimeline(eraStartUTC, todayIndex){
-  const track = document.getElementById('timelineTrack');
-  track.innerHTML = `<div class="tl-baseline"></div><div class="tl-progress" id="tlProgress"></div>`;
+    const title = document.createElement('div');
+    title.className = 'tl-lane-title';
+    title.textContent = lane.title;
+    row.appendChild(title);
 
-  const clampedToday = Math.min(Math.max(todayIndex,1),84);
-  const todayPct = ((clampedToday-1)/83)*100;
-  document.getElementById('tlProgress').style.width = todayPct + '%';
+    const track = document.createElement('div');
+    track.className = 'tl-lane-track';
 
-  const markers = collectTimelineMarkers();
-  markers.forEach(m=>{
-    const leftPct = ((m.dayIndex-1)/83)*100;
-    const topOffset = m.stack ? (m.stack%2===1 ? -34*Math.ceil(m.stack/2) : 34*Math.ceil(m.stack/2)) : 0;
-    const el = document.createElement('div');
-    el.className = 'tl-marker ' + m.cat + (m.dayIndex < todayIndex ? ' past' : '') + (m.dayIndex === todayIndex ? ' today-ring' : '');
-    el.style.left = leftPct + '%';
-    if(topOffset) el.style.marginTop = (-20+topOffset) + 'px';
-    el.title = `${m.label} — Day ${m.dayIndex}`;
-    if(m.assetIcon){
-      el.style.backgroundImage = `url("assets/schedule/${m.assetIcon}.png")`;
-      el.style.backgroundSize = 'cover';
-      el.style.backgroundPosition = 'center';
-      el.classList.add('with-icon');
-    } else {
-      el.textContent = initials(m.label);
-    }
-    track.appendChild(el);
+    spans[lane.id].forEach(sp => {
+      // Filter based on scope
+      if(sp.start + sp.duration - 1 <= startDayOffset || sp.start > startDayOffset + totalDays) return;
+
+      const relStart = Math.max(1, sp.start - startDayOffset);
+      const relEnd = Math.min(totalDays, sp.start + sp.duration - 1 - startDayOffset);
+      const relDur = relEnd - relStart + 1;
+
+      const leftPct = ((relStart - 1) / totalDays) * 100;
+      const widthPct = (relDur / totalDays) * 100;
+
+      const bar = document.createElement('div');
+      bar.className = `tl-bar ${lane.color}`;
+      bar.style.left = leftPct + '%';
+      bar.style.width = widthPct + '%';
+      bar.textContent = sp.label;
+      bar.title = `${sp.label} (Days ${sp.start} - ${sp.start + sp.duration - 1})`;
+      track.appendChild(bar);
+    });
+
+    row.appendChild(track);
+    wrap.appendChild(row);
   });
 
-  const tick = document.createElement('div');
-  tick.className = 'tl-today-tick';
-  tick.style.left = todayPct + '%';
-  track.appendChild(tick);
-  const label = document.createElement('div');
-  label.className = 'tl-today-label';
-  label.style.left = todayPct + '%';
-  label.textContent = 'TODAY';
-  track.appendChild(label);
+  // Now Marker
+  if(st.eraDay >= startDayOffset + 1 && st.eraDay <= startDayOffset + totalDays){
+    const relToday = st.eraDay - startDayOffset;
+    const nowPct = ((relToday - 0.5) / totalDays) * 100;
 
-  document.getElementById('tlStartDate').textContent = fmtDate(eraStartUTC);
-  document.getElementById('tlEndDate').textContent = fmtDate(eraStartUTC + 83*86400000);
-  document.getElementById('tlDaysLeft').textContent = Math.max(0, 84 - todayIndex);
+    const nowMarker = document.createElement('div');
+    nowMarker.className = 'tl-now-marker';
+    nowMarker.style.left = `calc(120px + (100% - 120px) * ${nowPct / 100})`;
+
+    const label = document.createElement('div');
+    label.className = 'tl-now-label';
+    label.textContent = 'TODAY';
+    nowMarker.appendChild(label);
+
+    wrap.appendChild(nowMarker);
+  }
 }
 
-const ASSET_KEYS = ['marquee_event','journey_reruns','era_changeover','gac_signup','gac_attack','gac_defense',
-  'tw_attack','tw_defense','tw_signup','tw_payout','smugglersrun','rote','tb_ends','era_battle',
-  'era_challenge','conquest_start','conquest_end','proving_ground','ultimate_journey','journey_guide',
-  'tw_offense','krayt','zeffo','jotaz','dryax',
-  'journeyicon','marquee1icon','marquee2icon','marquee3icon','marquee4icon','marquee5icon','marquee6icon',
-  'marquee2event','erabattle1','erabattle2'];
-
-function glyphFor(label){
-  return label.split(' ').filter(w=>/^[A-Za-z]/.test(w)).slice(0,2).map(w=>w[0].toUpperCase()).join('');
-}
-
-function assetFileForCard(item){
-  if(item.icon === 'marquee_event') return 'marquee2event';
-  if(item.icon === 'era_battle') return item.label.includes('1') ? 'erabattle1' : 'erabattle2';
-  if(item.icon === 'journey_reruns' || item.icon === 'journey_guide') return 'journeyicon';
-  return item.icon;
-}
+/* =========================================================
+   CARDS & TABLES RENDERERS
+   ========================================================= */
 
 function cardHTML(item, extraClass){
   const cls = extraClass || '';
-  const assetBase = assetFileForCard(item);
-  return `<figure class="ecard bracket ${cls}" data-glyph="${glyphFor(item.label)}">
+  const assetBase = item.icon === 'marquee_event' ? 'marquee2event' : item.icon;
+  const glyph = item.label.split(' ').map(w=>w[0]).join('').substring(0,3).toUpperCase();
+
+  return `<figure class="ecard bracket ${cls}">
     <span class="bl"></span><span class="br"></span>
-    <div class="art"><img src="assets/schedule/${assetBase}.png" alt="${item.label}"
-      onerror="if(!this.dataset.tried){this.dataset.tried=1;this.src='assets/schedule/${assetBase}.jpg';}
-               else{this.parentElement.parentElement.classList.add('noimg');this.remove();}">
+    <div class="art" data-glyph="${glyph}">
+      <img src="assets/schedule/${assetBase}.png" alt="${item.label}"
+        onerror="if(!this.dataset.tried){this.dataset.tried=1;this.src='assets/schedule/${assetBase}.jpg';}
+                 else{this.parentElement.parentElement.classList.add('noimg');this.remove();}">
     </div>
     <figcaption>${item.label}</figcaption>
   </figure>`;
@@ -564,159 +833,189 @@ function cardHTML(item, extraClass){
 function renderCards(el, items, extraClass){
   el.innerHTML = items.length
     ? items.map(i=>cardHTML(i, extraClass)).join('')
-    : `<p class="empty-note">— no scheduled changeovers —</p>`;
+    : `<p class="empty-note">— No event changeovers scheduled for this day —</p>`;
 }
 
-function renderFullSchedule(eraStartUTC, todayIndex){
+function renderFullSchedule(st){
   const tbody = document.getElementById('fullSchedule');
   tbody.innerHTML = '';
-  for(let idx=1; idx<=84; idx++){
-    const sched = scheduleForIndex(idx);
-    const dateUTC = eraStartUTC + (idx-1)*86400000;
-    const items = sched ? getDayEvents(sched.episode, sched.dayInEp) : [];
+
+  for(let idx = 1; idx <= 84; idx++){
+    const ep = Math.floor((idx - 1) / 28) + 1;
+    const dayInEp = ((idx - 1) % 28) + 1;
+    const week = Math.floor((dayInEp - 1) / 7) + 1;
+
+    const dateMs = st.currentEraStartMs + ((idx - 1) * 86400000);
+    const items = getDayEvents(ep, dayInEp);
+
     const row = document.createElement('tr');
-    if(idx === todayIndex) row.className = 'active';
+    if(idx === st.eraDay) row.className = 'active';
+
     row.innerHTML = `
-      <td>${idx}</td>
-      <td>${fmtDate(dateUTC)}</td>
-      <td>${sched ? `${sched.episode}.${sched.week}` : '—'}</td>
+      <td><strong>${idx}</strong></td>
+      <td>${fmtDateUTC(dateMs)}</td>
+      <td>Ep ${ep}.${week}</td>
       <td>${items.length ? items.map(it => `<span class="event-tag">${it.label}</span>`).join('') : '—'}</td>
     `;
     tbody.appendChild(row);
   }
 }
 
-function render(){
-  const warnBox = document.getElementById('warnBox');
-  warnBox.innerHTML = '';
+function renderMainFeed(st){
+  // 1. Today Events
+  const todayEvents = getDayEvents(st.episode, st.dayInEp);
+  const todayDateMs = st.currentDayStartMs;
+  const todayWeekday = WEEKDAY_NAMES[new Date(todayDateMs).getUTCDay()];
 
-  const now = new Date();
-  const currentStartStr = getStoredEraStart();
-  const eraStartUTC = parseEraStart(currentStartStr);
-  const { gameDateUTC } = effectiveGameDateUTC(now);
-  const todayIndex = dayIndexFor(gameDateUTC, eraStartUTC);
-  const todaySched = scheduleForIndex(todayIndex);
-  renderTimeline(eraStartUTC, todayIndex);
-  renderFullSchedule(eraStartUTC, todayIndex);
-  const tmrwSched = scheduleForIndex(todayIndex+1);
-
-  if(!todaySched){
-    warnBox.innerHTML = `<div class="warn">Day ${todayIndex} is outside the 84-day era window. Click <b>⚙ ERA START DATE</b> above to update your era start date.</div>`;
-  }
-
-  // hero readout
-  const todayWeekday = WEEKDAY_NAMES[new Date(gameDateUTC).getUTCDay()];
-  document.getElementById('readoutRow').innerHTML = todaySched ? `
-    <div class="readout"><div class="k">Era Day</div><div class="v accent">${todaySched.dayIndex} / 84</div></div>
-    <div class="readout"><div class="k">Episode</div><div class="v">${todaySched.episode} of 3</div></div>
-    <div class="readout"><div class="k">Week</div><div class="v">${todaySched.week} of 4</div></div>
-    <div class="readout"><div class="k">Today Is</div><div class="v">${todayWeekday}</div></div>
-  ` : `<div class="readout"><div class="k">Status</div><div class="v accent">Out of range</div></div>`;
-
-  // today / tomorrow
   document.getElementById('todayHeading').textContent = `Today — ${todayWeekday}`;
-  document.getElementById('todaySub').textContent = fmtDate(gameDateUTC);
-  const todayEvents = todaySched ? getDayEvents(todaySched.episode, todaySched.dayInEp) : [];
+  document.getElementById('todaySub').textContent = fmtDateUTC(todayDateMs);
   renderCards(document.getElementById('todayCards'), todayEvents);
 
-  const tmrwDateUTC = gameDateUTC + 86400000;
-  const tmrwWeekday = WEEKDAY_NAMES[new Date(tmrwDateUTC).getUTCDay()];
-  document.getElementById('tmrwHeading').textContent = `Tomorrow — ${tmrwWeekday}`;
-  document.getElementById('tmrwSub').textContent = fmtDate(tmrwDateUTC);
-  const tmrwEvents = tmrwSched ? getDayEvents(tmrwSched.episode, tmrwSched.dayInEp) : [];
-  renderCards(document.getElementById('tmrwCards'), tmrwEvents, 'tomorrow');
+  // 2. Tomorrow Events
+  const tmrwDayIndex = (st.eraDay % 84) + 1;
+  const tmrwEp = Math.floor((tmrwDayIndex - 1) / 28) + 1;
+  const tmrwDayInEp = ((tmrwDayIndex - 1) % 28) + 1;
+  const tmrwEvents = getDayEvents(tmrwEp, tmrwDayInEp);
 
-  // 7-day forecast
+  const tmrwDateMs = todayDateMs + 86400000;
+  const tmrwWeekday = WEEKDAY_NAMES[new Date(tmrwDateMs).getUTCDay()];
+
+  document.getElementById('tmrwHeading').textContent = `Tomorrow — ${tmrwWeekday}`;
+  document.getElementById('tmrwSub').textContent = fmtDateUTC(tmrwDateMs);
+  renderCards(document.getElementById('tmrwCards'), tmrwEvents);
+
+  // 3. 7-Day Outlook
   const forecastEl = document.getElementById('forecastRow');
   forecastEl.innerHTML = '';
-  for(let i=0;i<7;i++){
-    const dUTC = gameDateUTC + i*86400000;
-    const idx = todayIndex + i;
-    const sched = scheduleForIndex(idx);
-    const items = sched ? getDayEvents(sched.episode, sched.dayInEp) : [];
+  for(let i = 0; i < 7; i++){
+    const dMs = todayDateMs + (i * 86400000);
+    const dIdx = ((st.eraDay - 1 + i) % 84) + 1;
+    const ep = Math.floor((dIdx - 1) / 28) + 1;
+    const dayInEp = ((dIdx - 1) % 28) + 1;
+    const items = getDayEvents(ep, dayInEp);
+
     const chip = document.createElement('div');
-    chip.className = 'fchip' + (i===0 ? ' today' : '');
+    chip.className = 'fchip' + (i === 0 ? ' today' : '');
     chip.innerHTML = `
-      <div class="day">${WEEKDAY_SHORT[new Date(dUTC).getUTCDay()]}${i===0?' · today':''}</div>
-      <div class="date">${new Date(dUTC).toLocaleDateString('en-GB',{timeZone:'UTC',day:'numeric',month:'short'})}</div>
+      <div class="day">${WEEKDAY_SHORT[new Date(dMs).getUTCDay()]}${i === 0 ? ' · Today' : ''}</div>
+      <div class="date">${new Date(dMs).toLocaleDateString('en-GB',{ timeZone: 'UTC', day: 'numeric', month: 'short' })}</div>
       <ul>${items.length ? items.map(it=>`<li>${it.label}</li>`).join('') : '<li>—</li>'}</ul>
     `;
     forecastEl.appendChild(chip);
   }
 
-  // boss rotation strip at bottom
+  // 4. Coliseum Boss Rotation
   const bossEl = document.getElementById('bossStrip');
   bossEl.innerHTML = '';
-  const currentUTCDay = new Date(gameDateUTC).getUTCDay();
-  const activeBossDay = getActiveBossDayForUTCDay(currentUTCDay);
+  const currentUTCDayIndex = new Date(st.nowMs).getUTCDay();
+
+  let activeBossDay = 'Friday';
+  if(currentUTCDayIndex === 2) activeBossDay = 'Tuesday';
+  else if(currentUTCDayIndex === 3) activeBossDay = 'Wednesday';
+  else if(currentUTCDayIndex === 4) activeBossDay = 'Thursday';
 
   BOSS_SCHEDULE.forEach((b) => {
     const isActive = b.day === activeBossDay;
     const cell = document.createElement('div');
     cell.className = 'bcell' + (isActive ? ' active' : '');
     cell.innerHTML = `
-      <div class="day">${b.day}${isActive ? ' · active' : ''}</div>
+      <div class="day">${b.day}${isActive ? ' · Active' : ''}</div>
       <div class="name">${b.label}</div>
     `;
     bossEl.appendChild(cell);
   });
 }
 
+/* =========================================================
+   LIVE TIMER & MASTER RENDER
+   ========================================================= */
+
 function tickCountdown(){
   const now = new Date();
-  const msSinceUTCMidnight = now.getUTCHours()*3600000 + now.getUTCMinutes()*60000 + now.getUTCSeconds()*1000;
-  const target = 19*3600000;
-  let diff = target - msSinceUTCMidnight;
-  if(diff <= 0) diff += 86400000;
-  const h = Math.floor(diff/3600000);
-  const m = Math.floor((diff%3600000)/60000);
-  const s = Math.floor((diff%60000)/1000);
-  const pad = n => String(n).padStart(2,'0');
+  const nowMs = now.getTime();
+
+  // Target next 19:00 UTC
+  const nextReset = new Date(now);
+  nextReset.setUTCHours(19, 0, 0, 0);
+  if(nowMs >= nextReset.getTime()){
+    nextReset.setUTCDate(nextReset.getUTCDate() + 1);
+  }
+
+  const diff = nextReset.getTime() - nowMs;
+  const h = Math.floor(diff / 3600000);
+  const m = Math.floor((diff % 3600000) / 60000);
+  const s = Math.floor((diff % 60000) / 1000);
+
+  const pad = n => String(n).padStart(2, '0');
   document.getElementById('countdown').textContent = `${pad(h)}:${pad(m)}:${pad(s)}`;
-  const tlRotates = document.getElementById('tlRotates');
-  if(tlRotates) tlRotates.textContent = `${h}h ${pad(m)}m`;
 }
 
-function buildAssetGuide(){
-  document.getElementById('assetGuide').innerHTML = ASSET_KEYS.map(k=>`<div><code>assets/schedule/${k}.png</code></div>`).join('');
+function renderAll(){
+  const st = getGameStatus();
+  renderStatusDashboard(st);
+  renderTimeline(st);
+  renderMainFeed(st);
+  renderFullSchedule(st);
 }
 
 /* =========================================================
-   MODAL / SETTINGS
+   EVENT HANDLERS & MODAL CONTROLS
    ========================================================= */
 
-const modal = document.getElementById('settingsModal');
-const openBtn = document.getElementById('openSettingsBtn');
-const closeBtn = document.getElementById('closeModalBtn');
-const saveBtn = document.getElementById('saveDateBtn');
-const dateInput = document.getElementById('startDateInput');
+document.getElementById('tlViewAllBtn').onclick = function(){
+  timelineScope = 'all';
+  this.classList.add('active');
+  document.getElementById('tlViewEpBtn').classList.remove('active');
+  renderTimeline(getGameStatus());
+};
 
-openBtn.onclick = () => {
-  dateInput.value = getStoredEraStart();
+document.getElementById('tlViewEpBtn').onclick = function(){
+  timelineScope = 'ep';
+  this.classList.add('active');
+  document.getElementById('tlViewAllBtn').classList.remove('active');
+  renderTimeline(getGameStatus());
+};
+
+const modal = document.getElementById('settingsModal');
+document.getElementById('openSettingsBtn').onclick = () => {
+  document.getElementById('startDateInput').value = getStoredEraStart();
   modal.classList.add('open');
 };
-closeBtn.onclick = () => modal.classList.remove('open');
+document.getElementById('closeModalBtn').onclick = () => modal.classList.remove('open');
 
-saveBtn.onclick = () => {
-  if(!dateInput.value) return;
-  const chosen = new Date(dateInput.value + 'T00:00:00Z');
+document.getElementById('saveDateBtn').onclick = () => {
+  const val = document.getElementById('startDateInput').value;
+  if(!val) return;
+  const chosen = new Date(val + 'T00:00:00Z');
   if(chosen.getUTCDay() !== 2){
     alert('Day 1 of an Era must be a Tuesday. Please select a Tuesday.');
     return;
   }
-  localStorage.setItem('era_start_date', dateInput.value);
+  localStorage.setItem('era_start_date', val);
   modal.classList.remove('open');
-  render();
+  renderAll();
 };
 
 /* =========================================================
-   INIT
+   STARFIELD & INIT
    ========================================================= */
-buildAssetGuide();
-render();
+
+(function(){
+  const field = document.getElementById('starfield');
+  if(!field) return;
+  for(let i = 0; i < 50; i++){
+    const s = document.createElement('span');
+    s.style.left = Math.random() * 100 + '%';
+    s.style.top = Math.random() * 100 + '%';
+    s.style.animationDelay = (Math.random() * 4.5).toFixed(2) + 's';
+    field.appendChild(s);
+  }
+})();
+
+renderAll();
 tickCountdown();
 setInterval(tickCountdown, 1000);
-setInterval(render, 60000);
+setInterval(renderAll, 60000);
 </script>
 
 </body>
