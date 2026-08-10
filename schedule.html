@@ -284,7 +284,7 @@
 
   <details class="guide">
     <summary>Banner asset guide (for uploading images later)</summary>
-    <p>Drop image files into an <code>assets/</code> folder next to this HTML file, named exactly as below (<code>.png</code>, <code>.jpg</code>, or <code>.webp</code> — first match wins). Vertical banners around a 2:3 ratio (e.g. 400×600px) work best. Any event without a matching file will show a placeholder card instead of breaking.</p>
+    <p>Drop image files into an <code>assets/schedule/</code> folder next to this HTML file, named exactly as below (<code>.png</code>, <code>.jpg</code>, or <code>.webp</code> — first match wins). Vertical banners around a 2:3 ratio (e.g. 400×600px) work best. Any event without a matching file will show a placeholder card instead of breaking.</p>
     <div class="guide-grid" id="assetGuide"></div>
   </details>
 
@@ -470,7 +470,7 @@ function renderTimeline(eraStartUTC, todayIndex){
     if(topOffset) el.style.marginTop = (-20+topOffset) + 'px';
     el.title = `${m.label} — Day ${m.dayIndex}`;
     if(m.assetIcon){
-      el.style.backgroundImage = `url("assets/${m.assetIcon}.png")`;
+      el.style.backgroundImage = `url("assets/schedule/${m.assetIcon}.png")`;
       el.style.backgroundSize = 'cover';
       el.style.backgroundPosition = 'center';
       el.classList.add('with-icon');
@@ -519,8 +519,8 @@ function cardHTML(item, extraClass){
   const assetBase = assetFileForCard(item);
   return `<figure class="ecard bracket ${cls}" data-glyph="${glyphFor(item.label)}">
     <span class="bl"></span><span class="br"></span>
-    <div class="art"><img src="assets/${assetBase}.png" alt="${item.label}"
-      onerror="if(!this.dataset.tried){this.dataset.tried=1;this.src='assets/${assetBase}.jpg';}
+    <div class="art"><img src="assets/schedule/${assetBase}.png" alt="${item.label}"
+      onerror="if(!this.dataset.tried){this.dataset.tried=1;this.src='assets/schedule/${assetBase}.jpg';}
                else{this.parentElement.parentElement.classList.add('noimg');this.remove();}">
     </div>
     <figcaption>${item.label}</figcaption>
@@ -632,7 +632,7 @@ function tickCountdown(){
 }
 
 function buildAssetGuide(){
-  document.getElementById('assetGuide').innerHTML = ASSET_KEYS.map(k=>`<div><code>assets/${k}.png</code></div>`).join('');
+  document.getElementById('assetGuide').innerHTML = ASSET_KEYS.map(k=>`<div><code>assets/schedule/${k}.png</code></div>`).join('');
 }
 
 /* =========================================================
