@@ -28,7 +28,6 @@
   --magenta: #ff3fd8;
   --magenta-dim: rgba(255, 63, 216, 0.12);
   --red: #ef4444;
-  --red-dim: rgba(239, 68, 68, 0.12);
   --green: #10b981;
   --green-dim: rgba(16, 185, 129, 0.12);
   --text: #eae7e0;
@@ -112,9 +111,9 @@ body {
 .bracket .bl::before { bottom: -1px; left: -1px; border-bottom-width: 2px; border-left-width: 2px; position: absolute; }
 .bracket .br::before { bottom: -1px; right: -1px; border-bottom-width: 2px; border-right-width: 2px; position: absolute; }
 
-/* ─── Hero / Quick Status Cards Grid ─── */
+/* ─── Hero Status Cards Grid ─── */
 .hero-grid {
-  display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px;
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px;
 }
 .status-card {
   background: linear-gradient(160deg, var(--void1), var(--void2));
@@ -122,7 +121,7 @@ body {
   padding: 16px; display: flex; flex-direction: column; justify-content: space-between;
   position: relative; overflow: hidden;
 }
-.status-card.active-card { border-color: var(--cyan-border); box-shadow: 0 0 20px rgba(79, 209, 197, 0.08); }
+.status-card.cyan-card { border-color: var(--cyan-border); box-shadow: 0 0 20px rgba(79, 209, 197, 0.08); }
 .status-card.amber-card { border-color: var(--amber-border); box-shadow: 0 0 20px rgba(232, 163, 61, 0.08); }
 .status-card.purple-card { border-color: var(--purple-border); box-shadow: 0 0 20px rgba(176, 115, 255, 0.08); }
 
@@ -144,7 +143,7 @@ body {
 .sc-footer { font-family: var(--mono); font-size: 10.5px; color: var(--text3); border-top: 1px solid var(--border); padding-top: 8px; display: flex; justify-content: space-between; }
 .sc-footer .highlight { color: var(--amber); font-weight: 500; }
 
-/* ─── Countdown Big Box ─── */
+/* ─── Countdown Box ─── */
 .changeover-box {
   background: linear-gradient(135deg, rgba(232,163,61,0.06), var(--void1));
   border: 1px solid var(--amber-border); border-radius: var(--radius-lg);
@@ -160,56 +159,6 @@ body {
 .section-head h2 { font-family: var(--disp); font-size: 16px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text); }
 .section-head .sub { font-family: var(--mono); font-size: 11.5px; color: var(--text3); }
 .section-head .rule { flex: 1; height: 1px; background: linear-gradient(90deg, var(--border2), transparent); }
-
-/* ─── Multi-Lane Interactive Timeline ─── */
-.tl-container {
-  background: var(--void1); border: 1px solid var(--border); border-radius: var(--radius-lg);
-  padding: 20px; margin-bottom: 28px; position: relative; overflow-x: auto;
-}
-.tl-header-bar {
-  display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;
-}
-.tl-legend { display: flex; gap: 16px; font-family: var(--mono); font-size: 11px; flex-wrap: wrap; }
-.tl-legend-item { display: flex; align-items: center; gap: 6px; color: var(--text2); }
-.tl-legend-dot { width: 10px; height: 10px; border-radius: 3px; }
-
-.tl-controls { display: flex; gap: 6px; }
-.tl-btn {
-  background: var(--void2); border: 1px solid var(--border); color: var(--text2);
-  font-family: var(--mono); font-size: 11px; padding: 4px 10px; border-radius: var(--radius); cursor: pointer; transition: 0.15s;
-}
-.tl-btn:hover, .tl-btn.active { background: var(--void3); border-color: var(--cyan-border); color: var(--cyan); }
-
-.tl-grid-wrap { position: relative; min-width: 800px; }
-.tl-axis-days { display: flex; border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 12px; margin-left: 120px; }
-.tl-day-col { flex: 1; text-align: center; font-family: var(--mono); font-size: 9.5px; color: var(--text3); }
-.tl-day-col.is-today { color: var(--cyan); font-weight: 700; }
-
-.tl-lane { display: flex; align-items: center; margin-bottom: 10px; height: 32px; position: relative; }
-.tl-lane-title { width: 120px; font-family: var(--mono); font-size: 11px; color: var(--text2); font-weight: 500; flex-shrink: 0; padding-right: 10px; }
-.tl-lane-track { flex: 1; height: 100%; background: rgba(255,255,255,0.015); border-radius: 6px; position: relative; border: 1px dashed var(--border); }
-
-.tl-bar {
-  position: absolute; top: 3px; bottom: 3px; border-radius: 4px; padding: 0 8px;
-  display: flex; align-items: center; font-family: var(--mono); font-size: 10px; font-weight: 600;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; transition: transform 0.15s ease, filter 0.15s ease;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
-}
-.tl-bar:hover { transform: translateY(-1px) scaleY(1.05); filter: brightness(1.25); z-index: 10; }
-.tl-bar.conquest { background: rgba(232, 163, 61, 0.22); border: 1px solid var(--amber); color: var(--amber); }
-.tl-bar.gac { background: rgba(79, 209, 197, 0.2); border: 1px solid var(--cyan); color: var(--cyan); }
-.tl-bar.tb { background: rgba(176, 115, 255, 0.2); border: 1px solid var(--purple); color: var(--purple); }
-.tl-bar.marquee { background: rgba(255, 63, 216, 0.2); border: 1px solid var(--magenta); color: var(--magenta); }
-
-.tl-now-marker {
-  position: absolute; top: 0; bottom: 0; width: 2px; background: var(--cyan);
-  box-shadow: 0 0 10px var(--cyan); z-index: 20; pointer-events: none;
-}
-.tl-now-label {
-  position: absolute; top: -20px; transform: translateX(-50%);
-  background: var(--cyan); color: var(--void); font-family: var(--mono); font-size: 9px; font-weight: 700;
-  padding: 1px 5px; border-radius: 3px; white-space: nowrap;
-}
 
 /* ─── Feed Cards Layout ─── */
 .card-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; }
@@ -232,17 +181,16 @@ body {
   content: ""; position: absolute; inset: 6px; border: 1px dashed var(--border2); border-radius: 4px;
 }
 .ecard figcaption { font-size: 12px; font-weight: 600; color: var(--text); line-height: 1.35; }
-.ecard .tag { font-family: var(--mono); font-size: 9.5px; color: var(--cyan); margin-top: 4px; }
 
 .empty-note { font-family: var(--mono); font-size: 12px; color: var(--text3); padding: 16px 0; }
 
 /* ─── Forecast Strip ─── */
 .forecast { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: thin; }
 .fchip {
-  min-width: 135px; background: var(--void1); border: 1px solid var(--border); border-radius: var(--radius);
+  min-width: 140px; background: var(--void1); border: 1px solid var(--border); border-radius: var(--radius-lg);
   padding: 12px; flex: 0 0 auto; display: flex; flex-direction: column;
 }
-.fchip.today { border-color: var(--cyan-border); background: linear-gradient(180deg, rgba(79, 209, 197, 0.05), var(--void1)); }
+.fchip.today { border-color: var(--cyan-border); background: linear-gradient(180deg, rgba(79, 209, 197, 0.06), var(--void1)); }
 .fchip .day { font-family: var(--mono); font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.05em; }
 .fchip .date { font-family: var(--disp); font-size: 14px; font-weight: 600; margin: 2px 0 8px; color: var(--text); }
 .fchip ul { list-style: none; display: flex; flex-direction: column; gap: 4px; }
@@ -269,9 +217,9 @@ body {
   background: var(--void1); border: 1px solid var(--border); border-radius: var(--radius-lg);
   padding: 16px; text-align: center; position: relative; transition: all 0.2s;
 }
-.bcell.active { border-color: var(--magenta); box-shadow: 0 0 16px rgba(255, 63, 216, 0.15); background: linear-gradient(180deg, rgba(255, 63, 216, 0.06), var(--void1)); }
-.bcell .day { font-family: var(--mono); font-size: 10.5px; color: var(--cyan); text-transform: uppercase; letter-spacing: 0.06em; }
-.bcell.active .day { color: var(--magenta); font-weight: 700; }
+.bcell.active { border-color: var(--magenta); box-shadow: 0 0 16px rgba(255, 63, 216, 0.18); background: linear-gradient(180deg, rgba(255, 63, 216, 0.08), var(--void1)); }
+.bcell .step { font-family: var(--mono); font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; }
+.bcell.active .step { color: var(--magenta); font-weight: 700; }
 .bcell .name { font-family: var(--disp); font-size: 15px; font-weight: 600; margin-top: 6px; color: var(--text); }
 
 /* ─── Modal ─── */
@@ -348,33 +296,6 @@ body {
     <div class="cb-timer" id="countdown">--:--:--</div>
   </div>
 
-  <!-- Multi-Lane Gantt Timeline -->
-  <div class="section-head">
-    <h2>Era Roadmap & Phase Timeline</h2>
-    <span class="sub">84-day live cycle overview</span>
-    <div class="rule"></div>
-  </div>
-
-  <div class="tl-container bracket">
-    <span class="bl"></span><span class="br"></span>
-    <div class="tl-header-bar">
-      <div class="tl-legend">
-        <span class="tl-legend-item"><span class="tl-legend-dot" style="background:var(--amber)"></span> Conquest</span>
-        <span class="tl-legend-item"><span class="tl-legend-dot" style="background:var(--cyan)"></span> Grand Arena (GAC)</span>
-        <span class="tl-legend-item"><span class="tl-legend-dot" style="background:var(--purple)"></span> ROTE / TB</span>
-        <span class="tl-legend-item"><span class="tl-legend-dot" style="background:var(--magenta)"></span> Marquee / Era Events</span>
-      </div>
-      <div class="tl-controls">
-        <button class="tl-btn active" id="tlViewAllBtn">Full Era (84d)</button>
-        <button class="tl-btn" id="tlViewEpBtn">Current Episode (28d)</button>
-      </div>
-    </div>
-
-    <div class="tl-grid-wrap" id="tlGridWrap">
-      <!-- Generated via JS -->
-    </div>
-  </div>
-
   <!-- Today & Tomorrow Event Cards -->
   <div class="section-head">
     <h2 id="todayHeading">Today's Schedule</h2>
@@ -392,10 +313,18 @@ body {
 
   <!-- 7-Day Forecast -->
   <div class="section-head">
-    <h2>7-Day Outlook</h2>
+    <h2>7-Day Forecast</h2>
     <div class="rule"></div>
   </div>
   <div class="forecast" id="forecastRow"></div>
+
+  <!-- Coliseum Rotation -->
+  <div class="section-head">
+    <h2>Coliseum Boss Rotation</h2>
+    <span class="sub">Loops continuously at 19:00 UTC daily</span>
+    <div class="rule"></div>
+  </div>
+  <div class="boss-strip" id="bossStrip"></div>
 
   <!-- Full Era Schedule -->
   <div class="section-head">
@@ -410,14 +339,6 @@ body {
       <tbody id="fullSchedule"></tbody>
     </table>
   </div>
-
-  <!-- Coliseum Rotation -->
-  <div class="section-head">
-    <h2>Coliseum Boss Rotation</h2>
-    <span class="sub">Rotates Tue–Fri at 19:00 UTC</span>
-    <div class="rule"></div>
-  </div>
-  <div class="boss-strip" id="bossStrip"></div>
 
 </div>
 
@@ -467,7 +388,7 @@ const COMMON_DAYS = {
   24: [ev('rote','Territory Battles Phase 4'), ev('gac_attack','GAC Attack')],
   25: [ev('gac_defense','GAC Defense'), ev('rote','Territory Battles Phase 5')],
   26: [ev('gac_attack','GAC Attack'), ev('rote','Territory Battles Phase 6')],
-  27: [ev('gac_defense','GAC Defense'), ev('tb_ends','Territory Battles Ends'), ev('tw_signup','TW Signup Starts')],
+  27: [ev('tb_ends','Territory Battles Ends'), ev('tw_signup','TW Signup Starts')],
   28: [ev('era_battle','Era Battle 2'), ev('tw_defense','TW Defense Starts')],
 };
 
@@ -495,21 +416,19 @@ const EPISODE_OVERRIDES = {
   }
 };
 
-const BOSS_SCHEDULE = [
-  { day: 'Tuesday', label: 'Krayt Dragon' },
-  { day: 'Wednesday', label: 'Zeffo Tomb Guardians' },
-  { day: 'Thursday', label: 'Jotaz' },
-  { day: 'Friday', label: 'Dryax' }
+const BOSS_LOOP = [
+  'Krayt Dragon',
+  'Zeffo Tomb Guardians',
+  'Jotaz',
+  'Dryax'
 ];
 
 const DEFAULT_ERA_START = '2026-01-20'; // Tuesday
 const WEEKDAY_NAMES = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 const WEEKDAY_SHORT = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 
-let timelineScope = 'all'; // 'all' or 'ep'
-
 /* =========================================================
-   EXACT UTC TIME & CALCULATION ENGINE
+   EXACT UTC TIME ENGINE & CALCULATION
    ========================================================= */
 
 function getStoredEraStart(){
@@ -529,33 +448,40 @@ function getGameStatus(){
 
   // Difference in milliseconds from baseline era start
   const diffMs = nowMs - eraStartMs;
+  const msPerDay = 86400000;
 
-  // Day index relative to baseline start
-  let rawDayIndex = Math.floor(diffMs / 86400000) + 1;
+  // Raw days elapsed since baseline 19:00 UTC
+  let rawDayIndex = Math.floor(diffMs / msPerDay) + 1;
+  if(diffMs < 0) rawDayIndex = 1; // Fallback safeguard
 
-  // Modulo 84 days so day is always between 1 and 84
+  // Era Day is 1 to 84
   let eraDay = ((rawDayIndex - 1) % 84) + 1;
-  if(eraDay < 1) eraDay += 84;
 
   // Cycle count
   let cycleNum = Math.floor((rawDayIndex - 1) / 84);
 
   // Active Era start timestamp for current cycle
-  const currentEraStartMs = eraStartMs + (cycleNum * 84 * 86400000);
+  const currentEraStartMs = eraStartMs + (cycleNum * 84 * msPerDay);
 
-  // Current day timestamp
-  const currentDayStartMs = currentEraStartMs + ((eraDay - 1) * 86400000);
+  // Current game day timestamp (starts at 19:00 UTC)
+  const currentDayStartMs = currentEraStartMs + ((eraDay - 1) * msPerDay);
 
   const episode = Math.floor((eraDay - 1) / 28) + 1;
   const dayInEp = ((eraDay - 1) % 28) + 1;
   const week = Math.floor((dayInEp - 1) / 7) + 1;
 
+  // Exact calendar weekday of the active game day
+  const activeDayObj = new Date(currentDayStartMs);
+  const weekdayName = WEEKDAY_NAMES[activeDayObj.getUTCDay()];
+
   return {
     nowMs,
+    rawDayIndex,
     eraDay,
     episode,
     dayInEp,
     week,
+    weekdayName,
     currentEraStartMs,
     currentDayStartMs,
     cycleNum
@@ -573,39 +499,40 @@ function fmtDateUTC(ms){
 }
 
 /* =========================================================
-   STATUS DASHBOARD BUILDER (GAC, CONQUEST, TB, ERA)
+   STATUS DASHBOARD BUILDER (GAC, CONQUEST, TB/TW, ERA)
    ========================================================= */
 
 function renderStatusDashboard(st){
   const container = document.getElementById('statusDashboard');
 
   // 1. GAC Status Logic
-  // GAC is active Days 1-21 of each Episode (Weeks 1, 2, 3). Day 22-28 is Off-Week.
-  let gacState = { status: 'OFF-WEEK', badgeClass: 'off', title: 'Grand Arena', main: 'Off-Week Active', sub: 'Next GAC starts Ep ' + st.episode + ' Day 22 / Ep next Day 1' };
+  // Days 1-21 of Episode = Active Season Weeks 1, 2, 3.
+  // Days 22-28 = Off-Week / Intermission between seasons.
+  let gacState = {};
   if(st.dayInEp <= 21){
     const gacWeek = Math.floor((st.dayInEp - 1) / 7) + 1;
-    const daysLeftInGac = 21 - st.dayInEp + 1;
+    const daysLeftInSeason = 21 - st.dayInEp + 1;
     gacState = {
-      status: 'RUNNING',
+      status: 'SEASON ACTIVE',
       badgeClass: 'running',
       title: 'Grand Arena (GAC)',
-      main: `Week ${gacWeek} Active`,
-      sub: `${daysLeftInGac} days left in 3-week season`
+      main: `Week ${gacWeek} of 3`,
+      sub: `${daysLeftInSeason} days left in Season`
     };
   } else {
-    const daysUntilGac = 28 - st.dayInEp + 1;
+    const daysUntilNextSeason = 28 - st.dayInEp + 1;
     gacState = {
       status: 'OFF-WEEK',
       badgeClass: 'off',
       title: 'Grand Arena (GAC)',
-      main: 'Intermission / Off-Week',
-      sub: `Next season in ${daysUntilGac} days`
+      main: 'Season Intermission',
+      sub: `New Season starts in ${daysUntilNextSeason}d`
     };
   }
 
   // 2. Conquest Status Logic
-  // Conquest runs 14 days starting on Day 7 of each Episode (Days 7 to 20).
-  let conquestState = { status: 'INACTIVE', badgeClass: 'off', title: 'Conquest', main: 'Inactive', sub: 'Starts Ep Day 7' };
+  // Runs 14 days from Day 7 to Day 20 of each Episode
+  let conquestState = {};
   if(st.dayInEp >= 7 && st.dayInEp <= 20){
     const conquestDay = st.dayInEp - 6;
     const daysLeft = 14 - conquestDay + 1;
@@ -623,7 +550,7 @@ function renderStatusDashboard(st){
       badgeClass: 'purple',
       title: 'Conquest Event',
       main: `Starts in ${daysUntil}d`,
-      sub: `Ep ${st.episode} Conquest launch`
+      sub: `Ep ${st.episode} Conquest Launch`
     };
   } else {
     const daysUntil = (28 - st.dayInEp) + 7;
@@ -632,49 +559,69 @@ function renderStatusDashboard(st){
       badgeClass: 'purple',
       title: 'Conquest Event',
       main: `Starts in ${daysUntil}d`,
-      sub: `Ep ${st.episode === 3 ? 1 : st.episode + 1} Conquest`
+      sub: `Next Conquest Launch`
     };
   }
 
-  // 3. ROTE / Territory Battle Status
-  // TB occurs Day 7-13 and Day 21-27
-  let tbState = { status: 'OFF-WEEK', badgeClass: 'off', title: 'Territory Battle', main: 'No TB Active', sub: 'Rotates twice per episode' };
-  if(st.dayInEp >= 7 && st.dayInEp <= 13){
-    const phase = st.dayInEp - 6;
-    tbState = {
-      status: 'RUNNING',
+  // 3. ROTE / Territory Battle & Territory War (TW) Status
+  let tbTwState = {};
+  if((st.dayInEp >= 7 && st.dayInEp <= 12) || (st.dayInEp >= 21 && st.dayInEp <= 26)){
+    const phase = st.dayInEp >= 21 ? (st.dayInEp - 20) : (st.dayInEp - 6);
+    tbTwState = {
+      status: 'TB RUNNING',
       badgeClass: 'running',
-      title: 'ROTE / TB',
-      main: `Phase ${phase} of 6`,
-      sub: `Active Territory Battle`
+      title: 'Territory Battle',
+      main: `ROTE Phase ${phase} of 6`,
+      sub: `Active 24h Guild Phase`
     };
-  } else if(st.dayInEp >= 21 && st.dayInEp <= 27){
-    const phase = st.dayInEp - 20;
-    tbState = {
-      status: 'RUNNING',
-      badgeClass: 'running',
-      title: 'ROTE / TB',
-      main: `Phase ${phase} of 6`,
-      sub: `Active Territory Battle`
+  } else if(st.dayInEp === 13 || st.dayInEp === 27){
+    tbTwState = {
+      status: 'TW SIGNUP',
+      badgeClass: 'purple',
+      title: 'Guild Events',
+      main: 'TB Ends → TW Signup',
+      sub: 'Join Territory War now'
+    };
+  } else if(st.dayInEp === 14 || st.dayInEp === 28){
+    tbTwState = {
+      status: 'TW DEFENSE',
+      badgeClass: 'warning',
+      title: 'Territory War',
+      main: 'TW Defense Phase',
+      sub: 'Set defensive squads'
+    };
+  } else if(st.dayInEp === 15 || st.dayInEp === 1){
+    tbTwState = {
+      status: 'TW ATTACK',
+      badgeClass: 'warning',
+      title: 'Territory War',
+      main: 'TW Attack Phase',
+      sub: 'Clear enemy sectors'
     };
   } else {
-    tbState = {
-      status: 'PREPARATION',
+    tbTwState = {
+      status: 'INTERMISSION',
       badgeClass: 'off',
-      title: 'ROTE / TB',
-      main: 'Intermission',
-      sub: 'Next TB coming up soon'
+      title: 'Guild Events',
+      main: 'Guild Intermission',
+      sub: 'Next event coming up'
     };
   }
 
-  // 4. Era Overview
+  // 4. Era Overview Card
   const eraDaysRemaining = 84 - st.eraDay;
 
   container.innerHTML = `
-    <div class="status-card ${gacState.badgeClass === 'running' ? 'active-card' : ''}">
+    <div class="status-card cyan-card">
+      <div class="sc-header"><span class="sc-title">Era Timeline</span><span class="sc-badge running">${st.weekdayName}</span></div>
+      <div class="sc-main"><div class="sc-val">Day ${st.eraDay} / 84</div><div class="sc-sub">Ep ${st.episode} · Week ${st.week} of 4</div></div>
+      <div class="sc-footer"><span>${eraDaysRemaining} days remaining</span><span class="highlight">Cycle #${st.cycleNum + 1}</span></div>
+    </div>
+
+    <div class="status-card ${gacState.badgeClass === 'running' ? 'cyan-card' : ''}">
       <div class="sc-header"><span class="sc-title">${gacState.title}</span><span class="sc-badge ${gacState.badgeClass}">${gacState.status}</span></div>
       <div class="sc-main"><div class="sc-val">${gacState.main}</div><div class="sc-sub">${gacState.sub}</div></div>
-      <div class="sc-footer"><span>Mode: 5v5 / 3v3</span><span class="highlight">Ep ${st.episode}</span></div>
+      <div class="sc-footer"><span>Format: 5v5 / 3v3</span><span class="highlight">Ep ${st.episode}</span></div>
     </div>
 
     <div class="status-card ${conquestState.badgeClass === 'warning' ? 'amber-card' : ''}">
@@ -683,131 +630,12 @@ function renderStatusDashboard(st){
       <div class="sc-footer"><span>Duration: 14 Days</span><span class="highlight">Proving Grounds at end</span></div>
     </div>
 
-    <div class="status-card ${tbState.badgeClass === 'running' ? 'purple-card' : ''}">
-      <div class="sc-header"><span class="sc-title">${tbState.title}</span><span class="sc-badge ${tbState.badgeClass}">${tbState.status}</span></div>
-      <div class="sc-main"><div class="sc-val">${tbState.main}</div><div class="sc-sub">${tbState.sub}</div></div>
-      <div class="sc-footer"><span>Cycle: 6 Phases</span><span class="highlight">Guild Focus</span></div>
-    </div>
-
-    <div class="status-card">
-      <div class="sc-header"><span class="sc-title">Era Progress</span><span class="sc-badge running">Day ${st.eraDay}/84</span></div>
-      <div class="sc-main"><div class="sc-val">Episode ${st.episode} of 3</div><div class="sc-sub">Week ${st.week} of 4 · ${eraDaysRemaining} days left</div></div>
-      <div class="sc-footer"><span>Cycle #${st.cycleNum + 1}</span><span class="highlight">${fmtDateUTC(st.currentDayStartMs)}</span></div>
+    <div class="status-card ${tbTwState.badgeClass === 'running' ? 'purple-card' : ''}">
+      <div class="sc-header"><span class="sc-title">${tbTwState.title}</span><span class="sc-badge ${tbTwState.badgeClass}">${tbTwState.status}</span></div>
+      <div class="sc-main"><div class="sc-val">${tbTwState.main}</div><div class="sc-sub">${tbTwState.sub}</div></div>
+      <div class="sc-footer"><span>Guild Activity</span><span class="highlight">19:00 UTC Reset</span></div>
     </div>
   `;
-}
-
-/* =========================================================
-   MULTI-LANE GANTT TIMELINE RENDERER
-   ========================================================= */
-
-function renderTimeline(st){
-  const wrap = document.getElementById('tlGridWrap');
-  wrap.innerHTML = '';
-
-  const totalDays = timelineScope === 'ep' ? 28 : 84;
-  const startDayOffset = timelineScope === 'ep' ? (st.episode - 1) * 28 : 0;
-
-  // Day columns header
-  const axis = document.createElement('div');
-  axis.className = 'tl-axis-days';
-  for(let i = 1; i <= totalDays; i++){
-    const dayNum = startDayOffset + i;
-    const isToday = dayNum === st.eraDay;
-    const col = document.createElement('div');
-    col.className = 'tl-day-col' + (isToday ? ' is-today' : '');
-    col.textContent = dayNum % 7 === 1 ? `D${dayNum}` : '.';
-    axis.appendChild(col);
-  }
-  wrap.appendChild(axis);
-
-  // Lanes definition
-  const lanes = [
-    { id: 'conquest', title: 'Conquest', color: 'conquest' },
-    { id: 'gac', title: 'Grand Arena', color: 'gac' },
-    { id: 'tb', title: 'TB / ROTE', color: 'tb' },
-    { id: 'marquee', title: 'Era & Marquees', color: 'marquee' }
-  ];
-
-  // Prepare event spans for each lane
-  const spans = { conquest: [], gac: [], tb: [], marquee: [] };
-
-  for(let ep = 1; ep <= 3; ep++){
-    const epOffset = (ep - 1) * 28;
-    // Conquest: Days 7-20
-    spans.conquest.push({ start: epOffset + 7, duration: 14, label: `Ep ${ep} Conquest` });
-    // GAC: Days 1-21
-    spans.gac.push({ start: epOffset + 1, duration: 21, label: `Ep ${ep} GAC Season` });
-    // TB: Days 7-13 and Days 21-27
-    spans.tb.push({ start: epOffset + 7, duration: 7, label: `Ep ${ep} TB #1` });
-    spans.tb.push({ start: epOffset + 21, duration: 7, label: `Ep ${ep} TB #2` });
-  }
-
-  // Populate marquee / era battle points
-  for(let d = 1; d <= 84; d++){
-    const ep = Math.floor((d - 1) / 28) + 1;
-    const dInEp = ((d - 1) % 28) + 1;
-    const events = getDayEvents(ep, dInEp);
-    events.forEach(e => {
-      if(e.icon === 'marquee_event' || e.icon === 'era_challenge' || e.icon === 'journey_guide'){
-        spans.marquee.push({ start: d, duration: 1, label: e.label });
-      }
-    });
-  }
-
-  // Render lanes
-  lanes.forEach(lane => {
-    const row = document.createElement('div');
-    row.className = 'tl-lane';
-
-    const title = document.createElement('div');
-    title.className = 'tl-lane-title';
-    title.textContent = lane.title;
-    row.appendChild(title);
-
-    const track = document.createElement('div');
-    track.className = 'tl-lane-track';
-
-    spans[lane.id].forEach(sp => {
-      // Filter based on scope
-      if(sp.start + sp.duration - 1 <= startDayOffset || sp.start > startDayOffset + totalDays) return;
-
-      const relStart = Math.max(1, sp.start - startDayOffset);
-      const relEnd = Math.min(totalDays, sp.start + sp.duration - 1 - startDayOffset);
-      const relDur = relEnd - relStart + 1;
-
-      const leftPct = ((relStart - 1) / totalDays) * 100;
-      const widthPct = (relDur / totalDays) * 100;
-
-      const bar = document.createElement('div');
-      bar.className = `tl-bar ${lane.color}`;
-      bar.style.left = leftPct + '%';
-      bar.style.width = widthPct + '%';
-      bar.textContent = sp.label;
-      bar.title = `${sp.label} (Days ${sp.start} - ${sp.start + sp.duration - 1})`;
-      track.appendChild(bar);
-    });
-
-    row.appendChild(track);
-    wrap.appendChild(row);
-  });
-
-  // Now Marker
-  if(st.eraDay >= startDayOffset + 1 && st.eraDay <= startDayOffset + totalDays){
-    const relToday = st.eraDay - startDayOffset;
-    const nowPct = ((relToday - 0.5) / totalDays) * 100;
-
-    const nowMarker = document.createElement('div');
-    nowMarker.className = 'tl-now-marker';
-    nowMarker.style.left = `calc(120px + (100% - 120px) * ${nowPct / 100})`;
-
-    const label = document.createElement('div');
-    label.className = 'tl-now-label';
-    label.textContent = 'TODAY';
-    nowMarker.appendChild(label);
-
-    wrap.appendChild(nowMarker);
-  }
 }
 
 /* =========================================================
@@ -852,7 +680,7 @@ function renderFullSchedule(st){
     if(idx === st.eraDay) row.className = 'active';
 
     row.innerHTML = `
-      <td><strong>${idx}</strong></td>
+      <td><strong>Day ${idx}</strong></td>
       <td>${fmtDateUTC(dateMs)}</td>
       <td>Ep ${ep}.${week}</td>
       <td>${items.length ? items.map(it => `<span class="event-tag">${it.label}</span>`).join('') : '—'}</td>
@@ -865,9 +693,8 @@ function renderMainFeed(st){
   // 1. Today Events
   const todayEvents = getDayEvents(st.episode, st.dayInEp);
   const todayDateMs = st.currentDayStartMs;
-  const todayWeekday = WEEKDAY_NAMES[new Date(todayDateMs).getUTCDay()];
 
-  document.getElementById('todayHeading').textContent = `Today — ${todayWeekday}`;
+  document.getElementById('todayHeading').textContent = `Today — ${st.weekdayName}`;
   document.getElementById('todaySub').textContent = fmtDateUTC(todayDateMs);
   renderCards(document.getElementById('todayCards'), todayEvents);
 
@@ -884,7 +711,7 @@ function renderMainFeed(st){
   document.getElementById('tmrwSub').textContent = fmtDateUTC(tmrwDateMs);
   renderCards(document.getElementById('tmrwCards'), tmrwEvents);
 
-  // 3. 7-Day Outlook
+  // 3. 7-Day Forecast
   const forecastEl = document.getElementById('forecastRow');
   forecastEl.innerHTML = '';
   for(let i = 0; i < 7; i++){
@@ -904,23 +731,20 @@ function renderMainFeed(st){
     forecastEl.appendChild(chip);
   }
 
-  // 4. Coliseum Boss Rotation
+  // 4. Coliseum Boss Rotation Loop
+  // Continuous 4-boss loop index advancing daily
   const bossEl = document.getElementById('bossStrip');
   bossEl.innerHTML = '';
-  const currentUTCDayIndex = new Date(st.nowMs).getUTCDay();
 
-  let activeBossDay = 'Friday';
-  if(currentUTCDayIndex === 2) activeBossDay = 'Tuesday';
-  else if(currentUTCDayIndex === 3) activeBossDay = 'Wednesday';
-  else if(currentUTCDayIndex === 4) activeBossDay = 'Thursday';
+  const activeBossIndex = (st.rawDayIndex - 1) % 4;
 
-  BOSS_SCHEDULE.forEach((b) => {
-    const isActive = b.day === activeBossDay;
+  BOSS_LOOP.forEach((bossName, index) => {
+    const isActive = index === activeBossIndex;
     const cell = document.createElement('div');
     cell.className = 'bcell' + (isActive ? ' active' : '');
     cell.innerHTML = `
-      <div class="day">${b.day}${isActive ? ' · Active' : ''}</div>
-      <div class="name">${b.label}</div>
+      <div class="step">Boss ${index + 1} of 4${isActive ? ' · Active Today' : ''}</div>
+      <div class="name">${bossName}</div>
     `;
     bossEl.appendChild(cell);
   });
@@ -934,14 +758,13 @@ function tickCountdown(){
   const now = new Date();
   const nowMs = now.getTime();
 
-  // Target next 19:00 UTC
-  const nextReset = new Date(now);
-  nextReset.setUTCHours(19, 0, 0, 0);
-  if(nowMs >= nextReset.getTime()){
-    nextReset.setUTCDate(nextReset.getUTCDate() + 1);
+  // Next reset is at 19:00:00 UTC
+  let reset = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 19, 0, 0, 0));
+  if(nowMs >= reset.getTime()){
+    reset.setUTCDate(reset.getUTCDate() + 1);
   }
 
-  const diff = nextReset.getTime() - nowMs;
+  const diff = reset.getTime() - nowMs;
   const h = Math.floor(diff / 3600000);
   const m = Math.floor((diff % 3600000) / 60000);
   const s = Math.floor((diff % 60000) / 1000);
@@ -953,28 +776,13 @@ function tickCountdown(){
 function renderAll(){
   const st = getGameStatus();
   renderStatusDashboard(st);
-  renderTimeline(st);
   renderMainFeed(st);
   renderFullSchedule(st);
 }
 
 /* =========================================================
-   EVENT HANDLERS & MODAL CONTROLS
+   MODAL CONTROLS & INIT
    ========================================================= */
-
-document.getElementById('tlViewAllBtn').onclick = function(){
-  timelineScope = 'all';
-  this.classList.add('active');
-  document.getElementById('tlViewEpBtn').classList.remove('active');
-  renderTimeline(getGameStatus());
-};
-
-document.getElementById('tlViewEpBtn').onclick = function(){
-  timelineScope = 'ep';
-  this.classList.add('active');
-  document.getElementById('tlViewAllBtn').classList.remove('active');
-  renderTimeline(getGameStatus());
-};
 
 const modal = document.getElementById('settingsModal');
 document.getElementById('openSettingsBtn').onclick = () => {
@@ -996,10 +804,7 @@ document.getElementById('saveDateBtn').onclick = () => {
   renderAll();
 };
 
-/* =========================================================
-   STARFIELD & INIT
-   ========================================================= */
-
+/* Starfield Background */
 (function(){
   const field = document.getElementById('starfield');
   if(!field) return;
