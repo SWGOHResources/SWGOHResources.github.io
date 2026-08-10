@@ -12,7 +12,7 @@
   ══════════════════════════════════════════════════════════════
 -->
 <title>SWGOH Event Schedule</title>
-<meta name="description" content="Star Wars: Galaxy of Heroes event schedule — track GAC, Territory War, Territory Battle, Conquest and Marquee events day-by-day across the full 84-day Era.">
+<meta name="description" content="Star Wars: Galaxy of Heroes event schedule to track GAC, Territory War, Territory Battle, Conquest and Marquee events day-by-day across the full 84-day Era.">
 <meta name="keywords" content="SWGOH, Star Wars Galaxy of Heroes, event schedule, GAC, Territory War, Territory Battle, Conquest, marquee event">
 <meta name="author" content="Dom">
 <meta name="robots" content="index, follow">
@@ -22,14 +22,14 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="SWGOH::RESOURCES">
 <meta property="og:title" content="SWGOH Event Schedule">
-<meta property="og:description" content="SWGOH event schedule — GAC, Territory War, Territory Battle, Conquest and Marquee events, mapped across the full 84-day Era.">
+<meta property="og:description" content="SWGOH event schedule for GAC, Territory War, Territory Battle, Conquest and Marquee events, mapped across the full 84-day Era.">
 <meta property="og:url" content="https://swgohresources.github.io/">
 <meta property="og:image" content="https://swgohresources.github.io/favicon.ico">
 
 <!-- Twitter/X Card -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="SWGOH Event Schedule">
-<meta name="twitter:description" content="SWGOH event schedule — GAC, Territory War, Territory Battle, Conquest and Marquee events, mapped across the full 84-day Era.">
+<meta name="twitter:description" content="SWGOH event schedule for GAC, Territory War, Territory Battle, Conquest and Marquee events, mapped across the full 84-day Era.">
 <meta name="twitter:image" content="https://swgohresources.github.io/favicon.ico">
 
 <meta name="theme-color" content="#0b0d11">
@@ -76,6 +76,7 @@
   --steel: #7c94c9;
   --steel-dim: rgba(124, 148, 201, 0.14);
   --steel-border: rgba(124, 148, 201, 0.45);
+  --discord: #5865F2;
   --text: #f1eee7;
   --text2: #bcc3cf;
   --text3: #97a0af;
@@ -145,6 +146,7 @@ body {
   cursor: pointer; transition: 0.15s; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;
 }
 .gear-btn:hover { border-color: var(--amber-border); color: var(--amber); }
+.gear-btn.creator-btn:hover { border-color: var(--cyan-border); color: var(--cyan); }
 
 /* ─── Mobile Nav Toggle ─── */
 .nav-toggle {
@@ -266,24 +268,10 @@ body {
 .sc-badge.amber { background: var(--amber-dim); color: var(--amber); border: 1px solid var(--amber-border); }
 .sc-badge.running { background: var(--green-dim); color: var(--green); border: 1px solid rgba(92, 173, 130, 0.3); }
 .sc-badge.off { background: var(--void3); color: var(--text3); border: 1px solid var(--border); }
-/* Keeps badge pills colored to match the card theme even during OFF-WEEK / IDLE */
-.status-card.red-card .sc-badge.off { 
-  background: var(--red-dim); 
-  color: var(--red); 
-  border-color: var(--red-border); 
-}
 
-.status-card.purple-card .sc-badge.off { 
-  background: var(--purple-dim); 
-  color: var(--purple); 
-  border-color: var(--purple-border); 
-}
-
-.status-card.amber-card .sc-badge.off { 
-  background: var(--amber-dim); 
-  color: var(--amber); 
-  border-color: var(--amber-border); 
-}
+.status-card.red-card .sc-badge.off { background: var(--red-dim); color: var(--red); border-color: var(--red-border); }
+.status-card.purple-card .sc-badge.off { background: var(--purple-dim); color: var(--purple); border-color: var(--purple-border); }
+.status-card.amber-card .sc-badge.off { background: var(--amber-dim); color: var(--amber); border-color: var(--amber-border); }
 
 .sc-main { margin-bottom: 8px; }
 .sc-val { font-family: var(--disp); font-size: 17px; font-weight: 700; color: var(--text); line-height: 1.25; }
@@ -405,7 +393,7 @@ body {
 .modal-backdrop.open { display: flex; }
 .modal {
   background: var(--void1); border: 1px solid var(--border2); border-radius: var(--radius-lg);
-  max-width: 400px; width: 100%; padding: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+  max-width: 440px; width: 100%; padding: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.6);
 }
 .modal.wide { max-width: 920px; padding: 20px; display: flex; flex-direction: column; max-height: 84vh; }
 .modal.wide .modal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
@@ -441,6 +429,33 @@ body {
 .schedule-access .sa-title { font-family: var(--disp); font-size: 13.5px; font-weight: 700; color: var(--text); }
 .schedule-access .sa-sub { font-family: var(--body); font-size: 11px; color: var(--text3); }
 
+/* ─── Creator / Discord Callout Card ─── */
+.creator-card {
+  background: linear-gradient(135deg, var(--void2), rgba(88, 101, 242, 0.08));
+  border: 1px solid rgba(88, 101, 242, 0.35);
+  border-radius: var(--radius-lg);
+  padding: 16px 20px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; width: 100%; max-width: 640px; margin: 12px 0;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25);
+  text-align: left;
+}
+.creator-card-info { display: flex; flex-direction: column; gap: 3px; }
+.creator-card-title { font-family: var(--disp); font-size: 13px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 6px; }
+.creator-card-title .badge { background: var(--cyan-dim); color: var(--cyan); border: 1px solid var(--cyan-border); font-size: 9px; padding: 1px 6px; border-radius: 10px; font-family: var(--body); font-weight: 600; text-transform: uppercase; }
+.creator-card-sub { font-size: 11px; color: var(--text2); }
+
+.discord-copy-btn {
+  background: var(--discord); color: #fff;
+  border: none; padding: 8px 14px; border-radius: var(--radius);
+  font-family: var(--body); font-size: 12px; font-weight: 600;
+  cursor: pointer; transition: all 0.2s ease;
+  display: inline-flex; align-items: center; justify-content: center;
+  box-shadow: 0 0 12px rgba(88, 101, 242, 0.3); white-space: nowrap; flex: 0 0 auto;
+}
+.discord-copy-btn:hover { background: #4752c4; box-shadow: 0 0 16px rgba(88, 101, 242, 0.5); transform: translateY(-1px); }
+.discord-copy-btn.copied { background: var(--green); color: #0b0d11; }
+
 /* ─── Footer ─── */
 .site-footer { position: relative; z-index: 1; border-top: 1px solid var(--border); margin-top: 48px; padding: 32px 24px 28px; }
 .footer-inner { max-width: 1180px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 18px; text-align: center; }
@@ -460,8 +475,6 @@ body {
   font-family: var(--body); font-size: 10.5px; color: var(--text3);
 }
 .footer-bottom .dot { opacity: 0.5; }
-.footer-bottom a { color: var(--text2); text-decoration: none; transition: color 0.15s; }
-.footer-bottom a:hover { color: var(--cyan); }
 
 @media (max-width: 900px) {
   .merged-hero { grid-template-columns: 1fr; padding: 22px 20px; }
@@ -470,6 +483,8 @@ body {
   .boss-strip { grid-template-columns: repeat(2, 1fr); }
   .schedule-access { flex-direction: column; align-items: flex-start; }
   .forecast { grid-template-columns: repeat(4, 1fr); }
+  .creator-card { flex-direction: column; text-align: center; }
+  .discord-copy-btn { width: 100%; justify-content: center; }
 }
 
 @media (max-width: 600px) {
@@ -493,6 +508,7 @@ body {
       <a class="tab-btn active" href="index.html">Home</a>
     </div>
     <div class="topbar-actions" id="topbarActions">
+      <button class="gear-btn creator-btn" id="openAboutBtnHeader">Report Issue</button>
       <button class="gear-btn" id="openFullScheduleBtn">Full Schedule</button>
     </div>
     <button class="nav-toggle" id="navToggle" aria-label="Menu"><span></span><span></span><span></span></button>
@@ -500,6 +516,7 @@ body {
   <div class="mobile-panel" id="mobilePanel">
     <a class="mp-link active" href="index.html">Home</a>
     <div class="mp-divider"></div>
+    <button class="gear-btn mp-btn" id="openAboutBtnMobile">Report Issue</button>
     <button class="gear-btn mp-btn" id="openFullScheduleBtnMobile">Full Schedule</button>
   </div>
 </div>
@@ -594,12 +611,22 @@ body {
         <button type="button" id="footerFullScheduleBtn">Full Schedule</button>
       </div>
     </div>
+
+    <!-- Creator Highlight Card in Footer -->
+    <div class="creator-card">
+      <div class="creator-card-info">
+        <div class="creator-card-title">Maintained & Built by Dom <span class="badge">Creator</span></div>
+        <div class="creator-card-sub">Found a schedule discrepancy or have feedback? Reach out directly on Discord!</div>
+      </div>
+      <button class="discord-copy-btn" onclick="copyDiscordHandle(this)" title="Click to copy Discord handle">
+        <span>@granddom</span>
+      </button>
+    </div>
+
     <div class="footer-note">Fan-made planning tool for Star Wars: Galaxy of Heroes. Not affiliated with, endorsed, sponsored, or specifically approved by Electronic Arts, Capital Games, Disney, or Lucasfilm. All game assets, trademarks, and character names are property of their respective owners.</div>
     <div class="footer-divider"></div>
     <div class="footer-bottom">
       <span id="footerMeta"></span>
-      <span class="dot">·</span>
-      <span>Maintained by Dom <span style="opacity:0.75">(@granddom on Discord)</span></span>
       <span class="dot">·</span>
       <span id="footerYear"></span>
     </div>
@@ -623,6 +650,31 @@ body {
         </thead>
         <tbody id="fullSchedule"></tbody>
       </table>
+    </div>
+  </div>
+</div>
+
+<!-- Report Issue Modal -->
+<div class="modal-backdrop" id="aboutModal">
+  <div class="modal">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+      <h3 style="font-family:var(--disp); font-size:18px;">Report an Issue</h3>
+      <button class="modal-close-x" id="closeAboutBtn" aria-label="Close"><span></span><span></span></button>
+    </div>
+
+    <p style="font-size:13px; color:var(--text2); margin-bottom:16px; line-height:1.6;">
+      This tool is maintained by Dom. Report issues to him on Discord:
+    </p>
+
+    <div style="background:var(--void2); border:1px solid var(--border2); border-radius:var(--radius); padding:14px; margin-bottom:16px; display:flex; align-items:center; justify-content:space-between; gap:10px;">
+      <span style="font-weight:600; font-size:13px; color:var(--text);">Discord</span>
+      <button class="discord-copy-btn" onclick="copyDiscordHandle(this)">
+        <span>@granddom</span>
+      </button>
+    </div>
+
+    <div style="display:flex; justify-content:flex-end;">
+      <button class="btn primary" id="closeAboutBtn2">Close</button>
     </div>
   </div>
 </div>
@@ -811,7 +863,6 @@ function categoryFor(icon){
 
 const WEEKDAY_NAMES = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 const WEEKDAY_SHORT = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-
 
 /* =========================================================
    TIME ENGINE
@@ -1098,6 +1149,8 @@ function getFullScheduleLabel(item){
   return needsCategory ? `${catLabel} ${item.label}` : item.label;
 }
 
+const fullScheduleCache = { eraStartMs: null, activeDay: null };
+
 function renderFullSchedule(st){
   const tbody = document.getElementById('fullSchedule');
   const sameEra = fullScheduleCache.eraStartMs === st.currentEraStartMs;
@@ -1129,8 +1182,6 @@ function renderFullSchedule(st){
     fullScheduleCache.activeDay = st.eraDay;
   }
 }
-
-const fullScheduleCache = { eraStartMs: null, activeDay: null };
 
 function renderMainFeed(st){
   // Today Events
@@ -1227,18 +1278,45 @@ function renderAll(){
 }
 
 /* =========================================================
-   MODAL CONTROLS & INIT
-   ========================================================= */
+ MODALS & DISCORD COPY FUNCTIONALITY
+  ========================================================= */
 
 const scheduleModal = document.getElementById('fullScheduleModal');
+const aboutModal = document.getElementById('aboutModal');
+
 const openSchedule = () => { scheduleModal.classList.add('open'); closeMobilePanel(); };
 const closeSchedule = () => scheduleModal.classList.remove('open');
+
+const openAbout = () => { aboutModal.classList.add('open'); closeMobilePanel(); };
+const closeAbout = () => aboutModal.classList.remove('open');
+
 document.getElementById('openFullScheduleBtn').onclick = openSchedule;
 document.getElementById('openFullScheduleBtn2').onclick = openSchedule;
 document.getElementById('openFullScheduleBtnMobile').onclick = openSchedule;
 document.getElementById('footerFullScheduleBtn').onclick = openSchedule;
 document.getElementById('closeFullScheduleBtn').onclick = closeSchedule;
+
+document.getElementById('openAboutBtnHeader').onclick = openAbout;
+document.getElementById('openAboutBtnMobile').onclick = openAbout;
+document.getElementById('closeAboutBtn').onclick = closeAbout;
+document.getElementById('closeAboutBtn2').onclick = closeAbout;
+
 scheduleModal.addEventListener('click', e => { if(e.target === scheduleModal) closeSchedule(); });
+aboutModal.addEventListener('click', e => { if(e.target === aboutModal) closeAbout(); });
+
+function copyDiscordHandle(btnEl) {
+  navigator.clipboard.writeText('granddom').then(() => {
+    const originalText = btnEl.innerHTML;
+    btnEl.classList.add('copied');
+    btnEl.innerHTML = `<span>✓ Copied!</span>`;
+    setTimeout(() => {
+      btnEl.classList.remove('copied');
+      btnEl.innerHTML = originalText;
+    }, 2000);
+  }).catch(() => {
+    alert('Discord username: granddom');
+  });
+}
 
 /* Mobile Nav Panel */
 const navToggle = document.getElementById('navToggle');
@@ -1274,7 +1352,7 @@ tickCountdown();
 setInterval(tickCountdown, 1000);
 setInterval(renderAll, 60000);
 </script>
-<script src="./build-version.js?v=9ebe4ec-139"></script>
+<script src="./build-version.js?v=a2318bc-140"></script>
 
 </body>
 </html>
