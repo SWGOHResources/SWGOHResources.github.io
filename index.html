@@ -619,10 +619,6 @@ const ERA_START_DATE = '2026-07-28'; // Day 1 baseline (Tuesday, July 28, 2026 -
   Day 5 = Saturday, Day 6 = Sunday, Day 7 = Monday.
   ========================================================= */
 
-/* =========================================================
-  EDIT EVENT NAMES HERE  
-  ========================================================= */
-
 // Marquee events — update values when new units drop.
 const MARQUEE_NAMES = {
   marquee_1: 'Mara Jade Skywalker',
@@ -882,35 +878,78 @@ function fmtDateUTC(ms){
   return d.toLocaleDateString('en-GB', { timeZone: 'UTC', weekday: 'short', day: 'numeric', month: 'short' });
 }
 
+/* =========================================================
+   UPDATED GAC STATUS CALCULATOR
+   Explicitly tracks Signup, Defense, Attack, Mid-Season Off-Weeks,
+   and Season Intermissions with exact target launch dates.
+   ========================================================= */
 function getGacStatus(st){
   const d = st.dayInEp;
   const format = (st.episode % 2 === 1) ? '5v5' : '3v3';
+  const nextFormat = format === '5v5' ? '3v3' : '5v5';
 
-  if(d >= 22 && d <= 28){
+  // 1. Signup Days (Days 1, 15, 22)
+  if(d === 1 || d === 15 || d === 22){
+    return {
+      status: 'SIGNUP PHASE',
+      badgeClass: 'purple',
+      title: `Grand Arena (${format})`,
+      main: 'Signup Phase Open',
+      sub: 'Set Defense Phase starts tomorrow'
+    };
+  }
+
+  // 2. Active Defense Days
+  if(d === 2 || d === 4 || d === 6 || d === 16 || d === 18 || d === 20 || d === 23 || d === 25 || d === 27){
+    return {
+      status: 'DEFENSE PHASE',
+      badgeClass: 'warning',
+      title: `Grand Arena (${format})`,
+      main: 'Defense Phase Active',
+      sub: 'Attack Phase begins tomorrow'
+    };
+  }
+
+  // 3. Active Attack Days
+  if(d === 3 || d === 5 || d === 7 || d === 17 || d === 19 || d === 21 || d === 24 || d === 26){
+    return {
+      status: 'ATTACK PHASE',
+      badgeClass: 'running',
+      title: `Grand Arena (${format})`,
+      main: 'Attack Phase Active',
+      sub: 'Clear enemy sectors before payout'
+    };
+  }
+
+  // 4. Mid-Season Off-Week (Days 8 to 14)
+  if(d >= 8 && d <= 14){
+    const daysUntilNext = 15 - d;
+    const nextDateMs = st.currentDayStartMs + (daysUntilNext * 86400000);
+    const dateStr = fmtDateUTC(nextDateMs);
+    const dayLabel = daysUntilNext === 1 ? 'tomorrow' : `in ${daysUntilNext} days`;
+
     return {
       status: 'OFF-WEEK',
       badgeClass: 'off',
       title: `Grand Arena (${format})`,
-      main: 'Season Intermission',
-      sub: `Next Season starts in ${29 - d} days (${format === '5v5' ? '3v3' : '5v5'})`
+      main: 'Mid-Season Intermission',
+      sub: `Next Signup opens ${dateStr} (${dayLabel})`
     };
   }
 
-  if(d === 1 || d === 15){
-    return { status: 'SIGNUP PHASE', badgeClass: 'purple', title: `Grand Arena (${format})`, main: 'Signup Phase Open', sub: 'Set Defense Phase starts tomorrow' };
-  }
-  if(d === 2 || d === 4 || d === 6 || d === 16 || d === 18 || d === 20){
-    return { status: 'DEFENSE PHASE', badgeClass: 'warning', title: `Grand Arena (${format})`, main: 'Defense Phase Active', sub: 'Attack Phase begins tomorrow' };
-  }
-  if(d === 3 || d === 5 || d === 7 || d === 17 || d === 19 || d === 21){
-    return { status: 'ATTACK PHASE', badgeClass: 'running', title: `Grand Arena (${format})`, main: 'Attack Phase Active', sub: 'Clear enemy sectors before payout' };
-  }
+  // 5. Final Round Attack/Payout & Season Intermission (Days 28+)
+  const daysUntilNext = 29 - d; // Days until Day 1 of next Episode
+  const nextDateMs = st.currentDayStartMs + (daysUntilNext * 86400000);
+  const dateStr = fmtDateUTC(nextDateMs);
+  const dayLabel = daysUntilNext === 1 ? 'tomorrow' : `in ${daysUntilNext} days`;
 
-  if(d === 14){
-    return { status: 'OFF-WEEK', badgeClass: 'running', title: `Grand Arena (${format})`, main: 'Round Transition', sub: 'GAC Signup starts tomorrow' };
-  }
-
-  return { status: 'OFF-WEEK', badgeClass: 'running', title: `Grand Arena (${format})`, main: 'Round Transition', sub: 'Next round starts shortly' };
+  return {
+    status: 'OFF-WEEK',
+    badgeClass: 'off',
+    title: `Grand Arena (${format})`,
+    main: 'Season Intermission',
+    sub: `Next Season (${nextFormat}) Signup opens ${dateStr} (${dayLabel})`
+  };
 }
 
 function getConquestStatus(st){
@@ -1224,7 +1263,7 @@ tickCountdown();
 setInterval(tickCountdown, 1000);
 setInterval(renderAll, 60000);
 </script>
-<script src="./build-version.js?v=aea3db8-135"></script>
+<script src="./build-version.js?v=dc36c0f-136"></script>
 
 </body>
 </html>
