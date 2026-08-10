@@ -1097,6 +1097,14 @@ function renderCards(el, items, extraClass){
     : `<p class="empty-note">— No event changeovers scheduled for this day —</p>`;
 }
 
+function getFullScheduleLabel(item){
+  const catLabel = CATEGORY_META[categoryFor(item.icon)]?.label;
+  if(!catLabel) return item.label;
+
+  const needsCategory = /\b(Phase|Payout|Signup|Attack|Defense|Offense)\b/i.test(item.label);
+  return needsCategory ? `${catLabel} ${item.label}` : item.label;
+}
+
 function renderFullSchedule(st){
   const tbody = document.getElementById('fullSchedule');
 
@@ -1120,7 +1128,7 @@ function renderFullSchedule(st){
         <td><strong>Day ${idx}</strong></td>
         <td>${fmtDateUTC(dateMs)}</td>
         <td>Ep ${ep}.${week}</td>
-        <td>${items.length ? items.map(it => `<span class="event-tag">${it.label}</span>`).join('') : '—'}</td>
+        <td>${items.length ? items.map(it => `<span class="event-tag">${getFullScheduleLabel(it)}</span>`).join('') : '—'}</td>
       </tr>`);
     }
     tbody.innerHTML = rows.join('');
@@ -1309,7 +1317,7 @@ tickCountdown();
 setInterval(tickCountdown, 1000);
 setInterval(renderAll, 60000);
 </script>
-<script src="./build-version.js?v=c8ac099-128"></script>
+<script src="./build-version.js?v=3b2e8d6-129"></script>
 
 </body>
 </html>
