@@ -134,6 +134,7 @@
     font-family:var(--disp);font-size:11px;font-weight:600;color:var(--text-dim);
     cursor:default;transition:.15s;
   }
+  .tl-marker.with-icon{background-color:transparent;color:transparent;border-color:var(--line-bright);}
   .tl-marker.marquee{--c:var(--cyan);}
   .tl-marker.journey{--c:var(--purple);border-style:dashed;}
   .tl-marker.challenge{--c:var(--red);}
@@ -227,7 +228,6 @@
       <p class="eyebrow">Galaxy of Heroes // Live Schedule Feed</p>
       <h1>Era Terminal <span>84-day cycle</span></h1>
     </div>
-    <button class="gear-btn" id="openSettings">⚙ Set Era Start Date</button>
   </div>
 
   <div id="warnBox"></div>
@@ -290,20 +290,6 @@
 
 </div>
 
-<div class="modal-backdrop" id="modalBackdrop">
-  <div class="modal bracket"><span class="bl"></span><span class="br"></span>
-    <h3>Sync Era Start Date</h3>
-    <p>Enter the calendar date (UK time) of the Tuesday your current era began — the day the marquee event and era changeover fired. Everything else is calculated from there.</p>
-    <label for="eraDateInput">Era start date</label>
-    <input type="date" id="eraDateInput">
-    <p class="hint">Day 1 of the era = this date, from 7:00pm UK onward.</p>
-    <div class="modal-actions">
-      <button class="btn ghost" id="cancelSettings">Cancel</button>
-      <button class="btn primary" id="saveSettings">Save</button>
-    </div>
-  </div>
-</div>
-
 <script>
 /* =========================================================
    EVENT DATA MODEL
@@ -316,52 +302,52 @@
 function ev(icon,label){ return {icon,label}; }
 
 const COMMON_DAYS = {
-  2:  [ev('gac_defense','GAC Defense'), ev('smugglers_run','Smugglers Run II'), ev('tw_payout','TW Payout')],
+  2:  [ev('gac_defense','GAC Defense'), ev('smugglersrun','Smugglers Run II'), ev('tw_payout','TW Payout')],
   3:  [ev('gac_attack','GAC Attack'), ev('tw_signup','TW Signup Starts')],
-  4:  [ev('gac_defense','GAC Defense'), ev('smugglers_run','Smugglers Run III'), ev('tw_defense','TW Defense Starts')],
+  4:  [ev('gac_defense','GAC Defense'), ev('smugglersrun','Smugglers Run III'), ev('tw_defense','TW Defense Starts')],
   5:  [ev('gac_attack','GAC Attack'), ev('tw_attack','TW Attack Starts')],
   6:  [ev('gac_defense','GAC Defense'), ev('tw_payout','TW Payout')],
-  9:  [ev('tb_phase','TB Phase 3 Start'), ev('era_battle','Era Battle 1')],
-  10: [ev('tb_phase','TB Phase 4 Start')],
-  11: [ev('tb_phase','TB Phase 5 Start')],
-  12: [ev('tb_phase','TB Phase 6 Start')],
-  13: [ev('tb_ends','TB Ends'), ev('tw_signup','TW Signup Starts')],
+  9:  [ev('rote','Territory Battles Phase 3'), ev('era_battle','Era Battle 1')],
+  10: [ev('rote','Territory Battles Phase 4')],
+  11: [ev('rote','Territory Battles Phase 5')],
+  12: [ev('rote','Territory Battles Phase 6')],
+  13: [ev('tb_ends','Territory Battles Ends'), ev('tw_signup','TW Signup Starts')],
   14: [ev('tw_defense','TW Defense Starts'), ev('era_battle','Era Battle 2')],
-  16: [ev('gac_defense','GAC Defense'), ev('smugglers_run','Smugglers Run II')],
+  16: [ev('gac_defense','GAC Defense'), ev('smugglersrun','Smugglers Run II')],
   17: [ev('gac_attack','GAC Attack'), ev('tw_signup','TW Signup Starts')],
-  18: [ev('gac_defense','GAC Defense'), ev('smugglers_run','Smugglers Run III'), ev('tw_defense','TW Defense Starts')],
+  18: [ev('gac_defense','GAC Defense'), ev('smugglersrun','Smugglers Run III'), ev('tw_defense','TW Defense Starts')],
   19: [ev('gac_attack','GAC Attack'), ev('tw_attack','TW Attack Starts')],
   20: [ev('gac_defense','GAC Defense'), ev('tw_payout','TW Payout')],
-  22: [ev('era_challenge','Era Challenge'), ev('gac_signup','GAC Signup Starts'), ev('tb_phase','TB Phase 2 Starts')],
-  23: [ev('gac_defense','GAC Defense'), ev('era_battle','New Era Battle 1'), ev('tb_phase','TB Phase 2 Starts')],
-  24: [ev('tb_phase','TB Phase 4 Starts'), ev('gac_attack','GAC Attack')],
-  25: [ev('gac_defense','GAC Defense'), ev('tb_phase','TB Phase 5 Starts')],
-  26: [ev('gac_defense','GAC Defense'), ev('tb_phase','TB Phase 6 Starts')],
-  27: [ev('gac_defense','GAC Defense'), ev('tb_ends','TB Ends'), ev('tw_signup','TW Signup Starts')],
+  22: [ev('era_challenge','Era Challenge'), ev('gac_signup','GAC Signup Starts'), ev('rote','Territory Battles Phase 2')],
+  23: [ev('gac_defense','GAC Defense'), ev('era_battle','New Era Battle 1'), ev('rote','Territory Battles Phase 2')],
+  24: [ev('rote','Territory Battles Phase 4'), ev('gac_attack','GAC Attack')],
+  25: [ev('gac_defense','GAC Defense'), ev('rote','Territory Battles Phase 5')],
+  26: [ev('gac_defense','GAC Defense'), ev('rote','Territory Battles Phase 6')],
+  27: [ev('gac_defense','GAC Defense'), ev('tb_ends','Territory Battles Ends'), ev('tw_signup','TW Signup Starts')],
   28: [ev('era_battle','Era Battle 2'), ev('tw_defense','TW Defense Starts')],
 };
 
 const EPISODE_OVERRIDES = {
   1: {
     1:  [ev('marquee_event','Marquee Event'), ev('journey_reruns','Journey Event Reruns Start'), ev('era_changeover','Era Changeover'), ev('gac_signup','GAC Signup Starts'), ev('tw_attack','TW Attack Starts')],
-    7:  [ev('tb_phase','TB Phase 1 Starts'), ev('conquest_start','2nd Conquest of Volume Starts'), ev('smugglers_run','Smugglers Run I'), ev('gac_attack','GAC Attack')],
-    8:  [ev('era_challenge','Era Challenge'), ev('tb_phase','TB Phase 2 Start'), ev('journey_reruns','End of Journey Reruns')],
+    7:  [ev('rote','Territory Battles Phase 1'), ev('conquest_start','2nd Conquest of Volume Starts'), ev('smugglersrun','Smugglers Run I'), ev('gac_attack','GAC Attack')],
+    8:  [ev('era_challenge','Era Challenge'), ev('rote','Territory Battles Phase 2'), ev('journey_reruns','End of Journey Reruns')],
     15: [ev('marquee_event','Marquee Event'), ev('tw_offense','TW Offense Starts'), ev('gac_signup','GAC Signup Starts')],
-    21: [ev('conquest_end','2nd Conquest of Volume Ends'), ev('gac_attack','GAC Attack'), ev('proving_ground','Proving Ground'), ev('ultimate_journey','Ultimate Journey'), ev('smugglers_run','Smugglers Run I'), ev('tb_phase','TB Phase 1 Starts')],
+    21: [ev('conquest_end','2nd Conquest of Volume Ends'), ev('gac_attack','GAC Attack'), ev('proving_ground','Proving Ground'), ev('ultimate_journey','Ultimate Journey'), ev('smugglersrun','Smugglers Run I'), ev('rote','Territory Battles Phase 1')],
   },
   2: {
     1:  [ev('marquee_event','Marquee Event'), ev('gac_signup','GAC Signup Starts'), ev('tw_attack','TW Attack Starts')],
-    7:  [ev('tb_phase','TB Phase 1 Starts'), ev('conquest_start','3rd Conquest of Volume Starts'), ev('smugglers_run','Smugglers Run I'), ev('gac_attack','GAC Attack')],
-    8:  [ev('era_challenge','Era Challenge'), ev('tb_phase','TB Phase 2 Start')],
+    7:  [ev('rote','Territory Battles Phase 1'), ev('conquest_start','3rd Conquest of Volume Starts'), ev('smugglersrun','Smugglers Run I'), ev('gac_attack','GAC Attack')],
+    8:  [ev('era_challenge','Era Challenge'), ev('rote','Territory Battles Phase 2')],
     15: [ev('marquee_event','Marquee Event'), ev('tw_offense','TW Offense Starts'), ev('gac_signup','GAC Signup Starts')],
-    21: [ev('conquest_end','Conquest Volume Ends (unit now usable)'), ev('gac_attack','GAC Attack'), ev('proving_ground','Proving Ground'), ev('ultimate_journey','Ultimate Journey'), ev('smugglers_run','Smugglers Run I'), ev('tb_phase','TB Phase 1 Starts')],
+    21: [ev('conquest_end','Conquest Volume Ends (unit now usable)'), ev('gac_attack','GAC Attack'), ev('proving_ground','Proving Ground'), ev('ultimate_journey','Ultimate Journey'), ev('smugglersrun','Smugglers Run I'), ev('rote','Territory Battles Phase 1')],
   },
   3: {
     1:  [ev('marquee_event','Marquee Event'), ev('journey_guide','4/5★ Journey Guide Event Unlock'), ev('gac_signup','GAC Signup Starts'), ev('tw_attack','TW Attack Starts')],
-    7:  [ev('tb_phase','TB Phase 1 Starts'), ev('conquest_start','1st Conquest of New Volume Starts'), ev('smugglers_run','Smugglers Run I'), ev('gac_attack','GAC Attack')],
-    8:  [ev('era_challenge','Era Challenge'), ev('tb_phase','TB Phase 2 Start')],
+    7:  [ev('rote','Territory Battles Phase 1'), ev('conquest_start','1st Conquest of New Volume Starts'), ev('smugglersrun','Smugglers Run I'), ev('gac_attack','GAC Attack')],
+    8:  [ev('era_challenge','Era Challenge'), ev('rote','Territory Battles Phase 2')],
     15: [ev('marquee_event','Marquee Event'), ev('journey_guide','6/7★ Journey Guide Unlock'), ev('tw_offense','TW Offense Starts'), ev('gac_signup','GAC Signup Starts')],
-    21: [ev('conquest_end','1st Conquest of New Volume Ends'), ev('gac_attack','GAC Attack'), ev('proving_ground','Proving Ground'), ev('ultimate_journey','Ultimate Journey'), ev('smugglers_run','Smugglers Run I'), ev('tb_phase','TB Phase 1 Starts')],
+    21: [ev('conquest_end','1st Conquest of New Volume Ends'), ev('gac_attack','GAC Attack'), ev('proving_ground','Proving Ground'), ev('ultimate_journey','Ultimate Journey'), ev('smugglersrun','Smugglers Run I'), ev('rote','Territory Battles Phase 1')],
   }
 };
 
@@ -410,7 +396,7 @@ function parseEraStart(str){
 }
 
 function dayIndexFor(gameDateUTC, eraStartUTC){
-  return Math.round((gameDateUTC - eraStartUTC)/86400000) + 1; // 1-based
+  return Math.floor((gameDateUTC - eraStartUTC)/86400000) + 1; // 1-based
 }
 
 function scheduleForIndex(dayIndex){
@@ -440,11 +426,17 @@ function timelineCategory(icon){
 
 function collectTimelineMarkers(){
   const markers = [];
+  let marqueeCount = 0;
   for(let idx=1; idx<=84; idx++){
     const sched = scheduleForIndex(idx);
     getDayEvents(sched.episode, sched.dayInEp).forEach(e=>{
       const cat = timelineCategory(e.icon);
-      if(cat) markers.push({ dayIndex: idx, cat, label: e.label });
+      if(!cat) return;
+      let assetIcon;
+      if(e.icon === 'marquee_event') assetIcon = `marquee${++marqueeCount}icon`;
+      else if(e.icon === 'journey_reruns' || e.icon === 'journey_guide') assetIcon = 'journeyicon';
+      else if(e.icon === 'era_battle') assetIcon = e.label.includes('1') ? 'erabattle1' : 'erabattle2';
+      markers.push({ dayIndex: idx, cat, label: e.label, assetIcon });
     });
   }
   // stack markers that land on the same day
@@ -476,12 +468,18 @@ function renderTimeline(eraStartUTC, todayIndex){
     el.className = 'tl-marker ' + m.cat + (m.dayIndex < todayIndex ? ' past' : '') + (m.dayIndex === todayIndex ? ' today-ring' : '');
     el.style.left = leftPct + '%';
     if(topOffset) el.style.marginTop = (-20+topOffset) + 'px';
-    el.textContent = initials(m.label);
     el.title = `${m.label} — Day ${m.dayIndex}`;
+    if(m.assetIcon){
+      el.style.backgroundImage = `url("assets/${m.assetIcon}.png")`;
+      el.style.backgroundSize = 'cover';
+      el.style.backgroundPosition = 'center';
+      el.classList.add('with-icon');
+    } else {
+      el.textContent = initials(m.label);
+    }
     track.appendChild(el);
   });
 
-  // today tick + label
   const tick = document.createElement('div');
   tick.className = 'tl-today-tick';
   tick.style.left = todayPct + '%';
@@ -499,20 +497,30 @@ function renderTimeline(eraStartUTC, todayIndex){
 
 
 const ASSET_KEYS = ['marquee_event','journey_reruns','era_changeover','gac_signup','gac_attack','gac_defense',
-  'tw_attack','tw_defense','tw_signup','tw_payout','smugglers_run','tb_phase','tb_ends','era_battle',
+  'tw_attack','tw_defense','tw_signup','tw_payout','smugglersrun','rote','tb_ends','era_battle',
   'era_challenge','conquest_start','conquest_end','proving_ground','ultimate_journey','journey_guide',
-  'tw_offense','krayt','zeffo','jotaz','dryax'];
+  'tw_offense','krayt','zeffo','jotaz','dryax',
+  'journeyicon','marquee1icon','marquee2icon','marquee3icon','marquee4icon','marquee5icon','marquee6icon',
+  'marquee2event','erabattle1','erabattle2'];
 
 function glyphFor(label){
   return label.split(' ').filter(w=>/^[A-Za-z]/.test(w)).slice(0,2).map(w=>w[0].toUpperCase()).join('');
 }
 
+function assetFileForCard(item){
+  if(item.icon === 'marquee_event') return 'marquee2event';
+  if(item.icon === 'era_battle') return item.label.includes('1') ? 'erabattle1' : 'erabattle2';
+  if(item.icon === 'journey_reruns' || item.icon === 'journey_guide') return 'journeyicon';
+  return item.icon;
+}
+
 function cardHTML(item, extraClass){
   const cls = [extraClass||'', item.boss ? 'boss' : ''].join(' ');
+  const assetBase = assetFileForCard(item);
   return `<figure class="ecard bracket ${cls}" data-glyph="${glyphFor(item.label)}">
     <span class="bl"></span><span class="br"></span>
-    <div class="art"><img src="assets/${item.icon}.png" alt="${item.label}"
-      onerror="if(!this.dataset.tried){this.dataset.tried=1;this.src='assets/${item.icon}.jpg';}
+    <div class="art"><img src="assets/${assetBase}.png" alt="${item.label}"
+      onerror="if(!this.dataset.tried){this.dataset.tried=1;this.src='assets/${assetBase}.jpg';}
                else{this.parentElement.parentElement.classList.add('noimg');this.remove();}">
     </div>
     <figcaption>${item.label}</figcaption>
@@ -526,16 +534,11 @@ function renderCards(el, items, extraClass){
 }
 
 function render(){
-  let stored = localStorage.getItem('swgohEraStart');
-  if(!stored){
-    stored = DEFAULT_ERA_START;
-    localStorage.setItem('swgohEraStart', stored);
-  }
   const warnBox = document.getElementById('warnBox');
   warnBox.innerHTML = '';
 
   const now = new Date();
-  const eraStartUTC = parseEraStart(stored);
+  const eraStartUTC = parseEraStart(DEFAULT_ERA_START);
   const { gameDateUTC } = effectiveGameDateUTC(now);
   const todayIndex = dayIndexFor(gameDateUTC, eraStartUTC);
   const todaySched = scheduleForIndex(todayIndex);
@@ -543,7 +546,7 @@ function render(){
   const tmrwSched = scheduleForIndex(todayIndex+1);
 
   if(!todaySched){
-    warnBox.innerHTML = `<div class="warn">Day ${todayIndex} is outside the 84-day era window. Your era may have ended — update the start date once the new era's schedule is confirmed.</div>`;
+    warnBox.innerHTML = `<div class="warn">Day ${todayIndex} is outside the 84-day era window. The current era schedule has ended.</div>`;
   }
 
   // hero readout
@@ -631,23 +634,6 @@ function tickCountdown(){
 function buildAssetGuide(){
   document.getElementById('assetGuide').innerHTML = ASSET_KEYS.map(k=>`<div><code>assets/${k}.png</code></div>`).join('');
 }
-
-/* =========================================================
-   SETTINGS MODAL
-   ========================================================= */
-const backdrop = document.getElementById('modalBackdrop');
-document.getElementById('openSettings').addEventListener('click', ()=>{
-  const stored = localStorage.getItem('swgohEraStart');
-  if(stored) document.getElementById('eraDateInput').value = stored;
-  backdrop.classList.add('open');
-});
-document.getElementById('cancelSettings').addEventListener('click', ()=> backdrop.classList.remove('open'));
-backdrop.addEventListener('click', e=>{ if(e.target===backdrop) backdrop.classList.remove('open'); });
-document.getElementById('saveSettings').addEventListener('click', ()=>{
-  const val = document.getElementById('eraDateInput').value;
-  if(val){ localStorage.setItem('swgohEraStart', val); render(); }
-  backdrop.classList.remove('open');
-});
 
 /* =========================================================
    INIT
