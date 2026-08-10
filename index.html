@@ -3,543 +3,405 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self' https:;script-src 'self' https://www.gstatic.com https://www.googleapis.com https://apis.google.com https://fonts.googleapis.com 'unsafe-inline'; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' https://fonts.gstatic.com data:; connect-src 'self' https://www.googleapis.com https://firestore.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com; frame-src https://accounts.google.com https://noteproject-4c78d.firebaseapp.com; object-src 'none'; base-uri 'self'; form-action 'self' https://accounts.google.com">
-<meta name="referrer-policy" content="strict-origin-when-cross-origin">
-<title>SwgohResources</title>
+<title>SWGOH Schedule // SwgohResources</title>
 <link rel="icon" href="/favicon.ico" type="image/x-icon">
-<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
 <style>
 :root {
-  --void: #0a0c10;
-  --void1: #0e1116;
-  --void2: #12161c;
-  --void3: #191e26;
-  --border: rgba(232, 227, 216, 0.08);
-  --border2: rgba(232, 227, 216, 0.14);
-  --amber-border: rgba(232, 163, 61, 0.4);
-  --text: #eae7e0;
-  --text2: #8f96a3;
-  --text3: #565f6d;
-  --amber: #e8a33d;
-  --amber-dim: rgba(232, 163, 61, 0.1);
-  --cyan: #4fd1c5;
-  --cyan-dim: rgba(79, 209, 197, 0.1);
+  --void: #0b0d11;
+  --void1: #13161c;
+  --void2: #191d24;
+  --void3: #22272f;
+  --border: rgba(232, 227, 216, 0.10);
+  --border2: rgba(232, 227, 216, 0.18);
+  --amber: #e0a552;
+  --amber-dim: rgba(224, 165, 82, 0.14);
+  --amber-border: rgba(224, 165, 82, 0.45);
+  --cyan: #56b8ad;
+  --cyan-dim: rgba(86, 184, 173, 0.14);
+  --cyan-border: rgba(86, 184, 173, 0.45);
+  --purple: #9686d6;
+  --purple-dim: rgba(150, 134, 214, 0.14);
+  --purple-border: rgba(150, 134, 214, 0.45);
+  --magenta: #d1698f;
+  --magenta-dim: rgba(209, 105, 143, 0.14);
   --red: #ef4444;
+  --green: #5cad82;
+  --green-dim: rgba(92, 173, 130, 0.14);
+  --text: #f1eee7;
+  --text2: #a3abb8;
+  --text3: #7c8494;
   --radius: 8px;
   --radius-lg: 14px;
-  --shadow: 0 12px 40px rgba(0,0,0,0.5);
-  --font-display: 'Chakra Petch', sans-serif;
-  --font-body: 'Inter', sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
+  --disp: 'Sora', sans-serif;
+  --body: 'Inter', sans-serif;
+  --mono: 'IBM Plex Mono', monospace;
 }
 
-*, *::before, *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { height: 100%; scroll-behavior: smooth; }
 body {
   background: var(--void);
   color: var(--text);
-  font-family: var(--font-body);
+  font-family: var(--body);
   font-size: 13px;
   line-height: 1.5;
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   position: relative;
+  display: flex;
+  flex-direction: column;
 }
-a { color: inherit; }
-::selection { background: var(--amber-dim); color: var(--amber); }
 
-/* ─── Starfield (twinkling) ───────────────────── */
-.starfield {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-}
+/* ─── Starfield ─── */
+.starfield { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
 .starfield span {
-  position: absolute;
-  width: 2px;
-  height: 2px;
-  border-radius: 50%;
-  background: #eae7e0;
+  position: absolute; width: 2px; height: 2px; border-radius: 50%; background: #eae7e0;
   animation: twinkle 4.5s ease-in-out infinite;
 }
+@keyframes twinkle { 0%, 100% { opacity: 0.15; } 50% { opacity: 0.85; } }
 
-@keyframes twinkle {
-  0%, 100% { opacity: 0.15; }
-  50% { opacity: 0.9; }
-}
-
-/* ─── Header ─────────────────────────────────── */
+/* ─── Top Header & Navigation ─── */
 .top-header {
-  position: sticky;
-  top: 0;
-  z-index: 200;
-  width: 100%;
-  background: rgba(10, 12, 16, 0.82);
-  backdrop-filter: blur(14px);
+  position: sticky; top: 0; z-index: 200; width: 100%;
+  background: rgba(10, 12, 16, 0.85); backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--border);
 }
 .topbar {
-  display: flex;
-  align-items: center;
-  height: 56px;
-  padding: 0 24px;
-  max-width: 1080px;
-  margin: 0 auto;
+  display: flex; align-items: center; height: 56px; padding: 0 24px;
+  max-width: 1180px; margin: 0 auto;
 }
 .topbar-title {
-  font-family: var(--font-display);
-  font-size: 16px;
-  font-weight: 700;
-  letter-spacing: 0.01em;
-  color: var(--text);
-  margin-right: 32px;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  white-space: nowrap;
+  font-family: var(--disp); font-size: 16px; font-weight: 700;
+  color: var(--text); margin-right: 32px; text-decoration: none;
+  display: inline-flex; align-items: center; white-space: nowrap;
 }
 .topbar-title span { color: var(--amber); }
-.topbar-title .divider-glyph { color: var(--text3); margin: 0 1px; font-weight: 400; }
+.topbar-title .divider-glyph { color: var(--text3); margin: 0 2px; font-weight: 400; }
 .topbar-tabs { display: flex; gap: 4px; flex: 1; height: 100%; }
 .tab-btn {
-  height: 100%;
-  padding: 0 16px;
-  background: none;
-  border: none;
-  color: var(--text2);
-  font-size: 12px;
-  font-weight: 500;
-  font-family: var(--font-mono);
-  letter-spacing: 0.02em;
-  cursor: pointer;
-  border-bottom: 2px solid transparent;
-  transition: all 0.15s ease;
-  white-space: nowrap;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
+  height: 100%; padding: 0 16px; background: none; border: none;
+  color: var(--text2); font-size: 13px; font-weight: 500; font-family: var(--body);
+  cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.15s ease;
+  text-decoration: none; display: inline-flex; align-items: center; white-space: nowrap;
 }
 .tab-btn:hover { color: var(--text); }
-.tab-btn.active { color: var(--amber); border-bottom-color: var(--amber); }
-.topbar-right { display: flex; align-items: center; gap: 10px; flex-wrap: nowrap; justify-content: flex-end; }
-.auth-status { font-size: 11px; font-family: var(--font-mono); color: var(--text3); white-space: nowrap; }
-.topbar-divider { width: 1px; height: 16px; background: var(--border); margin: 0 2px; }
+.tab-btn.active { color: var(--amber); border-bottom-color: var(--amber); font-weight: 600; }
 
-/* ─── Buttons ─────────────────────────────────── */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  height: 32px;
-  padding: 0 14px;
-  border-radius: var(--radius);
-  border: none;
-  font-family: var(--font-body);
-  font-size: 12px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  text-decoration: none;
-  white-space: nowrap;
-}
-.btn-accent { background: var(--amber); color: #1a1104; font-weight: 600; }
-.btn-accent:hover { box-shadow: 0 0 0 3px var(--amber-dim), 0 0 18px rgba(232,163,61,0.35); transform: translateY(-1px); }
-.btn-ghost { background: var(--void2); color: var(--text2); border: 1px solid var(--border); }
-.btn-ghost:hover:not(:disabled) { background: var(--void3); color: var(--text); border-color: var(--border2); }
-.btn-sm { height: 28px; padding: 0 10px; font-size: 11px; }
-.btn-lg { height: 44px; padding: 0 24px; font-size: 13px; border-radius: var(--radius); font-weight: 600; }
-.btn-outline { background: transparent; color: var(--text); border: 1px solid var(--border2); }
-.btn-outline:hover { border-color: var(--amber-border); color: var(--amber); transform: translateY(-1px); }
+.topbar-actions { display: flex; gap: 8px; align-items: center; }
 
-/* ─── Layout ──────────────────────────────────── */
-.app { max-width: 1080px; margin: 0 auto; padding: 0 24px 0; position: relative; z-index: 1; }
+.gear-btn {
+  background: var(--void2); border: 1px solid var(--border2); color: var(--text2);
+  font-family: var(--body); font-weight: 500; font-size: 12.5px; padding: 7px 14px; border-radius: var(--radius);
+  cursor: pointer; transition: 0.15s; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;
+}
+.gear-btn:hover { border-color: var(--amber-border); color: var(--amber); }
 
-/* ─── Hero ────────────────────────────────────── */
-.hero { position: relative; overflow: hidden; padding: 80px 0 60px; margin-bottom: 8px; }
-.hero-glow {
-  position: absolute;
-  top: -240px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 780px;
-  height: 460px;
-  background: radial-gradient(ellipse at center, rgba(232,163,61,0.2) 0%, rgba(232,163,61,0.06) 45%, transparent 70%);
-  pointer-events: none;
-  z-index: 0;
-  animation: pulse-glow 5s ease-in-out infinite;
+/* ─── Mobile Nav Toggle ─── */
+.nav-toggle {
+  display: none; width: 34px; height: 34px; background: var(--void2); border: 1px solid var(--border2);
+  border-radius: var(--radius); cursor: pointer; flex-direction: column; align-items: center; justify-content: center;
+  gap: 4px; flex: 0 0 auto;
 }
-@keyframes pulse-glow { 0%, 100% { opacity: 0.75; } 50% { opacity: 1; } }
-.hero-floor {
-  position: absolute;
-  left: 50%;
-  bottom: -60px;
-  width: 1500px;
-  height: 240px;
-  transform: translateX(-50%) perspective(260px) rotateX(58deg);
-  background-image:
-    repeating-linear-gradient(90deg, rgba(232,163,61,0.18) 0 1px, transparent 1px 56px),
-    repeating-linear-gradient(0deg, rgba(232,163,61,0.18) 0 1px, transparent 1px 40px);
-  -webkit-mask-image: linear-gradient(to top, black, transparent 82%);
-  mask-image: linear-gradient(to top, black, transparent 82%);
-  opacity: 0.6;
-  pointer-events: none;
-  z-index: 0;
-}
-.hero-scan {
-  position: absolute;
-  left: 0; right: 0;
-  height: 150px;
-  background: linear-gradient(180deg, transparent, rgba(79,209,197,0.07), transparent);
-  pointer-events: none;
-  z-index: 0;
-  animation: scan-sweep 6s linear infinite;
-}
-@keyframes scan-sweep { 0% { top: -150px; } 100% { top: 460px; } }
-.hero-horizon {
-  position: absolute;
-  left: 50%;
-  bottom: 60px;
-  transform: translateX(-50%);
-  width: 680px;
-  max-width: 92%;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(232,163,61,0.6), transparent);
-  box-shadow: 0 0 18px 1px rgba(232,163,61,0.4);
-  pointer-events: none;
-  z-index: 0;
-}
-.hero-content { position: relative; z-index: 1; max-width: 640px; }
-.hero-eyebrow {
-  font-family: var(--font-mono);
-  font-size: 11.5px;
-  color: var(--cyan);
-  letter-spacing: 0.03em;
-  margin-bottom: 18px;
-  display: inline-flex;
-  align-items: center;
-  gap: 2px;
-  border: 1px solid rgba(79,209,197,0.25);
-  background: rgba(79,209,197,0.05);
-  padding: 5px 10px 5px 8px;
-  border-radius: 20px;
-}
-.hero-eyebrow .dot {
-  width: 6px; height: 6px; border-radius: 50%;
-  background: var(--cyan);
-  box-shadow: 0 0 8px var(--cyan);
-  margin-right: 6px;
-  animation: pulse-dot 1.6s ease-in-out infinite;
-}
-@keyframes pulse-dot { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(0.8); } }
-.hero-eyebrow::after {
-  content: '';
-  width: 6px;
-  height: 12px;
-  background: var(--cyan);
-  margin-left: 3px;
-  animation: blink 1.1s steps(1) infinite;
-}
-@keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
-.hero h1 {
-  font-family: var(--font-display);
-  font-size: 44px;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  line-height: 1.1;
-  margin-bottom: 18px;
-}
-.hero h1 em { font-style: normal; color: var(--amber); position: relative; }
-.hero p { font-size: 14.5px; color: var(--text2); max-width: 540px; line-height: 1.65; margin-bottom: 28px; }
-.hero-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 34px; }
+.nav-toggle span { width: 16px; height: 2px; background: var(--text2); border-radius: 2px; transition: all 0.2s ease; }
+.nav-toggle:hover span { background: var(--amber); }
+.nav-toggle.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+.nav-toggle.open span:nth-child(2) { opacity: 0; }
+.nav-toggle.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
 
-.hero-stats {
-  display: flex;
-  gap: 0;
-  flex-wrap: wrap;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  background: rgba(255,255,255,0.012);
-  overflow: hidden;
-  max-width: 560px;
-}
-.hero-stat {
-  flex: 1;
-  min-width: 140px;
-  padding: 13px 18px;
-  border-right: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.hero-stat:last-child { border-right: none; }
-.hero-stat svg { width: 16px; height: 16px; flex-shrink: 0; }
-.hero-stat .label { font-family: var(--font-mono); font-size: 9.5px; color: var(--text3); letter-spacing: 0.05em; text-transform: uppercase; }
-.hero-stat .value { font-size: 12px; font-weight: 600; color: var(--text); margin-top: 1px; }
-
-/* ─── Section framing ─────────────────────────── */
-.section-label {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.08em;
-  color: var(--amber);
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-.section-label .bracket { color: var(--text3); }
-.section-label .rule { flex: 1; height: 1px; background: linear-gradient(90deg, var(--border2), transparent); }
-.section-label .section-note { font-weight: 400; color: var(--text3); letter-spacing: 0; text-transform: none; }
-.section-block { margin-bottom: 46px; }
-
-/* ─── Tool cards ──────────────────────────────── */
-.tool-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
-.tool-card {
-  background: linear-gradient(160deg, var(--void1), var(--void2) 140%);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 22px;
-  text-decoration: none;
-  color: inherit;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
-  position: relative;
-  overflow: hidden;
-}
-.tool-card::before {
-  content: '';
-  position: absolute;
-  top: -60%;
-  right: -30%;
-  width: 220px;
-  height: 220px;
-  background: radial-gradient(circle, rgba(232,163,61,0.08), transparent 70%);
-  opacity: 0;
-  transition: opacity 0.25s ease;
-  pointer-events: none;
-}
-a.tool-card:hover {
-  border-color: var(--amber-border);
-  transform: translateY(-3px);
-  box-shadow: 0 14px 32px rgba(0,0,0,0.4), 0 0 0 1px var(--amber-dim);
-}
-a.tool-card:hover::before { opacity: 1; }
-a.tool-card:hover .tool-icon { border-color: var(--amber-border); box-shadow: 0 0 16px rgba(232,163,61,0.25); }
-.tool-card.muted { opacity: 0.5; }
-.tool-card.muted:hover { transform: none; border-color: var(--border); box-shadow: none; }
-.tool-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; position: relative; z-index: 1; }
-.tool-icon {
-  width: 44px;
-  height: 44px;
-  border-radius: 10px;
-  background: var(--void2);
-  border: 1px solid var(--border2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  transition: all 0.2s ease;
-}
-.tool-icon svg { width: 24px; height: 24px; }
-.tool-badge {
-  font-family: var(--font-mono);
-  font-size: 9.5px;
-  font-weight: 500;
-  color: var(--text3);
-  border: 1px solid var(--border2);
-  border-radius: 4px;
-  padding: 3px 7px;
-  letter-spacing: 0.04em;
-  white-space: nowrap;
-}
-.tool-info { position: relative; z-index: 1; }
-.tool-info .name { font-family: var(--font-display); font-size: 17px; font-weight: 600; margin-bottom: 7px; letter-spacing: 0.005em; }
-.tool-info .desc { font-size: 12px; color: var(--text3); line-height: 1.6; }
-.tool-card-foot {
-  margin-top: auto;
-  padding-top: 14px;
-  border-top: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-family: var(--font-mono);
-  font-size: 10.5px;
-  color: var(--text3);
-  position: relative;
-  z-index: 1;
-}
-.tool-card-foot .status-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--cyan); display: inline-block; margin-right: 6px; box-shadow: 0 0 6px var(--cyan); }
-.tool-card-foot .go { color: var(--text3); transition: color 0.15s ease; }
-a.tool-card:hover .go { color: var(--amber); }
-.tool-card .orbit-icon { animation: orbit-spin 3.5s linear infinite; transform-origin: 12px 12px; }
-@keyframes orbit-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
-/* ─── External link cards ─────────────────────── */
-.link-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-.link-card {
-  background: var(--void1);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 16px;
-  text-decoration: none;
-  color: inherit;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  transition: border-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
-}
-a.link-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 24px rgba(0,0,0,0.35);
-}
-a.link-card.tag-cyan:hover { border-color: rgba(79,209,197,0.4); box-shadow: 0 10px 24px rgba(0,0,0,0.35), 0 0 0 1px var(--cyan-dim); }
-a.link-card.tag-amber:hover { border-color: var(--amber-border); box-shadow: 0 10px 24px rgba(0,0,0,0.35), 0 0 0 1px var(--amber-dim); }
-a.link-card.tag-neutral:hover { border-color: var(--border2); }
-.link-card-top { display: flex; align-items: center; gap: 10px; }
-.link-icon {
-  width: 32px;
-  height: 32px;
-  border-radius: 7px;
-  background: var(--void2);
-  border: 1px solid var(--border2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  overflow: hidden;
-}
-.link-icon img { width: 17px; height: 17px; object-fit: contain; }
-.link-card .name { font-size: 13px; font-weight: 600; }
-.link-card .desc { font-size: 11.5px; color: var(--text3); line-height: 1.55; flex: 1; }
-.link-card-foot { display: flex; align-items: center; justify-content: space-between; margin-top: auto; }
-.link-tag { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.05em; padding: 3px 7px; border-radius: 4px; border: 1px solid; white-space: nowrap; }
-.tag-cyan .link-tag { color: var(--cyan); border-color: rgba(79,209,197,0.35); background: var(--cyan-dim); }
-.tag-amber .link-tag { color: var(--amber); border-color: var(--amber-border); background: var(--amber-dim); }
-.tag-neutral .link-tag { color: var(--text3); border-color: var(--border2); background: var(--void2); }
-.link-domain { font-family: var(--font-mono); font-size: 10px; color: var(--text3); }
-a.link-card:hover .link-domain { color: var(--text2); }
-
-/* ─── Auth Modal ──────────────────────────────── */
-.modal-overlay {
-  position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(4px);
-  display: none; align-items: center; justify-content: center; padding: 20px; z-index: 300;
-}
-.modal-overlay.open { display: flex; }
-.auth-card {
-  width: min(380px, 100%);
-  padding: 28px;
-  border: 1px solid var(--border2);
-  border-radius: var(--radius-lg);
-  background: var(--void1);
-  box-shadow: var(--shadow);
-  text-align: center;
-  position: relative;
-}
-.auth-card h2 { font-family: var(--font-display); font-size: 19px; font-weight: 600; margin-bottom: 6px; }
-.auth-card p { font-size: 12px; color: var(--text2); margin-bottom: 20px; line-height: 1.5; }
-.auth-close { position: absolute; top: 12px; right: 12px; background: transparent; border: none; color: var(--text3); font-size: 16px; cursor: pointer; line-height: 1; }
-.auth-close:hover { color: var(--text); }
-.auth-toggle { display: flex; gap: 4px; margin-bottom: 18px; background: var(--void2); padding: 4px; border-radius: var(--radius); border: 1px solid var(--border); }
-.auth-toggle button { flex: 1; height: 30px; border-radius: 5px; border: none; background: transparent; color: var(--text2); font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.15s ease; }
-.auth-toggle button.active { background: var(--void3); color: var(--amber); }
-.auth-grid { display: grid; gap: 10px; }
-.auth-grid input {
-  height: 38px; font-size: 13px; background: var(--void2); border: 1px solid var(--border);
-  border-radius: var(--radius); color: var(--text); font-family: var(--font-body); padding: 0 12px; width: 100%; outline: none;
-}
-.auth-grid input:focus { border-color: var(--amber-border); box-shadow: 0 0 0 2px var(--amber-dim); background: var(--void3); }
-.auth-actions { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
-.auth-actions button { width: 100%; height: 36px; }
-.auth-hint { font-size: 11px; color: var(--text3); margin-top: 12px; }
-
-/* ─── Footer ──────────────────────────────────── */
-footer {
-  position: relative;
-  z-index: 1;
-  border-top: 1px solid var(--border);
-  margin-top: 20px;
-  background: linear-gradient(180deg, transparent, rgba(232,163,61,0.02));
-}
-.footer-inner {
-  max-width: 1080px;
-  margin: 0 auto;
-  padding: 44px 24px 28px;
-  display: grid;
-  grid-template-columns: 1.4fr 1fr 1fr;
-  gap: 32px;
-}
-.footer-brand .topbar-title { margin-right: 0; margin-bottom: 12px; }
-.footer-brand p {
-  font-size: 12px;
-  color: var(--text3);
-  line-height: 1.65;
-  max-width: 320px;
-}
-.footer-col-title {
-  font-family: var(--font-mono);
-  font-size: 10.5px;
-  letter-spacing: 0.06em;
-  color: var(--text2);
-  text-transform: uppercase;
-  margin-bottom: 14px;
-}
-.footer-links { list-style: none; display: flex; flex-direction: column; gap: 10px; }
-.footer-links a {
-  font-size: 12.5px;
-  color: var(--text3);
-  text-decoration: none;
-  transition: color 0.15s ease;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-.footer-links a:hover { color: var(--amber); }
-.footer-bottom {
-  border-top: 1px solid var(--border);
-  max-width: 1080px;
-  margin: 0 auto;
-  padding: 18px 24px 26px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  flex-wrap: wrap;
-  font-size: 11px;
-  font-family: var(--font-mono);
-  color: var(--text3);
-}
-.footer-bottom .disclaimer { max-width: 640px; line-height: 1.6; }
+.mobile-panel { display: none; }
 
 @media (max-width: 760px) {
-  .footer-inner { grid-template-columns: 1fr 1fr; }
-  .footer-brand { grid-column: 1 / -1; }
-}
-@media (max-width: 640px) {
+  .topbar-tabs, .topbar-actions { display: none; }
+  .nav-toggle { display: flex; }
   .topbar { padding: 0 16px; }
-  .tool-badge { display: none; }
-  .hero { padding: 60px 0 46px; }
-  .hero h1 { font-size: 32px; }
-  .tool-grid { grid-template-columns: 1fr; }
-  .link-grid { grid-template-columns: 1fr; }
-  .hero-stats { flex-direction: column; }
-  .hero-stat { border-right: none; border-bottom: 1px solid var(--border); }
-  .hero-stat:last-child { border-bottom: none; }
-  .footer-inner { grid-template-columns: 1fr; }
+  .topbar-title { margin-right: auto; }
+  .mobile-panel {
+    max-width: 1180px; margin: 0 auto; flex-direction: column; padding: 8px 16px 16px; gap: 4px;
+    border-top: 1px solid var(--border);
+  }
+  .mobile-panel.open { display: flex; }
+  .mp-link {
+    padding: 11px 4px; color: var(--text2); font-size: 14px; font-weight: 500; text-decoration: none;
+    border-bottom: 1px solid var(--border);
+  }
+  .mp-link.active { color: var(--amber); font-weight: 600; }
+  .mp-divider { height: 8px; }
+  .mp-btn { width: 100%; justify-content: center; padding: 11px 14px; font-size: 13px; margin-bottom: 8px; }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .hero-eyebrow::after, .hero-eyebrow .dot, .hero-glow, .hero-scan, .starfield span, .tool-card .orbit-icon {
-    animation: none !important;
-  }
+/* ─── Layout ─── */
+.wrap { max-width: 1180px; margin: 0 auto; padding: 24px; position: relative; z-index: 1; width: 100%; flex: 1; }
+
+/* ─── Corner Brackets ─── */
+.bracket { position: relative; }
+.bracket::before, .bracket::after,
+.bracket .bl::before, .bracket .br::before {
+  content: ""; position: absolute; width: 8px; height: 8px;
+  border-color: var(--cyan-border); border-style: solid; border-width: 0; pointer-events: none;
+}
+.bracket::before { top: -1px; left: -1px; border-top-width: 2px; border-left-width: 2px; }
+.bracket::after { top: -1px; right: -1px; border-top-width: 2px; border-right-width: 2px; }
+.bracket .bl::before { bottom: -1px; left: -1px; border-bottom-width: 2px; border-left-width: 2px; position: absolute; }
+.bracket .br::before { bottom: -1px; right: -1px; border-bottom-width: 2px; border-right-width: 2px; position: absolute; }
+
+/* ─── Merged Era Banner ─── */
+.merged-hero {
+  position: relative; overflow: hidden;
+  background: var(--void1);
+  border: 1px solid var(--border2); border-radius: var(--radius-lg);
+  padding: 28px 28px; margin-bottom: 24px; display: grid; grid-template-columns: 1fr auto;
+  gap: 28px; align-items: center;
+}
+.merged-hero::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(480px 240px at 8% 0%, rgba(86,184,173,0.14), transparent 70%),
+    radial-gradient(420px 220px at 100% 100%, rgba(224,165,82,0.12), transparent 70%);
+}
+.merged-hero::after {
+  content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+  background: linear-gradient(180deg, var(--cyan), var(--amber));
+}
+.mh-left { display: flex; flex-direction: column; gap: 14px; position: relative; z-index: 1; }
+.mh-tag { font-family: var(--disp); font-size: 20px; font-weight: 700; color: var(--text); letter-spacing: 0; text-transform: none; margin-bottom: 4px; }
+  .mh-tag .live-dot { display: none; }
+  .mh-title-row { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+  .mh-main-val { font-family: var(--disp); font-size: 34px; font-weight: 700; color: var(--text); line-height: 1; }
+  .mh-main-val span { color: var(--amber); }
+  .mh-sub-info { display: flex; flex-wrap: wrap; gap: 10px; font-family: var(--body); font-size: 13px; color: var(--text2); font-weight: 500; letter-spacing: 0.02em; }
+  .mh-sub-info::before { content: ""; }
+  .mh-sub-info span { white-space: nowrap; }
+
+.mh-progress-wrap { width: 100%; max-width: 560px; }
+.mh-progress-bar {
+  width: 100%; height: 8px; background: var(--void3); border-radius: 5px;
+  overflow: hidden; border: 1px solid var(--border); position: relative; margin-top: 6px;
+}
+.mh-progress-fill { height: 100%; background: linear-gradient(90deg, var(--cyan), var(--amber)); border-radius: 5px; transition: width 0.3s; box-shadow: 0 0 10px rgba(86,184,173,0.4); }
+.mh-progress-labels { display: flex; justify-content: space-between; font-family: var(--body); font-size: 10px; color: var(--text3); margin-top: 6px; }
+
+.mh-right {
+  position: relative; z-index: 1; text-align: center;
+  background: var(--void2); border: 1px solid var(--border2); border-radius: var(--radius);
+  padding: 16px 26px; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 2px;
+}
+.mh-right .cb-label { font-family: var(--body); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text3); }
+.mh-right .cb-timer {
+  font-family: var(--mono); font-size: 34px; font-weight: 700; color: var(--amber);
+  text-shadow: 0 0 10px rgba(224, 165, 82, 0.2); letter-spacing: 0.05em; margin: 2px 0;
+}
+.mh-right .cb-sub { font-size: 11px; color: var(--text2); }
+
+/* ─── Mode Status Cards Grid ─── */
+.hero-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 24px;
+}
+.status-card {
+  background: linear-gradient(160deg, var(--void1), var(--void2));
+  border: 1px solid var(--border); border-radius: var(--radius-lg);
+  padding: 16px; display: flex; flex-direction: column; justify-content: space-between;
+  position: relative; overflow: hidden;
+}
+.status-card.cyan-card { border-color: var(--cyan-border); box-shadow: 0 0 14px rgba(86, 184, 173, 0.06); }
+.status-card.amber-card { border-color: var(--amber-border); box-shadow: 0 0 14px rgba(224, 165, 82, 0.06); }
+.status-card.purple-card { border-color: var(--purple-border); box-shadow: 0 0 14px rgba(150, 134, 214, 0.06); }
+
+.sc-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.sc-title { font-family: var(--body); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text3); }
+.sc-badge {
+  font-family: var(--body); font-size: 9.5px; padding: 2px 7px; border-radius: 12px;
+  font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+}
+.sc-badge.running { background: var(--green-dim); color: var(--green); border: 1px solid rgba(92, 173, 130, 0.3); }
+.sc-badge.off { background: var(--void3); color: var(--text3); border: 1px solid var(--border); }
+.sc-badge.warning { background: var(--amber-dim); color: var(--amber); border: 1px solid var(--amber-border); }
+.sc-badge.purple { background: var(--purple-dim); color: var(--purple); border: 1px solid var(--purple-border); }
+
+.sc-main { margin-bottom: 8px; }
+.sc-val { font-family: var(--disp); font-size: 17px; font-weight: 700; color: var(--text); line-height: 1.25; }
+.sc-sub { font-size: 11.5px; color: var(--text2); margin-top: 3px; }
+
+.sc-footer { font-family: var(--body); font-size: 10.5px; color: var(--text3); border-top: 1px solid var(--border); padding-top: 8px; display: flex; justify-content: space-between; }
+.sc-footer .highlight { color: var(--amber); font-weight: 500; }
+
+/* ─── Section Labels ─── */
+.section-head { display: flex; align-items: center; gap: 12px; margin: 32px 0 16px; }
+.section-head h2 { font-family: var(--disp); font-size: 16px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text); }
+.section-head .sub { font-family: var(--body); font-size: 11.5px; color: var(--text3); }
+.section-head .rule { flex: 1; height: 1px; background: linear-gradient(90deg, var(--border2), transparent); }
+
+/* ─── Feed Cards Layout ─── */
+.card-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(148px, 1fr)); gap: 14px; }
+.ecard {
+  background: var(--void1); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  padding: 10px; display: flex; flex-direction: column; transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+  position: relative;
+}
+.ecard:hover { border-color: var(--accent, var(--cyan-border)); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.35); }
+.ecard .art {
+  aspect-ratio: 1/1; width: 100%; border-radius: 8px; overflow: hidden;
+  background: linear-gradient(160deg, var(--void2), var(--void3));
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center; margin-bottom: 9px; position: relative;
+}
+.ecard .art img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.ecard .art-badge {
+  width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 5px; background: var(--accent-dim, var(--void2)); position: relative;
+}
+.ecard .art-badge::after {
+  content: ""; position: absolute; inset: 5px; border: 1px dashed var(--accent-border, var(--border2)); border-radius: 5px;
+}
+.ecard .art-badge .glyph {
+  font-family: var(--disp); font-size: 20px; font-weight: 700; color: var(--accent, var(--text2)); position: relative; z-index: 1;
+}
+.ecard .art-badge .cat {
+  font-family: var(--mono); font-size: 8px; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--accent, var(--text3)); position: relative; z-index: 1;
+}
+.ecard .cat-tag {
+  font-family: var(--body); font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--accent, var(--text3)); margin-bottom: 3px;
+}
+.ecard figcaption { font-size: 12px; font-weight: 600; color: var(--text); line-height: 1.35; }
+
+.empty-note { font-family: var(--body); font-size: 12px; color: var(--text3); padding: 16px 0; }
+
+/* ─── Forecast Strip ─── */
+.forecast { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; }
+.fchip {
+  background: var(--void1); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  padding: 12px; display: flex; flex-direction: column; min-width: 0;
+}
+.fchip.today { border-color: var(--cyan-border); background: linear-gradient(180deg, rgba(86, 184, 173, 0.06), var(--void1)); }
+.fchip .day { font-family: var(--body); font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.05em; }
+.fchip .date { font-family: var(--disp); font-size: 14px; font-weight: 600; margin: 2px 0 8px; color: var(--text); }
+.fchip ul { list-style: none; display: flex; flex-direction: column; gap: 4px; }
+.fchip li { font-size: 11px; color: var(--text2); line-height: 1.3; padding-left: 8px; position: relative; }
+.fchip li::before { content: ""; position: absolute; left: 0; top: 5px; width: 3px; height: 3px; border-radius: 50%; background: var(--cyan); }
+
+/* ─── Full Schedule Table ─── */
+.full-schedule-wrap {
+  background: var(--void2); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 4px 12px; overflow: auto; scrollbar-width: thin; flex: 1; min-height: 0;
+}
+.schedule-table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 12px; }
+.schedule-table th, .schedule-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; }
+.schedule-table th { color: var(--text3); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; position: sticky; top: 0; background: var(--void2); z-index: 5; }
+.schedule-table tbody tr.active { background: rgba(86, 184, 173, 0.08); }
+.schedule-table td .event-tag {
+  display: inline-block; margin: 0 4px 4px 0; padding: 2px 7px; border-radius: 4px;
+  background: var(--void2); border: 1px solid var(--border); color: var(--cyan); font-size: 10.5px;
+}
+
+/* ─── Coliseum Boss Strip ─── */
+.boss-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.bcell {
+  background: linear-gradient(160deg, var(--void1), var(--void2)); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  padding: 18px 12px 16px; text-align: center; position: relative; transition: all 0.25s;
+  display: flex; flex-direction: column; align-items: center; gap: 9px;
+}
+.bcell-img {
+  width: 84px; height: 84px; border-radius: 12px; overflow: hidden; border: 1px solid var(--border2);
+  background: var(--void3); box-shadow: 0 4px 14px rgba(0,0,0,0.35);
+}
+.bcell-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.bcell .step { font-family: var(--body); font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; }
+.bcell.active .step { color: var(--magenta); font-weight: 700; }
+.bcell .name { font-family: var(--disp); font-size: 15.5px; font-weight: 700; color: var(--text); line-height: 1.2; }
+.bcell.active {
+  border-color: var(--magenta); box-shadow: 0 0 18px rgba(209, 105, 143, 0.16);
+  background: linear-gradient(180deg, rgba(209, 105, 143, 0.10), var(--void1)); transform: translateY(-3px);
+}
+.bcell.active .bcell-img { border-color: var(--magenta); box-shadow: 0 0 12px rgba(209, 105, 143, 0.3); }
+.bcell .active-tag {
+  font-family: var(--body); font-size: 9px; font-weight: 700; letter-spacing: 0.07em; color: var(--magenta);
+  background: rgba(209, 105, 143, 0.12); border: 1px solid rgba(209, 105, 143, 0.35); padding: 2px 9px 2px 7px;
+  border-radius: 12px; display: inline-flex; align-items: center; gap: 5px;
+}
+.bcell .active-tag .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--magenta); box-shadow: 0 0 5px var(--magenta); }
+
+/* ─── Modal ─── */
+.modal-backdrop {
+  position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(4px);
+  display: none; align-items: center; justify-content: center; z-index: 300; padding: 16px;
+}
+.modal-backdrop.open { display: flex; }
+.modal {
+  background: var(--void1); border: 1px solid var(--border2); border-radius: var(--radius-lg);
+  max-width: 400px; width: 100%; padding: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+}
+.modal.wide { max-width: 920px; padding: 20px; display: flex; flex-direction: column; max-height: 84vh; }
+.modal.wide .modal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.modal.wide .modal-head h3 { margin-bottom: 0; }
+.modal.wide .modal-head p { margin: 2px 0 0; font-size: 11.5px; }
+.modal-close-x {
+  background: var(--void2); border: 1px solid var(--border2); width: 28px; height: 28px;
+  border-radius: 50%; cursor: pointer; flex: 0 0 auto; position: relative;
+}
+.modal-close-x span {
+  position: absolute; top: 50%; left: 50%; width: 12px; height: 1.5px; background: var(--text2);
+  border-radius: 2px; transition: background 0.15s;
+}
+.modal-close-x span:nth-child(1) { transform: translate(-50%,-50%) rotate(45deg); }
+.modal-close-x span:nth-child(2) { transform: translate(-50%,-50%) rotate(-45deg); }
+.modal-close-x:hover { border-color: var(--amber-border); }
+.modal-close-x:hover span { background: var(--amber); }
+.modal h3 { font-family: var(--disp); font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+.modal p { font-size: 12px; color: var(--text2); margin-bottom: 16px; line-height: 1.5; }
+.modal label { font-family: var(--body); font-size: 11px; color: var(--text3); text-transform: uppercase; display: block; margin-bottom: 6px; }
+.modal input[type=date] {
+  width: 100%; background: var(--void2); border: 1px solid var(--border2); color: var(--text); padding: 10px 12px;
+  border-radius: var(--radius); font-family: var(--mono); font-size: 13px; margin-bottom: 8px; outline: none;
+}
+.modal input[type=date]:focus { border-color: var(--amber-border); }
+.modal .hint { font-family: var(--body); font-size: 11px; color: var(--text3); margin-bottom: 20px; }
+.modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+
+.btn {
+  font-family: var(--body); font-size: 11.5px; padding: 8px 16px; border-radius: var(--radius);
+  cursor: pointer; border: 1px solid var(--border); background: var(--void2); color: var(--text2); transition: 0.15s;
+}
+.btn.primary { background: var(--amber); color: #1a1104; border-color: var(--amber); font-weight: 600; }
+.btn.primary:hover { box-shadow: 0 0 12px rgba(224,165,82,0.4); }
+
+/* ─── Full-Schedule Access Strip ─── */
+.schedule-access {
+  background: var(--void1); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  padding: 14px 18px; margin-top: 32px; display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; flex-wrap: wrap;
+}
+.schedule-access .sa-text { display: flex; flex-direction: column; gap: 2px; }
+.schedule-access .sa-title { font-family: var(--disp); font-size: 13.5px; font-weight: 700; color: var(--text); }
+.schedule-access .sa-sub { font-family: var(--body); font-size: 11px; color: var(--text3); }
+
+/* ─── Footer ─── */
+.site-footer { position: relative; z-index: 1; border-top: 1px solid var(--border); margin-top: 48px; padding: 28px 24px 32px; }
+.footer-inner { max-width: 1180px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center; }
+.footer-brand { font-family: var(--disp); font-size: 14px; font-weight: 700; color: var(--text2); letter-spacing: 0.04em; }
+.footer-brand span { color: var(--amber); }
+.footer-links { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; }
+.footer-links a { font-family: var(--body); font-size: 11.5px; color: var(--text2); text-decoration: none; transition: color 0.15s; }
+.footer-links a:hover { color: var(--cyan); }
+.footer-note { font-family: var(--body); font-size: 10.5px; color: var(--text3); max-width: 620px; line-height: 1.6; }
+.footer-meta { font-family: var(--body); font-size: 10px; color: var(--text3); opacity: 0.7; }
+
+@media (max-width: 900px) {
+  .merged-hero { grid-template-columns: 1fr; padding: 22px 20px; }
+  .mh-right { border-left: none; width: 100%; padding: 14px 20px; }
+  .hero-grid { grid-template-columns: 1fr; }
+  .boss-strip { grid-template-columns: repeat(2, 1fr); }
+  .schedule-access { flex-direction: column; align-items: flex-start; }
+  .forecast { grid-template-columns: repeat(4, 1fr); }
+}
+
+@media (max-width: 600px) {
+  .forecast { grid-template-columns: repeat(2, 1fr); }
+  .mh-main-val { font-size: 28px; }
+  .mh-right .cb-timer { font-size: 28px; }
 }
 </style>
 </head>
@@ -550,479 +412,715 @@ footer {
 <div class="top-header">
   <div class="topbar">
     <a href="index.html" class="topbar-title">SWGOH<span class="divider-glyph">::</span><span>RESOURCES</span></a>
-    <div class="topbar-tabs">
-      <a class="tab-btn active" href="index.html">home</a>
-      <a class="tab-btn" href="relic.html">relic planner</a>
-      <a class="tab-btn" href="shipments.html">shipment planner</a>
-      <a class="tab-btn" href="schedule.html">schedule</a>
+    <div class="topbar-tabs" id="topbarTabs">
+      <a class="tab-btn" href="index.html">Home</a>
+      <a class="tab-btn active" href="index.html">Schedule</a>
     </div>
-    <div class="topbar-right">
-      <div id="auth-status" class="auth-status">Connecting…</div>
-      <button id="signin-btn" class="btn btn-ghost btn-sm" onclick="openAuthModal()">Sign In</button>
-      <button id="signout-btn" class="btn btn-ghost btn-sm" style="display:none" onclick="signOut()">Sign Out</button>
-      <div class="topbar-divider"></div>
-      <div id="build-badge" style="font-size:11px;color:var(--text3);font-family:var(--font-mono)">build <span id="build-version"></span></div>
+    <div class="topbar-actions" id="topbarActions">
+      <button class="gear-btn" id="openFullScheduleBtn">Full Schedule</button>
+      <button class="gear-btn" id="openSettingsBtn">Era Start</button>
     </div>
+    <button class="nav-toggle" id="navToggle" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+  <div class="mobile-panel" id="mobilePanel">
+    <a class="mp-link" href="index.html">Home</a>
+    <a class="mp-link active" href="index.html">Schedule</a>
+    <div class="mp-divider"></div>
+    <button class="gear-btn mp-btn" id="openFullScheduleBtnMobile">Full Schedule</button>
+    <button class="gear-btn mp-btn" id="openSettingsBtnMobile">Era Start</button>
   </div>
 </div>
 
-<div class="app">
+<div class="wrap">
 
-  <div class="hero">
-    <div class="hero-glow"></div>
-    <div class="hero-floor"></div>
-    <div class="hero-scan"></div>
-    <div class="hero-horizon"></div>
-    <div class="hero-content">
-      <div class="hero-eyebrow"><span class="dot"></span>holotable_network: online</div>
-      <h1>Run your roster like a <em>spreadsheet</em>, not a scramble.</h1>
-      <p>Relic queues, farming groups, cantina battles, and shipment budgets — planned before the event drops, not scrambled together during it.</p>
-      <div class="hero-actions">
-        <a href="relic.html" class="btn btn-accent btn-lg">Open Relic Planner</a>
-        <a href="shipments.html" class="btn btn-outline btn-lg">Open Shipment Planner</a>
+  <!-- Merged Era Banner -->
+  <div class="merged-hero" id="mergedHero">
+    <div class="mh-left">
+      <div class="mh-tag">Event Schedule for Era of Myths & Legends</div>
+      <div class="mh-title-row">
+        <div class="mh-main-val">Day <span id="mhDayVal">--</span> <span>/ 84</span></div>
+        <div class="mh-sub-info" id="mhSubInfo"><span>Episode -- of 3</span><span>Week -- of 4</span><span>--</span></div>
       </div>
-      <div class="hero-stats">
-        <div class="hero-stat">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#e8a33d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l7 4v6c0 5-3 8-7 10-4-2-7-5-7-10V6l7-4z"/></svg>
-          <div><div class="label">Sign-in</div><div class="value">Free, no download</div></div>
+      <div class="mh-progress-wrap">
+        <div class="mh-progress-bar">
+          <div class="mh-progress-fill" id="mhFill" style="width: 0%"></div>
         </div>
-        <div class="hero-stat">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#4fd1c5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v4l-6 6v6l-4-2v-4L4 8V4z"/></svg>
-          <div><div class="label">Sync</div><div class="value">Cross-device via account</div></div>
-        </div>
-        <div class="hero-stat">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#e8a33d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3 8 4-16 3 8h4"/></svg>
-          <div><div class="label">Built for</div><div class="value">Guild-scale planning</div></div>
+        <div class="mh-progress-labels">
+          <span id="mhStartDate">Start</span>
+          <span id="mhDaysRemaining">-- days left in Era</span>
+          <span id="mhEndDate">End</span>
         </div>
       </div>
+    </div>
+
+    <div class="mh-right">
+      <div class="cb-label">Next Changeover (18:00 UTC)</div>
+      <div class="cb-timer" id="countdown">--:--:--</div>
+      <div class="cb-sub">Official SWGOH Event Reset</div>
     </div>
   </div>
 
-  <div class="section-block">
-    <div class="section-label">
-      <span class="bracket">[</span>TOOLS<span class="bracket">]</span>
-      <span class="rule"></span>
-      <span class="section-note">sign in to sync across devices</span>
-    </div>
-
-    <div class="tool-grid">
-      <a href="relic.html" class="tool-card">
-        <div class="tool-card-top">
-          <div class="tool-icon">
-            <svg viewBox="0 0 32 32" fill="none">
-              <polygon points="16,3 27.2,9.5 27.2,22.5 16,29 4.8,22.5 4.8,9.5" stroke="#e8a33d" stroke-width="1.5"/>
-              <polygon points="16,9.5 21.5,12.7 21.5,19.3 16,22.5 10.5,19.3 10.5,12.7" fill="rgba(232,163,61,0.14)" stroke="#e8a33d" stroke-width="1.2"/>
-              <line x1="16" y1="3" x2="16" y2="9.5" stroke="#e8a33d" stroke-width="1" opacity="0.55"/>
-              <line x1="27.2" y1="9.5" x2="21.5" y2="12.7" stroke="#e8a33d" stroke-width="1" opacity="0.55"/>
-              <line x1="27.2" y1="22.5" x2="21.5" y2="19.3" stroke="#e8a33d" stroke-width="1" opacity="0.55"/>
-              <line x1="16" y1="29" x2="16" y2="22.5" stroke="#e8a33d" stroke-width="1" opacity="0.55"/>
-              <line x1="4.8" y1="22.5" x2="10.5" y2="19.3" stroke="#e8a33d" stroke-width="1" opacity="0.55"/>
-              <line x1="4.8" y1="9.5" x2="10.5" y2="12.7" stroke="#e8a33d" stroke-width="1" opacity="0.55"/>
-            </svg>
-          </div>
-          <span class="tool-badge">planner</span>
-        </div>
-        <div class="tool-info">
-          <div class="name">Relic &amp; Farming Planner</div>
-          <div class="desc">Track relic material income vs. demand, plan monthly farming groups, and manage guild event and cantina setups.</div>
-        </div>
-        <div class="tool-card-foot">
-          <span><span class="status-dot"></span>active</span>
-          <span class="go">open →</span>
-        </div>
-      </a>
-
-      <a href="shipments.html" class="tool-card">
-        <div class="tool-card-top">
-          <div class="tool-icon">
-            <svg viewBox="0 0 32 32" fill="none">
-              <polygon points="16,4 26,9.2 16,14.4 6,9.2" fill="rgba(232,163,61,0.16)" stroke="#e8a33d" stroke-width="1.4" stroke-linejoin="round"/>
-              <polygon points="6,9.2 16,14.4 16,25.2 6,20" fill="rgba(232,163,61,0.08)" stroke="#e8a33d" stroke-width="1.4" stroke-linejoin="round"/>
-              <polygon points="26,9.2 16,14.4 16,25.2 26,20" fill="rgba(232,163,61,0.12)" stroke="#e8a33d" stroke-width="1.4" stroke-linejoin="round"/>
-              <line x1="6" y1="9.2" x2="16" y2="4" stroke="#e8a33d" stroke-width="1"/>
-              <path d="M11 16.2v4.6" stroke="#e8a33d" stroke-width="1" opacity="0.6"/>
-              <path d="M21 16.2v4.6" stroke="#e8a33d" stroke-width="1" opacity="0.6"/>
-            </svg>
-          </div>
-          <span class="tool-badge">planner</span>
-        </div>
-        <div class="tool-info">
-          <div class="name">Shipment Planner</div>
-          <div class="desc">Plan expenditures for your guild event and raid incomes.</div>
-        </div>
-        <div class="tool-card-foot">
-          <span><span class="status-dot"></span>active</span>
-          <span class="go">open →</span>
-        </div>
-      </a>
-
-      <a href="schedule.html" class="tool-card">
-        <div class="tool-card-top">
-          <div class="tool-icon">
-            <svg viewBox="0 0 32 32" fill="none">
-              <rect x="5" y="6" width="22" height="21" rx="3" stroke="#4fd1c5" stroke-width="1.4"/>
-              <path d="M5 12h22" stroke="#4fd1c5" stroke-width="1.4"/>
-              <path d="M11 3v5" stroke="#4fd1c5" stroke-width="1.4" stroke-linecap="round"/>
-              <path d="M21 3v5" stroke="#4fd1c5" stroke-width="1.4" stroke-linecap="round"/>
-              <rect x="9" y="16" width="4" height="4" rx="1" fill="rgba(79,209,197,0.22)" stroke="#4fd1c5" stroke-width="1.2"/>
-              <rect x="14" y="16" width="4" height="4" rx="1" fill="rgba(79,209,197,0.22)" stroke="#4fd1c5" stroke-width="1.2"/>
-              <rect x="19" y="16" width="4" height="4" rx="1" fill="rgba(79,209,197,0.22)" stroke="#4fd1c5" stroke-width="1.2"/>
-            </svg>
-          </div>
-          <span class="tool-badge">prototype</span>
-        </div>
-        <div class="tool-info">
-          <div class="name">Schedule Prototype</div>
-          <div class="desc">Preview the upcoming schedule layout and planning view.</div>
-        </div>
-        <div class="tool-card-foot">
-          <span><span class="status-dot"></span>preview</span>
-          <span class="go">open →</span>
-        </div>
-      </a>
-
-      <div class="tool-card muted">
-        <div class="tool-card-top">
-          <div class="tool-icon">
-            <svg class="orbit-icon" viewBox="0 0 24 24" fill="none">
-              <circle cx="12" cy="12" r="1.6" fill="#8f96a3"/>
-              <ellipse cx="12" cy="12" rx="9" ry="4" stroke="#565f6d" stroke-width="1.3"/>
-              <circle cx="21" cy="12" r="1.4" fill="#e8a33d"/>
-            </svg>
-          </div>
-          <span class="tool-badge">soon</span>
-        </div>
-        <div class="tool-info">
-          <div class="name">More tools in development</div>
-          <div class="desc">Additional planners and calculators are on the way.</div>
-        </div>
-        <div class="tool-card-foot">
-          <span>in progress</span>
-        </div>
-      </div>
-    </div>
+  <!-- Mode Status Cards Grid -->
+  <div class="hero-grid" id="statusDashboard">
+    <!-- Rendered dynamically -->
   </div>
 
-  <div class="section-block">
-    <div class="section-label">
-      <span class="bracket">[</span>COMMUNITY<span class="bracket">]</span>
-      <span class="rule"></span>
-      <span class="section-note">not affiliated with SwgohResources</span>
+  <!-- Today & Tomorrow Event Cards -->
+  <div class="section-head">
+    <h2 id="todayHeading">Today's Schedule</h2>
+    <span class="sub" id="todaySub"></span>
+    <div class="rule"></div>
+  </div>
+  <div class="card-row" id="todayCards"></div>
+
+  <div class="section-head" style="opacity:0.85">
+    <h2 id="tmrwHeading">Tomorrow</h2>
+    <span class="sub" id="tmrwSub"></span>
+    <div class="rule"></div>
+  </div>
+  <div class="card-row" id="tmrwCards"></div>
+
+  <!-- 7-Day Forecast -->
+  <div class="section-head">
+    <h2>7-Day Forecast</h2>
+    <div class="rule"></div>
+  </div>
+  <div class="forecast" id="forecastRow"></div>
+
+  <!-- Coliseum Rotation -->
+  <div class="section-head">
+    <h2>Coliseum Boss Rotation</h2>
+    <span class="sub">Loops continuously at 18:00 UTC daily</span>
+    <div class="rule"></div>
+  </div>
+  <div class="boss-strip" id="bossStrip"></div>
+
+  <!-- Full Era Schedule Access -->
+  <div class="schedule-access">
+    <div class="sa-text">
+      <div class="sa-title">Looking for the full 84-day breakdown?</div>
+      <div class="sa-sub">Every day of the Era, mapped Episode → Week → Day, in one searchable table.</div>
     </div>
-
-    <div class="link-grid">
-      <a href="https://holotables.xyz" target="_blank" rel="noopener noreferrer" class="link-card tag-cyan">
-        <div class="link-card-top">
-          <div class="link-icon"><img src="https://www.google.com/s2/favicons?sz=64&domain=holotables.xyz" alt="" loading="lazy"></div>
-          <div class="name">HoloTables</div>
-        </div>
-        <div class="desc">Squad Arena and Grand Arena counters, defense analysis, and matchup planning.</div>
-        <div class="link-card-foot">
-          <span class="link-tag">coliseum</span>
-          <span class="link-domain">holotables.xyz ↗</span>
-        </div>
-      </a>
-
-      <a href="https://swgoh.gg" target="_blank" rel="noopener noreferrer" class="link-card tag-cyan">
-        <div class="link-card-top">
-          <div class="link-icon"><img src="https://www.google.com/s2/favicons?sz=64&domain=swgoh.gg" alt="" loading="lazy"></div>
-          <div class="name">SWGOH.GG</div>
-        </div>
-        <div class="desc">Character and ship stats, mod optimization, guild lookups, teams, and events.</div>
-        <div class="link-card-foot">
-          <span class="link-tag">game info</span>
-          <span class="link-domain">swgoh.gg ↗</span>
-        </div>
-      </a>
-
-      <a href="https://swgoh.hona.dev" target="_blank" rel="noopener noreferrer" class="link-card tag-amber">
-        <div class="link-card-top">
-          <div class="link-icon"><img src="https://www.google.com/s2/favicons?sz=64&domain=swgoh.hona.dev" alt="" loading="lazy"></div>
-          <div class="name">Hona Account Planner</div>
-        </div>
-        <div class="desc">Tools for planning teams for GAC and other game modes.</div>
-        <div class="link-card-foot">
-          <span class="link-tag">account planning</span>
-          <span class="link-domain">hona.dev ↗</span>
-        </div>
-      </a>
-
-      <a href="https://swgoh4.life" target="_blank" rel="noopener noreferrer" class="link-card tag-cyan">
-        <div class="link-card-top">
-          <div class="link-icon"><img src="https://www.google.com/s2/favicons?sz=64&domain=swgoh4.life" alt="" loading="lazy"></div>
-          <div class="name">SWGOH4 Life</div>
-        </div>
-        <div class="desc">Game guides, information and GAC tools.</div>
-        <div class="link-card-foot">
-          <span class="link-tag">game help</span>
-          <span class="link-domain">swgoh4.life ↗</span>
-        </div>
-      </a>
-
-      <a href="https://swgohrote.com" target="_blank" rel="noopener noreferrer" class="link-card tag-amber">
-        <div class="link-card-top">
-          <div class="link-icon"><img src="https://www.google.com/s2/favicons?sz=64&domain=swgohrote.com" alt="" loading="lazy"></div>
-          <div class="name">SWGOH ROTE</div>
-        </div>
-        <div class="desc">Visual guide and videos for the ROTE Territory Battle.</div>
-        <div class="link-card-foot">
-          <span class="link-tag">tb guide</span>
-          <span class="link-domain">swgohrote.com ↗</span>
-        </div>
-      </a>
-
-      <a href="https://hotutils.com" target="_blank" rel="noopener noreferrer" class="link-card tag-amber">
-        <div class="link-card-top">
-          <div class="link-icon"><img src="https://www.google.com/s2/favicons?sz=64&domain=hotutils.com" alt="" loading="lazy"></div>
-          <div class="name">Hotutils</div>
-        </div>
-        <div class="desc">Tools for guild events, farming and modding.</div>
-        <div class="link-card-foot">
-          <span class="link-tag">utility tools</span>
-          <span class="link-domain">hotutils.com ↗</span>
-        </div>
-      </a>
-
-      <a href="https://store.galaxy-of-heroes.starwars.ea.com" target="_blank" rel="noopener noreferrer" class="link-card tag-neutral">
-        <div class="link-card-top">
-          <div class="link-icon"><img src="https://www.google.com/s2/favicons?sz=64&domain=store.galaxy-of-heroes.starwars.ea.com" alt="" loading="lazy"></div>
-          <div class="name">SWGOH Webstore</div>
-        </div>
-        <div class="desc">Official in-game store for currency and bundles.</div>
-        <div class="link-card-foot">
-          <span class="link-tag">official store</span>
-          <span class="link-domain">EA ↗</span>
-        </div>
-      </a>
-    </div>
+    <button class="btn primary" id="openFullScheduleBtn2">Open Full Schedule</button>
   </div>
 
 </div>
 
-<div id="auth-modal" class="modal-overlay" onclick="if(event.target.id==='auth-modal') closeAuthModal()">
-  <div class="auth-card">
-    <button class="auth-close" onclick="closeAuthModal()">×</button>
-    <h2 id="auth-title">Welcome back</h2>
-    <p id="auth-desc">Sign in to sync your planner across devices, or create an account to save your groups and settings.</p>
-    <div class="auth-toggle">
-      <button id="auth-mode-signin" class="active" onclick="setAuthMode('signin')">Sign in</button>
-      <button id="auth-mode-signup" onclick="setAuthMode('signup')">Create account</button>
-    </div>
-    <div class="auth-grid">
-      <input id="auth-email" type="email" placeholder="Email address">
-      <input id="auth-password" type="password" placeholder="Password">
-      <div class="auth-actions">
-        <button id="auth-submit-btn" class="btn btn-accent" onclick="submitAuthForm()">Sign in</button>
-        <button class="btn btn-ghost" onclick="signInWithGoogle()">Continue with Google</button>
-      </div>
-    </div>
-    <div id="auth-user-panel" class="auth-hint" style="display:none"></div>
-  </div>
-</div>
-
-<footer>
+<footer class="site-footer">
   <div class="footer-inner">
-    <div class="footer-brand">
-      <a href="index.html" class="topbar-title">SWGOH<span class="divider-glyph">::</span><span>RESOURCES</span></a>
-      <p>A set of free planning tools for Star Wars: Galaxy of Heroes — built for players who'd rather plan their relics and shipments once than re-figure them every event.</p>
+    <div class="footer-brand">SWGOH<span>::</span>RESOURCES</div>
+    <div class="footer-links">
+      <a href="index.html">Home</a>
+      <a href="index.html">Schedule</a>
     </div>
-    <div class="footer-col">
-      <div class="footer-col-title">Tools</div>
-      <ul class="footer-links">
-        <li><a href="relic.html">Relic &amp; Farming Planner</a></li>
-        <li><a href="shipments.html">Shipment Planner</a></li>
-      </ul>
-    </div>
-    <div class="footer-col">
-      <div class="footer-col-title">Community</div>
-      <ul class="footer-links">
-        <li><a href="https://holotables.xyz" target="_blank" rel="noopener noreferrer">HoloTables ↗</a></li>
-        <li><a href="https://swgoh.gg" target="_blank" rel="noopener noreferrer">SWGOH.GG ↗</a></li>
-        <li><a href="https://hotutils.com" target="_blank" rel="noopener noreferrer">Hotutils ↗</a></li>
-      </ul>
-    </div>
-  </div>
-  <div class="footer-bottom">
-    <span>© 2026 SwgohResources</span>
-    <span class="disclaimer">Unofficial, fan-made resource. Not affiliated with, endorsed, sponsored, or specifically approved by Lucasfilm, Disney, EA, or Capital Games.</span>
+    <div class="footer-note">Fan-made planning tool for Star Wars: Galaxy of Heroes. Not affiliated with, endorsed, sponsored, or specifically approved by Electronic Arts, Capital Games, Disney, or Lucasfilm. All game assets, trademarks, and character names are property of their respective owners.</div>
+    <div class="footer-meta" id="footerMeta"></div>
   </div>
 </footer>
 
-<script src="./build-version.js?v=3c91250-123"></script>
-<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+<!-- Full Schedule Modal -->
+<div class="modal-backdrop" id="fullScheduleModal">
+  <div class="modal wide">
+    <div class="modal-head">
+      <div>
+        <h3>Full Era Schedule Breakdown</h3>
+        <p>All 84 days of the current Era baseline.</p>
+      </div>
+      <button class="modal-close-x" id="closeFullScheduleBtn" aria-label="Close"><span></span><span></span></button>
+    </div>
+    <div class="full-schedule-wrap">
+      <table class="schedule-table">
+        <thead>
+          <tr><th>Day</th><th>Date</th><th>Episode</th><th>Events</th></tr>
+        </thead>
+        <tbody id="fullSchedule"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Settings Modal -->
+<div class="modal-backdrop" id="settingsModal">
+  <div class="modal">
+    <h3>Configure Era Start Date</h3>
+    <p>Select the Tuesday when Day 1 of the Era began. The schedule automatically calculates cycles from this baseline.</p>
+    <label for="startDateInput">Era Start Baseline (Tuesday)</label>
+    <input type="date" id="startDateInput">
+    <div class="hint">Day 1 always starts on a Tuesday at 18:00 UTC.</div>
+    <div class="modal-actions">
+      <button class="btn" id="closeModalBtn">Cancel</button>
+      <button class="btn primary" id="saveDateBtn">Save & Refresh</button>
+    </div>
+  </div>
+</div>
+
 <script>
-const FIREBASE_CONFIG = window.FIREBASE_CONFIG || {
-  apiKey: 'AIzaSyBixCM0BOfOeD37ybGA0M1_6-XT3x6MVFk',
-  authDomain: 'noteproject-4c78d.firebaseapp.com',
-  projectId: 'noteproject-4c78d',
-  storageBucket: 'noteproject-4c78d.firebasestorage.app',
-  messagingSenderId: '791609826482',
-  appId: '1:791609826482:web:6a7c2e4ed6c5147a623dab'
+/* =========================================================
+   EVENT DATA MODEL (EXACT SHEET9 MAPPING)
+   Day 1 = Tuesday (Era Baseline)
+   Day 2 = Wednesday, Day 3 = Thursday, Day 4 = Friday,
+   Day 5 = Saturday, Day 6 = Sunday, Day 7 = Monday.
+   ========================================================= */
+
+function ev(icon, label){ return {icon, label}; }
+
+const COMMON_DAYS = {
+  2:  [ev('gac_defense','GAC Defense'), ev('smugglersrun','Smugglers Run II'), ev('tw_payout','TW Payout')],
+  3:  [ev('gac_attack','GAC Attack'), ev('tw_signup','TW Signup Starts')],
+  4:  [ev('gac_defense','GAC Defense'), ev('smugglersrun','Smugglers Run III'), ev('tw_defense','TW Defense Starts')],
+  5:  [ev('gac_attack','GAC Attack'), ev('tw_attack','TW Attack Starts')],
+  6:  [ev('gac_defense','GAC Defense'), ev('tw_payout','TW Payout')],
+  9:  [ev('rote','TB Phase 3 Start'), ev('era_battle_1','ERA BATTLE 1')],
+  10: [ev('rote','TB Phase 4 Start')],
+  11: [ev('rote','TB Phase 5 Start')],
+  12: [ev('rote','TB Phase 6 Start')],
+  13: [ev('tb_ends','TB ENDS'), ev('tw_signup','TW SIGNUP STARTS')],
+  14: [ev('tw_defense','TW DEFENSE STARTS'), ev('era_battle_2','ERA BATTLE 2')],
+  16: [ev('gac_defense','GAC Defense'), ev('smugglersrun','Smugglers Run II')],
+  17: [ev('gac_attack','GAC Attack'), ev('tw_signup','TW Signup Starts')],
+  18: [ev('gac_defense','GAC Defense'), ev('smugglersrun','Smugglers Run III'), ev('tw_defense','TW Defense Starts')],
+  19: [ev('gac_attack','GAC Attack'), ev('tw_attack','TW Attack Starts')],
+  20: [ev('gac_defense','GAC Defense'), ev('tw_payout','TW Payout')],
+  22: [ev('era_challenge','Era Challenge'), ev('gac_signup','GAC SIGNUP STARTS'), ev('rote','TB PHASE 2 STARTS')],
+  23: [ev('gac_defense','GAC Defense'), ev('era_battle_1','NEW ERA BATTLE 1'), ev('rote','TB PHASE 3 STARTS')],
+  24: [ev('rote','TB PHASE 4 STARTS'), ev('gac_attack','GAC Attack')],
+  25: [ev('gac_defense','GAC Defense'), ev('rote','TB PHASE 5 STARTS')],
+  26: [ev('gac_attack','GAC Attack'), ev('rote','TB PHASE 6 STARTS')],
+  27: [ev('gac_defense','GAC Defense'), ev('tb_ends','TB ENDS'), ev('tw_signup','TW SIGNUP STARTS')],
+  28: [ev('era_battle_2','ERA BATTLE 2'), ev('tw_defense','TW DEFENSE STARTS')],
 };
 
-let firebaseApp = null;
-let firebaseAuth = null;
-let authUser = null;
-let authReady = false;
-let authAvailable = false;
-let authDisabledReason = '';
-let authMode = 'signin';
-
-function isFirebaseConfigured(){
-  return Boolean(FIREBASE_CONFIG.apiKey && FIREBASE_CONFIG.projectId);
-}
-
-function setAuthStatus(message, isError){
-  const el = document.getElementById('auth-status');
-  if(!el) return;
-  el.textContent = message;
-  el.style.color = isError ? 'var(--red)' : 'var(--text3)';
-}
-
-function openAuthModal(){
-  document.getElementById('auth-modal').classList.add('open');
-}
-function closeAuthModal(){
-  document.getElementById('auth-modal').classList.remove('open');
-}
-
-function setAuthMode(mode){
-  authMode = mode;
-  const signInBtn = document.getElementById('auth-mode-signin');
-  const signUpBtn = document.getElementById('auth-mode-signup');
-  const submitBtn = document.getElementById('auth-submit-btn');
-  const title = document.getElementById('auth-title');
-  const desc = document.getElementById('auth-desc');
-  signInBtn.classList.toggle('active', mode === 'signin');
-  signUpBtn.classList.toggle('active', mode === 'signup');
-  submitBtn.textContent = mode === 'signup' ? 'Create account' : 'Sign in';
-  title.textContent = mode === 'signup' ? 'Create your account' : 'Welcome back';
-  desc.textContent = mode === 'signup'
-    ? 'Create an account to save your relic planner groups and settings across devices.'
-    : 'Sign in to sync your planner across devices, or create an account to save your groups and settings.';
-}
-
-async function submitAuthForm(){
-  const email = document.getElementById('auth-email').value.trim();
-  const password = document.getElementById('auth-password').value;
-  if(!email || !password){ setAuthStatus('Enter your email and password', true); return; }
-  if(!firebaseAuth || !authAvailable){
-    setAuthStatus(authDisabledReason || 'Authentication is unavailable right now.', true);
-    return;
+const EPISODE_OVERRIDES = {
+  1: {
+    1:  [ev('marquee_1','Marquee Event'), ev('journey_reruns','Journey Event Reruns Start'), ev('era_changeover','Era Changeover'), ev('gac_signup','GAC SIGNUP STARTS'), ev('tw_attack','TW ATTACK STARTS')],
+    7:  [ev('rote','TB Phase 1'), ev('conquest_start','2nd Conquest of Volume Starts'), ev('smugglersrun','Smugglers Run I'), ev('gac_attack','GAC ATTACK')],
+    8:  [ev('era_challenge','Era Challenge'), ev('rote','TB Phase 2 Start'), ev('journey_reruns','End of Journey Reruns')],
+    15: [ev('marquee_2','Marquee Event'), ev('tw_offense','TW OFFENSE'), ev('gac_signup','GAC SIGNUP STARTS')],
+    21: [ev('conquest_end','2nd Conquest of Volume Ends'), ev('gac_attack','GAC ATTACK'), ev('proving_ground','Proving Ground'), ev('ultimate_journey','Ultimate Journey'), ev('smugglersrun','Smugglers Run I'), ev('rote','TB PHASE 1 STARTS')],
+  },
+  2: {
+    1:  [ev('marquee_3','Marquee Event'), ev('gac_signup','GAC SIGNUP STARTS'), ev('tw_attack','TW ATTACK STARTS')],
+    7:  [ev('rote','TB Phase 1'), ev('conquest_start','3rd Conquest of Volume Starts'), ev('smugglersrun','Smugglers Run I'), ev('gac_attack','GAC ATTACK')],
+    8:  [ev('era_challenge','Era Challenge'), ev('rote','TB Phase 2 Start')],
+    15: [ev('marquee_4','Marquee Event'), ev('tw_offense','TW OFFENSE'), ev('gac_signup','GAC SIGNUP STARTS')],
+    21: [ev('conquest_end','Conquest Volume Ends (Unit First Playable)'), ev('gac_attack','GAC ATTACK'), ev('proving_ground','Proving Ground'), ev('ultimate_journey','Ultimate Journey'), ev('smugglersrun','Smugglers Run I'), ev('rote','TB PHASE 1 STARTS')],
+  },
+  3: {
+    1:  [ev('marquee_5','Marquee Event'), ev('journey_guide','4/5* Journey Guide Event Unlock'), ev('gac_signup','GAC SIGNUP STARTS'), ev('tw_attack','TW ATTACK STARTS')],
+    7:  [ev('rote','TB Phase 1'), ev('conquest_start','1st Conquest of New Volume Starts'), ev('smugglersrun','Smugglers Run I'), ev('gac_attack','GAC ATTACK')],
+    8:  [ev('era_challenge','Era Challenge'), ev('rote','TB Phase 2 Start')],
+    15: [ev('marquee_6','Marquee Event'), ev('journey_guide','6/7* Journey Guide Unlock'), ev('tw_offense','TW OFFENSE'), ev('gac_signup','GAC SIGNUP STARTS')],
+    21: [ev('conquest_end','1st Conquest of New Volume Ends'), ev('gac_attack','GAC ATTACK'), ev('proving_ground','Proving Ground'), ev('ultimate_journey','Ultimate Journey'), ev('smugglersrun','Smugglers Run I'), ev('rote','TB PHASE 1 STARTS')],
   }
-  try{
-    setAuthStatus(authMode === 'signup' ? 'Creating account…' : 'Signing in…');
-    if(authMode === 'signup'){
-      await firebaseAuth.createUserWithEmailAndPassword(email, password);
-    } else {
-      await firebaseAuth.signInWithEmailAndPassword(email, password);
-    }
-    closeAuthModal();
-  } catch(e){
-    console.error(e);
-    setAuthStatus(e.message || (authMode === 'signup' ? 'Unable to create account' : 'Unable to sign in'), true);
-  }
+};
+
+const BOSS_LOOP = [
+  'Krayt Dragon',
+  'Zeffo Tomb Guardians',
+  'Jotaz',
+  'Dryax'
+];
+
+const BOSS_ICONS = {
+  'Krayt Dragon': 'krayt.png',
+  'Zeffo Tomb Guardians': 'zeffo.png',
+  'Jotaz': 'jotaz.png',
+  'Dryax': 'dryax.png'
+};
+
+/* =========================================================
+   ICON / CATEGORY SYSTEM
+   Maps each event's icon key to real artwork where it exists,
+   and to a colour-coded category badge everywhere else.
+   ========================================================= */
+
+const CATEGORY_META = {
+  gac:      { label: 'GAC',    glyph: 'GAC', accent: 'var(--cyan)',    dim: 'var(--cyan-dim)',    border: 'var(--cyan-border)' },
+  tw:       { label: 'TW',     glyph: 'TW',  accent: 'var(--purple)',  dim: 'var(--purple-dim)',  border: 'var(--purple-border)' },
+  tb:       { label: 'TB',     glyph: 'TB',  accent: 'var(--magenta)', dim: 'var(--magenta-dim)', border: 'var(--magenta)' },
+  era:      { label: 'ERA',    glyph: 'ERA', accent: 'var(--amber)',   dim: 'var(--amber-dim)',   border: 'var(--amber-border)' },
+  conquest: { label: 'CONQUEST', glyph: 'CQ', accent: 'var(--amber)',  dim: 'var(--amber-dim)',   border: 'var(--amber-border)' },
+  guild:    { label: 'GUILD',  glyph: 'SR',  accent: 'var(--green)',   dim: 'var(--green-dim)',   border: 'rgba(16,185,129,0.4)' },
+  journey:  { label: 'JOURNEY',glyph: 'JRN', accent: 'var(--cyan)',    dim: 'var(--cyan-dim)',    border: 'var(--cyan-border)' },
+  marquee:  { label: 'MARQUEE',glyph: 'MQ',  accent: 'var(--amber)',   dim: 'var(--amber-dim)',   border: 'var(--amber-border)' },
+  misc:     { label: 'EVENT',  glyph: 'EVT', accent: 'var(--text2)',   dim: 'var(--void2)',       border: 'var(--border2)' }
+};
+
+// icon key -> real asset filename (relative to assets/schedule/)
+const ICON_MAP = {
+  rote: 'rote.png',
+  smugglersrun: 'smugglersrun.png',
+  journey_reruns: 'journeyicon.png',
+  journey_guide: 'journeyicon.png',
+  ultimate_journey: 'journeyicon.png',
+  era_battle_1: 'erabattle1.png',
+  era_battle_2: 'erabattle2.png',
+  marquee_1: 'marquee1icon.png',
+  marquee_2: 'marquee2icon.png',
+  marquee_3: 'marquee3icon.png',
+  marquee_4: 'marquee4icon.png',
+  marquee_5: 'marquee5icon.png',
+  marquee_6: 'marquee6icon.png'
+};
+
+function categoryFor(icon){
+  if(icon.startsWith('gac')) return 'gac';
+  if(icon.startsWith('tw')) return 'tw';
+  if(icon === 'rote' || icon === 'tb_ends') return 'tb';
+  if(icon.startsWith('era')) return 'era';
+  if(icon.startsWith('conquest') || icon === 'proving_ground') return 'conquest';
+  if(icon === 'smugglersrun') return 'guild';
+  if(icon.startsWith('journey') || icon === 'ultimate_journey') return 'journey';
+  if(icon.startsWith('marquee')) return 'marquee';
+  return 'misc';
 }
 
-async function signInWithGoogle(){
-  if(!firebaseAuth || !authAvailable){
-    setAuthStatus(authDisabledReason || 'Authentication is unavailable right now.', true);
-    return;
-  }
-  try{
-    const provider = new firebase.auth.GoogleAuthProvider();
-    setAuthStatus('Opening Google sign-in…');
-    await firebaseAuth.signInWithPopup(provider);
-    closeAuthModal();
-  } catch(e){
-    console.error(e);
-    setAuthStatus(e.message || 'Google sign-in failed', true);
-  }
+const DEFAULT_ERA_START = '2026-01-20'; // Baseline Tuesday
+const WEEKDAY_NAMES = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const WEEKDAY_SHORT = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+/* =========================================================
+   TIME ENGINE (UTC Calendar Day Baseline + 18:00 UTC Boss Changeover)
+   ========================================================= */
+
+function getStoredEraStart(){
+  return localStorage.getItem('era_start_date') || DEFAULT_ERA_START;
 }
 
-async function signOut(){
-  if(!firebaseAuth) return;
-  try{ await firebaseAuth.signOut(); } catch(e){ console.error(e); }
+function parseEraStart(str){
+  const [y,m,d] = str.split('-').map(Number);
+  return Date.UTC(y, m-1, d, 0, 0, 0);
 }
 
-function updateAuthUI(){
-  const signinBtn = document.getElementById('signin-btn');
-  const signoutBtn = document.getElementById('signout-btn');
-  const userPanel = document.getElementById('auth-user-panel');
-  if(authUser){
-    const displayName = authUser.displayName || authUser.email || 'Account';
-    setAuthStatus(`Signed in as ${displayName}`, false);
-    signinBtn.style.display = 'none';
-    signoutBtn.style.display = 'inline-flex';
-    signoutBtn.title = `Sign out from ${displayName}`;
-    if(userPanel){
-      userPanel.style.display = 'block';
-      userPanel.textContent = `Signed in as ${displayName}`;
-    }
+function parseChangeoverEraStart(str){
+  const [y,m,d] = str.split('-').map(Number);
+  return Date.UTC(y, m-1, d, 18, 0, 0);
+}
+
+function getChangeoverDayIndex(nowMs, eraStartMs){
+  const msPerDay = 86400000;
+  const diffMs = nowMs - eraStartMs;
+
+  let rawDayIndex = Math.floor(diffMs / msPerDay) + 1;
+  if(diffMs < 0) rawDayIndex = 1;
+  return rawDayIndex;
+}
+
+function getGameStatus(){
+  const now = new Date();
+  const nowMs = now.getTime();
+  const eraStartMs = parseEraStart(getStoredEraStart());
+  const changeoverEraStartMs = parseChangeoverEraStart(getStoredEraStart());
+
+  const msPerDay = 86400000;
+  const nowUtcDayStartMs = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0);
+  const diffMs = nowUtcDayStartMs - eraStartMs;
+
+  let rawDayIndex = Math.floor(diffMs / msPerDay) + 1;
+  if(diffMs < 0) rawDayIndex = 1;
+
+  let eraDay = ((rawDayIndex - 1) % 84) + 1;
+  let cycleNum = Math.floor((rawDayIndex - 1) / 84);
+
+  const currentEraStartMs = eraStartMs + (cycleNum * 84 * msPerDay);
+  const currentDayStartMs = currentEraStartMs + ((eraDay - 1) * msPerDay);
+  const currentDayUtcMs = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0);
+  const currentDayOffset = Math.floor((currentDayUtcMs - currentEraStartMs) / msPerDay);
+  const normalizedEraDay = ((currentDayOffset % 84) + 84) % 84 + 1;
+
+  const episode = Math.floor((normalizedEraDay - 1) / 28) + 1;
+  const dayInEp = ((normalizedEraDay - 1) % 28) + 1;
+  const week = Math.floor((dayInEp - 1) / 7) + 1;
+
+  const activeDayObj = new Date(currentDayStartMs);
+  const utcDayIndex = activeDayObj.getUTCDay();
+  const weekdayName = WEEKDAY_NAMES[utcDayIndex];
+  const bossDayIndex = getChangeoverDayIndex(nowMs, changeoverEraStartMs);
+  const bossEraDay = ((bossDayIndex - 1) % 84) + 1;
+
+  return {
+    nowMs,
+    rawDayIndex,
+    bossDayIndex,
+    bossEraDay,
+    eraDay: normalizedEraDay,
+    episode,
+    dayInEp,
+    week,
+    utcDayIndex,
+    weekdayName,
+    currentEraStartMs,
+    currentDayStartMs,
+    cycleNum
+  };
+}
+
+function getDayEvents(episode, dayInEp){
+  const o = EPISODE_OVERRIDES[episode] && EPISODE_OVERRIDES[episode][dayInEp];
+  return o || COMMON_DAYS[dayInEp] || [];
+}
+
+function fmtDateUTC(ms){
+  const d = new Date(ms);
+  return d.toLocaleDateString('en-GB', { timeZone: 'UTC', weekday: 'short', day: 'numeric', month: 'short' });
+}
+
+/* Helper to describe current GAC Status */
+function getGacStatus(st){
+  const d = st.dayInEp;
+  const format = (st.episode % 2 === 1) ? '5v5' : '3v3';
+
+  if(d >= 22 && d <= 28){
+    return {
+      status: 'OFF-WEEK',
+      badgeClass: 'off',
+      title: `Grand Arena (${format})`,
+      main: 'Season Intermission',
+      sub: `Next Season starts in ${29 - d} days (${format === '5v5' ? '3v3' : '5v5'})`
+    };
+  }
+
+  if(d === 1 || d === 15){
+    return { status: 'SIGNUP PHASE', badgeClass: 'purple', title: `Grand Arena (${format})`, main: 'Signup Phase Open', sub: 'Set Defense Phase starts tomorrow' };
+  }
+  if(d === 2 || d === 4 || d === 6 || d === 16 || d === 18 || d === 20){
+    return { status: 'DEFENSE PHASE', badgeClass: 'warning', title: `Grand Arena (${format})`, main: 'Defense Phase Active', sub: 'Attack Phase begins tomorrow' };
+  }
+  if(d === 3 || d === 5 || d === 7 || d === 17 || d === 19 || d === 21){
+    return { status: 'ATTACK PHASE', badgeClass: 'running', title: `Grand Arena (${format})`, main: 'Attack Phase Active', sub: 'Clear enemy sectors before payout' };
+  }
+
+  if(d === 14){
+    return { status: 'OFF-WEEK', badgeClass: 'running', title: `Grand Arena (${format})`, main: 'Round Transition', sub: 'GAC Signup starts tomorrow' };
+  }
+
+  return { status: 'OFF-WEEK', badgeClass: 'running', title: `Grand Arena (${format})`, main: 'Round Transition', sub: 'Next round starts shortly' };
+}
+
+/* Helper to describe current Conquest Status */
+function getConquestStatus(st){
+  const d = st.dayInEp;
+  let titleNote = 'Volume Conquest';
+  if(st.episode === 1) titleNote = '2nd Conquest of Vol.';
+  else if(st.episode === 2) titleNote = '3rd Conquest of Vol. (Final)';
+  else if(st.episode === 3) titleNote = '1st Conquest of New Vol.';
+
+  if(d >= 7 && d <= 21){
+    const conquestDay = d - 6;
+    const daysRemaining = 21 - d;
+    return {
+      status: 'ACTIVE',
+      badgeClass: 'warning',
+      title: titleNote,
+      main: `Conquest Day ${conquestDay} of 14`,
+      sub: daysRemaining === 0 ? 'Ends Today! Proving Grounds Active' : `Ends in ${daysRemaining} days`
+    };
+  } else if(d < 7){
+    return {
+      status: 'UPCOMING',
+      badgeClass: 'purple',
+      title: titleNote,
+      main: `Starts in ${7 - d} days`,
+      sub: `Ep ${st.episode} Conquest Launch`
+    };
   } else {
-    signinBtn.style.display = 'inline-flex';
-    signoutBtn.style.display = 'none';
-    if(userPanel) userPanel.style.display = 'none';
-    setAuthStatus(authReady ? (authDisabledReason || 'Not signed in') : 'Connecting…', Boolean(authDisabledReason));
+    return {
+      status: 'UPCOMING',
+      badgeClass: 'purple',
+      title: 'Next Volume Conquest',
+      main: `Starts in ${(28 - d) + 7} days`,
+      sub: 'Intermission Active'
+    };
   }
 }
 
-function initFirebase(){
-  authAvailable = false;
-  authDisabledReason = '';
-  authReady = false;
+/* Helper to summarize Guild Event state */
+function getGuildEventSummary(dayInEp){
+  if(dayInEp >= 7 && dayInEp <= 12) return `ROTE TB Phase ${dayInEp - 6} of 6`;
+  if(dayInEp === 13 || dayInEp === 27) return 'TB Ends → TW Signup Starts';
+  if(dayInEp === 14 || dayInEp === 28) return 'TW Defense Phase Starts';
+  if(dayInEp === 15 || dayInEp === 1) return 'TW Attack / Offense Starts';
+  if(dayInEp === 2 || dayInEp === 6 || dayInEp === 20) return 'TW Payout / Intermission';
+  if(dayInEp >= 21 && dayInEp <= 26) return `ROTE TB Phase ${dayInEp - 20} of 6`;
+  return 'Guild Intermission';
+}
 
-  if(!isFirebaseConfigured()){
-    authDisabledReason = 'Sign-in unavailable: Firebase config is missing.';
-    authReady = true;
-    updateAuthUI();
+/* =========================================================
+   STATUS DASHBOARD & MERGED HERO BUILDER
+   ========================================================= */
+
+function renderMergedHero(st){
+  document.getElementById('mhDayVal').textContent = st.bossEraDay;
+  document.getElementById('mhSubInfo').innerHTML = `
+    <span>Episode ${st.episode} of 3</span>
+    <span>Week ${st.week} of 4</span>
+    <span>${st.weekdayName}</span>
+  `;
+
+  const fillPct = Math.min(100, Math.max(0, (st.bossEraDay / 84) * 100));
+  document.getElementById('mhFill').style.width = fillPct + '%';
+
+  const eraEndMs = st.currentEraStartMs + (83 * 86400000);
+  document.getElementById('mhStartDate').textContent = fmtDateUTC(st.currentEraStartMs);
+  document.getElementById('mhEndDate').textContent = fmtDateUTC(eraEndMs);
+  document.getElementById('mhDaysRemaining').textContent = `${84 - st.bossEraDay} days remaining`;
+}
+
+function renderStatusDashboard(st){
+  const container = document.getElementById('statusDashboard');
+
+  const gac = getGacStatus(st);
+  const conq = getConquestStatus(st);
+
+  const tmrwDayInEp = (st.dayInEp % 28) + 1;
+  const todayGuildSummary = getGuildEventSummary(st.dayInEp);
+  const tmrwGuildSummary = getGuildEventSummary(tmrwDayInEp);
+
+  const isGuildActive = todayGuildSummary.includes('ROTE') || todayGuildSummary.includes('TW');
+
+  container.innerHTML = `
+    <div class="status-card ${gac.badgeClass === 'running' ? 'cyan-card' : ''}">
+      <div class="sc-header"><span class="sc-title">${gac.title}</span><span class="sc-badge ${gac.badgeClass}">${gac.status}</span></div>
+      <div class="sc-main" style="margin-bottom:0"><div class="sc-val">${gac.main}</div><div class="sc-sub">${gac.sub}</div></div>
+    </div>
+
+    <div class="status-card ${conq.badgeClass === 'warning' ? 'amber-card' : ''}">
+      <div class="sc-header"><span class="sc-title">${conq.title}</span><span class="sc-badge ${conq.badgeClass}">${conq.status}</span></div>
+      <div class="sc-main" style="margin-bottom:0"><div class="sc-val">${conq.main}</div><div class="sc-sub">${conq.sub}</div></div>
+    </div>
+
+    <div class="status-card ${isGuildActive ? 'purple-card' : ''}">
+      <div class="sc-header"><span class="sc-title">Guild Events</span><span class="sc-badge ${isGuildActive ? 'running' : 'off'}">${isGuildActive ? 'ACTIVE' : 'IDLE'}</span></div>
+      <div class="sc-main" style="margin-bottom:0">
+        <div class="sc-val" style="font-size:15px;margin-bottom:2px">Today: <span style="color:var(--text);font-weight:600">${todayGuildSummary}</span></div>
+        <div class="sc-sub" style="font-size:12px">Tomorrow: <span style="color:var(--cyan)">${tmrwGuildSummary}</span></div>
+      </div>
+    </div>
+  `;
+}
+
+/* =========================================================
+   CARDS & TABLES RENDERERS
+   ========================================================= */
+
+function cardHTML(item, extraClass){
+  const cls = extraClass || '';
+  const cat = categoryFor(item.icon);
+  const meta = CATEGORY_META[cat];
+  const asset = ICON_MAP[item.icon];
+  const style = `--accent:${meta.accent};--accent-dim:${meta.dim};--accent-border:${meta.border}`;
+
+  const artInner = asset
+    ? `<img src="assets/schedule/${asset}" alt="${item.label}"
+        onerror="this.parentElement.innerHTML='<div class=\\'art-badge\\'><span class=\\'glyph\\'>${meta.glyph}</span><span class=\\'cat\\'>${meta.label}</span></div>';">`
+    : `<div class="art-badge"><span class="glyph">${meta.glyph}</span><span class="cat">${meta.label}</span></div>`;
+
+  return `<figure class="ecard bracket ${cls}" style="${style}">
+    <span class="bl"></span><span class="br"></span>
+    <div class="art">${artInner}</div>
+    <div class="cat-tag">${meta.label}</div>
+    <figcaption>${item.label}</figcaption>
+  </figure>`;
+}
+
+function renderCards(el, items, extraClass){
+  el.innerHTML = items.length
+    ? items.map(i=>cardHTML(i, extraClass)).join('')
+    : `<p class="empty-note">— No event changeovers scheduled for this day —</p>`;
+}
+
+function renderFullSchedule(st){
+  const tbody = document.getElementById('fullSchedule');
+  tbody.innerHTML = '';
+
+  for(let idx = 1; idx <= 84; idx++){
+    const ep = Math.floor((idx - 1) / 28) + 1;
+    const dayInEp = ((idx - 1) % 28) + 1;
+    const week = Math.floor((dayInEp - 1) / 7) + 1;
+
+    const dateMs = st.currentEraStartMs + ((idx - 1) * 86400000);
+    const items = getDayEvents(ep, dayInEp);
+
+    const row = document.createElement('tr');
+    if(idx === st.eraDay) row.className = 'active';
+
+    row.innerHTML = `
+      <td><strong>Day ${idx}</strong></td>
+      <td>${fmtDateUTC(dateMs)}</td>
+      <td>Ep ${ep}.${week}</td>
+      <td>${items.length ? items.map(it => `<span class="event-tag">${it.label}</span>`).join('') : '—'}</td>
+    `;
+    tbody.appendChild(row);
+  }
+}
+
+function renderMainFeed(st){
+  // Today Events
+  const todayEvents = getDayEvents(st.episode, st.dayInEp);
+  const todayDateMs = st.currentDayStartMs;
+
+  document.getElementById('todayHeading').textContent = `Today — ${st.weekdayName}`;
+  document.getElementById('todaySub').textContent = fmtDateUTC(todayDateMs);
+  renderCards(document.getElementById('todayCards'), todayEvents);
+
+  // Tomorrow Events
+  const tmrwDayIndex = (st.eraDay % 84) + 1;
+  const tmrwEp = Math.floor((tmrwDayIndex - 1) / 28) + 1;
+  const tmrwDayInEp = ((tmrwDayIndex - 1) % 28) + 1;
+  const tmrwEvents = getDayEvents(tmrwEp, tmrwDayInEp);
+
+  const tmrwDateMs = todayDateMs + 86400000;
+  const tmrwWeekday = WEEKDAY_NAMES[new Date(tmrwDateMs).getUTCDay()];
+
+  document.getElementById('tmrwHeading').textContent = `Tomorrow — ${tmrwWeekday}`;
+  document.getElementById('tmrwSub').textContent = fmtDateUTC(tmrwDateMs);
+  renderCards(document.getElementById('tmrwCards'), tmrwEvents);
+
+  // 7-Day Forecast
+  const forecastEl = document.getElementById('forecastRow');
+  forecastEl.innerHTML = '';
+  for(let i = 0; i < 7; i++){
+    const dMs = todayDateMs + (i * 86400000);
+    const dIdx = ((st.eraDay - 1 + i) % 84) + 1;
+    const ep = Math.floor((dIdx - 1) / 28) + 1;
+    const dayInEp = ((dIdx - 1) % 28) + 1;
+    const items = getDayEvents(ep, dayInEp);
+
+    const chip = document.createElement('div');
+    chip.className = 'fchip' + (i === 0 ? ' today' : '');
+    chip.innerHTML = `
+      <div class="day">${WEEKDAY_SHORT[new Date(dMs).getUTCDay()]}${i === 0 ? ' · Today' : ''}</div>
+      <div class="date">${new Date(dMs).toLocaleDateString('en-GB',{ timeZone: 'UTC', day: 'numeric', month: 'short' })}</div>
+      <ul>${items.length ? items.map(it=>`<li>${it.label}</li>`).join('') : '<li>—</li>'}</ul>
+    `;
+    forecastEl.appendChild(chip);
+  }
+
+  // Coliseum Boss Continuous Loop (Unmapped from Weekdays)
+  const bossEl = document.getElementById('bossStrip');
+  bossEl.innerHTML = '';
+
+  const activeBossIndex = (st.bossDayIndex - 1) % 4;
+
+  BOSS_LOOP.forEach((bossName, index) => {
+    const isActive = index === activeBossIndex;
+    const iconFile = BOSS_ICONS[bossName];
+    const cell = document.createElement('div');
+    cell.className = 'bcell' + (isActive ? ' active' : '');
+    cell.innerHTML = `
+      <div class="bcell-img"><img src="assets/schedule/${iconFile}" alt="${bossName}"></div>
+      <div class="step">Boss ${index + 1} of 4</div>
+      <div class="name">${bossName}</div>
+      ${isActive ? '<div class="active-tag"><span class="dot"></span>ACTIVE TODAY</div>' : ''}
+    `;
+    bossEl.appendChild(cell);
+  });
+}
+
+/* =========================================================
+   LIVE COUNTDOWN & MASTER RENDER (18:00 UTC Reset)
+   ========================================================= */
+
+function tickCountdown(){
+  const now = new Date();
+  const nowMs = now.getTime();
+  const todayChangeoverMs = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 18, 0, 0, 0);
+  const nextChangeoverMs = nowMs >= todayChangeoverMs ? todayChangeoverMs + 86400000 : todayChangeoverMs;
+
+  const diff = nextChangeoverMs - nowMs;
+  const h = Math.floor(diff / 3600000);
+  const m = Math.floor((diff % 3600000) / 60000);
+  const s = Math.floor((diff % 60000) / 1000);
+
+  const pad = n => String(n).padStart(2, '0');
+  document.getElementById('countdown').textContent = `${pad(h)}:${pad(m)}:${pad(s)}`;
+
+  if (Math.abs(nowMs - todayChangeoverMs) < 1000) {
+    renderAll();
+  }
+}
+
+function renderAll(){
+  const st = getGameStatus();
+  renderMergedHero(st);
+  renderStatusDashboard(st);
+  renderMainFeed(st);
+  renderFullSchedule(st);
+}
+
+/* =========================================================
+   MODAL CONTROLS & INIT
+   ========================================================= */
+
+const modal = document.getElementById('settingsModal');
+document.getElementById('openSettingsBtn').onclick = () => {
+  document.getElementById('startDateInput').value = getStoredEraStart();
+  modal.classList.add('open');
+};
+document.getElementById('closeModalBtn').onclick = () => modal.classList.remove('open');
+modal.addEventListener('click', e => { if(e.target === modal) modal.classList.remove('open'); });
+
+const scheduleModal = document.getElementById('fullScheduleModal');
+const openSchedule = () => { scheduleModal.classList.add('open'); closeMobilePanel(); };
+const closeSchedule = () => scheduleModal.classList.remove('open');
+document.getElementById('openFullScheduleBtn').onclick = openSchedule;
+document.getElementById('openFullScheduleBtn2').onclick = openSchedule;
+document.getElementById('openFullScheduleBtnMobile').onclick = openSchedule;
+document.getElementById('closeFullScheduleBtn').onclick = closeSchedule;
+scheduleModal.addEventListener('click', e => { if(e.target === scheduleModal) closeSchedule(); });
+
+document.getElementById('openSettingsBtnMobile').onclick = () => {
+  document.getElementById('startDateInput').value = getStoredEraStart();
+  modal.classList.add('open');
+  closeMobilePanel();
+};
+
+/* Mobile Nav Panel */
+const navToggle = document.getElementById('navToggle');
+const mobilePanel = document.getElementById('mobilePanel');
+function closeMobilePanel(){ navToggle.classList.remove('open'); mobilePanel.classList.remove('open'); }
+navToggle.onclick = () => {
+  navToggle.classList.toggle('open');
+  mobilePanel.classList.toggle('open');
+};
+
+const footerMetaEl = document.getElementById('footerMeta');
+if(footerMetaEl){
+  footerMetaEl.textContent = `Live data · resets 18:00 UTC daily · page loaded ${new Date().toLocaleString('en-GB', { timeZone: 'UTC', hour12: false })} UTC`;
+}
+
+document.getElementById('saveDateBtn').onclick = () => {
+  const val = document.getElementById('startDateInput').value;
+  if(!val) return;
+  const chosen = new Date(val + 'T00:00:00Z');
+  if(chosen.getUTCDay() !== 2){
+    alert('Day 1 of an Era must be a Tuesday. Please select a Tuesday.');
     return;
   }
+  localStorage.setItem('era_start_date', val);
+  modal.classList.remove('open');
+  renderAll();
+};
 
-  try{
-    firebaseApp = firebase.apps.length ? firebase.apps[0] : firebase.initializeApp(FIREBASE_CONFIG);
-    firebaseAuth = firebaseApp.auth();
-    authAvailable = true;
-    authReady = true;
-    updateAuthUI();
-    firebaseAuth.onAuthStateChanged((user) => {
-      authUser = user;
-      updateAuthUI();
-    });
-  } catch(e){
-    console.error(e);
-    firebaseAuth = null;
-    authAvailable = false;
-    authDisabledReason = 'Authentication failed. Please verify the Firebase setup.';
-    authReady = true;
-    updateAuthUI();
-  }
-}
-
-const buildVersionEl = document.getElementById('build-version');
-if(buildVersionEl){ buildVersionEl.textContent = window.BUILD_VERSION || 'dev'; }
-
-initFirebase();
-
-// Generate a scattered twinkling starfield
+/* Starfield Background */
 (function(){
   const field = document.getElementById('starfield');
   if(!field) return;
-  const count = 60;
-  for(let i = 0; i < count; i++){
+  for(let i = 0; i < 50; i++){
     const s = document.createElement('span');
     s.style.left = Math.random() * 100 + '%';
     s.style.top = Math.random() * 100 + '%';
     s.style.animationDelay = (Math.random() * 4.5).toFixed(2) + 's';
-    s.style.animationDuration = (3.5 + Math.random() * 3).toFixed(2) + 's';
-    if(Math.random() > 0.7){
-      s.style.width = '1px';
-      s.style.height = '1px';
-    }
     field.appendChild(s);
   }
 })();
+
+renderAll();
+tickCountdown();
+setInterval(tickCountdown, 1000);
+setInterval(renderAll, 60000);
 </script>
+<script src="./build-version.js?v=2fe9a3f-124"></script>
+
 </body>
 </html>
