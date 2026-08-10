@@ -47,7 +47,7 @@
 
   .wrap{max-width:1080px;margin:0 auto;}
 
-  /* ---------- corner-bracket frame, the signature motif ---------- */
+  /* ---------- corner-bracket frame ---------- */
   .bracket{position:relative;}
   .bracket::before,.bracket::after,
   .bracket .bl::before,.bracket .br::before{
@@ -65,6 +65,12 @@
   .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.25em;color:var(--cyan);text-transform:uppercase;margin:0 0 4px;}
   h1{font-family:var(--disp);font-weight:700;font-size:26px;margin:0;letter-spacing:.02em;}
   h1 span{color:var(--text-dim);font-weight:500;}
+  .gear-btn{
+    background:var(--bg-panel);border:1px solid var(--line);color:var(--text-dim);
+    font-family:var(--mono);font-size:12px;letter-spacing:.08em;padding:9px 14px;border-radius:var(--radius);
+    cursor:pointer;transition:.15s;display:flex;align-items:center;gap:8px;
+  }
+  .gear-btn:hover{border-color:var(--cyan-dim);color:var(--cyan);}
 
   /* ---------- hero readout ---------- */
   .hero{
@@ -184,6 +190,28 @@
     font-family:var(--mono);font-size:12.5px;padding:12px 16px;margin-bottom:20px;
   }
 
+  /* ---------- modal ---------- */
+  .modal-backdrop{
+    position:fixed;inset:0;background:#000c;display:none;align-items:center;justify-content:center;z-index:50;padding:16px;
+  }
+  .modal-backdrop.open{display:flex;}
+  .modal{
+    background:var(--bg-panel);border:1px solid var(--line-bright);max-width:380px;width:100%;padding:26px;
+  }
+  .modal h3{font-family:var(--disp);font-size:16px;margin:0 0 6px;letter-spacing:.05em;}
+  .modal p{font-size:12.5px;color:var(--text-dim);line-height:1.55;margin:0 0 16px;}
+  .modal label{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--text-faint);text-transform:uppercase;display:block;margin-bottom:6px;}
+  .modal input[type=date]{
+    width:100%;background:var(--bg);border:1px solid var(--line);color:var(--text);padding:10px 12px;
+    font-family:var(--mono);font-size:14px;margin-bottom:8px;
+  }
+  .hint{font-family:var(--mono);font-size:11px;color:var(--text-faint);margin-bottom:18px;}
+  .modal-actions{display:flex;gap:10px;justify-content:flex-end;}
+  .btn{font-family:var(--mono);font-size:12px;letter-spacing:.08em;padding:9px 16px;cursor:pointer;border:1px solid var(--line);background:transparent;color:var(--text-dim);text-transform:uppercase;}
+  .btn.primary{border-color:var(--cyan);color:var(--cyan);}
+  .btn.primary:hover{background:var(--cyan);color:#031017;}
+  .btn.ghost:hover{color:var(--text);}
+
   @media(max-width:640px){
     .hero{grid-template-columns:1fr;}
     .countdown-box{text-align:left;}
@@ -200,6 +228,7 @@
       <p class="eyebrow">Galaxy of Heroes // Live Schedule Feed</p>
       <h1>Era Terminal <span>84-day cycle</span></h1>
     </div>
+    <button class="gear-btn" id="openSettingsBtn">⚙ ERA START DATE</button>
   </div>
 
   <div id="warnBox"></div>
@@ -275,6 +304,21 @@
 
 </div>
 
+<!-- Settings Modal -->
+<div class="modal-backdrop" id="settingsModal">
+  <div class="modal bracket"><span class="bl"></span><span class="br"></span>
+    <h3>Configure Era Start Date</h3>
+    <p>Select the Tuesday when Day 1 of the current Era began.</p>
+    <label for="startDateInput">Era Start Date (Tuesday)</label>
+    <input type="date" id="startDateInput">
+    <div class="hint" id="modalHint">Day 1 of an Era always falls on a Tuesday.</div>
+    <div class="modal-actions">
+      <button class="btn ghost" id="closeModalBtn">Cancel</button>
+      <button class="btn primary" id="saveDateBtn">Save & Refresh</button>
+    </div>
+  </div>
+</div>
+
 <script>
 /* =========================================================
    EVENT DATA MODEL
@@ -326,15 +370,14 @@ const EPISODE_OVERRIDES = {
     21: [ev('conquest_end','Conquest Volume Ends (unit now usable)'), ev('gac_attack','GAC Attack'), ev('proving_ground','Proving Ground'), ev('ultimate_journey','Ultimate Journey'), ev('smugglersrun','Smugglers Run I'), ev('rote','Territory Battles Phase 1')],
   },
   3: {
-    1:  [ev('marquee_event','Marquee Event'), ev('journey_guide','4/5★ Journey Guide Event Unlock'), ev('gac_signup','GAC Signup Starts'), ev('tw_attack','TW Attack Starts')],
+    1:  [ev('marquee_event','Marquee Event'), ev('journey_guide','4/5* Journey Guide Event Unlock'), ev('gac_signup','GAC Signup Starts'), ev('tw_attack','TW Attack Starts')],
     7:  [ev('rote','Territory Battles Phase 1'), ev('conquest_start','1st Conquest of New Volume Starts'), ev('smugglersrun','Smugglers Run I'), ev('gac_attack','GAC Attack')],
     8:  [ev('era_challenge','Era Challenge'), ev('rote','Territory Battles Phase 2')],
-    15: [ev('marquee_event','Marquee Event'), ev('journey_guide','6/7★ Journey Guide Unlock'), ev('tw_offense','TW Offense Starts'), ev('gac_signup','GAC Signup Starts')],
+    15: [ev('marquee_event','Marquee Event'), ev('journey_guide','6/7* Journey Guide Unlock'), ev('tw_offense','TW Offense Starts'), ev('gac_signup','GAC Signup Starts')],
     21: [ev('conquest_end','1st Conquest of New Volume Ends'), ev('gac_attack','GAC Attack'), ev('proving_ground','Proving Ground'), ev('ultimate_journey','Ultimate Journey'), ev('smugglersrun','Smugglers Run I'), ev('rote','Territory Battles Phase 1')],
   }
 };
 
-// Bosses cycle on specific weekdays (Tue-Fri)
 const BOSS_SCHEDULE = [
   { day: 'Tuesday', label: 'Krayt Dragon', icon: 'krayt' },
   { day: 'Wednesday', label: 'Zeffo Tomb Guardians', icon: 'zeffo' },
@@ -343,16 +386,19 @@ const BOSS_SCHEDULE = [
 ];
 
 function getActiveBossDayForUTCDay(utcDayIndex){
-  // 0 = Sun, 1 = Mon, 2 = Tue, 3 = Wed, 4 = Thu, 5 = Fri, 6 = Sat
   if(utcDayIndex === 2) return 'Tuesday';
   if(utcDayIndex === 3) return 'Wednesday';
   if(utcDayIndex === 4) return 'Thursday';
   return 'Friday'; // Friday, Saturday, Sunday, Monday (Dryax)
 }
 
-const DEFAULT_ERA_START = '2026-07-29';
+const DEFAULT_ERA_START = '2026-07-28'; // Must be a Tuesday!
 const WEEKDAY_NAMES = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 const WEEKDAY_SHORT = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+function getStoredEraStart(){
+  return localStorage.getItem('era_start_date') || DEFAULT_ERA_START;
+}
 
 function getDayEvents(episode, dayInEp){
   const o = EPISODE_OVERRIDES[episode] && EPISODE_OVERRIDES[episode][dayInEp];
@@ -545,7 +591,8 @@ function render(){
   warnBox.innerHTML = '';
 
   const now = new Date();
-  const eraStartUTC = parseEraStart(DEFAULT_ERA_START);
+  const currentStartStr = getStoredEraStart();
+  const eraStartUTC = parseEraStart(currentStartStr);
   const { gameDateUTC } = effectiveGameDateUTC(now);
   const todayIndex = dayIndexFor(gameDateUTC, eraStartUTC);
   const todaySched = scheduleForIndex(todayIndex);
@@ -554,7 +601,7 @@ function render(){
   const tmrwSched = scheduleForIndex(todayIndex+1);
 
   if(!todaySched){
-    warnBox.innerHTML = `<div class="warn">Day ${todayIndex} is outside the 84-day era window. The current era schedule has ended.</div>`;
+    warnBox.innerHTML = `<div class="warn">Day ${todayIndex} is outside the 84-day era window. Click <b>⚙ ERA START DATE</b> above to update your era start date.</div>`;
   }
 
   // hero readout
@@ -566,7 +613,7 @@ function render(){
     <div class="readout"><div class="k">Today Is</div><div class="v">${todayWeekday}</div></div>
   ` : `<div class="readout"><div class="k">Status</div><div class="v accent">Out of range</div></div>`;
 
-  // today / tomorrow event cards (bosses removed from cards)
+  // today / tomorrow
   document.getElementById('todayHeading').textContent = `Today — ${todayWeekday}`;
   document.getElementById('todaySub').textContent = fmtDate(gameDateUTC);
   const todayEvents = todaySched ? getDayEvents(todaySched.episode, todaySched.dayInEp) : [];
@@ -633,6 +680,34 @@ function tickCountdown(){
 function buildAssetGuide(){
   document.getElementById('assetGuide').innerHTML = ASSET_KEYS.map(k=>`<div><code>assets/schedule/${k}.png</code></div>`).join('');
 }
+
+/* =========================================================
+   MODAL / SETTINGS
+   ========================================================= */
+
+const modal = document.getElementById('settingsModal');
+const openBtn = document.getElementById('openSettingsBtn');
+const closeBtn = document.getElementById('closeModalBtn');
+const saveBtn = document.getElementById('saveDateBtn');
+const dateInput = document.getElementById('startDateInput');
+
+openBtn.onclick = () => {
+  dateInput.value = getStoredEraStart();
+  modal.classList.add('open');
+};
+closeBtn.onclick = () => modal.classList.remove('open');
+
+saveBtn.onclick = () => {
+  if(!dateInput.value) return;
+  const chosen = new Date(dateInput.value + 'T00:00:00Z');
+  if(chosen.getUTCDay() !== 2){
+    alert('Day 1 of an Era must be a Tuesday. Please select a Tuesday.');
+    return;
+  }
+  localStorage.setItem('era_start_date', dateInput.value);
+  modal.classList.remove('open');
+  render();
+};
 
 /* =========================================================
    INIT
