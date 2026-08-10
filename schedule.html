@@ -7,37 +7,37 @@
 <link rel="icon" href="/favicon.ico" type="image/x-icon">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
 <style>
 :root {
-  --void: #0a0c10;
-  --void1: #0e1116;
-  --void2: #12161c;
-  --void3: #191e26;
-  --border: rgba(232, 227, 216, 0.08);
-  --border2: rgba(232, 227, 216, 0.16);
-  --amber: #e8a33d;
-  --amber-dim: rgba(232, 163, 61, 0.12);
-  --amber-border: rgba(232, 163, 61, 0.4);
-  --cyan: #4fd1c5;
-  --cyan-dim: rgba(79, 209, 197, 0.12);
-  --cyan-border: rgba(79, 209, 197, 0.4);
-  --purple: #b073ff;
-  --purple-dim: rgba(176, 115, 255, 0.12);
-  --purple-border: rgba(176, 115, 255, 0.4);
-  --magenta: #ff3fd8;
-  --magenta-dim: rgba(255, 63, 216, 0.12);
+  --void: #0b0d11;
+  --void1: #13161c;
+  --void2: #191d24;
+  --void3: #22272f;
+  --border: rgba(232, 227, 216, 0.10);
+  --border2: rgba(232, 227, 216, 0.18);
+  --amber: #e0a552;
+  --amber-dim: rgba(224, 165, 82, 0.14);
+  --amber-border: rgba(224, 165, 82, 0.45);
+  --cyan: #56b8ad;
+  --cyan-dim: rgba(86, 184, 173, 0.14);
+  --cyan-border: rgba(86, 184, 173, 0.45);
+  --purple: #9686d6;
+  --purple-dim: rgba(150, 134, 214, 0.14);
+  --purple-border: rgba(150, 134, 214, 0.45);
+  --magenta: #d1698f;
+  --magenta-dim: rgba(209, 105, 143, 0.14);
   --red: #ef4444;
-  --green: #10b981;
-  --green-dim: rgba(16, 185, 129, 0.12);
-  --text: #eae7e0;
-  --text2: #8f96a3;
-  --text3: #565f6d;
+  --green: #5cad82;
+  --green-dim: rgba(92, 173, 130, 0.14);
+  --text: #f1eee7;
+  --text2: #a3abb8;
+  --text3: #7c8494;
   --radius: 8px;
   --radius-lg: 14px;
-  --disp: 'Chakra Petch', sans-serif;
+  --disp: 'Sora', sans-serif;
   --body: 'Inter', sans-serif;
-  --mono: 'JetBrains Mono', monospace;
+  --mono: 'IBM Plex Mono', monospace;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -51,7 +51,8 @@ body {
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   position: relative;
-  padding-bottom: 60px;
+  display: flex;
+  flex-direction: column;
 }
 
 /* ─── Starfield ─── */
@@ -82,22 +83,57 @@ body {
 .topbar-tabs { display: flex; gap: 4px; flex: 1; height: 100%; }
 .tab-btn {
   height: 100%; padding: 0 16px; background: none; border: none;
-  color: var(--text2); font-size: 12px; font-weight: 500; font-family: var(--mono);
+  color: var(--text2); font-size: 13px; font-weight: 500; font-family: var(--body);
   cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.15s ease;
   text-decoration: none; display: inline-flex; align-items: center; white-space: nowrap;
 }
 .tab-btn:hover { color: var(--text); }
-.tab-btn.active { color: var(--amber); border-bottom-color: var(--amber); }
+.tab-btn.active { color: var(--amber); border-bottom-color: var(--amber); font-weight: 600; }
+
+.topbar-actions { display: flex; gap: 8px; align-items: center; }
 
 .gear-btn {
   background: var(--void2); border: 1px solid var(--border2); color: var(--text2);
-  font-family: var(--mono); font-size: 11px; padding: 6px 12px; border-radius: var(--radius);
-  cursor: pointer; transition: 0.15s; display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--body); font-weight: 500; font-size: 12.5px; padding: 7px 14px; border-radius: var(--radius);
+  cursor: pointer; transition: 0.15s; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;
 }
 .gear-btn:hover { border-color: var(--amber-border); color: var(--amber); }
 
+/* ─── Mobile Nav Toggle ─── */
+.nav-toggle {
+  display: none; width: 34px; height: 34px; background: var(--void2); border: 1px solid var(--border2);
+  border-radius: var(--radius); cursor: pointer; flex-direction: column; align-items: center; justify-content: center;
+  gap: 4px; flex: 0 0 auto;
+}
+.nav-toggle span { width: 16px; height: 2px; background: var(--text2); border-radius: 2px; transition: all 0.2s ease; }
+.nav-toggle:hover span { background: var(--amber); }
+.nav-toggle.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+.nav-toggle.open span:nth-child(2) { opacity: 0; }
+.nav-toggle.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+.mobile-panel { display: none; }
+
+@media (max-width: 760px) {
+  .topbar-tabs, .topbar-actions { display: none; }
+  .nav-toggle { display: flex; }
+  .topbar { padding: 0 16px; }
+  .topbar-title { margin-right: auto; }
+  .mobile-panel {
+    max-width: 1180px; margin: 0 auto; flex-direction: column; padding: 8px 16px 16px; gap: 4px;
+    border-top: 1px solid var(--border);
+  }
+  .mobile-panel.open { display: flex; }
+  .mp-link {
+    padding: 11px 4px; color: var(--text2); font-size: 14px; font-weight: 500; text-decoration: none;
+    border-bottom: 1px solid var(--border);
+  }
+  .mp-link.active { color: var(--amber); font-weight: 600; }
+  .mp-divider { height: 8px; }
+  .mp-btn { width: 100%; justify-content: center; padding: 11px 14px; font-size: 13px; margin-bottom: 8px; }
+}
+
 /* ─── Layout ─── */
-.wrap { max-width: 1180px; margin: 0 auto; padding: 24px; position: relative; z-index: 1; }
+.wrap { max-width: 1180px; margin: 0 auto; padding: 24px; position: relative; z-index: 1; width: 100%; flex: 1; }
 
 /* ─── Corner Brackets ─── */
 .bracket { position: relative; }
@@ -113,34 +149,47 @@ body {
 
 /* ─── Merged Era Banner ─── */
 .merged-hero {
-  background: linear-gradient(135deg, rgba(79,209,197,0.05), var(--void1) 60%, rgba(232,163,61,0.05));
-  border: 1px solid var(--cyan-border); border-radius: var(--radius-lg);
-  padding: 20px 24px; margin-bottom: 24px; display: grid; grid-template-columns: 1fr auto;
-  gap: 24px; align-items: center; box-shadow: 0 0 24px rgba(79, 209, 197, 0.06);
+  position: relative; overflow: hidden;
+  background: var(--void1);
+  border: 1px solid var(--border2); border-radius: var(--radius-lg);
+  padding: 28px 28px; margin-bottom: 24px; display: grid; grid-template-columns: 1fr auto;
+  gap: 28px; align-items: center;
 }
-.mh-left { display: flex; flex-direction: column; gap: 12px; }
-.mh-tag { font-family: var(--mono); font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--cyan); }
+.merged-hero::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(480px 240px at 8% 0%, rgba(86,184,173,0.14), transparent 70%),
+    radial-gradient(420px 220px at 100% 100%, rgba(224,165,82,0.12), transparent 70%);
+}
+.merged-hero::after {
+  content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+  background: linear-gradient(180deg, var(--cyan), var(--amber));
+}
+.mh-left { display: flex; flex-direction: column; gap: 14px; position: relative; z-index: 1; }
+.mh-tag { font-family: var(--body); font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--cyan); display: flex; align-items: center; gap: 8px; }
+.mh-tag .live-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 8px var(--cyan); animation: twinkle 2s ease-in-out infinite; }
 .mh-title-row { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
-.mh-main-val { font-family: var(--disp); font-size: 32px; font-weight: 700; color: var(--text); line-height: 1; }
+.mh-main-val { font-family: var(--disp); font-size: 34px; font-weight: 700; color: var(--text); line-height: 1; }
 .mh-main-val span { color: var(--amber); }
-.mh-sub-info { font-family: var(--mono); font-size: 13px; color: var(--text2); }
+.mh-sub-info { font-family: var(--body); font-size: 13px; color: var(--text2); font-weight: 500; }
 
-.mh-progress-wrap { width: 100%; max-width: 520px; }
+.mh-progress-wrap { width: 100%; max-width: 560px; }
 .mh-progress-bar {
-  width: 100%; height: 6px; background: var(--void3); border-radius: 3px;
-  overflow: hidden; border: 1px solid var(--border); position: relative; margin-top: 4px;
+  width: 100%; height: 8px; background: var(--void3); border-radius: 5px;
+  overflow: hidden; border: 1px solid var(--border); position: relative; margin-top: 6px;
 }
-.mh-progress-fill { height: 100%; background: linear-gradient(90deg, var(--cyan), var(--amber)); border-radius: 3px; transition: width 0.3s; }
-.mh-progress-labels { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 10px; color: var(--text3); margin-top: 4px; }
+.mh-progress-fill { height: 100%; background: linear-gradient(90deg, var(--cyan), var(--amber)); border-radius: 5px; transition: width 0.3s; box-shadow: 0 0 10px rgba(86,184,173,0.4); }
+.mh-progress-labels { display: flex; justify-content: space-between; font-family: var(--body); font-size: 10px; color: var(--text3); margin-top: 6px; }
 
 .mh-right {
-  text-align: right; border-left: 1px solid var(--border2); padding-left: 24px;
-  display: flex; flex-direction: column; justify-content: center;
+  position: relative; z-index: 1; text-align: center;
+  background: var(--void2); border: 1px solid var(--border2); border-radius: var(--radius);
+  padding: 16px 26px; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 2px;
 }
-.mh-right .cb-label { font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text3); }
+.mh-right .cb-label { font-family: var(--body); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text3); }
 .mh-right .cb-timer {
   font-family: var(--mono); font-size: 34px; font-weight: 700; color: var(--amber);
-  text-shadow: 0 0 16px rgba(232, 163, 61, 0.3); letter-spacing: 0.05em; margin: 2px 0;
+  text-shadow: 0 0 10px rgba(224, 165, 82, 0.2); letter-spacing: 0.05em; margin: 2px 0;
 }
 .mh-right .cb-sub { font-size: 11px; color: var(--text2); }
 
@@ -154,17 +203,17 @@ body {
   padding: 16px; display: flex; flex-direction: column; justify-content: space-between;
   position: relative; overflow: hidden;
 }
-.status-card.cyan-card { border-color: var(--cyan-border); box-shadow: 0 0 20px rgba(79, 209, 197, 0.08); }
-.status-card.amber-card { border-color: var(--amber-border); box-shadow: 0 0 20px rgba(232, 163, 61, 0.08); }
-.status-card.purple-card { border-color: var(--purple-border); box-shadow: 0 0 20px rgba(176, 115, 255, 0.08); }
+.status-card.cyan-card { border-color: var(--cyan-border); box-shadow: 0 0 14px rgba(86, 184, 173, 0.06); }
+.status-card.amber-card { border-color: var(--amber-border); box-shadow: 0 0 14px rgba(224, 165, 82, 0.06); }
+.status-card.purple-card { border-color: var(--purple-border); box-shadow: 0 0 14px rgba(150, 134, 214, 0.06); }
 
 .sc-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-.sc-title { font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text3); }
+.sc-title { font-family: var(--body); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text3); }
 .sc-badge {
-  font-family: var(--mono); font-size: 9.5px; padding: 2px 7px; border-radius: 12px;
+  font-family: var(--body); font-size: 9.5px; padding: 2px 7px; border-radius: 12px;
   font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
 }
-.sc-badge.running { background: var(--green-dim); color: var(--green); border: 1px solid rgba(16, 185, 129, 0.3); }
+.sc-badge.running { background: var(--green-dim); color: var(--green); border: 1px solid rgba(92, 173, 130, 0.3); }
 .sc-badge.off { background: var(--void3); color: var(--text3); border: 1px solid var(--border); }
 .sc-badge.warning { background: var(--amber-dim); color: var(--amber); border: 1px solid var(--amber-border); }
 .sc-badge.purple { background: var(--purple-dim); color: var(--purple); border: 1px solid var(--purple-border); }
@@ -173,47 +222,60 @@ body {
 .sc-val { font-family: var(--disp); font-size: 17px; font-weight: 700; color: var(--text); line-height: 1.25; }
 .sc-sub { font-size: 11.5px; color: var(--text2); margin-top: 3px; }
 
-.sc-footer { font-family: var(--mono); font-size: 10.5px; color: var(--text3); border-top: 1px solid var(--border); padding-top: 8px; display: flex; justify-content: space-between; }
+.sc-footer { font-family: var(--body); font-size: 10.5px; color: var(--text3); border-top: 1px solid var(--border); padding-top: 8px; display: flex; justify-content: space-between; }
 .sc-footer .highlight { color: var(--amber); font-weight: 500; }
 
 /* ─── Section Labels ─── */
 .section-head { display: flex; align-items: center; gap: 12px; margin: 32px 0 16px; }
 .section-head h2 { font-family: var(--disp); font-size: 16px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text); }
-.section-head .sub { font-family: var(--mono); font-size: 11.5px; color: var(--text3); }
+.section-head .sub { font-family: var(--body); font-size: 11.5px; color: var(--text3); }
 .section-head .rule { flex: 1; height: 1px; background: linear-gradient(90deg, var(--border2), transparent); }
 
 /* ─── Feed Cards Layout ─── */
-.card-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; }
+.card-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(148px, 1fr)); gap: 14px; }
 .ecard {
   background: var(--void1); border: 1px solid var(--border); border-radius: var(--radius-lg);
-  padding: 10px; display: flex; flex-direction: column; transition: border-color 0.2s, transform 0.2s;
+  padding: 10px; display: flex; flex-direction: column; transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
   position: relative;
 }
-.ecard:hover { border-color: var(--cyan-border); transform: translateY(-2px); }
+.ecard:hover { border-color: var(--accent, var(--cyan-border)); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.35); }
 .ecard .art {
-  aspect-ratio: 2/3; width: 100%; border-radius: 6px; overflow: hidden;
+  aspect-ratio: 1/1; width: 100%; border-radius: 8px; overflow: hidden;
   background: linear-gradient(160deg, var(--void2), var(--void3));
-  display: flex; align-items: center; justify-content: center; margin-bottom: 8px; position: relative;
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center; margin-bottom: 9px; position: relative;
 }
 .ecard .art img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.ecard.noimg .art::before {
-  content: attr(data-glyph); font-family: var(--disp); font-size: 24px; color: var(--cyan); font-weight: 700;
+.ecard .art-badge {
+  width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 5px; background: var(--accent-dim, var(--void2)); position: relative;
 }
-.ecard.noimg .art::after {
-  content: ""; position: absolute; inset: 6px; border: 1px dashed var(--border2); border-radius: 4px;
+.ecard .art-badge::after {
+  content: ""; position: absolute; inset: 5px; border: 1px dashed var(--accent-border, var(--border2)); border-radius: 5px;
+}
+.ecard .art-badge .glyph {
+  font-family: var(--disp); font-size: 20px; font-weight: 700; color: var(--accent, var(--text2)); position: relative; z-index: 1;
+}
+.ecard .art-badge .cat {
+  font-family: var(--mono); font-size: 8px; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--accent, var(--text3)); position: relative; z-index: 1;
+}
+.ecard .cat-tag {
+  font-family: var(--body); font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--accent, var(--text3)); margin-bottom: 3px;
 }
 .ecard figcaption { font-size: 12px; font-weight: 600; color: var(--text); line-height: 1.35; }
 
-.empty-note { font-family: var(--mono); font-size: 12px; color: var(--text3); padding: 16px 0; }
+.empty-note { font-family: var(--body); font-size: 12px; color: var(--text3); padding: 16px 0; }
 
 /* ─── Forecast Strip ─── */
-.forecast { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: thin; }
+.forecast { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; }
 .fchip {
-  min-width: 140px; background: var(--void1); border: 1px solid var(--border); border-radius: var(--radius-lg);
-  padding: 12px; flex: 0 0 auto; display: flex; flex-direction: column;
+  background: var(--void1); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  padding: 12px; display: flex; flex-direction: column; min-width: 0;
 }
-.fchip.today { border-color: var(--cyan-border); background: linear-gradient(180deg, rgba(79, 209, 197, 0.06), var(--void1)); }
-.fchip .day { font-family: var(--mono); font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.05em; }
+.fchip.today { border-color: var(--cyan-border); background: linear-gradient(180deg, rgba(86, 184, 173, 0.06), var(--void1)); }
+.fchip .day { font-family: var(--body); font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.05em; }
 .fchip .date { font-family: var(--disp); font-size: 14px; font-weight: 600; margin: 2px 0 8px; color: var(--text); }
 .fchip ul { list-style: none; display: flex; flex-direction: column; gap: 4px; }
 .fchip li { font-size: 11px; color: var(--text2); line-height: 1.3; padding-left: 8px; position: relative; }
@@ -221,28 +283,44 @@ body {
 
 /* ─── Full Schedule Table ─── */
 .full-schedule-wrap {
-  background: var(--void1); border: 1px solid var(--border); border-radius: var(--radius-lg);
-  padding: 16px; overflow-x: auto; max-height: 480px; scrollbar-width: thin;
+  background: var(--void2); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 4px 12px; overflow: auto; scrollbar-width: thin; flex: 1; min-height: 0;
 }
 .schedule-table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 12px; }
 .schedule-table th, .schedule-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; }
-.schedule-table th { color: var(--text3); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; position: sticky; top: 0; background: var(--void1); z-index: 5; }
-.schedule-table tbody tr.active { background: rgba(79, 209, 197, 0.08); }
+.schedule-table th { color: var(--text3); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; position: sticky; top: 0; background: var(--void2); z-index: 5; }
+.schedule-table tbody tr.active { background: rgba(86, 184, 173, 0.08); }
 .schedule-table td .event-tag {
   display: inline-block; margin: 0 4px 4px 0; padding: 2px 7px; border-radius: 4px;
   background: var(--void2); border: 1px solid var(--border); color: var(--cyan); font-size: 10.5px;
 }
 
 /* ─── Coliseum Boss Strip ─── */
-.boss-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.boss-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
 .bcell {
-  background: var(--void1); border: 1px solid var(--border); border-radius: var(--radius-lg);
-  padding: 16px; text-align: center; position: relative; transition: all 0.2s;
+  background: linear-gradient(160deg, var(--void1), var(--void2)); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  padding: 18px 12px 16px; text-align: center; position: relative; transition: all 0.25s;
+  display: flex; flex-direction: column; align-items: center; gap: 9px;
 }
-.bcell.active { border-color: var(--magenta); box-shadow: 0 0 16px rgba(255, 63, 216, 0.18); background: linear-gradient(180deg, rgba(255, 63, 216, 0.08), var(--void1)); }
-.bcell .step { font-family: var(--mono); font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; }
+.bcell-img {
+  width: 84px; height: 84px; border-radius: 12px; overflow: hidden; border: 1px solid var(--border2);
+  background: var(--void3); box-shadow: 0 4px 14px rgba(0,0,0,0.35);
+}
+.bcell-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.bcell .step { font-family: var(--body); font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; }
 .bcell.active .step { color: var(--magenta); font-weight: 700; }
-.bcell .name { font-family: var(--disp); font-size: 15px; font-weight: 600; margin-top: 6px; color: var(--text); }
+.bcell .name { font-family: var(--disp); font-size: 15.5px; font-weight: 700; color: var(--text); line-height: 1.2; }
+.bcell.active {
+  border-color: var(--magenta); box-shadow: 0 0 18px rgba(209, 105, 143, 0.16);
+  background: linear-gradient(180deg, rgba(209, 105, 143, 0.10), var(--void1)); transform: translateY(-3px);
+}
+.bcell.active .bcell-img { border-color: var(--magenta); box-shadow: 0 0 12px rgba(209, 105, 143, 0.3); }
+.bcell .active-tag {
+  font-family: var(--body); font-size: 9px; font-weight: 700; letter-spacing: 0.07em; color: var(--magenta);
+  background: rgba(209, 105, 143, 0.12); border: 1px solid rgba(209, 105, 143, 0.35); padding: 2px 9px 2px 7px;
+  border-radius: 12px; display: inline-flex; align-items: center; gap: 5px;
+}
+.bcell .active-tag .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--magenta); box-shadow: 0 0 5px var(--magenta); }
 
 /* ─── Modal ─── */
 .modal-backdrop {
@@ -254,29 +332,74 @@ body {
   background: var(--void1); border: 1px solid var(--border2); border-radius: var(--radius-lg);
   max-width: 400px; width: 100%; padding: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.6);
 }
-.modal h3 { font-family: var(--disp); font-size: 18px; margin-bottom: 8px; }
+.modal.wide { max-width: 920px; padding: 20px; display: flex; flex-direction: column; max-height: 84vh; }
+.modal.wide .modal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.modal.wide .modal-head h3 { margin-bottom: 0; }
+.modal.wide .modal-head p { margin: 2px 0 0; font-size: 11.5px; }
+.modal-close-x {
+  background: var(--void2); border: 1px solid var(--border2); width: 28px; height: 28px;
+  border-radius: 50%; cursor: pointer; flex: 0 0 auto; position: relative;
+}
+.modal-close-x span {
+  position: absolute; top: 50%; left: 50%; width: 12px; height: 1.5px; background: var(--text2);
+  border-radius: 2px; transition: background 0.15s;
+}
+.modal-close-x span:nth-child(1) { transform: translate(-50%,-50%) rotate(45deg); }
+.modal-close-x span:nth-child(2) { transform: translate(-50%,-50%) rotate(-45deg); }
+.modal-close-x:hover { border-color: var(--amber-border); }
+.modal-close-x:hover span { background: var(--amber); }
+.modal h3 { font-family: var(--disp); font-size: 18px; font-weight: 700; margin-bottom: 8px; }
 .modal p { font-size: 12px; color: var(--text2); margin-bottom: 16px; line-height: 1.5; }
-.modal label { font-family: var(--mono); font-size: 11px; color: var(--text3); text-transform: uppercase; display: block; margin-bottom: 6px; }
+.modal label { font-family: var(--body); font-size: 11px; color: var(--text3); text-transform: uppercase; display: block; margin-bottom: 6px; }
 .modal input[type=date] {
   width: 100%; background: var(--void2); border: 1px solid var(--border2); color: var(--text); padding: 10px 12px;
   border-radius: var(--radius); font-family: var(--mono); font-size: 13px; margin-bottom: 8px; outline: none;
 }
 .modal input[type=date]:focus { border-color: var(--amber-border); }
-.modal .hint { font-family: var(--mono); font-size: 11px; color: var(--text3); margin-bottom: 20px; }
+.modal .hint { font-family: var(--body); font-size: 11px; color: var(--text3); margin-bottom: 20px; }
 .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
 
 .btn {
-  font-family: var(--mono); font-size: 11.5px; padding: 8px 16px; border-radius: var(--radius);
+  font-family: var(--body); font-size: 11.5px; padding: 8px 16px; border-radius: var(--radius);
   cursor: pointer; border: 1px solid var(--border); background: var(--void2); color: var(--text2); transition: 0.15s;
 }
 .btn.primary { background: var(--amber); color: #1a1104; border-color: var(--amber); font-weight: 600; }
-.btn.primary:hover { box-shadow: 0 0 12px rgba(232,163,61,0.4); }
+.btn.primary:hover { box-shadow: 0 0 12px rgba(224,165,82,0.4); }
+
+/* ─── Full-Schedule Access Strip ─── */
+.schedule-access {
+  background: var(--void1); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  padding: 14px 18px; margin-top: 32px; display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; flex-wrap: wrap;
+}
+.schedule-access .sa-text { display: flex; flex-direction: column; gap: 2px; }
+.schedule-access .sa-title { font-family: var(--disp); font-size: 13.5px; font-weight: 700; color: var(--text); }
+.schedule-access .sa-sub { font-family: var(--body); font-size: 11px; color: var(--text3); }
+
+/* ─── Footer ─── */
+.site-footer { position: relative; z-index: 1; border-top: 1px solid var(--border); margin-top: 48px; padding: 28px 24px 32px; }
+.footer-inner { max-width: 1180px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center; }
+.footer-brand { font-family: var(--disp); font-size: 14px; font-weight: 700; color: var(--text2); letter-spacing: 0.04em; }
+.footer-brand span { color: var(--amber); }
+.footer-links { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; }
+.footer-links a { font-family: var(--body); font-size: 11.5px; color: var(--text2); text-decoration: none; transition: color 0.15s; }
+.footer-links a:hover { color: var(--cyan); }
+.footer-note { font-family: var(--body); font-size: 10.5px; color: var(--text3); max-width: 620px; line-height: 1.6; }
+.footer-meta { font-family: var(--body); font-size: 10px; color: var(--text3); opacity: 0.7; }
 
 @media (max-width: 900px) {
-  .merged-hero { grid-template-columns: 1fr; }
-  .mh-right { border-left: none; border-top: 1px solid var(--border2); padding-left: 0; padding-top: 16px; text-align: left; }
+  .merged-hero { grid-template-columns: 1fr; padding: 22px 20px; }
+  .mh-right { border-left: none; width: 100%; padding: 14px 20px; }
   .hero-grid { grid-template-columns: 1fr; }
   .boss-strip { grid-template-columns: repeat(2, 1fr); }
+  .schedule-access { flex-direction: column; align-items: flex-start; }
+  .forecast { grid-template-columns: repeat(4, 1fr); }
+}
+
+@media (max-width: 600px) {
+  .forecast { grid-template-columns: repeat(2, 1fr); }
+  .mh-main-val { font-size: 28px; }
+  .mh-right .cb-timer { font-size: 28px; }
 }
 </style>
 </head>
@@ -287,23 +410,31 @@ body {
 <div class="top-header">
   <div class="topbar">
     <a href="index.html" class="topbar-title">SWGOH<span class="divider-glyph">::</span><span>RESOURCES</span></a>
-    <div class="topbar-tabs">
-      <a class="tab-btn" href="index.html">home</a>
-      <a class="tab-btn" href="relic.html">relic planner</a>
-      <a class="tab-btn" href="shipments.html">shipment planner</a>
-      <a class="tab-btn active" href="schedule.html">schedule</a>
+    <div class="topbar-tabs" id="topbarTabs">
+      <a class="tab-btn" href="index.html">Home</a>
+      <a class="tab-btn active" href="schedule.html">Schedule</a>
     </div>
-    <button class="gear-btn" id="openSettingsBtn">⚙ ERA START</button>
+    <div class="topbar-actions" id="topbarActions">
+      <button class="gear-btn" id="openFullScheduleBtn">Full Schedule</button>
+      <button class="gear-btn" id="openSettingsBtn">Era Start</button>
+    </div>
+    <button class="nav-toggle" id="navToggle" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+  <div class="mobile-panel" id="mobilePanel">
+    <a class="mp-link" href="index.html">Home</a>
+    <a class="mp-link active" href="schedule.html">Schedule</a>
+    <div class="mp-divider"></div>
+    <button class="gear-btn mp-btn" id="openFullScheduleBtnMobile">Full Schedule</button>
+    <button class="gear-btn mp-btn" id="openSettingsBtnMobile">Era Start</button>
   </div>
 </div>
 
 <div class="wrap">
 
   <!-- Merged Era Banner -->
-  <div class="merged-hero bracket" id="mergedHero">
-    <span class="bl"></span><span class="br"></span>
+  <div class="merged-hero" id="mergedHero">
     <div class="mh-left">
-      <div class="mh-tag">// Live Era Timeline & Changeover Feed</div>
+      <div class="mh-tag"><span class="live-dot"></span>Event Schedule for Era of Myths & Legends</div>
       <div class="mh-title-row">
         <div class="mh-main-val">Day <span id="mhDayVal">--</span> <span>/ 84</span></div>
         <div class="mh-sub-info" id="mhSubInfo">Episode -- · Week -- · --</div>
@@ -362,20 +493,48 @@ body {
   </div>
   <div class="boss-strip" id="bossStrip"></div>
 
-  <!-- Full Era Schedule Breakdown -->
-  <div class="section-head">
-    <h2>Full Era Schedule Breakdown</h2>
-    <div class="rule"></div>
-  </div>
-  <div class="full-schedule-wrap">
-    <table class="schedule-table">
-      <thead>
-        <tr><th>Day</th><th>Date</th><th>Episode</th><th>Events</th></tr>
-      </thead>
-      <tbody id="fullSchedule"></tbody>
-    </table>
+  <!-- Full Era Schedule Access -->
+  <div class="schedule-access">
+    <div class="sa-text">
+      <div class="sa-title">Looking for the full 84-day breakdown?</div>
+      <div class="sa-sub">Every day of the Era, mapped Episode → Week → Day, in one searchable table.</div>
+    </div>
+    <button class="btn primary" id="openFullScheduleBtn2">Open Full Schedule</button>
   </div>
 
+</div>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-brand">SWGOH<span>::</span>RESOURCES</div>
+    <div class="footer-links">
+      <a href="index.html">Home</a>
+      <a href="schedule.html">Schedule</a>
+    </div>
+    <div class="footer-note">Fan-made planning tool for Star Wars: Galaxy of Heroes. Not affiliated with, endorsed, sponsored, or specifically approved by Electronic Arts, Capital Games, Disney, or Lucasfilm. All game assets, trademarks, and character names are property of their respective owners.</div>
+    <div class="footer-meta" id="footerMeta"></div>
+  </div>
+</footer>
+
+<!-- Full Schedule Modal -->
+<div class="modal-backdrop" id="fullScheduleModal">
+  <div class="modal wide">
+    <div class="modal-head">
+      <div>
+        <h3>Full Era Schedule Breakdown</h3>
+        <p>All 84 days of the current Era baseline.</p>
+      </div>
+      <button class="modal-close-x" id="closeFullScheduleBtn" aria-label="Close"><span></span><span></span></button>
+    </div>
+    <div class="full-schedule-wrap">
+      <table class="schedule-table">
+        <thead>
+          <tr><th>Day</th><th>Date</th><th>Episode</th><th>Events</th></tr>
+        </thead>
+        <tbody id="fullSchedule"></tbody>
+      </table>
+    </div>
+  </div>
 </div>
 
 <!-- Settings Modal -->
@@ -409,46 +568,46 @@ const COMMON_DAYS = {
   4:  [ev('gac_defense','GAC Defense'), ev('smugglersrun','Smugglers Run III'), ev('tw_defense','TW Defense Starts')],
   5:  [ev('gac_attack','GAC Attack'), ev('tw_attack','TW Attack Starts')],
   6:  [ev('gac_defense','GAC Defense'), ev('tw_payout','TW Payout')],
-  9:  [ev('rote','TB Phase 3 Start'), ev('era_battle','ERA BATTLE 1')],
+  9:  [ev('rote','TB Phase 3 Start'), ev('era_battle_1','ERA BATTLE 1')],
   10: [ev('rote','TB Phase 4 Start')],
   11: [ev('rote','TB Phase 5 Start')],
   12: [ev('rote','TB Phase 6 Start')],
   13: [ev('tb_ends','TB ENDS'), ev('tw_signup','TW SIGNUP STARTS')],
-  14: [ev('tw_defense','TW DEFENSE STARTS'), ev('era_battle','ERA BATTLE 2')],
+  14: [ev('tw_defense','TW DEFENSE STARTS'), ev('era_battle_2','ERA BATTLE 2')],
   16: [ev('gac_defense','GAC Defense'), ev('smugglersrun','Smugglers Run II')],
   17: [ev('gac_attack','GAC Attack'), ev('tw_signup','TW Signup Starts')],
   18: [ev('gac_defense','GAC Defense'), ev('smugglersrun','Smugglers Run III'), ev('tw_defense','TW Defense Starts')],
   19: [ev('gac_attack','GAC Attack'), ev('tw_attack','TW Attack Starts')],
   20: [ev('gac_defense','GAC Defense'), ev('tw_payout','TW Payout')],
   22: [ev('era_challenge','Era Challenge'), ev('gac_signup','GAC SIGNUP STARTS'), ev('rote','TB PHASE 2 STARTS')],
-  23: [ev('gac_defense','GAC Defense'), ev('era_battle','NEW ERA BATTLE 1'), ev('rote','TB PHASE 3 STARTS')],
+  23: [ev('gac_defense','GAC Defense'), ev('era_battle_1','NEW ERA BATTLE 1'), ev('rote','TB PHASE 3 STARTS')],
   24: [ev('rote','TB PHASE 4 STARTS'), ev('gac_attack','GAC Attack')],
   25: [ev('gac_defense','GAC Defense'), ev('rote','TB PHASE 5 STARTS')],
   26: [ev('gac_attack','GAC Attack'), ev('rote','TB PHASE 6 STARTS')],
   27: [ev('gac_defense','GAC Defense'), ev('tb_ends','TB ENDS'), ev('tw_signup','TW SIGNUP STARTS')],
-  28: [ev('era_battle','ERA BATTLE 2'), ev('tw_defense','TW DEFENSE STARTS')],
+  28: [ev('era_battle_2','ERA BATTLE 2'), ev('tw_defense','TW DEFENSE STARTS')],
 };
 
 const EPISODE_OVERRIDES = {
   1: {
-    1:  [ev('marquee_event','Marquee Event'), ev('journey_reruns','Journey Event Reruns Start'), ev('era_changeover','Era Changeover'), ev('gac_signup','GAC SIGNUP STARTS'), ev('tw_attack','TW ATTACK STARTS')],
+    1:  [ev('marquee_1','Marquee Event'), ev('journey_reruns','Journey Event Reruns Start'), ev('era_changeover','Era Changeover'), ev('gac_signup','GAC SIGNUP STARTS'), ev('tw_attack','TW ATTACK STARTS')],
     7:  [ev('rote','TB Phase 1'), ev('conquest_start','2nd Conquest of Volume Starts'), ev('smugglersrun','Smugglers Run I'), ev('gac_attack','GAC ATTACK')],
     8:  [ev('era_challenge','Era Challenge'), ev('rote','TB Phase 2 Start'), ev('journey_reruns','End of Journey Reruns')],
-    15: [ev('marquee_event','Marquee Event'), ev('tw_offense','TW OFFENSE'), ev('gac_signup','GAC SIGNUP STARTS')],
+    15: [ev('marquee_2','Marquee Event'), ev('tw_offense','TW OFFENSE'), ev('gac_signup','GAC SIGNUP STARTS')],
     21: [ev('conquest_end','2nd Conquest of Volume Ends'), ev('gac_attack','GAC ATTACK'), ev('proving_ground','Proving Ground'), ev('ultimate_journey','Ultimate Journey'), ev('smugglersrun','Smugglers Run I'), ev('rote','TB PHASE 1 STARTS')],
   },
   2: {
-    1:  [ev('marquee_event','Marquee Event'), ev('gac_signup','GAC SIGNUP STARTS'), ev('tw_attack','TW ATTACK STARTS')],
+    1:  [ev('marquee_3','Marquee Event'), ev('gac_signup','GAC SIGNUP STARTS'), ev('tw_attack','TW ATTACK STARTS')],
     7:  [ev('rote','TB Phase 1'), ev('conquest_start','3rd Conquest of Volume Starts'), ev('smugglersrun','Smugglers Run I'), ev('gac_attack','GAC ATTACK')],
     8:  [ev('era_challenge','Era Challenge'), ev('rote','TB Phase 2 Start')],
-    15: [ev('marquee_event','Marquee Event'), ev('tw_offense','TW OFFENSE'), ev('gac_signup','GAC SIGNUP STARTS')],
+    15: [ev('marquee_4','Marquee Event'), ev('tw_offense','TW OFFENSE'), ev('gac_signup','GAC SIGNUP STARTS')],
     21: [ev('conquest_end','Conquest Volume Ends (Unit First Playable)'), ev('gac_attack','GAC ATTACK'), ev('proving_ground','Proving Ground'), ev('ultimate_journey','Ultimate Journey'), ev('smugglersrun','Smugglers Run I'), ev('rote','TB PHASE 1 STARTS')],
   },
   3: {
-    1:  [ev('marquee_event','Marquee Event'), ev('journey_guide','4/5* Journey Guide Event Unlock'), ev('gac_signup','GAC SIGNUP STARTS'), ev('tw_attack','TW ATTACK STARTS')],
+    1:  [ev('marquee_5','Marquee Event'), ev('journey_guide','4/5* Journey Guide Event Unlock'), ev('gac_signup','GAC SIGNUP STARTS'), ev('tw_attack','TW ATTACK STARTS')],
     7:  [ev('rote','TB Phase 1'), ev('conquest_start','1st Conquest of New Volume Starts'), ev('smugglersrun','Smugglers Run I'), ev('gac_attack','GAC ATTACK')],
     8:  [ev('era_challenge','Era Challenge'), ev('rote','TB Phase 2 Start')],
-    15: [ev('marquee_event','Marquee Event'), ev('journey_guide','6/7* Journey Guide Unlock'), ev('tw_offense','TW OFFENSE'), ev('gac_signup','GAC SIGNUP STARTS')],
+    15: [ev('marquee_6','Marquee Event'), ev('journey_guide','6/7* Journey Guide Unlock'), ev('tw_offense','TW OFFENSE'), ev('gac_signup','GAC SIGNUP STARTS')],
     21: [ev('conquest_end','1st Conquest of New Volume Ends'), ev('gac_attack','GAC ATTACK'), ev('proving_ground','Proving Ground'), ev('ultimate_journey','Ultimate Journey'), ev('smugglersrun','Smugglers Run I'), ev('rote','TB PHASE 1 STARTS')],
   }
 };
@@ -459,6 +618,60 @@ const BOSS_LOOP = [
   'Jotaz',
   'Dryax'
 ];
+
+const BOSS_ICONS = {
+  'Krayt Dragon': 'krayt.png',
+  'Zeffo Tomb Guardians': 'zeffo.png',
+  'Jotaz': 'jotaz.png',
+  'Dryax': 'dryax.png'
+};
+
+/* =========================================================
+   ICON / CATEGORY SYSTEM
+   Maps each event's icon key to real artwork where it exists,
+   and to a colour-coded category badge everywhere else.
+   ========================================================= */
+
+const CATEGORY_META = {
+  gac:      { label: 'GAC',    glyph: 'GAC', accent: 'var(--cyan)',    dim: 'var(--cyan-dim)',    border: 'var(--cyan-border)' },
+  tw:       { label: 'TW',     glyph: 'TW',  accent: 'var(--purple)',  dim: 'var(--purple-dim)',  border: 'var(--purple-border)' },
+  tb:       { label: 'TB',     glyph: 'TB',  accent: 'var(--magenta)', dim: 'var(--magenta-dim)', border: 'var(--magenta)' },
+  era:      { label: 'ERA',    glyph: 'ERA', accent: 'var(--amber)',   dim: 'var(--amber-dim)',   border: 'var(--amber-border)' },
+  conquest: { label: 'CONQUEST', glyph: 'CQ', accent: 'var(--amber)',  dim: 'var(--amber-dim)',   border: 'var(--amber-border)' },
+  guild:    { label: 'GUILD',  glyph: 'SR',  accent: 'var(--green)',   dim: 'var(--green-dim)',   border: 'rgba(16,185,129,0.4)' },
+  journey:  { label: 'JOURNEY',glyph: 'JRN', accent: 'var(--cyan)',    dim: 'var(--cyan-dim)',    border: 'var(--cyan-border)' },
+  marquee:  { label: 'MARQUEE',glyph: 'MQ',  accent: 'var(--amber)',   dim: 'var(--amber-dim)',   border: 'var(--amber-border)' },
+  misc:     { label: 'EVENT',  glyph: 'EVT', accent: 'var(--text2)',   dim: 'var(--void2)',       border: 'var(--border2)' }
+};
+
+// icon key -> real asset filename (relative to assets/schedule/)
+const ICON_MAP = {
+  rote: 'rote.png',
+  smugglersrun: 'smugglersrun.png',
+  journey_reruns: 'journeyicon.png',
+  journey_guide: 'journeyicon.png',
+  ultimate_journey: 'journeyicon.png',
+  era_battle_1: 'erabattle1.png',
+  era_battle_2: 'erabattle2.png',
+  marquee_1: 'marquee1icon.png',
+  marquee_2: 'marquee2icon.png',
+  marquee_3: 'marquee3icon.png',
+  marquee_4: 'marquee4icon.png',
+  marquee_5: 'marquee5icon.png',
+  marquee_6: 'marquee6icon.png'
+};
+
+function categoryFor(icon){
+  if(icon.startsWith('gac')) return 'gac';
+  if(icon.startsWith('tw')) return 'tw';
+  if(icon === 'rote' || icon === 'tb_ends') return 'tb';
+  if(icon.startsWith('era')) return 'era';
+  if(icon.startsWith('conquest') || icon === 'proving_ground') return 'conquest';
+  if(icon === 'smugglersrun') return 'guild';
+  if(icon.startsWith('journey') || icon === 'ultimate_journey') return 'journey';
+  if(icon.startsWith('marquee')) return 'marquee';
+  return 'misc';
+}
 
 const DEFAULT_ERA_START = '2026-01-20'; // Baseline Tuesday
 const WEEKDAY_NAMES = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
@@ -662,23 +875,20 @@ function renderStatusDashboard(st){
   container.innerHTML = `
     <div class="status-card ${gac.badgeClass === 'running' ? 'cyan-card' : ''}">
       <div class="sc-header"><span class="sc-title">${gac.title}</span><span class="sc-badge ${gac.badgeClass}">${gac.status}</span></div>
-      <div class="sc-main"><div class="sc-val">${gac.main}</div><div class="sc-sub">${gac.sub}</div></div>
-      <div class="sc-footer"><span>Format Cycle</span><span class="highlight">Ep ${st.episode}</span></div>
+      <div class="sc-main" style="margin-bottom:0"><div class="sc-val">${gac.main}</div><div class="sc-sub">${gac.sub}</div></div>
     </div>
 
     <div class="status-card ${conq.badgeClass === 'warning' ? 'amber-card' : ''}">
       <div class="sc-header"><span class="sc-title">${conq.title}</span><span class="sc-badge ${conq.badgeClass}">${conq.status}</span></div>
-      <div class="sc-main"><div class="sc-val">${conq.main}</div><div class="sc-sub">${conq.sub}</div></div>
-      <div class="sc-footer"><span>14-Day Event</span><span class="highlight">Proving Grounds at end</span></div>
+      <div class="sc-main" style="margin-bottom:0"><div class="sc-val">${conq.main}</div><div class="sc-sub">${conq.sub}</div></div>
     </div>
 
     <div class="status-card ${isGuildActive ? 'purple-card' : ''}">
       <div class="sc-header"><span class="sc-title">Guild Events</span><span class="sc-badge ${isGuildActive ? 'running' : 'off'}">${isGuildActive ? 'ACTIVE' : 'IDLE'}</span></div>
-      <div class="sc-main">
+      <div class="sc-main" style="margin-bottom:0">
         <div class="sc-val" style="font-size:15px;margin-bottom:2px">Today: <span style="color:var(--text);font-weight:600">${todayGuildSummary}</span></div>
         <div class="sc-sub" style="font-size:12px">Tomorrow: <span style="color:var(--cyan)">${tmrwGuildSummary}</span></div>
       </div>
-      <div class="sc-footer"><span>Territory Battles & Wars</span><span class="highlight">18:00 UTC Reset</span></div>
     </div>
   `;
 }
@@ -689,16 +899,20 @@ function renderStatusDashboard(st){
 
 function cardHTML(item, extraClass){
   const cls = extraClass || '';
-  const assetBase = item.icon === 'marquee_event' ? 'marquee2event' : item.icon;
-  const glyph = item.label.split(' ').map(w=>w[0]).join('').substring(0,3).toUpperCase();
+  const cat = categoryFor(item.icon);
+  const meta = CATEGORY_META[cat];
+  const asset = ICON_MAP[item.icon];
+  const style = `--accent:${meta.accent};--accent-dim:${meta.dim};--accent-border:${meta.border}`;
 
-  return `<figure class="ecard bracket ${cls}">
+  const artInner = asset
+    ? `<img src="assets/schedule/${asset}" alt="${item.label}"
+        onerror="this.parentElement.innerHTML='<div class=\\'art-badge\\'><span class=\\'glyph\\'>${meta.glyph}</span><span class=\\'cat\\'>${meta.label}</span></div>';">`
+    : `<div class="art-badge"><span class="glyph">${meta.glyph}</span><span class="cat">${meta.label}</span></div>`;
+
+  return `<figure class="ecard bracket ${cls}" style="${style}">
     <span class="bl"></span><span class="br"></span>
-    <div class="art" data-glyph="${glyph}">
-      <img src="assets/schedule/${assetBase}.png" alt="${item.label}"
-        onerror="if(!this.dataset.tried){this.dataset.tried=1;this.src='assets/schedule/${assetBase}.jpg';}
-                 else{this.parentElement.parentElement.classList.add('noimg');this.remove();}">
-    </div>
+    <div class="art">${artInner}</div>
+    <div class="cat-tag">${meta.label}</div>
     <figcaption>${item.label}</figcaption>
   </figure>`;
 }
@@ -784,11 +998,14 @@ function renderMainFeed(st){
 
   BOSS_LOOP.forEach((bossName, index) => {
     const isActive = index === activeBossIndex;
+    const iconFile = BOSS_ICONS[bossName];
     const cell = document.createElement('div');
     cell.className = 'bcell' + (isActive ? ' active' : '');
     cell.innerHTML = `
-      <div class="step">Boss ${index + 1} of 4${isActive ? ' · Active Today' : ''}</div>
+      <div class="bcell-img"><img src="assets/schedule/${iconFile}" alt="${bossName}"></div>
+      <div class="step">Boss ${index + 1} of 4</div>
       <div class="name">${bossName}</div>
+      ${isActive ? '<div class="active-tag"><span class="dot"></span>ACTIVE TODAY</div>' : ''}
     `;
     bossEl.appendChild(cell);
   });
@@ -835,6 +1052,36 @@ document.getElementById('openSettingsBtn').onclick = () => {
   modal.classList.add('open');
 };
 document.getElementById('closeModalBtn').onclick = () => modal.classList.remove('open');
+modal.addEventListener('click', e => { if(e.target === modal) modal.classList.remove('open'); });
+
+const scheduleModal = document.getElementById('fullScheduleModal');
+const openSchedule = () => { scheduleModal.classList.add('open'); closeMobilePanel(); };
+const closeSchedule = () => scheduleModal.classList.remove('open');
+document.getElementById('openFullScheduleBtn').onclick = openSchedule;
+document.getElementById('openFullScheduleBtn2').onclick = openSchedule;
+document.getElementById('openFullScheduleBtnMobile').onclick = openSchedule;
+document.getElementById('closeFullScheduleBtn').onclick = closeSchedule;
+scheduleModal.addEventListener('click', e => { if(e.target === scheduleModal) closeSchedule(); });
+
+document.getElementById('openSettingsBtnMobile').onclick = () => {
+  document.getElementById('startDateInput').value = getStoredEraStart();
+  modal.classList.add('open');
+  closeMobilePanel();
+};
+
+/* Mobile Nav Panel */
+const navToggle = document.getElementById('navToggle');
+const mobilePanel = document.getElementById('mobilePanel');
+function closeMobilePanel(){ navToggle.classList.remove('open'); mobilePanel.classList.remove('open'); }
+navToggle.onclick = () => {
+  navToggle.classList.toggle('open');
+  mobilePanel.classList.toggle('open');
+};
+
+const footerMetaEl = document.getElementById('footerMeta');
+if(footerMetaEl){
+  footerMetaEl.textContent = `Live data · resets 18:00 UTC daily · page loaded ${new Date().toLocaleString('en-GB', { timeZone: 'UTC', hour12: false })} UTC`;
+}
 
 document.getElementById('saveDateBtn').onclick = () => {
   const val = document.getElementById('startDateInput').value;
