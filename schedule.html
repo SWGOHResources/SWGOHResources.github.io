@@ -111,7 +111,7 @@ body {
 .bracket .bl::before { bottom: -1px; left: -1px; border-bottom-width: 2px; border-left-width: 2px; position: absolute; }
 .bracket .br::before { bottom: -1px; right: -1px; border-bottom-width: 2px; border-right-width: 2px; position: absolute; }
 
-/* ─── Merged Hero Era Timeline + Changeover Unit ─── */
+/* ─── Merged Hero Banner ─── */
 .merged-hero {
   background: linear-gradient(135deg, rgba(79,209,197,0.05), var(--void1) 60%, rgba(232,163,61,0.05));
   border: 1px solid var(--cyan-border); border-radius: var(--radius-lg);
@@ -125,7 +125,6 @@ body {
 .mh-main-val span { color: var(--amber); }
 .mh-sub-info { font-family: var(--mono); font-size: 13px; color: var(--text2); }
 
-/* Progress Bar inside Merged Hero */
 .mh-progress-wrap { width: 100%; max-width: 520px; }
 .mh-progress-bar {
   width: 100%; height: 6px; background: var(--void3); border-radius: 3px;
@@ -134,7 +133,6 @@ body {
 .mh-progress-fill { height: 100%; background: linear-gradient(90deg, var(--cyan), var(--amber)); border-radius: 3px; transition: width 0.3s; }
 .mh-progress-labels { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 10px; color: var(--text3); margin-top: 4px; }
 
-/* Countdown Section inside Merged Hero */
 .mh-right {
   text-align: right; border-left: 1px solid var(--border2); padding-left: 24px;
   display: flex; flex-direction: column; justify-content: center;
@@ -146,7 +144,7 @@ body {
 }
 .mh-right .cb-sub { font-size: 11px; color: var(--text2); }
 
-/* ─── Hero Mode Status Cards Grid ─── */
+/* ─── Mode Status Cards Grid ─── */
 .hero-grid {
   display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 24px;
 }
@@ -172,7 +170,7 @@ body {
 .sc-badge.purple { background: var(--purple-dim); color: var(--purple); border: 1px solid var(--purple-border); }
 
 .sc-main { margin-bottom: 8px; }
-.sc-val { font-family: var(--disp); font-size: 18px; font-weight: 700; color: var(--text); line-height: 1.25; }
+.sc-val { font-family: var(--disp); font-size: 17px; font-weight: 700; color: var(--text); line-height: 1.25; }
 .sc-sub { font-size: 11.5px; color: var(--text2); margin-top: 3px; }
 
 .sc-footer { font-family: var(--mono); font-size: 10.5px; color: var(--text3); border-top: 1px solid var(--border); padding-top: 8px; display: flex; justify-content: space-between; }
@@ -301,11 +299,11 @@ body {
 
 <div class="wrap">
 
-  <!-- Merged Era Timeline + Changeover Unit -->
+  <!-- Merged Era Banner -->
   <div class="merged-hero bracket" id="mergedHero">
     <span class="bl"></span><span class="br"></span>
     <div class="mh-left">
-      <div class="mh-tag">// Live Era Timeline & Status</div>
+      <div class="mh-tag">// Live Era Timeline & Changeover Feed</div>
       <div class="mh-title-row">
         <div class="mh-main-val">Day <span id="mhDayVal">--</span> <span>/ 84</span></div>
         <div class="mh-sub-info" id="mhSubInfo">Episode -- · Week -- · --</div>
@@ -359,12 +357,12 @@ body {
   <!-- Coliseum Rotation -->
   <div class="section-head">
     <h2>Coliseum Boss Rotation</h2>
-    <span class="sub">Loops continuously at 18:00 UTC daily</span>
+    <span class="sub">Loops Tue–Fri at 18:00 UTC</span>
     <div class="rule"></div>
   </div>
   <div class="boss-strip" id="bossStrip"></div>
 
-  <!-- Full Era Schedule -->
+  <!-- Full Era Schedule Breakdown -->
   <div class="section-head">
     <h2>Full Era Schedule Breakdown</h2>
     <div class="rule"></div>
@@ -380,7 +378,7 @@ body {
 
 </div>
 
-<!-- Modal -->
+<!-- Settings Modal -->
 <div class="modal-backdrop" id="settingsModal">
   <div class="modal">
     <h3>Configure Era Start Date</h3>
@@ -397,9 +395,10 @@ body {
 
 <script>
 /* =========================================================
-   EVENT DATA MODEL & CYCLE CONSTANTS
-   84-Day Cycle = 3 Episodes x 28 Days
-   Changeovers happen at 18:00 UTC daily.
+   EVENT DATA MODEL (EXACT SHEET9 MAPPING)
+   Day 1 = Tuesday (Era Baseline)
+   Day 2 = Wednesday, Day 3 = Thursday, Day 4 = Friday,
+   Day 5 = Saturday, Day 6 = Sunday, Day 7 = Monday.
    ========================================================= */
 
 function ev(icon, label){ return {icon, label}; }
@@ -410,63 +409,63 @@ const COMMON_DAYS = {
   4:  [ev('gac_defense','GAC Defense'), ev('smugglersrun','Smugglers Run III'), ev('tw_defense','TW Defense Starts')],
   5:  [ev('gac_attack','GAC Attack'), ev('tw_attack','TW Attack Starts')],
   6:  [ev('gac_defense','GAC Defense'), ev('tw_payout','TW Payout')],
-  9:  [ev('rote','Territory Battles Phase 3'), ev('era_battle','Era Battle 1')],
-  10: [ev('rote','Territory Battles Phase 4')],
-  11: [ev('rote','Territory Battles Phase 5')],
-  12: [ev('rote','Territory Battles Phase 6')],
-  13: [ev('tb_ends','Territory Battles Ends'), ev('tw_signup','TW Signup Starts')],
-  14: [ev('tw_defense','TW Defense Starts'), ev('era_battle','Era Battle 2')],
+  9:  [ev('rote','TB Phase 3 Start'), ev('era_battle','ERA BATTLE 1')],
+  10: [ev('rote','TB Phase 4 Start')],
+  11: [ev('rote','TB Phase 5 Start')],
+  12: [ev('rote','TB Phase 6 Start')],
+  13: [ev('tb_ends','TB ENDS'), ev('tw_signup','TW SIGNUP STARTS')],
+  14: [ev('tw_defense','TW DEFENSE STARTS'), ev('era_battle','ERA BATTLE 2')],
   16: [ev('gac_defense','GAC Defense'), ev('smugglersrun','Smugglers Run II')],
   17: [ev('gac_attack','GAC Attack'), ev('tw_signup','TW Signup Starts')],
   18: [ev('gac_defense','GAC Defense'), ev('smugglersrun','Smugglers Run III'), ev('tw_defense','TW Defense Starts')],
   19: [ev('gac_attack','GAC Attack'), ev('tw_attack','TW Attack Starts')],
   20: [ev('gac_defense','GAC Defense'), ev('tw_payout','TW Payout')],
-  22: [ev('era_challenge','Era Challenge'), ev('gac_signup','GAC Signup Starts'), ev('rote','Territory Battles Phase 2')],
-  23: [ev('gac_defense','GAC Defense'), ev('era_battle','New Era Battle 1'), ev('rote','Territory Battles Phase 3')],
-  24: [ev('rote','Territory Battles Phase 4'), ev('gac_attack','GAC Attack')],
-  25: [ev('gac_defense','GAC Defense'), ev('rote','Territory Battles Phase 5')],
-  26: [ev('gac_attack','GAC Attack'), ev('rote','Territory Battles Phase 6')],
-  27: [ev('tb_ends','Territory Battles Ends'), ev('tw_signup','TW Signup Starts')],
-  28: [ev('era_battle','Era Battle 2'), ev('tw_defense','TW Defense Starts')],
+  22: [ev('era_challenge','Era Challenge'), ev('gac_signup','GAC SIGNUP STARTS'), ev('rote','TB PHASE 2 STARTS')],
+  23: [ev('gac_defense','GAC Defense'), ev('era_battle','NEW ERA BATTLE 1'), ev('rote','TB PHASE 3 STARTS')],
+  24: [ev('rote','TB PHASE 4 STARTS'), ev('gac_attack','GAC Attack')],
+  25: [ev('gac_defense','GAC Defense'), ev('rote','TB PHASE 5 STARTS')],
+  26: [ev('gac_attack','GAC Attack'), ev('rote','TB PHASE 6 STARTS')],
+  27: [ev('gac_defense','GAC Defense'), ev('tb_ends','TB ENDS'), ev('tw_signup','TW SIGNUP STARTS')],
+  28: [ev('era_battle','ERA BATTLE 2'), ev('tw_defense','TW DEFENSE STARTS')],
 };
 
 const EPISODE_OVERRIDES = {
   1: {
-    1:  [ev('marquee_event','Marquee Event'), ev('journey_reruns','Journey Event Reruns Start'), ev('era_changeover','Era Changeover'), ev('gac_signup','GAC Signup Starts'), ev('tw_attack','TW Attack Starts')],
-    7:  [ev('rote','Territory Battles Phase 1'), ev('conquest_start','2nd Conquest of Volume Starts'), ev('smugglersrun','Smugglers Run I'), ev('gac_attack','GAC Attack')],
-    8:  [ev('era_challenge','Era Challenge'), ev('rote','Territory Battles Phase 2'), ev('journey_reruns','End of Journey Reruns')],
-    15: [ev('marquee_event','Marquee Event'), ev('tw_offense','TW Offense Starts'), ev('gac_signup','GAC Signup Starts')],
-    21: [ev('conquest_end','2nd Conquest of Volume Ends'), ev('gac_attack','GAC Attack'), ev('proving_ground','Proving Ground'), ev('ultimate_journey','Ultimate Journey'), ev('smugglersrun','Smugglers Run I'), ev('rote','Territory Battles Phase 1')],
+    1:  [ev('marquee_event','Marquee Event'), ev('journey_reruns','Journey Event Reruns Start'), ev('era_changeover','Era Changeover'), ev('gac_signup','GAC SIGNUP STARTS'), ev('tw_attack','TW ATTACK STARTS')],
+    7:  [ev('rote','TB Phase 1'), ev('conquest_start','2nd Conquest of Volume Starts'), ev('smugglersrun','Smugglers Run I'), ev('gac_attack','GAC ATTACK')],
+    8:  [ev('era_challenge','Era Challenge'), ev('rote','TB Phase 2 Start'), ev('journey_reruns','End of Journey Reruns')],
+    15: [ev('marquee_event','Marquee Event'), ev('tw_offense','TW OFFENSE'), ev('gac_signup','GAC SIGNUP STARTS')],
+    21: [ev('conquest_end','2nd Conquest of Volume Ends'), ev('gac_attack','GAC ATTACK'), ev('proving_ground','Proving Ground'), ev('ultimate_journey','Ultimate Journey'), ev('smugglersrun','Smugglers Run I'), ev('rote','TB PHASE 1 STARTS')],
   },
   2: {
-    1:  [ev('marquee_event','Marquee Event'), ev('gac_signup','GAC Signup Starts'), ev('tw_attack','TW Attack Starts')],
-    7:  [ev('rote','Territory Battles Phase 1'), ev('conquest_start','3rd Conquest of Volume Starts'), ev('smugglersrun','Smugglers Run I'), ev('gac_attack','GAC Attack')],
-    8:  [ev('era_challenge','Era Challenge'), ev('rote','Territory Battles Phase 2')],
-    15: [ev('marquee_event','Marquee Event'), ev('tw_offense','TW Offense Starts'), ev('gac_signup','GAC Signup Starts')],
-    21: [ev('conquest_end','Conquest Volume Ends'), ev('gac_attack','GAC Attack'), ev('proving_ground','Proving Ground'), ev('ultimate_journey','Ultimate Journey'), ev('smugglersrun','Smugglers Run I'), ev('rote','Territory Battles Phase 1')],
+    1:  [ev('marquee_event','Marquee Event'), ev('gac_signup','GAC SIGNUP STARTS'), ev('tw_attack','TW ATTACK STARTS')],
+    7:  [ev('rote','TB Phase 1'), ev('conquest_start','3rd Conquest of Volume Starts'), ev('smugglersrun','Smugglers Run I'), ev('gac_attack','GAC ATTACK')],
+    8:  [ev('era_challenge','Era Challenge'), ev('rote','TB Phase 2 Start')],
+    15: [ev('marquee_event','Marquee Event'), ev('tw_offense','TW OFFENSE'), ev('gac_signup','GAC SIGNUP STARTS')],
+    21: [ev('conquest_end','Conquest Volume Ends (Unit First Playable)'), ev('gac_attack','GAC ATTACK'), ev('proving_ground','Proving Ground'), ev('ultimate_journey','Ultimate Journey'), ev('smugglersrun','Smugglers Run I'), ev('rote','TB PHASE 1 STARTS')],
   },
   3: {
-    1:  [ev('marquee_event','Marquee Event'), ev('journey_guide','4/5* Journey Guide Event Unlock'), ev('gac_signup','GAC Signup Starts'), ev('tw_attack','TW Attack Starts')],
-    7:  [ev('rote','Territory Battles Phase 1'), ev('conquest_start','1st Conquest of New Volume Starts'), ev('smugglersrun','Smugglers Run I'), ev('gac_attack','GAC Attack')],
-    8:  [ev('era_challenge','Era Challenge'), ev('rote','Territory Battles Phase 2')],
-    15: [ev('marquee_event','Marquee Event'), ev('journey_guide','6/7* Journey Guide Unlock'), ev('tw_offense','TW Offense Starts'), ev('gac_signup','GAC Signup Starts')],
-    21: [ev('conquest_end','1st Conquest of New Volume Ends'), ev('gac_attack','GAC Attack'), ev('proving_ground','Proving Ground'), ev('ultimate_journey','Ultimate Journey'), ev('smugglersrun','Smugglers Run I'), ev('rote','Territory Battles Phase 1')],
+    1:  [ev('marquee_event','Marquee Event'), ev('journey_guide','4/5* Journey Guide Event Unlock'), ev('gac_signup','GAC SIGNUP STARTS'), ev('tw_attack','TW ATTACK STARTS')],
+    7:  [ev('rote','TB Phase 1'), ev('conquest_start','1st Conquest of New Volume Starts'), ev('smugglersrun','Smugglers Run I'), ev('gac_attack','GAC ATTACK')],
+    8:  [ev('era_challenge','Era Challenge'), ev('rote','TB Phase 2 Start')],
+    15: [ev('marquee_event','Marquee Event'), ev('journey_guide','6/7* Journey Guide Unlock'), ev('tw_offense','TW OFFENSE'), ev('gac_signup','GAC SIGNUP STARTS')],
+    21: [ev('conquest_end','1st Conquest of New Volume Ends'), ev('gac_attack','GAC ATTACK'), ev('proving_ground','Proving Ground'), ev('ultimate_journey','Ultimate Journey'), ev('smugglersrun','Smugglers Run I'), ev('rote','TB PHASE 1 STARTS')],
   }
 };
 
-const BOSS_LOOP = [
-  'Krayt Dragon',
-  'Zeffo Tomb Guardians',
-  'Jotaz',
-  'Dryax'
-];
+const BOSS_WEEKDAYS = {
+  2: 'Krayt Dragon',          // Tuesday
+  3: 'Zeffo Tomb Guardians',  // Wednesday
+  4: 'Jotaz',                 // Thursday
+  5: 'Dryax'                  // Friday
+};
 
-const DEFAULT_ERA_START = '2026-01-20'; // Tuesday
+const DEFAULT_ERA_START = '2026-01-20'; // Baseline Tuesday
 const WEEKDAY_NAMES = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 const WEEKDAY_SHORT = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 
 /* =========================================================
-   EXACT UTC TIME ENGINE (18:00 UTC Standard Reset)
+   TIME ENGINE (18:00 UTC Reset Baseline)
    ========================================================= */
 
 function getStoredEraStart(){
@@ -475,7 +474,6 @@ function getStoredEraStart(){
 
 function parseEraStart(str){
   const [y,m,d] = str.split('-').map(Number);
-  // Era starts at 18:00 UTC on Tuesday
   return Date.UTC(y, m-1, d, 18, 0, 0);
 }
 
@@ -487,29 +485,22 @@ function getGameStatus(){
   const msPerDay = 86400000;
   const diffMs = nowMs - eraStartMs;
 
-  // Raw days elapsed since baseline 18:00 UTC
   let rawDayIndex = Math.floor(diffMs / msPerDay) + 1;
   if(diffMs < 0) rawDayIndex = 1;
 
-  // Era Day is 1 to 84
   let eraDay = ((rawDayIndex - 1) % 84) + 1;
-
-  // Cycle count
   let cycleNum = Math.floor((rawDayIndex - 1) / 84);
 
-  // Active Era start timestamp for current cycle
   const currentEraStartMs = eraStartMs + (cycleNum * 84 * msPerDay);
-
-  // Current game day timestamp (starts at 18:00 UTC)
   const currentDayStartMs = currentEraStartMs + ((eraDay - 1) * msPerDay);
 
   const episode = Math.floor((eraDay - 1) / 28) + 1;
   const dayInEp = ((eraDay - 1) % 28) + 1;
   const week = Math.floor((dayInEp - 1) / 7) + 1;
 
-  // Exact calendar weekday of the active game day
   const activeDayObj = new Date(currentDayStartMs);
-  const weekdayName = WEEKDAY_NAMES[activeDayObj.getUTCDay()];
+  const utcDayIndex = activeDayObj.getUTCDay();
+  const weekdayName = WEEKDAY_NAMES[utcDayIndex];
 
   return {
     nowMs,
@@ -518,6 +509,7 @@ function getGameStatus(){
     episode,
     dayInEp,
     week,
+    utcDayIndex,
     weekdayName,
     currentEraStartMs,
     currentDayStartMs,
@@ -535,20 +527,81 @@ function fmtDateUTC(ms){
   return d.toLocaleDateString('en-GB', { timeZone: 'UTC', weekday: 'short', day: 'numeric', month: 'short' });
 }
 
-/* Helper to summarize Guild Event state for Today and Tomorrow */
-function getGuildEventSummary(dayInEp){
-  if(dayInEp >= 7 && dayInEp <= 12){
-    const phase = dayInEp - 6;
-    return `ROTE Phase ${phase} of 6`;
+/* Helper to describe current GAC Status */
+function getGacStatus(st){
+  // GAC Signup starts Day 1, 15, 22. Off week is Day 22-28 when no season active.
+  const d = st.dayInEp;
+  const format = (st.episode % 2 === 1) ? '5v5' : '3v3';
+
+  if(d >= 22 && d <= 28){
+    return {
+      status: 'OFF-WEEK',
+      badgeClass: 'off',
+      title: `Grand Arena (${format})`,
+      main: 'Season Intermission',
+      sub: `Next Season starts in ${29 - d} days (${format === '5v5' ? '3v3' : '5v5'})`
+    };
   }
+
+  // Active rounds within weeks
+  if(d === 1 || d === 15){
+    return { status: 'SIGNUP PHASE', badgeClass: 'purple', title: `Grand Arena (${format})`, main: 'Signup Phase Open', sub: 'Set Defense Phase starts tomorrow' };
+  }
+  if(d === 2 || d === 4 || d === 6 || d === 16 || d === 18 || d === 20){
+    return { status: 'DEFENSE PHASE', badgeClass: 'warning', title: `Grand Arena (${format})`, main: 'Defense Phase Active', sub: 'Attack Phase begins tomorrow' };
+  }
+  if(d === 3 || d === 5 || d === 7 || d === 17 || d === 19 || d === 21){
+    return { status: 'ATTACK PHASE', badgeClass: 'running', title: `Grand Arena (${format})`, main: 'Attack Phase Active', sub: 'Clear enemy sectors before payout' };
+  }
+
+  return { status: 'PREPARATION', badgeClass: 'running', title: `Grand Arena (${format})`, main: 'Round Transition', sub: 'Next round starts shortly' };
+}
+
+/* Helper to describe current Conquest Status */
+function getConquestStatus(st){
+  const d = st.dayInEp;
+  let titleNote = 'Volume Conquest';
+  if(st.episode === 1) titleNote = '2nd Conquest of Vol.';
+  else if(st.episode === 2) titleNote = '3rd Conquest of Vol. (Final)';
+  else if(st.episode === 3) titleNote = '1st Conquest of New Vol.';
+
+  if(d >= 7 && d <= 21){
+    const conquestDay = d - 6;
+    const daysRemaining = 21 - d;
+    return {
+      status: 'ACTIVE',
+      badgeClass: 'warning',
+      title: titleNote,
+      main: `Conquest Day ${conquestDay} of 14`,
+      sub: daysRemaining === 0 ? 'Ends Today! Proving Grounds Active' : `Ends in ${daysRemaining} days`
+    };
+  } else if(d < 7){
+    return {
+      status: 'UPCOMING',
+      badgeClass: 'purple',
+      title: titleNote,
+      main: `Starts in ${7 - d} days`,
+      sub: `Ep ${st.episode} Conquest Launch`
+    };
+  } else {
+    return {
+      status: 'UPCOMING',
+      badgeClass: 'purple',
+      title: 'Next Volume Conquest',
+      main: `Starts in ${(28 - d) + 7} days`,
+      sub: 'Intermission Active'
+    };
+  }
+}
+
+/* Helper to summarize Guild Event state */
+function getGuildEventSummary(dayInEp){
+  if(dayInEp >= 7 && dayInEp <= 12) return `ROTE TB Phase ${dayInEp - 6} of 6`;
   if(dayInEp === 13 || dayInEp === 27) return 'TB Ends → TW Signup Starts';
   if(dayInEp === 14 || dayInEp === 28) return 'TW Defense Phase Starts';
-  if(dayInEp === 15 || dayInEp === 1) return 'TW Attack / Offense Phase Starts';
+  if(dayInEp === 15 || dayInEp === 1) return 'TW Attack / Offense Starts';
   if(dayInEp === 2 || dayInEp === 6 || dayInEp === 20) return 'TW Payout / Intermission';
-  if(dayInEp >= 21 && dayInEp <= 26){
-    const phase = dayInEp - 20;
-    return `ROTE Phase ${phase} of 6`;
-  }
+  if(dayInEp >= 21 && dayInEp <= 26) return `ROTE TB Phase ${dayInEp - 20} of 6`;
   return 'Guild Intermission';
 }
 
@@ -572,62 +625,9 @@ function renderMergedHero(st){
 function renderStatusDashboard(st){
   const container = document.getElementById('statusDashboard');
 
-  // 1. GAC Status Logic
-  let gacState = {};
-  if(st.dayInEp <= 21){
-    const gacWeek = Math.floor((st.dayInEp - 1) / 7) + 1;
-    const daysLeftInSeason = 21 - st.dayInEp + 1;
-    gacState = {
-      status: 'SEASON ACTIVE',
-      badgeClass: 'running',
-      title: 'Grand Arena (GAC)',
-      main: `Week ${gacWeek} of 3`,
-      sub: `${daysLeftInSeason} days left in Season`
-    };
-  } else {
-    const daysUntilNextSeason = 28 - st.dayInEp + 1;
-    gacState = {
-      status: 'OFF-WEEK',
-      badgeClass: 'off',
-      title: 'Grand Arena (GAC)',
-      main: 'Season Intermission',
-      sub: `New Season starts in ${daysUntilNextSeason}d`
-    };
-  }
+  const gac = getGacStatus(st);
+  const conq = getConquestStatus(st);
 
-  // 2. Conquest Status Logic
-  let conquestState = {};
-  if(st.dayInEp >= 7 && st.dayInEp <= 20){
-    const conquestDay = st.dayInEp - 6;
-    const daysLeft = 14 - conquestDay + 1;
-    conquestState = {
-      status: 'ACTIVE',
-      badgeClass: 'warning',
-      title: 'Conquest Event',
-      main: `Day ${conquestDay} of 14`,
-      sub: `Ends in ~${daysLeft} days`
-    };
-  } else if(st.dayInEp < 7){
-    const daysUntil = 7 - st.dayInEp;
-    conquestState = {
-      status: 'UPCOMING',
-      badgeClass: 'purple',
-      title: 'Conquest Event',
-      main: `Starts in ${daysUntil}d`,
-      sub: `Ep ${st.episode} Conquest Launch`
-    };
-  } else {
-    const daysUntil = (28 - st.dayInEp) + 7;
-    conquestState = {
-      status: 'UPCOMING',
-      badgeClass: 'purple',
-      title: 'Conquest Event',
-      main: `Starts in ${daysUntil}d`,
-      sub: `Next Conquest Launch`
-    };
-  }
-
-  // 3. Guild Event Status (Direct Today & Tomorrow Summary)
   const tmrwDayInEp = (st.dayInEp % 28) + 1;
   const todayGuildSummary = getGuildEventSummary(st.dayInEp);
   const tmrwGuildSummary = getGuildEventSummary(tmrwDayInEp);
@@ -635,15 +635,15 @@ function renderStatusDashboard(st){
   const isGuildActive = todayGuildSummary.includes('ROTE') || todayGuildSummary.includes('TW');
 
   container.innerHTML = `
-    <div class="status-card ${gacState.badgeClass === 'running' ? 'cyan-card' : ''}">
-      <div class="sc-header"><span class="sc-title">${gacState.title}</span><span class="sc-badge ${gacState.badgeClass}">${gacState.status}</span></div>
-      <div class="sc-main"><div class="sc-val">${gacState.main}</div><div class="sc-sub">${gacState.sub}</div></div>
-      <div class="sc-footer"><span>Format: 5v5 / 3v3</span><span class="highlight">Ep ${st.episode}</span></div>
+    <div class="status-card ${gac.badgeClass === 'running' ? 'cyan-card' : ''}">
+      <div class="sc-header"><span class="sc-title">${gac.title}</span><span class="sc-badge ${gac.badgeClass}">${gac.status}</span></div>
+      <div class="sc-main"><div class="sc-val">${gac.main}</div><div class="sc-sub">${gac.sub}</div></div>
+      <div class="sc-footer"><span>Format Cycle</span><span class="highlight">Ep ${st.episode}</span></div>
     </div>
 
-    <div class="status-card ${conquestState.badgeClass === 'warning' ? 'amber-card' : ''}">
-      <div class="sc-header"><span class="sc-title">${conquestState.title}</span><span class="sc-badge ${conquestState.badgeClass}">${conquestState.status}</span></div>
-      <div class="sc-main"><div class="sc-val">${conquestState.main}</div><div class="sc-sub">${conquestState.sub}</div></div>
+    <div class="status-card ${conq.badgeClass === 'warning' ? 'amber-card' : ''}">
+      <div class="sc-header"><span class="sc-title">${conq.title}</span><span class="sc-badge ${conq.badgeClass}">${conq.status}</span></div>
+      <div class="sc-main"><div class="sc-val">${conq.main}</div><div class="sc-sub">${conq.sub}</div></div>
       <div class="sc-footer"><span>14-Day Event</span><span class="highlight">Proving Grounds at end</span></div>
     </div>
 
@@ -710,7 +710,7 @@ function renderFullSchedule(st){
 }
 
 function renderMainFeed(st){
-  // 1. Today Events
+  // Today Events
   const todayEvents = getDayEvents(st.episode, st.dayInEp);
   const todayDateMs = st.currentDayStartMs;
 
@@ -718,7 +718,7 @@ function renderMainFeed(st){
   document.getElementById('todaySub').textContent = fmtDateUTC(todayDateMs);
   renderCards(document.getElementById('todayCards'), todayEvents);
 
-  // 2. Tomorrow Events
+  // Tomorrow Events
   const tmrwDayIndex = (st.eraDay % 84) + 1;
   const tmrwEp = Math.floor((tmrwDayIndex - 1) / 28) + 1;
   const tmrwDayInEp = ((tmrwDayIndex - 1) % 28) + 1;
@@ -731,7 +731,7 @@ function renderMainFeed(st){
   document.getElementById('tmrwSub').textContent = fmtDateUTC(tmrwDateMs);
   renderCards(document.getElementById('tmrwCards'), tmrwEvents);
 
-  // 3. 7-Day Forecast
+  // 7-Day Forecast
   const forecastEl = document.getElementById('forecastRow');
   forecastEl.innerHTML = '';
   for(let i = 0; i < 7; i++){
@@ -751,33 +751,39 @@ function renderMainFeed(st){
     forecastEl.appendChild(chip);
   }
 
-  // 4. Coliseum Boss Rotation Loop
+  // Coliseum Boss Strip (Tue = Krayt, Wed = Zeffo, Thu = Jotaz, Fri = Dryax)
   const bossEl = document.getElementById('bossStrip');
   bossEl.innerHTML = '';
 
-  const activeBossIndex = (st.rawDayIndex - 1) % 4;
+  const currentUTCDay = st.utcDayIndex;
 
-  BOSS_LOOP.forEach((bossName, index) => {
-    const isActive = index === activeBossIndex;
+  const bosses = [
+    { dayNum: 2, name: 'Krayt Dragon', dayName: 'Tuesday' },
+    { dayNum: 3, name: 'Zeffo Tomb Guardians', dayName: 'Wednesday' },
+    { dayNum: 4, name: 'Jotaz', dayName: 'Thursday' },
+    { dayNum: 5, name: 'Dryax', dayName: 'Friday' }
+  ];
+
+  bosses.forEach(b => {
+    const isActive = currentUTCDay === b.dayNum;
     const cell = document.createElement('div');
     cell.className = 'bcell' + (isActive ? ' active' : '');
     cell.innerHTML = `
-      <div class="step">Boss ${index + 1} of 4${isActive ? ' · Active Today' : ''}</div>
-      <div class="name">${bossName}</div>
+      <div class="step">${b.dayName}${isActive ? ' · Active Today' : ''}</div>
+      <div class="name">${b.name}</div>
     `;
     bossEl.appendChild(cell);
   });
 }
 
 /* =========================================================
-   LIVE TIMER & MASTER RENDER (18:00 UTC Reset)
+   LIVE COUNTDOWN & MASTER RENDER (18:00 UTC Reset)
    ========================================================= */
 
 function tickCountdown(){
   const now = new Date();
   const nowMs = now.getTime();
 
-  // Next reset is at exactly 18:00:00 UTC
   let reset = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 18, 0, 0, 0));
   if(nowMs >= reset.getTime()){
     reset.setUTCDate(reset.getUTCDate() + 1);
