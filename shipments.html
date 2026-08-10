@@ -518,8 +518,8 @@ input:focus, select:focus { border-color: var(--amber-border); box-shadow: 0 0 0
               <div style="font-size:11.5px; color:var(--text2)">
                 Calculated automatically from your Relic Planner Guild Event Setup: 
               </div>
-              <span id="synced-get2-val" class="curr-tag tag-get2"><img src="assets/GET2.png" class="curr-icon" onerror="imgErrFallback(this)"> <span id="synced-get2-text">0 GET 2</span></span>
-              <span id="synced-get3-val" class="curr-tag tag-get3"><img src="assets/GET3.png" class="curr-icon" onerror="imgErrFallback(this)"> <span id="synced-get3-text">0 GET 3</span></span>
+              <span id="synced-get2-val" class="curr-tag tag-get2"><img src="assets/shipments/GET2.png" class="curr-icon" onerror="imgErrFallback(this)"> <span id="synced-get2-text">0 GET 2</span></span>
+              <span id="synced-get3-val" class="curr-tag tag-get3"><img src="assets/shipments/GET3.png" class="curr-icon" onerror="imgErrFallback(this)"> <span id="synced-get3-text">0 GET 3</span></span>
             </div>
             <a href="relic.html" class="btn btn-outline btn-sm">Setup Guild Events →</a>
           </div>
@@ -633,7 +633,7 @@ input:focus, select:focus { border-color: var(--amber-border); box-shadow: 0 0 0
           <div class="budget-row">
             <div class="budget-row-top">
               <span class="budget-label" style="color:#60a5fa">
-                <img src="assets/RAID1.png" class="curr-icon" onerror="imgErrFallback(this)"> Mk I
+                <img src="assets/shipments/RAID1.png" class="curr-icon" onerror="imgErrFallback(this)"> Mk I
               </span>
               <span class="budget-val" id="b-mk1">0</span>
             </div>
@@ -642,7 +642,7 @@ input:focus, select:focus { border-color: var(--amber-border); box-shadow: 0 0 0
           <div class="budget-row">
             <div class="budget-row-top">
               <span class="budget-label" style="color:#fbbf24">
-                <img src="assets/RAID2.png" class="curr-icon" onerror="imgErrFallback(this)"> Mk II
+                <img src="assets/shipments/RAID2.png" class="curr-icon" onerror="imgErrFallback(this)"> Mk II
               </span>
               <span class="budget-val" id="b-mk2">0</span>
             </div>
@@ -651,7 +651,7 @@ input:focus, select:focus { border-color: var(--amber-border); box-shadow: 0 0 0
           <div class="budget-row" style="border-bottom:none">
             <div class="budget-row-top">
               <span class="budget-label" style="color:#f87171">
-                <img src="assets/RAID3.png" class="curr-icon" onerror="imgErrFallback(this)"> Mk III
+                <img src="assets/shipments/RAID3.png" class="curr-icon" onerror="imgErrFallback(this)"> Mk III
               </span>
               <span class="budget-val" id="b-mk3">0</span>
             </div>
@@ -667,7 +667,7 @@ input:focus, select:focus { border-color: var(--amber-border); box-shadow: 0 0 0
           <div class="budget-row">
             <div class="budget-row-top">
               <span class="budget-label" style="color:#34d399">
-                <img src="assets/GET1.png" class="curr-icon" onerror="imgErrFallback(this)"> GET 1
+                <img src="assets/shipments/GET1.png" class="curr-icon" onerror="imgErrFallback(this)"> GET 1
               </span>
               <span class="budget-val" id="b-get1">0</span>
             </div>
@@ -676,7 +676,7 @@ input:focus, select:focus { border-color: var(--amber-border); box-shadow: 0 0 0
           <div class="budget-row">
             <div class="budget-row-top">
               <span class="budget-label" style="color:#fb923c">
-                <img src="assets/GET2.png" class="curr-icon" onerror="imgErrFallback(this)"> GET 2
+                <img src="assets/shipments/GET2.png" class="curr-icon" onerror="imgErrFallback(this)"> GET 2
               </span>
               <span class="budget-val" id="b-get2">0</span>
             </div>
@@ -685,7 +685,7 @@ input:focus, select:focus { border-color: var(--amber-border); box-shadow: 0 0 0
           <div class="budget-row" style="border-bottom:none">
             <div class="budget-row-top">
               <span class="budget-label" style="color:var(--cyan)">
-                <img src="assets/GET3.png" class="curr-icon" onerror="imgErrFallback(this)"> GET 3
+                <img src="assets/shipments/GET3.png" class="curr-icon" onerror="imgErrFallback(this)"> GET 3
               </span>
               <span class="budget-val" id="b-get3">0</span>
             </div>
@@ -811,23 +811,23 @@ const PERSONAL_TRACK = [
 
 const STORE_ITEMS = [
   // SHARDS & BLUEPRINTS
-  { id:'mk2_hoda_shards', cat:'shards', name:'Hermit Yoda Shards', sub:'5 Shards', cost:1250, curr:'mk2', icon:'assets/HERMITYODA.PNG', itemIcon:'assets/HERMITYODA.PNG', yieldQty:5, yieldUnit:'Hermit Yoda Shards' },
-  { id:'mk2_wampa_shards', cat:'shards', name:'Wampa Shards', sub:'5 Shards', cost:1250, curr:'mk2', icon:'assets/WAMPA.PNG', itemIcon:'assets/WAMPA.PNG', yieldQty:5, yieldUnit:'Wampa Shards' },
-  { id:'mk2_rolo_shards', cat:'shards', name:'Rebel Officer Leia Organa Shards', sub:'5 Shards', cost:1250, curr:'mk2', icon:'assets/ROLO.PNG', itemIcon:'assets/ROLO.PNG', yieldQty:5, yieldUnit:'ROLO Shards' },
-  { id:'mk2_ipd_shards', cat:'shards', name:'Imperial Probe Droid Shards', sub:'5 Shards', cost:1250, curr:'mk2', icon:'assets/IPD.PNG', itemIcon:'assets/IPD.PNG', yieldQty:5, yieldUnit:'IPD Shards' },
-  { id:'mk2_gas_shards', cat:'shards', name:'General Skywalker Shards', sub:'5 Shards', cost:1750, curr:'mk2', icon:'assets/GAS.PNG', itemIcon:'assets/GAS.PNG', yieldQty:5, yieldUnit:'GAS Shards' },
-  { id:'mk2_malak_shards', cat:'shards', name:'Darth Malak Shards', sub:'5 Shards', cost:1750, curr:'mk2', icon:'assets/MALAK.PNG', itemIcon:'assets/MALAK.PNG', yieldQty:5, yieldUnit:'Malak Shards' },
-  { id:'mk1_raid_shards', cat:'shards', name:'Raid Character Shards', sub:'10 Shards', cost:700, curr:'mk1', icon:'assets/HERMITYODA.PNG', itemIcon:'assets/HERMITYODA.PNG', yieldQty:10, yieldUnit:'Raid Character Shards' },
-  { id:'get2_nego_blueprints', cat:'shards', name:'Negotiator Blueprints', sub:'5 Blueprints', cost:1350, curr:'get2', icon:'assets/NEGOTIATOR.PNG', itemIcon:'assets/NEGOTIATOR.PNG', yieldQty:5, yieldUnit:'Negotiator Blueprints' },
-  { id:'get2_malev_blueprints', cat:'shards', name:'Malevolence Blueprints', sub:'5 Blueprints', cost:1350, curr:'get2', icon:'assets/MALEVOLENCE.PNG', itemIcon:'assets/MALEVOLENCE.PNG', yieldQty:5, yieldUnit:'Malevolence Blueprints' },
-  { id:'get3_kam_shards', cat:'shards', name:'Ki-Adi-Mundi (KAM) Shards', sub:'5 Shards', cost:2125, curr:'get3', icon:'assets/KAM.PNG', itemIcon:'assets/KAM.PNG', yieldQty:5, yieldUnit:'KAM Shards' },
+  { id:'mk2_hoda_shards', cat:'shards', name:'Hermit Yoda Shards', sub:'5 Shards', cost:1250, curr:'mk2', icon:'assets/shipments/HERMITYODA.PNG', itemIcon:'assets/shipments/HERMITYODA.PNG', yieldQty:5, yieldUnit:'Hermit Yoda Shards' },
+  { id:'mk2_wampa_shards', cat:'shards', name:'Wampa Shards', sub:'5 Shards', cost:1250, curr:'mk2', icon:'assets/shipments/WAMPA.PNG', itemIcon:'assets/shipments/WAMPA.PNG', yieldQty:5, yieldUnit:'Wampa Shards' },
+  { id:'mk2_rolo_shards', cat:'shards', name:'Rebel Officer Leia Organa Shards', sub:'5 Shards', cost:1250, curr:'mk2', icon:'assets/shipments/ROLO.PNG', itemIcon:'assets/shipments/ROLO.PNG', yieldQty:5, yieldUnit:'ROLO Shards' },
+  { id:'mk2_ipd_shards', cat:'shards', name:'Imperial Probe Droid Shards', sub:'5 Shards', cost:1250, curr:'mk2', icon:'assets/shipments/IPD.PNG', itemIcon:'assets/shipments/IPD.PNG', yieldQty:5, yieldUnit:'IPD Shards' },
+  { id:'mk2_gas_shards', cat:'shards', name:'General Skywalker Shards', sub:'5 Shards', cost:1750, curr:'mk2', icon:'assets/shipments/GAS.PNG', itemIcon:'assets/shipments/GAS.PNG', yieldQty:5, yieldUnit:'GAS Shards' },
+  { id:'mk2_malak_shards', cat:'shards', name:'Darth Malak Shards', sub:'5 Shards', cost:1750, curr:'mk2', icon:'assets/shipments/MALAK.PNG', itemIcon:'assets/shipments/MALAK.PNG', yieldQty:5, yieldUnit:'Malak Shards' },
+  { id:'mk1_raid_shards', cat:'shards', name:'Raid Character Shards', sub:'10 Shards', cost:700, curr:'mk1', icon:'assets/shipments/HERMITYODA.PNG', itemIcon:'assets/shipments/HERMITYODA.PNG', yieldQty:10, yieldUnit:'Raid Character Shards' },
+  { id:'get2_nego_blueprints', cat:'shards', name:'Negotiator Blueprints', sub:'5 Blueprints', cost:1350, curr:'get2', icon:'assets/shipments/NEGOTIATOR.PNG', itemIcon:'assets/shipments/NEGOTIATOR.PNG', yieldQty:5, yieldUnit:'Negotiator Blueprints' },
+  { id:'get2_malev_blueprints', cat:'shards', name:'Malevolence Blueprints', sub:'5 Blueprints', cost:1350, curr:'get2', icon:'assets/shipments/MALEVOLENCE.PNG', itemIcon:'assets/shipments/MALEVOLENCE.PNG', yieldQty:5, yieldUnit:'Malevolence Blueprints' },
+  { id:'get3_kam_shards', cat:'shards', name:'Ki-Adi-Mundi (KAM) Shards', sub:'5 Shards', cost:2125, curr:'get3', icon:'assets/shipments/KAM.PNG', itemIcon:'assets/shipments/KAM.PNG', yieldQty:5, yieldUnit:'KAM Shards' },
   { id:'get3_wat_tambor_shards', cat:'shards', name:'Wat Tambor Shards', sub:'5 Shards', cost:2125, curr:'get3', icon:null, itemIcon:null, yieldQty:5, yieldUnit:'Wat Tambor Shards' },
-  { id:'get2_rolo_shards_900', cat:'shards', name:'Rebel Officer Leia Organa Shards (GET2)', sub:'5 Shards', cost:900, curr:'get2', icon:'assets/ROLO.PNG', itemIcon:'assets/ROLO.PNG', yieldQty:5, yieldUnit:'ROLO Shards' },
-  { id:'get2_ipd_shards_900', cat:'shards', name:'Imperial Probe Droid Shards (GET2)', sub:'5 Shards', cost:900, curr:'get2', icon:'assets/IPD.PNG', itemIcon:'assets/IPD.PNG', yieldQty:5, yieldUnit:'IPD Shards' },
-  { id:'get1_gas_shards_1900', cat:'shards', name:'General Skywalker Shards (GET1)', sub:'5 Shards', cost:1900, curr:'get1', icon:'assets/GAS.PNG', itemIcon:'assets/GAS.PNG', yieldQty:5, yieldUnit:'GAS Shards' },
-  { id:'get1_malak_shards_1900', cat:'shards', name:'Darth Malak Shards (GET1)', sub:'5 Shards', cost:1900, curr:'get1', icon:'assets/MALAK.PNG', itemIcon:'assets/MALAK.PNG', yieldQty:5, yieldUnit:'Malak Shards' },
-  { id:'get1_hoda_shards_1350', cat:'shards', name:'Hermit Yoda Shards (GET1)', sub:'5 Shards', cost:1350, curr:'get1', icon:'assets/HERMITYODA.PNG', itemIcon:'assets/HERMITYODA.PNG', yieldQty:5, yieldUnit:'Hermit Yoda Shards' },
-  { id:'get1_wampa_shards_1350', cat:'shards', name:'Wampa Shards (GET1)', sub:'5 Shards', cost:1350, curr:'get1', icon:'assets/WAMPA.PNG', itemIcon:'assets/WAMPA.PNG', yieldQty:5, yieldUnit:'Wampa Shards' },
+  { id:'get2_rolo_shards_900', cat:'shards', name:'Rebel Officer Leia Organa Shards (GET2)', sub:'5 Shards', cost:900, curr:'get2', icon:'assets/shipments/ROLO.PNG', itemIcon:'assets/shipments/ROLO.PNG', yieldQty:5, yieldUnit:'ROLO Shards' },
+  { id:'get2_ipd_shards_900', cat:'shards', name:'Imperial Probe Droid Shards (GET2)', sub:'5 Shards', cost:900, curr:'get2', icon:'assets/shipments/IPD.PNG', itemIcon:'assets/shipments/IPD.PNG', yieldQty:5, yieldUnit:'IPD Shards' },
+  { id:'get1_gas_shards_1900', cat:'shards', name:'General Skywalker Shards (GET1)', sub:'5 Shards', cost:1900, curr:'get1', icon:'assets/shipments/GAS.PNG', itemIcon:'assets/shipments/GAS.PNG', yieldQty:5, yieldUnit:'GAS Shards' },
+  { id:'get1_malak_shards_1900', cat:'shards', name:'Darth Malak Shards (GET1)', sub:'5 Shards', cost:1900, curr:'get1', icon:'assets/shipments/MALAK.PNG', itemIcon:'assets/shipments/MALAK.PNG', yieldQty:5, yieldUnit:'Malak Shards' },
+  { id:'get1_hoda_shards_1350', cat:'shards', name:'Hermit Yoda Shards (GET1)', sub:'5 Shards', cost:1350, curr:'get1', icon:'assets/shipments/HERMITYODA.PNG', itemIcon:'assets/shipments/HERMITYODA.PNG', yieldQty:5, yieldUnit:'Hermit Yoda Shards' },
+  { id:'get1_wampa_shards_1350', cat:'shards', name:'Wampa Shards (GET1)', sub:'5 Shards', cost:1350, curr:'get1', icon:'assets/shipments/WAMPA.PNG', itemIcon:'assets/shipments/WAMPA.PNG', yieldQty:5, yieldUnit:'Wampa Shards' },
   { id:'get3_ahsoka_shards_1750', cat:'shards', name:'Commander Ahsoka Tano Shards', sub:'5 Shards', cost:1750, curr:'get3', icon:null, itemIcon:null, yieldQty:5, yieldUnit:'Ahsoka Shards' },
   { id:'get3_maul_shards_1750', cat:'shards', name:'Maul Shards', sub:'5 Shards', cost:1750, curr:'get3', icon:null, itemIcon:null, yieldQty:5, yieldUnit:'Maul Shards' },
   { id:'get3_razorcrest_shards_1750', cat:'shards', name:'Razor Crest Shards', sub:'5 Shards', cost:1750, curr:'get3', icon:null, itemIcon:null, yieldQty:5, yieldUnit:'Razor Crest Shards' },
@@ -846,33 +846,33 @@ const STORE_ITEMS = [
   { id:'get1_g12_purple_5_400', cat:'gear', name:'Purple Gear 12 Pieces (GET1)', sub:'5 Pieces', cost:400, curr:'get1', icon:null, itemIcon:null, yieldQty:5, yieldUnit:'G12 Purple Pieces' },
 
   // RELIC MATERIALS
-  { id:'mk3_gyrda', cat:'relics', name:'Gyrda Keypads', sub:'2 Keypads', cost:1170, curr:'mk3', icon:'assets/GYRDA.PNG', itemIcon:'assets/GYRDA.PNG', yieldQty:2, yieldUnit:'Gyrda Keypads' },
-  { id:'mk3_aero', cat:'relics', name:'Aeromagnifiers', sub:'2 Aeromagnifiers', cost:400, curr:'mk3', icon:'assets/AERO.PNG', itemIcon:'assets/AERO.PNG', yieldQty:2, yieldUnit:'Aeromagnifiers' },
-  { id:'mk3_impulse', cat:'relics', name:'Impulse Detectors', sub:'2 Impulse Detectors', cost:530, curr:'mk3', icon:'assets/IMPULSE.PNG', itemIcon:'assets/IMPULSE.PNG', yieldQty:2, yieldUnit:'Impulse Detectors' },
-  { id:'mk2_zinbiddle', cat:'relics', name:'Zinbiddle Cards', sub:'4 Cards', cost:400, curr:'mk2', icon:'assets/ZINBIDDLE.PNG', itemIcon:'assets/ZINBIDDLE.PNG', yieldQty:4, yieldUnit:'Zinbiddle Cards' },
-  { id:'mk2_electrium', cat:'relics', name:'Electrium Conductors', sub:'4 Conductors', cost:300, curr:'mk2', icon:'assets/ELECTRIUM.PNG', itemIcon:'assets/ELECTRIUM.PNG', yieldQty:4, yieldUnit:'Electrium Conductors' },
-  { id:'mk1_aurodium', cat:'relics', name:'Aurodium Heatsinks', sub:'10 Heatsinks', cost:550, curr:'mk1', icon:'assets/AURODIUM.PNG', itemIcon:'assets/AURODIUM.PNG', yieldQty:10, yieldUnit:'Aurodium Heatsinks' },
-  { id:'mk1_chromium', cat:'relics', name:'Chromium Transistors', sub:'10 Transistors', cost:500, curr:'mk1', icon:'assets/CHROMIUM.PNG', itemIcon:'assets/CHROMIUM.PNG', yieldQty:10, yieldUnit:'Chromium Transistors' },
-  { id:'mk1_bronzium', cat:'relics', name:'Bronzium Wiring', sub:'10 Wirings', cost:400, curr:'mk1', icon:'assets/BRONZIUM.PNG', itemIcon:'assets/BRONZIUM.PNG', yieldQty:10, yieldUnit:'Bronzium Wiring' },
-  { id:'mk1_carbonite', cat:'relics', name:'Carbonite Circuit Boards', sub:'10 Circuit Boards', cost:350, curr:'mk1', icon:'assets/CARBONITE.PNG', itemIcon:'assets/CARBONITE.PNG', yieldQty:10, yieldUnit:'Carbonite Circuit Boards' },
-  { id:'get3_electrium', cat:'relics', name:'Electrium Conductors (GET 3)', sub:'2 Conductors', cost:720, curr:'get3', icon:'assets/ELECTRIUM.PNG', itemIcon:'assets/ELECTRIUM.PNG', yieldQty:2, yieldUnit:'Electrium Conductors' },
-  { id:'get3_zinbiddle', cat:'relics', name:'Zinbiddle Cards (GET 3)', sub:'2 Cards', cost:850, curr:'get3', icon:'assets/ZINBIDDLE.PNG', itemIcon:'assets/ZINBIDDLE.PNG', yieldQty:2, yieldUnit:'Zinbiddle Cards' },
-  { id:'get3_impulse', cat:'relics', name:'Impulse Detectors (GET 3)', sub:'2 Impulse Detectors', cost:1230, curr:'get3', icon:'assets/IMPULSE.PNG', itemIcon:'assets/IMPULSE.PNG', yieldQty:2, yieldUnit:'Impulse Detectors' },
-  { id:'get3_gyrda', cat:'relics', name:'Gyrda Keypads (GET 3)', sub:'1 Keypad', cost:1200, curr:'get3', icon:'assets/GYRDA.PNG', itemIcon:'assets/GYRDA.PNG', yieldQty:1, yieldUnit:'Gyrda Keypads' },
+  { id:'mk3_gyrda', cat:'relics', name:'Gyrda Keypads', sub:'2 Keypads', cost:1170, curr:'mk3', icon:'assets/shipments/GYRDA.PNG', itemIcon:'assets/shipments/GYRDA.PNG', yieldQty:2, yieldUnit:'Gyrda Keypads' },
+  { id:'mk3_aero', cat:'relics', name:'Aeromagnifiers', sub:'2 Aeromagnifiers', cost:400, curr:'mk3', icon:'assets/shipments/AERO.PNG', itemIcon:'assets/shipments/AERO.PNG', yieldQty:2, yieldUnit:'Aeromagnifiers' },
+  { id:'mk3_impulse', cat:'relics', name:'Impulse Detectors', sub:'2 Impulse Detectors', cost:530, curr:'mk3', icon:'assets/shipments/IMPULSE.PNG', itemIcon:'assets/shipments/IMPULSE.PNG', yieldQty:2, yieldUnit:'Impulse Detectors' },
+  { id:'mk2_zinbiddle', cat:'relics', name:'Zinbiddle Cards', sub:'4 Cards', cost:400, curr:'mk2', icon:'assets/shipments/ZINBIDDLE.PNG', itemIcon:'assets/shipments/ZINBIDDLE.PNG', yieldQty:4, yieldUnit:'Zinbiddle Cards' },
+  { id:'mk2_electrium', cat:'relics', name:'Electrium Conductors', sub:'4 Conductors', cost:300, curr:'mk2', icon:'assets/shipments/ELECTRIUM.PNG', itemIcon:'assets/shipments/ELECTRIUM.PNG', yieldQty:4, yieldUnit:'Electrium Conductors' },
+  { id:'mk1_aurodium', cat:'relics', name:'Aurodium Heatsinks', sub:'10 Heatsinks', cost:550, curr:'mk1', icon:'assets/shipments/AURODIUM.PNG', itemIcon:'assets/shipments/AURODIUM.PNG', yieldQty:10, yieldUnit:'Aurodium Heatsinks' },
+  { id:'mk1_chromium', cat:'relics', name:'Chromium Transistors', sub:'10 Transistors', cost:500, curr:'mk1', icon:'assets/shipments/CHROMIUM.PNG', itemIcon:'assets/shipments/CHROMIUM.PNG', yieldQty:10, yieldUnit:'Chromium Transistors' },
+  { id:'mk1_bronzium', cat:'relics', name:'Bronzium Wiring', sub:'10 Wirings', cost:400, curr:'mk1', icon:'assets/shipments/BRONZIUM.PNG', itemIcon:'assets/shipments/BRONZIUM.PNG', yieldQty:10, yieldUnit:'Bronzium Wiring' },
+  { id:'mk1_carbonite', cat:'relics', name:'Carbonite Circuit Boards', sub:'10 Circuit Boards', cost:350, curr:'mk1', icon:'assets/shipments/CARBONITE.PNG', itemIcon:'assets/shipments/CARBONITE.PNG', yieldQty:10, yieldUnit:'Carbonite Circuit Boards' },
+  { id:'get3_electrium', cat:'relics', name:'Electrium Conductors (GET 3)', sub:'2 Conductors', cost:720, curr:'get3', icon:'assets/shipments/ELECTRIUM.PNG', itemIcon:'assets/shipments/ELECTRIUM.PNG', yieldQty:2, yieldUnit:'Electrium Conductors' },
+  { id:'get3_zinbiddle', cat:'relics', name:'Zinbiddle Cards (GET 3)', sub:'2 Cards', cost:850, curr:'get3', icon:'assets/shipments/ZINBIDDLE.PNG', itemIcon:'assets/shipments/ZINBIDDLE.PNG', yieldQty:2, yieldUnit:'Zinbiddle Cards' },
+  { id:'get3_impulse', cat:'relics', name:'Impulse Detectors (GET 3)', sub:'2 Impulse Detectors', cost:1230, curr:'get3', icon:'assets/shipments/IMPULSE.PNG', itemIcon:'assets/shipments/IMPULSE.PNG', yieldQty:2, yieldUnit:'Impulse Detectors' },
+  { id:'get3_gyrda', cat:'relics', name:'Gyrda Keypads (GET 3)', sub:'1 Keypad', cost:1200, curr:'get3', icon:'assets/shipments/GYRDA.PNG', itemIcon:'assets/shipments/GYRDA.PNG', yieldQty:1, yieldUnit:'Gyrda Keypads' },
 
   // SIGNAL DATA
-  { id:'mk3_corrupted_signal', cat:'signal', name:'Corrupted Signal Data', sub:'1 Signal Data', cost:750, curr:'mk3', icon:'assets/CORRUPTED.png', itemIcon:'assets/CORRUPTED.png', yieldQty:1, yieldUnit:'Corrupted' },
-  { id:'get2_grey_signal', cat:'signal', name:'Fragmented (Grey) Signal Data', sub:'20 Signal Data', cost:1600, curr:'get2', icon:'assets/FRAGMENTED.png', itemIcon:'assets/FRAGMENTED.png', yieldQty:20, yieldUnit:'Fragmented' },
-  { id:'get3_green_signal', cat:'signal', name:'Incomplete (Green) Signal Data', sub:'20 Signal Data', cost:2000, curr:'get3', icon:'assets/INCOMPLETE.png', itemIcon:'assets/INCOMPLETE.png', yieldQty:20, yieldUnit:'Incomplete' },
+  { id:'mk3_corrupted_signal', cat:'signal', name:'Corrupted Signal Data', sub:'1 Signal Data', cost:750, curr:'mk3', icon:'assets/shipments/CORRUPTED.png', itemIcon:'assets/shipments/CORRUPTED.png', yieldQty:1, yieldUnit:'Corrupted' },
+  { id:'get2_grey_signal', cat:'signal', name:'Fragmented (Grey) Signal Data', sub:'20 Signal Data', cost:1600, curr:'get2', icon:'assets/shipments/FRAGMENTED.png', itemIcon:'assets/shipments/FRAGMENTED.png', yieldQty:20, yieldUnit:'Fragmented' },
+  { id:'get3_green_signal', cat:'signal', name:'Incomplete (Green) Signal Data', sub:'20 Signal Data', cost:2000, curr:'get3', icon:'assets/shipments/INCOMPLETE.png', itemIcon:'assets/shipments/INCOMPLETE.png', yieldQty:20, yieldUnit:'Incomplete' },
 
   // ABILITY MATERIALS & MODS
-  { id:'mk3_zetas', cat:'ability', name:'Zeta Ability Materials', sub:'2 Zetas', cost:2350, curr:'mk3', icon:'assets/ZETA.PNG', itemIcon:'assets/ZETA.PNG', yieldQty:2, yieldUnit:'Zeta Ability Materials' },
-  { id:'mk1_omegas', cat:'ability', name:'Omega Ability Materials', sub:'5 Omegas', cost:825, curr:'mk1', icon:'assets/OMEGA.PNG', itemIcon:'assets/OMEGA.PNG', yieldQty:5, yieldUnit:'Omega Ability Materials'},
-  { id:'mk1_mod_bonding', cat:'ability', name:'Bonding Pins', sub:'100 Materials', cost:1000, curr:'mk1', icon:'assets/BONDINGPINS.PNG', itemIcon:'assets/BONDINGPINS.PNG', yieldQty:100, yieldUnit:'Bonding Pins' },
-  { id:'mk1_mod_coils', cat:'ability', name:'Fusion Coils', sub:'100 Materials', cost:1000, curr:'mk1', icon:'assets/FUSIONCOILS.PNG', itemIcon:'assets/FUSIONCOILS.PNG', yieldQty:100, yieldUnit:'Fusion Coils' },
-  { id:'mk1_mod_disks', cat:'ability', name:'Fusion Disks', sub:'100 Materials', cost:1000, curr:'mk1', icon:'assets/FUSIONDISKS.PNG', itemIcon:'assets/FUSIONDISKS.PNG', yieldQty:100, yieldUnit:'Fusion Disks' },
-  { id:'mk1_mod_chips', cat:'ability', name:'Control Chips', sub:'100 Materials', cost:1000, curr:'mk1', icon:'assets/CONTROLCHIPS.PNG', itemIcon:'assets/CONTROLCHIPS.PNG', yieldQty:100, yieldUnit:'Control Chips' },
-  { id:'get3_micro_attenuators', cat:'ability', name:'Micro Attenuators', sub:'5 Attenuators', cost:125, curr:'get3', icon:'assets/MICROATTENUATOR.PNG', itemIcon:'assets/MICROATTENUATOR.PNG', yieldQty:5, yieldUnit:'Micro Attenuators' }
+  { id:'mk3_zetas', cat:'ability', name:'Zeta Ability Materials', sub:'2 Zetas', cost:2350, curr:'mk3', icon:'assets/shipments/ZETA.PNG', itemIcon:'assets/shipments/ZETA.PNG', yieldQty:2, yieldUnit:'Zeta Ability Materials' },
+  { id:'mk1_omegas', cat:'ability', name:'Omega Ability Materials', sub:'5 Omegas', cost:825, curr:'mk1', icon:'assets/shipments/OMEGA.PNG', itemIcon:'assets/shipments/OMEGA.PNG', yieldQty:5, yieldUnit:'Omega Ability Materials'},
+  { id:'mk1_mod_bonding', cat:'ability', name:'Bonding Pins', sub:'100 Materials', cost:1000, curr:'mk1', icon:'assets/shipments/BONDINGPINS.PNG', itemIcon:'assets/shipments/BONDINGPINS.PNG', yieldQty:100, yieldUnit:'Bonding Pins' },
+  { id:'mk1_mod_coils', cat:'ability', name:'Fusion Coils', sub:'100 Materials', cost:1000, curr:'mk1', icon:'assets/shipments/FUSIONCOILS.PNG', itemIcon:'assets/shipments/FUSIONCOILS.PNG', yieldQty:100, yieldUnit:'Fusion Coils' },
+  { id:'mk1_mod_disks', cat:'ability', name:'Fusion Disks', sub:'100 Materials', cost:1000, curr:'mk1', icon:'assets/shipments/FUSIONDISKS.PNG', itemIcon:'assets/shipments/FUSIONDISKS.PNG', yieldQty:100, yieldUnit:'Fusion Disks' },
+  { id:'mk1_mod_chips', cat:'ability', name:'Control Chips', sub:'100 Materials', cost:1000, curr:'mk1', icon:'assets/shipments/CONTROLCHIPS.PNG', itemIcon:'assets/shipments/CONTROLCHIPS.PNG', yieldQty:100, yieldUnit:'Control Chips' },
+  { id:'get3_micro_attenuators', cat:'ability', name:'Micro Attenuators', sub:'5 Attenuators', cost:125, curr:'get3', icon:'assets/shipments/MICROATTENUATOR.PNG', itemIcon:'assets/shipments/MICROATTENUATOR.PNG', yieldQty:5, yieldUnit:'Micro Attenuators' }
 ];
 
 // ═══════════════════════════════════════════════════════
@@ -1042,12 +1042,12 @@ function calcTotalSpent() {
 // ═══════════════════════════════════════════════════════
 function getCurrencyTag(curr, costText, valSpanId) {
   const map = {
-    mk1: { class: 'tag-raid1', name: 'Mk I', icon: 'assets/RAID1.png' },
-    mk2: { class: 'tag-raid2', name: 'Mk II', icon: 'assets/RAID2.png' },
-    mk3: { class: 'tag-raid3', name: 'Mk III', icon: 'assets/RAID3.png' },
-    get1: { class: 'tag-get1', name: 'GET 1', icon: 'assets/GET1.png' },
-    get2: { class: 'tag-get2', name: 'GET 2', icon: 'assets/GET2.png' },
-    get3: { class: 'tag-get3', name: 'GET 3', icon: 'assets/GET3.png' }
+    mk1: { class: 'tag-raid1', name: 'Mk I', icon: 'assets/shipments/RAID1.png' },
+    mk2: { class: 'tag-raid2', name: 'Mk II', icon: 'assets/shipments/RAID2.png' },
+    mk3: { class: 'tag-raid3', name: 'Mk III', icon: 'assets/shipments/RAID3.png' },
+    get1: { class: 'tag-get1', name: 'GET 1', icon: 'assets/shipments/GET1.png' },
+    get2: { class: 'tag-get2', name: 'GET 2', icon: 'assets/shipments/GET2.png' },
+    get3: { class: 'tag-get3', name: 'GET 3', icon: 'assets/shipments/GET3.png' }
   };
   const conf = map[curr] || { class: 'tag-raid1', name: curr, icon: '' };
   const valAttr = valSpanId ? `id="${valSpanId}"` : '';
