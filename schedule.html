@@ -111,7 +111,7 @@ body {
 .bracket .bl::before { bottom: -1px; left: -1px; border-bottom-width: 2px; border-left-width: 2px; position: absolute; }
 .bracket .br::before { bottom: -1px; right: -1px; border-bottom-width: 2px; border-right-width: 2px; position: absolute; }
 
-/* ─── Merged Hero Banner ─── */
+/* ─── Merged Era Banner ─── */
 .merged-hero {
   background: linear-gradient(135deg, rgba(79,209,197,0.05), var(--void1) 60%, rgba(232,163,61,0.05));
   border: 1px solid var(--cyan-border); border-radius: var(--radius-lg);
@@ -357,7 +357,7 @@ body {
   <!-- Coliseum Rotation -->
   <div class="section-head">
     <h2>Coliseum Boss Rotation</h2>
-    <span class="sub">Loops Tue–Fri at 18:00 UTC</span>
+    <span class="sub">Loops continuously at 18:00 UTC daily</span>
     <div class="rule"></div>
   </div>
   <div class="boss-strip" id="bossStrip"></div>
@@ -453,12 +453,12 @@ const EPISODE_OVERRIDES = {
   }
 };
 
-const BOSS_WEEKDAYS = {
-  2: 'Krayt Dragon',          // Tuesday
-  3: 'Zeffo Tomb Guardians',  // Wednesday
-  4: 'Jotaz',                 // Thursday
-  5: 'Dryax'                  // Friday
-};
+const BOSS_LOOP = [
+  'Krayt Dragon',
+  'Zeffo Tomb Guardians',
+  'Jotaz',
+  'Dryax'
+];
 
 const DEFAULT_ERA_START = '2026-01-20'; // Baseline Tuesday
 const WEEKDAY_NAMES = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
@@ -529,7 +529,6 @@ function fmtDateUTC(ms){
 
 /* Helper to describe current GAC Status */
 function getGacStatus(st){
-  // GAC Signup starts Day 1, 15, 22. Off week is Day 22-28 when no season active.
   const d = st.dayInEp;
   const format = (st.episode % 2 === 1) ? '5v5' : '3v3';
 
@@ -543,7 +542,6 @@ function getGacStatus(st){
     };
   }
 
-  // Active rounds within weeks
   if(d === 1 || d === 15){
     return { status: 'SIGNUP PHASE', badgeClass: 'purple', title: `Grand Arena (${format})`, main: 'Signup Phase Open', sub: 'Set Defense Phase starts tomorrow' };
   }
@@ -751,26 +749,19 @@ function renderMainFeed(st){
     forecastEl.appendChild(chip);
   }
 
-  // Coliseum Boss Strip (Tue = Krayt, Wed = Zeffo, Thu = Jotaz, Fri = Dryax)
+  // Coliseum Boss Continuous Loop (Unmapped from Weekdays)
   const bossEl = document.getElementById('bossStrip');
   bossEl.innerHTML = '';
 
-  const currentUTCDay = st.utcDayIndex;
+  const activeBossIndex = (st.rawDayIndex - 1) % 4;
 
-  const bosses = [
-    { dayNum: 2, name: 'Krayt Dragon', dayName: 'Tuesday' },
-    { dayNum: 3, name: 'Zeffo Tomb Guardians', dayName: 'Wednesday' },
-    { dayNum: 4, name: 'Jotaz', dayName: 'Thursday' },
-    { dayNum: 5, name: 'Dryax', dayName: 'Friday' }
-  ];
-
-  bosses.forEach(b => {
-    const isActive = currentUTCDay === b.dayNum;
+  BOSS_LOOP.forEach((bossName, index) => {
+    const isActive = index === activeBossIndex;
     const cell = document.createElement('div');
     cell.className = 'bcell' + (isActive ? ' active' : '');
     cell.innerHTML = `
-      <div class="step">${b.dayName}${isActive ? ' · Active Today' : ''}</div>
-      <div class="name">${b.name}</div>
+      <div class="step">Boss ${index + 1} of 4${isActive ? ' · Active Today' : ''}</div>
+      <div class="name">${bossName}</div>
     `;
     bossEl.appendChild(cell);
   });
