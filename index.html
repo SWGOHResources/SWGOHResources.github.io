@@ -71,6 +71,9 @@
   --red: #ef4444;
   --green: #5cad82;
   --green-dim: rgba(92, 173, 130, 0.14);
+  --steel: #7c94c9;
+  --steel-dim: rgba(124, 148, 201, 0.14);
+  --steel-border: rgba(124, 148, 201, 0.45);
   --text: #f1eee7;
   --text2: #bcc3cf;
   --text3: #97a0af;
@@ -280,11 +283,7 @@ body {
   background: var(--void1); border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: 10px; display: flex; flex-direction: column; transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
-  position: relative; overflow: hidden;
-}
-.ecard::before {
-  content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2.5px;
-  background: var(--accent, var(--border2));
+  position: relative;
 }
 .ecard:hover { border-color: var(--border2); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
 .ecard .art {
@@ -293,7 +292,7 @@ body {
   border: 1px solid var(--border);
   display: flex; align-items: center; justify-content: center; margin-bottom: 9px; position: relative;
 }
-.ecard .art img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.ecard .art img { width: calc(100% - 16px); height: calc(100% - 16px); margin: 8px; object-fit: contain; display: block; }
 .ecard .art-badge {
   width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;
   gap: 6px; background: var(--accent-dim, var(--void2));
@@ -631,31 +630,31 @@ body {
 
 <script>
 /* =========================================================
-   EVENT DATA MODEL (EXACT SHEET9 MAPPING)
-   Day 1 = Tuesday (Era Baseline)
-   Day 2 = Wednesday, Day 3 = Thursday, Day 4 = Friday,
-   Day 5 = Saturday, Day 6 = Sunday, Day 7 = Monday.
-   ========================================================= */
+ EVENT DATA MODEL (EXACT SHEET9 MAPPING)
+  Day 1 = Tuesday (Era Baseline)
+  Day 2 = Wednesday, Day 3 = Thursday, Day 4 = Friday,
+  Day 5 = Saturday, Day 6 = Sunday, Day 7 = Monday.
+  ========================================================= */
 
 /* =========================================================
-   ✏️  EDIT EVENT NAMES HERE  ✏️
-   Everything below is the ONE place you need to touch to
-   rename what shows up on the cards/schedule. The category
-   badge (GAC / TW / TB / ERA etc.) is already shown on each
-   card, so these labels intentionally leave that part out —
-   no need to write "TW Defense Starts", just "Defense Phase
-   Starts" and the TW badge does the rest.
-   ========================================================= */
+  EDIT EVENT NAMES HERE  
+  Everything below is the ONE place you need to touch to
+  rename what shows up on the cards/schedule. The category
+  badge (GAC / TW / TB / ERA etc.) is already shown on each
+  card, so these labels intentionally leave that part out —
+  no need to write "TW Defense Starts", just "Defense Phase
+  Starts" and the TW badge does the rest.
+  ========================================================= */
 
 // Marquee events — just swap the value for the unit's name
 // each time a new one goes live (e.g. 'Marquee 2 Event' -> 'Mace Windu').
 const MARQUEE_NAMES = {
-  marquee_1: 'Marquee Event',
-  marquee_2: 'Marquee Event',
-  marquee_3: 'Marquee Event',
-  marquee_4: 'Marquee Event',
-  marquee_5: 'Marquee Event',
-  marquee_6: 'Marquee Event',
+  marquee_1: 'Mara Jade Skywalker',
+  marquee_2: 'Yoda (Dark Side Vision)',
+  marquee_3: 'Starkiller (Luke Concept)',
+  marquee_4: 'Stormtrooper (Concept)',
+  marquee_5: 'Jaxxon',
+  marquee_6: 'The Ronin',
 };
 
 function ev(icon, label){
@@ -666,54 +665,76 @@ function ev(icon, label){
 }
 
 const COMMON_DAYS = {
-  2:  [ev('gac_defense','Defense Phase'), ev('smugglersrun',"Smuggler's Run II"), ev('tw_payout','Payout')],
-  3:  [ev('gac_attack','Attack Phase'), ev('tw_signup','Signup Starts')],
-  4:  [ev('gac_defense','Defense Phase'), ev('smugglersrun',"Smuggler's Run III"), ev('tw_defense','Defense Phase Starts')],
-  5:  [ev('gac_attack','Attack Phase'), ev('tw_attack','Attack Phase Starts')],
-  6:  [ev('gac_defense','Defense Phase'), ev('tw_payout','Payout')],
-  9:  [ev('rote','Phase 3 Start'), ev('era_battle_1','Battle I')],
-  10: [ev('rote','Phase 4 Start')],
-  11: [ev('rote','Phase 5 Start')],
-  12: [ev('rote','Phase 6 Start')],
-  13: [ev('tb_ends','Ends'), ev('tw_signup','Signup Starts')],
-  14: [ev('tw_defense','Defense Phase Starts'), ev('era_battle_2','Battle II')],
-  16: [ev('gac_defense','Defense Phase'), ev('smugglersrun',"Smuggler's Run II")],
-  17: [ev('gac_attack','Attack Phase'), ev('tw_signup','Signup Starts')],
-  18: [ev('gac_defense','Defense Phase'), ev('smugglersrun',"Smuggler's Run III"), ev('tw_defense','Defense Phase Starts')],
-  19: [ev('gac_attack','Attack Phase'), ev('tw_attack','Attack Phase Starts')],
-  20: [ev('gac_defense','Defense Phase'), ev('tw_payout','Payout')],
-  22: [ev('era_challenge','Era Challenge'), ev('gac_signup','Signup Starts'), ev('rote','Phase 2 Starts')],
-  23: [ev('gac_defense','Defense Phase'), ev('era_battle_1','Battle I'), ev('rote','Phase 3 Starts')],
-  24: [ev('rote','Phase 4 Starts'), ev('gac_attack','Attack Phase')],
-  25: [ev('gac_defense','Defense Phase'), ev('rote','Phase 5 Starts')],
-  26: [ev('gac_attack','Attack Phase'), ev('rote','Phase 6 Starts')],
-  27: [ev('gac_defense','Defense Phase'), ev('tb_ends','Ends'), ev('tw_signup','Signup Starts')],
-  28: [ev('era_battle_2','Battle II'), ev('tw_defense','Defense Phase Starts')],
+  2:  [ev('gac_defense','Defense Phase Starts'), ev('smugglersrun',"Smuggler's Run II"), ev('tw_payout','Payout')],
+  3:  [ev('gac_attack','Attack Phase Starts'), ev('tw_signup','Signup Starts')],
+  4:  [ev('gac_defense','Defense Phase Starts'), ev('smugglersrun',"Smuggler's Run III"), ev('tw_defense','Defense Phase Starts')],
+  5:  [ev('gac_attack','Attack Phase Starts'), ev('tw_attack','Attack Phase Starts')],
+  6:  [ev('gac_defense','Defense Phase Starts'), ev('tw_payout','Payout')],
+  9:  [ev('rote','Phase 3 Starts'), ev('era_battle_1','Battle I Starts')],
+  10: [ev('rote','Phase 4 Starts')],
+  11: [ev('rote','Phase 5 Starts')],
+  12: [ev('rote','Phase 6 Starts')],
+  13: [ev('tb_ends','Territory Battle Ends'), ev('tw_signup','Signup Starts')],
+  14: [ev('tw_defense','Defense Phase Starts'), ev('era_battle_2','Battle II Starts')],
+  16: [ev('gac_defense','Defense Phase Starts'), ev('smugglersrun',"Smuggler's Run II")],
+  17: [ev('gac_attack','Attack Phase Starts'), ev('tw_signup','Signup Starts')],
+  18: [ev('gac_defense','Defense Phase Starts'), ev('smugglersrun',"Smuggler's Run III"), ev('tw_defense','Defense Phase Starts')],
+  19: [ev('gac_attack','Attack Phase Starts'), ev('tw_attack','Attack Phase Starts')],
+  20: [ev('gac_defense','Defense Phase Starts'), ev('tw_payout','Payout')],
+  22: [ev('era_challenge','Era Challenge Starts'), ev('gac_signup','Signup Starts'), ev('rote','Phase 2 Starts')],
+  23: [ev('gac_defense','Defense Phase Starts'), ev('era_battle_1','Battle I Starts'), ev('rote','Phase 3 Starts')],
+  24: [ev('rote','Phase 4 Starts'), ev('gac_attack','Attack Phase Starts')],
+  25: [ev('gac_defense','Defense Phase Starts'), ev('rote','Phase 5 Starts')],
+  26: [ev('gac_attack','Attack Phase Starts'), ev('rote','Phase 6 Starts')],
+  27: [ev('gac_defense','Defense Phase Starts'), ev('tb_ends','Territory Battle Ends'), ev('tw_signup','Signup Starts')],
+  28: [ev('era_battle_2','Battle II Starts'), ev('tw_defense','Defense Phase Starts')],
 };
 
 const EPISODE_OVERRIDES = {
   1: {
     1:  [ev('marquee_1'), ev('journey_reruns','Reruns Start'), ev('era_changeover','Era Changeover'), ev('gac_signup','Signup Starts'), ev('tw_attack','Attack Phase Starts')],
-    7:  [ev('rote','Phase 1'), ev('conquest_start','2nd Conquest of Volume Starts'), ev('smugglersrun',"Smuggler's Run I"), ev('gac_attack','Attack Phase')],
-    8:  [ev('era_challenge','Era Challenge'), ev('rote','Phase 2 Start'), ev('journey_reruns','Reruns End')],
+    7:  [ev('rote','Phase 1 Starts'), ev('conquest_start','2nd Conquest of Volume Starts'), ev('smugglersrun',"Smuggler's Run I"), ev('gac_attack','Attack Phase Starts')],
+    8:  [ev('era_challenge_1','Era Challenge Starts'), ev('rote','Phase 2 Starts'), ev('journey_reruns','Reruns End')],
     15: [ev('marquee_2'), ev('tw_offense','Offense Phase Starts'), ev('gac_signup','Signup Starts')],
-    21: [ev('conquest_end','2nd Conquest of Volume Ends'), ev('gac_attack','Attack Phase'), ev('proving_ground','Proving Grounds'), ev('ultimate_journey','Ultimate Journey'), ev('smugglersrun',"Smuggler's Run I"), ev('rote','Phase 1 Starts')],
+    21: [ev('conquest_end','2nd Conquest of Volume Ends'), ev('gac_attack','Attack Phase Starts'), ev('proving_ground','Proving Grounds'), ev('ultimate_journey','Ultimate Journey'), ev('smugglersrun',"Smuggler's Run I"), ev('rote','Phase 1 Starts')],
   },
   2: {
     1:  [ev('marquee_3'), ev('gac_signup','Signup Starts'), ev('tw_attack','Attack Phase Starts')],
-    7:  [ev('rote','Phase 1'), ev('conquest_start','3rd Conquest of Volume Starts'), ev('smugglersrun',"Smuggler's Run I"), ev('gac_attack','Attack Phase')],
-    8:  [ev('era_challenge','Era Challenge'), ev('rote','Phase 2 Start')],
+    7:  [ev('rote','Phase 1 Starts'), ev('conquest_start','3rd Conquest of Volume Starts'), ev('smugglersrun',"Smuggler's Run I"), ev('gac_attack','Attack Phase Starts')],
+    8:  [ev('era_challenge_2','Era Challenge Starts'), ev('rote','Phase 2 Starts')],
     15: [ev('marquee_4'), ev('tw_offense','Offense Phase Starts'), ev('gac_signup','Signup Starts')],
-    21: [ev('conquest_end','Conquest Ends (Unit First Playable)'), ev('gac_attack','Attack Phase'), ev('proving_ground','Proving Grounds'), ev('ultimate_journey','Ultimate Journey'), ev('smugglersrun',"Smuggler's Run I"), ev('rote','Phase 1 Starts')],
+    21: [ev('conquest_end','Conquest Ends (Unit First Playable)'), ev('gac_attack','Attack Phase Starts'), ev('proving_ground','Proving Grounds'), ev('ultimate_journey','Ultimate Journey'), ev('smugglersrun',"Smuggler's Run I"), ev('rote','Phase 1 Starts')],
   },
   3: {
     1:  [ev('marquee_5'), ev('journey_guide','4/5★ Guide Unlock'), ev('gac_signup','Signup Starts'), ev('tw_attack','Attack Phase Starts')],
-    7:  [ev('rote','Phase 1'), ev('conquest_start','1st Conquest of New Volume Starts'), ev('smugglersrun',"Smuggler's Run I"), ev('gac_attack','Attack Phase')],
-    8:  [ev('era_challenge','Era Challenge'), ev('rote','Phase 2 Start')],
+    7:  [ev('rote','Phase 1 Starts'), ev('conquest_start','1st Conquest of New Volume Starts'), ev('smugglersrun',"Smuggler's Run I"), ev('gac_attack','Attack Phase Starts')],
+    8:  [ev('era_challenge_3','Era Challenge Starts'), ev('rote','Phase 2 Starts')],
     15: [ev('marquee_6'), ev('journey_guide','6/7★ Guide Unlock'), ev('tw_offense','Offense Phase Starts'), ev('gac_signup','Signup Starts')],
-    21: [ev('conquest_end','1st Conquest of New Volume Ends'), ev('gac_attack','Attack Phase'), ev('proving_ground','Proving Grounds'), ev('ultimate_journey','Ultimate Journey'), ev('smugglersrun',"Smuggler's Run I"), ev('rote','Phase 1 Starts')],
+    21: [ev('conquest_end','1st Conquest of New Volume Ends'), ev('gac_attack','Attack Phase Starts'), ev('proving_ground','Proving Grounds'), ev('ultimate_journey','Ultimate Journey'), ev('smugglersrun',"Smuggler's Run I"), ev('rote','Phase 1 Starts')],
   }
 };
+
+/* ─── Recurring Monthly Events ───
+   These run off the real calendar date (not the Era's 84-day
+   counter), so they'll keep firing every month regardless of
+   which Era or Episode is currently active. Add a new one by
+   copying a line — use "dayOfMonth" for a fixed date, or
+   "lastDayOfMonth: true" for one that always lands on the
+   final day of the month. */
+const MONTHLY_EVENTS = [
+  { icon: 'fleet_executor',   label: 'Discarded Doctrine (Executor) Starts',      dayOfMonth: 15 },
+  { icon: 'fleet_leviathan',  label: 'Dark Sovereign (Leviathan) Starts',         dayOfMonth: 20 },
+  { icon: 'fleet_profundity', label: 'Stardust Transmission (Profundity) Starts', lastDayOfMonth: true },
+];
+
+function getMonthlyEvents(dateMs){
+  const d = new Date(dateMs);
+  const dom = d.getUTCDate();
+  const lastDom = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 0)).getUTCDate();
+  return MONTHLY_EVENTS
+    .filter(m => m.lastDayOfMonth ? dom === lastDom : dom === m.dayOfMonth)
+    .map(m => ev(m.icon, m.label));
+}
 
 const BOSS_LOOP = [
   'Krayt Dragon',
@@ -730,9 +751,23 @@ const BOSS_ICONS = {
 };
 
 /* =========================================================
-   ICON / CATEGORY SYSTEM 
-   Maps each event's icon key to real artwork where it exists,
-   and to a colour-coded category badge everywhere else.
+     ICON / CATEGORY SYSTEM — EDIT ARTWORK HERE  
+   Two levels of artwork, checked in this order for every event:
+
+   1) EVENT_ICONS  — a picture for one *specific* event only
+      (e.g. each Marquee slot gets its own character art).
+
+   2) CATEGORY_ICONS — a shared picture for an entire event TYPE.
+      Set this once and every GAC day (signup/defense/attack),
+      every TW day, every TB phase, etc. all use the same image
+      automatically — no need to touch anything else when a new
+      phase gets added to the schedule above.
+
+   If neither is set, the card falls back to a plain colour
+   badge using the category's short code (GAC/TW/TB/etc) — so
+   it's always safe to leave an image out.
+
+   All filenames are relative to assets/schedule/
    ========================================================= */
 
 const CATEGORY_META = {
@@ -744,26 +779,52 @@ const CATEGORY_META = {
   guild:    { label: 'GUILD',  glyph: 'SR',  accent: 'var(--green)',   dim: 'var(--green-dim)',   border: 'rgba(16,185,129,0.4)' },
   journey:  { label: 'JOURNEY',glyph: 'JRN', accent: 'var(--cyan)',    dim: 'var(--cyan-dim)',    border: 'var(--cyan-border)' },
   marquee:  { label: 'MARQUEE',glyph: 'MQ',  accent: 'var(--amber)',   dim: 'var(--amber-dim)',   border: 'var(--amber-border)' },
+  fleet:    { label: 'FLEET',  glyph: 'FLT', accent: 'var(--steel)',   dim: 'var(--steel-dim)',   border: 'var(--steel-border)' },
   misc:     { label: 'EVENT',  glyph: 'EVT', accent: 'var(--text2)',   dim: 'var(--void2)',       border: 'var(--border2)' }
 };
 
-// icon key -> real asset filename (relative to assets/schedule/)
-const ICON_MAP = {
-  rote: 'rote.png',
-  smugglersrun: 'smugglersrun.png',
-  journey_reruns: 'journeyicon.png',
-  journey_guide: 'journeyicon.png',
-  ultimate_journey: 'ultimatejourney.png',
+// One shared image per event TYPE — every phase of that type
+// (signup/defense/attack/payout, all 6 TB phases, etc.) uses this.
+const CATEGORY_ICONS = {
+  gac:      'gac.png',
+  tw:       'tw.png',
+  tb:       'tb.png',
+  era:      'era.png',
+  conquest: 'conquest.png',
+  guild:    'smugglersrun.png',
+  journey:  'journeyicon.png',
+  fleet:    'fleet.png',
+  marquee:  null,   // marquee art is per-slot below, not shared
+  misc:     null
+};
+
+// Only for events that need their OWN unique picture instead of
+// sharing their category's image (each Marquee slot, Era Battle
+// I vs II, etc). Add a line here any time you want to override
+// the category default for just one event.
+const EVENT_ICONS = {
   era_battle_1: 'erabattle1.png',
   era_battle_2: 'erabattle2.png',
+  era_challenge_1: 'marquee1event.png',
+  era_challenge_2: 'marquee2event.png',
+  era_challenge_3: 'marquee3event.png',
   marquee_1: 'marquee1event.png',
   marquee_2: 'marquee2event.png',
   marquee_3: 'marquee3event.png',
   marquee_4: 'marquee4event.png',
   marquee_5: 'marquee5event.png',
   marquee_6: 'marquee6event.png',
-  proving_ground: 'provingground.png'
+  proving_ground: 'provingground.png',
+  ultimate_journey: 'ultimatejourney.png',
+  fleet_executor: 'executor.png',
+  fleet_leviathan: 'leviathan.png',
+  fleet_profundity: 'profundity.png'
 };
+
+function assetFor(icon){
+  const cat = categoryFor(icon);
+  return EVENT_ICONS[icon] || CATEGORY_ICONS[cat] || null;
+}
 
 function categoryFor(icon){
   if(icon.startsWith('gac')) return 'gac';
@@ -774,12 +835,14 @@ function categoryFor(icon){
   if(icon === 'smugglersrun') return 'guild';
   if(icon.startsWith('journey') || icon === 'ultimate_journey') return 'journey';
   if(icon.startsWith('marquee')) return 'marquee';
+  if(icon.startsWith('fleet')) return 'fleet';
   return 'misc';
 }
 
 const DEFAULT_ERA_START = '2026-01-20'; // Baseline Tuesday
 const WEEKDAY_NAMES = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 const WEEKDAY_SHORT = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
 
 /* =========================================================
    TIME ENGINE (UTC Calendar Day Baseline + 18:00 UTC Boss Changeover)
@@ -860,6 +923,12 @@ function getGameStatus(){
 function getDayEvents(episode, dayInEp){
   const o = EPISODE_OVERRIDES[episode] && EPISODE_OVERRIDES[episode][dayInEp];
   return o || COMMON_DAYS[dayInEp] || [];
+}
+
+// Combines the Era's own schedule with the calendar-date-based
+// monthly events (Discarded Doctrine, Dark Sovereign, etc).
+function getEventsForDay(dateMs, episode, dayInEp){
+  return [...getDayEvents(episode, dayInEp), ...getMonthlyEvents(dateMs)];
 }
 
 function fmtDateUTC(ms){
@@ -1007,7 +1076,7 @@ function cardHTML(item, extraClass){
   const cls = extraClass || '';
   const cat = categoryFor(item.icon);
   const meta = CATEGORY_META[cat];
-  const asset = ICON_MAP[item.icon];
+  const asset = assetFor(item.icon);
   const style = `--accent:${meta.accent};--accent-dim:${meta.dim};--accent-border:${meta.border}`;
 
   const artInner = asset
@@ -1030,33 +1099,50 @@ function renderCards(el, items, extraClass){
 
 function renderFullSchedule(st){
   const tbody = document.getElementById('fullSchedule');
-  tbody.innerHTML = '';
 
-  for(let idx = 1; idx <= 84; idx++){
-    const ep = Math.floor((idx - 1) / 28) + 1;
-    const dayInEp = ((idx - 1) % 28) + 1;
-    const week = Math.floor((dayInEp - 1) / 7) + 1;
+  // The 84-day table almost never changes (only when the Era
+  // baseline itself changes), so it's built once and cached —
+  // rebuilding all 84 rows every minute was what made opening
+  // the modal feel laggy. On normal ticks we only move which
+  // row has the "active" highlight.
+  const sameEra = fullScheduleCache.eraStartMs === st.currentEraStartMs;
 
-    const dateMs = st.currentEraStartMs + ((idx - 1) * 86400000);
-    const items = getDayEvents(ep, dayInEp);
+  if(!sameEra){
+    const rows = [];
+    for(let idx = 1; idx <= 84; idx++){
+      const ep = Math.floor((idx - 1) / 28) + 1;
+      const dayInEp = ((idx - 1) % 28) + 1;
+      const week = Math.floor((dayInEp - 1) / 7) + 1;
+      const dateMs = st.currentEraStartMs + ((idx - 1) * 86400000);
+      const items = getEventsForDay(dateMs, ep, dayInEp);
 
-    const row = document.createElement('tr');
-    if(idx === st.eraDay) row.className = 'active';
-
-    row.innerHTML = `
-      <td><strong>Day ${idx}</strong></td>
-      <td>${fmtDateUTC(dateMs)}</td>
-      <td>Ep ${ep}.${week}</td>
-      <td>${items.length ? items.map(it => `<span class="event-tag">${it.label}</span>`).join('') : '—'}</td>
-    `;
-    tbody.appendChild(row);
+      rows.push(`<tr data-day="${idx}" class="${idx === st.eraDay ? 'active' : ''}">
+        <td><strong>Day ${idx}</strong></td>
+        <td>${fmtDateUTC(dateMs)}</td>
+        <td>Ep ${ep}.${week}</td>
+        <td>${items.length ? items.map(it => `<span class="event-tag">${it.label}</span>`).join('') : '—'}</td>
+      </tr>`);
+    }
+    tbody.innerHTML = rows.join('');
+    fullScheduleCache.eraStartMs = st.currentEraStartMs;
+    fullScheduleCache.activeDay = st.eraDay;
+  } else if(fullScheduleCache.activeDay !== st.eraDay){
+    const prevRow = tbody.querySelector(`tr[data-day="${fullScheduleCache.activeDay}"]`);
+    if(prevRow) prevRow.classList.remove('active');
+    const nextRow = tbody.querySelector(`tr[data-day="${st.eraDay}"]`);
+    if(nextRow) nextRow.classList.add('active');
+    fullScheduleCache.activeDay = st.eraDay;
   }
 }
 
+// Cache for the full-schedule table so it only rebuilds when the
+// Era baseline changes, not on every render tick (see renderFullSchedule).
+const fullScheduleCache = { eraStartMs: null, activeDay: null };
+
 function renderMainFeed(st){
   // Today Events
-  const todayEvents = getDayEvents(st.episode, st.dayInEp);
   const todayDateMs = st.currentDayStartMs;
+  const todayEvents = getEventsForDay(todayDateMs, st.episode, st.dayInEp);
 
   document.getElementById('todayHeading').textContent = `Today — ${st.weekdayName}`;
   document.getElementById('todaySub').textContent = fmtDateUTC(todayDateMs);
@@ -1066,9 +1152,9 @@ function renderMainFeed(st){
   const tmrwDayIndex = (st.eraDay % 84) + 1;
   const tmrwEp = Math.floor((tmrwDayIndex - 1) / 28) + 1;
   const tmrwDayInEp = ((tmrwDayIndex - 1) % 28) + 1;
-  const tmrwEvents = getDayEvents(tmrwEp, tmrwDayInEp);
-
   const tmrwDateMs = todayDateMs + 86400000;
+  const tmrwEvents = getEventsForDay(tmrwDateMs, tmrwEp, tmrwDayInEp);
+
   const tmrwWeekday = WEEKDAY_NAMES[new Date(tmrwDateMs).getUTCDay()];
 
   document.getElementById('tmrwHeading').textContent = `Tomorrow — ${tmrwWeekday}`;
@@ -1083,7 +1169,8 @@ function renderMainFeed(st){
     const dIdx = ((st.eraDay - 1 + i) % 84) + 1;
     const ep = Math.floor((dIdx - 1) / 28) + 1;
     const dayInEp = ((dIdx - 1) % 28) + 1;
-    const items = getDayEvents(ep, dayInEp);
+    const items = getEventsForDay(dMs, ep, dayInEp);
+
 
     const chip = document.createElement('div');
     chip.className = 'fchip' + (i === 0 ? ' today' : '');
@@ -1222,7 +1309,7 @@ tickCountdown();
 setInterval(tickCountdown, 1000);
 setInterval(renderAll, 60000);
 </script>
-<script src="./build-version.js?v=a6af0e9-127"></script>
+<script src="./build-version.js?v=c8ac099-128"></script>
 
 </body>
 </html>
