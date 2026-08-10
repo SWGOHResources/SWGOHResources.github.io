@@ -3,8 +3,49 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SWGOH Schedule // SwgohResources</title>
+
+<!--
+  ══════════════════════════════════════════════════════════════
+  SEO / SHARING SETUP — replace SITE_URL with your real domain
+  once it's live (e.g. https://swgoh-resources.com/) and swap in
+  a real share image at /assets/social-share.png (1200×630px).
+  ══════════════════════════════════════════════════════════════
+-->
+<title>SWGOH Event Schedule | SWGOH::RESOURCES</title>
+<meta name="description" content="Live Star Wars: Galaxy of Heroes event schedule — track GAC, Territory War, Territory Battle, Conquest and Marquee events day-by-day across the full 84-day Era.">
+<meta name="keywords" content="SWGOH, Star Wars Galaxy of Heroes, event schedule, GAC, Territory War, Territory Battle, Conquest, marquee event">
+<meta name="author" content="Dom">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="SITE_URL/">
+
+<!-- Open Graph (Facebook, Discord, etc.) -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="SWGOH::RESOURCES">
+<meta property="og:title" content="SWGOH Event Schedule">
+<meta property="og:description" content="Live SWGOH event schedule — GAC, Territory War, Territory Battle, Conquest and Marquee events, mapped across the full 84-day Era.">
+<meta property="og:url" content="SITE_URL/">
+<meta property="og:image" content="SITE_URL/assets/social-share.png">
+
+<!-- Twitter/X Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="SWGOH Event Schedule">
+<meta name="twitter:description" content="Live SWGOH event schedule — GAC, Territory War, Territory Battle, Conquest and Marquee events, mapped across the full 84-day Era.">
+<meta name="twitter:image" content="SITE_URL/assets/social-share.png">
+
+<meta name="theme-color" content="#0b0d11">
 <link rel="icon" href="/favicon.ico" type="image/x-icon">
+<link rel="apple-touch-icon" href="/favicon.ico">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "SWGOH::RESOURCES",
+  "url": "SITE_URL/",
+  "description": "Live Star Wars: Galaxy of Heroes event schedule tracker."
+}
+</script>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
@@ -31,8 +72,8 @@
   --green: #5cad82;
   --green-dim: rgba(92, 173, 130, 0.14);
   --text: #f1eee7;
-  --text2: #a3abb8;
-  --text3: #7c8494;
+  --text2: #bcc3cf;
+  --text3: #97a0af;
   --radius: 8px;
   --radius-lg: 14px;
   --disp: 'Sora', sans-serif;
@@ -76,8 +117,9 @@ body {
 .topbar-title {
   font-family: var(--disp); font-size: 16px; font-weight: 700;
   color: var(--text); margin-right: 32px; text-decoration: none;
-  display: inline-flex; align-items: center; white-space: nowrap;
+  display: inline-flex; align-items: center; gap: 9px; white-space: nowrap;
 }
+.topbar-logo { width: 20px; height: 20px; border-radius: 5px; display: block; flex: 0 0 auto; }
 .topbar-title span { color: var(--amber); }
 .topbar-title .divider-glyph { color: var(--text3); margin: 0 2px; font-weight: 400; }
 .topbar-tabs { display: flex; gap: 4px; flex: 1; height: 100%; }
@@ -135,18 +177,6 @@ body {
 /* ─── Layout ─── */
 .wrap { max-width: 1180px; margin: 0 auto; padding: 24px; position: relative; z-index: 1; width: 100%; flex: 1; }
 
-/* ─── Corner Brackets ─── */
-.bracket { position: relative; }
-.bracket::before, .bracket::after,
-.bracket .bl::before, .bracket .br::before {
-  content: ""; position: absolute; width: 8px; height: 8px;
-  border-color: var(--cyan-border); border-style: solid; border-width: 0; pointer-events: none;
-}
-.bracket::before { top: -1px; left: -1px; border-top-width: 2px; border-left-width: 2px; }
-.bracket::after { top: -1px; right: -1px; border-top-width: 2px; border-right-width: 2px; }
-.bracket .bl::before { bottom: -1px; left: -1px; border-bottom-width: 2px; border-left-width: 2px; position: absolute; }
-.bracket .br::before { bottom: -1px; right: -1px; border-bottom-width: 2px; border-right-width: 2px; position: absolute; }
-
 /* ─── Merged Era Banner ─── */
 .merged-hero {
   position: relative; overflow: hidden;
@@ -168,12 +198,23 @@ body {
 .mh-left { display: flex; flex-direction: column; gap: 14px; position: relative; z-index: 1; }
 .mh-tag { font-family: var(--disp); font-size: 20px; font-weight: 700; color: var(--text); letter-spacing: 0; text-transform: none; margin-bottom: 4px; }
   .mh-tag .live-dot { display: none; }
-  .mh-title-row { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
-  .mh-main-val { font-family: var(--disp); font-size: 34px; font-weight: 700; color: var(--text); line-height: 1; }
-  .mh-main-val span { color: var(--amber); }
-  .mh-sub-info { display: flex; flex-wrap: wrap; gap: 10px; font-family: var(--body); font-size: 13px; color: var(--text2); font-weight: 500; letter-spacing: 0.02em; }
-  .mh-sub-info::before { content: ""; }
-  .mh-sub-info span { white-space: nowrap; }
+  .mh-title-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .mh-main-val { font-family: var(--disp); font-size: 34px; font-weight: 700; color: var(--text); line-height: 1; white-space: nowrap; }
+  .mh-main-val .mh-of { font-size: 16px; font-weight: 600; color: var(--text3); margin-left: 4px; }
+  .mh-main-val span:not(.mh-of) { color: var(--amber); }
+
+  .mh-meta-strip {
+    display: flex; align-items: center; gap: 16px;
+    background: var(--void2); border: 1px solid var(--border2); border-radius: var(--radius);
+    padding: 8px 16px;
+  }
+  .mh-meta-item { display: flex; flex-direction: column; gap: 3px; }
+  .mh-meta-label {
+    font-family: var(--body); font-size: 9.5px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.08em; color: var(--text3); white-space: nowrap;
+  }
+  .mh-meta-val { font-family: var(--mono); font-size: 13px; font-weight: 600; color: var(--text); white-space: nowrap; }
+  .mh-meta-divider { width: 1px; height: 26px; background: var(--border2); flex: 0 0 auto; }
 
 .mh-progress-wrap { width: 100%; max-width: 560px; }
 .mh-progress-bar {
@@ -236,31 +277,36 @@ body {
 /* ─── Feed Cards Layout ─── */
 .card-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(148px, 1fr)); gap: 14px; }
 .ecard {
-  background: var(--void1); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  background: var(--void1); border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
   padding: 10px; display: flex; flex-direction: column; transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
-  position: relative;
+  position: relative; overflow: hidden;
 }
-.ecard:hover { border-color: var(--accent, var(--cyan-border)); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.35); }
+.ecard::before {
+  content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2.5px;
+  background: var(--accent, var(--border2));
+}
+.ecard:hover { border-color: var(--border2); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
 .ecard .art {
   aspect-ratio: 1/1; width: 100%; border-radius: 8px; overflow: hidden;
-  background: linear-gradient(160deg, var(--void2), var(--void3));
+  background: var(--void2);
   border: 1px solid var(--border);
   display: flex; align-items: center; justify-content: center; margin-bottom: 9px; position: relative;
 }
 .ecard .art img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .ecard .art-badge {
   width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;
-  gap: 5px; background: var(--accent-dim, var(--void2)); position: relative;
-}
-.ecard .art-badge::after {
-  content: ""; position: absolute; inset: 5px; border: 1px dashed var(--accent-border, var(--border2)); border-radius: 5px;
+  gap: 6px; background: var(--accent-dim, var(--void2));
 }
 .ecard .art-badge .glyph {
-  font-family: var(--disp); font-size: 20px; font-weight: 700; color: var(--accent, var(--text2)); position: relative; z-index: 1;
+  font-family: var(--disp); font-size: 14px; font-weight: 700; letter-spacing: 0.02em;
+  color: var(--void); background: var(--accent, var(--text2));
+  width: 34px; height: 34px; border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
 }
 .ecard .art-badge .cat {
-  font-family: var(--mono); font-size: 8px; letter-spacing: 0.1em; text-transform: uppercase;
-  color: var(--accent, var(--text3)); position: relative; z-index: 1;
+  font-family: var(--body); font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600;
+  color: var(--accent, var(--text3));
 }
 .ecard .cat-tag {
   font-family: var(--body); font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
@@ -379,15 +425,26 @@ body {
 .schedule-access .sa-sub { font-family: var(--body); font-size: 11px; color: var(--text3); }
 
 /* ─── Footer ─── */
-.site-footer { position: relative; z-index: 1; border-top: 1px solid var(--border); margin-top: 48px; padding: 28px 24px 32px; }
-.footer-inner { max-width: 1180px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center; }
-.footer-brand { font-family: var(--disp); font-size: 14px; font-weight: 700; color: var(--text2); letter-spacing: 0.04em; }
+.site-footer { position: relative; z-index: 1; border-top: 1px solid var(--border); margin-top: 48px; padding: 32px 24px 28px; }
+.footer-inner { max-width: 1180px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 18px; text-align: center; }
+.footer-top { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.footer-brand { font-family: var(--disp); font-size: 15px; font-weight: 700; color: var(--text); letter-spacing: 0.04em; }
 .footer-brand span { color: var(--amber); }
 .footer-links { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; }
-.footer-links a { font-family: var(--body); font-size: 11.5px; color: var(--text2); text-decoration: none; transition: color 0.15s; }
-.footer-links a:hover { color: var(--cyan); }
+.footer-links a, .footer-links button {
+  font-family: var(--body); font-size: 11.5px; color: var(--text2); text-decoration: none; transition: color 0.15s;
+  background: none; border: none; cursor: pointer; padding: 0;
+}
+.footer-links a:hover, .footer-links button:hover { color: var(--cyan); }
 .footer-note { font-family: var(--body); font-size: 10.5px; color: var(--text3); max-width: 620px; line-height: 1.6; }
-.footer-meta { font-family: var(--body); font-size: 10px; color: var(--text3); opacity: 0.7; }
+.footer-divider { height: 1px; width: 48px; background: var(--border2); }
+.footer-bottom {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px;
+  font-family: var(--body); font-size: 10.5px; color: var(--text3);
+}
+.footer-bottom .dot { opacity: 0.5; }
+.footer-bottom a { color: var(--text2); text-decoration: none; transition: color 0.15s; }
+.footer-bottom a:hover { color: var(--cyan); }
 
 @media (max-width: 900px) {
   .merged-hero { grid-template-columns: 1fr; padding: 22px 20px; }
@@ -411,10 +468,13 @@ body {
 
 <div class="top-header">
   <div class="topbar">
-    <a href="index.html" class="topbar-title">SWGOH<span class="divider-glyph">::</span><span>RESOURCES</span></a>
+    <a href="index.html" class="topbar-title">
+      <img src="/favicon.ico" alt="" class="topbar-logo" width="20" height="20">
+      SWGOH<span class="divider-glyph">::</span><span>RESOURCES</span>
+    </a>
+    <!-- More pages can be added here later — this page stays the "Home" entry -->
     <div class="topbar-tabs" id="topbarTabs">
-      <a class="tab-btn" href="index.html">Home</a>
-      <a class="tab-btn active" href="index.html">Schedule</a>
+      <a class="tab-btn active" href="index.html">Home</a>
     </div>
     <div class="topbar-actions" id="topbarActions">
       <button class="gear-btn" id="openFullScheduleBtn">Full Schedule</button>
@@ -423,8 +483,7 @@ body {
     <button class="nav-toggle" id="navToggle" aria-label="Menu"><span></span><span></span><span></span></button>
   </div>
   <div class="mobile-panel" id="mobilePanel">
-    <a class="mp-link" href="index.html">Home</a>
-    <a class="mp-link active" href="index.html">Schedule</a>
+    <a class="mp-link active" href="index.html">Home</a>
     <div class="mp-divider"></div>
     <button class="gear-btn mp-btn" id="openFullScheduleBtnMobile">Full Schedule</button>
     <button class="gear-btn mp-btn" id="openSettingsBtnMobile">Era Start</button>
@@ -438,8 +497,14 @@ body {
     <div class="mh-left">
       <div class="mh-tag">Event Schedule for Era of Myths & Legends</div>
       <div class="mh-title-row">
-        <div class="mh-main-val">Day <span id="mhDayVal">--</span> <span>/ 84</span></div>
-        <div class="mh-sub-info" id="mhSubInfo"><span>Episode -- of 3</span><span>Week -- of 4</span><span>--</span></div>
+        <div class="mh-main-val">Day <span id="mhDayVal">--</span><span class="mh-of">/ 84</span></div>
+        <div class="mh-meta-strip">
+          <div class="mh-meta-item"><span class="mh-meta-label">Episode</span><span class="mh-meta-val" id="mhEpVal">-- / 3</span></div>
+          <span class="mh-meta-divider"></span>
+          <div class="mh-meta-item"><span class="mh-meta-label">Week</span><span class="mh-meta-val" id="mhWeekVal">-- / 4</span></div>
+          <span class="mh-meta-divider"></span>
+          <div class="mh-meta-item"><span class="mh-meta-label">Today</span><span class="mh-meta-val" id="mhWeekdayVal">--</span></div>
+        </div>
       </div>
       <div class="mh-progress-wrap">
         <div class="mh-progress-bar">
@@ -508,13 +573,23 @@ body {
 
 <footer class="site-footer">
   <div class="footer-inner">
-    <div class="footer-brand">SWGOH<span>::</span>RESOURCES</div>
-    <div class="footer-links">
-      <a href="index.html">Home</a>
-      <a href="index.html">Schedule</a>
+    <div class="footer-top">
+      <div class="footer-brand">SWGOH<span>::</span>RESOURCES</div>
+      <!-- Add more pages here as the site grows -->
+      <div class="footer-links">
+        <a href="index.html">Home</a>
+        <button type="button" id="footerFullScheduleBtn">Full Schedule</button>
+      </div>
     </div>
     <div class="footer-note">Fan-made planning tool for Star Wars: Galaxy of Heroes. Not affiliated with, endorsed, sponsored, or specifically approved by Electronic Arts, Capital Games, Disney, or Lucasfilm. All game assets, trademarks, and character names are property of their respective owners.</div>
-    <div class="footer-meta" id="footerMeta"></div>
+    <div class="footer-divider"></div>
+    <div class="footer-bottom">
+      <span id="footerMeta"></span>
+      <span class="dot">·</span>
+      <span>Maintained by Dom <span style="opacity:0.75">(@granddom on Discord)</span></span>
+      <span class="dot">·</span>
+      <span id="footerYear"></span>
+    </div>
   </div>
 </footer>
 
@@ -562,55 +637,81 @@ body {
    Day 5 = Saturday, Day 6 = Sunday, Day 7 = Monday.
    ========================================================= */
 
-function ev(icon, label){ return {icon, label}; }
+/* =========================================================
+   ✏️  EDIT EVENT NAMES HERE  ✏️
+   Everything below is the ONE place you need to touch to
+   rename what shows up on the cards/schedule. The category
+   badge (GAC / TW / TB / ERA etc.) is already shown on each
+   card, so these labels intentionally leave that part out —
+   no need to write "TW Defense Starts", just "Defense Phase
+   Starts" and the TW badge does the rest.
+   ========================================================= */
+
+// Marquee events — just swap the value for the unit's name
+// each time a new one goes live (e.g. 'Marquee 2 Event' -> 'Mace Windu').
+const MARQUEE_NAMES = {
+  marquee_1: 'Marquee Event',
+  marquee_2: 'Marquee Event',
+  marquee_3: 'Marquee Event',
+  marquee_4: 'Marquee Event',
+  marquee_5: 'Marquee Event',
+  marquee_6: 'Marquee Event',
+};
+
+function ev(icon, label){
+  // Marquee slots always pull from MARQUEE_NAMES so you only
+  // ever have to update the name in one spot above.
+  if(icon.startsWith('marquee_')) label = MARQUEE_NAMES[icon] || label || 'Marquee Event';
+  return {icon, label};
+}
 
 const COMMON_DAYS = {
-  2:  [ev('gac_defense','GAC Defense'), ev('smugglersrun','Smugglers Run II'), ev('tw_payout','TW Payout')],
-  3:  [ev('gac_attack','GAC Attack'), ev('tw_signup','TW Signup Starts')],
-  4:  [ev('gac_defense','GAC Defense'), ev('smugglersrun','Smugglers Run III'), ev('tw_defense','TW Defense Starts')],
-  5:  [ev('gac_attack','GAC Attack'), ev('tw_attack','TW Attack Starts')],
-  6:  [ev('gac_defense','GAC Defense'), ev('tw_payout','TW Payout')],
-  9:  [ev('rote','TB Phase 3 Start'), ev('era_battle_1','ERA BATTLE 1')],
-  10: [ev('rote','TB Phase 4 Start')],
-  11: [ev('rote','TB Phase 5 Start')],
-  12: [ev('rote','TB Phase 6 Start')],
-  13: [ev('tb_ends','TB ENDS'), ev('tw_signup','TW SIGNUP STARTS')],
-  14: [ev('tw_defense','TW DEFENSE STARTS'), ev('era_battle_2','ERA BATTLE 2')],
-  16: [ev('gac_defense','GAC Defense'), ev('smugglersrun','Smugglers Run II')],
-  17: [ev('gac_attack','GAC Attack'), ev('tw_signup','TW Signup Starts')],
-  18: [ev('gac_defense','GAC Defense'), ev('smugglersrun','Smugglers Run III'), ev('tw_defense','TW Defense Starts')],
-  19: [ev('gac_attack','GAC Attack'), ev('tw_attack','TW Attack Starts')],
-  20: [ev('gac_defense','GAC Defense'), ev('tw_payout','TW Payout')],
-  22: [ev('era_challenge','Era Challenge'), ev('gac_signup','GAC SIGNUP STARTS'), ev('rote','TB PHASE 2 STARTS')],
-  23: [ev('gac_defense','GAC Defense'), ev('era_battle_1','NEW ERA BATTLE 1'), ev('rote','TB PHASE 3 STARTS')],
-  24: [ev('rote','TB PHASE 4 STARTS'), ev('gac_attack','GAC Attack')],
-  25: [ev('gac_defense','GAC Defense'), ev('rote','TB PHASE 5 STARTS')],
-  26: [ev('gac_attack','GAC Attack'), ev('rote','TB PHASE 6 STARTS')],
-  27: [ev('gac_defense','GAC Defense'), ev('tb_ends','TB ENDS'), ev('tw_signup','TW SIGNUP STARTS')],
-  28: [ev('era_battle_2','ERA BATTLE 2'), ev('tw_defense','TW DEFENSE STARTS')],
+  2:  [ev('gac_defense','Defense Phase'), ev('smugglersrun',"Smuggler's Run II"), ev('tw_payout','Payout')],
+  3:  [ev('gac_attack','Attack Phase'), ev('tw_signup','Signup Starts')],
+  4:  [ev('gac_defense','Defense Phase'), ev('smugglersrun',"Smuggler's Run III"), ev('tw_defense','Defense Phase Starts')],
+  5:  [ev('gac_attack','Attack Phase'), ev('tw_attack','Attack Phase Starts')],
+  6:  [ev('gac_defense','Defense Phase'), ev('tw_payout','Payout')],
+  9:  [ev('rote','Phase 3 Start'), ev('era_battle_1','Battle I')],
+  10: [ev('rote','Phase 4 Start')],
+  11: [ev('rote','Phase 5 Start')],
+  12: [ev('rote','Phase 6 Start')],
+  13: [ev('tb_ends','Ends'), ev('tw_signup','Signup Starts')],
+  14: [ev('tw_defense','Defense Phase Starts'), ev('era_battle_2','Battle II')],
+  16: [ev('gac_defense','Defense Phase'), ev('smugglersrun',"Smuggler's Run II")],
+  17: [ev('gac_attack','Attack Phase'), ev('tw_signup','Signup Starts')],
+  18: [ev('gac_defense','Defense Phase'), ev('smugglersrun',"Smuggler's Run III"), ev('tw_defense','Defense Phase Starts')],
+  19: [ev('gac_attack','Attack Phase'), ev('tw_attack','Attack Phase Starts')],
+  20: [ev('gac_defense','Defense Phase'), ev('tw_payout','Payout')],
+  22: [ev('era_challenge','Era Challenge'), ev('gac_signup','Signup Starts'), ev('rote','Phase 2 Starts')],
+  23: [ev('gac_defense','Defense Phase'), ev('era_battle_1','Battle I'), ev('rote','Phase 3 Starts')],
+  24: [ev('rote','Phase 4 Starts'), ev('gac_attack','Attack Phase')],
+  25: [ev('gac_defense','Defense Phase'), ev('rote','Phase 5 Starts')],
+  26: [ev('gac_attack','Attack Phase'), ev('rote','Phase 6 Starts')],
+  27: [ev('gac_defense','Defense Phase'), ev('tb_ends','Ends'), ev('tw_signup','Signup Starts')],
+  28: [ev('era_battle_2','Battle II'), ev('tw_defense','Defense Phase Starts')],
 };
 
 const EPISODE_OVERRIDES = {
   1: {
-    1:  [ev('marquee_1','Marquee Event'), ev('journey_reruns','Journey Event Reruns Start'), ev('era_changeover','Era Changeover'), ev('gac_signup','GAC SIGNUP STARTS'), ev('tw_attack','TW ATTACK STARTS')],
-    7:  [ev('rote','TB Phase 1'), ev('conquest_start','2nd Conquest of Volume Starts'), ev('smugglersrun','Smugglers Run I'), ev('gac_attack','GAC ATTACK')],
-    8:  [ev('era_challenge','Era Challenge'), ev('rote','TB Phase 2 Start'), ev('journey_reruns','End of Journey Reruns')],
-    15: [ev('marquee_2','Marquee Event'), ev('tw_offense','TW OFFENSE'), ev('gac_signup','GAC SIGNUP STARTS')],
-    21: [ev('conquest_end','2nd Conquest of Volume Ends'), ev('gac_attack','GAC ATTACK'), ev('proving_ground','Proving Ground'), ev('ultimate_journey','Ultimate Journey'), ev('smugglersrun','Smugglers Run I'), ev('rote','TB PHASE 1 STARTS')],
+    1:  [ev('marquee_1'), ev('journey_reruns','Reruns Start'), ev('era_changeover','Era Changeover'), ev('gac_signup','Signup Starts'), ev('tw_attack','Attack Phase Starts')],
+    7:  [ev('rote','Phase 1'), ev('conquest_start','2nd Conquest of Volume Starts'), ev('smugglersrun',"Smuggler's Run I"), ev('gac_attack','Attack Phase')],
+    8:  [ev('era_challenge','Era Challenge'), ev('rote','Phase 2 Start'), ev('journey_reruns','Reruns End')],
+    15: [ev('marquee_2'), ev('tw_offense','Offense Phase Starts'), ev('gac_signup','Signup Starts')],
+    21: [ev('conquest_end','2nd Conquest of Volume Ends'), ev('gac_attack','Attack Phase'), ev('proving_ground','Proving Grounds'), ev('ultimate_journey','Ultimate Journey'), ev('smugglersrun',"Smuggler's Run I"), ev('rote','Phase 1 Starts')],
   },
   2: {
-    1:  [ev('marquee_3','Marquee Event'), ev('gac_signup','GAC SIGNUP STARTS'), ev('tw_attack','TW ATTACK STARTS')],
-    7:  [ev('rote','TB Phase 1'), ev('conquest_start','3rd Conquest of Volume Starts'), ev('smugglersrun','Smugglers Run I'), ev('gac_attack','GAC ATTACK')],
-    8:  [ev('era_challenge','Era Challenge'), ev('rote','TB Phase 2 Start')],
-    15: [ev('marquee_4','Marquee Event'), ev('tw_offense','TW OFFENSE'), ev('gac_signup','GAC SIGNUP STARTS')],
-    21: [ev('conquest_end','Conquest Volume Ends (Unit First Playable)'), ev('gac_attack','GAC ATTACK'), ev('proving_ground','Proving Ground'), ev('ultimate_journey','Ultimate Journey'), ev('smugglersrun','Smugglers Run I'), ev('rote','TB PHASE 1 STARTS')],
+    1:  [ev('marquee_3'), ev('gac_signup','Signup Starts'), ev('tw_attack','Attack Phase Starts')],
+    7:  [ev('rote','Phase 1'), ev('conquest_start','3rd Conquest of Volume Starts'), ev('smugglersrun',"Smuggler's Run I"), ev('gac_attack','Attack Phase')],
+    8:  [ev('era_challenge','Era Challenge'), ev('rote','Phase 2 Start')],
+    15: [ev('marquee_4'), ev('tw_offense','Offense Phase Starts'), ev('gac_signup','Signup Starts')],
+    21: [ev('conquest_end','Conquest Ends (Unit First Playable)'), ev('gac_attack','Attack Phase'), ev('proving_ground','Proving Grounds'), ev('ultimate_journey','Ultimate Journey'), ev('smugglersrun',"Smuggler's Run I"), ev('rote','Phase 1 Starts')],
   },
   3: {
-    1:  [ev('marquee_5','Marquee Event'), ev('journey_guide','4/5* Journey Guide Event Unlock'), ev('gac_signup','GAC SIGNUP STARTS'), ev('tw_attack','TW ATTACK STARTS')],
-    7:  [ev('rote','TB Phase 1'), ev('conquest_start','1st Conquest of New Volume Starts'), ev('smugglersrun','Smugglers Run I'), ev('gac_attack','GAC ATTACK')],
-    8:  [ev('era_challenge','Era Challenge'), ev('rote','TB Phase 2 Start')],
-    15: [ev('marquee_6','Marquee Event'), ev('journey_guide','6/7* Journey Guide Unlock'), ev('tw_offense','TW OFFENSE'), ev('gac_signup','GAC SIGNUP STARTS')],
-    21: [ev('conquest_end','1st Conquest of New Volume Ends'), ev('gac_attack','GAC ATTACK'), ev('proving_ground','Proving Ground'), ev('ultimate_journey','Ultimate Journey'), ev('smugglersrun','Smugglers Run I'), ev('rote','TB PHASE 1 STARTS')],
+    1:  [ev('marquee_5'), ev('journey_guide','4/5★ Guide Unlock'), ev('gac_signup','Signup Starts'), ev('tw_attack','Attack Phase Starts')],
+    7:  [ev('rote','Phase 1'), ev('conquest_start','1st Conquest of New Volume Starts'), ev('smugglersrun',"Smuggler's Run I"), ev('gac_attack','Attack Phase')],
+    8:  [ev('era_challenge','Era Challenge'), ev('rote','Phase 2 Start')],
+    15: [ev('marquee_6'), ev('journey_guide','6/7★ Guide Unlock'), ev('tw_offense','Offense Phase Starts'), ev('gac_signup','Signup Starts')],
+    21: [ev('conquest_end','1st Conquest of New Volume Ends'), ev('gac_attack','Attack Phase'), ev('proving_ground','Proving Grounds'), ev('ultimate_journey','Ultimate Journey'), ev('smugglersrun',"Smuggler's Run I"), ev('rote','Phase 1 Starts')],
   }
 };
 
@@ -851,11 +952,9 @@ function getGuildEventSummary(dayInEp){
 
 function renderMergedHero(st){
   document.getElementById('mhDayVal').textContent = st.bossEraDay;
-  document.getElementById('mhSubInfo').innerHTML = `
-    <span>Episode ${st.episode} of 3</span>
-    <span>Week ${st.week} of 4</span>
-    <span>${st.weekdayName}</span>
-  `;
+  document.getElementById('mhEpVal').textContent = `${st.episode} / 3`;
+  document.getElementById('mhWeekVal').textContent = `${st.week} / 4`;
+  document.getElementById('mhWeekdayVal').textContent = st.weekdayName;
 
   const fillPct = Math.min(100, Math.max(0, (st.bossEraDay / 84) * 100));
   document.getElementById('mhFill').style.width = fillPct + '%';
@@ -915,8 +1014,7 @@ function cardHTML(item, extraClass){
         onerror="this.parentElement.innerHTML='<div class=\\'art-badge\\'><span class=\\'glyph\\'>${meta.glyph}</span><span class=\\'cat\\'>${meta.label}</span></div>';">`
     : `<div class="art-badge"><span class="glyph">${meta.glyph}</span><span class="cat">${meta.label}</span></div>`;
 
-  return `<figure class="ecard bracket ${cls}" style="${style}">
-    <span class="bl"></span><span class="br"></span>
+  return `<figure class="ecard ${cls}" style="${style}">
     <div class="art">${artInner}</div>
     <div class="cat-tag">${meta.label}</div>
     <figcaption>${item.label}</figcaption>
@@ -1066,6 +1164,7 @@ const closeSchedule = () => scheduleModal.classList.remove('open');
 document.getElementById('openFullScheduleBtn').onclick = openSchedule;
 document.getElementById('openFullScheduleBtn2').onclick = openSchedule;
 document.getElementById('openFullScheduleBtnMobile').onclick = openSchedule;
+document.getElementById('footerFullScheduleBtn').onclick = openSchedule;
 document.getElementById('closeFullScheduleBtn').onclick = closeSchedule;
 scheduleModal.addEventListener('click', e => { if(e.target === scheduleModal) closeSchedule(); });
 
@@ -1088,6 +1187,8 @@ const footerMetaEl = document.getElementById('footerMeta');
 if(footerMetaEl){
   footerMetaEl.textContent = `Live data · resets 18:00 UTC daily · page loaded ${new Date().toLocaleString('en-GB', { timeZone: 'UTC', hour12: false })} UTC`;
 }
+const footerYearEl = document.getElementById('footerYear');
+if(footerYearEl){ footerYearEl.textContent = `© ${new Date().getFullYear()} SWGOH::RESOURCES`; }
 
 document.getElementById('saveDateBtn').onclick = () => {
   const val = document.getElementById('startDateInput').value;
@@ -1120,7 +1221,7 @@ tickCountdown();
 setInterval(tickCountdown, 1000);
 setInterval(renderAll, 60000);
 </script>
-<script src="./build-version.js?v=2fe9a3f-124"></script>
+<script src="./build-version.js?v=d47930a-125"></script>
 
 </body>
 </html>
