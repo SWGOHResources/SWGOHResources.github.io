@@ -111,9 +111,44 @@ body {
 .bracket .bl::before { bottom: -1px; left: -1px; border-bottom-width: 2px; border-left-width: 2px; position: absolute; }
 .bracket .br::before { bottom: -1px; right: -1px; border-bottom-width: 2px; border-right-width: 2px; position: absolute; }
 
-/* ─── Hero Status Cards Grid ─── */
+/* ─── Merged Hero Era Timeline + Changeover Unit ─── */
+.merged-hero {
+  background: linear-gradient(135deg, rgba(79,209,197,0.05), var(--void1) 60%, rgba(232,163,61,0.05));
+  border: 1px solid var(--cyan-border); border-radius: var(--radius-lg);
+  padding: 20px 24px; margin-bottom: 24px; display: grid; grid-template-columns: 1fr auto;
+  gap: 24px; align-items: center; box-shadow: 0 0 24px rgba(79, 209, 197, 0.06);
+}
+.mh-left { display: flex; flex-direction: column; gap: 12px; }
+.mh-tag { font-family: var(--mono); font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--cyan); }
+.mh-title-row { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+.mh-main-val { font-family: var(--disp); font-size: 32px; font-weight: 700; color: var(--text); line-height: 1; }
+.mh-main-val span { color: var(--amber); }
+.mh-sub-info { font-family: var(--mono); font-size: 13px; color: var(--text2); }
+
+/* Progress Bar inside Merged Hero */
+.mh-progress-wrap { width: 100%; max-width: 520px; }
+.mh-progress-bar {
+  width: 100%; height: 6px; background: var(--void3); border-radius: 3px;
+  overflow: hidden; border: 1px solid var(--border); position: relative; margin-top: 4px;
+}
+.mh-progress-fill { height: 100%; background: linear-gradient(90deg, var(--cyan), var(--amber)); border-radius: 3px; transition: width 0.3s; }
+.mh-progress-labels { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 10px; color: var(--text3); margin-top: 4px; }
+
+/* Countdown Section inside Merged Hero */
+.mh-right {
+  text-align: right; border-left: 1px solid var(--border2); padding-left: 24px;
+  display: flex; flex-direction: column; justify-content: center;
+}
+.mh-right .cb-label { font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text3); }
+.mh-right .cb-timer {
+  font-family: var(--mono); font-size: 34px; font-weight: 700; color: var(--amber);
+  text-shadow: 0 0 16px rgba(232, 163, 61, 0.3); letter-spacing: 0.05em; margin: 2px 0;
+}
+.mh-right .cb-sub { font-size: 11px; color: var(--text2); }
+
+/* ─── Hero Mode Status Cards Grid ─── */
 .hero-grid {
-  display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 24px;
 }
 .status-card {
   background: linear-gradient(160deg, var(--void1), var(--void2));
@@ -137,22 +172,11 @@ body {
 .sc-badge.purple { background: var(--purple-dim); color: var(--purple); border: 1px solid var(--purple-border); }
 
 .sc-main { margin-bottom: 8px; }
-.sc-val { font-family: var(--disp); font-size: 20px; font-weight: 700; color: var(--text); line-height: 1.2; }
-.sc-sub { font-size: 11.5px; color: var(--text2); margin-top: 2px; }
+.sc-val { font-family: var(--disp); font-size: 18px; font-weight: 700; color: var(--text); line-height: 1.25; }
+.sc-sub { font-size: 11.5px; color: var(--text2); margin-top: 3px; }
 
 .sc-footer { font-family: var(--mono); font-size: 10.5px; color: var(--text3); border-top: 1px solid var(--border); padding-top: 8px; display: flex; justify-content: space-between; }
 .sc-footer .highlight { color: var(--amber); font-weight: 500; }
-
-/* ─── Countdown Box ─── */
-.changeover-box {
-  background: linear-gradient(135deg, rgba(232,163,61,0.06), var(--void1));
-  border: 1px solid var(--amber-border); border-radius: var(--radius-lg);
-  padding: 16px 20px; display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 28px;
-}
-.cb-info h2 { font-family: var(--disp); font-size: 18px; font-weight: 700; color: var(--amber); margin-bottom: 2px; }
-.cb-info p { font-size: 12px; color: var(--text2); }
-.cb-timer { font-family: var(--mono); font-size: 32px; font-weight: 700; color: var(--amber); text-shadow: 0 0 16px rgba(232, 163, 61, 0.3); letter-spacing: 0.05em; }
 
 /* ─── Section Labels ─── */
 .section-head { display: flex; align-items: center; gap: 12px; margin: 32px 0 16px; }
@@ -251,14 +275,10 @@ body {
 .btn.primary:hover { box-shadow: 0 0 12px rgba(232,163,61,0.4); }
 
 @media (max-width: 900px) {
-  .hero-grid { grid-template-columns: repeat(2, 1fr); }
-  .boss-strip { grid-template-columns: repeat(2, 1fr); }
-}
-@media (max-width: 600px) {
+  .merged-hero { grid-template-columns: 1fr; }
+  .mh-right { border-left: none; border-top: 1px solid var(--border2); padding-left: 0; padding-top: 16px; text-align: left; }
   .hero-grid { grid-template-columns: 1fr; }
-  .topbar { padding: 0 16px; }
-  .wrap { padding: 16px; }
-  .changeover-box { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .boss-strip { grid-template-columns: repeat(2, 1fr); }
 }
 </style>
 </head>
@@ -281,19 +301,37 @@ body {
 
 <div class="wrap">
 
-  <!-- Status Dashboard Cards -->
-  <div class="hero-grid" id="statusDashboard">
-    <!-- Rendered dynamically -->
+  <!-- Merged Era Timeline + Changeover Unit -->
+  <div class="merged-hero bracket" id="mergedHero">
+    <span class="bl"></span><span class="br"></span>
+    <div class="mh-left">
+      <div class="mh-tag">// Live Era Timeline & Status</div>
+      <div class="mh-title-row">
+        <div class="mh-main-val">Day <span id="mhDayVal">--</span> <span>/ 84</span></div>
+        <div class="mh-sub-info" id="mhSubInfo">Episode -- · Week -- · --</div>
+      </div>
+      <div class="mh-progress-wrap">
+        <div class="mh-progress-bar">
+          <div class="mh-progress-fill" id="mhFill" style="width: 0%"></div>
+        </div>
+        <div class="mh-progress-labels">
+          <span id="mhStartDate">Start</span>
+          <span id="mhDaysRemaining">-- days left in Era</span>
+          <span id="mhEndDate">End</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="mh-right">
+      <div class="cb-label">Next Changeover (18:00 UTC)</div>
+      <div class="cb-timer" id="countdown">--:--:--</div>
+      <div class="cb-sub">Official SWGOH Event Reset</div>
+    </div>
   </div>
 
-  <!-- Countdown Banner -->
-  <div class="changeover-box bracket">
-    <span class="bl"></span><span class="br"></span>
-    <div class="cb-info">
-      <h2>Daily Holotable Changeover</h2>
-      <p>Official SWGOH Event Reset Standard Time: 19:00 UTC</p>
-    </div>
-    <div class="cb-timer" id="countdown">--:--:--</div>
+  <!-- Mode Status Cards Grid -->
+  <div class="hero-grid" id="statusDashboard">
+    <!-- Rendered dynamically -->
   </div>
 
   <!-- Today & Tomorrow Event Cards -->
@@ -321,7 +359,7 @@ body {
   <!-- Coliseum Rotation -->
   <div class="section-head">
     <h2>Coliseum Boss Rotation</h2>
-    <span class="sub">Loops continuously at 19:00 UTC daily</span>
+    <span class="sub">Loops continuously at 18:00 UTC daily</span>
     <div class="rule"></div>
   </div>
   <div class="boss-strip" id="bossStrip"></div>
@@ -349,7 +387,7 @@ body {
     <p>Select the Tuesday when Day 1 of the Era began. The schedule automatically calculates cycles from this baseline.</p>
     <label for="startDateInput">Era Start Baseline (Tuesday)</label>
     <input type="date" id="startDateInput">
-    <div class="hint">Day 1 always starts on a Tuesday at 19:00 UTC.</div>
+    <div class="hint">Day 1 always starts on a Tuesday at 18:00 UTC.</div>
     <div class="modal-actions">
       <button class="btn" id="closeModalBtn">Cancel</button>
       <button class="btn primary" id="saveDateBtn">Save & Refresh</button>
@@ -361,7 +399,7 @@ body {
 /* =========================================================
    EVENT DATA MODEL & CYCLE CONSTANTS
    84-Day Cycle = 3 Episodes x 28 Days
-   Changeovers happen at 19:00 UTC daily.
+   Changeovers happen at 18:00 UTC daily.
    ========================================================= */
 
 function ev(icon, label){ return {icon, label}; }
@@ -428,7 +466,7 @@ const WEEKDAY_NAMES = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Frida
 const WEEKDAY_SHORT = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 
 /* =========================================================
-   EXACT UTC TIME ENGINE & CALCULATION
+   EXACT UTC TIME ENGINE (18:00 UTC Standard Reset)
    ========================================================= */
 
 function getStoredEraStart(){
@@ -437,8 +475,8 @@ function getStoredEraStart(){
 
 function parseEraStart(str){
   const [y,m,d] = str.split('-').map(Number);
-  // Era starts at 19:00 UTC on Tuesday
-  return Date.UTC(y, m-1, d, 19, 0, 0);
+  // Era starts at 18:00 UTC on Tuesday
+  return Date.UTC(y, m-1, d, 18, 0, 0);
 }
 
 function getGameStatus(){
@@ -446,13 +484,12 @@ function getGameStatus(){
   const nowMs = now.getTime();
   const eraStartMs = parseEraStart(getStoredEraStart());
 
-  // Difference in milliseconds from baseline era start
-  const diffMs = nowMs - eraStartMs;
   const msPerDay = 86400000;
+  const diffMs = nowMs - eraStartMs;
 
-  // Raw days elapsed since baseline 19:00 UTC
+  // Raw days elapsed since baseline 18:00 UTC
   let rawDayIndex = Math.floor(diffMs / msPerDay) + 1;
-  if(diffMs < 0) rawDayIndex = 1; // Fallback safeguard
+  if(diffMs < 0) rawDayIndex = 1;
 
   // Era Day is 1 to 84
   let eraDay = ((rawDayIndex - 1) % 84) + 1;
@@ -463,7 +500,7 @@ function getGameStatus(){
   // Active Era start timestamp for current cycle
   const currentEraStartMs = eraStartMs + (cycleNum * 84 * msPerDay);
 
-  // Current game day timestamp (starts at 19:00 UTC)
+  // Current game day timestamp (starts at 18:00 UTC)
   const currentDayStartMs = currentEraStartMs + ((eraDay - 1) * msPerDay);
 
   const episode = Math.floor((eraDay - 1) / 28) + 1;
@@ -498,16 +535,44 @@ function fmtDateUTC(ms){
   return d.toLocaleDateString('en-GB', { timeZone: 'UTC', weekday: 'short', day: 'numeric', month: 'short' });
 }
 
+/* Helper to summarize Guild Event state for Today and Tomorrow */
+function getGuildEventSummary(dayInEp){
+  if(dayInEp >= 7 && dayInEp <= 12){
+    const phase = dayInEp - 6;
+    return `ROTE Phase ${phase} of 6`;
+  }
+  if(dayInEp === 13 || dayInEp === 27) return 'TB Ends → TW Signup Starts';
+  if(dayInEp === 14 || dayInEp === 28) return 'TW Defense Phase Starts';
+  if(dayInEp === 15 || dayInEp === 1) return 'TW Attack / Offense Phase Starts';
+  if(dayInEp === 2 || dayInEp === 6 || dayInEp === 20) return 'TW Payout / Intermission';
+  if(dayInEp >= 21 && dayInEp <= 26){
+    const phase = dayInEp - 20;
+    return `ROTE Phase ${phase} of 6`;
+  }
+  return 'Guild Intermission';
+}
+
 /* =========================================================
-   STATUS DASHBOARD BUILDER (GAC, CONQUEST, TB/TW, ERA)
+   STATUS DASHBOARD & MERGED HERO BUILDER
    ========================================================= */
+
+function renderMergedHero(st){
+  document.getElementById('mhDayVal').textContent = st.eraDay;
+  document.getElementById('mhSubInfo').textContent = `Episode ${st.episode} of 3 · Week ${st.week} of 4 · ${st.weekdayName}`;
+
+  const fillPct = Math.min(100, Math.max(0, (st.eraDay / 84) * 100));
+  document.getElementById('mhFill').style.width = fillPct + '%';
+
+  const eraEndMs = st.currentEraStartMs + (83 * 86400000);
+  document.getElementById('mhStartDate').textContent = fmtDateUTC(st.currentEraStartMs);
+  document.getElementById('mhEndDate').textContent = fmtDateUTC(eraEndMs);
+  document.getElementById('mhDaysRemaining').textContent = `${84 - st.eraDay} days remaining`;
+}
 
 function renderStatusDashboard(st){
   const container = document.getElementById('statusDashboard');
 
   // 1. GAC Status Logic
-  // Days 1-21 of Episode = Active Season Weeks 1, 2, 3.
-  // Days 22-28 = Off-Week / Intermission between seasons.
   let gacState = {};
   if(st.dayInEp <= 21){
     const gacWeek = Math.floor((st.dayInEp - 1) / 7) + 1;
@@ -531,7 +596,6 @@ function renderStatusDashboard(st){
   }
 
   // 2. Conquest Status Logic
-  // Runs 14 days from Day 7 to Day 20 of each Episode
   let conquestState = {};
   if(st.dayInEp >= 7 && st.dayInEp <= 20){
     const conquestDay = st.dayInEp - 6;
@@ -563,61 +627,14 @@ function renderStatusDashboard(st){
     };
   }
 
-  // 3. ROTE / Territory Battle & Territory War (TW) Status
-  let tbTwState = {};
-  if((st.dayInEp >= 7 && st.dayInEp <= 12) || (st.dayInEp >= 21 && st.dayInEp <= 26)){
-    const phase = st.dayInEp >= 21 ? (st.dayInEp - 20) : (st.dayInEp - 6);
-    tbTwState = {
-      status: 'TB RUNNING',
-      badgeClass: 'running',
-      title: 'Territory Battle',
-      main: `ROTE Phase ${phase} of 6`,
-      sub: `Active 24h Guild Phase`
-    };
-  } else if(st.dayInEp === 13 || st.dayInEp === 27){
-    tbTwState = {
-      status: 'TW SIGNUP',
-      badgeClass: 'purple',
-      title: 'Guild Events',
-      main: 'TB Ends → TW Signup',
-      sub: 'Join Territory War now'
-    };
-  } else if(st.dayInEp === 14 || st.dayInEp === 28){
-    tbTwState = {
-      status: 'TW DEFENSE',
-      badgeClass: 'warning',
-      title: 'Territory War',
-      main: 'TW Defense Phase',
-      sub: 'Set defensive squads'
-    };
-  } else if(st.dayInEp === 15 || st.dayInEp === 1){
-    tbTwState = {
-      status: 'TW ATTACK',
-      badgeClass: 'warning',
-      title: 'Territory War',
-      main: 'TW Attack Phase',
-      sub: 'Clear enemy sectors'
-    };
-  } else {
-    tbTwState = {
-      status: 'INTERMISSION',
-      badgeClass: 'off',
-      title: 'Guild Events',
-      main: 'Guild Intermission',
-      sub: 'Next event coming up'
-    };
-  }
+  // 3. Guild Event Status (Direct Today & Tomorrow Summary)
+  const tmrwDayInEp = (st.dayInEp % 28) + 1;
+  const todayGuildSummary = getGuildEventSummary(st.dayInEp);
+  const tmrwGuildSummary = getGuildEventSummary(tmrwDayInEp);
 
-  // 4. Era Overview Card
-  const eraDaysRemaining = 84 - st.eraDay;
+  const isGuildActive = todayGuildSummary.includes('ROTE') || todayGuildSummary.includes('TW');
 
   container.innerHTML = `
-    <div class="status-card cyan-card">
-      <div class="sc-header"><span class="sc-title">Era Timeline</span><span class="sc-badge running">${st.weekdayName}</span></div>
-      <div class="sc-main"><div class="sc-val">Day ${st.eraDay} / 84</div><div class="sc-sub">Ep ${st.episode} · Week ${st.week} of 4</div></div>
-      <div class="sc-footer"><span>${eraDaysRemaining} days remaining</span><span class="highlight">Cycle #${st.cycleNum + 1}</span></div>
-    </div>
-
     <div class="status-card ${gacState.badgeClass === 'running' ? 'cyan-card' : ''}">
       <div class="sc-header"><span class="sc-title">${gacState.title}</span><span class="sc-badge ${gacState.badgeClass}">${gacState.status}</span></div>
       <div class="sc-main"><div class="sc-val">${gacState.main}</div><div class="sc-sub">${gacState.sub}</div></div>
@@ -627,13 +644,16 @@ function renderStatusDashboard(st){
     <div class="status-card ${conquestState.badgeClass === 'warning' ? 'amber-card' : ''}">
       <div class="sc-header"><span class="sc-title">${conquestState.title}</span><span class="sc-badge ${conquestState.badgeClass}">${conquestState.status}</span></div>
       <div class="sc-main"><div class="sc-val">${conquestState.main}</div><div class="sc-sub">${conquestState.sub}</div></div>
-      <div class="sc-footer"><span>Duration: 14 Days</span><span class="highlight">Proving Grounds at end</span></div>
+      <div class="sc-footer"><span>14-Day Event</span><span class="highlight">Proving Grounds at end</span></div>
     </div>
 
-    <div class="status-card ${tbTwState.badgeClass === 'running' ? 'purple-card' : ''}">
-      <div class="sc-header"><span class="sc-title">${tbTwState.title}</span><span class="sc-badge ${tbTwState.badgeClass}">${tbTwState.status}</span></div>
-      <div class="sc-main"><div class="sc-val">${tbTwState.main}</div><div class="sc-sub">${tbTwState.sub}</div></div>
-      <div class="sc-footer"><span>Guild Activity</span><span class="highlight">19:00 UTC Reset</span></div>
+    <div class="status-card ${isGuildActive ? 'purple-card' : ''}">
+      <div class="sc-header"><span class="sc-title">Guild Events</span><span class="sc-badge ${isGuildActive ? 'running' : 'off'}">${isGuildActive ? 'ACTIVE' : 'IDLE'}</span></div>
+      <div class="sc-main">
+        <div class="sc-val" style="font-size:15px;margin-bottom:2px">Today: <span style="color:var(--text);font-weight:600">${todayGuildSummary}</span></div>
+        <div class="sc-sub" style="font-size:12px">Tomorrow: <span style="color:var(--cyan)">${tmrwGuildSummary}</span></div>
+      </div>
+      <div class="sc-footer"><span>Territory Battles & Wars</span><span class="highlight">18:00 UTC Reset</span></div>
     </div>
   `;
 }
@@ -732,7 +752,6 @@ function renderMainFeed(st){
   }
 
   // 4. Coliseum Boss Rotation Loop
-  // Continuous 4-boss loop index advancing daily
   const bossEl = document.getElementById('bossStrip');
   bossEl.innerHTML = '';
 
@@ -751,15 +770,15 @@ function renderMainFeed(st){
 }
 
 /* =========================================================
-   LIVE TIMER & MASTER RENDER
+   LIVE TIMER & MASTER RENDER (18:00 UTC Reset)
    ========================================================= */
 
 function tickCountdown(){
   const now = new Date();
   const nowMs = now.getTime();
 
-  // Next reset is at 19:00:00 UTC
-  let reset = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 19, 0, 0, 0));
+  // Next reset is at exactly 18:00:00 UTC
+  let reset = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 18, 0, 0, 0));
   if(nowMs >= reset.getTime()){
     reset.setUTCDate(reset.getUTCDate() + 1);
   }
@@ -775,6 +794,7 @@ function tickCountdown(){
 
 function renderAll(){
   const st = getGameStatus();
+  renderMergedHero(st);
   renderStatusDashboard(st);
   renderMainFeed(st);
   renderFullSchedule(st);
