@@ -995,7 +995,7 @@ function getGacStatus(st){
       status: 'OFF-WEEK',
       badgeClass: 'off',
       title: `Grand Arena (${format})`,
-      main: 'Mid-Season Intermission',
+      main: 'Post-Season Off Week',
       sub: `Next Signup opens ${dateStr} (${dayLabel})`
     };
   }
@@ -1045,7 +1045,7 @@ function getConquestStatus(st){
       badgeClass: 'purple',
       title: 'Next Volume Conquest',
       main: `Starts in ${(28 - d) + 7} days`,
-      sub: 'Intermission Active'
+      sub: 'Conquest Is Not Currently Active'
     };
   }
 }
@@ -1054,7 +1054,7 @@ function getGuildEventSummary(dayInEp){
   if(dayInEp >= 7 && dayInEp <= 12) return `ROTE TB Phase ${dayInEp - 6} of 6`;
   if(dayInEp === 13 || dayInEp === 27) return 'TB Ends → TW Signup Starts';
   if(dayInEp === 14 || dayInEp === 28) return 'TW Defense Phase Starts';
-  if(dayInEp === 15 || dayInEp === 1) return 'TW Attack / Offense Starts';
+  if(dayInEp === 15 || dayInEp === 1) return 'TW Offense Starts';
   if(dayInEp === 2 || dayInEp === 6 || dayInEp === 20) return 'TW Payout / Intermission';
   if(dayInEp >= 21 && dayInEp <= 26) return `ROTE TB Phase ${dayInEp - 20} of 6`;
   return 'Guild Intermission';
@@ -1352,7 +1352,7 @@ tickCountdown();
 setInterval(tickCountdown, 1000);
 setInterval(renderAll, 60000);
 </script>
-<script src="./build-version.js?v=a2318bc-140"></script>
+<script src="./build-version.js?v=096c24c-141"></script>
 
 </body>
 </html>
