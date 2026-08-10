@@ -292,7 +292,14 @@ body {
   border: 1px solid var(--border);
   display: flex; align-items: center; justify-content: center; margin-bottom: 9px; position: relative;
 }
-.ecard .art img { width: calc(100% - 16px); height: calc(100% - 16px); margin: 8px; object-fit: contain; display: block; }
+.ecard .art img {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
 .ecard .art-badge {
   width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;
   gap: 6px; background: var(--accent-dim, var(--void2));
@@ -1327,7 +1334,7 @@ tickCountdown();
 setInterval(tickCountdown, 1000);
 setInterval(renderAll, 60000);
 </script>
-<script src="./build-version.js?v=705d7e2-130"></script>
+<script src="./build-version.js?v=375d86a-131"></script>
 
 </body>
 </html>
