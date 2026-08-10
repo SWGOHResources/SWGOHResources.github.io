@@ -156,8 +156,13 @@
   .legend .sw.journey{--c:var(--purple);border-style:dashed;}
   .legend .sw.challenge{--c:var(--red);}
 
-
   .forecast{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;}
+  .full-schedule-wrap{background:var(--bg-panel);border:1px solid var(--line);padding:14px 12px;margin-top:12px;overflow:auto;max-height:520px;}
+  .schedule-table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12px;color:var(--text-dim);}
+  .schedule-table th,.schedule-table td{padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top;text-align:left;}
+  .schedule-table th{color:var(--text);font-size:11px;text-transform:uppercase;letter-spacing:.08em;}
+  .schedule-table tbody tr.active{background:rgba(94,227,240,.08);}
+  .schedule-table td .event-tag{display:inline-block;margin:0 4px 4px 0;padding:2px 6px;border-radius:999px;background:rgba(94,227,240,.14);color:var(--cyan);font-size:11px;}
   .fchip{
     min-width:118px;background:var(--bg-panel);border:1px solid var(--line);padding:10px 10px 12px;flex:0 0 auto;
   }
@@ -235,7 +240,7 @@
   <div class="hero bracket"><span class="bl"></span><span class="br"></span>
     <div class="readout-row" id="readoutRow"><!-- filled by JS --></div>
     <div class="countdown-box">
-      <div class="k">Next changeover · 7:00pm UK</div>
+      <div class="k">Next changeover · 7:00pm UTC</div>
       <div class="countdown" id="countdown">--:--:--</div>
     </div>
   </div>
@@ -274,6 +279,19 @@
     <div class="rule"></div>
   </div>
   <div class="forecast" id="forecastRow"></div>
+
+  <div class="section-head">
+    <h2>Full Era Schedule</h2>
+    <div class="rule"></div>
+  </div>
+  <div class="full-schedule-wrap">
+    <table class="schedule-table">
+      <thead>
+        <tr><th>Day</th><th>Date</th><th>Episode</th><th>Events</th></tr>
+      </thead>
+      <tbody id="fullSchedule"></tbody>
+    </table>
+  </div>
 
   <div class="section-head">
     <h2>Coliseum Boss Rotation</h2>
@@ -351,12 +369,20 @@ const EPISODE_OVERRIDES = {
   }
 };
 
-// Bosses cycle Krayt Dragon (Tue) -> Zeffo (Wed) -> Jotaz (Thu) -> Dryax (Fri),
-// each one runs until the next one starts, then the sequence repeats the
-// following Tuesday. So Dryax stays active Fri through Mon.
-const BOSS_START_WEEKDAY = { 2:ev('krayt','Krayt Dragon'), 3:ev('zeffo','Zeffo Tomb Guardians'), 4:ev('jotaz','Jotaz'), 5:ev('dryax','Dryax') };
-const ACTIVE_BOSS_BY_WEEKDAY = { 0:BOSS_START_WEEKDAY[5], 1:BOSS_START_WEEKDAY[5], 2:BOSS_START_WEEKDAY[2], 3:BOSS_START_WEEKDAY[3], 4:BOSS_START_WEEKDAY[4], 5:BOSS_START_WEEKDAY[5], 6:BOSS_START_WEEKDAY[5] };
-const DEFAULT_ERA_START = '2026-07-28';
+// Bosses cycle every era day in a repeating 4-day cycle:
+// day 1 = Krayt Dragon, day 2 = Zeffo Tomb Guardians,
+// day 3 = Jotaz, day 4 = Dryax, then repeat.
+const BOSS_CYCLE = [
+  ev('krayt','Krayt Dragon'),
+  ev('zeffo','Zeffo Tomb Guardians'),
+  ev('jotaz','Jotaz'),
+  ev('dryax','Dryax')
+];
+function bossForDayIndex(dayIndex){
+  if(dayIndex < 1 || dayIndex > 84) return BOSS_CYCLE[3];
+  return BOSS_CYCLE[(dayIndex - 1) % BOSS_CYCLE.length];
+}
+const DEFAULT_ERA_START = '2026-07-29';
 const WEEKDAY_NAMES = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 const WEEKDAY_SHORT = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 
@@ -434,7 +460,7 @@ function collectTimelineMarkers(){
       if(!cat) return;
       let assetIcon;
       if(e.icon === 'marquee_event') assetIcon = `marquee${++marqueeCount}icon`;
-      else if(e.icon === 'journey_reruns' || e.icon === 'journey_guide') assetIcon = 'journeyicon';
+      else if(e.icon === 'journey_guide') assetIcon = 'journeyicon';
       else if(e.icon === 'era_battle') assetIcon = e.label.includes('1') ? 'erabattle1' : 'erabattle2';
       markers.push({ dayIndex: idx, cat, label: e.label, assetIcon });
     });
@@ -533,6 +559,25 @@ function renderCards(el, items, extraClass){
     : `<p class="empty-note">— no scheduled changeovers —</p>`;
 }
 
+function renderFullSchedule(eraStartUTC, todayIndex){
+  const tbody = document.getElementById('fullSchedule');
+  tbody.innerHTML = '';
+  for(let idx=1; idx<=84; idx++){
+    const sched = scheduleForIndex(idx);
+    const dateUTC = eraStartUTC + (idx-1)*86400000;
+    const items = sched ? getDayEvents(sched.episode, sched.dayInEp) : [];
+    const row = document.createElement('tr');
+    if(idx === todayIndex) row.className = 'active';
+    row.innerHTML = `
+      <td>${idx}</td>
+      <td>${fmtDate(dateUTC)}</td>
+      <td>${sched ? `${sched.episode}.${sched.week}` : '—'}</td>
+      <td>${items.length ? items.map(it => `<span class="event-tag">${it.label}</span>`).join('') : '—'}</td>
+    `;
+    tbody.appendChild(row);
+  }
+}
+
 function render(){
   const warnBox = document.getElementById('warnBox');
   warnBox.innerHTML = '';
@@ -543,6 +588,7 @@ function render(){
   const todayIndex = dayIndexFor(gameDateUTC, eraStartUTC);
   const todaySched = scheduleForIndex(todayIndex);
   renderTimeline(eraStartUTC, todayIndex);
+  renderFullSchedule(eraStartUTC, todayIndex);
   const tmrwSched = scheduleForIndex(todayIndex+1);
 
   if(!todaySched){
@@ -562,9 +608,8 @@ function render(){
   document.getElementById('todayHeading').textContent = `Today — ${todayWeekday}`;
   document.getElementById('todaySub').textContent = fmtDate(gameDateUTC);
   const todayEvents = todaySched ? getDayEvents(todaySched.episode, todaySched.dayInEp) : [];
-  const todayWd = new Date(gameDateUTC).getUTCDay();
-  const todayBoss = ACTIVE_BOSS_BY_WEEKDAY[todayWd];
-  const todayBossLabel = (todayWd>=2 && todayWd<=5) ? `${todayBoss.label} (starts today)` : `${todayBoss.label} (active)`;
+  const todayBoss = bossForDayIndex(todayIndex);
+  const todayBossLabel = `${todayBoss.label} (active)`;
   renderCards(document.getElementById('todayCards'), [...todayEvents, {icon:todayBoss.icon, label:todayBossLabel, boss:true}]);
 
   const tmrwDateUTC = gameDateUTC + 86400000;
@@ -572,9 +617,8 @@ function render(){
   document.getElementById('tmrwHeading').textContent = `Tomorrow — ${tmrwWeekday}`;
   document.getElementById('tmrwSub').textContent = fmtDate(tmrwDateUTC);
   const tmrwEvents = tmrwSched ? getDayEvents(tmrwSched.episode, tmrwSched.dayInEp) : [];
-  const tmrwWd = new Date(tmrwDateUTC).getUTCDay();
-  const tmrwBoss = ACTIVE_BOSS_BY_WEEKDAY[tmrwWd];
-  const tmrwBossLabel = (tmrwWd>=2 && tmrwWd<=5) ? `${tmrwBoss.label} (starts)` : `${tmrwBoss.label} (active)`;
+  const tmrwBoss = bossForDayIndex(todayIndex + 1);
+  const tmrwBossLabel = `${tmrwBoss.label} (starts tomorrow)`;
   renderCards(document.getElementById('tmrwCards'), [...tmrwEvents, {icon:tmrwBoss.icon, label:tmrwBossLabel, boss:true}], 'tomorrow');
 
   // 7-day forecast
@@ -584,43 +628,38 @@ function render(){
     const dUTC = gameDateUTC + i*86400000;
     const idx = todayIndex + i;
     const sched = scheduleForIndex(idx);
-    const wd = new Date(dUTC).getUTCDay();
     const items = sched ? getDayEvents(sched.episode, sched.dayInEp) : [];
-    const boss = ACTIVE_BOSS_BY_WEEKDAY[wd];
-    const isStart = wd>=2 && wd<=5;
+    const boss = bossForDayIndex(idx);
     const chip = document.createElement('div');
     chip.className = 'fchip' + (i===0 ? ' today' : '');
     chip.innerHTML = `
-      <div class="day">${WEEKDAY_SHORT[wd]}${i===0?' · today':''}</div>
+      <div class="day">${WEEKDAY_SHORT[new Date(dUTC).getUTCDay()]}${i===0?' · today':''}</div>
       <div class="date">${new Date(dUTC).toLocaleDateString('en-GB',{timeZone:'UTC',day:'numeric',month:'short'})}</div>
       <ul>${items.length ? items.map(it=>`<li>${it.label}</li>`).join('') : '<li>—</li>'}</ul>
-      <span class="boss-tag">${isStart ? '▲' : '·'} ${boss.label} ${isStart ? 'starts' : 'active'}</span>
+      <span class="boss-tag">▲ ${boss.label}</span>
     `;
     forecastEl.appendChild(chip);
   }
 
-  // boss rotation strip (Mon–Sun reference, highlighting today/tomorrow)
+  // boss rotation strip (4-day era cycle)
   const bossEl = document.getElementById('bossStrip');
   bossEl.innerHTML = '';
-  const order = [1,2,3,4,5,6,0]; // Mon..Sun
-  order.forEach(wd=>{
-    const b = ACTIVE_BOSS_BY_WEEKDAY[wd];
-    const isStart = wd>=2 && wd<=5;
+  BOSS_CYCLE.forEach((b, idx)=>{
+    const cycleDay = idx + 1;
     const cell = document.createElement('div');
-    cell.className = 'bcell' + (wd===todayWd ? ' active' : '');
-    cell.innerHTML = `<div class="day">${WEEKDAY_SHORT[wd]}${wd===todayWd?' · today':''}</div>
+    cell.className = 'bcell' + (((todayIndex - 1) % 4) === idx ? ' active' : '');
+    cell.innerHTML = `<div class="day">Day ${cycleDay}${((todayIndex - 1) % 4) === idx ? ' · today' : ''}</div>
       <div class="name">${b.label}</div>
-      <div class="name none">${isStart ? 'starts' : 'carries over'}</div>`;
+      <div class="name none">cycle ${cycleDay}/4</div>`;
     bossEl.appendChild(cell);
   });
 }
 
 function tickCountdown(){
   const now = new Date();
-  const p = ukParts(now);
-  const msSinceUKMidnight = p.hour*3600000 + p.minute*60000 + p.second*1000;
+  const msSinceUTCMidnight = now.getUTCHours()*3600000 + now.getUTCMinutes()*60000 + now.getUTCSeconds()*1000;
   const target = 19*3600000;
-  let diff = target - msSinceUKMidnight;
+  let diff = target - msSinceUTCMidnight;
   if(diff <= 0) diff += 86400000;
   const h = Math.floor(diff/3600000);
   const m = Math.floor((diff%3600000)/60000);
