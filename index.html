@@ -110,7 +110,7 @@ body:has(.modal-backdrop.open) .starfield span {
 /* ─── Top Header & Navigation ─── */
 .top-header {
   position: sticky; top: 0; z-index: 200; width: 100%;
-  background: rgba(10, 12, 16, 0.85); backdrop-filter: blur(14px);
+  background: rgba(10, 12, 16, 0.95);
   border-bottom: 1px solid var(--border);
 }
 .topbar {
@@ -185,19 +185,11 @@ body:has(.modal-backdrop.open) .starfield span {
 .merged-hero {
   position: relative; overflow: hidden;
   background: var(--void1);
-  border: 1px solid var(--border2); border-radius: var(--radius-lg);
+  border: 1px solid var(--border2);
+  border-left: 3px solid var(--amber);
+  border-radius: var(--radius-lg);
   padding: 28px 28px; margin-bottom: 24px; display: grid; grid-template-columns: 1fr auto;
   gap: 28px; align-items: center;
-}
-.merged-hero::before {
-  content: ""; position: absolute; inset: 0; pointer-events: none;
-  background:
-    radial-gradient(480px 240px at 8% 0%, rgba(86,184,173,0.14), transparent 70%),
-    radial-gradient(420px 220px at 100% 100%, rgba(224,165,82,0.12), transparent 70%);
-}
-.merged-hero::after {
-  content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
-  background: linear-gradient(180deg, var(--cyan), var(--amber));
 }
 .mh-left { display: flex; flex-direction: column; gap: 14px; position: relative; z-index: 1; }
 .mh-tag { font-family: var(--disp); font-size: 20px; font-weight: 700; color: var(--text); letter-spacing: 0; text-transform: none; margin-bottom: 4px; }
@@ -225,7 +217,7 @@ body:has(.modal-backdrop.open) .starfield span {
   width: 100%; height: 8px; background: var(--void3); border-radius: 5px;
   overflow: hidden; border: 1px solid var(--border); position: relative; margin-top: 6px;
 }
-.mh-progress-fill { height: 100%; background: linear-gradient(90deg, var(--cyan), var(--amber)); border-radius: 5px; transition: width 0.3s; box-shadow: 0 0 10px rgba(86,184,173,0.4); }
+.mh-progress-fill { height: 100%; background: var(--amber); border-radius: 5px; transition: width 0.3s; }
 .mh-progress-labels { display: flex; justify-content: space-between; font-family: var(--body); font-size: 10px; color: var(--text3); margin-top: 6px; }
 
 .mh-right {
@@ -236,7 +228,7 @@ body:has(.modal-backdrop.open) .starfield span {
 .mh-right .cb-label { font-family: var(--body); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text3); }
 .mh-right .cb-timer {
   font-family: var(--mono); font-size: 34px; font-weight: 700; color: var(--amber);
-  text-shadow: 0 0 10px rgba(224, 165, 82, 0.2); letter-spacing: 0.05em; margin: 2px 0;
+  letter-spacing: 0.05em; margin: 2px 0;
 }
 .mh-right .cb-sub { font-size: 11px; color: var(--text2); }
 
@@ -245,14 +237,14 @@ body:has(.modal-backdrop.open) .starfield span {
   display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 24px;
 }
 .status-card {
-  background: linear-gradient(160deg, var(--void1), var(--void2));
+  background: var(--void1);
   border: 1px solid var(--border); border-radius: var(--radius-lg);
   padding: 16px; display: flex; flex-direction: column; justify-content: space-between;
   position: relative; overflow: hidden;
 }
-.status-card.red-card { border-color: var(--red-border); box-shadow: 0 0 14px rgba(239, 68, 68, 0.12); }
-.status-card.purple-card { border-color: var(--purple-border); box-shadow: 0 0 14px rgba(150, 134, 214, 0.12); }
-.status-card.amber-card { border-color: var(--amber-border); box-shadow: 0 0 14px rgba(224, 165, 82, 0.12); }
+.status-card.red-card { border-color: var(--red-border); }
+.status-card.purple-card { border-color: var(--purple-border); }
+.status-card.amber-card { border-color: var(--amber-border); }
 
 .sc-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
 .sc-title { font-family: var(--body); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text3); }
@@ -281,17 +273,17 @@ body:has(.modal-backdrop.open) .starfield span {
 .section-head { display: flex; align-items: center; gap: 12px; margin: 32px 0 16px; }
 .section-head h2 { font-family: var(--disp); font-size: 16px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text); }
 .section-head .sub { font-family: var(--body); font-size: 11.5px; color: var(--text3); }
-.section-head .rule { flex: 1; height: 1px; background: linear-gradient(90deg, var(--border2), transparent); }
+.section-head .rule { flex: 1; height: 1px; background: var(--border); }
 
 /* ─── Feed Cards Layout ─── */
 .card-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(148px, 1fr)); gap: 14px; }
 .ecard {
   background: var(--void1); border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  padding: 10px; display: flex; flex-direction: column; transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+  padding: 10px; display: flex; flex-direction: column; transition: border-color 0.2s, transform 0.2s;
   position: relative;
 }
-.ecard:hover { border-color: var(--border2); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
+.ecard:hover { border-color: var(--border2); transform: translateY(-2px); }
 .ecard .art {
   aspect-ratio: 1/1; width: 100%; border-radius: 8px; overflow: hidden;
   background: var(--void2);
@@ -334,7 +326,7 @@ body:has(.modal-backdrop.open) .starfield span {
   background: var(--void1); border: 1px solid var(--border); border-radius: var(--radius-lg);
   padding: 12px; display: flex; flex-direction: column; min-width: 0;
 }
-.fchip.today { border-color: var(--cyan-border); background: linear-gradient(180deg, rgba(86, 184, 173, 0.06), var(--void1)); }
+.fchip.today { border-color: var(--cyan-border); background: var(--void2); }
 .fchip .day { font-family: var(--body); font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.05em; }
 .fchip .date { font-family: var(--disp); font-size: 14px; font-weight: 600; margin: 2px 0 8px; color: var(--text); }
 .fchip ul { list-style: none; display: flex; flex-direction: column; gap: 4px; }
@@ -351,8 +343,8 @@ body:has(.modal-backdrop.open) .starfield span {
   scrollbar-width: thin; 
   flex: 1; 
   min-height: 0;
-  -webkit-overflow-scrolling: touch; /* Smooth scrolling for iOS */
-  contain: content; /* Isolates repaints to inside this box only */
+  -webkit-overflow-scrolling: touch;
+  contain: content;
 }
 .schedule-table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 12px; }
 .schedule-table th, .schedule-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; }
@@ -363,9 +355,10 @@ body:has(.modal-backdrop.open) .starfield span {
   letter-spacing: 0.08em; 
   position: sticky; 
   top: 0; 
-  background: #191d24; /* Solid color instead of semi-transparent variable */
+  background: #191d24;
   z-index: 5; 
-}.schedule-table tbody tr.active { background: rgba(86, 184, 173, 0.08); }
+}
+.schedule-table tbody tr.active { background: rgba(86, 184, 173, 0.08); }
 .schedule-table td .event-tag {
   display: inline-block; margin: 0 4px 4px 0; padding: 2px 7px; border-radius: 4px;
   background: var(--void2); border: 1px solid var(--border); color: var(--cyan); font-size: 10.5px;
@@ -374,42 +367,41 @@ body:has(.modal-backdrop.open) .starfield span {
 /* ─── Coliseum Boss Strip ─── */
 .boss-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
 .bcell {
-  background: linear-gradient(160deg, var(--void1), var(--void2)); border: 1px solid var(--border); border-radius: var(--radius-lg);
-  padding: 18px 12px 16px; text-align: center; position: relative; transition: all 0.25s;
+  background: var(--void1); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  padding: 18px 12px 16px; text-align: center; position: relative; transition: all 0.2s;
   display: flex; flex-direction: column; align-items: center; gap: 9px;
 }
 .bcell-img {
   width: 84px; height: 84px; border-radius: 12px; overflow: hidden; border: 1px solid var(--border2);
-  background: var(--void3); box-shadow: 0 4px 14px rgba(0,0,0,0.35);
+  background: var(--void3);
 }
 .bcell-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .bcell .step { font-family: var(--body); font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; }
 .bcell.active .step { color: var(--magenta); font-weight: 700; }
 .bcell .name { font-family: var(--disp); font-size: 15.5px; font-weight: 700; color: var(--text); line-height: 1.2; }
 .bcell.active {
-  border-color: var(--magenta); box-shadow: 0 0 18px rgba(209, 105, 143, 0.16);
-  background: linear-gradient(180deg, rgba(209, 105, 143, 0.10), var(--void1)); transform: translateY(-3px);
+  border-color: var(--magenta);
+  background: var(--void2); transform: translateY(-2px);
 }
-.bcell.active .bcell-img { border-color: var(--magenta); box-shadow: 0 0 12px rgba(209, 105, 143, 0.3); }
+.bcell.active .bcell-img { border-color: var(--magenta); }
 .bcell .active-tag {
   font-family: var(--body); font-size: 9px; font-weight: 700; letter-spacing: 0.07em; color: var(--magenta);
   background: rgba(209, 105, 143, 0.12); border: 1px solid rgba(209, 105, 143, 0.35); padding: 2px 9px 2px 7px;
   border-radius: 12px; display: inline-flex; align-items: center; gap: 5px;
 }
-.bcell .active-tag { width: 5px; height: 5px; border-radius: 50%; background: var(--magenta); box-shadow: 0 0 5px var(--magenta); }
+.bcell .active-tag .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--magenta); }
 
-/* ─── Modal ─── */
-/* ─── Optimized Modal Backdrop (Removed heavy blur filter) ─── */
+/* ─── Modal Backdrop (Optimized) ─── */
 .modal-backdrop {
   position: fixed; 
   inset: 0; 
-  background: rgba(8, 10, 14, 0.92); /* Solid dark overlay instead of backdrop-filter */
+  background: rgba(8, 10, 14, 0.92);
   display: none; 
   align-items: center; 
   justify-content: center; 
   z-index: 300; 
   padding: 16px;
-  will-change: opacity; /* Forces GPU acceleration layer */
+  will-change: opacity;
 }
 
 .modal-backdrop.open { display: flex; }
@@ -439,27 +431,16 @@ body:has(.modal-backdrop.open) .starfield span {
   cursor: pointer; border: 1px solid var(--border); background: var(--void2); color: var(--text2); transition: 0.15s;
 }
 .btn.primary { background: var(--amber); color: #1a1104; border-color: var(--amber); font-weight: 600; }
-.btn.primary:hover { box-shadow: 0 0 12px rgba(224,165,82,0.4); }
-
-/* ─── Full-Schedule Access Strip ─── */
-.schedule-access {
-  background: var(--void1); border: 1px solid var(--border); border-radius: var(--radius-lg);
-  padding: 14px 18px; margin-top: 32px; display: flex; align-items: center; justify-content: space-between;
-  gap: 16px; flex-wrap: wrap;
-}
-.schedule-access .sa-text { display: flex; flex-direction: column; gap: 2px; }
-.schedule-access .sa-title { font-family: var(--disp); font-size: 13.5px; font-weight: 700; color: var(--text); }
-.schedule-access .sa-sub { font-family: var(--body); font-size: 11px; color: var(--text3); }
+.btn.primary:hover { background: #ebd076; }
 
 /* ─── Creator / Discord Callout Card ─── */
 .creator-card {
-  background: linear-gradient(135deg, var(--void2), rgba(88, 101, 242, 0.08));
+  background: var(--void2);
   border: 1px solid rgba(88, 101, 242, 0.35);
   border-radius: var(--radius-lg);
   padding: 16px 20px;
   display: flex; align-items: center; justify-content: space-between;
   gap: 16px; width: 100%; max-width: 640px; margin: 12px 0;
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25);
   text-align: left;
 }
 .creator-card-info { display: flex; flex-direction: column; gap: 3px; }
@@ -473,9 +454,9 @@ body:has(.modal-backdrop.open) .starfield span {
   font-family: var(--body); font-size: 12px; font-weight: 600;
   cursor: pointer; transition: all 0.2s ease;
   display: inline-flex; align-items: center; justify-content: center;
-  box-shadow: 0 0 12px rgba(88, 101, 242, 0.3); white-space: nowrap; flex: 0 0 auto;
+  white-space: nowrap; flex: 0 0 auto;
 }
-.discord-copy-btn:hover { background: #4752c4; box-shadow: 0 0 16px rgba(88, 101, 242, 0.5); transform: translateY(-1px); }
+.discord-copy-btn:hover { background: #4752c4; transform: translateY(-1px); }
 .discord-copy-btn.copied { background: var(--green); color: #0b0d11; }
 
 /* ─── Footer ─── */
@@ -503,7 +484,6 @@ body:has(.modal-backdrop.open) .starfield span {
   .mh-right { border-left: none; width: 100%; padding: 14px 20px; }
   .hero-grid { grid-template-columns: 1fr; }
   .boss-strip { grid-template-columns: repeat(2, 1fr); }
-  .schedule-access { flex-direction: column; align-items: flex-start; }
   .forecast { grid-template-columns: repeat(4, 1fr); }
   .creator-card { flex-direction: column; text-align: center; }
   .discord-copy-btn { width: 100%; justify-content: center; }
@@ -1303,14 +1283,14 @@ const closeSchedule = () => scheduleModal.classList.remove('open');
 const openAbout = () => { aboutModal.classList.add('open'); closeMobilePanel(); };
 const closeAbout = () => aboutModal.classList.remove('open');
 
-document.getElementById('openFullScheduleBtn').onclick = openSchedule;
-document.getElementById('openFullScheduleBtnMobile').onclick = openSchedule;
-document.getElementById('footerFullScheduleBtn').onclick = openSchedule;
-document.getElementById('closeFullScheduleBtn').onclick = closeSchedule;
+document.getElementById('openFullScheduleBtn')?.addEventListener('click', openSchedule);
+document.getElementById('openFullScheduleBtnMobile')?.addEventListener('click', openSchedule);
+document.getElementById('footerFullScheduleBtn')?.addEventListener('click', openSchedule);
+document.getElementById('closeFullScheduleBtn')?.addEventListener('click', closeSchedule);
 
-document.getElementById('openAboutBtnHeader').onclick = openAbout;
-document.getElementById('openAboutBtnMobile').onclick = openAbout;
-document.getElementById('closeAboutBtn').onclick = closeAbout;
+document.getElementById('openAboutBtnHeader')?.addEventListener('click', openAbout);
+document.getElementById('openAboutBtnMobile')?.addEventListener('click', openAbout);
+document.getElementById('closeAboutBtn')?.addEventListener('click', closeAbout);
 
 scheduleModal.addEventListener('click', e => { if(e.target === scheduleModal) closeSchedule(); });
 aboutModal.addEventListener('click', e => { if(e.target === aboutModal) closeAbout(); });
@@ -1363,7 +1343,7 @@ tickCountdown();
 setInterval(tickCountdown, 1000);
 setInterval(renderAll, 60000);
 </script>
-<script src="./build-version.js?v=ee2692c-147"></script>
+<script src="./build-version.js?v=fd47a65-148"></script>
 
 </body>
 </html>
