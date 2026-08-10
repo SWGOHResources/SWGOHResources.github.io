@@ -102,6 +102,11 @@ body {
 }
 @keyframes twinkle { 0%, 100% { opacity: 0.15; } 50% { opacity: 0.85; } }
 
+/* Pause starfield animation when any modal is active */
+body:has(.modal-backdrop.open) .starfield span {
+  animation-play-state: paused;
+}
+
 /* ─── Top Header & Navigation ─── */
 .top-header {
   position: sticky; top: 0; z-index: 200; width: 100%;
@@ -338,13 +343,29 @@ body {
 
 /* ─── Full Schedule Table ─── */
 .full-schedule-wrap {
-  background: var(--void2); border: 1px solid var(--border); border-radius: var(--radius);
-  padding: 4px 12px; overflow: auto; scrollbar-width: thin; flex: 1; min-height: 0;
+  background: var(--void2); 
+  border: 1px solid var(--border); 
+  border-radius: var(--radius);
+  padding: 4px 12px; 
+  overflow-y: auto; 
+  scrollbar-width: thin; 
+  flex: 1; 
+  min-height: 0;
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling for iOS */
+  contain: content; /* Isolates repaints to inside this box only */
 }
 .schedule-table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 12px; }
 .schedule-table th, .schedule-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; }
-.schedule-table th { color: var(--text3); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; position: sticky; top: 0; background: var(--void2); z-index: 5; }
-.schedule-table tbody tr.active { background: rgba(86, 184, 173, 0.08); }
+.schedule-table th { 
+  color: var(--text3); 
+  font-size: 10px; 
+  text-transform: uppercase; 
+  letter-spacing: 0.08em; 
+  position: sticky; 
+  top: 0; 
+  background: #191d24; /* Solid color instead of semi-transparent variable */
+  z-index: 5; 
+}.schedule-table tbody tr.active { background: rgba(86, 184, 173, 0.08); }
 .schedule-table td .event-tag {
   display: inline-block; margin: 0 4px 4px 0; padding: 2px 7px; border-radius: 4px;
   background: var(--void2); border: 1px solid var(--border); color: var(--cyan); font-size: 10.5px;
@@ -378,10 +399,19 @@ body {
 .bcell .active-tag .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--magenta); box-shadow: 0 0 5px var(--magenta); }
 
 /* ─── Modal ─── */
+/* ─── Optimized Modal Backdrop (Removed heavy blur filter) ─── */
 .modal-backdrop {
-  position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(4px);
-  display: none; align-items: center; justify-content: center; z-index: 300; padding: 16px;
+  position: fixed; 
+  inset: 0; 
+  background: rgba(8, 10, 14, 0.92); /* Solid dark overlay instead of backdrop-filter */
+  display: none; 
+  align-items: center; 
+  justify-content: center; 
+  z-index: 300; 
+  padding: 16px;
+  will-change: opacity; /* Forces GPU acceleration layer */
 }
+
 .modal-backdrop.open { display: flex; }
 .modal {
   background: var(--void1); border: 1px solid var(--border2); border-radius: var(--radius-lg);
@@ -1333,7 +1363,7 @@ tickCountdown();
 setInterval(tickCountdown, 1000);
 setInterval(renderAll, 60000);
 </script>
-<script src="./build-version.js?v=ef4857e-145"></script>
+<script src="./build-version.js?v=c23766e-146"></script>
 
 </body>
 </html>
