@@ -575,6 +575,10 @@ function getGacStatus(st){
     return { status: 'ATTACK PHASE', badgeClass: 'running', title: `Grand Arena (${format})`, main: 'Attack Phase Active', sub: 'Clear enemy sectors before payout' };
   }
 
+  if(d === 14){
+    return { status: 'PREPARATION', badgeClass: 'running', title: `Grand Arena (${format})`, main: 'Round Transition', sub: 'GAC Signup starts tomorrow' };
+  }
+
   return { status: 'PREPARATION', badgeClass: 'running', title: `Grand Arena (${format})`, main: 'Round Transition', sub: 'Next round starts shortly' };
 }
 
