@@ -102,8 +102,8 @@ body {
 }
 @keyframes twinkle { 0%, 100% { opacity: 0.15; } 50% { opacity: 0.85; } }
 
-/* Pause starfield animation when any modal is active */
-body:has(.modal-backdrop.open) .starfield span {
+/* Pause starfield animation when modal is active */
+body.modal-open .starfield span {
   animation-play-state: paused;
 }
 
@@ -291,14 +291,13 @@ body:has(.modal-backdrop.open) .starfield span {
   display: flex; align-items: center; justify-content: center; margin-bottom: 9px; position: relative;
 }
 .ecard .art img {
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  object-fit: cover;
-  object-position: center;
-  display: block;
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: center;
+  display: block; z-index: 2;
 }
-.ecard .art-badge {
+.ecard .art .art-badge {
+  position: absolute; inset: 0; z-index: 1;
   width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;
   gap: 6px; background: var(--accent-dim, var(--void2));
 }
@@ -373,9 +372,10 @@ body:has(.modal-backdrop.open) .starfield span {
 }
 .bcell-img {
   width: 84px; height: 84px; border-radius: 12px; overflow: hidden; border: 1px solid var(--border2);
-  background: var(--void3);
+  background: var(--void3); position: relative;
 }
-.bcell-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.bcell-img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; z-index: 2; }
+.bcell-img .art-badge { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: var(--void3); font-family: var(--disp); font-size: 11px; font-weight: 700; color: var(--text3); }
 .bcell .step { font-family: var(--body); font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; }
 .bcell.active .step { color: var(--magenta); font-weight: 700; }
 .bcell .name { font-family: var(--disp); font-size: 15.5px; font-weight: 700; color: var(--text); line-height: 1.2; }
@@ -391,7 +391,7 @@ body:has(.modal-backdrop.open) .starfield span {
 }
 .bcell .active-tag .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--magenta); }
 
-/* ─── Modal Backdrop (Optimized) ─── */
+/* ─── Modal Backdrop ─── */
 .modal-backdrop {
   position: fixed; 
   inset: 0; 
@@ -503,7 +503,7 @@ body:has(.modal-backdrop.open) .starfield span {
 <div class="top-header">
   <div class="topbar">
     <a href="index.html" class="topbar-title">
-      <img src="/favicon.ico" alt="" class="topbar-logo" width="20" height="20">
+      <img src="/favicon.ico" alt="SWGOH Resources" class="topbar-logo" width="20" height="20">
       SWGOH<span class="divider-glyph">::</span><span>RESOURCES</span>
     </a>
     <div class="topbar-tabs" id="topbarTabs">
@@ -627,11 +627,11 @@ body:has(.modal-backdrop.open) .starfield span {
 </footer>
 
 <!-- Full Schedule Modal -->
-<div class="modal-backdrop" id="fullScheduleModal">
-  <div class="modal wide">
+<div class="modal-backdrop" id="fullScheduleModal" aria-hidden="true">
+  <div class="modal wide" role="dialog" aria-modal="true" aria-labelledby="fullScheduleTitle">
     <div class="modal-head">
       <div>
-        <h3>Full Era Schedule Breakdown</h3>
+        <h3 id="fullScheduleTitle">Full Era Schedule Breakdown</h3>
         <p>All 84 days of the current Era baseline.</p>
       </div>
       <button class="modal-close-x" id="closeFullScheduleBtn" aria-label="Close"><span></span><span></span></button>
@@ -648,10 +648,10 @@ body:has(.modal-backdrop.open) .starfield span {
 </div>
 
 <!-- Report Issue Modal -->
-<div class="modal-backdrop" id="aboutModal">
-  <div class="modal">
+<div class="modal-backdrop" id="aboutModal" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="aboutModalTitle">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-      <h3 style="font-family:var(--disp); font-size:18px;">Report an Issue</h3>
+      <h3 id="aboutModalTitle" style="font-family:var(--disp); font-size:18px;">Report an Issue</h3>
       <button class="modal-close-x" id="closeAboutBtn" aria-label="Close"><span></span><span></span></button>
     </div>
 
@@ -1116,13 +1116,14 @@ function cardHTML(item, extraClass){
   const asset = assetFor(item.icon);
   const style = `--accent:${meta.accent};--accent-dim:${meta.dim};--accent-border:${meta.border}`;
 
-  const artInner = asset
-    ? `<img src="assets/schedule/${asset}" alt="${item.label}"
-        onerror="this.parentElement.innerHTML='<div class=\\'art-badge\\'><span class=\\'glyph\\'>${meta.glyph}</span><span class=\\'cat\\'>${meta.label}</span></div>';">`
-    : `<div class="art-badge"><span class="glyph">${meta.glyph}</span><span class="cat">${meta.label}</span></div>`;
+  const fallbackBadge = `<div class="art-badge"><span class="glyph">${meta.glyph}</span><span class="cat">${meta.label}</span></div>`;
+  const imgTag = asset ? `<img src="assets/schedule/${asset}" alt="" onerror="this.remove()">` : '';
 
   return `<figure class="ecard ${cls}" style="${style}">
-    <div class="art">${artInner}</div>
+    <div class="art">
+      ${fallbackBadge}
+      ${imgTag}
+    </div>
     <div class="cat-tag">${meta.label}</div>
     <figcaption>${item.label}</figcaption>
   </figure>`;
@@ -1230,7 +1231,10 @@ function renderMainFeed(st){
     const cell = document.createElement('div');
     cell.className = 'bcell' + (isActive ? ' active' : '');
     cell.innerHTML = `
-      <div class="bcell-img"><img src="assets/schedule/${iconFile}" alt="${bossName}"></div>
+      <div class="bcell-img">
+        <div class="art-badge">BOSS</div>
+        <img src="assets/schedule/${iconFile}" alt="" onerror="this.remove()">
+      </div>
       <div class="step">Boss ${index + 1} of 4</div>
       <div class="name">${bossName}</div>
       ${isActive ? '<div class="active-tag"><span class="dot"></span>ACTIVE TODAY</div>' : ''}
@@ -1271,29 +1275,80 @@ function renderAll(){
 }
 
 /* =========================================================
- MODALS & DISCORD COPY FUNCTIONALITY
+ MODALS, FOCUS TRAPPING & DISCORD COPY
   ========================================================= */
 
 const scheduleModal = document.getElementById('fullScheduleModal');
 const aboutModal = document.getElementById('aboutModal');
 
-const openSchedule = () => { scheduleModal.classList.add('open'); closeMobilePanel(); };
-const closeSchedule = () => scheduleModal.classList.remove('open');
+let lastFocusedElement = null;
 
-const openAbout = () => { aboutModal.classList.add('open'); closeMobilePanel(); };
-const closeAbout = () => aboutModal.classList.remove('open');
+function openModal(modalEl) {
+  if (!modalEl) return;
+  lastFocusedElement = document.activeElement;
+  modalEl.classList.add('open');
+  modalEl.setAttribute('aria-hidden', 'false');
+  document.body.classList.add('modal-open');
+  closeMobilePanel();
 
-document.getElementById('openFullScheduleBtn')?.addEventListener('click', openSchedule);
-document.getElementById('openFullScheduleBtnMobile')?.addEventListener('click', openSchedule);
-document.getElementById('footerFullScheduleBtn')?.addEventListener('click', openSchedule);
-document.getElementById('closeFullScheduleBtn')?.addEventListener('click', closeSchedule);
+  const focusables = modalEl.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+  if (focusables.length) focusables[0].focus();
+}
 
-document.getElementById('openAboutBtnHeader')?.addEventListener('click', openAbout);
-document.getElementById('openAboutBtnMobile')?.addEventListener('click', openAbout);
-document.getElementById('closeAboutBtn')?.addEventListener('click', closeAbout);
+function closeModal(modalEl) {
+  if (!modalEl) return;
+  modalEl.classList.remove('open');
+  modalEl.setAttribute('aria-hidden', 'true');
 
-scheduleModal.addEventListener('click', e => { if(e.target === scheduleModal) closeSchedule(); });
-aboutModal.addEventListener('click', e => { if(e.target === aboutModal) closeAbout(); });
+  if (!document.querySelector('.modal-backdrop.open')) {
+    document.body.classList.remove('modal-open');
+  }
+
+  if (lastFocusedElement) {
+    lastFocusedElement.focus();
+    lastFocusedElement = null;
+  }
+}
+
+// Trap Focus Inside Open Modals & Close on Escape Key
+document.addEventListener('keydown', e => {
+  const openModalEl = document.querySelector('.modal-backdrop.open');
+  if (!openModalEl) return;
+
+  if (e.key === 'Escape') {
+    closeModal(openModalEl);
+    return;
+  }
+
+  if (e.key === 'Tab') {
+    const focusables = Array.from(openModalEl.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'));
+    if (!focusables.length) return;
+
+    const first = focusables[0];
+    const last = focusables[focusables.length - 1];
+
+    if (e.shiftKey && document.activeElement === first) {
+      last.focus();
+      e.preventDefault();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      first.focus();
+      e.preventDefault();
+    }
+  }
+});
+
+document.getElementById('openFullScheduleBtn')?.addEventListener('click', () => openModal(scheduleModal));
+document.getElementById('openFullScheduleBtnMobile')?.addEventListener('click', () => openModal(scheduleModal));
+document.getElementById('footerFullScheduleBtn')?.addEventListener('click', () => openModal(scheduleModal));
+document.getElementById('closeFullScheduleBtn')?.addEventListener('click', () => closeModal(scheduleModal));
+
+document.getElementById('openAboutBtnHeader')?.addEventListener('click', () => openModal(aboutModal));
+document.getElementById('openAboutBtnMobile')?.addEventListener('click', () => openModal(aboutModal));
+document.getElementById('closeAboutBtn')?.addEventListener('click', () => closeModal(aboutModal));
+document.getElementById('closeAboutBtn2')?.addEventListener('click', () => closeModal(aboutModal));
+
+scheduleModal.addEventListener('click', e => { if(e.target === scheduleModal) closeModal(scheduleModal); });
+aboutModal.addEventListener('click', e => { if(e.target === aboutModal) closeModal(aboutModal); });
 
 function copyDiscordHandle(btnEl) {
   navigator.clipboard.writeText('granddom').then(() => {
@@ -1343,7 +1398,7 @@ tickCountdown();
 setInterval(tickCountdown, 1000);
 setInterval(renderAll, 60000);
 </script>
-<script src="./build-version.js?v=fd47a65-148"></script>
+<script src="./build-version.js?v=45f581d-149"></script>
 
 </body>
 </html>
