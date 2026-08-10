@@ -661,6 +661,16 @@ function ev(icon, label){
   // Marquee slots always pull from MARQUEE_NAMES so you only
   // ever have to update the name in one spot above.
   if(icon.startsWith('marquee_')) label = MARQUEE_NAMES[icon] || label || 'Marquee Event';
+
+  if(icon.startsWith('era_challenge_')) {
+    const match = icon.match(/^era_challenge_(\d+)$/);
+    if(match){
+      const marqueeKey = `marquee_${match[1]}`;
+      const marqueeName = MARQUEE_NAMES[marqueeKey];
+      label = marqueeName ? `${marqueeName} Era Challenge Starts` : label || 'Era Challenge Starts';
+    }
+  }
+
   return {icon, label};
 }
 
@@ -670,45 +680,45 @@ const COMMON_DAYS = {
   4:  [ev('gac_defense','Defense Phase Starts'), ev('smugglersrun',"Smuggler's Run III"), ev('tw_defense','Defense Phase Starts')],
   5:  [ev('gac_attack','Attack Phase Starts'), ev('tw_attack','Attack Phase Starts')],
   6:  [ev('gac_defense','Defense Phase Starts'), ev('tw_payout','Payout')],
-  9:  [ev('rote','Phase 3 Starts'), ev('era_battle_1','Battle I Starts')],
+  9:  [ev('rote','Phase 3 Starts'), ev('era_battle_1','Era Battle 1 (Rotta) Starts')],
   10: [ev('rote','Phase 4 Starts')],
   11: [ev('rote','Phase 5 Starts')],
   12: [ev('rote','Phase 6 Starts')],
   13: [ev('tb_ends','Territory Battle Ends'), ev('tw_signup','Signup Starts')],
-  14: [ev('tw_defense','Defense Phase Starts'), ev('era_battle_2','Battle II Starts')],
+  14: [ev('tw_defense','Defense Phase Starts'), ev('era_battle_2','Era Battle 2 (Grogu) Starts')],
   16: [ev('gac_defense','Defense Phase Starts'), ev('smugglersrun',"Smuggler's Run II")],
   17: [ev('gac_attack','Attack Phase Starts'), ev('tw_signup','Signup Starts')],
   18: [ev('gac_defense','Defense Phase Starts'), ev('smugglersrun',"Smuggler's Run III"), ev('tw_defense','Defense Phase Starts')],
   19: [ev('gac_attack','Attack Phase Starts'), ev('tw_attack','Attack Phase Starts')],
   20: [ev('gac_defense','Defense Phase Starts'), ev('tw_payout','Payout')],
   22: [ev('era_challenge','Era Challenge Starts'), ev('gac_signup','Signup Starts'), ev('rote','Phase 2 Starts')],
-  23: [ev('gac_defense','Defense Phase Starts'), ev('era_battle_1','Battle I Starts'), ev('rote','Phase 3 Starts')],
+  23: [ev('gac_defense','Defense Phase Starts'), ev('era_battle_1','Era Battle 1 (Rotta) Starts'), ev('rote','Phase 3 Starts')],
   24: [ev('rote','Phase 4 Starts'), ev('gac_attack','Attack Phase Starts')],
   25: [ev('gac_defense','Defense Phase Starts'), ev('rote','Phase 5 Starts')],
   26: [ev('gac_attack','Attack Phase Starts'), ev('rote','Phase 6 Starts')],
   27: [ev('gac_defense','Defense Phase Starts'), ev('tb_ends','Territory Battle Ends'), ev('tw_signup','Signup Starts')],
-  28: [ev('era_battle_2','Battle II Starts'), ev('tw_defense','Defense Phase Starts')],
+  28: [ev('era_battle_2','Era Battle 2 (Grogu) Starts'), ev('tw_defense','Defense Phase Starts')],
 };
 
 const EPISODE_OVERRIDES = {
   1: {
     1:  [ev('marquee_1'), ev('journey_reruns','Reruns Start'), ev('era_changeover','Era Changeover'), ev('gac_signup','Signup Starts'), ev('tw_attack','Attack Phase Starts')],
     7:  [ev('rote','Phase 1 Starts'), ev('conquest_start','2nd Conquest of Volume Starts'), ev('smugglersrun',"Smuggler's Run I"), ev('gac_attack','Attack Phase Starts')],
-    8:  [ev('era_challenge_1','Era Challenge Starts'), ev('rote','Phase 2 Starts'), ev('journey_reruns','Reruns End')],
+    8:  [ev('era_challenge_1'), ev('rote','Phase 2 Starts'), ev('journey_reruns','Reruns End')],
     15: [ev('marquee_2'), ev('tw_offense','Offense Phase Starts'), ev('gac_signup','Signup Starts')],
     21: [ev('conquest_end','2nd Conquest of Volume Ends'), ev('gac_attack','Attack Phase Starts'), ev('proving_ground','Proving Grounds'), ev('ultimate_journey','Ultimate Journey'), ev('smugglersrun',"Smuggler's Run I"), ev('rote','Phase 1 Starts')],
   },
   2: {
     1:  [ev('marquee_3'), ev('gac_signup','Signup Starts'), ev('tw_attack','Attack Phase Starts')],
     7:  [ev('rote','Phase 1 Starts'), ev('conquest_start','3rd Conquest of Volume Starts'), ev('smugglersrun',"Smuggler's Run I"), ev('gac_attack','Attack Phase Starts')],
-    8:  [ev('era_challenge_2','Era Challenge Starts'), ev('rote','Phase 2 Starts')],
+    8:  [ev('era_challenge_2'), ev('rote','Phase 2 Starts')],
     15: [ev('marquee_4'), ev('tw_offense','Offense Phase Starts'), ev('gac_signup','Signup Starts')],
     21: [ev('conquest_end','Conquest Ends (Unit First Playable)'), ev('gac_attack','Attack Phase Starts'), ev('proving_ground','Proving Grounds'), ev('ultimate_journey','Ultimate Journey'), ev('smugglersrun',"Smuggler's Run I"), ev('rote','Phase 1 Starts')],
   },
   3: {
     1:  [ev('marquee_5'), ev('journey_guide','4/5★ Guide Unlock'), ev('gac_signup','Signup Starts'), ev('tw_attack','Attack Phase Starts')],
     7:  [ev('rote','Phase 1 Starts'), ev('conquest_start','1st Conquest of New Volume Starts'), ev('smugglersrun',"Smuggler's Run I"), ev('gac_attack','Attack Phase Starts')],
-    8:  [ev('era_challenge_3','Era Challenge Starts'), ev('rote','Phase 2 Starts')],
+    8:  [ev('era_challenge_3'), ev('rote','Phase 2 Starts')],
     15: [ev('marquee_6'), ev('journey_guide','6/7★ Guide Unlock'), ev('tw_offense','Offense Phase Starts'), ev('gac_signup','Signup Starts')],
     21: [ev('conquest_end','1st Conquest of New Volume Ends'), ev('gac_attack','Attack Phase Starts'), ev('proving_ground','Proving Grounds'), ev('ultimate_journey','Ultimate Journey'), ev('smugglersrun',"Smuggler's Run I"), ev('rote','Phase 1 Starts')],
   }
@@ -1185,7 +1195,7 @@ function renderMainFeed(st){
     chip.innerHTML = `
       <div class="day">${WEEKDAY_SHORT[new Date(dMs).getUTCDay()]}${i === 0 ? ' · Today' : ''}</div>
       <div class="date">${new Date(dMs).toLocaleDateString('en-GB',{ timeZone: 'UTC', day: 'numeric', month: 'short' })}</div>
-      <ul>${items.length ? items.map(it=>`<li>${it.label}</li>`).join('') : '<li>—</li>'}</ul>
+ <ul>${items.length ? items.map(it=>`<li>${getFullScheduleLabel(it)}</li>`).join('') : '<li>—</li>'}</ul>
     `;
     forecastEl.appendChild(chip);
   }
@@ -1317,7 +1327,7 @@ tickCountdown();
 setInterval(tickCountdown, 1000);
 setInterval(renderAll, 60000);
 </script>
-<script src="./build-version.js?v=3b2e8d6-129"></script>
+<script src="./build-version.js?v=705d7e2-130"></script>
 
 </body>
 </html>
