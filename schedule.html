@@ -465,7 +465,7 @@ const WEEKDAY_NAMES = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Frida
 const WEEKDAY_SHORT = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 
 /* =========================================================
-   TIME ENGINE (18:00 UTC Reset Baseline)
+   TIME ENGINE (UTC Calendar Day Baseline)
    ========================================================= */
 
 function getStoredEraStart(){
@@ -474,7 +474,7 @@ function getStoredEraStart(){
 
 function parseEraStart(str){
   const [y,m,d] = str.split('-').map(Number);
-  return Date.UTC(y, m-1, d, 18, 0, 0);
+  return Date.UTC(y, m-1, d, 0, 0, 0);
 }
 
 function getGameStatus(){
@@ -483,7 +483,8 @@ function getGameStatus(){
   const eraStartMs = parseEraStart(getStoredEraStart());
 
   const msPerDay = 86400000;
-  const diffMs = nowMs - eraStartMs;
+  const nowUtcDayStartMs = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0);
+  const diffMs = nowUtcDayStartMs - eraStartMs;
 
   let rawDayIndex = Math.floor(diffMs / msPerDay) + 1;
   if(diffMs < 0) rawDayIndex = 1;
@@ -493,9 +494,12 @@ function getGameStatus(){
 
   const currentEraStartMs = eraStartMs + (cycleNum * 84 * msPerDay);
   const currentDayStartMs = currentEraStartMs + ((eraDay - 1) * msPerDay);
+  const currentDayUtcMs = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0);
+  const currentDayOffset = Math.floor((currentDayUtcMs - currentEraStartMs) / msPerDay);
+  const normalizedEraDay = ((currentDayOffset % 84) + 84) % 84 + 1;
 
-  const episode = Math.floor((eraDay - 1) / 28) + 1;
-  const dayInEp = ((eraDay - 1) % 28) + 1;
+  const episode = Math.floor((normalizedEraDay - 1) / 28) + 1;
+  const dayInEp = ((normalizedEraDay - 1) % 28) + 1;
   const week = Math.floor((dayInEp - 1) / 7) + 1;
 
   const activeDayObj = new Date(currentDayStartMs);
@@ -505,7 +509,7 @@ function getGameStatus(){
   return {
     nowMs,
     rawDayIndex,
-    eraDay,
+    eraDay: normalizedEraDay,
     episode,
     dayInEp,
     week,
