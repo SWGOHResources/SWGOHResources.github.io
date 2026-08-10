@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Era Terminal — SWGOH Schedule</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0a0d14;
+    --bg-panel: #10141d;
+    --bg-panel-2: #151a25;
+    --line: #232b3a;
+    --line-bright: #34506080;
+    --cyan: #5ee3f0;
+    --cyan-dim: #5ee3f055;
+    --amber: #ffb454;
+    --amber-dim: #ffb45455;
+    --text: #e7ecf5;
+    --text-dim: #8792a8;
+    --text-faint: #545e72;
+    --magenta: #ff3fd8;
+    --radius: 2px;
+    --disp: 'Chakra Petch', sans-serif;
+    --body: 'Inter', sans-serif;
+    --mono: 'Share Tech Mono', monospace;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(ellipse 1200px 600px at 50% -10%, #131c2a 0%, transparent 60%),
+      repeating-linear-gradient(180deg, #ffffff03 0px, #ffffff03 1px, transparent 1px, transparent 3px),
+      var(--bg);
+    color:var(--text);
+    font-family:var(--body);
+    min-height:100vh;
+    padding:24px 18px 60px;
+  }
+
+  .wrap{max-width:1080px;margin:0 auto;}
+
+  /* ---------- corner-bracket frame, the signature motif ---------- */
+  .bracket{position:relative;}
+  .bracket::before,.bracket::after,
+  .bracket .bl::before,.bracket .br::before{
+    content:"";position:absolute;width:10px;height:10px;
+    border-color:var(--cyan-dim);border-style:solid;border-width:0;
+    pointer-events:none;
+  }
+  .bracket::before{top:-1px;left:-1px;border-top-width:2px;border-left-width:2px;}
+  .bracket::after{top:-1px;right:-1px;border-top-width:2px;border-right-width:2px;}
+  .bracket .bl::before{bottom:-1px;left:-1px;border-bottom-width:2px;border-left-width:2px;position:absolute;}
+  .bracket .br::before{bottom:-1px;right:-1px;border-bottom-width:2px;border-right-width:2px;position:absolute;}
+
+  /* ---------- top bar ---------- */
+  .topbar{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:22px;gap:12px;flex-wrap:wrap;}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.25em;color:var(--cyan);text-transform:uppercase;margin:0 0 4px;}
+  h1{font-family:var(--disp);font-weight:700;font-size:26px;margin:0;letter-spacing:.02em;}
+  h1 span{color:var(--text-dim);font-weight:500;}
+  .gear-btn{
+    background:var(--bg-panel);border:1px solid var(--line);color:var(--text-dim);
+    font-family:var(--mono);font-size:12px;letter-spacing:.08em;padding:9px 14px;border-radius:var(--radius);
+    cursor:pointer;transition:.15s;display:flex;align-items:center;gap:8px;
+  }
+  .gear-btn:hover{border-color:var(--cyan-dim);color:var(--cyan);}
+
+  /* ---------- hero readout ---------- */
+  .hero{
+    background:linear-gradient(180deg,var(--bg-panel) 0%, var(--bg-panel-2) 100%);
+    border:1px solid var(--line);padding:22px 24px;margin-bottom:20px;
+    display:grid;grid-template-columns:1fr auto;gap:20px;align-items:center;
+  }
+  .readout-row{display:flex;gap:28px;flex-wrap:wrap;}
+  .readout{display:flex;flex-direction:column;gap:2px;}
+  .readout .k{font-family:var(--mono);font-size:10px;letter-spacing:.15em;color:var(--text-faint);text-transform:uppercase;}
+  .readout .v{font-family:var(--disp);font-size:22px;font-weight:600;color:var(--text);}
+  .readout .v.accent{color:var(--cyan);}
+  .countdown-box{text-align:right;}
+  .countdown-box .k{font-family:var(--mono);font-size:10px;letter-spacing:.15em;color:var(--text-faint);text-transform:uppercase;}
+  .countdown{font-family:var(--mono);font-size:34px;color:var(--amber);letter-spacing:.05em;text-shadow:0 0 18px var(--amber-dim);}
+  .countdown .u{font-size:15px;color:var(--text-faint);margin:0 2px 0 0;}
+
+  /* ---------- section headers ---------- */
+  .section-head{display:flex;align-items:baseline;gap:10px;margin:32px 0 14px;}
+  .section-head h2{font-family:var(--disp);font-size:15px;letter-spacing:.14em;text-transform:uppercase;margin:0;color:var(--text);}
+  .section-head .sub{font-family:var(--mono);font-size:12px;color:var(--text-faint);}
+  .section-head .rule{flex:1;height:1px;background:linear-gradient(90deg,var(--line-bright),transparent);}
+  .section-head.tomorrow h2{color:var(--text-dim);}
+
+  /* ---------- event cards ---------- */
+  .card-row{display:flex;gap:14px;flex-wrap:wrap;}
+  .ecard{
+    width:150px;margin:0;padding:8px 8px 10px;background:var(--bg-panel);border:1px solid var(--line);
+  }
+  .ecard .art{
+    aspect-ratio:2/3;width:100%;overflow:hidden;background:
+      linear-gradient(160deg,#182234 0%, #0d121c 100%);
+    display:flex;align-items:center;justify-content:center;margin-bottom:8px;position:relative;
+  }
+  .ecard .art img{width:100%;height:100%;object-fit:cover;display:block;}
+  .ecard.noimg .art::before{
+    content:attr(data-glyph);font-family:var(--disp);font-size:26px;color:var(--cyan-dim);letter-spacing:.05em;
+  }
+  .ecard.noimg .art::after{
+    content:"";position:absolute;inset:8px;border:1px dashed var(--line-bright);
+  }
+  .ecard figcaption{font-family:var(--body);font-size:12.5px;font-weight:500;line-height:1.3;color:var(--text);}
+  .ecard.tomorrow{opacity:.72;}
+  .ecard.boss .art{background:linear-gradient(160deg,#241221 0%, #10141d 100%);}
+  .ecard.boss figcaption{color:var(--magenta);}
+
+  .empty-note{
+    font-family:var(--mono);font-size:12.5px;color:var(--text-faint);padding:14px 0;
+  }
+
+  /* ---------- forecast strip ---------- */
+  .forecast{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;}
+  .fchip{
+    min-width:118px;background:var(--bg-panel);border:1px solid var(--line);padding:10px 10px 12px;flex:0 0 auto;
+  }
+  .fchip.today{border-color:var(--cyan-dim);}
+  .fchip .day{font-family:var(--mono);font-size:10px;color:var(--text-faint);letter-spacing:.1em;text-transform:uppercase;}
+  .fchip .date{font-family:var(--disp);font-size:15px;font-weight:600;margin:2px 0 8px;}
+  .fchip ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px;}
+  .fchip li{font-size:11px;color:var(--text-dim);line-height:1.35;padding-left:9px;position:relative;}
+  .fchip li::before{content:"";position:absolute;left:0;top:5px;width:4px;height:4px;background:var(--cyan-dim);}
+  .fchip .boss-tag{display:inline-block;margin-top:6px;font-family:var(--mono);font-size:10px;color:var(--magenta);}
+
+  /* ---------- boss rotation ---------- */
+  .boss-strip{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;}
+  .bcell{background:var(--bg-panel);border:1px solid var(--line);padding:10px 8px;text-align:center;}
+  .bcell.active{border-color:var(--magenta);}
+  .bcell .day{font-family:var(--mono);font-size:10px;color:var(--text-faint);letter-spacing:.1em;text-transform:uppercase;}
+  .bcell .name{font-family:var(--disp);font-size:12px;margin-top:6px;color:var(--text);}
+  .bcell .name.none{color:var(--text-faint);font-family:var(--mono);}
+
+  /* ---------- footer / asset guide ---------- */
+  details.guide{margin-top:40px;border:1px solid var(--line);background:var(--bg-panel);padding:14px 18px;}
+  details.guide summary{cursor:pointer;font-family:var(--mono);font-size:12px;letter-spacing:.1em;color:var(--cyan);text-transform:uppercase;}
+  .guide-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:6px 20px;margin-top:14px;font-family:var(--mono);font-size:11.5px;color:var(--text-dim);}
+  .guide-grid code{color:var(--amber);}
+  .guide p{font-size:12.5px;color:var(--text-dim);line-height:1.6;font-family:var(--body);}
+
+  .warn{
+    border:1px solid var(--amber-dim);background:#221a0f;color:var(--amber);
+    font-family:var(--mono);font-size:12.5px;padding:12px 16px;margin-bottom:20px;
+  }
+
+  /* ---------- modal ---------- */
+  .modal-backdrop{
+    position:fixed;inset:0;background:#000c;display:none;align-items:center;justify-content:center;z-index:50;padding:16px;
+  }
+  .modal-backdrop.open{display:flex;}
+  .modal{
+    background:var(--bg-panel);border:1px solid var(--line-bright);max-width:380px;width:100%;padding:26px;
+  }
+  .modal h3{font-family:var(--disp);font-size:16px;margin:0 0 6px;letter-spacing:.05em;}
+  .modal p{font-size:12.5px;color:var(--text-dim);line-height:1.55;margin:0 0 16px;}
+  .modal label{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--text-faint);text-transform:uppercase;display:block;margin-bottom:6px;}
+  .modal input[type=date]{
+    width:100%;background:var(--bg);border:1px solid var(--line);color:var(--text);padding:10px 12px;
+    font-family:var(--mono);font-size:14px;margin-bottom:8px;
+  }
+  .hint{font-family:var(--mono);font-size:11px;color:var(--text-faint);margin-bottom:18px;}
+  .modal-actions{display:flex;gap:10px;justify-content:flex-end;}
+  .btn{font-family:var(--mono);font-size:12px;letter-spacing:.08em;padding:9px 16px;cursor:pointer;border:1px solid var(--line);background:transparent;color:var(--text-dim);text-transform:uppercase;}
+  .btn.primary{border-color:var(--cyan);color:var(--cyan);}
+  .btn.primary:hover{background:var(--cyan);color:#031017;}
+  .btn.ghost:hover{color:var(--text);}
+
+  @media(max-width:640px){
+    .hero{grid-template-columns:1fr;}
+    .countdown-box{text-align:left;}
+    .boss-strip{grid-template-columns:repeat(4,1fr);}
+    .boss-strip .bcell:nth-child(n+5){display:none;}
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <div class="topbar">
+    <div>
+      <p class="eyebrow">Galaxy of Heroes // Live Schedule Feed</p>
+      <h1>Era Terminal <span>84-day cycle</span></h1>
+    </div>
+    <button class="gear-btn" id="openSettings">⚙ Set Era Start Date</button>
+  </div>
+
+  <div id="warnBox"></div>
+
+  <div class="hero bracket"><span class="bl"></span><span class="br"></span>
+    <div class="readout-row" id="readoutRow"><!-- filled by JS --></div>
+    <div class="countdown-box">
+      <div class="k">Next changeover · 7:00pm UK</div>
+      <div class="countdown" id="countdown">--:--:--</div>
+    </div>
+  </div>
+
+  <div class="section-head today">
+    <h2 id="todayHeading">Today</h2>
+    <span class="sub" id="todaySub"></span>
+    <div class="rule"></div>
+  </div>
+  <div class="card-row" id="todayCards"></div>
+
+  <div class="section-head tomorrow">
+    <h2 id="tmrwHeading">Tomorrow</h2>
+    <span class="sub" id="tmrwSub"></span>
+    <div class="rule"></div>
+  </div>
+  <div class="card-row" id="tmrwCards"></div>
+
+  <div class="section-head">
+    <h2>Next 7 Days</h2>
+    <div class="rule"></div>
+  </div>
+  <div class="forecast" id="forecastRow"></div>
+
+  <div class="section-head">
+    <h2>Coliseum Boss Rotation</h2>
+    <span class="sub">new boss starts Tue–Fri</span>
+    <div class="rule"></div>
+  </div>
+  <div class="boss-strip" id="bossStrip"></div>
+
+  <details class="guide">
+    <summary>Banner asset guide (for uploading images later)</summary>
+    <p>Drop image files into an <code>assets/</code> folder next to this HTML file, named exactly as below (<code>.png</code>, <code>.jpg</code>, or <code>.webp</code> — first match wins). Vertical banners around a 2:3 ratio (e.g. 400×600px) work best. Any event without a matching file will show a placeholder card instead of breaking.</p>
+    <div class="guide-grid" id="assetGuide"></div>
+  </details>
+
+</div>
+
+<div class="modal-backdrop" id="modalBackdrop">
+  <div class="modal bracket"><span class="bl"></span><span class="br"></span>
+    <h3>Sync Era Start Date</h3>
+    <p>Enter the calendar date (UK time) of the Tuesday your current era began — the day the marquee event and era changeover fired. Everything else is calculated from there.</p>
+    <label for="eraDateInput">Era start date</label>
+    <input type="date" id="eraDateInput">
+    <p class="hint">Day 1 of the era = this date, from 7:00pm UK onward.</p>
+    <div class="modal-actions">
+      <button class="btn ghost" id="cancelSettings">Cancel</button>
+      <button class="btn primary" id="saveSettings">Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   EVENT DATA MODEL
+   Each era = 84 days = 3 episodes of 28 days.
+   Episodes are identical in structure; only days 1, 7, 8, 15
+   and 21 of each episode carry episode-specific text
+   (marquee events / conquest volume language).
+   ========================================================= */
+
+function ev(icon,label){ return {icon,label}; }
+
+const COMMON_DAYS = {
+  2:  [ev('gac_defense','GAC Defense'), ev('smugglers_run','Smugglers Run II'), ev('tw_payout','TW Payout')],
+  3:  [ev('gac_attack','GAC Attack'), ev('tw_signup','TW Signup Starts')],
+  4:  [ev('gac_defense','GAC Defense'), ev('smugglers_run','Smugglers Run III'), ev('tw_defense','TW Defense Starts')],
+  5:  [ev('gac_attack','GAC Attack'), ev('tw_attack','TW Attack Starts')],
+  6:  [ev('gac_defense','GAC Defense'), ev('tw_payout','TW Payout')],
+  9:  [ev('tb_phase','TB Phase 3 Start'), ev('era_battle','Era Battle 1')],
+  10: [ev('tb_phase','TB Phase 4 Start')],
+  11: [ev('tb_phase','TB Phase 5 Start')],
+  12: [ev('tb_phase','TB Phase 6 Start')],
+  13: [ev('tb_ends','TB Ends'), ev('tw_signup','TW Signup Starts')],
+  14: [ev('tw_defense','TW Defense Starts'), ev('era_battle','Era Battle 2')],
+  16: [ev('gac_defense','GAC Defense'), ev('smugglers_run','Smugglers Run II')],
+  17: [ev('gac_attack','GAC Attack'), ev('tw_signup','TW Signup Starts')],
+  18: [ev('gac_defense','GAC Defense'), ev('smugglers_run','Smugglers Run III'), ev('tw_defense','TW Defense Starts')],
+  19: [ev('gac_attack','GAC Attack'), ev('tw_attack','TW Attack Starts')],
+  20: [ev('gac_defense','GAC Defense'), ev('tw_payout','TW Payout')],
+  22: [ev('era_challenge','Era Challenge'), ev('gac_signup','GAC Signup Starts'), ev('tb_phase','TB Phase 2 Starts')],
+  23: [ev('gac_defense','GAC Defense'), ev('era_battle','New Era Battle 1'), ev('tb_phase','TB Phase 2 Starts')],
+  24: [ev('tb_phase','TB Phase 4 Starts'), ev('gac_attack','GAC Attack')],
+  25: [ev('gac_defense','GAC Defense'), ev('tb_phase','TB Phase 5 Starts')],
+  26: [ev('gac_defense','GAC Defense'), ev('tb_phase','TB Phase 6 Starts')],
+  27: [ev('gac_defense','GAC Defense'), ev('tb_ends','TB Ends'), ev('tw_signup','TW Signup Starts')],
+  28: [ev('era_battle','Era Battle 2'), ev('tw_defense','TW Defense Starts')],
+};
+
+const EPISODE_OVERRIDES = {
+  1: {
+    1:  [ev('marquee_event','Marquee Event'), ev('journey_reruns','Journey Event Reruns Start'), ev('era_changeover','Era Changeover'), ev('gac_signup','GAC Signup Starts'), ev('tw_attack','TW Attack Starts')],
+    7:  [ev('tb_phase','TB Phase 1 Starts'), ev('conquest_start','2nd Conquest of Volume Starts'), ev('smugglers_run','Smugglers Run I'), ev('gac_attack','GAC Attack')],
+    8:  [ev('era_challenge','Era Challenge'), ev('tb_phase','TB Phase 2 Start'), ev('journey_reruns','End of Journey Reruns')],
+    15: [ev('marquee_event','Marquee Event'), ev('tw_offense','TW Offense Starts'), ev('gac_signup','GAC Signup Starts')],
+    21: [ev('conquest_end','2nd Conquest of Volume Ends'), ev('gac_attack','GAC Attack'), ev('proving_ground','Proving Ground'), ev('ultimate_journey','Ultimate Journey'), ev('smugglers_run','Smugglers Run I'), ev('tb_phase','TB Phase 1 Starts')],
+  },
+  2: {
+    1:  [ev('marquee_event','Marquee Event'), ev('gac_signup','GAC Signup Starts'), ev('tw_attack','TW Attack Starts')],
+    7:  [ev('tb_phase','TB Phase 1 Starts'), ev('conquest_start','3rd Conquest of Volume Starts'), ev('smugglers_run','Smugglers Run I'), ev('gac_attack','GAC Attack')],
+    8:  [ev('era_challenge','Era Challenge'), ev('tb_phase','TB Phase 2 Start')],
+    15: [ev('marquee_event','Marquee Event'), ev('tw_offense','TW Offense Starts'), ev('gac_signup','GAC Signup Starts')],
+    21: [ev('conquest_end','Conquest Volume Ends (unit now usable)'), ev('gac_attack','GAC Attack'), ev('proving_ground','Proving Ground'), ev('ultimate_journey','Ultimate Journey'), ev('smugglers_run','Smugglers Run I'), ev('tb_phase','TB Phase 1 Starts')],
+  },
+  3: {
+    1:  [ev('marquee_event','Marquee Event'), ev('journey_guide','4/5★ Journey Guide Event Unlock'), ev('gac_signup','GAC Signup Starts'), ev('tw_attack','TW Attack Starts')],
+    7:  [ev('tb_phase','TB Phase 1 Starts'), ev('conquest_start','1st Conquest of New Volume Starts'), ev('smugglers_run','Smugglers Run I'), ev('gac_attack','GAC Attack')],
+    8:  [ev('era_challenge','Era Challenge'), ev('tb_phase','TB Phase 2 Start')],
+    15: [ev('marquee_event','Marquee Event'), ev('journey_guide','6/7★ Journey Guide Unlock'), ev('tw_offense','TW Offense Starts'), ev('gac_signup','GAC Signup Starts')],
+    21: [ev('conquest_end','1st Conquest of New Volume Ends'), ev('gac_attack','GAC Attack'), ev('proving_ground','Proving Ground'), ev('ultimate_journey','Ultimate Journey'), ev('smugglers_run','Smugglers Run I'), ev('tb_phase','TB Phase 1 Starts')],
+  }
+};
+
+// Bosses cycle Krayt Dragon (Tue) -> Zeffo (Wed) -> Jotaz (Thu) -> Dryax (Fri),
+// each one runs until the next one starts, then the sequence repeats the
+// following Tuesday. So Dryax stays active Fri through Mon.
+const BOSS_START_WEEKDAY = { 2:ev('boss_krayt_dragon','Krayt Dragon'), 3:ev('boss_zeffo_tomb_guardians','Zeffo Tomb Guardians'), 4:ev('boss_jotaz','Jotaz'), 5:ev('boss_dryax','Dryax') };
+const ACTIVE_BOSS_BY_WEEKDAY = { 0:BOSS_START_WEEKDAY[5], 1:BOSS_START_WEEKDAY[5], 2:BOSS_START_WEEKDAY[2], 3:BOSS_START_WEEKDAY[3], 4:BOSS_START_WEEKDAY[4], 5:BOSS_START_WEEKDAY[5], 6:BOSS_START_WEEKDAY[5] };
+const DEFAULT_ERA_START = '2026-07-28';
+const WEEKDAY_NAMES = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const WEEKDAY_SHORT = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+function getDayEvents(episode, dayInEp){
+  const o = EPISODE_OVERRIDES[episode] && EPISODE_OVERRIDES[episode][dayInEp];
+  return o || COMMON_DAYS[dayInEp] || [];
+}
+
+/* =========================================================
+   TIME / DATE MATH — everything keyed to Europe/London,
+   with the game day rolling over at 19:00 UK time.
+   ========================================================= */
+
+function ukParts(d){
+  const fmt = new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/London',hour12:false,
+    year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  const p = {};
+  fmt.formatToParts(d).forEach(x=>{ if(x.type!=='literal') p[x.type]=parseInt(x.value,10); });
+  return p;
+}
+
+function dateUTC(y,m,d){ return Date.UTC(y, m-1, d); }
+
+// "effective game date" (UTC-midnight-tagged) given real now, per 7pm UK rollover rule
+function effectiveGameDateUTC(now){
+  const p = ukParts(now);
+  const today = dateUTC(p.year,p.month,p.day);
+  const msSinceUKMidnight = p.hour*3600000 + p.minute*60000 + p.second*1000;
+  const rolled = msSinceUKMidnight < 19*3600000;
+  return { gameDateUTC: rolled ? today - 86400000 : today, msSinceUKMidnight };
+}
+
+function parseEraStart(str){
+  // str = "YYYY-MM-DD"
+  const [y,m,d] = str.split('-').map(Number);
+  return dateUTC(y,m,d);
+}
+
+function dayIndexFor(gameDateUTC, eraStartUTC){
+  return Math.round((gameDateUTC - eraStartUTC)/86400000) + 1; // 1-based
+}
+
+function scheduleForIndex(dayIndex){
+  if(dayIndex < 1 || dayIndex > 84) return null;
+  const episode = Math.floor((dayIndex-1)/28) + 1;
+  const dayInEp = ((dayIndex-1)%28) + 1;
+  const week = Math.floor((dayInEp-1)/7) + 1;
+  return { episode, dayInEp, week, dayIndex };
+}
+
+function fmtDate(utcMs){
+  const d = new Date(utcMs);
+  return d.toLocaleDateString('en-GB',{ timeZone:'UTC', weekday:'short', day:'numeric', month:'short' });
+}
+
+/* =========================================================
+   RENDERING
+   ========================================================= */
+
+const ASSET_KEYS = ['marquee_event','journey_reruns','era_changeover','gac_signup','gac_attack','gac_defense',
+  'tw_attack','tw_defense','tw_signup','tw_payout','smugglers_run','tb_phase','tb_ends','era_battle',
+  'era_challenge','conquest_start','conquest_end','proving_ground','ultimate_journey','journey_guide',
+  'tw_offense','boss_krayt_dragon','boss_zeffo_tomb_guardians','boss_jotaz','boss_dryax'];
+
+function glyphFor(label){
+  return label.split(' ').filter(w=>/^[A-Za-z]/.test(w)).slice(0,2).map(w=>w[0].toUpperCase()).join('');
+}
+
+function cardHTML(item, extraClass){
+  const cls = [extraClass||'', item.boss ? 'boss' : ''].join(' ');
+  return `<figure class="ecard bracket ${cls}" data-glyph="${glyphFor(item.label)}">
+    <span class="bl"></span><span class="br"></span>
+    <div class="art"><img src="assets/${item.icon}.png" alt="${item.label}"
+      onerror="if(!this.dataset.tried){this.dataset.tried=1;this.src='assets/${item.icon}.jpg';}
+               else{this.parentElement.parentElement.classList.add('noimg');this.remove();}">
+    </div>
+    <figcaption>${item.label}</figcaption>
+  </figure>`;
+}
+
+function renderCards(el, items, extraClass){
+  el.innerHTML = items.length
+    ? items.map(i=>cardHTML(i, extraClass)).join('')
+    : `<p class="empty-note">— no scheduled changeovers —</p>`;
+}
+
+function render(){
+  let stored = localStorage.getItem('swgohEraStart');
+  if(!stored){
+    stored = DEFAULT_ERA_START;
+    localStorage.setItem('swgohEraStart', stored);
+  }
+  const warnBox = document.getElementById('warnBox');
+  warnBox.innerHTML = '';
+
+  const now = new Date();
+  const eraStartUTC = parseEraStart(stored);
+  const { gameDateUTC } = effectiveGameDateUTC(now);
+  const todayIndex = dayIndexFor(gameDateUTC, eraStartUTC);
+  const todaySched = scheduleForIndex(todayIndex);
+  const tmrwSched = scheduleForIndex(todayIndex+1);
+
+  if(!todaySched){
+    warnBox.innerHTML = `<div class="warn">Day ${todayIndex} is outside the 84-day era window. Your era may have ended — update the start date once the new era's schedule is confirmed.</div>`;
+  }
+
+  // hero readout
+  const todayWeekday = WEEKDAY_NAMES[new Date(gameDateUTC).getUTCDay()];
+  document.getElementById('readoutRow').innerHTML = todaySched ? `
+    <div class="readout"><div class="k">Era Day</div><div class="v accent">${todaySched.dayIndex} / 84</div></div>
+    <div class="readout"><div class="k">Episode</div><div class="v">${todaySched.episode} of 3</div></div>
+    <div class="readout"><div class="k">Week</div><div class="v">${todaySched.week} of 4</div></div>
+    <div class="readout"><div class="k">Today Is</div><div class="v">${todayWeekday}</div></div>
+  ` : `<div class="readout"><div class="k">Status</div><div class="v accent">Out of range</div></div>`;
+
+  // today / tomorrow
+  document.getElementById('todayHeading').textContent = `Today — ${todayWeekday}`;
+  document.getElementById('todaySub').textContent = fmtDate(gameDateUTC);
+  const todayEvents = todaySched ? getDayEvents(todaySched.episode, todaySched.dayInEp) : [];
+  const todayWd = new Date(gameDateUTC).getUTCDay();
+  const todayBoss = ACTIVE_BOSS_BY_WEEKDAY[todayWd];
+  const todayBossLabel = (todayWd>=2 && todayWd<=5) ? `${todayBoss.label} (starts today)` : `${todayBoss.label} (active)`;
+  renderCards(document.getElementById('todayCards'), [...todayEvents, {icon:todayBoss.icon, label:todayBossLabel, boss:true}]);
+
+  const tmrwDateUTC = gameDateUTC + 86400000;
+  const tmrwWeekday = WEEKDAY_NAMES[new Date(tmrwDateUTC).getUTCDay()];
+  document.getElementById('tmrwHeading').textContent = `Tomorrow — ${tmrwWeekday}`;
+  document.getElementById('tmrwSub').textContent = fmtDate(tmrwDateUTC);
+  const tmrwEvents = tmrwSched ? getDayEvents(tmrwSched.episode, tmrwSched.dayInEp) : [];
+  const tmrwWd = new Date(tmrwDateUTC).getUTCDay();
+  const tmrwBoss = ACTIVE_BOSS_BY_WEEKDAY[tmrwWd];
+  const tmrwBossLabel = (tmrwWd>=2 && tmrwWd<=5) ? `${tmrwBoss.label} (starts)` : `${tmrwBoss.label} (active)`;
+  renderCards(document.getElementById('tmrwCards'), [...tmrwEvents, {icon:tmrwBoss.icon, label:tmrwBossLabel, boss:true}], 'tomorrow');
+
+  // 7-day forecast
+  const forecastEl = document.getElementById('forecastRow');
+  forecastEl.innerHTML = '';
+  for(let i=0;i<7;i++){
+    const dUTC = gameDateUTC + i*86400000;
+    const idx = todayIndex + i;
+    const sched = scheduleForIndex(idx);
+    const wd = new Date(dUTC).getUTCDay();
+    const items = sched ? getDayEvents(sched.episode, sched.dayInEp) : [];
+    const boss = ACTIVE_BOSS_BY_WEEKDAY[wd];
+    const isStart = wd>=2 && wd<=5;
+    const chip = document.createElement('div');
+    chip.className = 'fchip' + (i===0 ? ' today' : '');
+    chip.innerHTML = `
+      <div class="day">${WEEKDAY_SHORT[wd]}${i===0?' · today':''}</div>
+      <div class="date">${new Date(dUTC).toLocaleDateString('en-GB',{timeZone:'UTC',day:'numeric',month:'short'})}</div>
+      <ul>${items.length ? items.map(it=>`<li>${it.label}</li>`).join('') : '<li>—</li>'}</ul>
+      <span class="boss-tag">${isStart ? '▲' : '·'} ${boss.label} ${isStart ? 'starts' : 'active'}</span>
+    `;
+    forecastEl.appendChild(chip);
+  }
+
+  // boss rotation strip (Mon–Sun reference, highlighting today/tomorrow)
+  const bossEl = document.getElementById('bossStrip');
+  bossEl.innerHTML = '';
+  const order = [1,2,3,4,5,6,0]; // Mon..Sun
+  order.forEach(wd=>{
+    const b = ACTIVE_BOSS_BY_WEEKDAY[wd];
+    const isStart = wd>=2 && wd<=5;
+    const cell = document.createElement('div');
+    cell.className = 'bcell' + (wd===todayWd ? ' active' : '');
+    cell.innerHTML = `<div class="day">${WEEKDAY_SHORT[wd]}${wd===todayWd?' · today':''}</div>
+      <div class="name">${b.label}</div>
+      <div class="name none">${isStart ? 'starts' : 'carries over'}</div>`;
+    bossEl.appendChild(cell);
+  });
+}
+
+function tickCountdown(){
+  const now = new Date();
+  const p = ukParts(now);
+  const msSinceUKMidnight = p.hour*3600000 + p.minute*60000 + p.second*1000;
+  const target = 19*3600000;
+  let diff = target - msSinceUKMidnight;
+  if(diff <= 0) diff += 86400000;
+  const h = Math.floor(diff/3600000);
+  const m = Math.floor((diff%3600000)/60000);
+  const s = Math.floor((diff%60000)/1000);
+  const pad = n => String(n).padStart(2,'0');
+  document.getElementById('countdown').textContent = `${pad(h)}:${pad(m)}:${pad(s)}`;
+}
+
+function buildAssetGuide(){
+  document.getElementById('assetGuide').innerHTML = ASSET_KEYS.map(k=>`<div><code>assets/${k}.png</code></div>`).join('');
+}
+
+/* =========================================================
+   SETTINGS MODAL
+   ========================================================= */
+const backdrop = document.getElementById('modalBackdrop');
+document.getElementById('openSettings').addEventListener('click', ()=>{
+  const stored = localStorage.getItem('swgohEraStart');
+  if(stored) document.getElementById('eraDateInput').value = stored;
+  backdrop.classList.add('open');
+});
+document.getElementById('cancelSettings').addEventListener('click', ()=> backdrop.classList.remove('open'));
+backdrop.addEventListener('click', e=>{ if(e.target===backdrop) backdrop.classList.remove('open'); });
+document.getElementById('saveSettings').addEventListener('click', ()=>{
+  const val = document.getElementById('eraDateInput').value;
+  if(val){ localStorage.setItem('swgohEraStart', val); render(); }
+  backdrop.classList.remove('open');
+});
+
+/* =========================================================
+   INIT
+   ========================================================= */
+buildAssetGuide();
+render();
+tickCountdown();
+setInterval(tickCountdown, 1000);
+setInterval(render, 60000); // re-check date/episode roll each minute
+</script>
+
+</body>
+</html>
