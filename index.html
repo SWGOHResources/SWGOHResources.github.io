@@ -193,7 +193,7 @@ body.modal-open .starfield span {
 }
 .mh-left { display: flex; flex-direction: column; gap: 14px; position: relative; z-index: 1; }
 .mh-tag { font-family: var(--disp); font-size: 20px; font-weight: 700; color: var(--text); letter-spacing: 0; text-transform: none; margin-bottom: 4px; }
-.mh-tag .live-dot { display: none; }
+.mh-tag { display: none; }
 .mh-title-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
 .mh-main-val { font-family: var(--disp); font-size: 34px; font-weight: 700; color: var(--text); line-height: 1; white-space: nowrap; }
 .mh-main-val .mh-of { font-size: 16px; font-weight: 600; color: var(--text3); margin-left: 4px; }
@@ -389,7 +389,7 @@ body.modal-open .starfield span {
   background: rgba(209, 105, 143, 0.12); border: 1px solid rgba(209, 105, 143, 0.35); padding: 2px 9px 2px 7px;
   border-radius: 12px; display: inline-flex; align-items: center; gap: 5px;
 }
-.bcell .active-tag .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--magenta); }
+.bcell .active-tag { width: 5px; height: 5px; border-radius: 50%; background: var(--magenta); }
 
 /* ─── Modal Backdrop ─── */
 .modal-backdrop {
@@ -1237,7 +1237,7 @@ function renderMainFeed(st){
       </div>
       <div class="step">Boss ${index + 1} of 4</div>
       <div class="name">${bossName}</div>
-      ${isActive ? '<div class="active-tag"><span class="dot"></span>ACTIVE TODAY</div>' : ''}
+      ${isActive ? '<div class="active-tag"></span>ACTIVE TODAY</div>' : ''}
     `;
     bossEl.appendChild(cell);
   });
@@ -1398,7 +1398,7 @@ tickCountdown();
 setInterval(tickCountdown, 1000);
 setInterval(renderAll, 60000);
 </script>
-<script src="./build-version.js?v=45f581d-149"></script>
+<script src="./build-version.js?v=d441c0b-150"></script>
 
 </body>
 </html>
