@@ -385,7 +385,6 @@ body.modal-open .starfield span {
   background: rgba(209, 105, 143, 0.12); border: 1px solid rgba(209, 105, 143, 0.35); padding: 2px 9px 2px 7px;
   border-radius: 12px; display: inline-flex; align-items: center; gap: 5px;
 }
-.bcell .active-tag { width: 5px; height: 5px; border-radius: 50%; background: var(--magenta); }
 
 /* ─── Modal Backdrop ─── */
 .modal-backdrop {
@@ -663,7 +662,7 @@ body.modal-open .starfield span {
 </div>
 
 <script>
-  
+
 /* =========================================================
  ERA CONFIGURATION — EDIT THIS WHEN A NEW ERA BEGINS
   ========================================================= */
@@ -1228,7 +1227,7 @@ function renderMainFeed(st){
       </div>
       <div class="step">Boss ${index + 1} of 4</div>
       <div class="name">${bossName}</div>
-      ${isActive ? '<div class="active-tag"></span>ACTIVE TODAY</div>' : ''}
+      ${isActive ? '<div class="active-tag">ACTIVE TODAY</div>' : ''}
     `;
     bossEl.appendChild(cell);
   });
@@ -1389,7 +1388,7 @@ tickCountdown();
 setInterval(tickCountdown, 1000);
 setInterval(renderAll, 60000);
 </script>
-<script src="./build-version.js?v=c987060-151"></script>
+<script src="./build-version.js?v=6bd6a45-152"></script>
 
 </body>
 </html>
