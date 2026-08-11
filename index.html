@@ -10,7 +10,7 @@
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://swgohresources.github.io/">
 
-<!-- Open Graph (Facebook, Discord, etc.) -->
+<!-- Open Graph -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="SWGOH::RESOURCES">
 <meta property="og:title" content="SWGOH Event Schedule">
@@ -18,7 +18,7 @@
 <meta property="og:url" content="https://swgohresources.github.io/">
 <meta property="og:image" content="https://swgohresources.github.io/favicon.ico">
   
-<!-- Twitter/X Card -->
+<!-- Twitter-->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="SWGOH Event Schedule">
 <meta name="twitter:description" content="SWGOH event schedule for GAC, Territory War, Territory Battle, Conquest and Marquee events, mapped across the full 84-day Era.">
@@ -107,7 +107,6 @@ body.modal-open .starfield span {
   animation-play-state: paused;
 }
 
-/* ─── Top Header & Navigation ─── */
 .top-header {
   position: sticky; top: 0; z-index: 200; width: 100%;
   background: rgba(10, 12, 16, 0.95);
@@ -145,7 +144,7 @@ body.modal-open .starfield span {
 .gear-btn:hover { border-color: var(--amber-border); color: var(--amber); }
 .gear-btn.creator-btn:hover { border-color: var(--cyan-border); color: var(--cyan); }
 
-/* ─── Mobile Nav Toggle ─── */
+/* ─── Mobile Nav  ─── */
 .nav-toggle {
   display: none; width: 34px; height: 34px; background: var(--void2); border: 1px solid var(--border2);
   border-radius: var(--radius); cursor: pointer; flex-direction: column; align-items: center; justify-content: center;
@@ -178,10 +177,9 @@ body.modal-open .starfield span {
   .mp-btn { width: 100%; justify-content: center; padding: 11px 14px; font-size: 13px; margin-bottom: 8px; }
 }
 
-/* ─── Layout ─── */
 .wrap { max-width: 1180px; margin: 0 auto; padding: 24px; position: relative; z-index: 1; width: 100%; flex: 1; }
 
-/* ─── Merged Era Banner ─── */
+/* ─── Era Banner ─── */
 .merged-hero {
   position: relative; overflow: hidden;
   background: var(--void1);
@@ -232,7 +230,6 @@ body.modal-open .starfield span {
 }
 .mh-right .cb-sub { font-size: 11px; color: var(--text2); }
 
-/* ─── Mode Status Cards Grid ─── */
 .hero-grid {
   display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 24px;
 }
@@ -275,7 +272,7 @@ body.modal-open .starfield span {
 .section-head .sub { font-family: var(--body); font-size: 11.5px; color: var(--text3); }
 .section-head .rule { flex: 1; height: 1px; background: var(--border); }
 
-/* ─── Feed Cards Layout ─── */
+/* ─── Feed Cards ─── */
 .card-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(148px, 1fr)); gap: 14px; }
 .ecard {
   background: var(--void1); border: 1px solid var(--border);
@@ -319,7 +316,6 @@ body.modal-open .starfield span {
 
 .empty-note { font-family: var(--body); font-size: 12px; color: var(--text3); padding: 16px 0; }
 
-/* ─── Forecast Strip ─── */
 .forecast { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; }
 .fchip {
   background: var(--void1); border: 1px solid var(--border); border-radius: var(--radius-lg);
@@ -433,7 +429,7 @@ body.modal-open .starfield span {
 .btn.primary { background: var(--amber); color: #1a1104; border-color: var(--amber); font-weight: 600; }
 .btn.primary:hover { background: #ebd076; }
 
-/* ─── Creator / Discord Callout Card ─── */
+/* ─── Creator Card ─── */
 .creator-card {
   background: var(--void2);
   border: 1px solid rgba(88, 101, 242, 0.35);
@@ -525,7 +521,6 @@ body.modal-open .starfield span {
 
 <div class="wrap">
 
-  <!-- Merged Era Banner -->
   <div class="merged-hero" id="mergedHero">
     <div class="mh-left">
       <div class="mh-tag">Event Schedule for Era of Myths & Legends</div>
@@ -558,9 +553,7 @@ body.modal-open .starfield span {
     </div>
   </div>
 
-  <!-- Mode Status Cards Grid -->
   <div class="hero-grid" id="statusDashboard">
-    <!-- Rendered dynamically -->
   </div>
 
   <!-- Today & Tomorrow Event Cards -->
@@ -605,7 +598,6 @@ body.modal-open .starfield span {
       </div>
     </div>
 
-    <!-- Creator Highlight Card in Footer -->
     <div class="creator-card">
       <div class="creator-card-info">
         <div class="creator-card-title">Maintained & Built by Dom <span class="badge">Creator</span></div>
@@ -626,7 +618,6 @@ body.modal-open .starfield span {
   </div>
 </footer>
 
-<!-- Full Schedule Modal -->
 <div class="modal-backdrop" id="fullScheduleModal" aria-hidden="true">
   <div class="modal wide" role="dialog" aria-modal="true" aria-labelledby="fullScheduleTitle">
     <div class="modal-head">
@@ -647,7 +638,6 @@ body.modal-open .starfield span {
   </div>
 </div>
 
-<!-- Report Issue Modal -->
 <div class="modal-backdrop" id="aboutModal" aria-hidden="true">
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="aboutModalTitle">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
@@ -673,6 +663,7 @@ body.modal-open .starfield span {
 </div>
 
 <script>
+  
 /* =========================================================
  ERA CONFIGURATION — EDIT THIS WHEN A NEW ERA BEGINS
   ========================================================= */
@@ -1398,7 +1389,7 @@ tickCountdown();
 setInterval(tickCountdown, 1000);
 setInterval(renderAll, 60000);
 </script>
-<script src="./build-version.js?v=d441c0b-150"></script>
+<script src="./build-version.js?v=c987060-151"></script>
 
 </body>
 </html>
