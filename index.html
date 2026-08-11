@@ -575,7 +575,7 @@ body.modal-open .starfield span {
   </div>
   <div class="forecast" id="forecastRow"></div>
 
-  <!-- Coliseum Rotation -->
+  <!-- Coliseum Boss Rotation -->
   <div class="section-head">
     <h2>Coliseum Boss Rotation</h2>
     <span class="sub">Coliseum Bosses rotate at 18:00 UTC daily</span>
@@ -637,7 +637,7 @@ body.modal-open .starfield span {
 
 <div class="modal-backdrop" id="aboutModal" aria-hidden="true">
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="aboutModalTitle">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
       <h3 id="aboutModalTitle" style="font-family:var(--disp); font-size:18px;">Report an Issue</h3>
       <button class="modal-close-x" id="closeAboutBtn" aria-label="Close"><span></span><span></span></button>
     </div>
@@ -849,71 +849,57 @@ const WEEKDAY_SHORT = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
    TIME ENGINE
    ========================================================= */
 
-function parseEraStart(str){
-  const [y,m,d] = str.split('-').map(Number);
-  return Date.UTC(y, m-1, d, 0, 0, 0);
-}
-
-function parseChangeoverEraStart(str){
-  const [y,m,d] = str.split('-').map(Number);
-  return Date.UTC(y, m-1, d, 18, 0, 0);
-}
-
-function getChangeoverDayIndex(nowMs, eraStartMs){
-  const msPerDay = 86400000;
-  const diffMs = nowMs - eraStartMs;
-
-  let rawDayIndex = Math.floor(diffMs / msPerDay) + 1;
-  if(diffMs < 0) rawDayIndex = 1;
-  return rawDayIndex;
-}
-
 function getGameStatus(){
   const now = new Date();
   const nowMs = now.getTime();
-  const eraStartMs = parseEraStart(ERA_START_DATE);
-  const changeoverEraStartMs = parseChangeoverEraStart(ERA_START_DATE);
-
   const msPerDay = 86400000;
-  const nowUtcDayStartMs = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0);
-  const diffMs = nowUtcDayStartMs - eraStartMs;
 
+  const [y, m, d] = ERA_START_DATE.split('-').map(Number);
+
+  // 1) Standard Event Changeover (18:00 UTC)
+  const stdStartMs = Date.UTC(y, m - 1, d, 18, 0, 0);
+  let diffMs = nowMs - stdStartMs;
   let rawDayIndex = Math.floor(diffMs / msPerDay) + 1;
   if(diffMs < 0) rawDayIndex = 1;
 
-  let eraDay = ((rawDayIndex - 1) % 84) + 1;
-  let cycleNum = Math.floor((rawDayIndex - 1) / 84);
+  const eraDay = ((rawDayIndex - 1) % 84) + 1;
+  const cycleNum = Math.floor((rawDayIndex - 1) / 84);
 
-  const currentEraStartMs = eraStartMs + (cycleNum * 84 * msPerDay);
-  const currentDayStartMs = currentEraStartMs + ((eraDay - 1) * msPerDay);
-  const currentDayUtcMs = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0);
-  const currentDayOffset = Math.floor((currentDayUtcMs - currentEraStartMs) / msPerDay);
-  const normalizedEraDay = ((currentDayOffset % 84) + 84) % 84 + 1;
-
-  const episode = Math.floor((normalizedEraDay - 1) / 28) + 1;
-  const dayInEp = ((normalizedEraDay - 1) % 28) + 1;
+  const episode = Math.floor((eraDay - 1) / 28) + 1;
+  const dayInEp = ((eraDay - 1) % 28) + 1;
   const week = Math.floor((dayInEp - 1) / 7) + 1;
 
+  // Active Calendar Day associated with current 18:00 UTC changeover
+  const currentDayStartMs = Date.UTC(y, m - 1, d, 0, 0, 0) + ((rawDayIndex - 1) * msPerDay);
   const activeDayObj = new Date(currentDayStartMs);
-  const utcDayIndex = activeDayObj.getUTCDay();
-  const weekdayName = WEEKDAY_NAMES[utcDayIndex];
-  const bossDayIndex = getChangeoverDayIndex(nowMs, changeoverEraStartMs);
-  const bossEraDay = ((bossDayIndex - 1) % 84) + 1;
+  const weekdayName = WEEKDAY_NAMES[activeDayObj.getUTCDay()];
+
+  // 2) GAC Specific Changeover (21:00 UTC - 3 Hours after 18:00 UTC)
+  const gacStartMs = Date.UTC(y, m - 1, d, 21, 0, 0);
+  let gacDiffMs = nowMs - gacStartMs;
+  let gacRawDayIndex = Math.floor(gacDiffMs / msPerDay) + 1;
+  if(gacDiffMs < 0) gacRawDayIndex = 1;
+
+  const gacEraDay = ((gacRawDayIndex - 1) % 84) + 1;
+  const gacEpisode = Math.floor((gacEraDay - 1) / 28) + 1;
+  const gacDayInEp = ((gacEraDay - 1) % 28) + 1;
 
   return {
     nowMs,
     rawDayIndex,
-    bossDayIndex,
-    bossEraDay,
-    eraDay: normalizedEraDay,
+    bossDayIndex: rawDayIndex,
+    bossEraDay: eraDay,
+    eraDay,
     episode,
     dayInEp,
     week,
-    utcDayIndex,
     weekdayName,
-    currentEraStartMs,
+    currentEraStartMs: Date.UTC(y, m - 1, d, 0, 0, 0) + (cycleNum * 84 * msPerDay),
     currentDayStartMs,
-    cycleNum
+    cycleNum,
+    // GAC specific trackers
+    gacEpisode,
+    gacDayInEp
   };
 }
 
@@ -932,8 +918,9 @@ function fmtDateUTC(ms){
 }
 
 function getGacStatus(st){
-  const d = st.dayInEp;
-  const format = (st.episode % 2 === 1) ? '5v5' : '3v3';
+  const d = st.gacDayInEp;
+  const ep = st.gacEpisode;
+  const format = (ep % 2 === 1) ? '5v5' : '3v3';
   const nextFormat = format === '5v5' ? '3v3' : '5v5';
 
   if(d === 1 || d === 15 || d === 22){
@@ -942,7 +929,7 @@ function getGacStatus(st){
       badgeClass: 'red',
       title: `Grand Arena (${format})`,
       main: 'Signup Phase Open',
-      sub: 'Set Defense Phase starts tomorrow'
+      sub: 'Set Defense Phase starts tomorrow (21:00 UTC)'
     };
   }
 
@@ -952,7 +939,7 @@ function getGacStatus(st){
       badgeClass: 'red',
       title: `Grand Arena (${format})`,
       main: 'Defense Phase Active',
-      sub: 'Attack Phase begins tomorrow'
+      sub: 'Attack Phase begins tomorrow (21:00 UTC)'
     };
   }
 
@@ -1238,8 +1225,12 @@ function renderMainFeed(st){
 function tickCountdown(){
   const now = new Date();
   const nowMs = now.getTime();
-  const todayChangeoverMs = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 18, 0, 0, 0);
-  const nextChangeoverMs = nowMs >= todayChangeoverMs ? todayChangeoverMs + 86400000 : todayChangeoverMs;
+  
+  // Standard daily changeover at 18:00 UTC
+  let nextChangeoverMs = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 18, 0, 0, 0);
+  if (nowMs >= nextChangeoverMs) {
+    nextChangeoverMs += 86400000;
+  }
 
   const diff = nextChangeoverMs - nowMs;
   const h = Math.floor(diff / 3600000);
@@ -1249,7 +1240,9 @@ function tickCountdown(){
   const pad = n => String(n).padStart(2, '0');
   document.getElementById('countdown').textContent = `${pad(h)}:${pad(m)}:${pad(s)}`;
 
-  if (Math.abs(nowMs - todayChangeoverMs) < 1000) {
+  // Refresh automatically if 18:00 UTC or 21:00 UTC changeover just occurred
+  const gacChangeoverMs = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 21, 0, 0, 0);
+  if (Math.abs(nowMs - nextChangeoverMs) < 1000 || Math.abs(nowMs - gacChangeoverMs) < 1000) {
     renderAll();
   }
 }
@@ -1386,7 +1379,7 @@ tickCountdown();
 setInterval(tickCountdown, 1000);
 setInterval(renderAll, 60000);
 </script>
-<script src="./build-version.js?v=e138124-155"></script>
+<script src="./build-version.js?v=60e6a43-156"></script>
 
 </body>
 </html>
