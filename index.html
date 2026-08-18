@@ -955,7 +955,7 @@ function getGacStatus(st){
       badgeClass: 'red',
       title: `Grand Arena (${format})`,
       main: 'Attack Phase Active',
-      sub: 'Clear enemy sectors before payout'
+      sub: 'Remember to make an attempt.'
     };
   }
 
@@ -1011,7 +1011,7 @@ function getConquestStatus(st){
       badgeClass: 'purple',
       title: titleNote,
       main: 'Proving Grounds Active',
-      sub: 'Conquest scoring is closed — unit unlock available'
+      sub: 'Conquest has ended! Proving Grounds is now available to attempt.'
     };
   } else if(d < 7){
     return {
