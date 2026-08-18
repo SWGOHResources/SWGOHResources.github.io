@@ -801,7 +801,7 @@ const CATEGORY_ICONS = {
   tb:       'tb.png',
   era:      'era.png',
   conquest: 'conquest.png',
-  guild:    'smugglersrun.png',
+  event:    'smugglersrun.png',
   journey:  'journeyicon.png',
   fleet:    'fleet.png',
   marquee:  null,
@@ -841,7 +841,7 @@ function categoryFor(icon){
   if(icon === 'rote' || icon === 'tb_ends') return 'tb';
   if(icon.startsWith('era')) return 'era';
   if(icon.startsWith('conquest') || icon === 'proving_ground') return 'conquest';
-  if(icon === 'smugglersrun') return 'guild';
+  if(icon === 'smugglersrun') return 'event';
   if(icon.startsWith('journey') || icon === 'ultimate_journey') return 'journey';
   if(icon.startsWith('marquee')) return 'marquee';
   if(icon.startsWith('fleet')) return 'fleet';
