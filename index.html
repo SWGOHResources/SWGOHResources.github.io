@@ -801,11 +801,10 @@ const CATEGORY_ICONS = {
   tb:       'tb.png',
   era:      'era.png',
   conquest: 'conquest.png',
-  event:    'smugglersrun.png',
+  misc:    'smugglersrun.png',
   journey:  'journeyicon.png',
   fleet:    'fleet.png',
   marquee:  null,
-  misc:     null
 };
 
 const EVENT_ICONS = {
@@ -841,11 +840,10 @@ function categoryFor(icon){
   if(icon === 'rote' || icon === 'tb_ends') return 'tb';
   if(icon.startsWith('era')) return 'era';
   if(icon.startsWith('conquest') || icon === 'proving_ground') return 'conquest';
-  if(icon === 'smugglersrun') return 'event';
+  if(icon === 'smugglersrun') return 'misc';
   if(icon.startsWith('journey') || icon === 'ultimate_journey') return 'journey';
   if(icon.startsWith('marquee')) return 'marquee';
   if(icon.startsWith('fleet')) return 'fleet';
-  return 'misc';
 }
 
 const WEEKDAY_NAMES = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
