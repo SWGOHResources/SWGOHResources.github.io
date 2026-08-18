@@ -702,7 +702,7 @@ const COMMON_DAYS = {
   2:  [ev('gac_defense','Defense Phase Starts'), ev('smugglersrun',"Smuggler's Run II"), ev('tw_payout','Payout')],
   3:  [ev('gac_attack','Attack Phase Starts'), ev('tw_signup','Signup Starts')],
   4:  [ev('gac_defense','Defense Phase Starts'), ev('smugglersrun',"Smuggler's Run III"), ev('tw_defense','Defense Phase Starts')],
-  5:  [ev('gac_attack','Attack Phase Starts'), ev('tw_attack','Attack Phase Starts')],
+  5:  [ev('gac_attack','Attack Phase Starts'), ev('tw_offense','Offense Phase Starts')],
   6:  [ev('gac_defense','Defense Phase Starts'), ev('tw_payout','Payout')],
   9:  [ev('rote','Phase 3 Starts'), ev('era_battle_1','Era Battle 1 (Rotta) Starts')],
   10: [ev('rote','Phase 4 Starts')],
@@ -710,12 +710,12 @@ const COMMON_DAYS = {
   12: [ev('rote','Phase 6 Starts')],
   13: [ev('tb_ends','Territory Battle Ends'), ev('tw_signup','Signup Starts')],
   14: [ev('tw_defense','Defense Phase Starts'), ev('era_battle_2','Era Battle 2 (Grogu) Starts')],
-  16: [ev('gac_defense','Defense Phase Starts'), ev('smugglersrun',"Smuggler's Run II")],
+  16: [ev('gac_defense','Defense Phase Starts'), ev('smugglersrun',"Smuggler's Run II"), ev('tw_payout','Payout')],
   17: [ev('gac_attack','Attack Phase Starts'), ev('tw_signup','Signup Starts')],
   18: [ev('gac_defense','Defense Phase Starts'), ev('smugglersrun',"Smuggler's Run III"), ev('tw_defense','Defense Phase Starts')],
-  19: [ev('gac_attack','Attack Phase Starts'), ev('tw_attack','Attack Phase Starts')],
+  19: [ev('gac_attack','Attack Phase Starts'), ev('tw_offense','Offense Phase Starts')],
   20: [ev('gac_defense','Defense Phase Starts'), ev('tw_payout','Payout')],
-  22: [ev('era_challenge','Era Challenge Starts'), ev('gac_signup','Signup Starts'), ev('rote','Phase 2 Starts')],
+  22: [ev('gac_signup','Signup Starts'), ev('rote','Phase 2 Starts')],
   23: [ev('gac_defense','Defense Phase Starts'), ev('era_battle_1','Era Battle 1 (Rotta) Starts'), ev('rote','Phase 3 Starts')],
   24: [ev('rote','Phase 4 Starts'), ev('gac_attack','Attack Phase Starts')],
   25: [ev('gac_defense','Defense Phase Starts'), ev('rote','Phase 5 Starts')],
@@ -726,25 +726,28 @@ const COMMON_DAYS = {
 
 const EPISODE_OVERRIDES = {
   1: {
-    1:  [ev('marquee_1'), ev('journey_reruns','Reruns Start'), ev('era_changeover','Era Changeover'), ev('gac_signup','Signup Starts'), ev('tw_attack','Attack Phase Starts')],
+    1:  [ev('marquee_1'), ev('journey_reruns','Reruns Start'), ev('era_changeover','Era Changeover'), ev('gac_signup','Signup Starts'), ev('tw_offense','Offense Phase Starts')],
     7:  [ev('rote','Phase 1 Starts'), ev('conquest_start','2nd Conquest of Volume Starts'), ev('smugglersrun',"Smuggler's Run I"), ev('gac_attack','Attack Phase Starts')],
     8:  [ev('era_challenge_1'), ev('rote','Phase 2 Starts'), ev('journey_reruns','Reruns End')],
     15: [ev('marquee_2'), ev('tw_offense','Offense Phase Starts'), ev('gac_signup','Signup Starts')],
     21: [ev('conquest_end','2nd Conquest of Volume Ends'), ev('gac_attack','Attack Phase Starts'), ev('proving_ground','Proving Grounds'), ev('ultimate_journey','Ultimate Journey'), ev('smugglersrun',"Smuggler's Run I"), ev('rote','Phase 1 Starts')],
+    22: [ev('era_challenge_2'), ev('gac_signup','Signup Starts'), ev('rote','Phase 2 Starts')],
   },
   2: {
-    1:  [ev('marquee_3'), ev('gac_signup','Signup Starts'), ev('tw_attack','Attack Phase Starts')],
+    1:  [ev('marquee_3'), ev('gac_signup','Signup Starts'), ev('tw_offense','Offense Phase Starts')],
     7:  [ev('rote','Phase 1 Starts'), ev('conquest_start','3rd Conquest of Volume Starts'), ev('smugglersrun',"Smuggler's Run I"), ev('gac_attack','Attack Phase Starts')],
-    8:  [ev('era_challenge_2'), ev('rote','Phase 2 Starts')],
+    8:  [ev('era_challenge_3'), ev('rote','Phase 2 Starts')],
     15: [ev('marquee_4'), ev('tw_offense','Offense Phase Starts'), ev('gac_signup','Signup Starts')],
     21: [ev('conquest_end','Conquest Ends (Unit First Playable)'), ev('gac_attack','Attack Phase Starts'), ev('proving_ground','Proving Grounds'), ev('ultimate_journey','Ultimate Journey'), ev('smugglersrun',"Smuggler's Run I"), ev('rote','Phase 1 Starts')],
+    22: [ev('era_challenge_4'), ev('gac_signup','Signup Starts'), ev('rote','Phase 2 Starts')],
   },
   3: {
-    1:  [ev('marquee_5'), ev('journey_guide','4/5★ Guide Unlock'), ev('gac_signup','Signup Starts'), ev('tw_attack','Attack Phase Starts')],
+    1:  [ev('marquee_5'), ev('journey_guide','4/5★ Guide Unlock'), ev('gac_signup','Signup Starts'), ev('tw_offense','Offense Phase Starts')],
     7:  [ev('rote','Phase 1 Starts'), ev('conquest_start','1st Conquest of New Volume Starts'), ev('smugglersrun',"Smuggler's Run I"), ev('gac_attack','Attack Phase Starts')],
-    8:  [ev('era_challenge_3'), ev('rote','Phase 2 Starts')],
+    8:  [ev('era_challenge_5'), ev('rote','Phase 2 Starts')],
     15: [ev('marquee_6'), ev('journey_guide','6/7★ Guide Unlock'), ev('tw_offense','Offense Phase Starts'), ev('gac_signup','Signup Starts')],
     21: [ev('conquest_end','1st Conquest of New Volume Ends'), ev('gac_attack','Attack Phase Starts'), ev('proving_ground','Proving Grounds'), ev('ultimate_journey','Ultimate Journey'), ev('smugglersrun',"Smuggler's Run I"), ev('rote','Phase 1 Starts')],
+    22: [ev('era_challenge_6'), ev('gac_signup','Signup Starts'), ev('rote','Phase 2 Starts')],
   }
 };
 
@@ -798,7 +801,7 @@ const CATEGORY_ICONS = {
   tb:       'tb.png',
   era:      'era.png',
   conquest: 'conquest.png',
-  event:    'smugglersrun.png',
+  guild:    'smugglersrun.png',
   journey:  'journeyicon.png',
   fleet:    'fleet.png',
   marquee:  null,
@@ -811,6 +814,9 @@ const EVENT_ICONS = {
   era_challenge_1: 'marquee1event.png',
   era_challenge_2: 'marquee2event.png',
   era_challenge_3: 'marquee3event.png',
+  era_challenge_4: 'marquee4event.png',
+  era_challenge_5: 'marquee5event.png',
+  era_challenge_6: 'marquee6event.png',
   marquee_1: 'marquee1event.png',
   marquee_2: 'marquee2event.png',
   marquee_3: 'marquee3event.png',
@@ -989,15 +995,23 @@ function getConquestStatus(st){
   else if(st.episode === 2) titleNote = '3rd Conquest of Vol. (Final)';
   else if(st.episode === 3) titleNote = '1st Conquest of New Vol.';
 
-  if(d >= 7 && d <= 21){
+  if(d >= 7 && d <= 20){
     const conquestDay = d - 6;
-    const daysRemaining = 21 - d;
+    const daysRemaining = 20 - d;
     return {
       status: 'ACTIVE',
       badgeClass: 'purple',
       title: titleNote,
       main: `Conquest Day ${conquestDay} of 14`,
-      sub: daysRemaining === 0 ? 'Ends Today! Proving Grounds Active' : `Ends in ${daysRemaining} days`
+      sub: daysRemaining === 0 ? 'Final Day! Proving Grounds starts tomorrow' : `Ends in ${daysRemaining} days`
+    };
+  } else if(d === 21){
+    return {
+      status: 'ACTIVE',
+      badgeClass: 'purple',
+      title: titleNote,
+      main: 'Proving Grounds Active',
+      sub: 'Conquest scoring is closed — unit unlock available'
     };
   } else if(d < 7){
     return {
@@ -1018,13 +1032,18 @@ function getConquestStatus(st){
   }
 }
 
-function getGuildEventSummary(dayInEp){
-  if(dayInEp >= 7 && dayInEp <= 12) return `ROTE TB Phase ${dayInEp - 6} of 6`;
-  if(dayInEp === 13 || dayInEp === 27) return 'TB Ends → TW Signup Starts';
-  if(dayInEp === 14 || dayInEp === 28) return 'TW Defense Phase Starts';
-  if(dayInEp === 15 || dayInEp === 1) return 'TW Offense Starts';
-  if(dayInEp === 2 || dayInEp === 6 || dayInEp === 20) return 'TW Payout / Intermission';
-  if(dayInEp >= 21 && dayInEp <= 26) return `ROTE TB Phase ${dayInEp - 20} of 6`;
+function getGuildEventSummary(episode, dayInEp){
+  const items = getDayEvents(episode, dayInEp);
+
+  const tw = items.find(i => i.icon.startsWith('tw_'));
+  if(tw) return `TW ${tw.label}`;
+
+  const tbEnd = items.find(i => i.icon === 'tb_ends');
+  if(tbEnd) return 'Territory Battle Ends';
+
+  const rote = items.find(i => i.icon === 'rote');
+  if(rote) return `ROTE ${rote.label}`;
+
   return 'Guild Intermission';
 }
 
@@ -1053,9 +1072,11 @@ function renderStatusDashboard(st){
   const gac = getGacStatus(st);
   const conq = getConquestStatus(st);
 
-  const tmrwDayInEp = (st.dayInEp % 28) + 1;
-  const todayGuildSummary = getGuildEventSummary(st.dayInEp);
-  const tmrwGuildSummary = getGuildEventSummary(tmrwDayInEp);
+  const tmrwDayIndex = (st.eraDay % 84) + 1;
+  const tmrwEpisode = Math.floor((tmrwDayIndex - 1) / 28) + 1;
+  const tmrwDayInEp = ((tmrwDayIndex - 1) % 28) + 1;
+  const todayGuildSummary = getGuildEventSummary(st.episode, st.dayInEp);
+  const tmrwGuildSummary = getGuildEventSummary(tmrwEpisode, tmrwDayInEp);
 
   const isGuildActive = todayGuildSummary.includes('ROTE') || todayGuildSummary.includes('TW');
 
@@ -1379,6 +1400,7 @@ tickCountdown();
 setInterval(tickCountdown, 1000);
 setInterval(renderAll, 60000);
 </script>
+<script src="./build-version.js?v=60e6a43-156"></script>
 
 </body>
 </html>
