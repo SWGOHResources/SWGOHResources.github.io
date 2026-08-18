@@ -942,17 +942,17 @@ function getGacStatus(st){
       status: 'DEFENSE PHASE',
       badgeClass: 'red',
       title: `Grand Arena (${format})`,
-      main: 'Defense Phase Active',
+      main: 'Defense Phase is now running',
       sub: 'Attack Phase begins tomorrow (21:00 UTC)'
     };
   }
 
   if(d === 3 || d === 5 || d === 7 || d === 17 || d === 19 || d === 21 || d === 24 || d === 26){
     return {
-      status: 'ATTACK PHASE',
+      status: 'OFFENSE PHASE',
       badgeClass: 'red',
       title: `Grand Arena (${format})`,
-      main: 'Attack Phase Active',
+      main: 'Attack Phase is now running',
       sub: 'Remember to make an attempt.'
     };
   }
@@ -968,7 +968,7 @@ function getGacStatus(st){
       badgeClass: 'off',
       title: `Grand Arena (${format})`,
       main: 'Post-Season Off Week',
-      sub: `Next Signup opens ${dateStr} (${dayLabel})`
+      sub: `Next Signups opens ${dateStr} (${dayLabel})`
     };
   }
 
@@ -982,7 +982,7 @@ function getGacStatus(st){
     badgeClass: 'off',
     title: `Grand Arena (${format})`,
     main: 'Season Intermission',
-    sub: `Next Season (${nextFormat}) Signup opens ${dateStr} (${dayLabel})`
+    sub: `Next Season (${nextFormat}) Signups opens ${dateStr} (${dayLabel})`
   };
 }
 
@@ -997,7 +997,7 @@ function getConquestStatus(st){
     const conquestDay = d - 6;
     const daysRemaining = 20 - d;
     return {
-      status: 'ACTIVE',
+      status: 'CONQUEST ENDING',
       badgeClass: 'purple',
       title: titleNote,
       main: `Conquest Day ${conquestDay} of 14`,
@@ -1005,7 +1005,7 @@ function getConquestStatus(st){
     };
   } else if(d === 21){
     return {
-      status: 'ACTIVE',
+      status: 'EVENT OVER',
       badgeClass: 'purple',
       title: titleNote,
       main: 'Proving Grounds Active',
