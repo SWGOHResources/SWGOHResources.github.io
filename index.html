@@ -1129,49 +1129,50 @@ function renderUnlockWindows(st){
   if(!el) return;
 
   // --- CONQUEST UNIT ---
-  // Unlocks at the end of Episode 2 (Day 49 = Monday)
+  // Finds the NEXT Day 49 (End of Episode 2 / Monday)
   const cqAbs = nextOccurrenceAbs([49], st.rawDayIndex, 84);
   const cqInf = absDayToInfo(cqAbs, st.eraBaseStartMs);
+  const cqDateMs = cqInf.dateMs;
   
-  // Roster locks at the Start of Defense Phase, which is Wednesday (Day 51)
-  const cqLockDateMs = cqInf.dateMs + (86400000 * 2); 
-  const cqGac = gacInfoForDate(cqLockDateMs);
+  // Roster locks at the Start of Defense Phase, which is Wednesday (+2 Days)
+  const cqNextSignupDate = cqDateMs + (86400000 * 2); 
+  const cqGac = gacInfoForDate(cqNextSignupDate);
   const cqGacWeek = Math.ceil(cqGac.cycleDay / 7);
- 
+
   // --- ERA UNIT ---
-  // Unlocks at the start of the Era (Day 1 = Tuesday)
+  // Finds the NEXT Day 1 (Era Changeover / Tuesday)
   const eraAbs = nextOccurrenceAbs([1], st.rawDayIndex, 84);
   const eraInf = absDayToInfo(eraAbs, st.eraBaseStartMs);
+  const eraDateMs = eraInf.dateMs;
   
-  // Roster locks at the Start of Defense Phase, which is Wednesday (Day 2)
-  const eraLockDateMs = eraInf.dateMs + 86400000; 
-  const eraGac = gacInfoForDate(eraLockDateMs);
+  // Roster locks at the Start of Defense Phase, which is Wednesday (+1 Day)
+  const eraNextSignupDate = eraDateMs + 86400000;
+  const eraGac = gacInfoForDate(eraNextSignupDate);
   const eraGacWeek = Math.ceil(eraGac.cycleDay / 7);
 
   el.innerHTML = `
     <div class="status-card purple-card">
-      <div class="sc-header"><span class="sc-title">Conquest Unit (3rd of Volume)</span><span class="sc-badge purple">UPCOMING</span></div>
+      <div class="sc-header"><span class="sc-title">Conquest Unit (3rd of Volume)</span><span class="sc-badge purple">${cqAbs <= st.rawDayIndex ? 'UNLOCKED' : 'UPCOMING'}</span></div>
       <div class="uw-body" style="--accent:var(--purple);--accent-dim:var(--purple-dim);--accent-border:var(--purple-border)">
         <div class="uw-img"><div class="art-badge">CQ</div><img src="assets/schedule/conquestunit.png" onerror="this.remove()"></div>
         <div class="uw-text">
-          <div class="sc-main"><div class="sc-val">Unlocks ${new Date(cqInf.dateMs).toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</div><div class="sc-sub">Playable at end of Episode 2</div></div>
+          <div class="sc-main"><div class="sc-val">Unlocks ${new Date(cqDateMs).toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</div><div class="sc-sub">Playable at end of Episode 2</div></div>
           <div class="sc-footer" style="flex-direction:column;align-items:flex-start;gap:2px;">
             <span>Usable in GAC: <span class="highlight">Week ${cqGacWeek} (${cqGac.format})</span></span>
-            <span>Roster Locks: ${new Date(cqLockDateMs).toLocaleDateString('en-GB',{day:'numeric',month:'short'})} (Defense Starts)</span>
+            <span>Roster Locks: ${new Date(cqNextSignupDate).toLocaleDateString('en-GB',{day:'numeric',month:'short'})} (Defense Starts)</span>
           </div>
         </div>
       </div>
     </div>
-
     <div class="status-card orange-card">
-      <div class="sc-header"><span class="sc-title">Era Journey Units</span><span class="sc-badge orange">NEXT ERA</span></div>
+      <div class="sc-header"><span class="sc-title">Era Journey Units</span><span class="sc-badge orange">${eraAbs <= st.rawDayIndex ? 'THIS ERA' : 'NEXT ERA'}</span></div>
       <div class="uw-body" style="--accent:var(--orange);--accent-dim:var(--orange-dim);--accent-border:var(--orange-border)">
         <div class="uw-img"><div class="art-badge">ERA</div><img src="assets/schedule/erajourney.png" onerror="this.remove()"></div>
         <div class="uw-text">
-          <div class="sc-main"><div class="sc-val">Starts ${new Date(eraInf.dateMs).toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</div><div class="sc-sub">Era Changeover</div></div>
+          <div class="sc-main"><div class="sc-val">Starts ${new Date(eraDateMs).toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</div><div class="sc-sub">Era Changeover</div></div>
           <div class="sc-footer" style="flex-direction:column;align-items:flex-start;gap:2px;">
              <span>Usable in GAC: <span class="highlight">Week ${eraGacWeek} (${eraGac.format})</span></span>
-             <span>Roster Locks: ${new Date(eraLockDateMs).toLocaleDateString('en-GB',{day:'numeric',month:'short'})} (Defense Starts)</span>
+             <span>Roster Locks: ${new Date(eraNextSignupDate).toLocaleDateString('en-GB',{day:'numeric',month:'short'})} (Defense Starts)</span>
           </div>
         </div>
       </div>
