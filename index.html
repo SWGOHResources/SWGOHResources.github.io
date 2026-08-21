@@ -1284,27 +1284,27 @@ function getConquestStatus(st){
     isUpcomingNextEp = true;
   }
 
-  // Map the Episode to the correct Conquest Volume Number
-  // Ep 1 = C2 | Ep 2 = C3 | Ep 3 = C1
+  // Map the Episode to the correct Conquest Chapter Number
+  // Ep 1 = Chapter 2 | Ep 2 = Chapter 3 | Ep 3 = Chapter 1
   let cNum = 1;
   let titleNote = '';
-  if (targetEp === 1) { cNum = 2; titleNote = '2nd Conquest of Vol.'; }
-  else if (targetEp === 2) { cNum = 3; titleNote = '3rd Conquest of Vol. (Final)'; }
-  else if (targetEp === 3) { cNum = 1; titleNote = '1st Conquest of New Vol.'; }
+  if (targetEp === 1) { cNum = 2; titleNote = 'Event 2 of Volume'; }
+  else if (targetEp === 2) { cNum = 3; titleNote = 'Event 3 of Volume (Final)'; }
+  else if (targetEp === 3) { cNum = 1; titleNote = 'Event 1 of New Volume'; }
 
   if (isUpcomingNextEp) {
     const daysUntil = (28 - st.dayInEp) + 7;
     return {
       status: 'UPCOMING', badgeClass: 'purple', title: titleNote,
       main: `Starts in ${daysUntil} days`,
-      sub: `Ep ${targetEp} Launch (Next Episode)`,
+      sub: `Event ${cNum} Starts`,
       cNum: cNum
     };
   } else if (targetDay < 7) {
     return {
       status: 'UPCOMING', badgeClass: 'purple', title: titleNote,
       main: `Starts in ${7 - targetDay} days`,
-      sub: `Ep ${st.episode} Conquest Launch`,
+      sub: `Event ${cNum} Starts`,
       cNum: cNum
     };
   } else if (targetDay >= 7 && targetDay <= 20) {
