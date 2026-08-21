@@ -63,9 +63,12 @@
   --red-border: rgba(239, 68, 68, 0.45);
   --green: #5cad82;
   --green-dim: rgba(92, 173, 130, 0.14);
-  --steel: #7c94c9;
-  --steel-dim: rgba(124, 148, 201, 0.14);
-  --steel-border: rgba(124, 148, 201, 0.45);
+  --steel: #4f8fe0;
+  --steel-dim: rgba(79, 143, 224, 0.14);
+  --steel-border: rgba(79, 143, 224, 0.45);
+  --orange: #dd7b3b;
+  --orange-dim: rgba(221, 123, 59, 0.14);
+  --orange-border: rgba(221, 123, 59, 0.45);
   --discord: #5865F2;
   --text: #f1eee7;
   --text2: #bcc3cf;
@@ -240,6 +243,8 @@ body.modal-open .starfield span {
 .status-card.red-card { border-color: var(--red-border); }
 .status-card.purple-card { border-color: var(--purple-border); }
 .status-card.amber-card { border-color: var(--amber-border); }
+.status-card.orange-card { border-color: var(--orange-border); }
+.status-card.steel-card { border-color: var(--steel-border); }
 
 .sc-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
 .sc-title { font-family: var(--body); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text3); }
@@ -250,12 +255,14 @@ body.modal-open .starfield span {
 .sc-badge.red { background: var(--red-dim); color: var(--red); border: 1px solid var(--red-border); }
 .sc-badge.purple { background: var(--purple-dim); color: var(--purple); border: 1px solid var(--purple-border); }
 .sc-badge.amber { background: var(--amber-dim); color: var(--amber); border: 1px solid var(--amber-border); }
+.sc-badge.orange { background: var(--orange-dim); color: var(--orange); border: 1px solid var(--orange-border); }
 .sc-badge.running { background: var(--green-dim); color: var(--green); border: 1px solid rgba(92, 173, 130, 0.3); }
 .sc-badge.off { background: var(--void3); color: var(--text3); border: 1px solid var(--border); }
 
 .status-card.red-card .sc-badge.off { background: var(--red-dim); color: var(--red); border-color: var(--red-border); }
 .status-card.purple-card .sc-badge.off { background: var(--purple-dim); color: var(--purple); border-color: var(--purple-border); }
 .status-card.amber-card .sc-badge.off { background: var(--amber-dim); color: var(--amber); border-color: var(--amber-border); }
+.status-card.orange-card .sc-badge.off { background: var(--orange-dim); color: var(--orange); border-color: var(--orange-border); }
 
 .sc-main { margin-bottom: 8px; }
 .sc-val { font-family: var(--disp); font-size: 17px; font-weight: 700; color: var(--text); line-height: 1.25; }
@@ -263,6 +270,43 @@ body.modal-open .starfield span {
 
 .sc-footer { font-family: var(--body); font-size: 10.5px; color: var(--text3); border-top: 1px solid var(--border); padding-top: 8px; display: flex; justify-content: space-between; }
 .sc-footer .highlight { color: var(--amber); font-weight: 500; }
+
+/* ─── GAC Round Tracker ─── */
+/* A slim 3-segment progress rail. Each segment = one round; the active
+   round's segment is split diagonally to show which half (Defense /
+   Offense) is currently live, without adding extra boxes or borders. */
+.gac-track { margin-top: 12px; }
+.gac-track-bar { display: flex; gap: 4px; height: 5px; }
+.gac-track-bar .seg {
+  flex: 1; border-radius: 3px; background: var(--void3); overflow: hidden; position: relative;
+}
+.gac-track-bar .seg.done { background: var(--red); opacity: 0.4; }
+.gac-track-bar .seg.current { background: var(--void3); }
+.gac-track-bar .seg.current::before {
+  content: ""; position: absolute; inset: 0; background: var(--red);
+  width: 50%;
+}
+.gac-track-bar .seg.current.phase-offense::before { width: 100%; }
+.gac-track-labels { display: flex; margin-top: 5px; }
+.gac-track-labels span {
+  flex: 1; text-align: center; font-family: var(--body); font-size: 9px; font-weight: 600;
+  letter-spacing: 0.05em; text-transform: uppercase; color: var(--text3);
+}
+.gac-track-labels span.current { color: var(--red); }
+.gac-track-labels span.done { color: var(--text2); }
+
+/* ─── Generic Pip Tracker (Conquest volume / Guild phase) ─── */
+.pip-track { margin-top: 12px; }
+.pip-track-bar { display: flex; gap: 4px; height: 5px; }
+.pip-track-bar .seg { flex: 1; border-radius: 3px; background: var(--void3); }
+.pip-track-bar .seg.done { opacity: 0.4; }
+.pip-track-labels { display: flex; margin-top: 5px; }
+.pip-track-labels span {
+  flex: 1; text-align: center; font-family: var(--body); font-size: 9px; font-weight: 600;
+  letter-spacing: 0.05em; text-transform: uppercase; color: var(--text3);
+}
+.pip-track-labels span.current { font-weight: 700; }
+.pip-track-labels span.done { color: var(--text2); }
 
 /* ─── Unlock Window Tiles (image + text) ─── */
 .uw-body { display: flex; gap: 12px; align-items: flex-start; }
@@ -386,16 +430,16 @@ body.modal-open .starfield span {
 .bcell-img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; z-index: 2; }
 .bcell-img .art-badge { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: var(--void3); font-family: var(--disp); font-size: 11px; font-weight: 700; color: var(--text3); }
 .bcell .step { font-family: var(--body); font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; }
-.bcell.active .step { color: var(--purple); font-weight: 700; }
+.bcell.active .step { color: var(--orange); font-weight: 700; }
 .bcell .name { font-family: var(--disp); font-size: 15.5px; font-weight: 700; color: var(--text); line-height: 1.2; }
 .bcell.active {
-  border-color: var(--purple);
+  border-color: var(--orange-border);
   background: var(--void2); transform: translateY(-2px);
 }
-.bcell.active .bcell-img { border-color: var(--purple); }
+.bcell.active .bcell-img { border-color: var(--orange-border); }
 .bcell .active-tag {
-  font-family: var(--body); font-size: 9px; font-weight: 700; letter-spacing: 0.07em; color: var(--purple);
-  background: rgba(209, 105, 143, 0.12); border: 1px solid rgba(209, 105, 143, 0.35); padding: 2px 9px 2px 7px;
+  font-family: var(--body); font-size: 9px; font-weight: 700; letter-spacing: 0.07em; color: var(--orange);
+  background: var(--orange-dim); border: 1px solid var(--orange-border); padding: 2px 9px 2px 7px;
   border-radius: 12px; display: inline-flex; align-items: center; gap: 5px;
 }
 
@@ -441,21 +485,6 @@ body.modal-open .starfield span {
 .btn.primary { background: var(--amber); color: #1a1104; border-color: var(--amber); font-weight: 600; }
 .btn.primary:hover { background: #ebd076; }
 
-/* ─── Creator Card ─── */
-.creator-card {
-  background: var(--void2);
-  border: 1px solid rgba(88, 101, 242, 0.35);
-  border-radius: var(--radius-lg);
-  padding: 16px 20px;
-  display: flex; align-items: center; justify-content: space-between;
-  gap: 16px; width: 100%; max-width: 640px; margin: 12px 0;
-  text-align: left;
-}
-.creator-card-info { display: flex; flex-direction: column; gap: 3px; }
-.creator-card-title { font-family: var(--disp); font-size: 13px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 6px; }
-.creator-card-title .badge { background: var(--cyan-dim); color: var(--cyan); border: 1px solid var(--cyan-border); font-size: 9px; padding: 1px 6px; border-radius: 10px; font-family: var(--body); font-weight: 600; text-transform: uppercase; }
-.creator-card-sub { font-size: 11px; color: var(--text2); }
-
 .discord-copy-btn {
   background: var(--discord); color: #fff;
   border: none; padding: 8px 14px; border-radius: var(--radius);
@@ -468,24 +497,51 @@ body.modal-open .starfield span {
 .discord-copy-btn.copied { background: var(--green); color: #0b0d11; }
 
 /* ─── Footer ─── */
-.site-footer { position: relative; z-index: 1; border-top: 1px solid var(--border); margin-top: 48px; padding: 32px 24px 28px; }
-.footer-inner { max-width: 1180px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 18px; text-align: center; }
-.footer-top { display: flex; flex-direction: column; align-items: center; gap: 10px; }
-.footer-brand { font-family: var(--disp); font-size: 15px; font-weight: 700; color: var(--text); letter-spacing: 0.04em; }
+.site-footer {
+  position: relative; z-index: 1; flex-shrink: 0; margin-top: 56px;
+  border-top: 1px solid var(--border); background: var(--void1);
+}
+.footer-inner { max-width: 1180px; margin: 0 auto; padding: 30px 24px 22px; display: flex; flex-direction: column; gap: 22px; }
+
+.footer-main { display: flex; align-items: flex-start; justify-content: space-between; gap: 32px; flex-wrap: wrap; }
+
+.footer-brand-col { display: flex; flex-direction: column; gap: 5px; min-width: 180px; }
+.footer-brand { font-family: var(--disp); font-size: 14.5px; font-weight: 700; color: var(--text); letter-spacing: 0.03em; }
 .footer-brand span { color: var(--amber); }
-.footer-links { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; }
+.footer-tagline { font-family: var(--body); font-size: 11px; color: var(--text3); line-height: 1.5; max-width: 260px; }
+
+.footer-links { display: flex; flex-direction: column; gap: 8px; padding-top: 2px; }
+.footer-links-label {
+  font-family: var(--body); font-size: 9.5px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.08em; color: var(--text3); margin-bottom: 2px;
+}
 .footer-links a, .footer-links button {
-  font-family: var(--body); font-size: 11.5px; color: var(--text2); text-decoration: none; transition: color 0.15s;
-  background: none; border: none; cursor: pointer; padding: 0;
+  font-family: var(--body); font-size: 12px; color: var(--text2); text-decoration: none; transition: color 0.15s;
+  background: none; border: none; cursor: pointer; padding: 0; text-align: left; width: fit-content;
 }
 .footer-links a:hover, .footer-links button:hover { color: var(--cyan); }
-.footer-note { font-family: var(--body); font-size: 10.5px; color: var(--text3); max-width: 620px; line-height: 1.6; }
-.footer-divider { height: 1px; width: 48px; background: var(--border2); }
+
+.footer-contact { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+.footer-contact .creator-line { font-family: var(--body); font-size: 11px; color: var(--text3); text-align: right; }
+.footer-contact .creator-line strong { color: var(--text2); font-weight: 600; }
+.footer-contact .discord-copy-btn { padding: 7px 12px; font-size: 11.5px; }
+
+.footer-rule { height: 1px; background: var(--border); width: 100%; }
+
+.footer-legal { display: flex; flex-direction: column; gap: 10px; }
+.footer-note { font-family: var(--body); font-size: 10.5px; color: var(--text3); line-height: 1.6; max-width: 760px; }
 .footer-bottom {
-  display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px;
+  display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
   font-family: var(--body); font-size: 10.5px; color: var(--text3);
 }
 .footer-bottom .dot { opacity: 0.5; }
+
+@media (max-width: 700px) {
+  .footer-main { flex-direction: column; gap: 20px; }
+  .footer-contact { align-items: flex-start; width: 100%; }
+  .footer-contact .creator-line { text-align: left; }
+  .footer-contact .discord-copy-btn { width: 100%; justify-content: center; }
+}
 
 @media (max-width: 900px) {
   .merged-hero { grid-template-columns: 1fr; padding: 22px 20px; }
@@ -493,7 +549,6 @@ body.modal-open .starfield span {
   .hero-grid { grid-template-columns: 1fr; }
   .boss-strip { grid-template-columns: repeat(2, 1fr); }
   .forecast { grid-template-columns: repeat(4, 1fr); }
-  .creator-card { flex-direction: column; text-align: center; }
   .discord-copy-btn { width: 100%; justify-content: center; }
 }
 
@@ -610,30 +665,35 @@ body.modal-open .starfield span {
 
 <footer class="site-footer">
   <div class="footer-inner">
-    <div class="footer-top">
-      <div class="footer-brand">SWGOH<span>::</span>RESOURCES</div>
-      <div class="footer-links">
+    <div class="footer-main">
+      <div class="footer-brand-col">
+        <div class="footer-brand">SWGOH<span>::</span>RESOURCES</div>
+        <p class="footer-tagline">Day-by-day GAC, Territory War, Territory Battle, Conquest and Marquee event tracker.</p>
+      </div>
+
+      <nav class="footer-links">
+        <span class="footer-links-label">Navigate</span>
         <a href="index.html">Home</a>
         <button type="button" id="footerFullScheduleBtn">Full Schedule</button>
+      </nav>
+
+      <div class="footer-contact">
+        <div class="creator-line">Maintained by <strong>Dom</strong> — found a schedule issue?</div>
+        <button class="discord-copy-btn" onclick="copyDiscordHandle(this)" title="Click to copy Discord handle">
+          <span>@granddom</span>
+        </button>
       </div>
     </div>
 
-    <div class="creator-card">
-      <div class="creator-card-info">
-        <div class="creator-card-title">Maintained & Built by Dom <span class="badge">Creator</span></div>
-        <div class="creator-card-sub">Found a schedule discrepancy or have feedback? Reach out directly on Discord!</div>
-      </div>
-      <button class="discord-copy-btn" onclick="copyDiscordHandle(this)" title="Click to copy Discord handle">
-        <span>@granddom</span>
-      </button>
-    </div>
+    <div class="footer-rule"></div>
 
-    <div class="footer-note">Fan-made planning tool for Star Wars: Galaxy of Heroes. Not affiliated with, endorsed, sponsored, or specifically approved by Electronic Arts, Capital Games, Disney, or Lucasfilm. All game assets, trademarks, and character names are property of their respective owners.</div>
-    <div class="footer-divider"></div>
-    <div class="footer-bottom">
-      <span id="footerMeta"></span>
-      <span class="dot">·</span>
-      <span id="footerYear"></span>
+    <div class="footer-legal">
+      <p class="footer-note">Fan-made planning tool for Star Wars: Galaxy of Heroes. Not affiliated with, endorsed, sponsored, or specifically approved by Electronic Arts, Capital Games, Disney, or Lucasfilm. All game assets, trademarks, and character names are property of their respective owners.</p>
+      <div class="footer-bottom">
+        <span id="footerMeta"></span>
+        <span class="dot">·</span>
+        <span id="footerYear"></span>
+      </div>
     </div>
   </div>
 </footer>
@@ -690,10 +750,15 @@ body.modal-open .starfield span {
 const ERA_START_DATE = '2026-07-28'; // Day 1 baseline (Tuesday, July 28, 2026 -> Ends Oct 20, 2026)
 
 /* =========================================================
+ GAC CONFIGURATION
+  GAC runs on its OWN independent 28-day cycle.
+  Based on user report: Aug 21 8:41am is Round 1 Attack, Week 2 of 5v5.
+  Working backward with the 7-day structure: Week 1 Signup was Aug 11.
+  ========================================================= */
+const GAC_CYCLE_START_DATE = '2026-08-11'; // Day 1 (Signup) of the 5v5 season
+
+/* =========================================================
  EVENT DATA MODEL (EXACT SHEET9 MAPPING)
-  Day 1 = Tuesday (Era Baseline)
-  Day 2 = Wednesday, Day 3 = Thursday, Day 4 = Friday,
-  Day 5 = Saturday, Day 6 = Sunday, Day 7 = Monday.
   ========================================================= */
 
 // Marquee events — update values when new units drop.
@@ -706,8 +771,7 @@ const MARQUEE_NAMES = {
   marquee_6: 'The Ronin',
 };
 
-// Unit Unlock Window tile images — drop matching files into assets/schedule/
-// One Conquest unit per Volume (the whole 3-month Era), and one Era journey unit.
+// Unit Unlock Window tile images
 const CONQUEST_UNIT_IMAGE = 'conquestunit.png';
 const ERA_UNIT_IMAGE = 'erajourney.png';
 
@@ -727,55 +791,55 @@ function ev(icon, label){
 }
 
 const COMMON_DAYS = {
-  2:  [ev('gac_defense','Defense Phase Starts'), ev('smugglersrun',"Smuggler's Run II"), ev('tw_payout','Payout')],
-  3:  [ev('gac_attack','Attack Phase Starts'), ev('tw_signup','Signup Starts')],
-  4:  [ev('gac_defense','Defense Phase Starts'), ev('smugglersrun',"Smuggler's Run III"), ev('tw_defense','Defense Phase Starts')],
-  5:  [ev('gac_attack','Attack Phase Starts'), ev('tw_offense','Offense Phase Starts')],
-  6:  [ev('gac_defense','Defense Phase Starts'), ev('tw_payout','Payout')],
+  2:  [ev('smugglersrun',"Smuggler's Run II"), ev('tw_payout','Payout')],
+  3:  [ev('tw_signup','Signup Starts')],
+  4:  [ev('smugglersrun',"Smuggler's Run III"), ev('tw_defense','Defense Phase Starts')],
+  5:  [ev('tw_offense','Offense Phase Starts')],
+  6:  [ev('tw_payout','Payout')],
   9:  [ev('rote','Phase 3 Starts'), ev('era_battle_1','Era Battle 1 (Rotta) Starts')],
   10: [ev('rote','Phase 4 Starts')],
   11: [ev('rote','Phase 5 Starts')],
   12: [ev('rote','Phase 6 Starts')],
   13: [ev('tb_ends','Territory Battle Ends'), ev('tw_signup','Signup Starts')],
   14: [ev('tw_defense','Defense Phase Starts'), ev('era_battle_2','Era Battle 2 (Grogu) Starts')],
-  16: [ev('gac_defense','Defense Phase Starts'), ev('smugglersrun',"Smuggler's Run II"), ev('tw_payout','Payout')],
-  17: [ev('gac_attack','Attack Phase Starts'), ev('tw_signup','Signup Starts')],
-  18: [ev('gac_defense','Defense Phase Starts'), ev('smugglersrun',"Smuggler's Run III"), ev('tw_defense','Defense Phase Starts')],
-  19: [ev('gac_attack','Attack Phase Starts'), ev('tw_offense','Offense Phase Starts')],
-  20: [ev('gac_defense','Defense Phase Starts'), ev('tw_payout','Payout')],
-  22: [ev('gac_signup','Signup Starts'), ev('rote','Phase 2 Starts')],
-  23: [ev('gac_defense','Defense Phase Starts'), ev('era_battle_1','Era Battle 1 (Rotta) Starts'), ev('rote','Phase 3 Starts')],
-  24: [ev('rote','Phase 4 Starts'), ev('gac_attack','Attack Phase Starts')],
-  25: [ev('gac_defense','Defense Phase Starts'), ev('rote','Phase 5 Starts')],
-  26: [ev('gac_attack','Attack Phase Starts'), ev('rote','Phase 6 Starts')],
-  27: [ev('gac_defense','Defense Phase Starts'), ev('tb_ends','Territory Battle Ends'), ev('tw_signup','Signup Starts')],
+  16: [ev('smugglersrun',"Smuggler's Run II"), ev('tw_payout','Payout')],
+  17: [ev('tw_signup','Signup Starts')],
+  18: [ev('smugglersrun',"Smuggler's Run III"), ev('tw_defense','Defense Phase Starts')],
+  19: [ev('tw_offense','Offense Phase Starts')],
+  20: [ev('tw_payout','Payout')],
+  22: [ev('rote','Phase 2 Starts')],
+  23: [ev('era_battle_1','Era Battle 1 (Rotta) Starts'), ev('rote','Phase 3 Starts')],
+  24: [ev('rote','Phase 4 Starts')],
+  25: [ev('rote','Phase 5 Starts')],
+  26: [ev('rote','Phase 6 Starts')],
+  27: [ev('tb_ends','Territory Battle Ends'), ev('tw_signup','Signup Starts')],
   28: [ev('era_battle_2','Era Battle 2 (Grogu) Starts'), ev('tw_defense','Defense Phase Starts')],
 };
 
 const EPISODE_OVERRIDES = {
   1: {
-    1:  [ev('marquee_1'), ev('journey_reruns','Reruns Start'), ev('era_changeover','Era Changeover'), ev('gac_signup','Signup Starts'), ev('tw_offense','Offense Phase Starts')],
-    7:  [ev('rote','Phase 1 Starts'), ev('conquest_start','2nd Conquest of Volume Starts'), ev('smugglersrun',"Smuggler's Run I"), ev('gac_attack','Attack Phase Starts')],
+    1:  [ev('marquee_1'), ev('journey_reruns','Reruns Start'), ev('era_changeover','Era Changeover'), ev('tw_offense','Offense Phase Starts')],
+    7:  [ev('rote','Phase 1 Starts'), ev('conquest_start','2nd Conquest of Volume Starts'), ev('smugglersrun',"Smuggler's Run I")],
     8:  [ev('era_challenge_1'), ev('rote','Phase 2 Starts'), ev('journey_reruns','Reruns End')],
-    15: [ev('marquee_2'), ev('tw_offense','Offense Phase Starts'), ev('gac_signup','Signup Starts')],
-    21: [ev('conquest_end','2nd Conquest of Volume Ends'), ev('gac_attack','Attack Phase Starts'), ev('proving_ground','Proving Grounds'), ev('ultimate_journey','Ultimate Journey'), ev('smugglersrun',"Smuggler's Run I"), ev('rote','Phase 1 Starts')],
-    22: [ev('era_challenge_2'), ev('gac_signup','Signup Starts'), ev('rote','Phase 2 Starts')],
+    15: [ev('marquee_2'), ev('tw_offense','Offense Phase Starts')],
+    21: [ev('conquest_end','2nd Conquest of Volume Ends'), ev('proving_ground','Proving Grounds'), ev('ultimate_journey','Ultimate Journey'), ev('smugglersrun',"Smuggler's Run I"), ev('rote','Phase 1 Starts')],
+    22: [ev('era_challenge_2'), ev('rote','Phase 2 Starts')],
   },
   2: {
-    1:  [ev('marquee_3'), ev('gac_signup','Signup Starts'), ev('tw_offense','Offense Phase Starts')],
-    7:  [ev('rote','Phase 1 Starts'), ev('conquest_start','3rd Conquest of Volume Starts'), ev('smugglersrun',"Smuggler's Run I"), ev('gac_attack','Attack Phase Starts')],
+    1:  [ev('marquee_3'), ev('tw_offense','Offense Phase Starts')],
+    7:  [ev('rote','Phase 1 Starts'), ev('conquest_start','3rd Conquest of Volume Starts'), ev('smugglersrun',"Smuggler's Run I")],
     8:  [ev('era_challenge_3'), ev('rote','Phase 2 Starts')],
-    15: [ev('marquee_4'), ev('tw_offense','Offense Phase Starts'), ev('gac_signup','Signup Starts')],
-    21: [ev('conquest_end','Conquest Ends (Unit First Playable)'), ev('gac_attack','Attack Phase Starts'), ev('proving_ground','Proving Grounds'), ev('ultimate_journey','Ultimate Journey'), ev('smugglersrun',"Smuggler's Run I"), ev('rote','Phase 1 Starts')],
-    22: [ev('era_challenge_4'), ev('gac_signup','Signup Starts'), ev('rote','Phase 2 Starts')],
+    15: [ev('marquee_4'), ev('tw_offense','Offense Phase Starts')],
+    21: [ev('conquest_end','Conquest Ends (Unit First Playable)'), ev('proving_ground','Proving Grounds'), ev('ultimate_journey','Ultimate Journey'), ev('smugglersrun',"Smuggler's Run I"), ev('rote','Phase 1 Starts')],
+    22: [ev('era_challenge_4'), ev('rote','Phase 2 Starts')],
   },
   3: {
-    1:  [ev('marquee_5'), ev('journey_guide','4/5★ Guide Unlock'), ev('gac_signup','Signup Starts'), ev('tw_offense','Offense Phase Starts')],
-    7:  [ev('rote','Phase 1 Starts'), ev('conquest_start','1st Conquest of New Volume Starts'), ev('smugglersrun',"Smuggler's Run I"), ev('gac_attack','Attack Phase Starts')],
+    1:  [ev('marquee_5'), ev('journey_guide','4/5★ Guide Unlock'), ev('tw_offense','Offense Phase Starts')],
+    7:  [ev('rote','Phase 1 Starts'), ev('conquest_start','1st Conquest of New Volume Starts'), ev('smugglersrun',"Smuggler's Run I")],
     8:  [ev('era_challenge_5'), ev('rote','Phase 2 Starts')],
-    15: [ev('marquee_6'), ev('journey_guide','6/7★ Guide Unlock'), ev('tw_offense','Offense Phase Starts'), ev('gac_signup','Signup Starts')],
-    21: [ev('conquest_end','1st Conquest of New Volume Ends'), ev('gac_attack','Attack Phase Starts'), ev('proving_ground','Proving Grounds'), ev('ultimate_journey','Ultimate Journey'), ev('smugglersrun',"Smuggler's Run I"), ev('rote','Phase 1 Starts')],
-    22: [ev('era_challenge_6'), ev('gac_signup','Signup Starts'), ev('rote','Phase 2 Starts')],
+    15: [ev('marquee_6'), ev('journey_guide','6/7★ Guide Unlock'), ev('tw_offense','Offense Phase Starts')],
+    21: [ev('conquest_end','1st Conquest of New Volume Ends'), ev('proving_ground','Proving Grounds'), ev('ultimate_journey','Ultimate Journey'), ev('smugglersrun',"Smuggler's Run I"), ev('rote','Phase 1 Starts')],
+    22: [ev('era_challenge_6'), ev('rote','Phase 2 Starts')],
   }
 };
 
@@ -795,6 +859,74 @@ function getMonthlyEvents(dateMs){
     .map(m => ev(m.icon, m.label));
 }
 
+/* =========================================================
+ GAC CYCLE (7-Day Setup)
+  Day 1 (Tue): Signup
+  Day 2 (Wed): R1 Defense
+  Day 3 (Thu): R1 Offense
+  Day 4 (Fri): R2 Defense
+  Day 5 (Sat): R2 Offense
+  Day 6 (Sun): R3 Defense
+  Day 7 (Mon): R3 Offense
+  ========================================================= */
+
+function gacInfoForDate(dateMs){
+  const [gy, gm, gd] = GAC_CYCLE_START_DATE.split('-').map(Number);
+  const gacStartMs = Date.UTC(gy, gm - 1, gd, 21, 0, 0); 
+  const alignedMs = dateMs + (21 * 3600000); 
+  const diffMs = alignedMs - gacStartMs;
+  
+  const rawDays = Math.floor(diffMs / 86400000);
+  const cycleDay = ((rawDays % 28) + 28) % 28 + 1;
+  const cycleNum = Math.floor(rawDays / 28);
+  
+  const format = (cycleNum % 2 === 0) ? '5v5' : '3v3'; 
+  return { cycleDay, cycleNum, format, rawDays };
+}
+
+function getGacRoundInfo(cycleDay){
+  const week = Math.ceil(cycleDay / 7);
+  const dayInWeek = ((cycleDay - 1) % 7) + 1;
+
+  if (week > 3) return { phase: 'off', round: null, week: null };
+
+  if (dayInWeek === 1) return { phase: 'signup', round: null, week };
+  if (dayInWeek === 2) return { phase: 'defense', round: 1, week };
+  if (dayInWeek === 3) return { phase: 'offense', round: 1, week };
+  if (dayInWeek === 4) return { phase: 'defense', round: 2, week };
+  if (dayInWeek === 5) return { phase: 'offense', round: 2, week };
+  if (dayInWeek === 6) return { phase: 'defense', round: 3, week };
+  if (dayInWeek === 7) return { phase: 'offense', round: 3, week };
+  
+  return { phase: 'off', round: null, week: null };
+}
+
+function gacEventsForDate(dateMs){
+  const info = gacInfoForDate(dateMs);
+  const rnd = getGacRoundInfo(info.cycleDay);
+  
+  if (rnd.week && rnd.week <= 3) {
+    if (rnd.phase === 'signup') return [ev('gac_signup', `GAC Week ${rnd.week} Signup & Roster Lock`)];
+    if (rnd.phase === 'defense') return [ev('gac_defense', `GAC Week ${rnd.week} Round ${rnd.round} Defense`)];
+    if (rnd.phase === 'offense') return [ev('gac_attack', `GAC Week ${rnd.week} Round ${rnd.round} Attack`)];
+  }
+  return [];
+}
+
+// Next date (UTC midnight) on/after dateMs on which a GAC Signup Phase opens
+function nextGacSignupOnOrAfter(dateMs){
+  let d = dateMs;
+  while(true){
+    const info = gacInfoForDate(d);
+    const dayInWeek = ((info.cycleDay - 1) % 7) + 1;
+    const week = Math.ceil(info.cycleDay / 7);
+    if (week <= 3 && dayInWeek === 1) {
+      return { dateMs: d, format: info.format, gacWeek: week };
+    }
+    d += 86400000;
+  }
+}
+
 const BOSS_LOOP = [
   'Krayt Dragon',
   'Zeffo Tomb Guardians',
@@ -811,31 +943,35 @@ const BOSS_ICONS = {
 
 /* ICON / CATEGORY SYSTEM */
 const CATEGORY_META = {
-  gac:      { label: 'GAC',    glyph: 'GAC', accent: 'var(--red)',     dim: 'var(--red-dim)',     border: 'var(--red-border)' },
-  tw:       { label: 'TW',     glyph: 'TW',  accent: 'var(--purple)',  dim: 'var(--purple-dim)',  border: 'var(--purple-border)' },
-  tb:       { label: 'TB',     glyph: 'TB',  accent: 'var(--magenta)', dim: 'var(--magenta-dim)', border: 'var(--magenta)' },
-  era:      { label: 'ERA',    glyph: 'ERA', accent: 'var(--amber)',   dim: 'var(--amber-dim)',   border: 'var(--amber-border)' },
-  conquest: { label: 'CONQUEST', glyph: 'CQ', accent: 'var(--purple)', dim: 'var(--purple-dim)', border: 'var(--purple-border)' },
-  guild:    { label: 'GUILD',  glyph: 'SR',  accent: 'var(--amber)',   dim: 'var(--amber-dim)',   border: 'var(--amber-border)' },
-  journey:  { label: 'JOURNEY',glyph: 'JRN', accent: 'var(--cyan)',    dim: 'var(--cyan-dim)',    border: 'var(--cyan-border)' },
-  marquee:  { label: 'MARQUEE',glyph: 'MQ',  accent: 'var(--amber)',   dim: 'var(--amber-dim)',   border: 'var(--amber-border)' },
-  fleet:    { label: 'FLEET',  glyph: 'FLT', accent: 'var(--steel)',   dim: 'var(--steel-dim)',   border: 'var(--steel-border)' },
-  misc:     { label: 'EVENT',  glyph: 'EVT', accent: 'var(--text2)',   dim: 'var(--void2)',       border: 'var(--border2)' }
+  gac:      { label: 'GAC',      glyph: 'GAC', accent: 'var(--red)',    dim: 'var(--red-dim)',    border: 'var(--red-border)' },
+  conquest: { label: 'CONQUEST', glyph: 'CQ',  accent: 'var(--purple)', dim: 'var(--purple-dim)', border: 'var(--purple-border)' },
+  guild:    { label: 'GUILD',    glyph: 'GLD', accent: 'var(--amber)',  dim: 'var(--amber-dim)',  border: 'var(--amber-border)' },
+  fleet:    { label: 'FLEET',    glyph: 'FLT', accent: 'var(--steel)',  dim: 'var(--steel-dim)',  border: 'var(--steel-border)' },
+  era:      { label: 'ERA',      glyph: 'ERA', accent: 'var(--orange)', dim: 'var(--orange-dim)', border: 'var(--orange-border)' },
 };
 
 const CATEGORY_ICONS = {
   gac:      'gac.png',
-  tw:       'tw.png',
-  tb:       'tb.png',
-  era:      'era.png',
   conquest: 'conquest.png',
-  misc:    'smugglersrun.png',
-  journey:  'journeyicon.png',
+  guild:    'tw.png',
   fleet:    'fleet.png',
-  marquee:  null,
+  era:      'era.png',
 };
 
 const EVENT_ICONS = {
+  tw_signup: 'tw.png',
+  tw_defense: 'tw.png',
+  tw_offense: 'tw.png',
+  tw_payout: 'tw.png',
+  rote: 'tb.png',
+  tb_ends: 'tb.png',
+  smugglersrun: 'smugglersrun.png',
+  gac_signup: 'gac.png',
+  gac_defense: 'gac.png',
+  gac_attack: 'gac.png',
+  conquest_start: 'conquest.png',
+  conquest_end: 'conquest.png',
+  era_changeover: 'era.png',
   era_battle_1: 'erabattle1.png',
   era_battle_2: 'erabattle2.png',
   era_challenge_1: 'marquee1event.png',
@@ -852,6 +988,8 @@ const EVENT_ICONS = {
   marquee_6: 'marquee6event.png',
   proving_ground: 'provingground.png',
   ultimate_journey: 'ultimatejourney.png',
+  journey_reruns: 'journeyicon.png',
+  journey_guide: 'journeyicon.png',
   fleet_executor: 'executor.png',
   fleet_leviathan: 'leviathan.png',
   fleet_profundity: 'profundity.png'
@@ -864,14 +1002,10 @@ function assetFor(icon){
 
 function categoryFor(icon){
   if(icon.startsWith('gac')) return 'gac';
-  if(icon.startsWith('tw')) return 'tw';
-  if(icon === 'rote' || icon === 'tb_ends') return 'tb';
-  if(icon.startsWith('era')) return 'era';
   if(icon.startsWith('conquest') || icon === 'proving_ground') return 'conquest';
-  if(icon === 'smugglersrun') return 'misc';
-  if(icon.startsWith('journey') || icon === 'ultimate_journey') return 'journey';
-  if(icon.startsWith('marquee')) return 'marquee';
+  if(icon.startsWith('tw') || icon === 'rote' || icon === 'tb_ends' || icon === 'smugglersrun') return 'guild';
   if(icon.startsWith('fleet')) return 'fleet';
+  return 'era'; 
 }
 
 const WEEKDAY_NAMES = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
@@ -906,15 +1040,8 @@ function getGameStatus(){
   const activeDayObj = new Date(currentDayStartMs);
   const weekdayName = WEEKDAY_NAMES[activeDayObj.getUTCDay()];
 
-  // 2) GAC Specific Changeover (21:00 UTC - 3 Hours after 18:00 UTC)
-  const gacStartMs = Date.UTC(y, m - 1, d, 21, 0, 0);
-  let gacDiffMs = nowMs - gacStartMs;
-  let gacRawDayIndex = Math.floor(gacDiffMs / msPerDay) + 1;
-  if(gacDiffMs < 0) gacRawDayIndex = 1;
-
-  const gacEraDay = ((gacRawDayIndex - 1) % 84) + 1;
-  const gacEpisode = Math.floor((gacEraDay - 1) / 28) + 1;
-  const gacDayInEp = ((gacEraDay - 1) % 28) + 1;
+  // 2) GAC Cycle — independent 28-day cycle, own reference date, own changeover (21:00 UTC)
+  const gacInfo = gacInfoForDate(currentDayStartMs);
 
   return {
     nowMs,
@@ -927,41 +1054,23 @@ function getGameStatus(){
     week,
     weekdayName,
     currentEraStartMs: Date.UTC(y, m - 1, d, 0, 0, 0) + (cycleNum * 84 * msPerDay),
-    eraBaseStartMs: Date.UTC(y, m - 1, d, 0, 0, 0), // Cycle-0 (very first) era start, used for absolute-day math
+    eraBaseStartMs: Date.UTC(y, m - 1, d, 0, 0, 0),
     currentDayStartMs,
     cycleNum,
-    // GAC specific trackers
-    gacEpisode,
-    gacDayInEp
+    gacCycleDay: gacInfo.cycleDay,
+    gacFormat: gacInfo.format
   };
 }
 
 /* =========================================================
    UNLOCK WINDOW MATH
-   A unit is only usable in GAC if it was unlocked BEFORE that
-   season's Signup Phase opened. These helpers find, from "today",
-   the next time a Conquest unit / Era unit becomes unlocked, and
-   the next GAC Signup Phase on or after that unlock date — which
-   is the first season the unit can actually be used in.
    ========================================================= */
 
 const ERA_LENGTH_DAYS = 84;
 const EPISODE_LENGTH_DAYS = 28;
-const GAC_SIGNUP_OFFSETS_IN_EP = [1, 15, 22]; // dayInEp values where GAC Signup opens
-const CONQUEST_END_OFFSETS = [49];            // eraDay where the NEW Conquest unit becomes playable (Ep 2 "Final" Conquest of the Volume)
-const ERA_START_OFFSETS = [1];                // eraDay value where a new Era begins
+const CONQUEST_END_OFFSETS = [49];            
+const ERA_START_OFFSETS = [1];                
 
-const SIGNUP_ABS_OFFSETS = (() => {
-  const arr = [];
-  for (let e = 0; e < 3; e++) {
-    GAC_SIGNUP_OFFSETS_IN_EP.forEach(o => arr.push(e * EPISODE_LENGTH_DAYS + o));
-  }
-  return arr;
-})();
-
-// Finds the smallest "absolute day" (1-based, counting from the very first era start,
-// uncapped so it can run past 84) that is >= fromAbsDay and lands on one of the given
-// per-cycle offsets (offsets are 1..cycleLen, repeating every cycleLen days).
 function nextOccurrenceAbs(offsetsInCycle, fromAbsDay, cycleLen){
   const sorted = [...offsetsInCycle].sort((a, b) => a - b);
   let k = Math.floor((fromAbsDay - 1) / cycleLen);
@@ -974,38 +1083,42 @@ function nextOccurrenceAbs(offsetsInCycle, fromAbsDay, cycleLen){
   }
 }
 
-// Converts an absolute day back into episode/week/format/calendar-date info.
 function absDayToInfo(absDay, eraBaseStartMs){
   const eraDay = ((absDay - 1) % ERA_LENGTH_DAYS) + 1;
   const episode = Math.floor((eraDay - 1) / EPISODE_LENGTH_DAYS) + 1;
   const dayInEp = ((eraDay - 1) % EPISODE_LENGTH_DAYS) + 1;
   const week = Math.floor((dayInEp - 1) / 7) + 1;
-  const format = (episode % 2 === 1) ? '5v5' : '3v3';
   const dateMs = eraBaseStartMs + (absDay - 1) * 86400000;
-  return { eraDay, episode, dayInEp, week, format, dateMs };
+  return { eraDay, episode, dayInEp, week, dateMs };
+}
+
+function dateMsToEraInfo(dateMs, eraBaseStartMs){
+  const absDay = Math.round((dateMs - eraBaseStartMs) / 86400000) + 1;
+  return absDayToInfo(absDay, eraBaseStartMs);
 }
 
 function getConquestLabel(){
-  return 'Conquest Unit (Volume)';
+  return 'Conquest Unit (3rd of Volume)';
 }
 
 function getUnlockWindows(st){
-  // Next Conquest to end, and the first GAC season its unit is usable in
   const conquestEndAbs = nextOccurrenceAbs(CONQUEST_END_OFFSETS, st.rawDayIndex, ERA_LENGTH_DAYS);
   const conquestEndInfo = absDayToInfo(conquestEndAbs, st.eraBaseStartMs);
-  const conquestSignupAbs = nextOccurrenceAbs(SIGNUP_ABS_OFFSETS, conquestEndAbs, ERA_LENGTH_DAYS);
-  const conquestSignupInfo = absDayToInfo(conquestSignupAbs, st.eraBaseStartMs);
+  
+  // Search for the first signup strictly after the unlock to ensure roster lock captures it
+  const conquestSignup = nextGacSignupOnOrAfter(conquestEndInfo.dateMs + 86400000);
+  conquestSignup.eraInfo = dateMsToEraInfo(conquestSignup.dateMs, st.eraBaseStartMs);
 
-  // Next Era rollover, and the first GAC season Era units are usable in
   const eraStartAbs = nextOccurrenceAbs(ERA_START_OFFSETS, st.rawDayIndex, ERA_LENGTH_DAYS);
   const eraStartInfo = absDayToInfo(eraStartAbs, st.eraBaseStartMs);
-  const eraSignupAbs = nextOccurrenceAbs(SIGNUP_ABS_OFFSETS, eraStartAbs, ERA_LENGTH_DAYS);
-  const eraSignupInfo = absDayToInfo(eraSignupAbs, st.eraBaseStartMs);
+  
+  const eraSignup = nextGacSignupOnOrAfter(eraStartInfo.dateMs + 86400000);
+  eraSignup.eraInfo = dateMsToEraInfo(eraSignup.dateMs, st.eraBaseStartMs);
 
   return {
     conquestLabel: getConquestLabel(),
-    conquestEndInfo, conquestSignupInfo,
-    eraStartInfo, eraSignupInfo,
+    conquestEndInfo, conquestSignupInfo: conquestSignup,
+    eraStartInfo, eraSignupInfo: eraSignup,
     conquestAlreadyUnlocked: conquestEndAbs <= st.rawDayIndex,
     eraAlreadyStarted: eraStartAbs <= st.rawDayIndex
   };
@@ -1027,22 +1140,22 @@ function renderUnlockWindows(st){
         <div class="uw-text">
           <div class="sc-main"><div class="sc-val">Unit unlocks ${fmtDateUTC(uw.conquestEndInfo.dateMs)}</div><div class="sc-sub">Conquest ends that day (Ep ${uw.conquestEndInfo.episode}, Day ${uw.conquestEndInfo.dayInEp})</div></div>
           <div class="sc-footer" style="flex-direction:column;align-items:flex-start;gap:2px;">
-            <span>First usable in GAC: <span class="highlight">${fmtDateUTC(uw.conquestSignupInfo.dateMs)}</span></span>
-            <span>Week ${uw.conquestSignupInfo.week} of 4 &middot; ${uw.conquestSignupInfo.format} Signup Phase</span>
+            <span>Usable in GAC: <span class="highlight">Week ${uw.conquestSignupInfo.gacWeek} (${uw.conquestSignupInfo.format})</span></span>
+            <span>Locks in at Signup: ${fmtDateUTC(uw.conquestSignupInfo.dateMs)}</span>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="status-card amber-card">
-      <div class="sc-header"><span class="sc-title">Era Units</span><span class="sc-badge amber">${uw.eraAlreadyStarted ? 'THIS ERA' : 'NEXT ERA'}</span></div>
-      <div class="uw-body" style="--accent:var(--amber);--accent-dim:var(--amber-dim);--accent-border:var(--amber-border)">
+    <div class="status-card orange-card">
+      <div class="sc-header"><span class="sc-title">Era Units</span><span class="sc-badge orange">${uw.eraAlreadyStarted ? 'THIS ERA' : 'NEXT ERA'}</span></div>
+      <div class="uw-body" style="--accent:var(--orange);--accent-dim:var(--orange-dim);--accent-border:var(--orange-border)">
         <div class="uw-img"><div class="art-badge">ERA</div>${eraImgTag}</div>
         <div class="uw-text">
           <div class="sc-main"><div class="sc-val">New Era begins ${fmtDateUTC(uw.eraStartInfo.dateMs)}</div><div class="sc-sub">Era Changeover (Ep 1, Day 1)</div></div>
           <div class="sc-footer" style="flex-direction:column;align-items:flex-start;gap:2px;">
-            <span>First usable in GAC: <span class="highlight">${fmtDateUTC(uw.eraSignupInfo.dateMs)}</span></span>
-            <span>Week ${uw.eraSignupInfo.week} of 4 &middot; ${uw.eraSignupInfo.format} Signup Phase</span>
+            <span>Usable in GAC: <span class="highlight">Week ${uw.eraSignupInfo.gacWeek} (${uw.eraSignupInfo.format})</span></span>
+            <span>Locks in at Signup: ${fmtDateUTC(uw.eraSignupInfo.dateMs)}</span>
           </div>
         </div>
       </div>
@@ -1056,7 +1169,7 @@ function getDayEvents(episode, dayInEp){
 }
 
 function getEventsForDay(dateMs, episode, dayInEp){
-  return [...getDayEvents(episode, dayInEp), ...getMonthlyEvents(dateMs)];
+  return [...getDayEvents(episode, dayInEp), ...gacEventsForDate(dateMs), ...getMonthlyEvents(dateMs)];
 }
 
 function fmtDateUTC(ms){
@@ -1065,73 +1178,87 @@ function fmtDateUTC(ms){
 }
 
 function getGacStatus(st){
-  const d = st.gacDayInEp;
-  const ep = st.gacEpisode;
-  const format = (ep % 2 === 1) ? '5v5' : '3v3';
+  const format = st.gacFormat;
   const nextFormat = format === '5v5' ? '3v3' : '5v5';
+  const info = getGacRoundInfo(st.gacCycleDay);
 
-  if(d === 1 || d === 15 || d === 22){
+  if(info.phase === 'off'){
+     const daysUntilNext = 29 - st.gacCycleDay;
+     const untilPhrase = daysUntilNext === 1 ? 'tomorrow' : `in ${daysUntilNext} days`;
+     return {
+        status: 'OFF-WEEK',
+        badgeClass: 'off',
+        title: `Grand Arena (${format})`,
+        main: 'Post-Season Off Week',
+        sub: `Next Signup opens ${untilPhrase} (${nextFormat})`,
+        round: null,
+        roundPhase: null
+     };
+  }
+
+  const daysUntilNextPhase = 1; 
+  const untilPhrase = 'tomorrow'; 
+
+  if(info.phase === 'signup'){
     return {
-      status: 'SIGNUP PHASE',
+      status: `WEEK ${info.week} · SIGNUP`,
       badgeClass: 'red',
       title: `Grand Arena (${format})`,
-      main: 'Signup Phase Open',
-      sub: 'Set Defense Phase starts tomorrow (21:00 UTC)'
+      main: `Week ${info.week} Signup Phase Open`,
+      sub: `Roster locks and Defense Phase starts ${untilPhrase}`,
+      round: null,
+      roundPhase: null
     };
   }
 
-  if(d === 2 || d === 4 || d === 6 || d === 16 || d === 18 || d === 20 || d === 23 || d === 25 || d === 27){
+  if(info.phase === 'defense'){
     return {
-      status: 'DEFENSE PHASE',
+      status: `WEEK ${info.week} · ROUND ${info.round} DEFENSE`,
       badgeClass: 'red',
       title: `Grand Arena (${format})`,
-      main: 'Defense Phase is now running',
-      sub: 'Attack Phase begins tomorrow (21:00 UTC)'
+      main: `Round ${info.round} of 3 — Defense Phase`,
+      sub: `Round ${info.round} Attack Phase begins ${untilPhrase}`,
+      round: info.round,
+      roundPhase: 'defense'
     };
   }
 
-  if(d === 3 || d === 5 || d === 7 || d === 17 || d === 19 || d === 21 || d === 24 || d === 26){
+  if(info.phase === 'offense'){
+    const isLastRound = info.round === 3;
+    const subStr = isLastRound 
+       ? (info.week === 3 ? `Season ends ${untilPhrase}!` : `Week ${info.week} ends ${untilPhrase}`)
+       : `Round ${info.round + 1} Defense Phase begins ${untilPhrase}`;
     return {
-      status: 'OFFENSE PHASE',
+      status: `WEEK ${info.week} · ROUND ${info.round} ATTACK`,
       badgeClass: 'red',
       title: `Grand Arena (${format})`,
-      main: 'Attack Phase is now running',
-      sub: 'Remember to make an attempt.'
+      main: `Round ${info.round} of 3 — Attack Phase`,
+      sub: subStr,
+      round: info.round,
+      roundPhase: 'offense'
     };
   }
+}
 
-  if(d >= 8 && d <= 14){
-    const daysUntilNext = 15 - d;
-    const nextDateMs = st.currentDayStartMs + (daysUntilNext * 86400000);
-    const dateStr = fmtDateUTC(nextDateMs);
-    const dayLabel = daysUntilNext === 1 ? 'tomorrow' : `in ${daysUntilNext} days`;
+function gacRoundTrackerHTML(gac){
+  if(!gac.round) return '';
 
-    return {
-      status: 'OFF-WEEK',
-      badgeClass: 'off',
-      title: `Grand Arena (${format})`,
-      main: 'Post-Season Off Week',
-      sub: `Next Signups opens ${dateStr} (${dayLabel})`
-    };
+  let segs = '';
+  let labels = '';
+  for(let r = 1; r <= 3; r++){
+    let segCls = '';
+    let labelCls = '';
+    if(r < gac.round){ segCls = 'done'; labelCls = 'done'; }
+    else if(r === gac.round){ segCls = `current phase-${gac.roundPhase}`; labelCls = 'current'; }
+    segs += `<span class="seg ${segCls}"></span>`;
+    labels += `<span class="${labelCls}">R${r}</span>`;
   }
-
-  const daysUntilNext = 29 - d;
-  const nextDateMs = st.currentDayStartMs + (daysUntilNext * 86400000);
-  const dateStr = fmtDateUTC(nextDateMs);
-  const dayLabel = daysUntilNext === 1 ? 'tomorrow' : `in ${daysUntilNext} days`;
-
-  return {
-    status: 'OFF-WEEK',
-    badgeClass: 'off',
-    title: `Grand Arena (${format})`,
-    main: 'Season Intermission',
-    sub: `Next Season (${nextFormat}) Signups opens ${dateStr} (${dayLabel})`
-  };
+  return `<div class="gac-track"><div class="gac-track-bar">${segs}</div><div class="gac-track-labels">${labels}</div></div>`;
 }
 
 function getConquestStatus(st){
   const d = st.dayInEp;
-  let titleNote = 'Volume Conquest';
+  let titleNote = '3rd Conquest of Volume';
   if(st.episode === 1) titleNote = '2nd Conquest of Vol.';
   else if(st.episode === 2) titleNote = '3rd Conquest of Vol. (Final)';
   else if(st.episode === 3) titleNote = '1st Conquest of New Vol.';
@@ -1173,6 +1300,21 @@ function getConquestStatus(st){
   }
 }
 
+function conquestVolumeTrackerHTML(st){
+  let segs = '';
+  let labels = '';
+  const labelText = ['C1', 'C2', 'C3'];
+  for(let e = 1; e <= 3; e++){
+    let segCls = '';
+    let labelCls = '';
+    if(e < st.episode){ segCls = 'done'; labelCls = 'done'; }
+    else if(e === st.episode){ segCls = 'done'; labelCls = 'current'; }
+    segs += `<span class="seg ${segCls}" style="${e <= st.episode ? 'background:var(--purple)' : ''}"></span>`;
+    labels += `<span class="${labelCls}" style="${e === st.episode ? 'color:var(--purple)' : ''}">${labelText[e-1]}</span>`;
+  }
+  return `<div class="pip-track"><div class="pip-track-bar">${segs}</div><div class="pip-track-labels">${labels}</div></div>`;
+}
+
 function getGuildEventSummary(episode, dayInEp){
   const items = getDayEvents(episode, dayInEp);
 
@@ -1186,6 +1328,78 @@ function getGuildEventSummary(episode, dayInEp){
   if(rote) return `ROTE ${rote.label}`;
 
   return 'Guild Intermission';
+}
+
+function scanBackwardForGuildEvents(st, maxDays){
+  maxDays = maxDays || 28;
+  let twFound = null, tbFound = null;
+  for(let back = 0; back <= maxDays; back++){
+    const absDay = st.rawDayIndex - back;
+    if(absDay < 1) break;
+    const info = absDayToInfo(absDay, st.eraBaseStartMs);
+    const items = getDayEvents(info.episode, info.dayInEp);
+
+    if(!twFound){
+      const twItem = items.find(i => i.icon.startsWith('tw_'));
+      if(twItem) twFound = { daysAgo: back, icon: twItem.icon };
+    }
+    if(!tbFound){
+      const tbItem = items.find(i => i.icon === 'rote' || i.icon === 'tb_ends');
+      if(tbItem){
+        const m = tbItem.label.match(/Phase (\d+)/);
+        tbFound = { daysAgo: back, icon: tbItem.icon, phaseNum: m ? parseInt(m[1], 10) : null };
+      }
+    }
+    if(twFound && tbFound) break;
+  }
+  return { tw: twFound, tb: tbFound };
+}
+
+const TW_PHASE_LABELS = ['Signup', 'Defense', 'Attack'];
+const TW_PHASE_ICONS = ['tw_signup', 'tw_defense', 'tw_offense'];
+
+function getGuildPhaseInfo(st){
+  const scan = scanBackwardForGuildEvents(st, 28);
+  const tw = scan.tw, tb = scan.tb;
+
+  let active = null;
+  if(tw && (!tb || tw.daysAgo <= tb.daysAgo)) active = { type: 'tw', info: tw };
+  else if(tb) active = { type: 'tb', info: tb };
+  if(!active) return null;
+
+  if(active.type === 'tw'){
+    if(active.info.icon === 'tw_payout') return { type: 'tw', complete: true };
+    const idx = TW_PHASE_ICONS.indexOf(active.info.icon);
+    return { type: 'tw', phaseIndex: idx };
+  } else {
+    if(active.info.icon === 'tb_ends') return { type: 'tb', complete: true };
+    return { type: 'tb', phaseIndex: (active.info.phaseNum || 1) - 1 };
+  }
+}
+
+function guildPhaseTrackerHTML(st){
+  const gp = getGuildPhaseInfo(st);
+  if(!gp) return '';
+
+  if(gp.type === 'tw'){
+    let segs = '', labels = '';
+    for(let i = 0; i < 3; i++){
+      const isDone = gp.complete || i < gp.phaseIndex;
+      const isCurrent = !gp.complete && i === gp.phaseIndex;
+      segs += `<span class="seg ${isDone || isCurrent ? 'done' : ''}" style="${isDone || isCurrent ? 'background:var(--amber)' : ''}"></span>`;
+      labels += `<span class="${isCurrent ? 'current' : (isDone ? 'done' : '')}" style="${isCurrent ? 'color:var(--amber)' : ''}">${TW_PHASE_LABELS[i]}</span>`;
+    }
+    return `<div class="pip-track"><div class="pip-track-bar">${segs}</div><div class="pip-track-labels">${labels}</div></div>`;
+  } else {
+    let segs = '', labels = '';
+    for(let i = 0; i < 6; i++){
+      const isDone = gp.complete || i < gp.phaseIndex;
+      const isCurrent = !gp.complete && i === gp.phaseIndex;
+      segs += `<span class="seg ${isDone || isCurrent ? 'done' : ''}" style="${isDone || isCurrent ? 'background:var(--amber)' : ''}"></span>`;
+      labels += `<span class="${isCurrent ? 'current' : (isDone ? 'done' : '')}" style="${isCurrent ? 'color:var(--amber)' : ''}">P${i+1}</span>`;
+    }
+    return `<div class="pip-track"><div class="pip-track-bar">${segs}</div><div class="pip-track-labels">${labels}</div></div>`;
+  }
 }
 
 /* =========================================================
@@ -1225,11 +1439,13 @@ function renderStatusDashboard(st){
     <div class="status-card red-card">
       <div class="sc-header"><span class="sc-title">${gac.title}</span><span class="sc-badge ${gac.badgeClass}">${gac.status}</span></div>
       <div class="sc-main" style="margin-bottom:0"><div class="sc-val">${gac.main}</div><div class="sc-sub">${gac.sub}</div></div>
+      ${gacRoundTrackerHTML(gac)}
     </div>
 
     <div class="status-card purple-card">
       <div class="sc-header"><span class="sc-title">${conq.title}</span><span class="sc-badge ${conq.badgeClass}">${conq.status}</span></div>
       <div class="sc-main" style="margin-bottom:0"><div class="sc-val">${conq.main}</div><div class="sc-sub">${conq.sub}</div></div>
+      ${conquestVolumeTrackerHTML(st)}
     </div>
 
     <div class="status-card amber-card">
@@ -1238,6 +1454,7 @@ function renderStatusDashboard(st){
         <div class="sc-val" style="font-size:15px;margin-bottom:2px">Today: <span style="color:var(--text);font-weight:600">${todayGuildSummary}</span></div>
         <div class="sc-sub" style="font-size:12px">Tomorrow: <span style="color:var(--amber)">${tmrwGuildSummary}</span></div>
       </div>
+      ${guildPhaseTrackerHTML(st)}
     </div>
   `;
 }
@@ -1272,8 +1489,14 @@ function renderCards(el, items, extraClass){
     : `<p class="empty-note">— No event changeovers scheduled for this day —</p>`;
 }
 
+const GUILD_SUBLABEL = {
+  tw_signup: 'TW', tw_defense: 'TW', tw_offense: 'TW', tw_payout: 'TW',
+  rote: 'TB', tb_ends: 'TB',
+  smugglersrun: 'SR'
+};
+
 function getFullScheduleLabel(item){
-  const catLabel = CATEGORY_META[categoryFor(item.icon)]?.label;
+  const catLabel = GUILD_SUBLABEL[item.icon] || CATEGORY_META[categoryFor(item.icon)]?.label;
   if(!catLabel) return item.label;
 
   const needsCategory = /\b(Phase|Payout|Signup|Attack|Defense|Offense)\b/i.test(item.label);
