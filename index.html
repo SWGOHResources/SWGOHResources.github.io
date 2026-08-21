@@ -1272,60 +1272,72 @@ function gacRoundTrackerHTML(gac){
 }
 
 function getConquestStatus(st){
-  const d = st.dayInEp;
-  let titleNote = '3rd Conquest of Volume';
-  if(st.episode === 1) titleNote = '2nd Conquest of Vol.';
-  else if(st.episode === 2) titleNote = '3rd Conquest of Vol. (Final)';
-  else if(st.episode === 3) titleNote = '1st Conquest of New Vol.';
+  let targetEp = st.episode;
+  let targetDay = st.dayInEp;
+  let isUpcomingNextEp = false;
+  
+  // If we are past Day 21, the current episode's conquest is over.
+  // We point the dashboard to the NEXT episode's conquest.
+  if (targetDay > 21) {
+    targetEp = targetEp === 3 ? 1 : targetEp + 1;
+    isUpcomingNextEp = true;
+  }
 
-  if(d >= 7 && d <= 20){
-    const conquestDay = d - 6;
-    const daysRemaining = 20 - d;
+  // Map the Episode to the correct Conquest Volume Number
+  // Ep 1 = C2 | Ep 2 = C3 | Ep 3 = C1
+  let cNum = 1;
+  let titleNote = '';
+  if (targetEp === 1) { cNum = 2; titleNote = '2nd Conquest of Vol.'; }
+  else if (targetEp === 2) { cNum = 3; titleNote = '3rd Conquest of Vol. (Final)'; }
+  else if (targetEp === 3) { cNum = 1; titleNote = '1st Conquest of New Vol.'; }
+
+  if (isUpcomingNextEp) {
+    const daysUntil = (28 - st.dayInEp) + 7;
     return {
-      status: 'CONQUEST ENDING',
-      badgeClass: 'purple',
-      title: titleNote,
-      main: `Conquest Day ${conquestDay} of 14`,
-      sub: daysRemaining === 0 ? 'Final Day! Proving Grounds starts tomorrow' : `Ends in ${daysRemaining} days`
+      status: 'UPCOMING', badgeClass: 'purple', title: titleNote,
+      main: `Starts in ${daysUntil} days`,
+      sub: `Ep ${targetEp} Launch (Next Episode)`,
+      cNum: cNum
     };
-  } else if(d === 21){
+  } else if (targetDay < 7) {
     return {
-      status: 'EVENT OVER',
-      badgeClass: 'purple',
-      title: titleNote,
+      status: 'UPCOMING', badgeClass: 'purple', title: titleNote,
+      main: `Starts in ${7 - targetDay} days`,
+      sub: `Ep ${st.episode} Conquest Launch`,
+      cNum: cNum
+    };
+  } else if (targetDay >= 7 && targetDay <= 20) {
+    const cqDay = targetDay - 6;
+    const remaining = 20 - targetDay;
+    return {
+      status: remaining === 0 ? 'ENDING TODAY' : 'ACTIVE',
+      badgeClass: 'purple', title: titleNote,
+      main: `Conquest Day ${cqDay} of 14`,
+      sub: remaining === 0 ? 'Proving Grounds starts tomorrow' : `Ends in ${remaining} days`,
+      cNum: cNum
+    };
+  } else if (targetDay === 21) {
+    return {
+      status: 'EVENT OVER', badgeClass: 'purple', title: titleNote,
       main: 'Proving Grounds Active',
-      sub: 'Conquest has ended! Proving Grounds is now available to attempt.'
-    };
-  } else if(d < 7){
-    return {
-      status: 'UPCOMING',
-      badgeClass: 'purple',
-      title: titleNote,
-      main: `Starts in ${7 - d} days`,
-      sub: `Ep ${st.episode} Conquest Launch`
-    };
-  } else {
-    return {
-      status: 'UPCOMING',
-      badgeClass: 'purple',
-      title: 'Next Volume Conquest',
-      main: `Starts in ${(28 - d) + 7} days`,
-      sub: 'Conquest Is Not Currently Active'
+      sub: 'Conquest has ended! Unit is now claimable.',
+      cNum: cNum
     };
   }
 }
 
-function conquestVolumeTrackerHTML(st){
+function conquestVolumeTrackerHTML(cNum){
   let segs = '';
   let labels = '';
   const labelText = ['C1', 'C2', 'C3'];
-  for(let e = 1; e <= 3; e++){
+  for(let i = 1; i <= 3; i++){
     let segCls = '';
     let labelCls = '';
-    if(e < st.episode){ segCls = 'done'; labelCls = 'done'; }
-    else if(e === st.episode){ segCls = 'done'; labelCls = 'current'; }
-    segs += `<span class="seg ${segCls}" style="${e <= st.episode ? 'background:var(--purple)' : ''}"></span>`;
-    labels += `<span class="${labelCls}" style="${e === st.episode ? 'color:var(--purple)' : ''}">${labelText[e-1]}</span>`;
+    if(i < cNum){ segCls = 'done'; labelCls = 'done'; }
+    else if(i === cNum){ segCls = 'done'; labelCls = 'current'; }
+    
+    segs += `<span class="seg ${segCls}" style="${i <= cNum ? 'background:var(--purple)' : ''}"></span>`;
+    labels += `<span class="${labelCls}" style="${i === cNum ? 'color:var(--purple)' : ''}">${labelText[i-1]}</span>`;
   }
   return `<div class="pip-track"><div class="pip-track-bar">${segs}</div><div class="pip-track-labels">${labels}</div></div>`;
 }
@@ -1460,7 +1472,7 @@ function renderStatusDashboard(st){
     <div class="status-card purple-card">
       <div class="sc-header"><span class="sc-title">${conq.title}</span><span class="sc-badge ${conq.badgeClass}">${conq.status}</span></div>
       <div class="sc-main" style="margin-bottom:0"><div class="sc-val">${conq.main}</div><div class="sc-sub">${conq.sub}</div></div>
-      ${conquestVolumeTrackerHTML(st)}
+      ${conquestVolumeTrackerHTML(conq.cNum)}
     </div>
 
     <div class="status-card amber-card">
