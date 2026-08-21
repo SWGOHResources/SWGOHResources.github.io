@@ -1156,7 +1156,7 @@ function renderUnlockWindows(st){
       <div class="uw-body" style="--accent:var(--purple);--accent-dim:var(--purple-dim);--accent-border:var(--purple-border)">
         <div class="uw-img"><div class="art-badge">CQ</div><img src="assets/schedule/conquestunit.png" onerror="this.remove()"></div>
         <div class="uw-text">
-          <div class="sc-main"><div class="sc-val">Unlocks ${new Date(cqDateMs).toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</div><div class="sc-sub">Playable at end of Episode 2</div></div>
+          <div class="sc-main"><div class="sc-val">Unlocks ${new Date(cqDateMs).toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</div><div class="sc-sub">Current Conquest Unit is now available in Legacy Modes</div></div>
           <div class="sc-footer" style="flex-direction:column;align-items:flex-start;gap:2px;">
             <span>Usable in GAC: <span class="highlight">Week ${cqGacWeek} (${cqGac.format})</span></span>
             <span>Roster Locks: ${new Date(cqNextSignupDate).toLocaleDateString('en-GB',{day:'numeric',month:'short'})} (Defense Starts)</span>
@@ -1169,7 +1169,7 @@ function renderUnlockWindows(st){
       <div class="uw-body" style="--accent:var(--orange);--accent-dim:var(--orange-dim);--accent-border:var(--orange-border)">
         <div class="uw-img"><div class="art-badge">ERA</div><img src="assets/schedule/erajourney.png" onerror="this.remove()"></div>
         <div class="uw-text">
-          <div class="sc-main"><div class="sc-val">Starts ${new Date(eraDateMs).toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</div><div class="sc-sub">Era Changeover</div></div>
+          <div class="sc-main"><div class="sc-val">Starts ${new Date(eraDateMs).toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</div><div class="sc-sub">End of Era Changeover</div></div>
           <div class="sc-footer" style="flex-direction:column;align-items:flex-start;gap:2px;">
              <span>Usable in GAC: <span class="highlight">Week ${eraGacWeek} (${eraGac.format})</span></span>
              <span>Roster Locks: ${new Date(eraNextSignupDate).toLocaleDateString('en-GB',{day:'numeric',month:'short'})} (Defense Starts)</span>
