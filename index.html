@@ -333,16 +333,16 @@ body.modal-open .starfield span {
    so we mirror it rather than introducing a separate flex/auto-fit
    track-sizing algorithm that can leave unclaimed space on wide
    viewports. */
+.unlock-grid {
+  /* Grid's default align-items:stretch was forcing every card in the
+     row to match the height of the tallest one (e.g. whichever card's
+     text happened to wrap an extra line), leaving a blank gap at the
+     bottom of the shorter cards. Sizing each card to its own content
+     removes that leftover space entirely instead of trying to hide it. */
+  align-items: start;
+}
 .unlock-grid > .status-card {
   min-width: 0;
-  /* Override the base .status-card's justify-content: space-between.
-     When Grid stretches all 3 cards in the row to match the tallest
-     one (e.g. because one card's text wrapped to an extra line), the
-     inherited space-between pushed the header/body apart to fill
-     that leftover height, making the shorter cards' content appear
-     "pushed down" relative to the tall one. Keeping content flush to
-     the top means any leftover height just sits below it instead. */
-  justify-content: flex-start;
 }
 
 /* ─── Section Labels ─── */
