@@ -326,16 +326,23 @@ body.modal-open .starfield span {
 .uw-text { flex: 1; min-width: 0; }
 
 /* ─── Important Dates Grid ───
-   Uses auto-fit so tiles reflow cleanly at any width instead of being
-   locked to a fixed 3-column track (which used to leave an empty gap
-   whenever the last tile wrapped onto its own row). */
-.unlock-grid {
-  display: flex;
-  flex-wrap: wrap;
-}
+   Intentionally left to inherit .hero-grid's plain
+   `grid-template-columns: repeat(3, 1fr)` (and its matching
+   single-column mobile override) — this is the exact same rule the
+   status dashboard above uses, and it doesn't have any gap issue,
+   so we mirror it rather than introducing a separate flex/auto-fit
+   track-sizing algorithm that can leave unclaimed space on wide
+   viewports. */
 .unlock-grid > .status-card {
-  flex: 1 1 240px;
   min-width: 0;
+  /* Override the base .status-card's justify-content: space-between.
+     When Grid stretches all 3 cards in the row to match the tallest
+     one (e.g. because one card's text wrapped to an extra line), the
+     inherited space-between pushed the header/body apart to fill
+     that leftover height, making the shorter cards' content appear
+     "pushed down" relative to the tall one. Keeping content flush to
+     the top means any leftover height just sits below it instead. */
+  justify-content: flex-start;
 }
 
 /* ─── Section Labels ─── */
@@ -947,8 +954,8 @@ function gacEventsForDate(dateMs){
   
   if (rnd.week && rnd.week <= 3) {
     if (rnd.phase === 'signup') return [ev('gac_signup', `GAC Week ${rnd.week} Signup & Roster Lock`)];
-    if (rnd.phase === 'defense') return [ev('gac_defense', `GAC Week ${rnd.week} Round ${rnd.round} Defense`)];
-    if (rnd.phase === 'offense') return [ev('gac_attack', `GAC Week ${rnd.week} Round ${rnd.round} Attack`)];
+    if (rnd.phase === 'defense') return [ev('gac_defense', `GAC Round ${rnd.round} Defense (Week ${rnd.week})`)];
+    if (rnd.phase === 'offense') return [ev('gac_attack', `GAC Round ${rnd.round} Attack (Week ${rnd.week})`)];
   }
   return [];
 }
@@ -1241,7 +1248,14 @@ function renderUnlockWindows(st){
   const daysLeft = Math.ceil((cron.expiresMs - st.nowMs) / 86400000);
   const cronBadgeLabel = daysLeft <= 0 ? 'EXPIRES TODAY' : `${daysLeft} DAY${daysLeft === 1 ? '' : 'S'} LEFT`;
   const lastUsable = getLastUsableGuildEvent(cron.expiresMs, st.eraBaseStartMs);
-  const lastUsableLabel = lastUsable ? getFullScheduleLabel(lastUsable.item) : '—';
+  let lastUsableLabel = '—';
+  if(lastUsable){
+    lastUsableLabel = getFullScheduleLabel(lastUsable.item);
+    if(lastUsable.item.icon.startsWith('gac_')){
+      const lastUsableFormat = gacInfoForDate(lastUsable.dateMs).format;
+      lastUsableLabel = `${lastUsableFormat} ${lastUsableLabel}`;
+    }
+  }
 
   el.innerHTML = `
     <div class="status-card purple-card">
