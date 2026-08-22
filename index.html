@@ -58,11 +58,13 @@
   --purple-border: rgba(150, 134, 214, 0.45);
   --magenta: #d1698f;
   --magenta-dim: rgba(209, 105, 143, 0.14);
+  --magenta-border: rgba(209, 105, 143, 0.45);
   --red: #ef4444;
   --red-dim: rgba(239, 68, 68, 0.14);
   --red-border: rgba(239, 68, 68, 0.45);
   --green: #5cad82;
   --green-dim: rgba(92, 173, 130, 0.14);
+  --green-border: rgba(92, 173, 130, 0.45);
   --steel: #4f8fe0;
   --steel-dim: rgba(79, 143, 224, 0.14);
   --steel-border: rgba(79, 143, 224, 0.45);
@@ -625,10 +627,10 @@ body.modal-open .starfield span {
 
   <!-- Unit Unlock Windows -->
   <div class="section-head">
-    <h2>Unit Unlock Windows</h2>
+    <h2>Important Dates</h2>
     <div class="rule"></div>
   </div>
-  <div class="hero-grid" id="unlockWindows" style="grid-template-columns:repeat(2,1fr);">
+  <div class="hero-grid" id="unlockWindows" style="grid-template-columns:repeat(3,1fr);">
   </div>
 
   <!-- Today & Tomorrow Event Cards -->
@@ -756,6 +758,31 @@ const ERA_START_DATE = '2026-07-28'; // Day 1 baseline (Tuesday, July 28, 2026 -
   Working backward with the 7-day structure: Week 1 Signup was Aug 11.
   ========================================================= */
 const GAC_CYCLE_START_DATE = '2026-08-11'; // Day 1 (Signup) of the 5v5 season
+
+/* =========================================================
+ DATACRON SET CONFIGURATION — EDIT WHEN A NEW SET IS ANNOUNCED
+  Datacron sets rotate through colors in a fixed order:
+    Orange -> Pink -> Green -> Blue -> (repeats)
+  A new set is introduced roughly every 28 days, but each individual
+  set stays equippable longer than 28 days, so up to 4 sets can be
+  active/overlapping at once. "expires" is the date (UTC) the set
+  is removed. Set hasFDC: true for sets that add Fleet/Faction
+  Datacrons (FDCs) on top of the normal set — adjust manually.
+  ========================================================= */
+const DATACRON_SETS = [
+  { name: 'For Old Times',       color: 'orange', expires: '2026-09-03', hasFDC: false },
+  { name: 'Necessary Means',     color: 'pink',    expires: '2026-10-01', hasFDC: false },
+  { name: 'Supremacy Directive', color: 'green',   expires: '2026-10-29', hasFDC: true  },
+];
+
+const CRON_COLOR_ORDER = ['orange', 'pink', 'green', 'blue'];
+
+const CRON_COLOR_META = {
+  orange: { label: 'Orange', accent: 'var(--orange)', dim: 'var(--orange-dim)', border: 'var(--orange-border)', asset: 'datacron_orange.png' },
+  pink:   { label: 'Pink',   accent: 'var(--magenta)', dim: 'var(--magenta-dim)', border: 'var(--magenta-border)', asset: 'datacron_pink.png' },
+  green:  { label: 'Green',  accent: 'var(--green)',  dim: 'var(--green-dim)',  border: 'var(--green-border)',  asset: 'datacron_green.png' },
+  blue:   { label: 'Blue',   accent: 'var(--steel)',  dim: 'var(--steel-dim)',  border: 'var(--steel-border)',  asset: 'datacron_blue.png' },
+};
 
 /* =========================================================
  EVENT DATA MODEL (EXACT SHEET9 MAPPING)
@@ -1101,6 +1128,34 @@ function getConquestLabel(){
   return 'Conquest Unit (3rd of Volume)';
 }
 
+/* =========================================================
+   DATACRON EXPIRATION HELPERS
+   ========================================================= */
+
+// Returns the datacron set that is next/currently expiring (soonest
+// expires date that hasn't passed yet). Falls back to the last set
+// in the config if every set's expiration has already passed —
+// update DATACRON_SETS with the next set(s) when that happens.
+function getCurrentDatacronSet(nowMs){
+  const withMs = DATACRON_SETS.map(s => ({
+    ...s,
+    expiresMs: Date.parse(s.expires + 'T18:00:00Z')
+  })).sort((a, b) => a.expiresMs - b.expiresMs);
+
+  const upcoming = withMs.find(s => s.expiresMs >= nowMs);
+  return upcoming || withMs[withMs.length - 1];
+}
+
+function datacronOrderHTML(currentColor){
+  return CRON_COLOR_ORDER.map((c, i) => {
+    const meta = CRON_COLOR_META[c];
+    const isCurrent = c === currentColor;
+    const dot = `<span style="width:8px;height:8px;border-radius:50%;display:inline-block;background:${isCurrent ? meta.accent : 'var(--void3)'};border:1px solid ${isCurrent ? meta.accent : 'var(--border2)'};flex:0 0 auto;"></span>`;
+    const arrow = i < CRON_COLOR_ORDER.length - 1 ? `<span style="color:var(--text3);font-size:10px;">→</span>` : '';
+    return dot + arrow;
+  }).join('');
+}
+
 function getUnlockWindows(st){
   const conquestEndAbs = nextOccurrenceAbs(CONQUEST_END_OFFSETS, st.rawDayIndex, ERA_LENGTH_DAYS);
   const conquestEndInfo = absDayToInfo(conquestEndAbs, st.eraBaseStartMs);
@@ -1150,6 +1205,12 @@ function renderUnlockWindows(st){
   const eraGac = gacInfoForDate(eraNextSignupDate);
   const eraGacWeek = Math.ceil(eraGac.cycleDay / 7);
 
+  // --- DATACRON EXPIRATIONS ---
+  const cron = getCurrentDatacronSet(st.nowMs);
+  const cronMeta = CRON_COLOR_META[cron.color] || CRON_COLOR_META.orange;
+  const daysLeft = Math.ceil((cron.expiresMs - st.nowMs) / 86400000);
+  const cronBadgeLabel = daysLeft <= 0 ? 'EXPIRES TODAY' : `${daysLeft} DAY${daysLeft === 1 ? '' : 'S'} LEFT`;
+
   el.innerHTML = `
     <div class="status-card purple-card">
       <div class="sc-header"><span class="sc-title">Conquest Unit (3rd of Volume)</span><span class="sc-badge purple">${cqAbs <= st.rawDayIndex ? 'UNLOCKED' : 'UPCOMING'}</span></div>
@@ -1173,6 +1234,22 @@ function renderUnlockWindows(st){
           <div class="sc-footer" style="flex-direction:column;align-items:flex-start;gap:2px;">
              <span>Usable in GAC: <span class="highlight">Week ${eraGacWeek} (${eraGac.format})</span></span>
              <span>Roster Locks: ${new Date(eraNextSignupDate).toLocaleDateString('en-GB',{day:'numeric',month:'short'})} (Defense Starts)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="status-card" style="border-color:${cronMeta.border}">
+      <div class="sc-header"><span class="sc-title">Datacron Expirations</span><span class="sc-badge" style="background:${cronMeta.dim};color:${cronMeta.accent};border:1px solid ${cronMeta.border}">${cronBadgeLabel}</span></div>
+      <div class="uw-body" style="--accent:${cronMeta.accent};--accent-dim:${cronMeta.dim};--accent-border:${cronMeta.border}">
+        <div class="uw-img"><div class="art-badge">${cronMeta.label.slice(0,3).toUpperCase()}</div><img src="assets/schedule/${cronMeta.asset}" onerror="this.remove()"></div>
+        <div class="uw-text">
+          <div class="sc-main">
+            <div class="sc-val">${cron.name}${cron.hasFDC ? ' <span style="color:var(--text3);font-size:11px;font-weight:600;">+ FDC</span>' : ''}</div>
+            <div class="sc-sub">Expires ${new Date(cron.expiresMs).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}</div>
+          </div>
+          <div class="sc-footer" style="flex-direction:column;align-items:flex-start;gap:6px;">
+            <span>Rotation: Orange → Pink → Green → Blue</span>
+            <div style="display:flex;gap:5px;align-items:center;">${datacronOrderHTML(cron.color)}</div>
           </div>
         </div>
       </div>
