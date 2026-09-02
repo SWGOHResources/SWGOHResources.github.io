@@ -194,7 +194,6 @@ body.modal-open .starfield span {
 }
 .mh-left { display: flex; flex-direction: column; gap: 14px; position: relative; z-index: 1; }
 .mh-tag { font-family: var(--disp); font-size: 20px; font-weight: 700; color: var(--text); letter-spacing: 0; text-transform: none; margin-bottom: 4px; }
-.mh-tag { display: none; }
 .mh-title-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
 .mh-main-val { font-family: var(--disp); font-size: 34px; font-weight: 700; color: var(--text); line-height: 1; white-space: nowrap; }
 .mh-main-val .mh-of { font-size: 16px; font-weight: 600; color: var(--text3); margin-left: 4px; }
@@ -818,8 +817,8 @@ const MARQUEE_NAMES = {
   marquee_6: 'The Ronin',
 };
 
-// Unit Unlock Window tile images
-const CONQUEST_UNIT_IMAGE = 'conquestunit.png';
+// Unit Unlock Window tile images (must exist in assets/schedule/)
+const CONQUEST_UNIT_IMAGE = 'conquest.png';
 const ERA_UNIT_IMAGE = 'erajourney.png';
 
 function ev(icon, label){
@@ -1001,8 +1000,8 @@ const CATEGORY_ICONS = {
   gac:      'gac.png',
   conquest: 'conquest.png',
   guild:    'tw.png',
-  fleet:    'fleet.png',
-  era:      'era.png',
+  fleet:    'executor.png',
+  era:      'erajourney.png',
 };
 
 const EVENT_ICONS = {
@@ -1018,7 +1017,7 @@ const EVENT_ICONS = {
   gac_attack: 'gac.png',
   conquest_start: 'conquest.png',
   conquest_end: 'conquest.png',
-  era_changeover: 'era.png',
+  era_changeover: 'erajourney.png',
   era_battle_1: 'erabattle1.png',
   era_battle_2: 'erabattle2.png',
   era_challenge_1: 'marquee1event.png',
@@ -1261,7 +1260,7 @@ function renderUnlockWindows(st){
     <div class="status-card purple-card">
       <div class="sc-header"><span class="sc-title">Conquest Unit (3rd of Volume)</span><span class="sc-badge purple">${cqAbs <= st.rawDayIndex ? 'UNLOCKED' : 'UPCOMING'}</span></div>
       <div class="uw-body" style="--accent:var(--purple);--accent-dim:var(--purple-dim);--accent-border:var(--purple-border)">
-        <div class="uw-img"><div class="art-badge">CQ</div><img src="assets/schedule/conquestunit.png" onerror="this.remove()"></div>
+        <div class="uw-img"><div class="art-badge">CQ</div><img src="assets/schedule/${CONQUEST_UNIT_IMAGE}" onerror="this.remove()"></div>
         <div class="uw-text">
           <div class="sc-main"><div class="sc-val">Unlocks ${new Date(cqDateMs).toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</div><div class="sc-sub">Current Conquest Unit is now available in Legacy Modes</div></div>
           <div class="sc-footer" style="flex-direction:column;align-items:flex-start;gap:2px;">
@@ -1274,7 +1273,7 @@ function renderUnlockWindows(st){
     <div class="status-card orange-card">
       <div class="sc-header"><span class="sc-title">Era Units Available in Legacy Modes</span><span class="sc-badge orange">${eraAbs <= st.rawDayIndex ? 'THIS ERA' : 'NEXT ERA'}</span></div>
       <div class="uw-body" style="--accent:var(--orange);--accent-dim:var(--orange-dim);--accent-border:var(--orange-border)">
-        <div class="uw-img"><div class="art-badge">ERA</div><img src="assets/schedule/erajourney.png" onerror="this.remove()"></div>
+        <div class="uw-img"><div class="art-badge">ERA</div><img src="assets/schedule/${ERA_UNIT_IMAGE}" onerror="this.remove()"></div>
         <div class="uw-text">
           <div class="sc-main"><div class="sc-val">Starts ${new Date(eraDateMs).toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</div><div class="sc-sub">End of Era Changeover</div></div>
           <div class="sc-footer" style="flex-direction:column;align-items:flex-start;gap:2px;">
@@ -1777,8 +1776,11 @@ function tickCountdown(){
   document.getElementById('countdown').textContent = `${pad(h)}:${pad(m)}:${pad(s)}`;
 
   // Refresh automatically if 18:00 UTC or 21:00 UTC changeover just occurred
-  const gacChangeoverMs = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 21, 0, 0, 0);
-  if (Math.abs(nowMs - nextChangeoverMs) < 1000 || Math.abs(nowMs - gacChangeoverMs) < 1000) {
+  // (compare against the most recent past changeover, not the next future one)
+  const prevStdChangeoverMs = nextChangeoverMs - 86400000;
+  let prevGacChangeoverMs = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 21, 0, 0, 0);
+  if (nowMs < prevGacChangeoverMs) prevGacChangeoverMs -= 86400000;
+  if (nowMs - prevStdChangeoverMs < 2000 || nowMs - prevGacChangeoverMs < 2000) {
     renderAll();
   }
 }
