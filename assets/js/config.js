@@ -28,20 +28,16 @@ const DATACRON_SETS = [
   { name: 'Supremacy Directive', color: 'green',   expires: '2026-10-29', hasFDC: true  },
 ];
 
-const CRON_COLOR_ORDER = ['orange', 'pink', 'green', 'blue'];
-
 const CRON_COLOR_META = {
-  orange: { label: 'Orange', accent: 'var(--orange)', dim: 'var(--orange-dim)', border: 'var(--orange-border)', asset: 'datacron_orange.png' },
-  pink:   { label: 'Pink',   accent: 'var(--magenta)', dim: 'var(--magenta-dim)', border: 'var(--magenta-border)', asset: 'datacron_pink.png' },
-  green:  { label: 'Green',  accent: 'var(--green)',  dim: 'var(--green-dim)',  border: 'var(--green-border)',  asset: 'datacron_green.png' },
-  blue:   { label: 'Blue',   accent: 'var(--steel)',  dim: 'var(--steel-dim)',  border: 'var(--steel-border)',  asset: 'datacron_blue.png' },
+  orange: { label: 'Orange', accent: 'var(--orange)', dim: 'var(--orange-dim)', border: 'var(--orange-border)', asset: 'datacrons/datacron_orange.png' },
+  pink:   { label: 'Pink',   accent: 'var(--magenta)', dim: 'var(--magenta-dim)', border: 'var(--magenta-border)', asset: 'datacrons/datacron_pink.png' },
+  green:  { label: 'Green',  accent: 'var(--green)',  dim: 'var(--green-dim)',  border: 'var(--green-border)',  asset: 'datacrons/datacron_green.png' },
+  blue:   { label: 'Blue',   accent: 'var(--steel)',  dim: 'var(--steel-dim)',  border: 'var(--steel-border)',  asset: 'datacrons/datacron_blue.png' },
 };
 
 /* =========================================================
  EVENT DATA MODEL (EXACT SHEET9 MAPPING)
   ========================================================= */
-
-// Marquee events — update values when new units drop.
 
 // Marquee events — update values when new units drop.
 const MARQUEE_NAMES = {
@@ -53,12 +49,10 @@ const MARQUEE_NAMES = {
   marquee_6: 'The Ronin',
 };
 
-// Unit Unlock Window tile images (must exist in assets/schedule/)
-
-// Unit Unlock Window tile images (must exist in assets/schedule/)
-const CONQUEST_UNIT_IMAGE = 'conquest.png';
-
-const ERA_UNIT_IMAGE = 'erajourney.png';
+// Image base + unit tile images (paths relative to IMG_BASE in assets/img/)
+const IMG_BASE = 'assets/img/';
+const CONQUEST_UNIT_IMAGE = 'events/conquest.png';
+const ERA_UNIT_IMAGE = 'events/erajourney.png';
 
 function ev(icon, label){
   if(icon.startsWith('marquee_')) label = MARQUEE_NAMES[icon] || label || 'Marquee Event';
@@ -129,8 +123,6 @@ const EPISODE_OVERRIDES = {
 };
 
 /* Recurring Monthly Events */
-
-/* Recurring Monthly Events */
 const MONTHLY_EVENTS = [
   { icon: 'fleet_executor',   label: 'Discarded Doctrine (Executor) Starts',      dayOfMonth: 15 },
   { icon: 'fleet_leviathan',  label: 'Dark Sovereign (Leviathan) Starts',         dayOfMonth: 20 },
@@ -145,13 +137,11 @@ const BOSS_LOOP = [
 ];
 
 const BOSS_ICONS = {
-  'Krayt Dragon': 'krayt.png',
-  'Zeffo Tomb Guardians': 'zeffo.png',
-  'Jotaz': 'jotaz.png',
-  'Dryax': 'dryax.png'
+  'Krayt Dragon': 'bosses/krayt.png',
+  'Zeffo Tomb Guardians': 'bosses/zeffo.png',
+  'Jotaz': 'bosses/jotaz.png',
+  'Dryax': 'bosses/dryax.png'
 };
-
-/* ICON / CATEGORY SYSTEM */
 
 /* ICON / CATEGORY SYSTEM */
 const CATEGORY_META = {
@@ -163,48 +153,48 @@ const CATEGORY_META = {
 };
 
 const CATEGORY_ICONS = {
-  gac:      'gac.png',
-  conquest: 'conquest.png',
-  guild:    'tw.png',
-  fleet:    'executor.png',
-  era:      'erajourney.png',
+  gac:      'events/gac.png',
+  conquest: 'events/conquest.png',
+  guild:    'events/tw.png',
+  fleet:    'events/executor.png',
+  era:      'events/erajourney.png',
 };
 
 const EVENT_ICONS = {
-  tw_signup: 'tw.png',
-  tw_defense: 'tw.png',
-  tw_offense: 'tw.png',
-  tw_payout: 'tw.png',
-  rote: 'tb.png',
-  tb_ends: 'tb.png',
-  smugglersrun: 'smugglersrun.png',
-  gac_signup: 'gac.png',
-  gac_defense: 'gac.png',
-  gac_attack: 'gac.png',
-  conquest_start: 'conquest.png',
-  conquest_end: 'conquest.png',
-  era_changeover: 'erajourney.png',
-  era_battle_1: 'erabattle1.png',
-  era_battle_2: 'erabattle2.png',
-  era_challenge_1: 'marquee1event.png',
-  era_challenge_2: 'marquee2event.png',
-  era_challenge_3: 'marquee3event.png',
-  era_challenge_4: 'marquee4event.png',
-  era_challenge_5: 'marquee5event.png',
-  era_challenge_6: 'marquee6event.png',
-  marquee_1: 'marquee1event.png',
-  marquee_2: 'marquee2event.png',
-  marquee_3: 'marquee3event.png',
-  marquee_4: 'marquee4event.png',
-  marquee_5: 'marquee5event.png',
-  marquee_6: 'marquee6event.png',
-  proving_ground: 'provingground.png',
-  ultimate_journey: 'ultimatejourney.png',
-  journey_reruns: 'journeyicon.png',
-  journey_guide: 'journeyicon.png',
-  fleet_executor: 'executor.png',
-  fleet_leviathan: 'leviathan.png',
-  fleet_profundity: 'profundity.png'
+  tw_signup: 'events/tw.png',
+  tw_defense: 'events/tw.png',
+  tw_offense: 'events/tw.png',
+  tw_payout: 'events/tw.png',
+  rote: 'events/tb.png',
+  tb_ends: 'events/tb.png',
+  smugglersrun: 'events/smugglersrun.png',
+  gac_signup: 'events/gac.png',
+  gac_defense: 'events/gac.png',
+  gac_attack: 'events/gac.png',
+  conquest_start: 'events/conquest.png',
+  conquest_end: 'events/conquest.png',
+  era_changeover: 'events/erajourney.png',
+  era_battle_1: 'events/erabattle1.png',
+  era_battle_2: 'events/erabattle2.png',
+  era_challenge_1: 'marquee/marquee1event.png',
+  era_challenge_2: 'marquee/marquee2event.png',
+  era_challenge_3: 'marquee/marquee3event.png',
+  era_challenge_4: 'marquee/marquee4event.png',
+  era_challenge_5: 'marquee/marquee5event.png',
+  era_challenge_6: 'marquee/marquee6event.png',
+  marquee_1: 'marquee/marquee1event.png',
+  marquee_2: 'marquee/marquee2event.png',
+  marquee_3: 'marquee/marquee3event.png',
+  marquee_4: 'marquee/marquee4event.png',
+  marquee_5: 'marquee/marquee5event.png',
+  marquee_6: 'marquee/marquee6event.png',
+  proving_ground: 'events/provingground.png',
+  ultimate_journey: 'events/ultimatejourney.png',
+  journey_reruns: 'events/journeyicon.png',
+  journey_guide: 'events/journeyicon.png',
+  fleet_executor: 'events/executor.png',
+  fleet_leviathan: 'events/leviathan.png',
+  fleet_profundity: 'events/profundity.png'
 };
 
 const WEEKDAY_NAMES = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];

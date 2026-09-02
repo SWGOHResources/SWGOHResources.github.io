@@ -19,18 +19,30 @@ GitHub Pages.
   starfield, init. Loaded last.
 - `assets/js/firebase-reference.js` — not loaded. Preserved Firebase
   auth/Firestore snippet in case the schedule ever needs sync.
-- `assets/schedule/` — event art (`conquest.png`, `erajourney.png`,
-  `executor.png`, `leviathan.png`, `profundity.png`, …).
+- `assets/img/` — event art, grouped by type:
+  - `events/` — GAC, conquest, TW/TB, smuggling runs, journeys, fleet
+    ships (`executor.png`, `leviathan.png`, `profundity.png`),
+    era battles/journeys.
+  - `marquee/` — `marquee1-6event.png` unit art.
+  - `bosses/` — coliseum rotation (`krayt.png`, `zeffo.png`,
+    `jotaz.png`, `dryax.png`).
+  - `datacrons/` — `datacron_blue/green/orange/pink.png`.
+  Image paths live in `config.js` as paths relative to `IMG_BASE`
+  (`assets/img/`); the renderer prefixes them, so regrouping art only
+  touches `config.js`.
 
-Scripts load in order at the end of `<body>` as plain (non-module) scripts
-so `onclick="…"` handlers keep working:
+Scripts load in order at the end of `<body>` as deferred classic scripts
+(ordered, non-blocking) so `onclick="…"` handlers keep working:
 
 ```html
-<script src="assets/js/config.js"></script>
-<script src="assets/js/time.js"></script>
-<script src="assets/js/render.js"></script>
-<script src="assets/js/app.js"></script>
+<script defer src="assets/js/config.js?v=1"></script>
+<script defer src="assets/js/time.js?v=1"></script>
+<script defer src="assets/js/render.js?v=1"></script>
+<script defer src="assets/js/app.js?v=1"></script>
 ```
+
+Bump the `?v=` number on every deploy, or browsers may keep serving
+cached CSS/JS instead of the new schedule.
 
 ## Editing rotation
 

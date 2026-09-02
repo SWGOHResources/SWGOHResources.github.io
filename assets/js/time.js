@@ -63,22 +63,6 @@ function gacEventsForDate(dateMs){
   return [];
 }
 
-// Next date (UTC midnight) on/after dateMs on which a GAC Signup Phase opens
-
-// Next date (UTC midnight) on/after dateMs on which a GAC Signup Phase opens
-function nextGacSignupOnOrAfter(dateMs){
-  let d = dateMs;
-  while(true){
-    const info = gacInfoForDate(d);
-    const dayInWeek = ((info.cycleDay - 1) % 7) + 1;
-    const week = Math.ceil(info.cycleDay / 7);
-    if (week <= 3 && dayInWeek === 1) {
-      return { dateMs: d, format: info.format, gacWeek: week };
-    }
-    d += 86400000;
-  }
-}
-
 function assetFor(icon){
   const cat = categoryFor(icon);
   return EVENT_ICONS[icon] || CATEGORY_ICONS[cat] || null;
@@ -169,18 +153,9 @@ function dateMsToEraInfo(dateMs, eraBaseStartMs){
   return absDayToInfo(absDay, eraBaseStartMs);
 }
 
-function getConquestLabel(){
-  return 'Conquest Unit (3rd of Volume)';
-}
-
 /* =========================================================
    DATACRON EXPIRATION HELPERS
    ========================================================= */
-
-// Returns the datacron set that is next/currently expiring (soonest
-// expires date that hasn't passed yet). Falls back to the last set
-// in the config if every set's expiration has already passed —
-// update DATACRON_SETS with the next set(s) when that happens.
 
 // Returns the datacron set that is next/currently expiring (soonest
 // expires date that hasn't passed yet). Falls back to the last set
@@ -211,29 +186,6 @@ function getLastUsableGuildEvent(expiresMs, eraBaseStartMs){
     cursorMs -= 86400000;
   }
   return null;
-}
-
-function getUnlockWindows(st){
-  const conquestEndAbs = nextOccurrenceAbs(CONQUEST_END_OFFSETS, st.rawDayIndex, ERA_LENGTH_DAYS);
-  const conquestEndInfo = absDayToInfo(conquestEndAbs, st.eraBaseStartMs);
-  
-  // Search for the first signup strictly after the unlock to ensure roster lock captures it
-  const conquestSignup = nextGacSignupOnOrAfter(conquestEndInfo.dateMs + 86400000);
-  conquestSignup.eraInfo = dateMsToEraInfo(conquestSignup.dateMs, st.eraBaseStartMs);
-
-  const eraStartAbs = nextOccurrenceAbs(ERA_START_OFFSETS, st.rawDayIndex, ERA_LENGTH_DAYS);
-  const eraStartInfo = absDayToInfo(eraStartAbs, st.eraBaseStartMs);
-  
-  const eraSignup = nextGacSignupOnOrAfter(eraStartInfo.dateMs + 86400000);
-  eraSignup.eraInfo = dateMsToEraInfo(eraSignup.dateMs, st.eraBaseStartMs);
-
-  return {
-    conquestLabel: getConquestLabel(),
-    conquestEndInfo, conquestSignupInfo: conquestSignup,
-    eraStartInfo, eraSignupInfo: eraSignup,
-    conquestAlreadyUnlocked: conquestEndAbs <= st.rawDayIndex,
-    eraAlreadyStarted: eraStartAbs <= st.rawDayIndex
-  };
 }
 
 function getDayEvents(episode, dayInEp){

@@ -116,8 +116,6 @@ function copyDiscordHandle(btnEl) {
 }
 
 /* Mobile Nav Panel */
-
-/* Mobile Nav Panel */
 const navToggle = document.getElementById('navToggle');
 
 const mobilePanel = document.getElementById('mobilePanel');
@@ -152,4 +150,8 @@ if(footerYearEl){ footerYearEl.textContent = `© ${new Date().getFullYear()} SWG
 renderAll();
 tickCountdown();
 setInterval(tickCountdown, 1000);
-setInterval(renderAll, 60000);
+// Skip background re-renders while the tab is hidden; the next visible
+// tick catches up. Bump ASSET_VERSION in index.html on deploy so browsers
+// fetch fresh CSS/JS instead of serving cached copies.
+setInterval(() => { if(!document.hidden) renderAll(); }, 60000);
+document.addEventListener('visibilitychange', () => { if(!document.hidden) renderAll(); });
