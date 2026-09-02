@@ -1,15 +1,5 @@
 /* RENDER — DOM builders. Depends on config.js + time.js globals. */
 
-function datacronOrderHTML(currentColor){
-  return CRON_COLOR_ORDER.map((c, i) => {
-    const meta = CRON_COLOR_META[c];
-    const isCurrent = c === currentColor;
-    const dot = `<span style="width:8px;height:8px;border-radius:50%;display:inline-block;background:${isCurrent ? meta.accent : 'var(--void3)'};border:1px solid ${isCurrent ? meta.accent : 'var(--border2)'};flex:0 0 auto;"></span>`;
-    const arrow = i < CRON_COLOR_ORDER.length - 1 ? `<span style="color:var(--text3);font-size:10px;">→</span>` : '';
-    return dot + arrow;
-  }).join('');
-}
-
 // A datacron set can only ever be equipped/used for Territory War and
 // GAC — never Territory Battle, Conquest, etc. This scans backward day
 // by day from the set's expiry date to find the most recent TW or GAC
@@ -21,8 +11,8 @@ function renderUnlockWindows(st){
   if(!el) return;
 
   // --- CONQUEST UNIT ---
-  // Finds the NEXT Day 49 (End of Episode 2 / Monday)
-  const cqAbs = nextOccurrenceAbs([49], st.rawDayIndex, 84);
+  // Finds the NEXT conquest-end day (End of Episode 2 / Monday)
+  const cqAbs = nextOccurrenceAbs(CONQUEST_END_OFFSETS, st.rawDayIndex, ERA_LENGTH_DAYS);
   const cqInf = absDayToInfo(cqAbs, st.eraBaseStartMs);
   const cqDateMs = cqInf.dateMs;
   
@@ -32,8 +22,8 @@ function renderUnlockWindows(st){
   const cqGacWeek = Math.ceil(cqGac.cycleDay / 7);
 
   // --- ERA UNIT ---
-  // Finds the NEXT Day 1 (Era Changeover / Tuesday)
-  const eraAbs = nextOccurrenceAbs([1], st.rawDayIndex, 84);
+  // Finds the NEXT era-start day (Era Changeover / Tuesday)
+  const eraAbs = nextOccurrenceAbs(ERA_START_OFFSETS, st.rawDayIndex, ERA_LENGTH_DAYS);
   const eraInf = absDayToInfo(eraAbs, st.eraBaseStartMs);
   const eraDateMs = eraInf.dateMs;
   
@@ -61,7 +51,7 @@ function renderUnlockWindows(st){
     <div class="status-card purple-card">
       <div class="sc-header"><span class="sc-title">Conquest Unit (3rd of Volume)</span><span class="sc-badge purple">${cqAbs <= st.rawDayIndex ? 'UNLOCKED' : 'UPCOMING'}</span></div>
       <div class="uw-body" style="--accent:var(--purple);--accent-dim:var(--purple-dim);--accent-border:var(--purple-border)">
-        <div class="uw-img"><div class="art-badge">CQ</div><img src="assets/schedule/${CONQUEST_UNIT_IMAGE}" onerror="this.remove()"></div>
+        <div class="uw-img"><div class="art-badge">CQ</div><img src="${IMG_BASE}${CONQUEST_UNIT_IMAGE}" onerror="this.remove()"></div>
         <div class="uw-text">
           <div class="sc-main"><div class="sc-val">Unlocks ${new Date(cqDateMs).toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</div><div class="sc-sub">Current Conquest Unit is now available in Legacy Modes</div></div>
           <div class="sc-footer" style="flex-direction:column;align-items:flex-start;gap:2px;">
@@ -74,7 +64,7 @@ function renderUnlockWindows(st){
     <div class="status-card orange-card">
       <div class="sc-header"><span class="sc-title">Era Units Available in Legacy Modes</span><span class="sc-badge orange">${eraAbs <= st.rawDayIndex ? 'THIS ERA' : 'NEXT ERA'}</span></div>
       <div class="uw-body" style="--accent:var(--orange);--accent-dim:var(--orange-dim);--accent-border:var(--orange-border)">
-        <div class="uw-img"><div class="art-badge">ERA</div><img src="assets/schedule/${ERA_UNIT_IMAGE}" onerror="this.remove()"></div>
+        <div class="uw-img"><div class="art-badge">ERA</div><img src="${IMG_BASE}${ERA_UNIT_IMAGE}" onerror="this.remove()"></div>
         <div class="uw-text">
           <div class="sc-main"><div class="sc-val">Starts ${new Date(eraDateMs).toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</div><div class="sc-sub">End of Era Changeover</div></div>
           <div class="sc-footer" style="flex-direction:column;align-items:flex-start;gap:2px;">
@@ -87,7 +77,7 @@ function renderUnlockWindows(st){
     <div class="status-card" style="border-color:${cronMeta.border}">
       <div class="sc-header"><span class="sc-title">Datacron Expirations</span><span class="sc-badge" style="background:${cronMeta.dim};color:${cronMeta.accent};border:1px solid ${cronMeta.border}">${cronBadgeLabel}</span></div>
       <div class="uw-body" style="--accent:${cronMeta.accent};--accent-dim:${cronMeta.dim};--accent-border:${cronMeta.border}">
-        <div class="uw-img"><div class="art-badge">${cronMeta.label.slice(0,3).toUpperCase()}</div><img src="assets/schedule/${cronMeta.asset}" onerror="this.remove()"></div>
+        <div class="uw-img"><div class="art-badge">${cronMeta.label.slice(0,3).toUpperCase()}</div><img src="${IMG_BASE}${cronMeta.asset}" onerror="this.remove()"></div>
         <div class="uw-text">
           <div class="sc-main">
             <div class="sc-val">${cron.name}${cron.hasFDC ? ' <span style="color:var(--text3);font-size:11px;font-weight:600;">+ FDC</span>' : ''}</div>
@@ -232,7 +222,7 @@ function cardHTML(item, extraClass){
   const style = `--accent:${meta.accent};--accent-dim:${meta.dim};--accent-border:${meta.border}`;
 
   const fallbackBadge = `<div class="art-badge"><span class="glyph">${meta.glyph}</span><span class="cat">${meta.label}</span></div>`;
-  const imgTag = asset ? `<img src="assets/schedule/${asset}" alt="" onerror="this.remove()">` : '';
+  const imgTag = asset ? `<img src="${IMG_BASE}${asset}" alt="" onerror="this.remove()">` : '';
 
   return `<figure class="ecard ${cls}" style="${style}">
     <div class="art">
@@ -349,7 +339,7 @@ function renderMainFeed(st){
     cell.innerHTML = `
       <div class="bcell-img">
         <div class="art-badge">BOSS</div>
-        <img src="assets/schedule/${iconFile}" alt="" onerror="this.remove()">
+        <img src="${IMG_BASE}${iconFile}" alt="" onerror="this.remove()">
       </div>
       <div class="step">Boss ${index + 1} of 4</div>
       <div class="name">${bossName}</div>
