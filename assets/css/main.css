@@ -130,8 +130,9 @@ body.modal-open .starfield span {
 /* ─── Timezone picker ─── */
 .tz-select {
   background: var(--void2); border: 1px solid var(--border2); color: var(--text2);
-  font-family: var(--body); font-weight: 500; font-size: 12.5px; padding: 7px 8px; border-radius: var(--radius);
-  cursor: pointer; transition: 0.15s; max-width: 172px;
+  font-family: var(--body); font-weight: 500; font-size: 12.5px; padding: 7px 10px; border-radius: var(--radius);
+  cursor: pointer; transition: 0.15s; width: 240px; max-width: min(240px, 100%);
+  appearance: none; -webkit-appearance: none; overflow: hidden; text-overflow: ellipsis;
 }
 .tz-select:hover { border-color: var(--amber-border); color: var(--amber); }
 .tz-select:focus-visible { outline: 2px solid var(--amber-border); outline-offset: 1px; }
