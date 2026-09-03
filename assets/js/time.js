@@ -221,7 +221,6 @@ function getGacStatus(st){
      };
   }
 
-  const daysUntilNextPhase = 1; 
   const untilPhrase = 'tomorrow'; 
 
   if(info.phase === 'signup'){

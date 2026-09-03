@@ -6,7 +6,9 @@ GitHub Pages.
 
 ## Structure
 
-- `index.html` — markup only (no inline CSS/JS).
+- `index.html` — schedule page, markup only (no inline CSS/JS).
+- `404.html` — not-found page (GitHub Pages serves it automatically).
+  Root-absolute asset paths so it works from any bad URL.
 - `assets/css/main.css` — all styles.
 - `assets/js/config.js` — **edit this when a new Era begins.** Era start
   date, GAC cycle start, datacron sets, marquee names, episode overrides,
@@ -19,7 +21,7 @@ GitHub Pages.
   starfield, init. Loaded last.
 - `assets/js/firebase-reference.js` — not loaded. Preserved Firebase
   auth/Firestore snippet in case the schedule ever needs sync.
-- `assets/img/` — event art, grouped by type:
+- `assets/img/` — imagery, grouped by type:
   - `events/` — GAC, conquest, TW/TB, smuggling runs, journeys, fleet
     ships (`executor.png`, `leviathan.png`, `profundity.png`),
     era battles/journeys.
@@ -27,9 +29,13 @@ GitHub Pages.
   - `bosses/` — coliseum rotation (`krayt.png`, `zeffo.png`,
     `jotaz.png`, `dryax.png`).
   - `datacrons/` — `datacron_blue/green/orange/pink.png`.
+  - `icons/` — generated PNG icon set (`icon-180/192/512.png`,
+    `favicon-32.png`), resized from `favicon.ico` with Pillow.
   Image paths live in `config.js` as paths relative to `IMG_BASE`
   (`assets/img/`); the renderer prefixes them, so regrouping art only
   touches `config.js`.
+- `site.webmanifest`, `robots.txt`, `sitemap.xml`, `.nojekyll`,
+  `favicon.ico` — standard Pages/PWA plumbing.
 
 Scripts load in order at the end of `<body>` as deferred classic scripts
 (ordered, non-blocking) so `onclick="…"` handlers keep working:
