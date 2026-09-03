@@ -163,6 +163,15 @@ const CATEGORY_ICONS = {
   era:      'events/erajourney.png',
 };
 
+// Display tags that differ from the owning category (shown on cards).
+const TAG_OVERRIDES = {
+  smugglersrun:    { label: 'Resource',      glyph: 'RES' },
+  ultimate_journey:{ label: 'Resource',      glyph: 'RES' },
+  fleet_executor:  { label: 'Fleet Mastery', glyph: 'FLT' },
+  fleet_leviathan: { label: 'Fleet Mastery', glyph: 'FLT' },
+  fleet_profundity:{ label: 'Fleet Mastery', glyph: 'FLT' },
+};
+
 const EVENT_ICONS = {
   tw_signup: 'events/tw.png',
   tw_defense: 'events/tw.png',
