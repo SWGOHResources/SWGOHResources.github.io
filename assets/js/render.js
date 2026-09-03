@@ -195,7 +195,8 @@ function renderStatusDashboard(st){
   const todayGuildSummary = getGuildEventSummary(st.episode, st.dayInEp, st.currentDayStartMs);
   const tmrwGuildSummary = getGuildEventSummary(tmrwEpisode, tmrwDayInEp, st.currentDayStartMs + 86400000);
 
-  const isGuildActive = todayGuildSummary.includes('TW') || todayGuildSummary.includes('TB ') || todayGuildSummary.includes(' Ends');
+  const isGuildActive = getDayEvents(st.episode, st.dayInEp)
+    .some(i => i.icon.startsWith('tw_') || i.icon === 'rote' || i.icon === 'tb_ends');
 
   // TB picker on the status card too, so the guild can set their TB
   // without scrolling to the schedule. Only during a TB week.
@@ -265,9 +266,10 @@ function jumpExplorer(offset){
 function tbPickerHTML(tbCtx){
   if(!tbCtx) return '';
   const sideName = tbCtx.side === 'dark' ? 'Dark Side' : 'Light Side';
-  const btns = tbCtx.options.map(o =>
-    `<button type="button" class="tb-pick-btn${o.id === tbCtx.def.id ? ' active' : ''}" onclick="setTbChoice('${o.id}','${tbCtx.side}')" aria-pressed="${o.id === tbCtx.def.id}">${o.name}</button>`
-  ).join('');
+  const btns = tbCtx.options.map(o => {
+    const label = o.short || o.name;
+    return `<button type="button" class="tb-pick-btn${o.id === tbCtx.def.id ? ' active' : ''}" onclick="setTbChoice('${o.id}','${tbCtx.side}')" aria-pressed="${o.id === tbCtx.def.id}">${label}</button>`;
+  }).join('');
   return `<div class="tb-pick" role="group" aria-label="Choose your guild's TB"><span class="tb-pick-label">${sideName} run — your TB:</span><div class="tb-pick-btns">${btns}</div><span class="tb-pick-hint">Saved per Light / Dark side — changing one side never disturbs the other.</span></div>`;
 }
 
@@ -359,6 +361,9 @@ function renderExplorer(st){
 }
 
 function getFullScheduleLabel(item){
+  // TB labels already carry the full planet-prefixed name
+  // (e.g. "Hoth Rebel Assault Phase 1 Starts") — no extra prefix.
+  if(item.icon === 'rote' || item.icon === 'tb_ends') return item.label;
   const catLabel = GUILD_SUBLABEL[item.icon] || CATEGORY_META[categoryFor(item.icon)]?.label;
   if(!catLabel) return item.label;
   if(item.label.toUpperCase().startsWith(catLabel.toUpperCase())) return item.label;

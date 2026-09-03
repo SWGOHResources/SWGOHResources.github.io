@@ -376,7 +376,7 @@ function relativeDayLabel(diffDays){
   return `${Math.abs(diffDays)} days ago`;
 }
 
-/* How long a changeover marker lasts. GAC/TW phases and ROTE phases run
+/* How long a changeover marker lasts. GAC/TW phases and TB phases run
    24 hours until the next 18:00 UTC changeover; Conquest runs Day 7→20
    (14 days). Anything else (marquees, journeys, fleet ships, payouts)
    has no sheet-defined duration, so only its start date is shown. */
@@ -533,7 +533,7 @@ function getGuildEventSummary(episode, dayInEp, dateMs){
   if(tbEnd) return tbEnd.label;
 
   const rote = items.find(i => i.icon === 'rote');
-  if(rote) return dateMs != null ? `TB ${rote.label}` : `ROTE ${rote.label}`;
+  if(rote) return rote.label;
 
   return 'Guild Intermission';
 }
