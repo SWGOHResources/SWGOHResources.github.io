@@ -127,6 +127,15 @@ body.modal-open .starfield span {
 .gear-btn:hover { border-color: var(--amber-border); color: var(--amber); }
 .gear-btn.creator-btn:hover { border-color: var(--cyan-border); color: var(--cyan); }
 
+/* ─── Timezone picker ─── */
+.tz-select {
+  background: var(--void2); border: 1px solid var(--border2); color: var(--text2);
+  font-family: var(--body); font-weight: 500; font-size: 12.5px; padding: 7px 8px; border-radius: var(--radius);
+  cursor: pointer; transition: 0.15s; max-width: 172px;
+}
+.tz-select:hover { border-color: var(--amber-border); color: var(--amber); }
+.tz-select:focus-visible { outline: 2px solid var(--amber-border); outline-offset: 1px; }
+
 /* ─── Mobile Nav  ─── */
 .nav-toggle {
   display: none; width: 34px; height: 34px; background: var(--void2); border: 1px solid var(--border2);

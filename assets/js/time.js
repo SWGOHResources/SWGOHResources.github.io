@@ -200,8 +200,9 @@ function tbPhaseWindow(def, phase1Ms, idx){
 
 function fmtPhaseMoment(ms){
   const d = new Date(ms);
-  const date = withOrdinal(d.toLocaleDateString('en-GB', { timeZone: 'UTC', weekday: 'short', day: 'numeric', month: 'short' }));
-  const time = d.toLocaleTimeString('en-GB', { timeZone: 'UTC', hour: '2-digit', minute: '2-digit', hour12: false });
+  const zone = tz();
+  const date = withOrdinal(d.toLocaleDateString('en-GB', { timeZone: zone, weekday: 'short', day: 'numeric', month: 'short' }));
+  const time = d.toLocaleTimeString('en-GB', { timeZone: zone, hour: '2-digit', minute: '2-digit', hour12: false });
   return `${date} ${time}`;
 }
 
@@ -367,19 +368,80 @@ function withOrdinal(str){
   return str.replace(new RegExp(`\\b(\\d{1,2})(?= ${MONTH_RE}\\b)`, 'g'), m => ordinal(Number(m)));
 }
 
+/* =========================================================
+ DISPLAY TIMEZONE
+  Game logic (changeovers, cycles) always runs on UTC — this only
+  controls how dates/times are rendered. Defaults to the device's
+  timezone; the user can pin UTC (or another zone) via the header
+  picker. Persisted in localStorage.
+  ========================================================= */
+
+function deviceTimeZone(){
+  try { return Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC'; }
+  catch(e){ return 'UTC'; }
+}
+
+function validTimeZone(z){
+  try { new Intl.DateTimeFormat('en-GB', { timeZone: z }); return true; }
+  catch(e){ return false; }
+}
+
+/* Stored setting: 'local' (default) or an IANA zone name. */
+function getTimeZoneSetting(){
+  try {
+    const v = localStorage.getItem(TZ_STORAGE_KEY);
+    if(!v || v === 'local') return 'local';
+    if(validTimeZone(v)) return v;
+  } catch(e){}
+  return 'local';
+}
+
+/* Resolved IANA zone used by every display formatter. */
+function tz(){
+  const s = getTimeZoneSetting();
+  if(s === 'local'){
+    const dz = deviceTimeZone();
+    return validTimeZone(dz) ? dz : 'UTC';
+  }
+  return s;
+}
+
+function tzDisplayName(){
+  const s = getTimeZoneSetting();
+  return s === 'local' ? `local time (${tz()})` : s;
+}
+
+function setTimeZone(v){
+  if(v !== 'local' && !validTimeZone(v)) return false;
+  try { localStorage.setItem(TZ_STORAGE_KEY, v); } catch(e){}
+  return true;
+}
+
+/* Weekday-short + day-number of an instant in the display zone
+   (for the explorer day pills). */
+function tzDayParts(ms){
+  const parts = new Intl.DateTimeFormat('en-GB', { timeZone: tz(), weekday: 'short', day: 'numeric' }).formatToParts(new Date(ms));
+  let dow = '', num = '';
+  for(const p of parts){
+    if(p.type === 'weekday') dow = p.value;
+    if(p.type === 'day') num = p.value;
+  }
+  return { dow, num };
+}
+
 function fmtDateUTC(ms){
   const d = new Date(ms);
-  return withOrdinal(d.toLocaleDateString('en-GB', { timeZone: 'UTC', weekday: 'short', day: 'numeric', month: 'short' }));
+  return withOrdinal(d.toLocaleDateString('en-GB', { timeZone: tz(), weekday: 'short', day: 'numeric', month: 'short' }));
 }
 
 function fmtDateLongUTC(ms){
   const d = new Date(ms);
-  return withOrdinal(d.toLocaleDateString('en-GB', { timeZone: 'UTC', weekday: 'long', day: 'numeric', month: 'long' }));
+  return withOrdinal(d.toLocaleDateString('en-GB', { timeZone: tz(), weekday: 'long', day: 'numeric', month: 'long' }));
 }
 
 function fmtDayMonthUTC(ms){
   const d = new Date(ms);
-  return withOrdinal(d.toLocaleDateString('en-GB', { timeZone: 'UTC', day: 'numeric', month: 'short' }));
+  return withOrdinal(d.toLocaleDateString('en-GB', { timeZone: tz(), day: 'numeric', month: 'short' }));
 }
 
 /* Relative day label vs the active (today) changeover day */

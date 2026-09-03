@@ -269,3 +269,28 @@ const TB_DEFS = {
 };
 
 const TB_CHOICE_STORAGE_KEY = 'swgoh-tb-choice';
+
+/* =========================================================
+ DISPLAY TIMEZONE
+  Game logic (changeovers, cycles) always runs on UTC. This only
+  controls how dates/times are rendered. 'local' (device default)
+  unless the user picks a zone; persisted in localStorage.
+  ========================================================= */
+
+const TZ_STORAGE_KEY = 'swgoh-tz';
+
+const TIMEZONE_OPTIONS = [
+  'UTC',
+  'America/Los_Angeles',
+  'America/Denver',
+  'America/Chicago',
+  'America/New_York',
+  'America/Sao_Paulo',
+  'Europe/London',
+  'Europe/Berlin',
+  'Asia/Dubai',
+  'Asia/Singapore',
+  'Asia/Tokyo',
+  'Australia/Sydney',
+  'Pacific/Auckland',
+];

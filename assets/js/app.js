@@ -139,9 +139,44 @@ navToggle.onclick = () => {
   navToggle.setAttribute('aria-expanded', String(willOpen));
 };
 
+/* Display timezone picker (header + mobile panel). Defaults to the
+   device's timezone; the choice persists and re-renders all dates. */
+function tzSelectLabel(value){
+  return value === 'local' ? `Local (${deviceTimeZone()})` : value.replace(/_/g, ' ');
+}
+
+function populateTzSelect(sel){
+  if(!sel) return;
+  const current = getTimeZoneSetting();
+  sel.innerHTML = `<option value="local">${tzSelectLabel('local')}</option>`
+    + TIMEZONE_OPTIONS.map(z => `<option value="${z}">${z === 'UTC' ? 'UTC (game time)' : z.replace(/_/g, ' ')}</option>`).join('');
+  sel.value = TIMEZONE_OPTIONS.includes(current) ? current : 'local';
+}
+
+function syncTzSelects(){
+  const current = getTimeZoneSetting();
+  const value = TIMEZONE_OPTIONS.includes(current) ? current : 'local';
+  ['tzSelect', 'tzSelectMobile'].forEach(id => {
+    const sel = document.getElementById(id);
+    if(sel && sel.options.length && sel.value !== value) sel.value = value;
+  });
+}
+
+function onTzChange(sel){
+  if(setTimeZone(sel.value)) renderAll();
+  syncTzSelects();
+}
+
+['tzSelect', 'tzSelectMobile'].forEach(id => {
+  const sel = document.getElementById(id);
+  if(!sel) return;
+  populateTzSelect(sel);
+  sel.addEventListener('change', () => onTzChange(sel));
+});
+
 const footerMetaEl = document.getElementById('footerMeta');
 if(footerMetaEl){
-  footerMetaEl.textContent = `Resets 18:00 UTC daily · page loaded ${new Date().toLocaleString('en-GB', { timeZone: 'UTC', hour12: false })} UTC`;
+  footerMetaEl.textContent = `Resets 18:00 UTC daily · showing ${tzDisplayName()} · loaded ${new Date().toLocaleString('en-GB', { timeZone: tz(), hour12: false })}`;
 }
 
 const footerYearEl = document.getElementById('footerYear');
