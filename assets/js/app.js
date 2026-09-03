@@ -32,6 +32,22 @@ const scheduleModal = document.getElementById('fullScheduleModal');
 
 const aboutModal = document.getElementById('aboutModal');
 
+const cookieNotice = document.getElementById('cookieNotice');
+const dismissCookieNotice = document.getElementById('dismissCookieNotice');
+const COOKIE_NOTICE_KEY = 'swgoh_cookie_notice';
+
+function hasCookie(name){
+  return document.cookie.split('; ').some(cookie => cookie.startsWith(`${name}=`));
+}
+
+function dismissCookies(){
+  document.cookie = `${COOKIE_NOTICE_KEY}=dismissed; max-age=15552000; path=/; SameSite=Lax`;
+  if(cookieNotice) cookieNotice.hidden = true;
+}
+
+if(cookieNotice && !hasCookie(COOKIE_NOTICE_KEY)) cookieNotice.hidden = false;
+if(dismissCookieNotice) dismissCookieNotice.addEventListener('click', dismissCookies);
+
 let lastFocusedElement = null;
 
 function openModal(modalEl) {
