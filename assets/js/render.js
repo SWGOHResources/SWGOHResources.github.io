@@ -59,10 +59,10 @@ function renderUnlockWindows(st){
       <div class="uw-body" style="--accent:var(--purple);--accent-dim:var(--purple-dim);--accent-border:var(--purple-border)">
         <div class="uw-img"><div class="art-badge">CQ</div><img src="${IMG_BASE}${CONQUEST_UNIT_IMAGE}" onerror="this.remove()"></div>
         <div class="uw-text">
-          <div class="sc-main"><div class="sc-val">Unlocks ${withOrdinal(new Date(cqDateMs).toLocaleDateString('en-GB',{timeZone: tz(),day:'numeric',month:'short'}))}</div><div class="sc-sub">Conquest Unit can be unlocked</div></div>
+          <div class="sc-main"><div class="sc-val">Unlocks ${withOrdinal(new Date(dms(cqDateMs)).toLocaleDateString('en-GB',{timeZone: tz(),day:'numeric',month:'short'}))}</div><div class="sc-sub">Conquest Unit can be unlocked</div></div>
           <div class="sc-footer" style="flex-direction:column;align-items:flex-start;gap:2px;">
             <span>Usable in GAC: <span class="highlight">Week ${cqGacWeek} (${cqGac.format})</span></span>
-            <span>Roster Locks: ${withOrdinal(new Date(cqNextSignupDate).toLocaleDateString('en-GB',{timeZone: tz(),day:'numeric',month:'short'}))} (Defense Starts)</span>
+            <span>Roster Locks: ${withOrdinal(new Date(dms(cqNextSignupDate)).toLocaleDateString('en-GB',{timeZone: tz(),day:'numeric',month:'short'}))} (Defense Starts)</span>
           </div>
         </div>
       </div>
@@ -72,10 +72,10 @@ function renderUnlockWindows(st){
       <div class="uw-body" style="--accent:var(--orange);--accent-dim:var(--orange-dim);--accent-border:var(--orange-border)">
         <div class="uw-img"><div class="art-badge">ERA</div><img src="${IMG_BASE}${ERA_UNIT_IMAGE}" onerror="this.remove()"></div>
         <div class="uw-text">
-          <div class="sc-main"><div class="sc-val">Starts ${withOrdinal(new Date(eraDateMs).toLocaleDateString('en-GB',{timeZone: tz(),day:'numeric',month:'short'}))}</div><div class="sc-sub">Era Units can be used in Legacy Gamemodes</div></div>
+          <div class="sc-main"><div class="sc-val">Starts ${withOrdinal(new Date(dms(eraDateMs)).toLocaleDateString('en-GB',{timeZone: tz(),day:'numeric',month:'short'}))}</div><div class="sc-sub">Era Units can be used in Legacy Gamemodes</div></div>
           <div class="sc-footer" style="flex-direction:column;align-items:flex-start;gap:2px;">
              <span>Usable in GAC: <span class="highlight">Week ${eraGacWeek} (${eraGac.format})</span></span>
-             <span>Roster Locks: ${withOrdinal(new Date(eraNextSignupDate).toLocaleDateString('en-GB',{timeZone: tz(),day:'numeric',month:'short'}))} (Defense Starts)</span>
+             <span>Roster Locks: ${withOrdinal(new Date(dms(eraNextSignupDate)).toLocaleDateString('en-GB',{timeZone: tz(),day:'numeric',month:'short'}))} (Defense Starts)</span>
           </div>
         </div>
       </div>
@@ -90,7 +90,7 @@ function renderUnlockWindows(st){
             <div class="sc-sub">This Datacron Set will expire to your inbox</div>
           </div>
           <div class="sc-footer" style="flex-direction:column;align-items:flex-start;gap:2px;">
-            <span>Expires: <span class="highlight">${withOrdinal(new Date(cron.expiresMs).toLocaleDateString('en-GB',{timeZone: tz(),day:'numeric',month:'short',year:'numeric'}))}</span></span>
+            <span>Expires: <span class="highlight">${withOrdinal(new Date(dms(cron.expiresMs)).toLocaleDateString('en-GB',{timeZone: tz(),day:'numeric',month:'short',year:'numeric'}))}</span></span>
             <span>Last usable: <span class="highlight">${lastUsableLabel}</span></span>
           </div>
         </div>
@@ -265,12 +265,10 @@ function jumpExplorer(offset){
    relevant day; null off-TB weeks. */
 function tbPickerHTML(tbCtx){
   if(!tbCtx) return '';
-  const sideName = tbCtx.side === 'dark' ? 'Dark Side' : 'Light Side';
-  const btns = tbCtx.options.map(o => {
-    const label = o.short || o.name;
-    return `<button type="button" class="tb-pick-btn${o.id === tbCtx.def.id ? ' active' : ''}" onclick="setTbChoice('${o.id}','${tbCtx.side}')" aria-pressed="${o.id === tbCtx.def.id}">${label}</button>`;
-  }).join('');
-  return `<div class="tb-pick" role="group" aria-label="Choose your guild's TB"><span class="tb-pick-label">${sideName} run — your TB:</span><div class="tb-pick-btns">${btns}</div><span class="tb-pick-hint">Saved per Light / Dark side — changing one side never disturbs the other.</span></div>`;
+  const btns = tbCtx.options.map(o =>
+    `<button type="button" class="tb-pick-btn${o.id === tbCtx.def.id ? ' active' : ''}" onclick="setTbChoice('${o.id}','${tbCtx.side}')" aria-pressed="${o.id === tbCtx.def.id}" title="${o.short || o.name}">${o.tag}</button>`
+  ).join('');
+  return `<div class="tb-pick" role="group" aria-label="Select your current TB"><span class="tb-pick-label">Select your current TB:</span><div class="tb-pick-btns">${btns}</div></div>`;
 }
 
 function explorerCardHTML(item, dateMs, relLabel, tbCtx){
