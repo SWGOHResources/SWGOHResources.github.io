@@ -381,8 +381,10 @@ function renderExplorer(st){
   }
   strip.innerHTML = pills;
 
-  document.getElementById('dayPrev').disabled = explorerOffset <= bounds.minOffset;
-  document.getElementById('dayNext').disabled = explorerOffset >= bounds.maxOffset;
+  const dayPrev = document.getElementById('dayPrev');
+  const dayNext = document.getElementById('dayNext');
+  if(dayPrev) dayPrev.disabled = explorerOffset <= bounds.minOffset;
+  if(dayNext) dayNext.disabled = explorerOffset >= bounds.maxOffset;
 
   const cur = explorerDayAt(st, explorerOffset);
   const rel = relativeDayLabel(cur.offset);

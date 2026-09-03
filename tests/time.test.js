@@ -162,6 +162,29 @@ test('validator reports missing config without throwing', () => {
   assert.ok(engine.validateScheduleConfig().some(issue => issue.includes('DATACRON_SETS')));
 });
 
+test('malformed era dates fall back without crashing status calculation', () => {
+  const engine = loadTimeEngine({ omit: ['ERA_START_DATE'] });
+  assert.doesNotThrow(() => engine.getGameStatus(Date.parse('2026-07-28T19:00:00Z')));
+  assert.equal(engine.getGameStatus(Date.parse('2026-07-28T19:00:00Z')).preEra, false);
+  assert.ok(engine.validateScheduleConfig().some(issue => issue.includes('ERA_START_DATE')));
+});
+
+test('invalid datacron dates are ignored instead of rendering invalid dates', () => {
+  const engine = loadTimeEngine({
+    datacronSets: [null, { name: 'Bad', color: 'orange', expires: '2026-02-31' }],
+  });
+  assert.equal(engine.getCurrentDatacronSet(Date.parse('2026-09-03T19:00:00Z')), null);
+  assert.ok(engine.validateScheduleConfig().some(issue => issue.includes('DATACRON_SETS[1]')));
+});
+
+test('date validation requires real canonical calendar dates', () => {
+  const engine = loadTimeEngine();
+  assert.equal(engine.validateScheduleConfig().some(issue => issue.includes('ERA_START_DATE')), false);
+  const invalid = loadTimeEngine();
+  invalid.GAC_CYCLE_START_DATE = '2026-2-3';
+  assert.ok(invalid.validateScheduleConfig().some(issue => issue.includes('GAC_CYCLE_START_DATE')));
+});
+
 test('invalid changeover hours fall back and are reported', () => {
   const engine = loadTimeEngine({ hours: { std: 25, gac: NaN } });
   assert.equal(engine.stdHour(), 18);
