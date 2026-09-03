@@ -228,7 +228,7 @@ function renderStatusDashboard(st){
         <div class="sc-sub" style="font-size:12px">Upcoming: <span style="color:var(--amber)">${tmrwGuildSummary}</span></div>
       </div>
       ${guildPhaseTrackerHTML(st)}
-      ${tbPickerHTML(todayTbCtx)}
+      ${tbPickerHTML(todayTbCtx, true)}
     </div>
   `;
 }
@@ -260,14 +260,21 @@ function jumpExplorer(offset){
   renderAll();
 }
 
-/* Guild TB picker (shared by the dashboard status card and the
-   explorer Phase-1 cards). tbCtx comes from tbRunContext for the
-   relevant day; null off-TB weeks. */
-function tbPickerHTML(tbCtx){
+/* Guild TB picker. Full row (explorer Phase-1 cards) or compact
+   collapsible (dashboard status card, so the Guild card stays level
+   with GAC/Conquest). tbCtx comes from tbRunContext for the relevant
+   day; null off-TB weeks. The active button always carries a ✓ and
+   the compact summary always names the selection. */
+function tbPickerHTML(tbCtx, compact){
   if(!tbCtx) return '';
-  const btns = tbCtx.options.map(o =>
-    `<button type="button" class="tb-pick-btn${o.id === tbCtx.def.id ? ' active' : ''}" onclick="setTbChoice('${o.id}','${tbCtx.side}')" aria-pressed="${o.id === tbCtx.def.id}" title="${o.short || o.name}">${o.tag}</button>`
-  ).join('');
+  const btns = tbCtx.options.map(o => {
+    const active = o.id === tbCtx.def.id;
+    const selectedLabel = active ? ', selected' : '';
+    return `<button type="button" class="tb-pick-btn${active ? ' active' : ''}" onclick="setTbChoice('${o.id}','${tbCtx.side}')" aria-pressed="${active}" aria-label="${o.name}${selectedLabel}" title="${o.short || o.name}${active ? ' — selected' : ''}">${active ? '<span class="tb-pick-check" aria-hidden="true">✓</span>' : ''}<span>${o.tag}</span>${active ? '<span class="tb-pick-selected">Selected</span>' : ''}</button>`;
+  }).join('');
+  if(compact){
+    return `<details class="tb-pick tb-pick-compact"><summary aria-label="Current Territory Battle: ${tbCtx.def.name}. Change selection"><span class="tb-pick-label">TB: <strong>${tbCtx.def.name}</strong></span><span class="tb-pick-change">Change <span aria-hidden="true">▾</span></span></summary><div class="tb-pick-btns">${btns}</div></details>`;
+  }
   return `<div class="tb-pick" role="group" aria-label="Select your current TB"><span class="tb-pick-label">Select your current TB:</span><div class="tb-pick-btns">${btns}</div></div>`;
 }
 
@@ -333,6 +340,15 @@ function renderExplorer(st){
     : `Upcoming ${rel.charAt(0).toLowerCase() + rel.slice(1)}: ${fmtDateLongUTC(cur.dMs)}`;
   const bossName = BOSS_LOOP[(st.bossDayIndex - 1 + cur.offset) % BOSS_LOOP.length];
   const bossIcon = BOSS_ICONS[bossName];
+  // Conquest indicator (mirrors the boss badge): shown on days 7-20
+  // of each episode while a run is active.
+  const cq = conquestInfoForDay(cur.ep, cur.dayInEp);
+  const cqBadge = cq
+    ? `<div class="day-conquest" title="Conquest ${cq.cNum} — ${cq.note}${cq.finalDay ? ' (final day)' : ''}">`
+      + `<img src="${IMG_BASE}${CONQUEST_UNIT_IMAGE}" alt="" loading="lazy" onerror="this.remove()">`
+      + `<div class="db-text"><span class="db-label">Conquest · C${cq.cNum}</span><span class="db-name">Day ${cq.day} of ${cq.total}${cq.finalDay ? ' — Final' : ''}</span></div>`
+      + `</div>`
+    : '';
   // TB context for this day: drives the card art, phase labels and
   // the guild picker (shown on Phase-1 days). Null off-TB days.
   const runCtx = tbRunContext(cur.dMs, cur.ep, cur.dayInEp);
@@ -348,9 +364,12 @@ function renderExplorer(st){
         <h3>${headTitle}</h3>
         <p>Day ${cur.dIdx} / 84 · Episode ${cur.ep}, Week ${cur.week}</p>
       </div>
-      <div class="day-boss" title="Coliseum boss rotates daily at 18:00 UTC">
+      <div class="day-indicators">
+        ${cqBadge}
+        <div class="day-boss" title="Coliseum boss rotates daily at 18:00 UTC">
         <img src="${IMG_BASE}${bossIcon}" alt="" loading="lazy" onerror="this.remove()">
         <div class="db-text"><span class="db-label">Coliseum boss</span><span class="db-name">${bossName}</span></div>
+        </div>
       </div>
     </div>
     ${cur.items.length
