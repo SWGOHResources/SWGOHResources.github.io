@@ -512,7 +512,11 @@ function eventDateRangeLabel(item, dateMs, tbCtx){
   }
   if(item.icon === 'journey_rerun_2'){
     const endMs = new Date(dateMs);
+    const originalDay = endMs.getUTCDate();
+    endMs.setUTCDate(1);
     endMs.setUTCMonth(endMs.getUTCMonth() + 1);
+    const daysInEndMonth = new Date(Date.UTC(endMs.getUTCFullYear(), endMs.getUTCMonth() + 1, 0)).getUTCDate();
+    endMs.setUTCDate(Math.min(originalDay, daysInEndMonth));
     return `${fmtDayMonthUTC(dateMs)} → ${fmtDayMonthUTC(endMs.getTime())} · 1 month`;
   }
   // 36-hour TB phases (Separatist Might / Republic Offensive): phase
