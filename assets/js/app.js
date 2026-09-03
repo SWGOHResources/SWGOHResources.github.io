@@ -141,9 +141,15 @@ function copyDiscordHandle(btnEl) {
 function setTbChoice(id, side){
   const scrollX = window.scrollX;
   const scrollY = window.scrollY;
+  const deck = document.querySelector('.xcard-deck');
+  const deckScrollLeft = deck?.scrollLeft ?? 0;
   if(tbSetChoice(id, side)){
     renderAll();
-    requestAnimationFrame(() => window.scrollTo(scrollX, scrollY));
+    requestAnimationFrame(() => {
+      window.scrollTo(scrollX, scrollY);
+      const nextDeck = document.querySelector('.xcard-deck');
+      if(nextDeck) nextDeck.scrollLeft = deckScrollLeft;
+    });
   }
 }
 
