@@ -272,15 +272,17 @@ function jumpExplorer(offset){
    the compact summary always names the selection. */
 function tbPickerHTML(tbCtx, compact){
   if(!tbCtx) return '';
+  const guildAccent = CATEGORY_META.guild;
+  const pickerStyle = `--accent:${guildAccent.accent};--accent-dim:${guildAccent.dim};--accent-border:${guildAccent.border}`;
   const btns = tbCtx.options.map(o => {
     const active = o.id === tbCtx.def.id;
     const selectedLabel = active ? ', selected' : '';
     return `<button type="button" class="tb-pick-btn${active ? ' active' : ''}" onclick="setTbChoice('${o.id}','${tbCtx.side}')" aria-pressed="${active}" aria-label="${o.name}${selectedLabel}" title="${o.short || o.name}${active ? ' — selected' : ''}">${active ? '<span class="tb-pick-check" aria-hidden="true">✓</span>' : ''}<span>${o.tag}</span>${active ? '<span class="tb-pick-selected">Selected</span>' : ''}</button>`;
   }).join('');
   if(compact){
-    return `<details class="tb-pick tb-pick-compact"><summary aria-label="Current Territory Battle: ${tbCtx.def.name}. Change selection"><span class="tb-pick-label">TB: <strong>${tbCtx.def.name}</strong></span><span class="tb-pick-change">Change <span aria-hidden="true">▾</span></span></summary><div class="tb-pick-btns">${btns}</div></details>`;
+    return `<details class="tb-pick tb-pick-compact" style="${pickerStyle}"><summary aria-label="Current Territory Battle: ${tbCtx.def.name}. Change selection"><span class="tb-pick-label">TB: <strong>${tbCtx.def.name}</strong></span><span class="tb-pick-change">Change <span aria-hidden="true">▾</span></span></summary><div class="tb-pick-btns">${btns}</div></details>`;
   }
-  return `<div class="tb-pick" role="group" aria-label="Select your current TB"><span class="tb-pick-label">Select your current TB:</span><div class="tb-pick-btns">${btns}</div></div>`;
+  return `<div class="tb-pick" style="${pickerStyle}" role="group" aria-label="Select your current TB"><span class="tb-pick-label">Select your current TB:</span><div class="tb-pick-btns">${btns}</div></div>`;
 }
 
 function explorerCardHTML(item, dateMs, relLabel, tbCtx){
