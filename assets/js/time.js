@@ -249,11 +249,11 @@ function getGameStatus(){
   let rawDayIndex = Math.floor(diffMs / msPerDay) + 1;
   if(diffMs < 0) rawDayIndex = 1;
 
-  const eraDay = ((rawDayIndex - 1) % 84) + 1;
-  const cycleNum = Math.floor((rawDayIndex - 1) / 84);
+  const eraDay = ((rawDayIndex - 1) % ERA_LENGTH_DAYS) + 1;
+  const cycleNum = Math.floor((rawDayIndex - 1) / ERA_LENGTH_DAYS);
 
-  const episode = Math.floor((eraDay - 1) / 28) + 1;
-  const dayInEp = ((eraDay - 1) % 28) + 1;
+  const episode = Math.floor((eraDay - 1) / EPISODE_LENGTH_DAYS) + 1;
+  const dayInEp = ((eraDay - 1) % EPISODE_LENGTH_DAYS) + 1;
   const week = Math.floor((dayInEp - 1) / 7) + 1;
 
   // Active Calendar Day associated with current 18:00 UTC changeover.
@@ -279,7 +279,7 @@ function getGameStatus(){
     dayInEp,
     week,
     weekdayName,
-    currentEraStartMs: Date.UTC(y, m - 1, d, 0, 0, 0) + (cycleNum * 84 * msPerDay),
+    currentEraStartMs: Date.UTC(y, m - 1, d, 0, 0, 0) + (cycleNum * ERA_LENGTH_DAYS * msPerDay),
     eraBaseStartMs: Date.UTC(y, m - 1, d, 0, 0, 0),
     currentDayStartMs,
     cycleNum,
@@ -343,7 +343,7 @@ function getCurrentDatacronSet(nowMs){
 // use the set in before it's removed.
 function getLastUsableGuildEvent(expiresMs, eraBaseStartMs){
   const firstAbsDay = Math.floor((expiresMs - eraBaseStartMs) / 86400000) + 1;
-  for(let back = 0; back <= 84; back++){
+  for(let back = 0; back <= ERA_LENGTH_DAYS; back++){
     const absDay = firstAbsDay - back;
     const info = absDayToInfo(absDay, eraBaseStartMs);
     const dayStartMs = eraBaseStartMs + ((absDay - 1) * 86400000);
@@ -631,7 +631,7 @@ function getConquestStatus(st){
   else if (targetEp === 3) { cNum = 1; titleNote = 'Event 1 of New Volume'; }
 
   if (isUpcomingNextEp) {
-    const daysUntil = (28 - st.dayInEp) + 7;
+    const daysUntil = (EPISODE_LENGTH_DAYS - st.dayInEp) + 7;
     return {
       status: 'UPCOMING', badgeClass: 'purple', title: titleNote,
       main: `Starts in ${daysUntil} days`,
