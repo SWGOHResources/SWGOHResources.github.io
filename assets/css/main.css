@@ -502,15 +502,16 @@ body.modal-open .starfield span {
 .tb-pick-btn {
   flex: 1; min-width: 0;
   font-family: var(--body); font-size: 11px; font-weight: 700; text-align: center;
-  padding: 6px 4px; border-radius: var(--radius); cursor: pointer;
+  min-height: 46px; padding: 6px 4px; border-radius: var(--radius); cursor: pointer;
   background: var(--void3); border: 1px solid var(--border); color: var(--text2);
-  transition: 0.15s; white-space: nowrap;
+  transition: 0.15s; white-space: normal; line-height: 1.15;
+  display: flex; flex-wrap: wrap; align-content: center; justify-content: center;
 }
 .tb-pick-btn:hover { border-color: var(--accent-border, var(--border2)); color: var(--text); }
 .tb-pick-btn.active { border-color: var(--accent-border, var(--border2)); color: var(--accent, var(--text)); background: var(--accent-dim, var(--void3)); }
 .tb-pick-btn:focus-visible { outline: 2px solid var(--amber); outline-offset: 1px; }
 .tb-pick-check { margin-right: 3px; }
-.tb-pick-selected { display: block; margin-top: 2px; font-size: 8px; font-weight: 600; color: var(--accent, var(--text)); text-transform: uppercase; letter-spacing: 0.04em; }
+.tb-pick-selected { flex-basis: 100%; display: block; margin-top: 2px; font-size: 8px; font-weight: 600; color: var(--accent, var(--text)); text-transform: uppercase; letter-spacing: 0.04em; }
 
 /* ─── Compact TB picker (dashboard status card) ─── */
 .tb-pick-compact summary { list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 8px; cursor: pointer; }
