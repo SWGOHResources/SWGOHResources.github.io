@@ -59,7 +59,7 @@ function renderUnlockWindows(st){
       <div class="uw-body" style="--accent:var(--purple);--accent-dim:var(--purple-dim);--accent-border:var(--purple-border)">
         <div class="uw-img"><div class="art-badge">CQ</div><img src="${IMG_BASE}${CONQUEST_UNIT_IMAGE}" onerror="this.remove()"></div>
         <div class="uw-text">
-          <div class="sc-main"><div class="sc-val">Unlocks ${withOrdinal(new Date(cqDateMs).toLocaleDateString('en-GB',{day:'numeric',month:'short'}))}</div><div class="sc-sub">New unit enters legacy modes</div></div>
+          <div class="sc-main"><div class="sc-val">Unlocks ${withOrdinal(new Date(cqDateMs).toLocaleDateString('en-GB',{day:'numeric',month:'short'}))}</div><div class="sc-sub">Conquest Unit can be unlocked</div></div>
           <div class="sc-footer" style="flex-direction:column;align-items:flex-start;gap:2px;">
             <span>Usable in GAC: <span class="highlight">Week ${cqGacWeek} (${cqGac.format})</span></span>
             <span>Roster Locks: ${withOrdinal(new Date(cqNextSignupDate).toLocaleDateString('en-GB',{day:'numeric',month:'short'}))} (Defense Starts)</span>
@@ -72,7 +72,7 @@ function renderUnlockWindows(st){
       <div class="uw-body" style="--accent:var(--orange);--accent-dim:var(--orange-dim);--accent-border:var(--orange-border)">
         <div class="uw-img"><div class="art-badge">ERA</div><img src="${IMG_BASE}${ERA_UNIT_IMAGE}" onerror="this.remove()"></div>
         <div class="uw-text">
-          <div class="sc-main"><div class="sc-val">Starts ${withOrdinal(new Date(eraDateMs).toLocaleDateString('en-GB',{day:'numeric',month:'short'}))}</div><div class="sc-sub">Era units enter legacy modes</div></div>
+          <div class="sc-main"><div class="sc-val">Starts ${withOrdinal(new Date(eraDateMs).toLocaleDateString('en-GB',{day:'numeric',month:'short'}))}</div><div class="sc-sub">Era Units can be used in Legacy Gamemodes</div></div>
           <div class="sc-footer" style="flex-direction:column;align-items:flex-start;gap:2px;">
              <span>Usable in GAC: <span class="highlight">Week ${eraGacWeek} (${eraGac.format})</span></span>
              <span>Roster Locks: ${withOrdinal(new Date(eraNextSignupDate).toLocaleDateString('en-GB',{day:'numeric',month:'short'}))} (Defense Starts)</span>
@@ -87,7 +87,7 @@ function renderUnlockWindows(st){
         <div class="uw-text">
           <div class="sc-main">
             <div class="sc-val">${cron.name}${cron.hasFDC ? ' <span style="color:var(--text3);font-size:11px;font-weight:600;">+ FDC</span>' : ''}</div>
-            <div class="sc-sub">${cronMeta.label} datacron set</div>
+            <div class="sc-sub">This Datacron Set will expire to your inbox</div>
           </div>
           <div class="sc-footer" style="flex-direction:column;align-items:flex-start;gap:2px;">
             <span>Expires: <span class="highlight">${withOrdinal(new Date(cron.expiresMs).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}))}</span></span>
