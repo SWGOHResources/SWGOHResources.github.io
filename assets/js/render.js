@@ -239,7 +239,10 @@ function renderStatusDashboard(st){
 
 let explorerOffset = 0;
 const EXPLORER_WINDOW = 14;
-const EXPLORER_RANGE = 84; // browse the full era ahead of today
+
+function explorerRangeFor(st){
+  return Math.max(1, ERA_LENGTH_DAYS - st.eraDay + 1);
+}
 
 function explorerDayAt(st, offset){
   const dMs = st.currentDayStartMs + (offset * 86400000);
@@ -251,12 +254,14 @@ function explorerDayAt(st, offset){
 }
 
 function shiftExplorer(delta){
-  explorerOffset = Math.min(EXPLORER_RANGE - 1, Math.max(0, explorerOffset + delta));
+  const range = explorerRangeFor(getGameStatus());
+  explorerOffset = Math.min(range - 1, Math.max(0, explorerOffset + delta));
   renderAll();
 }
 
 function jumpExplorer(offset){
-  explorerOffset = Math.min(EXPLORER_RANGE - 1, Math.max(0, offset));
+  const range = explorerRangeFor(getGameStatus());
+  explorerOffset = Math.min(range - 1, Math.max(0, offset));
   renderAll();
 }
 
@@ -314,9 +319,12 @@ function renderExplorer(st){
   const detail = document.getElementById('dayDetail');
   if(!strip || !detail) return;
 
-  const winStart = Math.max(0, Math.min(explorerOffset - 6, EXPLORER_RANGE - EXPLORER_WINDOW));
+  const range = explorerRangeFor(st);
+  explorerOffset = Math.min(range - 1, Math.max(0, explorerOffset));
+  const winStart = Math.max(0, Math.min(explorerOffset - 6, range - EXPLORER_WINDOW));
+  const winEnd = Math.min(range, winStart + EXPLORER_WINDOW);
   let pills = '';
-  for(let o = winStart; o < winStart + EXPLORER_WINDOW; o++){
+  for(let o = winStart; o < winEnd; o++){
     const d = explorerDayAt(st, o);
     const parts = tzDayParts(d.dMs);
     const cls = 'day-pill'
@@ -331,7 +339,7 @@ function renderExplorer(st){
   strip.innerHTML = pills;
 
   document.getElementById('dayPrev').disabled = explorerOffset <= 0;
-  document.getElementById('dayNext').disabled = explorerOffset >= EXPLORER_RANGE - 1;
+  document.getElementById('dayNext').disabled = explorerOffset >= range - 1;
 
   const cur = explorerDayAt(st, explorerOffset);
   const rel = relativeDayLabel(cur.offset);
