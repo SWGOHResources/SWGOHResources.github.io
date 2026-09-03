@@ -56,7 +56,9 @@ function gacEventsForDate(dateMs){
   const rnd = getGacRoundInfo(info.cycleDay);
   
   if (rnd.week && rnd.week <= 3) {
-    if (rnd.phase === 'signup') return [ev('gac_signup', `GAC Week ${rnd.week} Signup & Roster Lock`)];
+    // Signup opens Tuesday; rosters lock when Round 1 defense starts Wednesday.
+    if (rnd.phase === 'signup') return [ev('gac_signup', `GAC Week ${rnd.week} Signup`)];
+    if (rnd.phase === 'defense' && rnd.round === 1) return [ev('gac_defense', `GAC Round 1 Defense & Roster Lock (Week ${rnd.week})`)];
     if (rnd.phase === 'defense') return [ev('gac_defense', `GAC Round ${rnd.round} Defense (Week ${rnd.week})`)];
     if (rnd.phase === 'offense') return [ev('gac_attack', `GAC Round ${rnd.round} Attack (Week ${rnd.week})`)];
   }
@@ -225,16 +227,6 @@ function fmtDayMonthUTC(ms){
   return withOrdinal(d.toLocaleDateString('en-GB', { timeZone: 'UTC', day: 'numeric', month: 'short' }));
 }
 
-/* "in N days" countdown vs the active (today) changeover day.
-   Conquest/Era targets always lie today-or-later, so past diffs
-   collapse to 'today'. */
-function untilLabel(dateMs, todayMs){
-  const n = Math.round((dateMs - todayMs) / 86400000);
-  if(n <= 0) return 'now';
-  if(n === 1) return 'in 1 day';
-  return `in ${n} days`;
-}
-
 /* Relative day label vs the active (today) changeover day */
 function relativeDayLabel(diffDays){
   if(diffDays === 0) return 'Now';
@@ -305,7 +297,9 @@ function getGacStatus(st){
       badgeClass: 'red',
       title: `Grand Arena (${format})`,
       main: `Round ${info.round} of 3 — Defense Phase`,
-      sub: `Round ${info.round} Attack Phase begins ${untilPhrase}`,
+      sub: info.round === 1
+        ? `Roster lock-in · Round 1 Attack Phase begins ${untilPhrase}`
+        : `Round ${info.round} Attack Phase begins ${untilPhrase}`,
       round: info.round,
       roundPhase: 'defense'
     };

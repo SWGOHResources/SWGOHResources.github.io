@@ -52,6 +52,18 @@ html { height: 100%; scroll-behavior: smooth; }
   text-decoration: none; transition: top 0.15s ease;
 }
 .skip-link:focus { top: 12px; }
+
+/* ─── Scrollbars (themed) ─── */
+* { scrollbar-width: thin; scrollbar-color: var(--void3) transparent; }
+*::-webkit-scrollbar { width: 10px; height: 10px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb {
+  background: var(--void3); border-radius: 6px;
+  border: 2px solid var(--void);
+}
+*::-webkit-scrollbar-thumb:hover { background: #2e3540; }
+.full-schedule-wrap { scrollbar-color: var(--border2) transparent; }
+.full-schedule-wrap::-webkit-scrollbar-thumb { border-color: var(--void2); }
 body {
   background: var(--void);
   color: var(--text);
@@ -580,6 +592,8 @@ body.modal-open .starfield span {
 
 .footer-legal { display: flex; flex-direction: column; gap: 10px; }
 .footer-note { font-family: var(--body); font-size: 10.5px; color: var(--text3); line-height: 1.6; max-width: 760px; }
+.footer-note a { color: var(--cyan); text-decoration: none; }
+.footer-note a:hover { text-decoration: underline; }
 .footer-bottom {
   display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
   font-family: var(--body); font-size: 10.5px; color: var(--text3);
