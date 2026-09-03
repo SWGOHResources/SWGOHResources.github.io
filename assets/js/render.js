@@ -393,8 +393,12 @@ function getFullScheduleLabel(item){
    FULL ERA TIMELINE (modal)
    ========================================================= */
 
-const fullScheduleCache = { eraStartMs: null, activeDay: null };
+const fullScheduleCache = { eraStartMs: null, activeDay: null, tbChoices: null };
 let scheduleFilterEp = 0; // 0 = all episodes
+
+function fullScheduleTbChoiceKey(){
+  return ['light', 'dark'].map(side => tbStoredChoiceId(side) || 'rote').join('|');
+}
 
 function timelineChipHTML(item){
   const meta = CATEGORY_META[categoryFor(item.icon)];
@@ -404,7 +408,9 @@ function timelineChipHTML(item){
 function renderFullSchedule(st){
   const container = document.getElementById('fullSchedule');
   if(!container) return;
-  const sameEra = fullScheduleCache.eraStartMs === st.currentEraStartMs;
+  const tbChoices = fullScheduleTbChoiceKey();
+  const sameEra = fullScheduleCache.eraStartMs === st.currentEraStartMs
+    && fullScheduleCache.tbChoices === tbChoices;
 
   if(!sameEra){
     let html = '';
@@ -431,6 +437,7 @@ function renderFullSchedule(st){
     container.innerHTML = html;
     fullScheduleCache.eraStartMs = st.currentEraStartMs;
     fullScheduleCache.activeDay = st.eraDay;
+    fullScheduleCache.tbChoices = tbChoices;
     applyScheduleFilter();
   } else if(fullScheduleCache.activeDay !== st.eraDay){
     const prev = container.querySelector(`.tl-day[data-day="${fullScheduleCache.activeDay}"]`);
