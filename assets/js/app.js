@@ -88,9 +88,14 @@ document.addEventListener('keydown', e => {
   }
 });
 
-document.getElementById('openFullScheduleBtn')?.addEventListener('click', () => openModal(scheduleModal));
-document.getElementById('openFullScheduleBtnMobile')?.addEventListener('click', () => openModal(scheduleModal));
-document.getElementById('footerFullScheduleBtn')?.addEventListener('click', () => openModal(scheduleModal));
+function openScheduleModal(){
+  openModal(scheduleModal);
+  scrollScheduleToToday();
+}
+
+document.getElementById('openFullScheduleBtn')?.addEventListener('click', openScheduleModal);
+document.getElementById('openFullScheduleBtnMobile')?.addEventListener('click', openScheduleModal);
+document.getElementById('footerFullScheduleBtn')?.addEventListener('click', openScheduleModal);
 document.getElementById('closeFullScheduleBtn')?.addEventListener('click', () => closeModal(scheduleModal));
 
 document.getElementById('openAboutBtnHeader')?.addEventListener('click', () => openModal(aboutModal));

@@ -202,6 +202,47 @@ function fmtDateUTC(ms){
   return d.toLocaleDateString('en-GB', { timeZone: 'UTC', weekday: 'short', day: 'numeric', month: 'short' });
 }
 
+function fmtDateLongUTC(ms){
+  const d = new Date(ms);
+  return d.toLocaleDateString('en-GB', { timeZone: 'UTC', weekday: 'long', day: 'numeric', month: 'long' });
+}
+
+function fmtDayMonthUTC(ms){
+  const d = new Date(ms);
+  return d.toLocaleDateString('en-GB', { timeZone: 'UTC', day: 'numeric', month: 'short' });
+}
+
+/* Relative day label vs the active (today) changeover day */
+function relativeDayLabel(diffDays){
+  if(diffDays === 0) return 'Today';
+  if(diffDays === 1) return 'Tomorrow';
+  if(diffDays === -1) return 'Yesterday';
+  if(diffDays > 1) return `In ${diffDays} days`;
+  return `${Math.abs(diffDays)} days ago`;
+}
+
+/* Multi-day span (in days, inclusive of the start day) for changeover
+   markers that open a longer event. Derived from the sheet rhythm:
+   conquest runs Day 7→20 (14d); a TW runs signup→payout (4d); a GAC
+   week runs signup→final offense (7d); a GAC round is defense+offense
+   (2d). Everything else is a single-day marker → span of 1. */
+function eventSpanDays(icon){
+  if(icon === 'conquest_start') return 14;
+  if(icon === 'tw_signup') return 4;
+  if(icon === 'tw_defense') return 3;
+  if(icon === 'tw_offense') return 2;
+  if(icon === 'gac_signup') return 7;
+  if(icon === 'gac_defense' || icon === 'gac_attack') return 2;
+  return 1;
+}
+
+function eventDateRangeLabel(item, dateMs){
+  const span = eventSpanDays(item.icon);
+  if(span <= 1) return fmtDateLongUTC(dateMs);
+  const endMs = dateMs + ((span - 1) * 86400000);
+  return `${fmtDayMonthUTC(dateMs)} → ${fmtDayMonthUTC(endMs)} · ${span} days`;
+}
+
 function getGacStatus(st){
   const format = st.gacFormat;
   const nextFormat = format === '5v5' ? '3v3' : '5v5';
