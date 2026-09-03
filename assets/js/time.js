@@ -7,6 +7,17 @@ function posMod(n, m){
   return ((n % m) + m) % m;
 }
 
+function parseDateOnlyMs(value){
+  if(typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return NaN;
+  const [year, month, day] = value.split('-').map(Number);
+  const dateMs = Date.UTC(year, month - 1, day);
+  const date = new Date(dateMs);
+  return date.getUTCFullYear() === year
+    && date.getUTCMonth() === month - 1
+    && date.getUTCDate() === day
+    ? dateMs : NaN;
+}
+
 /* Config accessors with safe fallbacks so a missing / mistyped config
    key degrades to the long-standing defaults instead of NaN-poisoning
    every date on the page. */
@@ -158,7 +169,7 @@ function tbOptionsForSide(side){
 }
 
 function tbSideForPhase1(phase1Ms){
-  const anchor = Date.parse(TB_SIDE_ANCHOR_DATE + 'T00:00:00Z');
+  const anchor = parseDateOnlyMs(typeof TB_SIDE_ANCHOR_DATE !== 'undefined' ? TB_SIDE_ANCHOR_DATE : null);
   const idx = Math.round((phase1Ms - anchor) / (TB_RUN_GAP_DAYS * 86400000));
   const even = (((idx % 2) + 2) % 2) === 0;
   if(TB_SIDE_ANCHOR_SIDE === 'light') return even ? 'light' : 'dark';
@@ -296,7 +307,13 @@ function getGameStatus(nowMsInput){
     : new Date().getTime();
   const msPerDay = 86400000;
 
-  const [y, m, d] = ERA_START_DATE.split('-').map(Number);
+  const configuredEraStartMs = parseDateOnlyMs(typeof ERA_START_DATE !== 'undefined' ? ERA_START_DATE : null);
+  const eraStartMs = Number.isFinite(configuredEraStartMs)
+    ? configuredEraStartMs : Date.UTC(2026, 6, 28);
+  const eraStartDate = new Date(eraStartMs);
+  const y = eraStartDate.getUTCFullYear();
+  const m = eraStartDate.getUTCMonth() + 1;
+  const d = eraStartDate.getUTCDate();
 
   // 1) Standard Event Changeover (STD_CHANGEOVER_HOUR_UTC)
   const stdStartMs = Date.UTC(y, m - 1, d, stdHour(), 0, 0);
@@ -403,10 +420,12 @@ function dateMsToEraInfo(dateMs, eraBaseStartMs){
 // allExpired flag so the UI can show EXPIRED instead of a stale set.
 function getCurrentDatacronSet(nowMs){
   if(typeof DATACRON_SETS === 'undefined' || !Array.isArray(DATACRON_SETS) || DATACRON_SETS.length === 0) return null;
-  const withMs = DATACRON_SETS.map(s => ({
+  const withMs = DATACRON_SETS.filter(s => s && typeof s.expires === 'string').map(s => ({
     ...s,
-    expiresMs: Date.parse(s.expires + 'T' + String(stdHour()).padStart(2, '0') + ':00:00Z')
-  })).sort((a, b) => a.expiresMs - b.expiresMs);
+    expiresMs: parseDateOnlyMs(s.expires) + (stdHour() * 3600000)
+  })).filter(s => Number.isFinite(s.expiresMs)).sort((a, b) => a.expiresMs - b.expiresMs);
+
+  if(!withMs.length) return null;
 
   const upcoming = withMs.find(s => s.expiresMs >= nowMs);
   if(upcoming) return { ...upcoming, allExpired: false };
@@ -814,7 +833,7 @@ function scanBackwardForGuildEvents(st, maxDays){
    logs these to the console on load. */
 function validateScheduleConfig(){
   const issues = [];
-  const isDateStr = v => typeof v === 'string' && Number.isFinite(Date.parse(v + 'T00:00:00Z'));
+  const isDateStr = v => Number.isFinite(parseDateOnlyMs(v));
   const eraLength = typeof ERA_LENGTH_DAYS !== 'undefined' ? ERA_LENGTH_DAYS : null;
   const episodeLength = typeof EPISODE_LENGTH_DAYS !== 'undefined' ? EPISODE_LENGTH_DAYS : null;
   const tbRunGap = typeof TB_RUN_GAP_DAYS !== 'undefined' ? TB_RUN_GAP_DAYS : null;
