@@ -321,8 +321,9 @@ function renderExplorer(st){
 
   const range = explorerRangeFor(st);
   explorerOffset = Math.min(range - 1, Math.max(0, explorerOffset));
-  const winStart = Math.max(0, Math.min(explorerOffset - 6, range - EXPLORER_WINDOW));
+  const winStart = explorerOffset;
   const winEnd = Math.min(range, winStart + EXPLORER_WINDOW);
+  strip.scrollLeft = 0;
   let pills = '';
   for(let o = winStart; o < winEnd; o++){
     const d = explorerDayAt(st, o);
