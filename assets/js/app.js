@@ -139,7 +139,12 @@ function copyDiscordHandle(btnEl) {
 /* Guild TB picker (called from TB cards in the explorer and the
    dashboard status card). The pick is stored per rotation side. */
 function setTbChoice(id, side){
-  if(tbSetChoice(id, side)) renderAll();
+  const scrollX = window.scrollX;
+  const scrollY = window.scrollY;
+  if(tbSetChoice(id, side)){
+    renderAll();
+    requestAnimationFrame(() => window.scrollTo(scrollX, scrollY));
+  }
 }
 
 /* Mobile Nav Panel */
