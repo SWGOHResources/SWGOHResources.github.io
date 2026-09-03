@@ -450,8 +450,8 @@ body.modal-open .starfield span {
 .xcard-date { font-family: var(--mono); font-size: 11px; color: var(--text2); margin-top: 6px; }
 
 /* ─── Guild TB picker (on TB Phase-1 cards) ─── */
-.tb-pick { margin-top: 8px; border-top: 1px solid var(--border); padding-top: 8px; }
-.tb-pick-label { display: block; font-family: var(--body); font-size: 9.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text3); margin-bottom: 6px; }
+.tb-pick { margin-top: 6px; border-top: 1px solid var(--border); padding-top: 6px; }
+.tb-pick-label { display: block; font-family: var(--body); font-size: 9.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text3); margin-bottom: 4px; }
 .tb-pick-btns { display: flex; flex-direction: row; gap: 4px; }
 .tb-pick-btn {
   flex: 1; min-width: 0;
