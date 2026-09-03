@@ -48,7 +48,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/main.css?v=13">
+  <link rel="stylesheet" href="assets/css/main.css?v=14">
 </head>
 <body>
 
@@ -80,6 +80,17 @@
     <button class="gear-btn mp-btn" id="openFullScheduleBtnMobile">Full Schedule</button>
   </div>
 </header>
+
+<aside class="cookie-notice" id="cookieNotice" hidden aria-label="Cookie notice">
+  <div>
+    <strong>Cookie notice</strong>
+    <p>We use one essential cookie to remember this notice. Schedule preferences stay on your device.</p>
+  </div>
+  <div class="cookie-actions">
+    <a href="cookie-policy.html">Cookie policy</a>
+    <button class="btn primary" id="dismissCookieNotice" type="button">Got it</button>
+  </div>
+</aside>
 
 <main class="wrap" id="main">
 
@@ -178,6 +189,7 @@
 
     <div class="footer-legal">
       <p class="footer-note">Schedule shows expected dates based on the usual rotation, not live data — check live event timings at <a href="https://swgoh.gg/events/" target="_blank" rel="noopener">swgoh.gg/events</a>. Fan-made planning tool for Star Wars: Galaxy of Heroes. Not affiliated with, endorsed, sponsored, or specifically approved by Electronic Arts, Capital Games, Disney, or Lucasfilm. All game assets, trademarks, and character names are property of their respective owners.</p>
+      <nav class="legal-links" aria-label="Legal"><a href="privacy.html">Privacy</a><a href="cookie-policy.html">Cookies</a><a href="terms.html">Terms</a></nav>
       <div class="footer-bottom">
         <span id="footerMeta"></span>
         <span class="dot">·</span>
