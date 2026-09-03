@@ -11,6 +11,8 @@
   --cyan: #56b8ad;
   --cyan-dim: rgba(86, 184, 173, 0.14);
   --cyan-border: rgba(86, 184, 173, 0.45);
+  --ui-accent: var(--cyan);
+  --ui-accent-border: var(--cyan-border);
   --purple: #9686d6;
   --purple-dim: rgba(150, 134, 214, 0.14);
   --purple-border: rgba(150, 134, 214, 0.45);
@@ -115,7 +117,7 @@ body.modal-open .starfield span {
   text-decoration: none; display: inline-flex; align-items: center; white-space: nowrap;
 }
 .tab-btn:hover { color: var(--text); }
-.tab-btn.active { color: var(--amber); border-bottom-color: var(--amber); font-weight: 600; }
+.tab-btn.active { color: var(--ui-accent); border-bottom-color: var(--ui-accent); font-weight: 600; }
 
 .topbar-actions { display: flex; gap: 8px; align-items: center; }
 
@@ -124,7 +126,7 @@ body.modal-open .starfield span {
   font-family: var(--body); font-weight: 500; font-size: 12.5px; padding: 7px 14px; border-radius: var(--radius);
   cursor: pointer; transition: 0.15s; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;
 }
-.gear-btn:hover { border-color: var(--amber-border); color: var(--amber); }
+.gear-btn:hover { border-color: var(--ui-accent-border); color: var(--ui-accent); }
 .gear-btn.creator-btn:hover { border-color: var(--cyan-border); color: var(--cyan); }
 
 /* ─── Timezone picker ─── */
@@ -139,10 +141,10 @@ body.modal-open .starfield span {
   background-size: 5px 5px, 5px 5px; background-repeat: no-repeat;
 }
 .tz-select:hover {
-  border-color: var(--amber-border); color: var(--amber);
-  background-image: linear-gradient(45deg, transparent 50%, var(--amber) 50%), linear-gradient(135deg, var(--amber) 50%, transparent 50%);
+  border-color: var(--ui-accent-border); color: var(--ui-accent);
+  background-image: linear-gradient(45deg, transparent 50%, var(--ui-accent) 50%), linear-gradient(135deg, var(--ui-accent) 50%, transparent 50%);
 }
-.tz-select:focus-visible { outline: 2px solid var(--amber-border); outline-offset: 1px; }
+.tz-select:focus-visible { outline: 2px solid var(--ui-accent-border); outline-offset: 1px; }
 
 /* ─── Mobile Nav  ─── */
 .nav-toggle {
@@ -151,7 +153,7 @@ body.modal-open .starfield span {
   gap: 4px; flex: 0 0 auto;
 }
 .nav-toggle span { width: 16px; height: 2px; background: var(--text2); border-radius: 2px; transition: all 0.2s ease; }
-.nav-toggle:hover span { background: var(--amber); }
+.nav-toggle:hover span { background: var(--ui-accent); }
 .nav-toggle.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
 .nav-toggle.open span:nth-child(2) { opacity: 0; }
 .nav-toggle.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
@@ -382,7 +384,7 @@ body.modal-open .starfield span {
   background: var(--void2); border: 1px solid var(--border2); color: var(--text2);
   font-size: 20px; line-height: 1; cursor: pointer; transition: 0.15s;
 }
-.day-arrow:hover:not(:disabled) { border-color: var(--amber-border); color: var(--amber); }
+.day-arrow:hover:not(:disabled) { border-color: var(--ui-accent-border); color: var(--ui-accent); }
 .day-arrow:disabled { opacity: 0.3; cursor: default; }
 .day-strip {
   flex: 1; display: grid; grid-template-columns: repeat(14, 1fr); gap: 4px;
@@ -609,15 +611,15 @@ body.modal-open .starfield span {
 }
 .modal-close-x span:nth-child(1) { transform: translate(-50%, -50%) rotate(45deg); }
 .modal-close-x span:nth-child(2) { transform: translate(-50%, -50%) rotate(-45deg); }
-.modal-close-x:hover { border-color: var(--amber-border); }
-.modal-close-x:hover span { background: var(--amber); }
+.modal-close-x:hover { border-color: var(--ui-accent-border); }
+.modal-close-x:hover span { background: var(--ui-accent); }
 
 .btn {
   font-family: var(--body); font-size: 11.5px; padding: 8px 16px; border-radius: var(--radius);
   cursor: pointer; border: 1px solid var(--border); background: var(--void2); color: var(--text2); transition: 0.15s;
 }
-.btn.primary { background: var(--amber); color: #1a1104; border-color: var(--amber); font-weight: 600; }
-.btn.primary:hover { background: #ebd076; }
+.btn.primary { background: var(--ui-accent); color: #06251f; border-color: var(--ui-accent); font-weight: 600; }
+.btn.primary:hover { background: #72d2c5; }
 
 .discord-copy-btn {
   background: var(--discord); color: #fff;
