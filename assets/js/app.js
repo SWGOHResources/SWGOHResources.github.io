@@ -148,14 +148,20 @@ function tzSelectLabel(value){
 function populateTzSelect(sel){
   if(!sel) return;
   const current = getTimeZoneSetting();
+  const inList = v => TIMEZONE_OPTIONS.includes(v) || UTC_OFFSET_OPTIONS.includes(v);
   sel.innerHTML = `<option value="local">${tzSelectLabel('local')}</option>`
-    + TIMEZONE_OPTIONS.map(z => `<option value="${z}">${z === 'UTC' ? 'UTC (game time)' : z.replace(/_/g, ' ')}</option>`).join('');
-  sel.value = TIMEZONE_OPTIONS.includes(current) ? current : 'local';
+    + `<optgroup label="Presets">`
+    + TIMEZONE_OPTIONS.map(z => `<option value="${z}">${z === 'UTC' ? 'UTC (game time)' : z.replace(/_/g, ' ')}</option>`).join('')
+    + `</optgroup><optgroup label="Manual UTC offset">`
+    + UTC_OFFSET_OPTIONS.map(z => `<option value="${z}">${z}</option>`).join('')
+    + `</optgroup>`;
+  sel.value = inList(current) ? current : 'local';
 }
 
 function syncTzSelects(){
   const current = getTimeZoneSetting();
-  const value = TIMEZONE_OPTIONS.includes(current) ? current : 'local';
+  const inList = v => TIMEZONE_OPTIONS.includes(v) || UTC_OFFSET_OPTIONS.includes(v);
+  const value = inList(current) ? current : 'local';
   ['tzSelect', 'tzSelectMobile'].forEach(id => {
     const sel = document.getElementById(id);
     if(sel && sel.options.length && sel.value !== value) sel.value = value;

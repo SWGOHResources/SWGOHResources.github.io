@@ -199,7 +199,7 @@ function tbPhaseWindow(def, phase1Ms, idx){
 }
 
 function fmtPhaseMoment(ms){
-  const d = new Date(ms);
+  const d = new Date(dms(ms));
   const zone = tz();
   const date = withOrdinal(d.toLocaleDateString('en-GB', { timeZone: zone, weekday: 'short', day: 'numeric', month: 'short' }));
   const time = d.toLocaleTimeString('en-GB', { timeZone: zone, hour: '2-digit', minute: '2-digit', hour12: false });
@@ -386,33 +386,58 @@ function validTimeZone(z){
   catch(e){ return false; }
 }
 
-/* Stored setting: 'local' (default) or an IANA zone name. */
+/* Stored setting: 'local' (default), an IANA zone, or a manual
+   offset like 'UTC+05:30'. Offsets are validated to real-world
+   range (-12:00 to +14:00, :00/:15/:30/:45 minutes). */
+function tzOffsetMinutes(v){
+  const m = /^UTC([+-])(\d{2}):(\d{2})$/.exec(v || '');
+  if(!m) return null;
+  const mins = parseInt(m[2], 10) * 60 + parseInt(m[3], 10);
+  if(parseInt(m[2], 10) > 14 || ![0, 15, 30, 45].includes(parseInt(m[3], 10))) return null;
+  const total = m[1] === '-' ? -mins : mins;
+  if(total < -12 * 60 || total > 14 * 60) return null;
+  return total;
+}
+
 function getTimeZoneSetting(){
   try {
     const v = localStorage.getItem(TZ_STORAGE_KEY);
     if(!v || v === 'local') return 'local';
+    if(tzOffsetMinutes(v) != null) return v;
     if(validTimeZone(v)) return v;
   } catch(e){}
   return 'local';
 }
 
-/* Resolved IANA zone used by every display formatter. */
+/* Resolved IANA zone used by every display formatter. Manual
+   offsets render through UTC (see dms below). */
 function tz(){
   const s = getTimeZoneSetting();
   if(s === 'local'){
     const dz = deviceTimeZone();
     return validTimeZone(dz) ? dz : 'UTC';
   }
+  if(tzOffsetMinutes(s) != null) return 'UTC';
   return s;
+}
+
+/* Display instant: manual offsets shift the moment so formatting it
+   in UTC yields the offset wall-clock. One absolute changeover
+   (18:00 UTC) for everyone — only the label moves. */
+function dms(ms){
+  const s = getTimeZoneSetting();
+  const off = tzOffsetMinutes(s);
+  return off != null ? ms + (off * 60000) : ms;
 }
 
 function tzDisplayName(){
   const s = getTimeZoneSetting();
-  return s === 'local' ? `local time (${tz()})` : s;
+  if(s === 'local') return `local time (${tz()})`;
+  return s === 'UTC' ? 'UTC (game time)' : s;
 }
 
 function setTimeZone(v){
-  if(v !== 'local' && !validTimeZone(v)) return false;
+  if(v !== 'local' && tzOffsetMinutes(v) == null && !validTimeZone(v)) return false;
   try { localStorage.setItem(TZ_STORAGE_KEY, v); } catch(e){}
   return true;
 }
@@ -420,7 +445,7 @@ function setTimeZone(v){
 /* Weekday-short + day-number of an instant in the display zone
    (for the explorer day pills). */
 function tzDayParts(ms){
-  const parts = new Intl.DateTimeFormat('en-GB', { timeZone: tz(), weekday: 'short', day: 'numeric' }).formatToParts(new Date(ms));
+  const parts = new Intl.DateTimeFormat('en-GB', { timeZone: tz(), weekday: 'short', day: 'numeric' }).formatToParts(new Date(dms(ms)));
   let dow = '', num = '';
   for(const p of parts){
     if(p.type === 'weekday') dow = p.value;
@@ -430,17 +455,17 @@ function tzDayParts(ms){
 }
 
 function fmtDateUTC(ms){
-  const d = new Date(ms);
+  const d = new Date(dms(ms));
   return withOrdinal(d.toLocaleDateString('en-GB', { timeZone: tz(), weekday: 'short', day: 'numeric', month: 'short' }));
 }
 
 function fmtDateLongUTC(ms){
-  const d = new Date(ms);
+  const d = new Date(dms(ms));
   return withOrdinal(d.toLocaleDateString('en-GB', { timeZone: tz(), weekday: 'long', day: 'numeric', month: 'long' }));
 }
 
 function fmtDayMonthUTC(ms){
-  const d = new Date(ms);
+  const d = new Date(dms(ms));
   return withOrdinal(d.toLocaleDateString('en-GB', { timeZone: tz(), day: 'numeric', month: 'short' }));
 }
 

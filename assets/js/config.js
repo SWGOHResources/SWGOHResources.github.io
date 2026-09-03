@@ -261,11 +261,11 @@ const TB_SIDE_ANCHOR_SIDE = 'light';
 const TB_RUN_GAP_DAYS = 14;
 
 const TB_DEFS = {
-  rebel_assault:       { name: 'Hoth Rebel Assault',        short: 'Rebel Assault',       side: 'light',  tier: 'Hoth',    phases: 6, hoursPerPhase: 24, art: 'tb/hoth-rebel-assault.png' },
-  imperial_retaliation:{ name: 'Hoth Imperial Retaliation', short: 'Imperial Retaliation',side: 'dark',   tier: 'Hoth',    phases: 6, hoursPerPhase: 24, art: 'tb/hoth-imperial-retaliation.png' },
-  republic_offensive:  { name: 'Geonosis Republic Offensive', short: 'Republic Offensive',side: 'light',  tier: 'Geonosis',phases: 4, hoursPerPhase: 36, art: 'tb/geonosis-republic-offensive.png' },
-  separatist_might:    { name: 'Geonosis Separatist Might', short: 'Separatist Might',    side: 'dark',   tier: 'Geonosis',phases: 4, hoursPerPhase: 36, art: 'tb/separatist-might.png' },
-  rote:                { name: 'Rise of the Empire',  side: 'neutral', tier: 'Final', phases: 6, hoursPerPhase: 24, art: 'tb/rise-of-the-empire.png' },
+  rebel_assault:       { name: 'Hoth Rebel Assault',        short: 'Rebel Assault',       tag: 'Hoth', side: 'light',  tier: 'Hoth',    phases: 6, hoursPerPhase: 24, art: 'tb/hoth-rebel-assault.png' },
+  imperial_retaliation:{ name: 'Hoth Imperial Retaliation', short: 'Imperial Retaliation',tag: 'Hoth', side: 'dark',   tier: 'Hoth',    phases: 6, hoursPerPhase: 24, art: 'tb/hoth-imperial-retaliation.png' },
+  republic_offensive:  { name: 'Geonosis Republic Offensive', short: 'Republic Offensive',tag: 'Geo',  side: 'light',  tier: 'Geonosis',phases: 4, hoursPerPhase: 36, art: 'tb/geonosis-republic-offensive.png' },
+  separatist_might:    { name: 'Geonosis Separatist Might', short: 'Separatist Might',    tag: 'Geo',  side: 'dark',   tier: 'Geonosis',phases: 4, hoursPerPhase: 36, art: 'tb/separatist-might.png' },
+  rote:                { name: 'Rise of the Empire', short: 'Rise of the Empire', tag: 'ROTE', side: 'neutral', tier: 'Final', phases: 6, hoursPerPhase: 24, art: 'tb/rise-of-the-empire.png' },
 };
 
 const TB_CHOICE_STORAGE_KEY = 'swgoh-tb-choice';
@@ -294,3 +294,16 @@ const TIMEZONE_OPTIONS = [
   'Australia/Sydney',
   'Pacific/Auckland',
 ];
+
+/* Manual UTC offsets for zones not listed above (30-minute steps
+   plus the :45 zones). Values look like 'UTC+05:30'. Changeovers
+   still happen at one absolute moment (18:00 UTC) for everyone —
+   an offset only re-labels that moment, e.g. 18:00 UTC = 23:30
+   at UTC+05:30 on the same calendar day. */
+const UTC_OFFSET_OPTIONS = (() => {
+  const fmt = mins => 'UTC' + (mins < 0 ? '-' : '+') + String(Math.floor(Math.abs(mins) / 60)).padStart(2, '0') + ':' + String(Math.abs(mins) % 60).padStart(2, '0');
+  const minutes = [];
+  for(let m = -12 * 60; m <= 14 * 60; m += 30) minutes.push(m);
+  [5 * 60 + 45, 8 * 60 + 45, 12 * 60 + 45, 13 * 60 + 45].forEach(m => { if(!minutes.includes(m)) minutes.push(m); });
+  return minutes.sort((a, b) => a - b).map(fmt);
+})();
