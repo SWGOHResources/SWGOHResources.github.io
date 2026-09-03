@@ -26,7 +26,9 @@
 
 <meta name="theme-color" content="#0b0d11">
 <link rel="icon" href="/favicon.ico" type="image/x-icon">
-<link rel="apple-touch-icon" href="/favicon.ico">
+<link rel="icon" href="/assets/img/icons/favicon-32.png?v=1" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="/assets/img/icons/icon-180.png?v=1">
+<link rel="manifest" href="/site.webmanifest">
 
 <script type="application/ld+json">
 {
@@ -45,36 +47,38 @@
 </head>
 <body>
 
-<div class="starfield" id="starfield"></div>
+<a class="skip-link" href="#main">Skip to schedule</a>
 
-<div class="top-header">
+<div class="starfield" id="starfield" aria-hidden="true"></div>
+
+<header class="top-header">
   <div class="topbar">
-    <a href="index.html" class="topbar-title">
-      <img src="/favicon.ico" alt="SWGOH Resources" class="topbar-logo" width="20" height="20">
+    <a href="/" class="topbar-title">
+      <img src="/assets/img/icons/favicon-32.png" alt="SWGOH Resources" class="topbar-logo" width="20" height="20">
       SWGOH<span class="divider-glyph">::</span><span>RESOURCES</span>
     </a>
-    <div class="topbar-tabs" id="topbarTabs">
-      <a class="tab-btn active" href="index.html">Home</a>
-    </div>
+    <nav class="topbar-tabs" id="topbarTabs" aria-label="Primary">
+      <a class="tab-btn active" href="/" aria-current="page">Home</a>
+    </nav>
     <div class="topbar-actions" id="topbarActions">
       <button class="gear-btn creator-btn" id="openAboutBtnHeader">Report Issue</button>
       <button class="gear-btn" id="openFullScheduleBtn">Full Schedule</button>
     </div>
-    <button class="nav-toggle" id="navToggle" aria-label="Menu"><span></span><span></span><span></span></button>
+    <button class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false" aria-controls="mobilePanel"><span></span><span></span><span></span></button>
   </div>
   <div class="mobile-panel" id="mobilePanel">
-    <a class="mp-link active" href="index.html">Home</a>
+    <a class="mp-link active" href="/">Home</a>
     <div class="mp-divider"></div>
     <button class="gear-btn mp-btn" id="openAboutBtnMobile">Report Issue</button>
     <button class="gear-btn mp-btn" id="openFullScheduleBtnMobile">Full Schedule</button>
   </div>
-</div>
+</header>
 
-<div class="wrap">
+<main class="wrap" id="main">
 
-  <div class="merged-hero" id="mergedHero">
+  <section class="merged-hero" id="mergedHero" aria-label="Era progress">
     <div class="mh-left">
-      <div class="mh-tag">Event Schedule for Era of Myths & Legends</div>
+      <h1 class="mh-tag">Event Schedule for Era of Myths & Legends</h1>
       <div class="mh-title-row">
         <div class="mh-main-val">Day <span id="mhDayVal">--</span><span class="mh-of">/ 84</span></div>
         <div class="mh-meta-strip">
@@ -102,50 +106,60 @@
       <div class="cb-timer" id="countdown">--:--:--</div>
       <div class="cb-sub">Episode & Event Changeovers</div>
     </div>
-  </div>
+  </section>
 
   <div class="hero-grid" id="statusDashboard">
   </div>
 
   <!-- Unit Unlock Windows -->
+  <section aria-label="Important dates">
   <div class="section-head">
     <h2>Important Dates</h2>
     <div class="rule"></div>
   </div>
   <div class="hero-grid unlock-grid" id="unlockWindows">
   </div>
+  </section>
 
   <!-- Today & Tomorrow Event Cards -->
+  <section aria-label="Today's schedule">
   <div class="section-head">
     <h2 id="todayHeading">Today's Schedule</h2>
     <span class="sub" id="todaySub"></span>
     <div class="rule"></div>
   </div>
   <div class="card-row" id="todayCards"></div>
+  </section>
 
+  <section aria-label="Tomorrow's schedule">
   <div class="section-head" style="opacity:0.85">
     <h2 id="tmrwHeading">Tomorrow</h2>
     <span class="sub" id="tmrwSub"></span>
     <div class="rule"></div>
   </div>
   <div class="card-row" id="tmrwCards"></div>
+  </section>
 
   <!-- 7-Day Forecast -->
+  <section aria-label="7-day forecast">
   <div class="section-head">
     <h2>7-Day Forecast</h2>
     <div class="rule"></div>
   </div>
   <div class="forecast" id="forecastRow"></div>
+  </section>
 
   <!-- Coliseum Boss Rotation -->
+  <section aria-label="Coliseum boss rotation">
   <div class="section-head">
     <h2>Coliseum Boss Rotation</h2>
     <span class="sub">Coliseum Bosses rotate at 18:00 UTC daily</span>
     <div class="rule"></div>
   </div>
   <div class="boss-strip" id="bossStrip"></div>
+  </section>
 
-</div>
+</main>
 
 <footer class="site-footer">
   <div class="footer-inner">
@@ -157,7 +171,7 @@
 
       <nav class="footer-links">
         <span class="footer-links-label">Navigate</span>
-        <a href="index.html">Home</a>
+        <a href="/">Home</a>
         <button type="button" id="footerFullScheduleBtn">Full Schedule</button>
       </nav>
 

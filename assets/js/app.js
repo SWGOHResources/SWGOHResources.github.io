@@ -120,10 +120,12 @@ const navToggle = document.getElementById('navToggle');
 
 const mobilePanel = document.getElementById('mobilePanel');
 
-function closeMobilePanel(){ navToggle.classList.remove('open'); mobilePanel.classList.remove('open'); }
+function closeMobilePanel(){ navToggle.classList.remove('open'); mobilePanel.classList.remove('open'); navToggle.setAttribute('aria-expanded', 'false'); }
 navToggle.onclick = () => {
-  navToggle.classList.toggle('open');
-  mobilePanel.classList.toggle('open');
+  const willOpen = !mobilePanel.classList.contains('open');
+  navToggle.classList.toggle('open', willOpen);
+  mobilePanel.classList.toggle('open', willOpen);
+  navToggle.setAttribute('aria-expanded', String(willOpen));
 };
 
 const footerMetaEl = document.getElementById('footerMeta');
