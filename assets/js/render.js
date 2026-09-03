@@ -242,8 +242,11 @@ const EXPLORER_WINDOW = 14;
 const EXPLORER_PILL_WIDTH = 44;
 const EXPLORER_GAP = 4;
 
-function explorerRangeFor(st){
-  return Math.max(1, ERA_LENGTH_DAYS - st.eraDay + 1);
+function explorerBoundsFor(st){
+  return {
+    minOffset: -(st.eraDay - 1),
+    maxOffset: ERA_LENGTH_DAYS - st.eraDay
+  };
 }
 
 function explorerWindowSize(strip){
@@ -255,7 +258,7 @@ function explorerWindowSize(strip){
 
 function explorerDayAt(st, offset){
   const dMs = st.currentDayStartMs + (offset * 86400000);
-  const dIdx = ((st.eraDay - 1 + offset) % 84) + 1;
+  const dIdx = ((st.eraDay - 1 + offset) % ERA_LENGTH_DAYS + ERA_LENGTH_DAYS) % ERA_LENGTH_DAYS + 1;
   const ep = Math.floor((dIdx - 1) / 28) + 1;
   const dayInEp = ((dIdx - 1) % 28) + 1;
   const week = Math.floor((dayInEp - 1) / 7) + 1;
@@ -263,14 +266,14 @@ function explorerDayAt(st, offset){
 }
 
 function shiftExplorer(delta){
-  const range = explorerRangeFor(getGameStatus());
-  explorerOffset = Math.min(range - 1, Math.max(0, explorerOffset + delta));
+  const bounds = explorerBoundsFor(getGameStatus());
+  explorerOffset = Math.min(bounds.maxOffset, Math.max(bounds.minOffset, explorerOffset + delta));
   renderAll();
 }
 
 function jumpExplorer(offset){
-  const range = explorerRangeFor(getGameStatus());
-  explorerOffset = Math.min(range - 1, Math.max(0, offset));
+  const bounds = explorerBoundsFor(getGameStatus());
+  explorerOffset = Math.min(bounds.maxOffset, Math.max(bounds.minOffset, offset));
   renderAll();
 }
 
@@ -330,15 +333,17 @@ function renderExplorer(st){
   const detail = document.getElementById('dayDetail');
   if(!strip || !detail) return;
 
-  const range = explorerRangeFor(st);
-  explorerOffset = Math.min(range - 1, Math.max(0, explorerOffset));
+  const bounds = explorerBoundsFor(st);
+  explorerOffset = Math.min(bounds.maxOffset, Math.max(bounds.minOffset, explorerOffset));
   const windowSize = explorerWindowSize(strip);
+  const selectedEraDay = st.eraDay - 1 + explorerOffset;
   const winStart = Math.max(0, Math.min(
-    explorerOffset - Math.floor(windowSize / 2), range - windowSize));
-  const winEnd = Math.min(range, winStart + windowSize);
+    selectedEraDay - Math.floor(windowSize / 2), ERA_LENGTH_DAYS - windowSize));
+  const winEnd = Math.min(ERA_LENGTH_DAYS, winStart + windowSize);
   strip.scrollLeft = 0;
   let pills = '';
-  for(let o = winStart; o < winEnd; o++){
+  for(let eraDay = winStart; eraDay < winEnd; eraDay++){
+    const o = eraDay - (st.eraDay - 1);
     const d = explorerDayAt(st, o);
     const parts = tzDayParts(d.dMs);
     const cls = 'day-pill'
@@ -352,8 +357,8 @@ function renderExplorer(st){
   }
   strip.innerHTML = pills;
 
-  document.getElementById('dayPrev').disabled = explorerOffset <= 0;
-  document.getElementById('dayNext').disabled = explorerOffset >= range - 1;
+  document.getElementById('dayPrev').disabled = explorerOffset <= bounds.minOffset;
+  document.getElementById('dayNext').disabled = explorerOffset >= bounds.maxOffset;
 
   const cur = explorerDayAt(st, explorerOffset);
   const rel = relativeDayLabel(cur.offset);
