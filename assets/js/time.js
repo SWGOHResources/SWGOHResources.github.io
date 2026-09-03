@@ -128,23 +128,48 @@ function tbRunContext(dateMs, episode, dayInEp){
   return { phase1Ms, side, options: tbOptionsForSide(side), offset: dayInEp - p1 };
 }
 
-function tbStoredChoiceId(){
+function tbChoiceKeyForSide(side){
+  return `${TB_CHOICE_STORAGE_KEY}-${side}`;
+}
+
+/* Per-side memory: each rotation side remembers its own guild pick,
+   so changing the Dark pick on a future day never disturbs the
+   active Light run (and vice versa). Falls back to the legacy
+   global key once (migrating it), then to Rise of the Empire. */
+function tbStoredChoiceId(side){
+  const ids = side ? tbOptionsForSide(side).map(o => o.id) : Object.keys(TB_DEFS);
+  const valid = v => v && TB_DEFS[v] && ids.includes(v);
   try {
-    const v = localStorage.getItem(TB_CHOICE_STORAGE_KEY);
-    return (v && TB_DEFS[v]) ? v : null;
-  } catch(e){ return null; }
+    if(side){
+      const v = localStorage.getItem(tbChoiceKeyForSide(side));
+      if(valid(v)) return v;
+    }
+    const legacy = localStorage.getItem(TB_CHOICE_STORAGE_KEY);
+    if(valid(legacy)){
+      if(side){ try { localStorage.setItem(tbChoiceKeyForSide(side), legacy); } catch(e){} }
+      return legacy;
+    }
+  } catch(e){}
+  return null;
 }
 
 function tbChoiceForRun(runCtx){
   if(!runCtx) return { id: 'rote', ...TB_DEFS.rote };
-  const stored = tbStoredChoiceId();
-  if(stored && runCtx.options.some(o => o.id === stored)) return { id: stored, ...TB_DEFS[stored] };
+  const stored = tbStoredChoiceId(runCtx.side);
+  if(stored) return { id: stored, ...TB_DEFS[stored] };
   return { id: 'rote', ...TB_DEFS.rote };
 }
 
-function tbSetChoice(id){
+function tbSetChoice(id, side){
   if(!TB_DEFS[id]) return false;
-  try { localStorage.setItem(TB_CHOICE_STORAGE_KEY, id); } catch(e){}
+  try {
+    if(side === 'light' || side === 'dark'){
+      if(!tbOptionsForSide(side).some(o => o.id === id)) return false;
+      localStorage.setItem(tbChoiceKeyForSide(side), id);
+    } else {
+      localStorage.setItem(TB_CHOICE_STORAGE_KEY, id);
+    }
+  } catch(e){}
   return true;
 }
 
@@ -162,6 +187,22 @@ function tbPhaseAtOffset(def, offset){
 function tbPhaseLabel(def, offset){
   const { phase, starts } = tbPhaseAtOffset(def, offset);
   return `${def.name} Phase ${phase} ${starts ? 'Starts' : 'Continues'}`;
+}
+
+/* Exact window of a tier-2 (36h) phase. phase1Ms is midnight UTC of
+   the Phase-1 day; the run opens 18:00 that day. idx is 0-based,
+   so mid-phase markers render the true span (e.g. Wed 06:00 →
+   Thu 18:00) instead of implying a changeover at 18:00. */
+function tbPhaseWindow(def, phase1Ms, idx){
+  const startMs = phase1Ms + (18 * 3600000) + (idx * def.hoursPerPhase * 3600000);
+  return { startMs, endMs: startMs + (def.hoursPerPhase * 3600000) };
+}
+
+function fmtPhaseMoment(ms){
+  const d = new Date(ms);
+  const date = withOrdinal(d.toLocaleDateString('en-GB', { timeZone: 'UTC', weekday: 'short', day: 'numeric', month: 'short' }));
+  const time = d.toLocaleTimeString('en-GB', { timeZone: 'UTC', hour: '2-digit', minute: '2-digit', hour12: false });
+  return `${date} ${time}`;
 }
 
 /* Rewrite the static rote/tb_ends labels for the run's guild
@@ -352,9 +393,13 @@ function eventDateRangeLabel(item, dateMs, tbCtx){
   }
   const start = fmtDateLongUTC(dateMs);
   // 36-hour TB phases (Separatist Might / Republic Offensive): phase
-  // starts last 36h; mid-phase markers show the date only.
-  if(item.icon === 'rote' && tbCtx && tbCtx.def.hoursPerPhase === 36){
-    return tbPhaseAtOffset(tbCtx.def, tbCtx.offset).starts ? `${start} · 36 hours` : start;
+  // boundaries fall at 18:00 and 06:00 alternating, so mid-phase
+  // markers render the phase's exact window instead of implying a
+  // changeover at 18:00.
+  if(item.icon === 'rote' && tbCtx && tbCtx.def.hoursPerPhase === 36 && tbCtx.phase1Ms != null){
+    const { phase } = tbPhaseAtOffset(tbCtx.def, tbCtx.offset);
+    const w = tbPhaseWindow(tbCtx.def, tbCtx.phase1Ms, phase - 1);
+    return `${fmtPhaseMoment(w.startMs)} → ${fmtPhaseMoment(w.endMs)} · 36 hours`;
   }
   return DAY_LONG_EVENTS.has(item.icon) ? `${start} · 24 hours` : start;
 }

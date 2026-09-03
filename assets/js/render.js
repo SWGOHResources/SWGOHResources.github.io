@@ -203,7 +203,8 @@ function renderStatusDashboard(st){
   const todayTbDef = todayRunCtx ? tbChoiceForRun(todayRunCtx) : null;
   const todayTbCtx = todayRunCtx ? {
     def: todayTbDef, offset: todayRunCtx.offset, side: todayRunCtx.side,
-    options: todayRunCtx.options, art: todayTbDef.art, showPicker: true
+    phase1Ms: todayRunCtx.phase1Ms, options: todayRunCtx.options,
+    art: todayTbDef.art, showPicker: true
   } : null;
 
   container.innerHTML = `
@@ -265,9 +266,9 @@ function tbPickerHTML(tbCtx){
   if(!tbCtx) return '';
   const sideName = tbCtx.side === 'dark' ? 'Dark Side' : 'Light Side';
   const btns = tbCtx.options.map(o =>
-    `<button type="button" class="tb-pick-btn${o.id === tbCtx.def.id ? ' active' : ''}" onclick="setTbChoice('${o.id}')" aria-pressed="${o.id === tbCtx.def.id}">${o.name}</button>`
+    `<button type="button" class="tb-pick-btn${o.id === tbCtx.def.id ? ' active' : ''}" onclick="setTbChoice('${o.id}','${tbCtx.side}')" aria-pressed="${o.id === tbCtx.def.id}">${o.name}</button>`
   ).join('');
-  return `<div class="tb-pick" role="group" aria-label="Choose your guild's TB"><span class="tb-pick-label">${sideName} run — your TB:</span><div class="tb-pick-btns">${btns}</div></div>`;
+  return `<div class="tb-pick" role="group" aria-label="Choose your guild's TB"><span class="tb-pick-label">${sideName} run — your TB:</span><div class="tb-pick-btns">${btns}</div><span class="tb-pick-hint">Saved per Light / Dark side — changing one side never disturbs the other.</span></div>`;
 }
 
 function explorerCardHTML(item, dateMs, relLabel, tbCtx){
@@ -338,7 +339,7 @@ function renderExplorer(st){
   const tbDef = runCtx ? tbChoiceForRun(runCtx) : null;
   const tbCtx = runCtx ? {
     def: tbDef, offset: runCtx.offset, side: runCtx.side,
-    options: runCtx.options, art: tbDef.art,
+    phase1Ms: runCtx.phase1Ms, options: runCtx.options, art: tbDef.art,
     showPicker: runCtx.offset === 0
   } : null;
   detail.innerHTML = `
