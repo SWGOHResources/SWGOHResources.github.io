@@ -107,9 +107,9 @@ const COMMON_DAYS = {
 
 const EPISODE_OVERRIDES = {
   1: {
-    1:  [ev('marquee_1'), ev('journey_rerun_1','Journey Rerun 1: Maul Hate Fueled Starts'), ev('journey_rerun_2','Journey Rerun 2: Cassian Andor Undercover Starts'), ev('era_changeover','Era Changeover'), ev('tw_offense','Offense Phase Starts')],
+    1:  [ev('marquee_1'), ev('era_changeover','Era Changeover'), ev('tw_offense','Offense Phase Starts')],
     7:  [ev('rote','Phase 1 Starts'), ev('conquest_start','2nd Conquest of Volume Starts'), ev('smugglersrun',"Smuggler's Run I")],
-    8:  [ev('era_challenge_1'), ev('rote','Phase 2 Starts')],
+    8:  [ev('era_challenge_1'), ev('journey_rerun_1','Journey Rerun 1: Maul Hate Fueled Starts'), ev('journey_rerun_2','Journey Rerun 2: Cassian Andor Undercover Starts'), ev('rote','Phase 2 Starts')],
     15: [ev('marquee_2'), ev('tw_offense','Offense Phase Starts')],
     21: [ev('conquest_end','2nd Conquest of Volume Ends'), ev('proving_ground','Proving Grounds'), ev('ultimate_journey','Ultimate Journey'), ev('smugglersrun',"Smuggler's Run I"), ev('rote','Phase 1 Starts')],
     22: [ev('era_challenge_2'), ev('rote','Phase 2 Starts')],
@@ -209,8 +209,8 @@ const EVENT_ICONS = {
   marquee_6: 'marquee/marquee6event.png',
   proving_ground: 'events/provingground.png',
   ultimate_journey: 'events/ultimatejourney.png',
-  journey_rerun_1: 'events/journeyicon.png',
-  journey_rerun_2: 'events/journeyicon.png',
+  journey_rerun_1: 'events/journeyrerun1.png',
+  journey_rerun_2: 'events/journeyrerun2.png',
   journey_rerun_3: 'events/journeyicon.png',
   journey_guide: 'events/journeyicon.png',
   fleet_executor: 'events/executor.png',

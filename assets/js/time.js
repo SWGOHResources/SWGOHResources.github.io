@@ -486,7 +486,7 @@ function relativeDayLabel(diffDays){
 
 /* How long a changeover marker lasts. GAC/TW phases and TB phases run
   24 hours until the next 18:00 UTC changeover; Conquest runs Day 7→20
-  (14 days); the shared rerun window lasts one week. */
+  (14 days); Journey Rerun 1 lasts one week and Journey Rerun 2 lasts one month. */
 const DAY_LONG_EVENTS = new Set([
   'gac_signup', 'gac_defense', 'gac_attack',
   'tw_signup', 'tw_defense', 'tw_offense',
@@ -499,9 +499,14 @@ function eventDateRangeLabel(item, dateMs, tbCtx){
     return `${fmtDayMonthUTC(dateMs)} → ${fmtDayMonthUTC(endMs)} · 14 days`;
   }
   const start = fmtDateLongUTC(dateMs);
-  if(item.icon.startsWith('journey_rerun_')){
+  if(item.icon === 'journey_rerun_1'){
     const endMs = dateMs + (6 * 86400000);
     return `${fmtDayMonthUTC(dateMs)} → ${fmtDayMonthUTC(endMs)} · 7 days`;
+  }
+  if(item.icon === 'journey_rerun_2'){
+    const endMs = new Date(dateMs);
+    endMs.setUTCMonth(endMs.getUTCMonth() + 1);
+    return `${fmtDayMonthUTC(dateMs)} → ${fmtDayMonthUTC(endMs.getTime())} · 1 month`;
   }
   // 36-hour TB phases (Separatist Might / Republic Offensive): phase
   // boundaries fall at 18:00 and 06:00 alternating, so mid-phase
