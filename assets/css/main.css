@@ -462,6 +462,18 @@ body.modal-open .starfield span {
 }
 .tb-pick-btn:hover { border-color: var(--accent-border, var(--border2)); color: var(--text); }
 .tb-pick-btn.active { border-color: var(--accent-border, var(--border2)); color: var(--accent, var(--text)); background: var(--accent-dim, var(--void3)); }
+.tb-pick-btn:focus-visible { outline: 2px solid var(--amber); outline-offset: 1px; }
+.tb-pick-check { margin-right: 3px; }
+.tb-pick-selected { display: block; margin-top: 2px; font-size: 8px; font-weight: 600; color: var(--accent, var(--text)); text-transform: uppercase; letter-spacing: 0.04em; }
+
+/* ─── Compact TB picker (dashboard status card) ─── */
+.tb-pick-compact summary { list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 8px; cursor: pointer; }
+.tb-pick-compact summary::-webkit-details-marker { display: none; }
+.tb-pick-compact summary .tb-pick-label { margin-bottom: 0; }
+.tb-pick-compact summary strong { color: var(--text); }
+.tb-pick-change { font-size: 10px; font-weight: 600; color: var(--text3); white-space: nowrap; }
+.tb-pick-compact summary:hover .tb-pick-change, .tb-pick-compact summary:focus-visible .tb-pick-change { color: var(--amber); }
+.tb-pick-compact[open] .tb-pick-btns { margin-top: 6px; }
 
 .empty-note { font-family: var(--body); font-size: 12px; color: var(--text3); padding: 16px 0; }
 
@@ -533,12 +545,18 @@ body.modal-open .starfield span {
 
 /* ─── Day boss line (inside explorer detail head) ─── */
 .day-detail-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+.day-indicators { display: flex; gap: 8px; flex-wrap: wrap; flex: 0 1 auto; justify-content: flex-end; }
 .day-boss {
   display: flex; align-items: center; gap: 10px; flex: 0 0 auto;
   background: var(--void2); border: 1px solid var(--orange-border); border-radius: var(--radius-lg);
   padding: 8px 14px 8px 8px;
 }
-.day-boss img {
+.day-conquest {
+  display: flex; align-items: center; gap: 10px; flex: 0 0 auto;
+  background: var(--void2); border: 1px solid var(--purple-border); border-radius: var(--radius-lg);
+  padding: 8px 14px 8px 8px;
+}
+.day-boss img, .day-conquest img {
   width: 40px; height: 40px; border-radius: 9px; object-fit: cover; display: block;
   border: 1px solid var(--border2); background: var(--void3);
 }
@@ -548,6 +566,7 @@ body.modal-open .starfield span {
   letter-spacing: 0.08em; color: var(--text3);
 }
 .db-name { font-family: var(--disp); font-size: 13.5px; font-weight: 700; color: var(--orange); line-height: 1.25; }
+.day-conquest .db-name { color: var(--purple); }
 
 /* ─── Modal Backdrop ─── */
 .modal-backdrop {

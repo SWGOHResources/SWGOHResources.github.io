@@ -573,6 +573,19 @@ function getGacStatus(st){
   }
 }
 
+/* Conquest info for any explorer day (not just today). Returns null
+   when no run is active that day. Runs span day 7-20 of each episode
+   (14 days); Ep 1 = Chapter 2, Ep 2 = Chapter 3 (Final),
+   Ep 3 = Chapter 1 of a new Volume. */
+function conquestInfoForDay(episode, dayInEp){
+  if(dayInEp < 7 || dayInEp > 20) return null;
+  let cNum = 1, note = '';
+  if(episode === 1){ cNum = 2; note = 'Event 2 of Volume'; }
+  else if(episode === 2){ cNum = 3; note = 'Event 3 of Volume (Final)'; }
+  else { cNum = 1; note = 'Event 1 of New Volume'; }
+  return { active: true, day: dayInEp - 6, total: 14, cNum, note, finalDay: dayInEp === 20 };
+}
+
 function getConquestStatus(st){
   let targetEp = st.episode;
   let targetDay = st.dayInEp;
