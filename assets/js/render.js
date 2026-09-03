@@ -36,7 +36,7 @@ function renderUnlockWindows(st){
   const cron = getCurrentDatacronSet(st.nowMs);
   const cronMeta = CRON_COLOR_META[cron.color] || CRON_COLOR_META.orange;
   const daysLeft = Math.ceil((cron.expiresMs - st.nowMs) / 86400000);
-  const cronBadgeLabel = daysLeft <= 0 ? 'EXPIRES TODAY' : `${daysLeft} DAY${daysLeft === 1 ? '' : 'S'} LEFT`;
+  const cronBadgeLabel = daysLeft <= 0 ? 'FINAL DAY' : `${daysLeft} DAY${daysLeft === 1 ? '' : 'S'} LEFT`;
   const lastUsable = getLastUsableGuildEvent(cron.expiresMs, st.eraBaseStartMs);
   let lastUsableLabel = '—';
   if(lastUsable){
@@ -53,10 +53,11 @@ function renderUnlockWindows(st){
       <div class="uw-body" style="--accent:var(--purple);--accent-dim:var(--purple-dim);--accent-border:var(--purple-border)">
         <div class="uw-img"><div class="art-badge">CQ</div><img src="${IMG_BASE}${CONQUEST_UNIT_IMAGE}" onerror="this.remove()"></div>
         <div class="uw-text">
-          <div class="sc-main"><div class="sc-val">Unlocks ${new Date(cqDateMs).toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</div><div class="sc-sub">Current Conquest Unit is now available in Legacy Modes</div></div>
+          <div class="sc-main"><div class="sc-val">Unlocks ${withOrdinal(new Date(cqDateMs).toLocaleDateString('en-GB',{day:'numeric',month:'short'}))}</div><div class="sc-sub">Current Conquest Unit is now available in Legacy Modes</div></div>
           <div class="sc-footer" style="flex-direction:column;align-items:flex-start;gap:2px;">
+            <span>Unlocks <span class="highlight">${untilLabel(cqDateMs, st.currentDayStartMs)}</span></span>
             <span>Usable in GAC: <span class="highlight">Week ${cqGacWeek} (${cqGac.format})</span></span>
-            <span>Roster Locks: ${new Date(cqNextSignupDate).toLocaleDateString('en-GB',{day:'numeric',month:'short'})} (Defense Starts)</span>
+            <span>Roster Locks: ${withOrdinal(new Date(cqNextSignupDate).toLocaleDateString('en-GB',{day:'numeric',month:'short'}))} (Defense Starts)</span>
           </div>
         </div>
       </div>
@@ -66,10 +67,11 @@ function renderUnlockWindows(st){
       <div class="uw-body" style="--accent:var(--orange);--accent-dim:var(--orange-dim);--accent-border:var(--orange-border)">
         <div class="uw-img"><div class="art-badge">ERA</div><img src="${IMG_BASE}${ERA_UNIT_IMAGE}" onerror="this.remove()"></div>
         <div class="uw-text">
-          <div class="sc-main"><div class="sc-val">Starts ${new Date(eraDateMs).toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</div><div class="sc-sub">End of Era Changeover</div></div>
+          <div class="sc-main"><div class="sc-val">Starts ${withOrdinal(new Date(eraDateMs).toLocaleDateString('en-GB',{day:'numeric',month:'short'}))}</div><div class="sc-sub">End of Era Changeover</div></div>
           <div class="sc-footer" style="flex-direction:column;align-items:flex-start;gap:2px;">
+             <span>Starts <span class="highlight">${untilLabel(eraDateMs, st.currentDayStartMs)}</span></span>
              <span>Usable in GAC: <span class="highlight">Week ${eraGacWeek} (${eraGac.format})</span></span>
-             <span>Roster Locks: ${new Date(eraNextSignupDate).toLocaleDateString('en-GB',{day:'numeric',month:'short'})} (Defense Starts)</span>
+             <span>Roster Locks: ${withOrdinal(new Date(eraNextSignupDate).toLocaleDateString('en-GB',{day:'numeric',month:'short'}))} (Defense Starts)</span>
           </div>
         </div>
       </div>
@@ -81,7 +83,7 @@ function renderUnlockWindows(st){
         <div class="uw-text">
           <div class="sc-main">
             <div class="sc-val">${cron.name}${cron.hasFDC ? ' <span style="color:var(--text3);font-size:11px;font-weight:600;">+ FDC</span>' : ''}</div>
-            <div class="sc-sub">Expires ${new Date(cron.expiresMs).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}</div>
+            <div class="sc-sub">Expires ${withOrdinal(new Date(cron.expiresMs).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}))}</div>
           </div>
           <div class="sc-footer" style="flex-direction:column;align-items:flex-start;gap:6px;">
             <span>Last usable: <span class="highlight">${lastUsableLabel}</span></span>
@@ -202,8 +204,8 @@ function renderStatusDashboard(st){
     <div class="status-card amber-card">
       <div class="sc-header"><span class="sc-title">Guild Events</span><span class="sc-badge ${isGuildActive ? 'amber' : 'off'}">${isGuildActive ? 'ACTIVE' : 'IDLE'}</span></div>
       <div class="sc-main" style="margin-bottom:0">
-        <div class="sc-val" style="font-size:15px;margin-bottom:2px">Today: <span style="color:var(--text);font-weight:600">${todayGuildSummary}</span></div>
-        <div class="sc-sub" style="font-size:12px">Tomorrow: <span style="color:var(--amber)">${tmrwGuildSummary}</span></div>
+        <div class="sc-val" style="font-size:15px;margin-bottom:2px">Now: <span style="color:var(--text);font-weight:600">${todayGuildSummary}</span></div>
+        <div class="sc-sub" style="font-size:12px">Upcoming: <span style="color:var(--amber)">${tmrwGuildSummary}</span></div>
       </div>
       ${guildPhaseTrackerHTML(st)}
     </div>
@@ -243,14 +245,15 @@ function explorerCardHTML(item, dateMs, relLabel){
   const asset = assetFor(item.icon);
   const style = `--accent:${meta.accent};--accent-dim:${meta.dim};--accent-border:${meta.border}`;
   const imgTag = asset ? `<img src="${IMG_BASE}${asset}" alt="" loading="lazy" onerror="this.remove()">` : '';
+  const relCls = relLabel === 'Now' ? 'xcard-rel is-today' : 'xcard-rel';
 
   return `<article class="xcard" style="${style}">
-    <div class="xcard-banner">
+    <div class="xcard-art">
       <div class="art-badge">${meta.glyph}</div>
       ${imgTag}
       <div class="xcard-shade"></div>
       <span class="xcard-cat">${meta.label}</span>
-      <span class="xcard-rel">${relLabel}</span>
+      <span class="${relCls}">${relLabel}</span>
     </div>
     <div class="xcard-body">
       <h4>${getFullScheduleLabel(item)}</h4>
@@ -285,41 +288,25 @@ function renderExplorer(st){
 
   const cur = explorerDayAt(st, explorerOffset);
   const rel = relativeDayLabel(cur.offset);
+  const headTitle = cur.offset === 0
+    ? `Now: ${fmtDateLongUTC(cur.dMs)}`
+    : `Upcoming ${rel.charAt(0).toLowerCase() + rel.slice(1)}: ${fmtDateLongUTC(cur.dMs)}`;
+  const bossName = BOSS_LOOP[(st.bossDayIndex - 1 + cur.offset) % BOSS_LOOP.length];
+  const bossIcon = BOSS_ICONS[bossName];
   detail.innerHTML = `
     <div class="day-detail-head">
       <div>
-        <h3>${cur.offset === 0 ? 'Today' : rel} — ${fmtDateLongUTC(cur.dMs)}</h3>
+        <h3>${headTitle}</h3>
         <p>Day ${cur.dIdx} / 84 · Episode ${cur.ep}, Week ${cur.week}</p>
+      </div>
+      <div class="day-boss" title="Coliseum boss rotates daily at 18:00 UTC">
+        <img src="${IMG_BASE}${bossIcon}" alt="" loading="lazy" onerror="this.remove()">
+        <div class="db-text"><span class="db-label">Coliseum boss</span><span class="db-name">${bossName}</span></div>
       </div>
     </div>
     ${cur.items.length
-      ? `<div class="xcard-list">${cur.items.map(it => explorerCardHTML(it, cur.dMs, rel)).join('')}</div>`
+      ? `<div class="xcard-deck">${cur.items.map(it => explorerCardHTML(it, cur.dMs, rel)).join('')}</div>`
       : `<p class="empty-note">No changeovers this day — nothing starts or ends.</p>`}`;
-}
-
-function renderBossStrip(st){
-  const bossEl = document.getElementById('bossStrip');
-  if(!bossEl) return;
-  bossEl.innerHTML = '';
-
-  const activeBossIndex = (st.bossDayIndex - 1) % 4;
-
-  BOSS_LOOP.forEach((bossName, index) => {
-    const isActive = index === activeBossIndex;
-    const iconFile = BOSS_ICONS[bossName];
-    const cell = document.createElement('div');
-    cell.className = 'bcell' + (isActive ? ' active' : '');
-    cell.innerHTML = `
-      <div class="bcell-img">
-        <div class="art-badge">BOSS</div>
-        <img src="${IMG_BASE}${iconFile}" alt="" loading="lazy" onerror="this.remove()">
-      </div>
-      <div class="step">Boss ${index + 1} of 4</div>
-      <div class="name">${bossName}</div>
-      ${isActive ? '<div class="active-tag">ACTIVE TODAY</div>' : ''}
-    `;
-    bossEl.appendChild(cell);
-  });
 }
 
 function getFullScheduleLabel(item){
@@ -420,6 +407,5 @@ function renderAll(){
   renderStatusDashboard(st);
   renderUnlockWindows(st);
   renderExplorer(st);
-  renderBossStrip(st);
   renderFullSchedule(st);
 }

@@ -16,7 +16,7 @@ GitHub Pages.
 - `assets/js/time.js` — pure date/math helpers (GAC cycle, era day,
   unlock windows, countdown targets). Depends on `config.js`. No DOM.
 - `assets/js/render.js` — DOM builders (hero, dashboard, unlock windows,
-  schedule explorer, boss strip, full-era timeline). Depends on
+  schedule explorer with daily coliseum boss, full-era timeline). Depends on
   `config.js` + `time.js`.
 - `assets/js/app.js` — wiring: countdown tick, modals, mobile nav,
   starfield, init. Loaded last.
