@@ -403,6 +403,11 @@ function getFullScheduleLabel(item){
 
 const fullScheduleCache = { eraStartMs: null, activeDay: null, tbChoices: null };
 let scheduleFilterEp = 0; // 0 = all episodes
+const GAME_DAY_CHANGEOVER_HOURS = 18;
+
+function gameDayDisplayMs(dateMs){
+  return dateMs + (GAME_DAY_CHANGEOVER_HOURS * 3600000);
+}
 
 function fullScheduleTbChoiceKey(){
   return ['light', 'dark'].map(side => tbStoredChoiceId(side) || 'rote').join('|');
@@ -426,7 +431,7 @@ function renderFullSchedule(st){
       const epStartMs = st.currentEraStartMs + ((ep - 1) * 28 * 86400000);
       const epEndMs = epStartMs + (27 * 86400000);
       html += `<div class="tl-ep" data-ep="${ep}">`
-        + `<div class="tl-ep-head"><span>Episode ${ep}</span><span class="tl-ep-dates">${fmtDayMonthUTC(epStartMs)} → ${fmtDayMonthUTC(epEndMs)}</span></div>`;
+        + `<div class="tl-ep-head"><span>Episode ${ep}</span><span class="tl-ep-dates">${fmtDayMonthUTC(gameDayDisplayMs(epStartMs))} → ${fmtDayMonthUTC(gameDayDisplayMs(epEndMs))}</span></div>`;
       for(let week = 1; week <= 4; week++){
         html += `<div class="tl-week-head">Week ${week}</div>`;
         for(let d = 1; d <= 7; d++){
@@ -436,7 +441,7 @@ function renderFullSchedule(st){
           const items = getEventsForDay(dateMs, ep, dayInEp);
           html += `<div class="tl-day${idx === st.eraDay ? ' is-today' : ''}" data-day="${idx}">`
             + `<span class="tl-daynum">${idx}</span>`
-            + `<span class="tl-date">${fmtDateUTC(dateMs)}</span>`
+            + `<span class="tl-date">${fmtDateUTC(gameDayDisplayMs(dateMs))}</span>`
             + `<span class="tl-events">${items.length ? items.map(timelineChipHTML).join('') : '<span class="tl-none">—</span>'}</span></div>`;
         }
       }
