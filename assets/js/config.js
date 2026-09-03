@@ -250,7 +250,9 @@ const GUILD_SUBLABEL = {
   Each run a guild picks 1 of 3: the side's two TBs + Rise of
   the Empire (a Neutral TB, selectable on either rotation).
   Hoth TBs + RotE run 6 phases x 24h. Separatist Might /
-  Republic Offensive run 4 phases x 36h (same 6-day span).
+  Republic Offensive run 4 phases x 36h (same 6-day span); days
+  whose 36h boundary falls at 06:00 show two cards (Phase X Ends
+  + Phase Y Starts at that time).
   Art lives in assets/img/tb/ (kebab-case .png).
   ========================================================= */
 
