@@ -23,9 +23,13 @@ GitHub Pages.
 - `assets/js/firebase-reference.js` — not loaded. Preserved Firebase
   auth/Firestore snippet in case the schedule ever needs sync.
 - `assets/img/` — imagery, grouped by type:
-  - `events/` — GAC, conquest, TW/TB, smuggling runs, journeys, fleet
+  - `events/` — GAC, conquest, TW, smuggling runs, journeys, fleet
     ships (`executor.png`, `leviathan.png`, `profundity.png`),
     era battles/journeys.
+  - `tb/` — Territory Battles, one file per TB (`hoth-rebel-assault.png`,
+    `hoth-imperial-retaliation.png`, `geonosis-republic-offensive.png`,
+    `separatist-might.png`, `rise-of-the-empire.png`). The guild's pick
+    per Light/Dark rotation is stored in `localStorage`.
   - `marquee/` — `marquee1-6event.png` unit art.
   - `bosses/` — coliseum rotation (`krayt.png`, `zeffo.png`,
     `jotaz.png`, `dryax.png`).

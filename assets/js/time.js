@@ -87,6 +87,95 @@ function tagFor(icon){
   return { label: meta.label, glyph: meta.glyph };
 }
 
+/* =========================================================
+ TERRITORY BATTLE ROTATION + GUILD CHOICE
+  Side flips every TB run (runs start day 7 & 21 of each
+  episode, 14 days apart). Parity is anchored to a known
+  Light-side run; TB_SIDE_ANCHOR_SIDE='light' so even
+  instance indexes are Light. The guild's pick (1 of the
+  side's 2 TBs + Rise of the Empire) persists in
+  localStorage and defaults to Rise of the Empire.
+  ========================================================= */
+
+function tbOptionsForSide(side){
+  const ids = side === 'dark'
+    ? ['imperial_retaliation', 'separatist_might', 'rote']
+    : ['rebel_assault', 'republic_offensive', 'rote'];
+  return ids.map(id => ({ id, ...TB_DEFS[id] }));
+}
+
+function tbSideForPhase1(phase1Ms){
+  const anchor = Date.parse(TB_SIDE_ANCHOR_DATE + 'T00:00:00Z');
+  const idx = Math.round((phase1Ms - anchor) / (TB_RUN_GAP_DAYS * 86400000));
+  const even = (((idx % 2) + 2) % 2) === 0;
+  if(TB_SIDE_ANCHOR_SIDE === 'light') return even ? 'light' : 'dark';
+  return even ? 'dark' : 'light';
+}
+
+/* Phase-1 day-in-episode for the run containing dayInEp (7 or
+   21), or null outside a run (runs span day 7-13 & 21-27). */
+function tbPhase1DayInEp(dayInEp){
+  if(dayInEp >= 7 && dayInEp <= 13) return 7;
+  if(dayInEp >= 21 && dayInEp <= 27) return 21;
+  return null;
+}
+
+function tbRunContext(dateMs, episode, dayInEp){
+  const p1 = tbPhase1DayInEp(dayInEp);
+  if(p1 == null) return null;
+  const phase1Ms = dateMs - ((dayInEp - p1) * 86400000);
+  const side = tbSideForPhase1(phase1Ms);
+  return { phase1Ms, side, options: tbOptionsForSide(side), offset: dayInEp - p1 };
+}
+
+function tbStoredChoiceId(){
+  try {
+    const v = localStorage.getItem(TB_CHOICE_STORAGE_KEY);
+    return (v && TB_DEFS[v]) ? v : null;
+  } catch(e){ return null; }
+}
+
+function tbChoiceForRun(runCtx){
+  if(!runCtx) return { id: 'rote', ...TB_DEFS.rote };
+  const stored = tbStoredChoiceId();
+  if(stored && runCtx.options.some(o => o.id === stored)) return { id: stored, ...TB_DEFS[stored] };
+  return { id: 'rote', ...TB_DEFS.rote };
+}
+
+function tbSetChoice(id){
+  if(!TB_DEFS[id]) return false;
+  try { localStorage.setItem(TB_CHOICE_STORAGE_KEY, id); } catch(e){}
+  return true;
+}
+
+/* Phase index (1-based) + whether a new phase starts at this
+   day's 18:00 UTC marker. offset 0-5 across the 6-day run.
+   24h TBs start a phase daily; 36h TBs start one every 1.5
+   days (offsets 1 and 4 continue the current phase). */
+function tbPhaseAtOffset(def, offset){
+  if(def.hoursPerPhase === 24) return { phase: offset + 1, starts: true };
+  const phase = Math.min(def.phases, Math.floor((24 * offset) / def.hoursPerPhase) + 1);
+  const prev = offset === 0 ? 0 : Math.min(def.phases, Math.floor((24 * (offset - 1)) / def.hoursPerPhase) + 1);
+  return { phase, starts: offset === 0 || phase !== prev };
+}
+
+function tbPhaseLabel(def, offset){
+  const { phase, starts } = tbPhaseAtOffset(def, offset);
+  return `${def.name} Phase ${phase} ${starts ? 'Starts' : 'Continues'}`;
+}
+
+/* Rewrite the static rote/tb_ends labels for the run's guild
+   choice. Non-TB days pass through untouched. */
+function applyTbLabels(items, runCtx){
+  if(!runCtx) return items;
+  const def = tbChoiceForRun(runCtx);
+  return items.map(it => {
+    if(it.icon === 'rote') return { icon: it.icon, label: tbPhaseLabel(def, runCtx.offset) };
+    if(it.icon === 'tb_ends') return { icon: it.icon, label: `${def.name} Ends` };
+    return it;
+  });
+}
+
 function getGameStatus(){
   const now = new Date();
   const nowMs = now.getTime();
@@ -205,7 +294,8 @@ function getDayEvents(episode, dayInEp){
 }
 
 function getEventsForDay(dateMs, episode, dayInEp){
-  return [...getDayEvents(episode, dayInEp), ...gacEventsForDate(dateMs), ...getMonthlyEvents(dateMs)];
+  const runCtx = tbRunContext(dateMs, episode, dayInEp);
+  return applyTbLabels([...getDayEvents(episode, dayInEp), ...gacEventsForDate(dateMs), ...getMonthlyEvents(dateMs)], runCtx);
 }
 
 function ordinal(n){
@@ -255,12 +345,17 @@ const DAY_LONG_EVENTS = new Set([
   'rote', 'smugglersrun'
 ]);
 
-function eventDateRangeLabel(item, dateMs){
+function eventDateRangeLabel(item, dateMs, tbCtx){
   if(item.icon === 'conquest_start'){
     const endMs = dateMs + (13 * 86400000);
     return `${fmtDayMonthUTC(dateMs)} → ${fmtDayMonthUTC(endMs)} · 14 days`;
   }
   const start = fmtDateLongUTC(dateMs);
+  // 36-hour TB phases (Separatist Might / Republic Offensive): phase
+  // starts last 36h; mid-phase markers show the date only.
+  if(item.icon === 'rote' && tbCtx && tbCtx.def.hoursPerPhase === 36){
+    return tbPhaseAtOffset(tbCtx.def, tbCtx.offset).starts ? `${start} · 36 hours` : start;
+  }
   return DAY_LONG_EVENTS.has(item.icon) ? `${start} · 24 hours` : start;
 }
 
@@ -383,17 +478,17 @@ function getConquestStatus(st){
   }
 }
 
-function getGuildEventSummary(episode, dayInEp){
-  const items = getDayEvents(episode, dayInEp);
+function getGuildEventSummary(episode, dayInEp, dateMs){
+  const items = dateMs != null ? getEventsForDay(dateMs, episode, dayInEp) : getDayEvents(episode, dayInEp);
 
   const tw = items.find(i => i.icon.startsWith('tw_'));
   if(tw) return `TW ${tw.label}`;
 
   const tbEnd = items.find(i => i.icon === 'tb_ends');
-  if(tbEnd) return 'Territory Battle Ends';
+  if(tbEnd) return tbEnd.label;
 
   const rote = items.find(i => i.icon === 'rote');
-  if(rote) return `ROTE ${rote.label}`;
+  if(rote) return dateMs != null ? `TB ${rote.label}` : `ROTE ${rote.label}`;
 
   return 'Guild Intermission';
 }
@@ -414,8 +509,19 @@ function scanBackwardForGuildEvents(st, maxDays){
     if(!tbFound){
       const tbItem = items.find(i => i.icon === 'rote' || i.icon === 'tb_ends');
       if(tbItem){
-        const m = tbItem.label.match(/Phase (\d+)/);
-        tbFound = { daysAgo: back, icon: tbItem.icon, phaseNum: m ? parseInt(m[1], 10) : null };
+        // Resolve the actual phase for the run's guild choice (36h
+        // TBs have 4 phases, Hoth/RotE have 6).
+        const cursorMs = st.eraBaseStartMs + (absDay - 1) * 86400000;
+        const rc = tbRunContext(cursorMs, info.episode, info.dayInEp);
+        const df = tbChoiceForRun(rc);
+        let phaseNum = null;
+        if(tbItem.icon === 'rote' && rc){
+          phaseNum = tbPhaseAtOffset(df, rc.offset).phase;
+        } else {
+          const m = tbItem.label.match(/Phase (\d+)/);
+          phaseNum = m ? parseInt(m[1], 10) : null;
+        }
+        tbFound = { daysAgo: back, icon: tbItem.icon, phaseNum, phases: df.phases };
       }
     }
     if(twFound && tbFound) break;
@@ -437,7 +543,7 @@ function getGuildPhaseInfo(st){
     const idx = TW_PHASE_ICONS.indexOf(active.info.icon);
     return { type: 'tw', phaseIndex: idx };
   } else {
-    if(active.info.icon === 'tb_ends') return { type: 'tb', complete: true };
-    return { type: 'tb', phaseIndex: (active.info.phaseNum || 1) - 1 };
+    if(active.info.icon === 'tb_ends') return { type: 'tb', complete: true, phases: active.info.phases || 6 };
+    return { type: 'tb', phaseIndex: Math.max(0, (active.info.phaseNum || 1) - 1), phases: active.info.phases || 6 };
   }
 }

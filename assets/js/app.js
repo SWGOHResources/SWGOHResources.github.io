@@ -120,6 +120,12 @@ function copyDiscordHandle(btnEl) {
   });
 }
 
+/* Guild TB picker (called from TB cards in the explorer). Stores
+   the guild's TB for the current rotation side and re-renders. */
+function setTbChoice(id){
+  if(tbSetChoice(id)) renderAll();
+}
+
 /* Mobile Nav Panel */
 const navToggle = document.getElementById('navToggle');
 

@@ -149,10 +149,14 @@ function guildPhaseTrackerHTML(st){
     }
     return `<div class="pip-track"><div class="pip-track-bar">${segs}</div><div class="pip-track-labels">${labels}</div></div>`;
   } else {
+    // TB tracker length follows the tracked TB (6 phases for
+    // Hoth/RotE, 4 for Separatist Might / Republic Offensive).
+    const n = gp.phases || 6;
+    const capped = Math.min(gp.complete ? n : gp.phaseIndex, n - 1);
     let segs = '', labels = '';
-    for(let i = 0; i < 6; i++){
-      const isDone = gp.complete || i < gp.phaseIndex;
-      const isCurrent = !gp.complete && i === gp.phaseIndex;
+    for(let i = 0; i < n; i++){
+      const isDone = gp.complete || i < capped;
+      const isCurrent = !gp.complete && i === capped;
       segs += `<span class="seg ${isDone || isCurrent ? 'done' : ''}" style="${isDone || isCurrent ? 'background:var(--amber)' : ''}"></span>`;
       labels += `<span class="${isCurrent ? 'current' : (isDone ? 'done' : '')}" style="${isCurrent ? 'color:var(--amber)' : ''}">P${i+1}</span>`;
     }
@@ -188,10 +192,10 @@ function renderStatusDashboard(st){
   const tmrwDayIndex = (st.eraDay % 84) + 1;
   const tmrwEpisode = Math.floor((tmrwDayIndex - 1) / 28) + 1;
   const tmrwDayInEp = ((tmrwDayIndex - 1) % 28) + 1;
-  const todayGuildSummary = getGuildEventSummary(st.episode, st.dayInEp);
-  const tmrwGuildSummary = getGuildEventSummary(tmrwEpisode, tmrwDayInEp);
+  const todayGuildSummary = getGuildEventSummary(st.episode, st.dayInEp, st.currentDayStartMs);
+  const tmrwGuildSummary = getGuildEventSummary(tmrwEpisode, tmrwDayInEp, st.currentDayStartMs + 86400000);
 
-  const isGuildActive = todayGuildSummary.includes('ROTE') || todayGuildSummary.includes('TW');
+  const isGuildActive = todayGuildSummary.includes('TW') || todayGuildSummary.includes('TB ') || todayGuildSummary.includes(' Ends');
 
   container.innerHTML = `
     <div class="status-card red-card">
@@ -244,14 +248,27 @@ function jumpExplorer(offset){
   renderAll();
 }
 
-function explorerCardHTML(item, dateMs, relLabel){
+function explorerCardHTML(item, dateMs, relLabel, tbCtx){
   const cat = categoryFor(item.icon);
   const meta = CATEGORY_META[cat];
   const tag = tagFor(item.icon);
-  const asset = assetFor(item.icon);
+  const isTbCard = tbCtx && (item.icon === 'rote' || item.icon === 'tb_ends');
+  const asset = isTbCard ? tbCtx.art : assetFor(item.icon);
   const style = `--accent:${meta.accent};--accent-dim:${meta.dim};--accent-border:${meta.border}`;
   const imgTag = asset ? `<img src="${IMG_BASE}${asset}" alt="" loading="lazy" onerror="this.remove()">` : '';
   const relCls = relLabel === 'Now' ? 'xcard-rel is-today' : 'xcard-rel';
+
+  // Guild TB picker: on Phase-1 days the guild picks which of the
+  // run's 3 TBs (side's 2 + Neutral RotE) they are running. The
+  // choice persists and drives the art + phase labels everywhere.
+  let picker = '';
+  if(tbCtx && tbCtx.showPicker && item.icon === 'rote'){
+    const sideName = tbCtx.side === 'dark' ? 'Dark Side' : 'Light Side';
+    const btns = tbCtx.options.map(o =>
+      `<button type="button" class="tb-pick-btn${o.id === tbCtx.def.id ? ' active' : ''}" onclick="setTbChoice('${o.id}')" aria-pressed="${o.id === tbCtx.def.id}">${o.name}</button>`
+    ).join('');
+    picker = `<div class="tb-pick" role="group" aria-label="Choose your guild's TB"><span class="tb-pick-label">${sideName} run — your TB:</span><div class="tb-pick-btns">${btns}</div></div>`;
+  }
 
   return `<article class="xcard" style="${style}">
     <div class="xcard-art">
@@ -263,7 +280,8 @@ function explorerCardHTML(item, dateMs, relLabel){
     </div>
     <div class="xcard-body">
       <h4>${getFullScheduleLabel(item)}</h4>
-      <div class="xcard-date">${eventDateRangeLabel(item, dateMs)}</div>
+      <div class="xcard-date">${eventDateRangeLabel(item, dateMs, isTbCard ? tbCtx : null)}</div>
+      ${picker}
     </div>
   </article>`;
 }
@@ -299,6 +317,15 @@ function renderExplorer(st){
     : `Upcoming ${rel.charAt(0).toLowerCase() + rel.slice(1)}: ${fmtDateLongUTC(cur.dMs)}`;
   const bossName = BOSS_LOOP[(st.bossDayIndex - 1 + cur.offset) % BOSS_LOOP.length];
   const bossIcon = BOSS_ICONS[bossName];
+  // TB context for this day: drives the card art, phase labels and
+  // the guild picker (shown on Phase-1 days). Null off-TB days.
+  const runCtx = tbRunContext(cur.dMs, cur.ep, cur.dayInEp);
+  const tbDef = runCtx ? tbChoiceForRun(runCtx) : null;
+  const tbCtx = runCtx ? {
+    def: tbDef, offset: runCtx.offset, side: runCtx.side,
+    options: runCtx.options, art: IMG_BASE + tbDef.art,
+    showPicker: runCtx.offset === 0
+  } : null;
   detail.innerHTML = `
     <div class="day-detail-head">
       <div>
@@ -311,7 +338,7 @@ function renderExplorer(st){
       </div>
     </div>
     ${cur.items.length
-      ? `<div class="xcard-deck">${cur.items.map(it => explorerCardHTML(it, cur.dMs, rel)).join('')}</div>`
+      ? `<div class="xcard-deck">${cur.items.map(it => explorerCardHTML(it, cur.dMs, rel, tbCtx)).join('')}</div>`
       : `<p class="empty-note">No changeovers this day — nothing starts or ends.</p>`}`;
 }
 
