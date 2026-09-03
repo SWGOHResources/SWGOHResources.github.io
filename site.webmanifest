@@ -1,7 +1,7 @@
 {
-  "name": "SWGOH Event Schedule",
+  "name": "SWGOH Expected Event Schedule",
   "short_name": "SWGOH Schedule",
-  "description": "Day-by-day Star Wars: Galaxy of Heroes event schedule tracker.",
+  "description": "Day-by-day Star Wars: Galaxy of Heroes expected event schedule tracker.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

@@ -52,13 +52,20 @@ const MARQUEE_NAMES = {
   marquee_6: 'The Ronin',
 };
 
+// Journey Guide unlocks (4★→7★) are the same unit each era.
+// Update this when a new Era / Journey Guide unit is announced.
+const JOURNEY_GUIDE_UNIT = 'Darth Jar Jar';
+
 // Image base + unit tile images (paths relative to IMG_BASE in assets/img/)
 const IMG_BASE = 'assets/img/';
 const CONQUEST_UNIT_IMAGE = 'events/conquest.png';
 const ERA_UNIT_IMAGE = 'events/erajourney.png';
 
 function ev(icon, label){
-  if(icon.startsWith('marquee_')) label = MARQUEE_NAMES[icon] || label || 'Marquee Event';
+  if(icon.startsWith('marquee_')) {
+    const base = MARQUEE_NAMES[icon] || label || 'Marquee Event';
+    label = /marquee/i.test(base) ? base : `${base} Marquee`;
+  }
 
   if(icon.startsWith('era_challenge_')) {
     const match = icon.match(/^era_challenge_(\d+)$/);
@@ -116,10 +123,10 @@ const EPISODE_OVERRIDES = {
     22: [ev('era_challenge_4'), ev('rote','Phase 2 Starts')],
   },
   3: {
-    1:  [ev('marquee_5'), ev('journey_guide','4/5★ Guide Unlock'), ev('tw_offense','Offense Phase Starts')],
+    1:  [ev('marquee_5'), ev('journey_guide',`${JOURNEY_GUIDE_UNIT} 4/5★ Guide Unlock`), ev('tw_offense','Offense Phase Starts')],
     7:  [ev('rote','Phase 1 Starts'), ev('conquest_start','1st Conquest of New Volume Starts'), ev('smugglersrun',"Smuggler's Run I")],
     8:  [ev('era_challenge_5'), ev('rote','Phase 2 Starts')],
-    15: [ev('marquee_6'), ev('journey_guide','6/7★ Guide Unlock'), ev('tw_offense','Offense Phase Starts')],
+    15: [ev('marquee_6'), ev('journey_guide',`${JOURNEY_GUIDE_UNIT} 6/7★ Guide Unlock`), ev('tw_offense','Offense Phase Starts')],
     21: [ev('conquest_end','1st Conquest of New Volume Ends'), ev('proving_ground','Proving Grounds'), ev('ultimate_journey','Ultimate Journey'), ev('smugglersrun',"Smuggler's Run I"), ev('rote','Phase 1 Starts')],
     22: [ev('era_challenge_6'), ev('rote','Phase 2 Starts')],
   }
