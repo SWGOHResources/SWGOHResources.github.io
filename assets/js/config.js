@@ -40,8 +40,9 @@ const CRON_COLOR_META = {
   ========================================================= */
 
 // Marquee / era-challenge art is full portrait art in-game. The square
-// marquee3–6 images in assets/img/marquee/ are placeholders — swap in the
-// real portraits when available (same filenames, no code changes needed).
+// marquee3 and marquee5 images in assets/img/marquee/ are placeholders —
+// swap in the real portraits when available (same filenames, no code
+// changes needed).
 const MARQUEE_NAMES = {
   marquee_1: 'Mara Jade Skywalker',
   marquee_2: 'Yoda (Dark Side Vision)',
