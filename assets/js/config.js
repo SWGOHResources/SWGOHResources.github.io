@@ -221,8 +221,8 @@ const EVENT_ICONS = {
   ultimate_journey: 'events/ultimatejourney.png',
   journey_rerun_1: 'events/journeyrerun1.png',
   journey_rerun_2: 'events/journeyrerun2.png',
-  journey_rerun_3: 'events/journeyicon.png',
-  journey_guide: 'events/journeyicon.png',
+  journey_rerun_3: 'events/erajourney.png',
+  journey_guide: 'events/erajourney.png',
   fleet_executor: 'events/executor.png',
   fleet_leviathan: 'events/leviathan.png',
   fleet_profundity: 'events/profundity.png'
