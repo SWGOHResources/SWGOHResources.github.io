@@ -16,6 +16,9 @@ function renderUnlockWindows(st){
   const cqInf = absDayToInfo(cqAbs, st.eraBaseStartMs);
   const cqDateMs = cqInf.dateMs;
   
+  const cqDays = Math.round((cqDateMs - st.currentDayStartMs) / 86400000);
+  const cqBadge = cqAbs <= st.rawDayIndex || cqDays <= 0 ? 'UNLOCKED' : `IN ${cqDays} DAY${cqDays === 1 ? '' : 'S'}`;
+
   // Roster locks at the Start of Defense Phase, which is Wednesday (+2 Days)
   const cqNextSignupDate = cqDateMs + (86400000 * 2); 
   const cqGac = gacInfoForDate(cqNextSignupDate);
@@ -27,6 +30,9 @@ function renderUnlockWindows(st){
   const eraInf = absDayToInfo(eraAbs, st.eraBaseStartMs);
   const eraDateMs = eraInf.dateMs;
   
+  const eraDays = Math.round((eraDateMs - st.currentDayStartMs) / 86400000);
+  const eraBadge = eraAbs <= st.rawDayIndex || eraDays <= 0 ? 'THIS ERA' : `IN ${eraDays} DAY${eraDays === 1 ? '' : 'S'}`;
+
   // Roster locks at the Start of Defense Phase, which is Wednesday (+1 Day)
   const eraNextSignupDate = eraDateMs + 86400000;
   const eraGac = gacInfoForDate(eraNextSignupDate);
@@ -49,13 +55,12 @@ function renderUnlockWindows(st){
 
   el.innerHTML = `
     <div class="status-card purple-card">
-      <div class="sc-header"><span class="sc-title">Conquest Unit (3rd of Volume)</span><span class="sc-badge purple">${cqAbs <= st.rawDayIndex ? 'UNLOCKED' : 'UPCOMING'}</span></div>
+      <div class="sc-header"><span class="sc-title">Conquest Unit (3rd of Volume)</span><span class="sc-badge purple">${cqBadge}</span></div>
       <div class="uw-body" style="--accent:var(--purple);--accent-dim:var(--purple-dim);--accent-border:var(--purple-border)">
         <div class="uw-img"><div class="art-badge">CQ</div><img src="${IMG_BASE}${CONQUEST_UNIT_IMAGE}" onerror="this.remove()"></div>
         <div class="uw-text">
-          <div class="sc-main"><div class="sc-val">Unlocks ${withOrdinal(new Date(cqDateMs).toLocaleDateString('en-GB',{day:'numeric',month:'short'}))}</div><div class="sc-sub">Current Conquest Unit is now available in Legacy Modes</div></div>
+          <div class="sc-main"><div class="sc-val">Unlocks ${withOrdinal(new Date(cqDateMs).toLocaleDateString('en-GB',{day:'numeric',month:'short'}))}</div><div class="sc-sub">New unit enters legacy modes</div></div>
           <div class="sc-footer" style="flex-direction:column;align-items:flex-start;gap:2px;">
-            <span>Unlocks <span class="highlight">${untilLabel(cqDateMs, st.currentDayStartMs)}</span></span>
             <span>Usable in GAC: <span class="highlight">Week ${cqGacWeek} (${cqGac.format})</span></span>
             <span>Roster Locks: ${withOrdinal(new Date(cqNextSignupDate).toLocaleDateString('en-GB',{day:'numeric',month:'short'}))} (Defense Starts)</span>
           </div>
@@ -63,13 +68,12 @@ function renderUnlockWindows(st){
       </div>
     </div>
     <div class="status-card orange-card">
-      <div class="sc-header"><span class="sc-title">Era Units Available in Legacy Modes</span><span class="sc-badge orange">${eraAbs <= st.rawDayIndex ? 'THIS ERA' : 'NEXT ERA'}</span></div>
+      <div class="sc-header"><span class="sc-title">Era Units Available in Legacy Modes</span><span class="sc-badge orange">${eraBadge}</span></div>
       <div class="uw-body" style="--accent:var(--orange);--accent-dim:var(--orange-dim);--accent-border:var(--orange-border)">
         <div class="uw-img"><div class="art-badge">ERA</div><img src="${IMG_BASE}${ERA_UNIT_IMAGE}" onerror="this.remove()"></div>
         <div class="uw-text">
-          <div class="sc-main"><div class="sc-val">Starts ${withOrdinal(new Date(eraDateMs).toLocaleDateString('en-GB',{day:'numeric',month:'short'}))}</div><div class="sc-sub">End of Era Changeover</div></div>
+          <div class="sc-main"><div class="sc-val">Starts ${withOrdinal(new Date(eraDateMs).toLocaleDateString('en-GB',{day:'numeric',month:'short'}))}</div><div class="sc-sub">Era units enter legacy modes</div></div>
           <div class="sc-footer" style="flex-direction:column;align-items:flex-start;gap:2px;">
-             <span>Starts <span class="highlight">${untilLabel(eraDateMs, st.currentDayStartMs)}</span></span>
              <span>Usable in GAC: <span class="highlight">Week ${eraGacWeek} (${eraGac.format})</span></span>
              <span>Roster Locks: ${withOrdinal(new Date(eraNextSignupDate).toLocaleDateString('en-GB',{day:'numeric',month:'short'}))} (Defense Starts)</span>
           </div>
@@ -83,9 +87,10 @@ function renderUnlockWindows(st){
         <div class="uw-text">
           <div class="sc-main">
             <div class="sc-val">${cron.name}${cron.hasFDC ? ' <span style="color:var(--text3);font-size:11px;font-weight:600;">+ FDC</span>' : ''}</div>
-            <div class="sc-sub">Expires ${withOrdinal(new Date(cron.expiresMs).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}))}</div>
+            <div class="sc-sub">${cronMeta.label} datacron set</div>
           </div>
-          <div class="sc-footer" style="flex-direction:column;align-items:flex-start;gap:6px;">
+          <div class="sc-footer" style="flex-direction:column;align-items:flex-start;gap:2px;">
+            <span>Expires: <span class="highlight">${withOrdinal(new Date(cron.expiresMs).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}))}</span></span>
             <span>Last usable: <span class="highlight">${lastUsableLabel}</span></span>
           </div>
         </div>
