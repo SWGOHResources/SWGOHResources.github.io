@@ -236,26 +236,23 @@ function relativeDayLabel(diffDays){
   return `${Math.abs(diffDays)} days ago`;
 }
 
-/* Multi-day span (in days, inclusive of the start day) for changeover
-   markers that open a longer event. Derived from the sheet rhythm:
-   conquest runs Day 7→20 (14d); a TW runs signup→payout (4d); a GAC
-   week runs signup→final offense (7d); a GAC round is defense+offense
-   (2d). Everything else is a single-day marker → span of 1. */
-function eventSpanDays(icon){
-  if(icon === 'conquest_start') return 14;
-  if(icon === 'tw_signup') return 4;
-  if(icon === 'tw_defense') return 3;
-  if(icon === 'tw_offense') return 2;
-  if(icon === 'gac_signup') return 7;
-  if(icon === 'gac_defense' || icon === 'gac_attack') return 2;
-  return 1;
-}
+/* How long a changeover marker lasts. GAC/TW phases and ROTE phases run
+   24 hours until the next 18:00 UTC changeover; Conquest runs Day 7→20
+   (14 days). Anything else (marquees, journeys, fleet ships, payouts)
+   has no sheet-defined duration, so only its start date is shown. */
+const DAY_LONG_EVENTS = new Set([
+  'gac_signup', 'gac_defense', 'gac_attack',
+  'tw_signup', 'tw_defense', 'tw_offense',
+  'rote', 'smugglersrun'
+]);
 
 function eventDateRangeLabel(item, dateMs){
-  const span = eventSpanDays(item.icon);
-  if(span <= 1) return fmtDateLongUTC(dateMs);
-  const endMs = dateMs + ((span - 1) * 86400000);
-  return `${fmtDayMonthUTC(dateMs)} → ${fmtDayMonthUTC(endMs)} · ${span} days`;
+  if(item.icon === 'conquest_start'){
+    const endMs = dateMs + (13 * 86400000);
+    return `${fmtDayMonthUTC(dateMs)} → ${fmtDayMonthUTC(endMs)} · 14 days`;
+  }
+  const start = fmtDateLongUTC(dateMs);
+  return DAY_LONG_EVENTS.has(item.icon) ? `${start} · 24 hours` : start;
 }
 
 function getGacStatus(st){
