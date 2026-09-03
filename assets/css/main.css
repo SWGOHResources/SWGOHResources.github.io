@@ -449,6 +449,7 @@ body.modal-open .starfield span {
 }
 .tb-pick-btn:hover { border-color: var(--accent-border, var(--border2)); color: var(--text); }
 .tb-pick-btn.active { border-color: var(--accent-border, var(--border2)); color: var(--accent, var(--text)); background: var(--accent-dim, var(--void3)); }
+.tb-pick-hint { display: block; font-size: 10px; color: var(--text3); margin-top: 6px; line-height: 1.4; }
 
 .empty-note { font-family: var(--body); font-size: 12px; color: var(--text3); padding: 16px 0; }
 

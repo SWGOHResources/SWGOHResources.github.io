@@ -29,7 +29,7 @@ GitHub Pages.
   - `tb/` — Territory Battles, one file per TB (`hoth-rebel-assault.png`,
     `hoth-imperial-retaliation.png`, `geonosis-republic-offensive.png`,
     `separatist-might.png`, `rise-of-the-empire.png`). The guild's pick
-    per Light/Dark rotation is stored in `localStorage`.
+    is stored per Light/Dark side in `localStorage`.
   - `marquee/` — `marquee1-6event.png` unit art.
   - `bosses/` — coliseum rotation (`krayt.png`, `zeffo.png`,
     `jotaz.png`, `dryax.png`).

@@ -120,10 +120,10 @@ function copyDiscordHandle(btnEl) {
   });
 }
 
-/* Guild TB picker (called from TB cards in the explorer). Stores
-   the guild's TB for the current rotation side and re-renders. */
-function setTbChoice(id){
-  if(tbSetChoice(id)) renderAll();
+/* Guild TB picker (called from TB cards in the explorer and the
+   dashboard status card). The pick is stored per rotation side. */
+function setTbChoice(id, side){
+  if(tbSetChoice(id, side)) renderAll();
 }
 
 /* Mobile Nav Panel */
