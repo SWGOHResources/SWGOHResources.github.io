@@ -1,6 +1,16 @@
-/* CONFIG — edit this when a new Era / units / datacrons drop. No DOM. No logic changes needed elsewhere. */
+/* CONFIG — edit this when a new Era / units / datacrons drop. Data only,
+   plus the tiny ev() label factory the tables below are built with (it
+   must stay in this file: the tables call it at definition time, before
+   time.js loads). No DOM. No logic changes needed elsewhere. */
 
+const ERA_NAME = 'Era of Myths & Legends';
 const ERA_START_DATE = '2026-07-28'; // Day 1 baseline (Tuesday, July 28, 2026 -> Ends Oct 20, 2026)
+
+/* Changeover hours (UTC). Game logic runs on UTC; the display timezone
+   picker only re-labels these moments. If CG ever moves reset times,
+   change them here — every countdown, cycle and label follows. */
+const STD_CHANGEOVER_HOUR_UTC = 18; // era-day / TB / conquest changeover
+const GAC_CHANGEOVER_HOUR_UTC = 21; // GAC resets 3h after the daily changeover
 
 /* =========================================================
  GAC CONFIGURATION
@@ -218,10 +228,6 @@ const EVENT_ICONS = {
   fleet_profundity: 'events/profundity.png'
 };
 
-const WEEKDAY_NAMES = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-
-const WEEKDAY_SHORT = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-
 /* =========================================================
    TIME ENGINE
    ========================================================= */
@@ -230,9 +236,26 @@ const ERA_LENGTH_DAYS = 84;
 
 const EPISODE_LENGTH_DAYS = 28;
 
+/* Conquest runs Day 7-20 of each episode (14 days). Keep these two in
+   sync with EPISODE_OVERRIDES labels ('conquest_start' / 'conquest_end'). */
+const CONQUEST_START_DAY_IN_EP = 7;
+const CONQUEST_END_DAY_IN_EP = 20;
+const CONQUEST_DURATION_DAYS = 14;
+
+/* Absolute era-days (1-based) within one ERA_LENGTH_DAYS cycle that the
+   unlock cards count down to. 49 = Episode 2, day 21 (conquest-end /
+   Proving Grounds day); 1 = Era Changeover day. If the conquest timing
+   ever moves, update these alongside EPISODE_OVERRIDES. */
 const CONQUEST_END_OFFSETS = [49];
 
 const ERA_START_OFFSETS = [1];
+
+/* Roster locks when a GAC defense phase starts. Conquest units unlock
+   on a Monday and lock the following Wednesday (+2); era units arrive
+   on a Tuesday and lock the next Wednesday (+1). Weekday-relative — if
+   the unlock weekday ever shifts, adjust these, not render.js. */
+const CONQUEST_ROSTER_LOCK_OFFSET_DAYS = 2;
+const ERA_ROSTER_LOCK_OFFSET_DAYS = 1;
 
 const TW_PHASE_LABELS = ['Signup', 'Defense', 'Attack'];
 
