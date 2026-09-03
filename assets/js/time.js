@@ -259,7 +259,7 @@ function getGameStatus(){
   // Active Calendar Day associated with current 18:00 UTC changeover.
   // Weekday is rendered in the display timezone (game-day model stays UTC).
   const currentDayStartMs = Date.UTC(y, m - 1, d, 0, 0, 0) + ((rawDayIndex - 1) * msPerDay);
-  const activeDayObj = new Date(dms(currentDayStartMs));
+  const activeDayObj = new Date(dms(currentDayStartMs + (18 * 3600000)));
   const weekdayName = WEEKDAY_NAMES[activeDayObj.getUTCDay()];
 
   // 2) GAC Cycle — independent 28-day cycle, own reference date, own changeover (21:00 UTC).
