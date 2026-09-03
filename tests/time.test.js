@@ -6,7 +6,7 @@ import vm from 'node:vm';
 const timeSource = fs.readFileSync(new URL('../assets/js/time.js', import.meta.url), 'utf8');
 const dayMs = 86400000;
 
-function loadTimeEngine({ eraLength = 84, timeZone = 'UTC', datacronSets = [] } = {}) {
+function loadTimeEngine({ eraLength = 84, timeZone = 'UTC', datacronSets = [], gacStart = '2026-08-11' } = {}) {
   const storage = new Map([['swgoh-tz', timeZone]]);
   const context = {
     console,
@@ -27,11 +27,13 @@ function loadTimeEngine({ eraLength = 84, timeZone = 'UTC', datacronSets = [] } 
     ERA_LENGTH_DAYS: eraLength,
     EPISODE_LENGTH_DAYS: 28,
     TZ_STORAGE_KEY: 'swgoh-tz',
-    GAC_CYCLE_START_DATE: '2026-08-11',
+    GAC_CYCLE_START_DATE: gacStart,
     TB_SIDE_ANCHOR_DATE: '2026-08-31',
     TB_RUN_GAP_DAYS: 14,
     TB_SIDE_ANCHOR_SIDE: 'light',
-    TB_DEFS: {},
+    TB_DEFS: {
+      rote: { name: 'Rise of the Empire', phases: 6, hoursPerPhase: 24 },
+    },
     TB_CHOICE_STORAGE_KEY: 'tb',
     MONTHLY_EVENTS: [],
     EPISODE_OVERRIDES: {},
@@ -84,6 +86,61 @@ test('journey rerun month end clamps to the destination month', () => {
     engine.eventDateRangeLabel({ icon: 'journey_rerun_2' }, start),
     /31st Jan.*28th Feb.*1 month/
   );
+});
+
+test('schedule lookups degrade instead of hanging on empty offsets', () => {
+  const engine = loadTimeEngine();
+  assert.equal(engine.nextOccurrenceAbs([], 50, 84), 50);
+  assert.equal(engine.nextOccurrenceAbs(null, 50, 84), 50);
+});
+
+test('pre-era days wrap instead of going negative', () => {
+  const engine = loadTimeEngine({ eraLength: 84 });
+  const base = Date.parse('2026-07-28T00:00:00Z');
+  assert.equal(engine.absDayToInfo(0, base).eraDay, 84);
+  assert.equal(engine.absDayToInfo(-83, base).eraDay, 1);
+});
+
+test('pre-era status reports a countdown instead of fake Day 1', () => {
+  const engine = loadTimeEngine({ timeZone: 'UTC' });
+  const st = engine.getGameStatus(Date.parse('2026-07-27T12:00:00Z'));
+  assert.equal(st.preEra, true);
+  assert.equal(st.daysUntilEra, 1);
+  assert.equal(st.eraDay, 1);
+  const sameDay = engine.getGameStatus(Date.parse('2026-07-28T10:00:00Z'));
+  assert.equal(sameDay.preEra, true);
+  assert.equal(sameDay.daysUntilEra, 0);
+  const live = engine.getGameStatus(Date.parse('2026-07-28T19:00:00Z'));
+  assert.equal(live.preEra, false);
+  assert.equal(live.daysUntilEra, 0);
+});
+
+test('bad GAC start date falls back to a safe default', () => {
+  const engine = loadTimeEngine({ gacStart: 'not-a-date' });
+  const info = engine.gacInfoForTimestamp(Date.parse('2026-08-11T21:00:00Z'));
+  assert.equal(info.cycleDay, 1);
+  assert.equal(info.cycleNum, 0);
+  assert.equal(info.format, '5v5');
+  assert.equal(info.rawDays, 0);
+});
+
+test('datacron lookup handles empty and fully-expired configs', () => {
+  const empty = loadTimeEngine({ datacronSets: [] });
+  assert.equal(empty.getCurrentDatacronSet(Date.parse('2026-09-03T19:00:00Z')), null);
+
+  const stale = loadTimeEngine({
+    datacronSets: [{ name: 'Old', color: 'orange', expires: '2026-09-03' }],
+  });
+  const current = stale.getCurrentDatacronSet(Date.parse('2026-10-01T00:00:00Z'));
+  assert.equal(current.name, 'Old');
+  assert.equal(current.allExpired, true);
+});
+
+test('validator passes a healthy config', () => {
+  const engine = loadTimeEngine({
+    datacronSets: [{ name: 'Set', color: 'orange', expires: '2026-10-01' }],
+  });
+  assert.equal(engine.validateScheduleConfig().length, 0);
 });
 
 test('datacron expiration is evaluated at 18:00 UTC', () => {

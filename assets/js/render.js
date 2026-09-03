@@ -40,10 +40,12 @@ function renderUnlockWindows(st){
 
   // --- DATACRON EXPIRATIONS ---
   const cron = getCurrentDatacronSet(st.nowMs);
-  const cronMeta = CRON_COLOR_META[cron.color] || CRON_COLOR_META.orange;
-  const daysLeft = Math.ceil((cron.expiresMs - st.nowMs) / 86400000);
-  const cronBadgeLabel = daysLeft <= 0 ? 'FINAL DAY' : `${daysLeft} DAY${daysLeft === 1 ? '' : 'S'} LEFT`;
-  const lastUsable = getLastUsableGuildEvent(cron.expiresMs, st.eraBaseStartMs);
+  const cronMeta = (cron && CRON_COLOR_META[cron.color]) || CRON_COLOR_META.orange;
+  const daysLeft = cron ? Math.ceil((cron.expiresMs - st.nowMs) / 86400000) : 0;
+  const cronBadgeLabel = !cron ? 'NO SET'
+    : cron.allExpired ? 'EXPIRED'
+    : daysLeft <= 0 ? 'FINAL DAY' : `${daysLeft} DAY${daysLeft === 1 ? '' : 'S'} LEFT`;
+  const lastUsable = cron ? getLastUsableGuildEvent(cron.expiresMs, st.eraBaseStartMs) : null;
   let lastUsableLabel = '—';
   if(lastUsable){
     lastUsableLabel = getFullScheduleLabel(lastUsable.item);
@@ -86,11 +88,11 @@ function renderUnlockWindows(st){
         <div class="uw-img"><div class="art-badge">${cronMeta.label.slice(0,3).toUpperCase()}</div><img src="${IMG_BASE}${cronMeta.asset}" onerror="this.remove()"></div>
         <div class="uw-text">
           <div class="sc-main">
-            <div class="sc-val">${cron.name}${cron.hasFDC ? ' <span style="color:var(--text3);font-size:11px;font-weight:600;">+ FDC</span>' : ''}</div>
-            <div class="sc-sub">This Datacron Set will expire to your inbox</div>
+            <div class="sc-val">${cron ? cron.name : 'No datacron set configured'}${cron && cron.hasFDC ? ' <span style="color:var(--text3);font-size:11px;font-weight:600;">+ FDC</span>' : ''}</div>
+            <div class="sc-sub">${!cron ? 'Add the next set to DATACRON_SETS in config.js' : cron.allExpired ? 'This set has expired — add the next set to DATACRON_SETS' : 'This Datacron Set will expire to your inbox'}</div>
           </div>
           <div class="sc-footer" style="flex-direction:column;align-items:flex-start;gap:2px;">
-            <span>Expires: <span class="highlight">${withOrdinal(new Date(dms(cron.expiresMs)).toLocaleDateString('en-GB',{timeZone: tz(),day:'numeric',month:'short',year:'numeric'}))}</span></span>
+            <span>Expires: <span class="highlight">${cron ? withOrdinal(new Date(dms(cron.expiresMs)).toLocaleDateString('en-GB',{timeZone: tz(),day:'numeric',month:'short',year:'numeric'})) : '—'}</span></span>
             <span>Last usable: <span class="highlight">${lastUsableLabel}</span></span>
           </div>
         </div>
@@ -168,20 +170,41 @@ function guildPhaseTrackerHTML(st){
    STATUS DASHBOARD & MERGED HERO BUILDER
    ========================================================= */
 
+/* Static per-config labels (era name, day counts, changeover hour).
+   Re-applied on every render so a config edit or era rollover never
+   leaves stale hardcoded text behind. Missing elements are skipped so
+   this stays safe on pages with partial markup. */
+function renderStaticMeta(){
+  const setText = (id, text) => { const el = document.getElementById(id); if(el) el.textContent = text; };
+  if(typeof ERA_NAME !== 'undefined') setText('eraTitle', `Event Schedule for ${ERA_NAME}`);
+  setText('mhOfVal', `/ ${ERA_LENGTH_DAYS}`);
+  setText('fullScheduleCount', `All ${ERA_LENGTH_DAYS} days of the current Era baseline.`);
+  const h = (typeof stdHour === 'function') ? stdHour() : 18;
+  setText('cbLabel', `Next Changeover (${h}:00 UTC)`);
+  const tzNote = `Changeovers happen at the same moment worldwide (${h}:00 UTC) — this only changes how times are shown`;
+  ['tzSelect', 'tzSelectMobile'].forEach(id => {
+    const sel = document.getElementById(id);
+    if(sel) sel.title = tzNote;
+  });
+}
+
 function renderMergedHero(st){
   const episodeCount = Math.ceil(ERA_LENGTH_DAYS / EPISODE_LENGTH_DAYS);
+  const weeksPerEpisode = Math.ceil(EPISODE_LENGTH_DAYS / 7);
   document.getElementById('mhDayVal').textContent = st.bossEraDay;
   document.getElementById('mhEpVal').textContent = `${st.episode} / ${episodeCount}`;
-  document.getElementById('mhWeekVal').textContent = `${st.week} / 4`;
+  document.getElementById('mhWeekVal').textContent = `${st.week} / ${weeksPerEpisode}`;
   document.getElementById('mhWeekdayVal').textContent = st.weekdayName;
 
   const fillPct = Math.min(100, Math.max(0, (st.bossEraDay / ERA_LENGTH_DAYS) * 100));
   document.getElementById('mhFill').style.width = fillPct + '%';
 
-  const eraEndMs = st.currentEraStartMs + (83 * 86400000);
+  const eraEndMs = st.currentEraStartMs + ((ERA_LENGTH_DAYS - 1) * 86400000);
   document.getElementById('mhStartDate').textContent = fmtDateUTC(gameDayDisplayMs(st.currentEraStartMs));
   document.getElementById('mhEndDate').textContent = fmtDateUTC(gameDayDisplayMs(eraEndMs));
-  document.getElementById('mhDaysRemaining').textContent = `${ERA_LENGTH_DAYS - st.bossEraDay} days remaining`;
+  document.getElementById('mhDaysRemaining').textContent = st.preEra
+    ? (st.daysUntilEra <= 0 ? 'Era starts today' : `Era starts in ${st.daysUntilEra} day${st.daysUntilEra === 1 ? '' : 's'}`)
+    : `${ERA_LENGTH_DAYS - st.bossEraDay} days remaining`;
 }
 
 function renderStatusDashboard(st){
@@ -366,7 +389,7 @@ function renderExplorer(st){
   const headTitle = cur.offset === 0
     ? `Now: ${fmtDateLongUTC(gameDayDisplayMs(cur.dMs))}`
     : `Upcoming ${rel.charAt(0).toLowerCase() + rel.slice(1)}: ${fmtDateLongUTC(gameDayDisplayMs(cur.dMs))}`;
-  const bossName = BOSS_LOOP[(st.bossDayIndex - 1 + cur.offset) % BOSS_LOOP.length];
+  const bossName = BOSS_LOOP[posMod(st.bossDayIndex - 1 + cur.offset, BOSS_LOOP.length)];
   const bossIcon = BOSS_ICONS[bossName];
   // Conquest indicator (mirrors the boss badge): shown on days 7-20
   // of each episode while a run is active.
@@ -421,9 +444,9 @@ function getFullScheduleLabel(item){
    FULL ERA TIMELINE (modal)
    ========================================================= */
 
-const fullScheduleCache = { eraStartMs: null, activeDay: null, tbChoices: null };
+const fullScheduleCache = { eraStartMs: null, activeDay: null, tbChoices: null, tzKey: null };
 let scheduleFilterEp = 0; // 0 = all episodes
-const GAME_DAY_CHANGEOVER_HOURS = 18;
+const GAME_DAY_CHANGEOVER_HOURS = (typeof STD_CHANGEOVER_HOUR_UTC !== 'undefined') ? STD_CHANGEOVER_HOUR_UTC : 18;
 
 function gameDayDisplayMs(dateMs){
   return dateMs + (GAME_DAY_CHANGEOVER_HOURS * 3600000);
@@ -442,8 +465,13 @@ function renderFullSchedule(st){
   const container = document.getElementById('fullSchedule');
   if(!container) return;
   const tbChoices = fullScheduleTbChoiceKey();
+  // Timezone is part of the cache key: every date string in the
+  // timeline is rendered in the display zone, so a tz change must
+  // rebuild rather than reuse the cached markup.
+  const tzKey = (typeof getTimeZoneSetting === 'function') ? getTimeZoneSetting() : 'local';
   const sameEra = fullScheduleCache.eraStartMs === st.currentEraStartMs
-    && fullScheduleCache.tbChoices === tbChoices;
+    && fullScheduleCache.tbChoices === tbChoices
+    && fullScheduleCache.tzKey === tzKey;
 
   if(!sameEra){
     let html = '';
@@ -476,6 +504,7 @@ function renderFullSchedule(st){
     fullScheduleCache.eraStartMs = st.currentEraStartMs;
     fullScheduleCache.activeDay = st.eraDay;
     fullScheduleCache.tbChoices = tbChoices;
+    fullScheduleCache.tzKey = tzKey;
     applyScheduleFilter();
   } else if(fullScheduleCache.activeDay !== st.eraDay){
     const prev = container.querySelector(`.tl-day[data-day="${fullScheduleCache.activeDay}"]`);
@@ -517,12 +546,23 @@ function scrollScheduleToToday(){
    LIVE COUNTDOWN & MASTER RENDER
    ========================================================= */
 
+/* Footer line goes stale if rendered once (tz changes, midnight
+   rollovers). Refresh it on every render instead. */
+function updateFooterMeta(){
+  const el = document.getElementById('footerMeta');
+  if(!el || typeof tzDisplayName !== 'function') return;
+  const h = (typeof stdHour === 'function') ? stdHour() : 18;
+  el.textContent = `Resets ${h}:00 UTC daily · showing ${tzDisplayName()} · loaded ${new Date(dms(Date.now())).toLocaleString('en-GB', { timeZone: tz(), hour12: false })}`;
+}
+
 function renderAll(){
   const st = getGameStatus();
+  renderStaticMeta();
   renderMergedHero(st);
   renderStatusDashboard(st);
   renderUnlockWindows(st);
   renderExplorer(st);
   renderFullSchedule(st);
+  updateFooterMeta();
   if(typeof syncTzSelects === 'function') syncTzSelects();
 }

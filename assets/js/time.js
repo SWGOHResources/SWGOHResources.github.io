@@ -1,6 +1,41 @@
 /* TIME ENGINE — pure date/math helpers. Depends on config.js globals. No DOM. */
 
+/* Positive modulo: JS % keeps the sign of the dividend, which breaks
+   day math for pre-era / pre-season timestamps. posMod always wraps
+   into [0, m). */
+function posMod(n, m){
+  return ((n % m) + m) % m;
+}
+
+/* Config accessors with safe fallbacks so a missing / mistyped config
+   key degrades to the long-standing defaults instead of NaN-poisoning
+   every date on the page. */
+function stdHour(){
+  return (typeof STD_CHANGEOVER_HOUR_UTC !== 'undefined') ? STD_CHANGEOVER_HOUR_UTC : 18;
+}
+
+function gacHour(){
+  return (typeof GAC_CHANGEOVER_HOUR_UTC !== 'undefined') ? GAC_CHANGEOVER_HOUR_UTC : 21;
+}
+
+function conquestStartDay(){
+  return (typeof CONQUEST_START_DAY_IN_EP !== 'undefined') ? CONQUEST_START_DAY_IN_EP : 7;
+}
+
+function conquestEndDay(){
+  return (typeof CONQUEST_END_DAY_IN_EP !== 'undefined') ? CONQUEST_END_DAY_IN_EP : 20;
+}
+
+function conquestLockOffsetDays(){
+  return (typeof CONQUEST_ROSTER_LOCK_OFFSET_DAYS !== 'undefined') ? CONQUEST_ROSTER_LOCK_OFFSET_DAYS : 2;
+}
+
+function eraLockOffsetDays(){
+  return (typeof ERA_ROSTER_LOCK_OFFSET_DAYS !== 'undefined') ? ERA_ROSTER_LOCK_OFFSET_DAYS : 1;
+}
+
 function getMonthlyEvents(dateMs){
+  if(typeof MONTHLY_EVENTS === 'undefined' || !MONTHLY_EVENTS) return [];
   const d = new Date(dateMs);
   const dom = d.getUTCDate();
   const lastDom = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 0)).getUTCDate();
@@ -21,20 +56,23 @@ function getMonthlyEvents(dateMs){
   ========================================================= */
 
 function gacInfoForTimestamp(timestampMs){
-  const [gy, gm, gd] = GAC_CYCLE_START_DATE.split('-').map(Number);
-  const gacStartMs = Date.UTC(gy, gm - 1, gd, 21, 0, 0); 
+  const [gy, gm, gd] = (typeof GAC_CYCLE_START_DATE !== 'undefined' ? GAC_CYCLE_START_DATE : '').split('-').map(Number);
+  const gacStartMs = Date.UTC(gy, gm - 1, gd, gacHour(), 0, 0);
+  if(!Number.isFinite(gacStartMs) || !Number.isFinite(timestampMs)){
+    return { cycleDay: 1, cycleNum: 0, format: '5v5', rawDays: 0 };
+  }
   const diffMs = timestampMs - gacStartMs;
-  
+
   const rawDays = Math.floor(diffMs / 86400000);
-  const cycleDay = ((rawDays % 28) + 28) % 28 + 1;
+  const cycleDay = posMod(rawDays, 28) + 1;
   const cycleNum = Math.floor(rawDays / 28);
-  
-  const format = (cycleNum % 2 === 0) ? '5v5' : '3v3'; 
+
+  const format = (posMod(cycleNum, 2) === 0) ? '5v5' : '3v3';
   return { cycleDay, cycleNum, format, rawDays };
 }
 
 function gacInfoForDate(dateMs){
-  return gacInfoForTimestamp(dateMs + (21 * 3600000));
+  return gacInfoForTimestamp(dateMs + (gacHour() * 3600000));
 }
 
 function getGacRoundInfo(cycleDay){
@@ -197,7 +235,7 @@ function tbPhaseLabel(def, offset){
    so mid-phase markers render the true span (e.g. Wed 06:00 →
    Thu 18:00) instead of implying a changeover at 18:00. */
 function tbPhaseWindow(def, phase1Ms, idx){
-  const startMs = phase1Ms + (18 * 3600000) + (idx * def.hoursPerPhase * 3600000);
+  const startMs = phase1Ms + (stdHour() * 3600000) + (idx * def.hoursPerPhase * 3600000);
   return { startMs, endMs: startMs + (def.hoursPerPhase * 3600000) };
 }
 
@@ -221,7 +259,7 @@ function applyTbLabels(items, runCtx){
     if(it.icon === 'rote' && def.hoursPerPhase === 36 && runCtx.offset > 0){
       const { phase } = tbPhaseAtOffset(def, runCtx.offset);
       // Moment the current phase began (= previous phase ended).
-      const transMs = runCtx.phase1Ms + (18 * 3600000) + ((phase - 1) * def.hoursPerPhase * 3600000);
+      const transMs = runCtx.phase1Ms + (stdHour() * 3600000) + ((phase - 1) * def.hoursPerPhase * 3600000);
       if(new Date(transMs).getUTCHours() === 6 && phase > 1){
         return [
           { icon: it.icon, label: `${def.name} Phase ${phase - 1} Ends`, tbEndMoment: transMs },
@@ -236,37 +274,54 @@ function applyTbLabels(items, runCtx){
   });
 }
 
-function getGameStatus(){
-  const now = new Date();
-  const nowMs = now.getTime();
+/* nowMsInput is an optional override (used by tests). When omitted the
+   live clock is used. preEra is true before the era's first changeover;
+   the hero clamps to Day 1 but surfaces daysUntilEra so the UI can say
+   "starts in N days" instead of pretending Day 1 is live. */
+function getGameStatus(nowMsInput){
+  const nowMs = (typeof nowMsInput === 'number' && Number.isFinite(nowMsInput))
+    ? nowMsInput
+    : new Date().getTime();
   const msPerDay = 86400000;
 
   const [y, m, d] = ERA_START_DATE.split('-').map(Number);
 
-  // 1) Standard Event Changeover (18:00 UTC)
-  const stdStartMs = Date.UTC(y, m - 1, d, 18, 0, 0);
-  let diffMs = nowMs - stdStartMs;
+  // 1) Standard Event Changeover (STD_CHANGEOVER_HOUR_UTC)
+  const stdStartMs = Date.UTC(y, m - 1, d, stdHour(), 0, 0);
+  const diffMs = nowMs - stdStartMs;
+  const preEra = diffMs < 0;
   let rawDayIndex = Math.floor(diffMs / msPerDay) + 1;
-  if(diffMs < 0) rawDayIndex = 1;
+  if(preEra) rawDayIndex = 1;
 
-  const eraDay = ((rawDayIndex - 1) % ERA_LENGTH_DAYS) + 1;
+  // Calendar days from today until the era's first calendar day (0 =
+  // it starts today at the changeover). Wall-clock ceil() would say "2
+  // days" 30 hours out, which reads wrong — calendar math matches how
+  // players talk about reset days.
+  let daysUntilEra = 0;
+  if(preEra){
+    const nd = new Date(nowMs);
+    const startOfToday = Date.UTC(nd.getUTCFullYear(), nd.getUTCMonth(), nd.getUTCDate());
+    daysUntilEra = Math.max(0, Math.round((Date.UTC(y, m - 1, d) - startOfToday) / msPerDay));
+  }
+
+  const eraDay = posMod(rawDayIndex - 1, ERA_LENGTH_DAYS) + 1;
   const cycleNum = Math.floor((rawDayIndex - 1) / ERA_LENGTH_DAYS);
 
   const episode = Math.floor((eraDay - 1) / EPISODE_LENGTH_DAYS) + 1;
-  const dayInEp = ((eraDay - 1) % EPISODE_LENGTH_DAYS) + 1;
+  const dayInEp = posMod(eraDay - 1, EPISODE_LENGTH_DAYS) + 1;
   const week = Math.floor((dayInEp - 1) / 7) + 1;
 
-  // Active Calendar Day associated with current 18:00 UTC changeover.
+  // Active Calendar Day associated with current changeover.
   // Weekday is rendered in the display timezone (game-day model stays UTC).
   const currentDayStartMs = Date.UTC(y, m - 1, d, 0, 0, 0) + ((rawDayIndex - 1) * msPerDay);
   const activeDayParts = new Intl.DateTimeFormat('en-GB', {
     timeZone: tz(), weekday: 'long'
-  }).formatToParts(new Date(dms(currentDayStartMs + (18 * 3600000))));
+  }).formatToParts(new Date(dms(currentDayStartMs + (stdHour() * 3600000))));
   const weekdayName = activeDayParts.find(p => p.type === 'weekday').value;
 
-  // 2) GAC Cycle — independent 28-day cycle, own reference date, own changeover (21:00 UTC).
+  // 2) GAC Cycle — independent 28-day cycle, own reference date, own changeover.
   // Use the live timestamp so GAC remains on the previous phase between the
-  // 18:00 era reset and its own 21:00 reset.
+  // daily era reset and its own later reset.
   const gacInfo = gacInfoForTimestamp(nowMs);
 
   return {
@@ -279,6 +334,8 @@ function getGameStatus(){
     dayInEp,
     week,
     weekdayName,
+    preEra,
+    daysUntilEra,
     currentEraStartMs: Date.UTC(y, m - 1, d, 0, 0, 0) + (cycleNum * ERA_LENGTH_DAYS * msPerDay),
     eraBaseStartMs: Date.UTC(y, m - 1, d, 0, 0, 0),
     currentDayStartMs,
@@ -293,6 +350,10 @@ function getGameStatus(){
    ========================================================= */
 
 function nextOccurrenceAbs(offsetsInCycle, fromAbsDay, cycleLen){
+  // Guard: an empty offset list used to spin forever. Return the input
+  // day so callers degrade to "today" instead of hanging the page.
+  if(!Array.isArray(offsetsInCycle) || offsetsInCycle.length === 0) return fromAbsDay;
+  if(!Number.isFinite(cycleLen) || cycleLen <= 0) return fromAbsDay;
   const sorted = [...offsetsInCycle].sort((a, b) => a - b);
   let k = Math.floor((fromAbsDay - 1) / cycleLen);
   while(true){
@@ -305,9 +366,9 @@ function nextOccurrenceAbs(offsetsInCycle, fromAbsDay, cycleLen){
 }
 
 function absDayToInfo(absDay, eraBaseStartMs){
-  const eraDay = ((absDay - 1) % ERA_LENGTH_DAYS) + 1;
+  const eraDay = posMod(absDay - 1, ERA_LENGTH_DAYS) + 1;
   const episode = Math.floor((eraDay - 1) / EPISODE_LENGTH_DAYS) + 1;
-  const dayInEp = ((eraDay - 1) % EPISODE_LENGTH_DAYS) + 1;
+  const dayInEp = posMod(eraDay - 1, EPISODE_LENGTH_DAYS) + 1;
   const week = Math.floor((dayInEp - 1) / 7) + 1;
   const dateMs = eraBaseStartMs + (absDay - 1) * 86400000;
   return { eraDay, episode, dayInEp, week, dateMs };
@@ -326,14 +387,18 @@ function dateMsToEraInfo(dateMs, eraBaseStartMs){
 // expires date that hasn't passed yet). Falls back to the last set
 // in the config if every set's expiration has already passed —
 // update DATACRON_SETS with the next set(s) when that happens.
+// Returns null when no sets are configured. The result carries an
+// allExpired flag so the UI can show EXPIRED instead of a stale set.
 function getCurrentDatacronSet(nowMs){
+  if(typeof DATACRON_SETS === 'undefined' || !Array.isArray(DATACRON_SETS) || DATACRON_SETS.length === 0) return null;
   const withMs = DATACRON_SETS.map(s => ({
     ...s,
-    expiresMs: Date.parse(s.expires + 'T18:00:00Z')
+    expiresMs: Date.parse(s.expires + 'T' + String(stdHour()).padStart(2, '0') + ':00:00Z')
   })).sort((a, b) => a.expiresMs - b.expiresMs);
 
   const upcoming = withMs.find(s => s.expiresMs >= nowMs);
-  return upcoming || withMs[withMs.length - 1];
+  if(upcoming) return { ...upcoming, allExpired: false };
+  return { ...withMs[withMs.length - 1], allExpired: true };
 }
 
 // A datacron set can only ever be equipped/used for Territory War and
@@ -502,8 +567,9 @@ const DAY_LONG_EVENTS = new Set([
 
 function eventDateRangeLabel(item, dateMs, tbCtx){
   if(item.icon === 'conquest_start'){
-    const endMs = dateMs + (13 * 86400000);
-    return `${fmtDayMonthUTC(dateMs)} → ${fmtDayMonthUTC(endMs)} · 14 days`;
+    const dur = (typeof CONQUEST_DURATION_DAYS !== 'undefined') ? CONQUEST_DURATION_DAYS : 14;
+    const endMs = dateMs + ((dur - 1) * 86400000);
+    return `${fmtDayMonthUTC(dateMs)} → ${fmtDayMonthUTC(endMs)} · ${dur} days`;
   }
   const start = fmtDateLongUTC(dateMs);
   if(item.icon === 'journey_rerun_1'){
@@ -601,61 +667,72 @@ function getGacStatus(st){
    when no run is active that day. Runs span day 7-20 of each episode
    (14 days); Ep 1 = Chapter 2, Ep 2 = Chapter 3 (Final),
    Ep 3 = Chapter 1 of a new Volume. */
+/* Episode → conquest chapter. Ep 1 = 2nd of volume, Ep 2 = 3rd (final),
+   Ep 3 = 1st of a new volume. Single source of truth for the dashboard,
+   the explorer badge and the unlock-card title. */
+function conquestChapterForEpisode(episode){
+  if(episode === 1) return { cNum: 2, note: 'Event 2 of Volume' };
+  if(episode === 2) return { cNum: 3, note: 'Event 3 of Volume (Final)' };
+  return { cNum: 1, note: 'Event 1 of New Volume' };
+}
+
+function conquestOrdinal(cNum){
+  return cNum === 1 ? '1st' : cNum === 2 ? '2nd' : cNum === 3 ? '3rd' : `${cNum}th`;
+}
+
 function conquestInfoForDay(episode, dayInEp){
-  if(dayInEp < 7 || dayInEp > 20) return null;
-  let cNum = 1, note = '';
-  if(episode === 1){ cNum = 2; note = 'Event 2 of Volume'; }
-  else if(episode === 2){ cNum = 3; note = 'Event 3 of Volume (Final)'; }
-  else { cNum = 1; note = 'Event 1 of New Volume'; }
-  return { active: true, day: dayInEp - 6, total: 14, cNum, note, finalDay: dayInEp === 20 };
+  const start = conquestStartDay(), end = conquestEndDay();
+  if(dayInEp < start || dayInEp > end) return null;
+  const { cNum, note } = conquestChapterForEpisode(episode);
+  const total = (typeof CONQUEST_DURATION_DAYS !== 'undefined') ? CONQUEST_DURATION_DAYS : (end - start + 1);
+  return { active: true, day: dayInEp - start + 1, total, cNum, note, finalDay: dayInEp === end };
 }
 
 function getConquestStatus(st){
+  const start = conquestStartDay(), end = conquestEndDay();
+  const total = (typeof CONQUEST_DURATION_DAYS !== 'undefined') ? CONQUEST_DURATION_DAYS : (end - start + 1);
+  const episodeCount = Math.ceil(ERA_LENGTH_DAYS / EPISODE_LENGTH_DAYS);
   let targetEp = st.episode;
   let targetDay = st.dayInEp;
   let isUpcomingNextEp = false;
-  
-  // If we are past Day 21, the current episode's conquest is over.
-  // We point the dashboard to the NEXT episode's conquest.
-  if (targetDay > 21) {
-    targetEp = targetEp === 3 ? 1 : targetEp + 1;
+
+  // If we are past the Proving Grounds day, the current episode's
+  // conquest is over. Point the dashboard at the NEXT episode's run.
+  const overDay = end + 1;
+  if (targetDay > overDay) {
+    targetEp = targetEp >= episodeCount ? 1 : targetEp + 1;
     isUpcomingNextEp = true;
   }
 
   // Map the Episode to the correct Conquest Chapter Number
-  // Ep 1 = Chapter 2 | Ep 2 = Chapter 3 | Ep 3 = Chapter 1
-  let cNum = 1;
-  let titleNote = '';
-  if (targetEp === 1) { cNum = 2; titleNote = 'Event 2 of Volume'; }
-  else if (targetEp === 2) { cNum = 3; titleNote = 'Event 3 of Volume (Final)'; }
-  else if (targetEp === 3) { cNum = 1; titleNote = 'Event 1 of New Volume'; }
+  const { cNum, note: titleNote } = conquestChapterForEpisode(targetEp);
 
   if (isUpcomingNextEp) {
-    const daysUntil = (EPISODE_LENGTH_DAYS - st.dayInEp) + 7;
+    const daysUntil = (EPISODE_LENGTH_DAYS - st.dayInEp) + start;
     return {
       status: 'UPCOMING', badgeClass: 'purple', title: titleNote,
       main: `Starts in ${daysUntil} days`,
       sub: `Conquest Run ${cNum} will begin.`,
       cNum: cNum
     };
-  } else if (targetDay < 7) {
+  } else if (targetDay < start) {
     return {
       status: 'UPCOMING', badgeClass: 'purple', title: titleNote,
-      main: `Starts in ${7 - targetDay} days`,
+      main: `Starts in ${start - targetDay} days`,
       sub: `Event ${cNum} Starts`,
       cNum: cNum
     };
-  } else if (targetDay >= 7 && targetDay <= 20) {
-    const cqDay = targetDay - 6;
-    const remaining = 20 - targetDay;
+  } else if (targetDay >= start && targetDay <= end) {
+    const cqDay = targetDay - start + 1;
+    const remaining = end - targetDay;
     return {
       status: remaining === 0 ? 'FINAL DAY' : 'ACTIVE',
       badgeClass: 'purple', title: titleNote,
-      main: `Conquest Day ${cqDay} of 14`,
+      main: `Conquest Day ${cqDay} of ${total}`,
       sub: remaining === 0 ? 'Proving Grounds starts in 1 day' : `Ends in ${remaining} days`,
       cNum: cNum
     };
-  } else if (targetDay === 21) {
+  } else if (targetDay === overDay) {
     return {
       status: 'EVENT OVER', badgeClass: 'purple', title: titleNote,
       main: 'Proving Grounds Active',
@@ -717,6 +794,61 @@ function scanBackwardForGuildEvents(st, maxDays){
     if(twFound && tbFound) break;
   }
   return { tw: twFound, tb: tbFound };
+}
+
+/* Maintainer aid: checks config.js for the mistakes that silently break
+   the schedule (bad dates, empty lists, out-of-range days). Returns an
+   array of human-readable issue strings — empty means healthy. app.js
+   logs these to the console on load. */
+function validateScheduleConfig(){
+  const issues = [];
+  const isDateStr = v => typeof v === 'string' && Number.isFinite(Date.parse(v + 'T00:00:00Z'));
+
+  if(!isDateStr(typeof ERA_START_DATE !== 'undefined' ? ERA_START_DATE : null))
+    issues.push('ERA_START_DATE is missing or not YYYY-MM-DD.');
+  if(!Number.isInteger(ERA_LENGTH_DAYS) || ERA_LENGTH_DAYS <= 0)
+    issues.push('ERA_LENGTH_DAYS must be a positive integer.');
+  if(!Number.isInteger(EPISODE_LENGTH_DAYS) || EPISODE_LENGTH_DAYS <= 0)
+    issues.push('EPISODE_LENGTH_DAYS must be a positive integer.');
+  if(Number.isInteger(ERA_LENGTH_DAYS) && Number.isInteger(EPISODE_LENGTH_DAYS) && EPISODE_LENGTH_DAYS > ERA_LENGTH_DAYS)
+    issues.push('EPISODE_LENGTH_DAYS is longer than ERA_LENGTH_DAYS.');
+  if(!isDateStr(typeof GAC_CYCLE_START_DATE !== 'undefined' ? GAC_CYCLE_START_DATE : null))
+    issues.push('GAC_CYCLE_START_DATE is missing or not YYYY-MM-DD.');
+  if(!isDateStr(typeof TB_SIDE_ANCHOR_DATE !== 'undefined' ? TB_SIDE_ANCHOR_DATE : null))
+    issues.push('TB_SIDE_ANCHOR_DATE is missing or not YYYY-MM-DD.');
+  if(!(TB_RUN_GAP_DAYS > 0))
+    issues.push('TB_RUN_GAP_DAYS must be positive.');
+
+  if(!Array.isArray(DATACRON_SETS) || DATACRON_SETS.length === 0){
+    issues.push('DATACRON_SETS is empty — the datacron card has nothing to show.');
+  } else {
+    const colors = (typeof CRON_COLOR_META !== 'undefined') ? Object.keys(CRON_COLOR_META) : [];
+    DATACRON_SETS.forEach((s, i) => {
+      if(!s || !s.name) issues.push(`DATACRON_SETS[${i}] is missing a name.`);
+      if(colors.length && !colors.includes(s.color)) issues.push(`DATACRON_SETS[${i}] has unknown color "${s.color}".`);
+      if(!isDateStr(s && s.expires)) issues.push(`DATACRON_SETS[${i}] has a bad expires date.`);
+    });
+  }
+
+  if(!Array.isArray(CONQUEST_END_OFFSETS) || CONQUEST_END_OFFSETS.length === 0)
+    issues.push('CONQUEST_END_OFFSETS is empty — the conquest unlock card degrades to today.');
+  if(!Array.isArray(ERA_START_OFFSETS) || ERA_START_OFFSETS.length === 0)
+    issues.push('ERA_START_OFFSETS is empty — the era unlock card degrades to today.');
+
+  const cs = conquestStartDay(), ce = conquestEndDay();
+  if(!(cs >= 1 && ce >= cs && ce <= EPISODE_LENGTH_DAYS))
+    issues.push('Conquest days must satisfy 1 <= START <= END <= EPISODE_LENGTH_DAYS.');
+
+  if(typeof TB_DEFS === 'undefined' || !TB_DEFS || Object.keys(TB_DEFS).length === 0){
+    issues.push('TB_DEFS is empty — Territory Battle labels cannot resolve.');
+  } else {
+    Object.entries(TB_DEFS).forEach(([id, def]) => {
+      if(!def || !(def.phases > 0) || !(def.hoursPerPhase > 0))
+        issues.push(`TB_DEFS["${id}"] needs positive phases and hoursPerPhase.`);
+    });
+  }
+
+  return issues;
 }
 
 function getGuildPhaseInfo(st){

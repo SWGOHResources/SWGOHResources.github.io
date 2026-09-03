@@ -3,9 +3,11 @@
 function tickCountdown(){
   const now = new Date();
   const nowMs = now.getTime();
-  
-  // Standard daily changeover at 18:00 UTC
-  let nextChangeoverMs = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 18, 0, 0, 0);
+  const stdH = (typeof stdHour === 'function') ? stdHour() : 18;
+  const gacH = (typeof gacHour === 'function') ? gacHour() : 21;
+
+  // Standard daily changeover (STD_CHANGEOVER_HOUR_UTC)
+  let nextChangeoverMs = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), stdH, 0, 0, 0);
   if (nowMs >= nextChangeoverMs) {
     nextChangeoverMs += 86400000;
   }
@@ -16,12 +18,13 @@ function tickCountdown(){
   const s = Math.floor((diff % 60000) / 1000);
 
   const pad = n => String(n).padStart(2, '0');
-  document.getElementById('countdown').textContent = `${pad(h)}:${pad(m)}:${pad(s)}`;
+  const cdEl = document.getElementById('countdown');
+  if(cdEl) cdEl.textContent = `${pad(h)}:${pad(m)}:${pad(s)}`;
 
-  // Refresh automatically if 18:00 UTC or 21:00 UTC changeover just occurred
+  // Refresh automatically if a standard or GAC changeover just occurred
   // (compare against the most recent past changeover, not the next future one)
   const prevStdChangeoverMs = nextChangeoverMs - 86400000;
-  let prevGacChangeoverMs = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 21, 0, 0, 0);
+  let prevGacChangeoverMs = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), gacH, 0, 0, 0);
   if (nowMs < prevGacChangeoverMs) prevGacChangeoverMs -= 86400000;
   if (nowMs - prevStdChangeoverMs < 2000 || nowMs - prevGacChangeoverMs < 2000) {
     renderAll();
@@ -119,10 +122,15 @@ document.getElementById('openAboutBtnMobile')?.addEventListener('click', () => o
 document.getElementById('closeAboutBtn')?.addEventListener('click', () => closeModal(aboutModal));
 document.getElementById('closeAboutBtn2')?.addEventListener('click', () => closeModal(aboutModal));
 
-scheduleModal.addEventListener('click', e => { if(e.target === scheduleModal) closeModal(scheduleModal); });
-aboutModal.addEventListener('click', e => { if(e.target === aboutModal) closeModal(aboutModal); });
+scheduleModal?.addEventListener('click', e => { if(e.target === scheduleModal) closeModal(scheduleModal); });
+aboutModal?.addEventListener('click', e => { if(e.target === aboutModal) closeModal(aboutModal); });
 
 function copyDiscordHandle(btnEl) {
+  if(!btnEl) return;
+  if(!navigator.clipboard || !navigator.clipboard.writeText){
+    alert('Discord username: granddom');
+    return;
+  }
   navigator.clipboard.writeText('granddom').then(() => {
     const originalText = btnEl.innerHTML;
     btnEl.classList.add('copied');
@@ -153,18 +161,23 @@ function setTbChoice(id, side){
   }
 }
 
-/* Mobile Nav Panel */
+/* Mobile Nav Panel (null-safe: a missing toggle must not halt init) */
 const navToggle = document.getElementById('navToggle');
 
 const mobilePanel = document.getElementById('mobilePanel');
 
-function closeMobilePanel(){ navToggle.classList.remove('open'); mobilePanel.classList.remove('open'); navToggle.setAttribute('aria-expanded', 'false'); }
-navToggle.onclick = () => {
-  const willOpen = !mobilePanel.classList.contains('open');
-  navToggle.classList.toggle('open', willOpen);
-  mobilePanel.classList.toggle('open', willOpen);
-  navToggle.setAttribute('aria-expanded', String(willOpen));
-};
+function closeMobilePanel(){
+  if(!navToggle || !mobilePanel) return;
+  navToggle.classList.remove('open'); mobilePanel.classList.remove('open'); navToggle.setAttribute('aria-expanded', 'false');
+}
+if(navToggle && mobilePanel){
+  navToggle.addEventListener('click', () => {
+    const willOpen = !mobilePanel.classList.contains('open');
+    navToggle.classList.toggle('open', willOpen);
+    mobilePanel.classList.toggle('open', willOpen);
+    navToggle.setAttribute('aria-expanded', String(willOpen));
+  });
+}
 
 /* Display timezone picker (header + mobile panel). Defaults to the
    device's timezone; the choice persists and re-renders all dates. */
@@ -207,10 +220,8 @@ function onTzChange(sel){
   sel.addEventListener('change', () => onTzChange(sel));
 });
 
-const footerMetaEl = document.getElementById('footerMeta');
-if(footerMetaEl){
-  footerMetaEl.textContent = `Resets 18:00 UTC daily · showing ${tzDisplayName()} · loaded ${new Date(dms(Date.now())).toLocaleString('en-GB', { timeZone: tz(), hour12: false })}`;
-}
+/* footerMeta is refreshed on every renderAll() via updateFooterMeta()
+   (render.js) so it never goes stale after a tz change or rollover. */
 
 const footerYearEl = document.getElementById('footerYear');
 if(footerYearEl){ footerYearEl.textContent = `© ${new Date().getFullYear()} SWGOH::RESOURCES`; }
@@ -227,6 +238,13 @@ if(footerYearEl){ footerYearEl.textContent = `© ${new Date().getFullYear()} SWG
     field.appendChild(s);
   }
 })();
+
+/* Surface config mistakes early: the next era edit shows up here
+   instead of as a silently wrong schedule. */
+if(typeof validateScheduleConfig === 'function'){
+  const configIssues = validateScheduleConfig();
+  if(configIssues.length) console.warn('[swgoh-schedule] config issues:\n- ' + configIssues.join('\n- '));
+}
 
 renderAll();
 tickCountdown();
