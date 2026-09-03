@@ -182,7 +182,7 @@ function onTzChange(sel){
 
 const footerMetaEl = document.getElementById('footerMeta');
 if(footerMetaEl){
-  footerMetaEl.textContent = `Resets 18:00 UTC daily · showing ${tzDisplayName()} · loaded ${new Date().toLocaleString('en-GB', { timeZone: tz(), hour12: false })}`;
+  footerMetaEl.textContent = `Resets 18:00 UTC daily · showing ${tzDisplayName()} · loaded ${new Date(dms(Date.now())).toLocaleString('en-GB', { timeZone: tz(), hour12: false })}`;
 }
 
 const footerYearEl = document.getElementById('footerYear');
