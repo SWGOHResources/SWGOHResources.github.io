@@ -383,7 +383,10 @@ function nextOccurrenceAbs(offsetsInCycle, fromAbsDay, cycleLen){
   // day so callers degrade to "today" instead of hanging the page.
   if(!Array.isArray(offsetsInCycle) || offsetsInCycle.length === 0) return fromAbsDay;
   if(!Number.isFinite(cycleLen) || cycleLen <= 0) return fromAbsDay;
-  const sorted = [...offsetsInCycle].sort((a, b) => a - b);
+  const sorted = offsetsInCycle
+    .filter(offset => Number.isInteger(offset) && offset >= 1 && offset <= cycleLen)
+    .sort((a, b) => a - b);
+  if(!sorted.length) return fromAbsDay;
   let k = Math.floor((fromAbsDay - 1) / cycleLen);
   while(true){
     for(const o of sorted){
@@ -888,6 +891,16 @@ function validateScheduleConfig(){
     issues.push('CONQUEST_END_OFFSETS is empty — the conquest unlock card degrades to today.');
   if(!Array.isArray(eraStartOffsets) || eraStartOffsets.length === 0)
     issues.push('ERA_START_OFFSETS is empty — the era unlock card degrades to today.');
+
+  const checkOffsets = (name, offsets) => {
+    if(!Array.isArray(offsets) || !Number.isInteger(eraLength) || eraLength <= 0) return;
+    offsets.forEach((offset, i) => {
+      if(!Number.isInteger(offset) || offset < 1 || offset > eraLength)
+        issues.push(`${name}[${i}] must be an integer from 1 to ERA_LENGTH_DAYS.`);
+    });
+  };
+  checkOffsets('CONQUEST_END_OFFSETS', conquestEndOffsets);
+  checkOffsets('ERA_START_OFFSETS', eraStartOffsets);
 
   const cs = conquestStartDay(), ce = conquestEndDay();
   if(!(cs >= 1 && ce >= cs && ce <= episodeLength))

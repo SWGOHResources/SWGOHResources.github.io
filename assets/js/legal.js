@@ -80,3 +80,8 @@ function copyDiscordHandle(button){
     }, 2000);
   }).catch(() => alert('Discord username: granddom'));
 }
+
+document.getElementById('footerMeta')?.remove();
+document.querySelector('.footer-bottom .dot')?.remove();
+const footerYear = document.getElementById('footerYear');
+if(footerYear) footerYear.textContent = `© ${new Date().getFullYear()} SWGOH::RESOURCES`;
