@@ -437,6 +437,19 @@ body.modal-open .starfield span {
 }
 .xcard-date { font-family: var(--mono); font-size: 11px; color: var(--text2); margin-top: 6px; }
 
+/* ─── Guild TB picker (on TB Phase-1 cards) ─── */
+.tb-pick { margin-top: 8px; border-top: 1px solid var(--border); padding-top: 8px; }
+.tb-pick-label { display: block; font-family: var(--body); font-size: 9.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text3); margin-bottom: 6px; }
+.tb-pick-btns { display: flex; flex-direction: column; gap: 4px; }
+.tb-pick-btn {
+  font-family: var(--body); font-size: 11px; font-weight: 600; text-align: left;
+  padding: 6px 9px; border-radius: var(--radius); cursor: pointer;
+  background: var(--void3); border: 1px solid var(--border); color: var(--text2);
+  transition: 0.15s;
+}
+.tb-pick-btn:hover { border-color: var(--accent-border, var(--border2)); color: var(--text); }
+.tb-pick-btn.active { border-color: var(--accent-border, var(--border2)); color: var(--accent, var(--text)); background: var(--accent-dim, var(--void3)); }
+
 .empty-note { font-family: var(--body); font-size: 12px; color: var(--text3); padding: 16px 0; }
 
 /* ─── Full Era Timeline (modal) ─── */

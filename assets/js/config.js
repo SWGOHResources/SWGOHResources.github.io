@@ -59,7 +59,7 @@ const JOURNEY_GUIDE_UNIT = 'Darth Jar Jar';
 // Image base + unit tile images (paths relative to IMG_BASE in assets/img/)
 const IMG_BASE = 'assets/img/';
 const CONQUEST_UNIT_IMAGE = 'events/conquest.png';
-const ERA_UNIT_IMAGE = 'events/erajourney.png';
+const ERA_UNIT_IMAGE = 'events/eraicon.png';
 
 function ev(icon, label){
   if(icon.startsWith('marquee_')) {
@@ -184,8 +184,8 @@ const EVENT_ICONS = {
   tw_defense: 'events/tw.png',
   tw_offense: 'events/tw.png',
   tw_payout: 'events/tw.png',
-  rote: 'events/tb.png',
-  tb_ends: 'events/tb.png',
+  rote: 'tb/rise-of-the-empire.png',
+  tb_ends: 'tb/rise-of-the-empire.png',
   smugglersrun: 'events/smugglersrun.png',
   gac_signup: 'events/gac.png',
   gac_defense: 'events/gac.png',
@@ -241,3 +241,29 @@ const GUILD_SUBLABEL = {
   rote: 'TB', tb_ends: 'TB',
   smugglersrun: 'SR'
 };
+
+/* =========================================================
+ TERRITORY BATTLE ROTATION (Light / Dark sides alternate)
+  A TB run starts on day 7 and day 21 of every episode (6 per
+  era). The Light/Dark side flips every run, forever. Anchor:
+  the run starting 2026-08-31 (Era day 35) is Light-side.
+  Each run a guild picks 1 of 3: the side's two TBs + Rise of
+  the Empire (a Neutral TB, selectable on either rotation).
+  Hoth TBs + RotE run 6 phases x 24h. Separatist Might /
+  Republic Offensive run 4 phases x 36h (same 6-day span).
+  Art lives in assets/img/tb/ (kebab-case .png).
+  ========================================================= */
+
+const TB_SIDE_ANCHOR_DATE = '2026-08-31'; // Phase-1 day of a Light-side run
+const TB_SIDE_ANCHOR_SIDE = 'light';
+const TB_RUN_GAP_DAYS = 14;
+
+const TB_DEFS = {
+  rebel_assault:       { name: 'Rebel Assault',       side: 'light',  tier: 'Hoth',  phases: 6, hoursPerPhase: 24, art: 'tb/hoth-rebel-assault.png' },
+  imperial_retaliation:{ name: 'Imperial Retaliation',side: 'dark',   tier: 'Hoth',  phases: 6, hoursPerPhase: 24, art: 'tb/hoth-imperial-retaliation.png' },
+  republic_offensive:  { name: 'Republic Offensive',  side: 'light',  tier: 'Tier 2',phases: 4, hoursPerPhase: 36, art: 'tb/geonosis-republic-offensive.png' },
+  separatist_might:    { name: 'Separatist Might',    side: 'dark',   tier: 'Tier 2',phases: 4, hoursPerPhase: 36, art: 'tb/separatist-might.png' },
+  rote:                { name: 'Rise of the Empire',  side: 'neutral', tier: 'Final', phases: 6, hoursPerPhase: 24, art: 'tb/rise-of-the-empire.png' },
+};
+
+const TB_CHOICE_STORAGE_KEY = 'swgoh-tb-choice';
