@@ -247,6 +247,7 @@ function jumpExplorer(offset){
 function explorerCardHTML(item, dateMs, relLabel){
   const cat = categoryFor(item.icon);
   const meta = CATEGORY_META[cat];
+  const tag = tagFor(item.icon);
   const asset = assetFor(item.icon);
   const style = `--accent:${meta.accent};--accent-dim:${meta.dim};--accent-border:${meta.border}`;
   const imgTag = asset ? `<img src="${IMG_BASE}${asset}" alt="" loading="lazy" onerror="this.remove()">` : '';
@@ -254,10 +255,10 @@ function explorerCardHTML(item, dateMs, relLabel){
 
   return `<article class="xcard" style="${style}">
     <div class="xcard-art">
-      <div class="art-badge">${meta.glyph}</div>
+      <div class="art-badge">${tag.glyph}</div>
       ${imgTag}
       <div class="xcard-shade"></div>
-      <span class="xcard-cat">${meta.label}</span>
+      <span class="xcard-cat">${tag.label}</span>
       <span class="${relCls}">${relLabel}</span>
     </div>
     <div class="xcard-body">

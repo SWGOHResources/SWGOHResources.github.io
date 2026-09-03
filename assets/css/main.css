@@ -162,6 +162,27 @@ body.modal-open .starfield span {
 
 .wrap { max-width: 1180px; margin: 0 auto; padding: 24px; position: relative; z-index: 1; width: 100%; flex: 1; }
 
+/* ─── Expected-dates notice ─── */
+.notice-bar {
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  background: var(--amber-dim); border: 1px solid var(--amber-border);
+  border-radius: var(--radius-lg); padding: 12px 16px; margin-bottom: 20px;
+}
+.notice-dot {
+  flex: 0 0 auto; width: 26px; height: 26px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--amber); color: #1a1104;
+  font-family: var(--disp); font-size: 15px; font-weight: 800;
+}
+.notice-bar p { flex: 1; min-width: 200px; font-size: 12.5px; color: var(--text); }
+.notice-bar p strong { color: var(--amber); }
+.notice-bar a {
+  flex: 0 0 auto; font-family: var(--body); font-size: 12px; font-weight: 700;
+  color: #1a1104; background: var(--amber); border-radius: var(--radius);
+  padding: 8px 14px; text-decoration: none; transition: 0.15s; white-space: nowrap;
+}
+.notice-bar a:hover { background: #ebd076; }
+
 /* ─── Era Banner ─── */
 .merged-hero {
   position: relative; overflow: hidden;

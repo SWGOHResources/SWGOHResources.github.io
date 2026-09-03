@@ -78,6 +78,15 @@ function categoryFor(icon){
   return 'era'; 
 }
 
+/* Card tag: per-event override when the display name differs from the
+   owning category, otherwise the category label/glyph. */
+function tagFor(icon){
+  const override = (typeof TAG_OVERRIDES !== 'undefined' && TAG_OVERRIDES[icon]) || null;
+  if(override) return override;
+  const meta = CATEGORY_META[categoryFor(icon)];
+  return { label: meta.label, glyph: meta.glyph };
+}
+
 function getGameStatus(){
   const now = new Date();
   const nowMs = now.getTime();
