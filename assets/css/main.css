@@ -162,26 +162,23 @@ body.modal-open .starfield span {
 
 .wrap { max-width: 1180px; margin: 0 auto; padding: 24px; position: relative; z-index: 1; width: 100%; flex: 1; }
 
-/* ─── Expected-dates notice ─── */
-.notice-bar {
-  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+/* ─── Explorer inline note (scoped to Schedule only) ─── */
+.explorer-note {
+  display: flex; align-items: center; gap: 10px;
   background: var(--amber-dim); border: 1px solid var(--amber-border);
-  border-radius: var(--radius-lg); padding: 12px 16px; margin-bottom: 20px;
+  border-radius: var(--radius); padding: 8px 12px; margin-bottom: 12px;
 }
-.notice-dot {
-  flex: 0 0 auto; width: 26px; height: 26px; border-radius: 50%;
+.en-dot {
+  flex: 0 0 auto; width: 20px; height: 20px; border-radius: 50%;
   display: inline-flex; align-items: center; justify-content: center;
   background: var(--amber); color: #1a1104;
-  font-family: var(--disp); font-size: 15px; font-weight: 800;
+  font-family: var(--disp); font-size: 12px; font-weight: 800;
 }
-.notice-bar p { flex: 1; min-width: 200px; font-size: 12.5px; color: var(--text); }
-.notice-bar p strong { color: var(--amber); }
-.notice-bar a {
-  flex: 0 0 auto; font-family: var(--body); font-size: 12px; font-weight: 700;
-  color: #1a1104; background: var(--amber); border-radius: var(--radius);
-  padding: 8px 14px; text-decoration: none; transition: 0.15s; white-space: nowrap;
+.explorer-note p { flex: 1; min-width: 0; font-size: 12px; color: var(--text2); line-height: 1.5; }
+.explorer-note p a {
+  color: var(--amber); font-weight: 700; text-decoration: none; white-space: nowrap;
 }
-.notice-bar a:hover { background: #ebd076; }
+.explorer-note p a:hover { text-decoration: underline; }
 
 /* ─── Era Banner ─── */
 .merged-hero {
@@ -581,7 +578,7 @@ body.modal-open .starfield span {
 
 /* ─── Footer ─── */
 .site-footer {
-  position: relative; z-index: 1; flex-shrink: 0; margin-top: 56px;
+  position: relative; z-index: 1; flex-shrink: 0; margin-top: 16px;
   border-top: 1px solid var(--border); background: var(--void1);
 }
 .footer-inner { max-width: 1180px; margin: 0 auto; padding: 30px 24px 22px; display: flex; flex-direction: column; gap: 22px; }
