@@ -100,6 +100,12 @@ test('schedule lookups degrade instead of hanging on empty offsets', () => {
   assert.equal(engine.nextOccurrenceAbs(null, 50, 84), 50);
 });
 
+test('schedule lookups degrade on invalid offsets', () => {
+  const engine = loadTimeEngine();
+  assert.equal(engine.nextOccurrenceAbs([NaN, Infinity, 0, 85], 50, 84), 50);
+  assert.ok(engine.validateScheduleConfig().every(issue => !issue.includes('OFFSETS')));
+});
+
 test('era unlock lookup skips an era that starts today', () => {
   const engine = loadTimeEngine();
   assert.equal(engine.nextOccurrenceAbs([1], 1, 84), 1);
