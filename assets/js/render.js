@@ -59,10 +59,10 @@ function renderUnlockWindows(st){
       <div class="uw-body" style="--accent:var(--purple);--accent-dim:var(--purple-dim);--accent-border:var(--purple-border)">
         <div class="uw-img"><div class="art-badge">CQ</div><img src="${IMG_BASE}${CONQUEST_UNIT_IMAGE}" onerror="this.remove()"></div>
         <div class="uw-text">
-          <div class="sc-main"><div class="sc-val">Unlocks ${withOrdinal(new Date(cqDateMs).toLocaleDateString('en-GB',{day:'numeric',month:'short'}))}</div><div class="sc-sub">Conquest Unit can be unlocked</div></div>
+          <div class="sc-main"><div class="sc-val">Unlocks ${withOrdinal(new Date(cqDateMs).toLocaleDateString('en-GB',{timeZone: tz(),day:'numeric',month:'short'}))}</div><div class="sc-sub">Conquest Unit can be unlocked</div></div>
           <div class="sc-footer" style="flex-direction:column;align-items:flex-start;gap:2px;">
             <span>Usable in GAC: <span class="highlight">Week ${cqGacWeek} (${cqGac.format})</span></span>
-            <span>Roster Locks: ${withOrdinal(new Date(cqNextSignupDate).toLocaleDateString('en-GB',{day:'numeric',month:'short'}))} (Defense Starts)</span>
+            <span>Roster Locks: ${withOrdinal(new Date(cqNextSignupDate).toLocaleDateString('en-GB',{timeZone: tz(),day:'numeric',month:'short'}))} (Defense Starts)</span>
           </div>
         </div>
       </div>
@@ -72,10 +72,10 @@ function renderUnlockWindows(st){
       <div class="uw-body" style="--accent:var(--orange);--accent-dim:var(--orange-dim);--accent-border:var(--orange-border)">
         <div class="uw-img"><div class="art-badge">ERA</div><img src="${IMG_BASE}${ERA_UNIT_IMAGE}" onerror="this.remove()"></div>
         <div class="uw-text">
-          <div class="sc-main"><div class="sc-val">Starts ${withOrdinal(new Date(eraDateMs).toLocaleDateString('en-GB',{day:'numeric',month:'short'}))}</div><div class="sc-sub">Era Units can be used in Legacy Gamemodes</div></div>
+          <div class="sc-main"><div class="sc-val">Starts ${withOrdinal(new Date(eraDateMs).toLocaleDateString('en-GB',{timeZone: tz(),day:'numeric',month:'short'}))}</div><div class="sc-sub">Era Units can be used in Legacy Gamemodes</div></div>
           <div class="sc-footer" style="flex-direction:column;align-items:flex-start;gap:2px;">
              <span>Usable in GAC: <span class="highlight">Week ${eraGacWeek} (${eraGac.format})</span></span>
-             <span>Roster Locks: ${withOrdinal(new Date(eraNextSignupDate).toLocaleDateString('en-GB',{day:'numeric',month:'short'}))} (Defense Starts)</span>
+             <span>Roster Locks: ${withOrdinal(new Date(eraNextSignupDate).toLocaleDateString('en-GB',{timeZone: tz(),day:'numeric',month:'short'}))} (Defense Starts)</span>
           </div>
         </div>
       </div>
@@ -90,7 +90,7 @@ function renderUnlockWindows(st){
             <div class="sc-sub">This Datacron Set will expire to your inbox</div>
           </div>
           <div class="sc-footer" style="flex-direction:column;align-items:flex-start;gap:2px;">
-            <span>Expires: <span class="highlight">${withOrdinal(new Date(cron.expiresMs).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}))}</span></span>
+            <span>Expires: <span class="highlight">${withOrdinal(new Date(cron.expiresMs).toLocaleDateString('en-GB',{timeZone: tz(),day:'numeric',month:'short',year:'numeric'}))}</span></span>
             <span>Last usable: <span class="highlight">${lastUsableLabel}</span></span>
           </div>
         </div>
@@ -313,14 +313,14 @@ function renderExplorer(st){
   let pills = '';
   for(let o = winStart; o < winStart + EXPLORER_WINDOW; o++){
     const d = explorerDayAt(st, o);
-    const dt = new Date(d.dMs);
+    const parts = tzDayParts(d.dMs);
     const cls = 'day-pill'
       + (o === 0 ? ' is-today' : '')
       + (o === explorerOffset ? ' is-selected' : '')
       + (d.items.length ? ' has-events' : '');
     pills += `<button type="button" class="${cls}" onclick="jumpExplorer(${o})" aria-label="${fmtDateUTC(d.dMs)}${o === 0 ? ', today' : ''}">`
-      + `<span class="dp-dow">${WEEKDAY_SHORT[dt.getUTCDay()]}</span>`
-      + `<span class="dp-num">${dt.getUTCDate()}</span>`
+      + `<span class="dp-dow">${parts.dow}</span>`
+      + `<span class="dp-num">${parts.num}</span>`
       + `<span class="dp-dot"></span></button>`;
   }
   strip.innerHTML = pills;
@@ -462,4 +462,5 @@ function renderAll(){
   renderUnlockWindows(st);
   renderExplorer(st);
   renderFullSchedule(st);
+  if(typeof syncTzSelects === 'function') syncTzSelects();
 }
