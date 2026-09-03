@@ -20,11 +20,10 @@ function getMonthlyEvents(dateMs){
   Day 7 (Mon): R3 Offense
   ========================================================= */
 
-function gacInfoForDate(dateMs){
+function gacInfoForTimestamp(timestampMs){
   const [gy, gm, gd] = GAC_CYCLE_START_DATE.split('-').map(Number);
   const gacStartMs = Date.UTC(gy, gm - 1, gd, 21, 0, 0); 
-  const alignedMs = dateMs + (21 * 3600000); 
-  const diffMs = alignedMs - gacStartMs;
+  const diffMs = timestampMs - gacStartMs;
   
   const rawDays = Math.floor(diffMs / 86400000);
   const cycleDay = ((rawDays % 28) + 28) % 28 + 1;
@@ -32,6 +31,10 @@ function gacInfoForDate(dateMs){
   
   const format = (cycleNum % 2 === 0) ? '5v5' : '3v3'; 
   return { cycleDay, cycleNum, format, rawDays };
+}
+
+function gacInfoForDate(dateMs){
+  return gacInfoForTimestamp(dateMs + (21 * 3600000));
 }
 
 function getGacRoundInfo(cycleDay){
@@ -259,8 +262,10 @@ function getGameStatus(){
   const activeDayObj = new Date(dms(currentDayStartMs));
   const weekdayName = WEEKDAY_NAMES[activeDayObj.getUTCDay()];
 
-  // 2) GAC Cycle — independent 28-day cycle, own reference date, own changeover (21:00 UTC)
-  const gacInfo = gacInfoForDate(currentDayStartMs);
+  // 2) GAC Cycle — independent 28-day cycle, own reference date, own changeover (21:00 UTC).
+  // Use the live timestamp so GAC remains on the previous phase between the
+  // 18:00 era reset and its own 21:00 reset.
+  const gacInfo = gacInfoForTimestamp(nowMs);
 
   return {
     nowMs,
