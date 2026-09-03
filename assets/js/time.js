@@ -11,11 +11,17 @@ function posMod(n, m){
    key degrades to the long-standing defaults instead of NaN-poisoning
    every date on the page. */
 function stdHour(){
-  return (typeof STD_CHANGEOVER_HOUR_UTC !== 'undefined') ? STD_CHANGEOVER_HOUR_UTC : 18;
+  return (typeof STD_CHANGEOVER_HOUR_UTC !== 'undefined'
+    && Number.isInteger(STD_CHANGEOVER_HOUR_UTC)
+    && STD_CHANGEOVER_HOUR_UTC >= 0 && STD_CHANGEOVER_HOUR_UTC < 24)
+    ? STD_CHANGEOVER_HOUR_UTC : 18;
 }
 
 function gacHour(){
-  return (typeof GAC_CHANGEOVER_HOUR_UTC !== 'undefined') ? GAC_CHANGEOVER_HOUR_UTC : 21;
+  return (typeof GAC_CHANGEOVER_HOUR_UTC !== 'undefined'
+    && Number.isInteger(GAC_CHANGEOVER_HOUR_UTC)
+    && GAC_CHANGEOVER_HOUR_UTC >= 0 && GAC_CHANGEOVER_HOUR_UTC < 24)
+    ? GAC_CHANGEOVER_HOUR_UTC : 21;
 }
 
 function conquestStartDay(){
@@ -27,11 +33,17 @@ function conquestEndDay(){
 }
 
 function conquestLockOffsetDays(){
-  return (typeof CONQUEST_ROSTER_LOCK_OFFSET_DAYS !== 'undefined') ? CONQUEST_ROSTER_LOCK_OFFSET_DAYS : 2;
+  return (typeof CONQUEST_ROSTER_LOCK_OFFSET_DAYS !== 'undefined'
+    && Number.isInteger(CONQUEST_ROSTER_LOCK_OFFSET_DAYS)
+    && CONQUEST_ROSTER_LOCK_OFFSET_DAYS >= 0)
+    ? CONQUEST_ROSTER_LOCK_OFFSET_DAYS : 2;
 }
 
 function eraLockOffsetDays(){
-  return (typeof ERA_ROSTER_LOCK_OFFSET_DAYS !== 'undefined') ? ERA_ROSTER_LOCK_OFFSET_DAYS : 1;
+  return (typeof ERA_ROSTER_LOCK_OFFSET_DAYS !== 'undefined'
+    && Number.isInteger(ERA_ROSTER_LOCK_OFFSET_DAYS)
+    && ERA_ROSTER_LOCK_OFFSET_DAYS >= 0)
+    ? ERA_ROSTER_LOCK_OFFSET_DAYS : 1;
 }
 
 function getMonthlyEvents(dateMs){
@@ -415,7 +427,7 @@ function getLastUsableGuildEvent(expiresMs, eraBaseStartMs){
     const items = getEventsForDay(dayStartMs, info.episode, info.dayInEp);
     const usableItem = items.find(item => {
       if(!item.icon.startsWith('tw_') && !item.icon.startsWith('gac_')) return false;
-      const startHour = item.icon.startsWith('gac_') ? 21 : 18;
+      const startHour = item.icon.startsWith('gac_') ? gacHour() : stdHour();
       return dayStartMs + (startHour * 3600000) < expiresMs;
     });
     if(usableItem) return { item: usableItem, dateMs: dayStartMs };
@@ -803,40 +815,63 @@ function scanBackwardForGuildEvents(st, maxDays){
 function validateScheduleConfig(){
   const issues = [];
   const isDateStr = v => typeof v === 'string' && Number.isFinite(Date.parse(v + 'T00:00:00Z'));
+  const eraLength = typeof ERA_LENGTH_DAYS !== 'undefined' ? ERA_LENGTH_DAYS : null;
+  const episodeLength = typeof EPISODE_LENGTH_DAYS !== 'undefined' ? EPISODE_LENGTH_DAYS : null;
+  const tbRunGap = typeof TB_RUN_GAP_DAYS !== 'undefined' ? TB_RUN_GAP_DAYS : null;
+  const conquestLockOffset = typeof CONQUEST_ROSTER_LOCK_OFFSET_DAYS !== 'undefined'
+    ? CONQUEST_ROSTER_LOCK_OFFSET_DAYS : null;
+  const eraLockOffset = typeof ERA_ROSTER_LOCK_OFFSET_DAYS !== 'undefined'
+    ? ERA_ROSTER_LOCK_OFFSET_DAYS : null;
+  const datacronSets = typeof DATACRON_SETS !== 'undefined' ? DATACRON_SETS : null;
+  const conquestEndOffsets = typeof CONQUEST_END_OFFSETS !== 'undefined' ? CONQUEST_END_OFFSETS : null;
+  const eraStartOffsets = typeof ERA_START_OFFSETS !== 'undefined' ? ERA_START_OFFSETS : null;
 
   if(!isDateStr(typeof ERA_START_DATE !== 'undefined' ? ERA_START_DATE : null))
     issues.push('ERA_START_DATE is missing or not YYYY-MM-DD.');
-  if(!Number.isInteger(ERA_LENGTH_DAYS) || ERA_LENGTH_DAYS <= 0)
+  if(!Number.isInteger(eraLength) || eraLength <= 0)
     issues.push('ERA_LENGTH_DAYS must be a positive integer.');
-  if(!Number.isInteger(EPISODE_LENGTH_DAYS) || EPISODE_LENGTH_DAYS <= 0)
+  if(!Number.isInteger(episodeLength) || episodeLength <= 0)
     issues.push('EPISODE_LENGTH_DAYS must be a positive integer.');
-  if(Number.isInteger(ERA_LENGTH_DAYS) && Number.isInteger(EPISODE_LENGTH_DAYS) && EPISODE_LENGTH_DAYS > ERA_LENGTH_DAYS)
+  if(Number.isInteger(eraLength) && Number.isInteger(episodeLength) && episodeLength > eraLength)
     issues.push('EPISODE_LENGTH_DAYS is longer than ERA_LENGTH_DAYS.');
   if(!isDateStr(typeof GAC_CYCLE_START_DATE !== 'undefined' ? GAC_CYCLE_START_DATE : null))
     issues.push('GAC_CYCLE_START_DATE is missing or not YYYY-MM-DD.');
   if(!isDateStr(typeof TB_SIDE_ANCHOR_DATE !== 'undefined' ? TB_SIDE_ANCHOR_DATE : null))
     issues.push('TB_SIDE_ANCHOR_DATE is missing or not YYYY-MM-DD.');
-  if(!(TB_RUN_GAP_DAYS > 0))
+  if(!(tbRunGap > 0))
     issues.push('TB_RUN_GAP_DAYS must be positive.');
+  if(typeof CONQUEST_ROSTER_LOCK_OFFSET_DAYS !== 'undefined'
+    && (!Number.isInteger(conquestLockOffset) || conquestLockOffset < 0))
+    issues.push('CONQUEST_ROSTER_LOCK_OFFSET_DAYS must be a nonnegative integer.');
+  if(typeof ERA_ROSTER_LOCK_OFFSET_DAYS !== 'undefined'
+    && (!Number.isInteger(eraLockOffset) || eraLockOffset < 0))
+    issues.push('ERA_ROSTER_LOCK_OFFSET_DAYS must be a nonnegative integer.');
 
-  if(!Array.isArray(DATACRON_SETS) || DATACRON_SETS.length === 0){
+  if(typeof STD_CHANGEOVER_HOUR_UTC !== 'undefined'
+    && (stdHour() === 18 && STD_CHANGEOVER_HOUR_UTC !== 18))
+    issues.push('STD_CHANGEOVER_HOUR_UTC must be an integer from 0 to 23.');
+  if(typeof GAC_CHANGEOVER_HOUR_UTC !== 'undefined'
+    && (gacHour() === 21 && GAC_CHANGEOVER_HOUR_UTC !== 21))
+    issues.push('GAC_CHANGEOVER_HOUR_UTC must be an integer from 0 to 23.');
+
+  if(!Array.isArray(datacronSets) || datacronSets.length === 0){
     issues.push('DATACRON_SETS is empty — the datacron card has nothing to show.');
   } else {
     const colors = (typeof CRON_COLOR_META !== 'undefined') ? Object.keys(CRON_COLOR_META) : [];
-    DATACRON_SETS.forEach((s, i) => {
+    datacronSets.forEach((s, i) => {
       if(!s || !s.name) issues.push(`DATACRON_SETS[${i}] is missing a name.`);
       if(colors.length && !colors.includes(s.color)) issues.push(`DATACRON_SETS[${i}] has unknown color "${s.color}".`);
       if(!isDateStr(s && s.expires)) issues.push(`DATACRON_SETS[${i}] has a bad expires date.`);
     });
   }
 
-  if(!Array.isArray(CONQUEST_END_OFFSETS) || CONQUEST_END_OFFSETS.length === 0)
+  if(!Array.isArray(conquestEndOffsets) || conquestEndOffsets.length === 0)
     issues.push('CONQUEST_END_OFFSETS is empty — the conquest unlock card degrades to today.');
-  if(!Array.isArray(ERA_START_OFFSETS) || ERA_START_OFFSETS.length === 0)
+  if(!Array.isArray(eraStartOffsets) || eraStartOffsets.length === 0)
     issues.push('ERA_START_OFFSETS is empty — the era unlock card degrades to today.');
 
   const cs = conquestStartDay(), ce = conquestEndDay();
-  if(!(cs >= 1 && ce >= cs && ce <= EPISODE_LENGTH_DAYS))
+  if(!(cs >= 1 && ce >= cs && ce <= episodeLength))
     issues.push('Conquest days must satisfy 1 <= START <= END <= EPISODE_LENGTH_DAYS.');
 
   if(typeof TB_DEFS === 'undefined' || !TB_DEFS || Object.keys(TB_DEFS).length === 0){

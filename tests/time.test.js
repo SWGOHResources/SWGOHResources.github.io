@@ -6,7 +6,7 @@ import vm from 'node:vm';
 const timeSource = fs.readFileSync(new URL('../assets/js/time.js', import.meta.url), 'utf8');
 const dayMs = 86400000;
 
-function loadTimeEngine({ eraLength = 84, timeZone = 'UTC', datacronSets = [], gacStart = '2026-08-11' } = {}) {
+function loadTimeEngine({ eraLength = 84, timeZone = 'UTC', datacronSets = [], gacStart = '2026-08-11', omit = [], hours = {}, lockOffsets = {} } = {}) {
   const storage = new Map([['swgoh-tz', timeZone]]);
   const context = {
     console,
@@ -19,6 +19,7 @@ function loadTimeEngine({ eraLength = 84, timeZone = 'UTC', datacronSets = [], g
     Array,
     Set,
     parseInt,
+    ev: (icon, label) => ({ icon, label }),
     localStorage: {
       getItem: key => storage.get(key) ?? null,
       setItem: (key, value) => storage.set(key, value),
@@ -41,7 +42,12 @@ function loadTimeEngine({ eraLength = 84, timeZone = 'UTC', datacronSets = [], g
     DATACRON_SETS: datacronSets,
     CONQUEST_END_OFFSETS: [49],
     ERA_START_OFFSETS: [1],
+    STD_CHANGEOVER_HOUR_UTC: hours.std,
+    GAC_CHANGEOVER_HOUR_UTC: hours.gac,
+    CONQUEST_ROSTER_LOCK_OFFSET_DAYS: lockOffsets.conquest,
+    ERA_ROSTER_LOCK_OFFSET_DAYS: lockOffsets.era,
   };
+  for (const key of omit) delete context[key];
   vm.createContext(context);
   vm.runInContext(timeSource, context);
   return context;
@@ -141,6 +147,38 @@ test('validator passes a healthy config', () => {
     datacronSets: [{ name: 'Set', color: 'orange', expires: '2026-10-01' }],
   });
   assert.equal(engine.validateScheduleConfig().length, 0);
+});
+
+test('validator reports missing config without throwing', () => {
+  const engine = loadTimeEngine({ omit: ['ERA_LENGTH_DAYS', 'DATACRON_SETS'] });
+  assert.doesNotThrow(() => engine.validateScheduleConfig());
+  assert.ok(engine.validateScheduleConfig().some(issue => issue.includes('ERA_LENGTH_DAYS')));
+  assert.ok(engine.validateScheduleConfig().some(issue => issue.includes('DATACRON_SETS')));
+});
+
+test('invalid changeover hours fall back and are reported', () => {
+  const engine = loadTimeEngine({ hours: { std: 25, gac: NaN } });
+  assert.equal(engine.stdHour(), 18);
+  assert.equal(engine.gacHour(), 21);
+  assert.equal(engine.validateScheduleConfig().filter(issue => issue.includes('CHANGEOVER_HOUR')).length, 2);
+});
+
+test('invalid roster lock offsets fall back and are reported', () => {
+  const engine = loadTimeEngine({ lockOffsets: { conquest: NaN, era: -1 } });
+  assert.equal(engine.conquestLockOffsetDays(), 2);
+  assert.equal(engine.eraLockOffsetDays(), 1);
+  assert.equal(engine.validateScheduleConfig().filter(issue => issue.includes('ROSTER_LOCK_OFFSET')).length, 2);
+});
+
+test('last usable guild event follows configured changeover hours', () => {
+  const engine = loadTimeEngine({
+    hours: { std: 20, gac: 22 },
+    datacronSets: [{ name: 'Set', color: 'orange', expires: '2026-09-03' }],
+  });
+  const expiry = Date.parse('2026-09-03T21:30:00Z');
+  const event = engine.getLastUsableGuildEvent(expiry, Date.parse('2026-07-28T00:00:00Z'));
+  assert.equal(event.item.icon, 'gac_attack');
+  assert.equal(new Date(event.dateMs).toISOString(), '2026-08-31T00:00:00.000Z');
 });
 
 test('datacron expiration is evaluated at 18:00 UTC', () => {

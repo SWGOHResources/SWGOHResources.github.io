@@ -19,8 +19,8 @@ function renderUnlockWindows(st){
   const cqDays = Math.round((cqDateMs - st.currentDayStartMs) / 86400000);
   const cqBadge = cqAbs <= st.rawDayIndex || cqDays <= 0 ? 'UNLOCKED' : `IN ${cqDays} DAY${cqDays === 1 ? '' : 'S'}`;
 
-  // Roster locks at the Start of Defense Phase, which is Wednesday (+2 Days)
-  const cqNextSignupDate = cqDateMs + (86400000 * 2); 
+  // Roster locks at the configured defense-phase offset.
+  const cqNextSignupDate = cqDateMs + (86400000 * conquestLockOffsetDays());
   const cqGac = gacInfoForDate(cqNextSignupDate);
   const cqGacWeek = Math.ceil(cqGac.cycleDay / 7);
 
@@ -33,8 +33,8 @@ function renderUnlockWindows(st){
   const eraDays = Math.round((eraDateMs - st.currentDayStartMs) / 86400000);
   const eraBadge = eraAbs <= st.rawDayIndex || eraDays <= 0 ? 'THIS ERA' : `IN ${eraDays} DAY${eraDays === 1 ? '' : 'S'}`;
 
-  // Roster locks at the Start of Defense Phase, which is Wednesday (+1 Day)
-  const eraNextSignupDate = eraDateMs + 86400000;
+  // Roster locks at the configured defense-phase offset.
+  const eraNextSignupDate = eraDateMs + (86400000 * eraLockOffsetDays());
   const eraGac = gacInfoForDate(eraNextSignupDate);
   const eraGacWeek = Math.ceil(eraGac.cycleDay / 7);
 
