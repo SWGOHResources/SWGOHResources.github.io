@@ -259,10 +259,10 @@ const TB_SIDE_ANCHOR_SIDE = 'light';
 const TB_RUN_GAP_DAYS = 14;
 
 const TB_DEFS = {
-  rebel_assault:       { name: 'Rebel Assault',       side: 'light',  tier: 'Hoth',  phases: 6, hoursPerPhase: 24, art: 'tb/hoth-rebel-assault.png' },
-  imperial_retaliation:{ name: 'Imperial Retaliation',side: 'dark',   tier: 'Hoth',  phases: 6, hoursPerPhase: 24, art: 'tb/hoth-imperial-retaliation.png' },
-  republic_offensive:  { name: 'Republic Offensive',  side: 'light',  tier: 'Tier 2',phases: 4, hoursPerPhase: 36, art: 'tb/geonosis-republic-offensive.png' },
-  separatist_might:    { name: 'Separatist Might',    side: 'dark',   tier: 'Tier 2',phases: 4, hoursPerPhase: 36, art: 'tb/separatist-might.png' },
+  rebel_assault:       { name: 'Hoth Rebel Assault',        short: 'Rebel Assault',       side: 'light',  tier: 'Hoth',    phases: 6, hoursPerPhase: 24, art: 'tb/hoth-rebel-assault.png' },
+  imperial_retaliation:{ name: 'Hoth Imperial Retaliation', short: 'Imperial Retaliation',side: 'dark',   tier: 'Hoth',    phases: 6, hoursPerPhase: 24, art: 'tb/hoth-imperial-retaliation.png' },
+  republic_offensive:  { name: 'Geonosis Republic Offensive', short: 'Republic Offensive',side: 'light',  tier: 'Geonosis',phases: 4, hoursPerPhase: 36, art: 'tb/geonosis-republic-offensive.png' },
+  separatist_might:    { name: 'Geonosis Separatist Might', short: 'Separatist Might',    side: 'dark',   tier: 'Geonosis',phases: 4, hoursPerPhase: 36, art: 'tb/separatist-might.png' },
   rote:                { name: 'Rise of the Empire',  side: 'neutral', tier: 'Final', phases: 6, hoursPerPhase: 24, art: 'tb/rise-of-the-empire.png' },
 };
 

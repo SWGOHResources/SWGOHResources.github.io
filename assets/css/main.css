@@ -233,6 +233,9 @@ body.modal-open .starfield span {
 .hero-grid {
   display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 24px;
 }
+/* Dashboard cards keep natural heights — the Guild card grows with
+   the TB picker instead of stretching empty space into GAC/Conquest. */
+#statusDashboard { align-items: start; }
 .status-card {
   background: var(--void1);
   border: 1px solid var(--border); border-radius: var(--radius-lg);
@@ -389,7 +392,7 @@ body.modal-open .starfield span {
 .day-detail-head p { font-size: 11.5px; color: var(--text3); margin-top: 2px; }
 
 .xcard-deck {
-  display: flex; gap: 12px; overflow-x: auto;
+  display: flex; gap: 12px; overflow-x: auto; align-items: flex-start;
   scroll-snap-type: x proximity; padding: 2px 2px 8px;
 }
 .xcard {
