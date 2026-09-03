@@ -197,25 +197,48 @@ function getEventsForDay(dateMs, episode, dayInEp){
   return [...getDayEvents(episode, dayInEp), ...gacEventsForDate(dateMs), ...getMonthlyEvents(dateMs)];
 }
 
+function ordinal(n){
+  const s = ['th', 'st', 'nd', 'rd'], v = n % 100;
+  return n + (s[(v - 20) % 10] || s[v] || s[0]);
+}
+
+/* "Monday 2 September" → "Monday 2nd September". Only touches a 1–2
+   digit day directly before a month name; counts ("14 days") and years
+   are left alone. */
+const MONTH_RE = '(?:January|February|March|April|May|June|July|August|September|October|November|December|Sept|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec)';
+function withOrdinal(str){
+  return str.replace(new RegExp(`\\b(\\d{1,2})(?= ${MONTH_RE}\\b)`, 'g'), m => ordinal(Number(m)));
+}
+
 function fmtDateUTC(ms){
   const d = new Date(ms);
-  return d.toLocaleDateString('en-GB', { timeZone: 'UTC', weekday: 'short', day: 'numeric', month: 'short' });
+  return withOrdinal(d.toLocaleDateString('en-GB', { timeZone: 'UTC', weekday: 'short', day: 'numeric', month: 'short' }));
 }
 
 function fmtDateLongUTC(ms){
   const d = new Date(ms);
-  return d.toLocaleDateString('en-GB', { timeZone: 'UTC', weekday: 'long', day: 'numeric', month: 'long' });
+  return withOrdinal(d.toLocaleDateString('en-GB', { timeZone: 'UTC', weekday: 'long', day: 'numeric', month: 'long' }));
 }
 
 function fmtDayMonthUTC(ms){
   const d = new Date(ms);
-  return d.toLocaleDateString('en-GB', { timeZone: 'UTC', day: 'numeric', month: 'short' });
+  return withOrdinal(d.toLocaleDateString('en-GB', { timeZone: 'UTC', day: 'numeric', month: 'short' }));
+}
+
+/* "in N days" countdown vs the active (today) changeover day.
+   Conquest/Era targets always lie today-or-later, so past diffs
+   collapse to 'today'. */
+function untilLabel(dateMs, todayMs){
+  const n = Math.round((dateMs - todayMs) / 86400000);
+  if(n <= 0) return 'now';
+  if(n === 1) return 'in 1 day';
+  return `in ${n} days`;
 }
 
 /* Relative day label vs the active (today) changeover day */
 function relativeDayLabel(diffDays){
-  if(diffDays === 0) return 'Today';
-  if(diffDays === 1) return 'Tomorrow';
+  if(diffDays === 0) return 'Now';
+  if(diffDays === 1) return 'In 1 day';
   if(diffDays === -1) return 'Yesterday';
   if(diffDays > 1) return `In ${diffDays} days`;
   return `${Math.abs(diffDays)} days ago`;
@@ -250,7 +273,7 @@ function getGacStatus(st){
 
   if(info.phase === 'off'){
      const daysUntilNext = 29 - st.gacCycleDay;
-     const untilPhrase = daysUntilNext === 1 ? 'tomorrow' : `in ${daysUntilNext} days`;
+     const untilPhrase = daysUntilNext === 1 ? 'in 1 day' : `in ${daysUntilNext} days`;
      return {
         status: 'OFF-WEEK',
         badgeClass: 'off',
@@ -262,7 +285,7 @@ function getGacStatus(st){
      };
   }
 
-  const untilPhrase = 'tomorrow'; 
+  const untilPhrase = 'in 1 day'; 
 
   if(info.phase === 'signup'){
     return {
@@ -344,10 +367,10 @@ function getConquestStatus(st){
     const cqDay = targetDay - 6;
     const remaining = 20 - targetDay;
     return {
-      status: remaining === 0 ? 'ENDING TODAY' : 'ACTIVE',
+      status: remaining === 0 ? 'FINAL DAY' : 'ACTIVE',
       badgeClass: 'purple', title: titleNote,
       main: `Conquest Day ${cqDay} of 14`,
-      sub: remaining === 0 ? 'Proving Grounds starts tomorrow' : `Ends in ${remaining} days`,
+      sub: remaining === 0 ? 'Proving Grounds starts in 1 day' : `Ends in ${remaining} days`,
       cNum: cNum
     };
   } else if (targetDay === 21) {
