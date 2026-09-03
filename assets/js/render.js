@@ -211,122 +211,95 @@ function renderStatusDashboard(st){
 }
 
 /* =========================================================
-   CARDS & TABLES RENDERERS
+   SCHEDULE EXPLORER (day-by-day wide cards)
    ========================================================= */
 
-function cardHTML(item, extraClass){
-  const cls = extraClass || '';
+let explorerOffset = 0;
+const EXPLORER_WINDOW = 14;
+const EXPLORER_RANGE = 84; // browse the full era ahead of today
+
+function explorerDayAt(st, offset){
+  const dMs = st.currentDayStartMs + (offset * 86400000);
+  const dIdx = ((st.eraDay - 1 + offset) % 84) + 1;
+  const ep = Math.floor((dIdx - 1) / 28) + 1;
+  const dayInEp = ((dIdx - 1) % 28) + 1;
+  const week = Math.floor((dayInEp - 1) / 7) + 1;
+  return { offset, dMs, dIdx, ep, dayInEp, week, items: getEventsForDay(dMs, ep, dayInEp) };
+}
+
+function shiftExplorer(delta){
+  explorerOffset = Math.min(EXPLORER_RANGE - 1, Math.max(0, explorerOffset + delta));
+  renderAll();
+}
+
+function jumpExplorer(offset){
+  explorerOffset = Math.min(EXPLORER_RANGE - 1, Math.max(0, offset));
+  renderAll();
+}
+
+function explorerCardHTML(item, dateMs, relLabel){
   const cat = categoryFor(item.icon);
   const meta = CATEGORY_META[cat];
   const asset = assetFor(item.icon);
   const style = `--accent:${meta.accent};--accent-dim:${meta.dim};--accent-border:${meta.border}`;
+  const imgTag = asset ? `<img src="${IMG_BASE}${asset}" alt="" loading="lazy" onerror="this.remove()">` : '';
 
-  const fallbackBadge = `<div class="art-badge"><span class="glyph">${meta.glyph}</span><span class="cat">${meta.label}</span></div>`;
-  const imgTag = asset ? `<img src="${IMG_BASE}${asset}" alt="" onerror="this.remove()">` : '';
-
-  return `<figure class="ecard ${cls}" style="${style}">
-    <div class="art">
-      ${fallbackBadge}
+  return `<article class="xcard" style="${style}">
+    <div class="xcard-banner">
+      <div class="art-badge">${meta.glyph}</div>
       ${imgTag}
+      <div class="xcard-shade"></div>
+      <span class="xcard-cat">${meta.label}</span>
+      <span class="xcard-rel">${relLabel}</span>
     </div>
-    <div class="cat-tag">${meta.label}</div>
-    <figcaption>${item.label}</figcaption>
-  </figure>`;
+    <div class="xcard-body">
+      <h4>${getFullScheduleLabel(item)}</h4>
+      <div class="xcard-date">${eventDateRangeLabel(item, dateMs)}</div>
+    </div>
+  </article>`;
 }
 
-function renderCards(el, items, extraClass){
-  el.innerHTML = items.length
-    ? items.map(i=>cardHTML(i, extraClass)).join('')
-    : `<p class="empty-note">— No event changeovers scheduled for this day —</p>`;
-}
+function renderExplorer(st){
+  const strip = document.getElementById('dayStrip');
+  const detail = document.getElementById('dayDetail');
+  if(!strip || !detail) return;
 
-function getFullScheduleLabel(item){
-  const catLabel = GUILD_SUBLABEL[item.icon] || CATEGORY_META[categoryFor(item.icon)]?.label;
-  if(!catLabel) return item.label;
-  if(item.label.toUpperCase().startsWith(catLabel.toUpperCase())) return item.label;
-
-  const needsCategory = /\b(Phase|Payout|Signup|Attack|Defense|Offense)\b/i.test(item.label);
-  return needsCategory ? `${catLabel} ${item.label}` : item.label;
-}
-
-const fullScheduleCache = { eraStartMs: null, activeDay: null };
-
-function renderFullSchedule(st){
-  const tbody = document.getElementById('fullSchedule');
-  const sameEra = fullScheduleCache.eraStartMs === st.currentEraStartMs;
-
-  if(!sameEra){
-    const rows = [];
-    for(let idx = 1; idx <= 84; idx++){
-      const ep = Math.floor((idx - 1) / 28) + 1;
-      const dayInEp = ((idx - 1) % 28) + 1;
-      const week = Math.floor((dayInEp - 1) / 7) + 1;
-      const dateMs = st.currentEraStartMs + ((idx - 1) * 86400000);
-      const items = getEventsForDay(dateMs, ep, dayInEp);
-
-      rows.push(`<tr data-day="${idx}" class="${idx === st.eraDay ? 'active' : ''}">
-        <td><strong>Day ${idx}</strong></td>
-        <td>${fmtDateUTC(dateMs)}</td>
-        <td>Ep ${ep}.${week}</td>
-        <td>${items.length ? items.map(it => `<span class="event-tag">${getFullScheduleLabel(it)}</span>`).join('') : '—'}</td>
-      </tr>`);
-    }
-    tbody.innerHTML = rows.join('');
-    fullScheduleCache.eraStartMs = st.currentEraStartMs;
-    fullScheduleCache.activeDay = st.eraDay;
-  } else if(fullScheduleCache.activeDay !== st.eraDay){
-    const prevRow = tbody.querySelector(`tr[data-day="${fullScheduleCache.activeDay}"]`);
-    if(prevRow) prevRow.classList.remove('active');
-    const nextRow = tbody.querySelector(`tr[data-day="${st.eraDay}"]`);
-    if(nextRow) nextRow.classList.add('active');
-    fullScheduleCache.activeDay = st.eraDay;
+  const winStart = Math.max(0, Math.min(explorerOffset - 6, EXPLORER_RANGE - EXPLORER_WINDOW));
+  let pills = '';
+  for(let o = winStart; o < winStart + EXPLORER_WINDOW; o++){
+    const d = explorerDayAt(st, o);
+    const dt = new Date(d.dMs);
+    const cls = 'day-pill'
+      + (o === 0 ? ' is-today' : '')
+      + (o === explorerOffset ? ' is-selected' : '')
+      + (d.items.length ? ' has-events' : '');
+    pills += `<button type="button" class="${cls}" onclick="jumpExplorer(${o})" aria-label="${fmtDateUTC(d.dMs)}${o === 0 ? ', today' : ''}">`
+      + `<span class="dp-dow">${WEEKDAY_SHORT[dt.getUTCDay()]}</span>`
+      + `<span class="dp-num">${dt.getUTCDate()}</span>`
+      + `<span class="dp-dot"></span></button>`;
   }
+  strip.innerHTML = pills;
+
+  document.getElementById('dayPrev').disabled = explorerOffset <= 0;
+  document.getElementById('dayNext').disabled = explorerOffset >= EXPLORER_RANGE - 1;
+
+  const cur = explorerDayAt(st, explorerOffset);
+  const rel = relativeDayLabel(cur.offset);
+  detail.innerHTML = `
+    <div class="day-detail-head">
+      <div>
+        <h3>${cur.offset === 0 ? 'Today' : rel} — ${fmtDateLongUTC(cur.dMs)}</h3>
+        <p>Day ${cur.dIdx} / 84 · Episode ${cur.ep}, Week ${cur.week}</p>
+      </div>
+    </div>
+    ${cur.items.length
+      ? `<div class="xcard-list">${cur.items.map(it => explorerCardHTML(it, cur.dMs, rel)).join('')}</div>`
+      : `<p class="empty-note">No changeovers this day — nothing starts or ends.</p>`}`;
 }
 
-function renderMainFeed(st){
-  // Today Events
-  const todayDateMs = st.currentDayStartMs;
-  const todayEvents = getEventsForDay(todayDateMs, st.episode, st.dayInEp);
-
-  document.getElementById('todayHeading').textContent = `Today — ${st.weekdayName}`;
-  document.getElementById('todaySub').textContent = fmtDateUTC(todayDateMs);
-  renderCards(document.getElementById('todayCards'), todayEvents);
-
-  // Tomorrow Events
-  const tmrwDayIndex = (st.eraDay % 84) + 1;
-  const tmrwEp = Math.floor((tmrwDayIndex - 1) / 28) + 1;
-  const tmrwDayInEp = ((tmrwDayIndex - 1) % 28) + 1;
-  const tmrwDateMs = todayDateMs + 86400000;
-  const tmrwEvents = getEventsForDay(tmrwDateMs, tmrwEp, tmrwDayInEp);
-
-  const tmrwWeekday = WEEKDAY_NAMES[new Date(tmrwDateMs).getUTCDay()];
-
-  document.getElementById('tmrwHeading').textContent = `Tomorrow — ${tmrwWeekday}`;
-  document.getElementById('tmrwSub').textContent = fmtDateUTC(tmrwDateMs);
-  renderCards(document.getElementById('tmrwCards'), tmrwEvents);
-
-  // 7-Day Forecast
-  const forecastEl = document.getElementById('forecastRow');
-  forecastEl.innerHTML = '';
-  for(let i = 0; i < 7; i++){
-    const dMs = todayDateMs + (i * 86400000);
-    const dIdx = ((st.eraDay - 1 + i) % 84) + 1;
-    const ep = Math.floor((dIdx - 1) / 28) + 1;
-    const dayInEp = ((dIdx - 1) % 28) + 1;
-    const items = getEventsForDay(dMs, ep, dayInEp);
-
-    const chip = document.createElement('div');
-    chip.className = 'fchip' + (i === 0 ? ' today' : '');
-    chip.innerHTML = `
-      <div class="day">${WEEKDAY_SHORT[new Date(dMs).getUTCDay()]}${i === 0 ? ' · Today' : ''}</div>
-      <div class="date">${new Date(dMs).toLocaleDateString('en-GB',{ timeZone: 'UTC', day: 'numeric', month: 'short' })}</div>
-      <ul>${items.length ? items.map(it=>`<li>${getFullScheduleLabel(it)}</li>`).join('') : '<li>—</li>'}</ul>
-    `;
-    forecastEl.appendChild(chip);
-  }
-
-  // Coliseum Boss Loop
+function renderBossStrip(st){
   const bossEl = document.getElementById('bossStrip');
+  if(!bossEl) return;
   bossEl.innerHTML = '';
 
   const activeBossIndex = (st.bossDayIndex - 1) % 4;
@@ -339,7 +312,7 @@ function renderMainFeed(st){
     cell.innerHTML = `
       <div class="bcell-img">
         <div class="art-badge">BOSS</div>
-        <img src="${IMG_BASE}${iconFile}" alt="" onerror="this.remove()">
+        <img src="${IMG_BASE}${iconFile}" alt="" loading="lazy" onerror="this.remove()">
       </div>
       <div class="step">Boss ${index + 1} of 4</div>
       <div class="name">${bossName}</div>
@@ -347,6 +320,94 @@ function renderMainFeed(st){
     `;
     bossEl.appendChild(cell);
   });
+}
+
+function getFullScheduleLabel(item){
+  const catLabel = GUILD_SUBLABEL[item.icon] || CATEGORY_META[categoryFor(item.icon)]?.label;
+  if(!catLabel) return item.label;
+  if(item.label.toUpperCase().startsWith(catLabel.toUpperCase())) return item.label;
+
+  const needsCategory = /\b(Phase|Payout|Signup|Attack|Defense|Offense)\b/i.test(item.label);
+  return needsCategory ? `${catLabel} ${item.label}` : item.label;
+}
+
+/* =========================================================
+   FULL ERA TIMELINE (modal)
+   ========================================================= */
+
+const fullScheduleCache = { eraStartMs: null, activeDay: null };
+let scheduleFilterEp = 0; // 0 = all episodes
+
+function timelineChipHTML(item){
+  const meta = CATEGORY_META[categoryFor(item.icon)];
+  return `<span class="tl-chip" style="color:${meta.accent};border-color:${meta.border};background:${meta.dim}">${getFullScheduleLabel(item)}</span>`;
+}
+
+function renderFullSchedule(st){
+  const container = document.getElementById('fullSchedule');
+  if(!container) return;
+  const sameEra = fullScheduleCache.eraStartMs === st.currentEraStartMs;
+
+  if(!sameEra){
+    let html = '';
+    for(let ep = 1; ep <= 3; ep++){
+      const epStartMs = st.currentEraStartMs + ((ep - 1) * 28 * 86400000);
+      const epEndMs = epStartMs + (27 * 86400000);
+      html += `<div class="tl-ep" data-ep="${ep}">`
+        + `<div class="tl-ep-head"><span>Episode ${ep}</span><span class="tl-ep-dates">${fmtDayMonthUTC(epStartMs)} → ${fmtDayMonthUTC(epEndMs)}</span></div>`;
+      for(let week = 1; week <= 4; week++){
+        html += `<div class="tl-week-head">Week ${week}</div>`;
+        for(let d = 1; d <= 7; d++){
+          const dayInEp = (week - 1) * 7 + d;
+          const idx = (ep - 1) * 28 + dayInEp;
+          const dateMs = st.currentEraStartMs + ((idx - 1) * 86400000);
+          const items = getEventsForDay(dateMs, ep, dayInEp);
+          html += `<div class="tl-day${idx === st.eraDay ? ' is-today' : ''}" data-day="${idx}">`
+            + `<span class="tl-daynum">${idx}</span>`
+            + `<span class="tl-date">${fmtDateUTC(dateMs)}</span>`
+            + `<span class="tl-events">${items.length ? items.map(timelineChipHTML).join('') : '<span class="tl-none">—</span>'}</span></div>`;
+        }
+      }
+      html += `</div>`;
+    }
+    container.innerHTML = html;
+    fullScheduleCache.eraStartMs = st.currentEraStartMs;
+    fullScheduleCache.activeDay = st.eraDay;
+    applyScheduleFilter();
+  } else if(fullScheduleCache.activeDay !== st.eraDay){
+    const prev = container.querySelector(`.tl-day[data-day="${fullScheduleCache.activeDay}"]`);
+    if(prev) prev.classList.remove('is-today');
+    const next = container.querySelector(`.tl-day[data-day="${st.eraDay}"]`);
+    if(next) next.classList.add('is-today');
+    fullScheduleCache.activeDay = st.eraDay;
+  }
+}
+
+function applyScheduleFilter(){
+  const container = document.getElementById('fullSchedule');
+  document.querySelectorAll('.sf-pill').forEach(p => {
+    p.classList.toggle('active', Number(p.dataset.ep) === scheduleFilterEp);
+  });
+  if(!container) return;
+  container.querySelectorAll('.tl-ep').forEach(ep => {
+    ep.hidden = scheduleFilterEp !== 0 && Number(ep.dataset.ep) !== scheduleFilterEp;
+  });
+}
+
+function setScheduleFilter(ep){
+  scheduleFilterEp = Number(ep) || 0;
+  applyScheduleFilter();
+}
+
+function scrollScheduleToToday(){
+  const container = document.getElementById('fullSchedule');
+  if(!container) return;
+  if(scheduleFilterEp !== 0){
+    const todayEp = Math.floor((fullScheduleCache.activeDay - 1) / 28) + 1;
+    if(todayEp !== scheduleFilterEp) setScheduleFilter(0);
+  }
+  const row = container.querySelector(`.tl-day[data-day="${fullScheduleCache.activeDay}"]`);
+  if(row) row.scrollIntoView({ block: 'center' });
 }
 
 /* =========================================================
@@ -358,10 +419,7 @@ function renderAll(){
   renderMergedHero(st);
   renderStatusDashboard(st);
   renderUnlockWindows(st);
-  renderMainFeed(st);
+  renderExplorer(st);
+  renderBossStrip(st);
   renderFullSchedule(st);
 }
-
-/* =========================================================
- MODALS, FOCUS TRAPPING & DISCORD COPY
-  ========================================================= */

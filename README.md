@@ -15,8 +15,9 @@ GitHub Pages.
   monthly fleet days, boss loop, icon/category maps. No DOM, no logic.
 - `assets/js/time.js` — pure date/math helpers (GAC cycle, era day,
   unlock windows, countdown targets). Depends on `config.js`. No DOM.
-- `assets/js/render.js` — DOM builders (hero, dashboard, cards, forecast,
-  boss strip, full schedule). Depends on `config.js` + `time.js`.
+- `assets/js/render.js` — DOM builders (hero, dashboard, unlock windows,
+  schedule explorer, boss strip, full-era timeline). Depends on
+  `config.js` + `time.js`.
 - `assets/js/app.js` — wiring: countdown tick, modals, mobile nav,
   starfield, init. Loaded last.
 - `assets/js/firebase-reference.js` — not loaded. Preserved Firebase
@@ -41,10 +42,10 @@ Scripts load in order at the end of `<body>` as deferred classic scripts
 (ordered, non-blocking) so `onclick="…"` handlers keep working:
 
 ```html
-<script defer src="assets/js/config.js?v=1"></script>
-<script defer src="assets/js/time.js?v=1"></script>
-<script defer src="assets/js/render.js?v=1"></script>
-<script defer src="assets/js/app.js?v=1"></script>
+<script defer src="assets/js/config.js?v=2"></script>
+<script defer src="assets/js/time.js?v=2"></script>
+<script defer src="assets/js/render.js?v=2"></script>
+<script defer src="assets/js/app.js?v=2"></script>
 ```
 
 Bump the `?v=` number on every deploy, or browsers may keep serving

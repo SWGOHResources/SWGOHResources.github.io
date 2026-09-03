@@ -43,7 +43,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/main.css?v=2">
+<link rel="stylesheet" href="assets/css/main.css?v=3">
 </head>
 <body>
 
@@ -121,32 +121,21 @@
   </div>
   </section>
 
-  <!-- Today & Tomorrow Event Cards -->
-  <section aria-label="Today's schedule">
+  <!-- Day-by-day schedule explorer -->
+  <section aria-label="Schedule explorer">
   <div class="section-head">
-    <h2 id="todayHeading">Today's Schedule</h2>
-    <span class="sub" id="todaySub"></span>
+    <h2>Schedule</h2>
+    <span class="sub">Browse day by day</span>
     <div class="rule"></div>
   </div>
-  <div class="card-row" id="todayCards"></div>
-  </section>
-
-  <section aria-label="Tomorrow's schedule">
-  <div class="section-head" style="opacity:0.85">
-    <h2 id="tmrwHeading">Tomorrow</h2>
-    <span class="sub" id="tmrwSub"></span>
-    <div class="rule"></div>
+  <div class="explorer">
+    <div class="explorer-nav">
+      <button type="button" class="day-arrow" id="dayPrev" onclick="shiftExplorer(-1)" aria-label="Previous day">‹</button>
+      <div class="day-strip" id="dayStrip" role="group" aria-label="Choose a day"></div>
+      <button type="button" class="day-arrow" id="dayNext" onclick="shiftExplorer(1)" aria-label="Next day">›</button>
+    </div>
+    <div class="day-detail" id="dayDetail"></div>
   </div>
-  <div class="card-row" id="tmrwCards"></div>
-  </section>
-
-  <!-- 7-Day Forecast -->
-  <section aria-label="7-day forecast">
-  <div class="section-head">
-    <h2>7-Day Forecast</h2>
-    <div class="rule"></div>
-  </div>
-  <div class="forecast" id="forecastRow"></div>
   </section>
 
   <!-- Coliseum Boss Rotation -->
@@ -200,18 +189,20 @@
   <div class="modal wide" role="dialog" aria-modal="true" aria-labelledby="fullScheduleTitle">
     <div class="modal-head">
       <div>
-        <h3 id="fullScheduleTitle">Full Era Schedule Breakdown</h3>
+        <h3 id="fullScheduleTitle">Full Era Schedule</h3>
         <p>All 84 days of the current Era baseline.</p>
       </div>
       <button class="modal-close-x" id="closeFullScheduleBtn" aria-label="Close"><span></span><span></span></button>
     </div>
+    <div class="sched-filters" role="group" aria-label="Filter by episode">
+      <button type="button" class="sf-pill active" data-ep="0" onclick="setScheduleFilter(0)">All</button>
+      <button type="button" class="sf-pill" data-ep="1" onclick="setScheduleFilter(1)">Ep 1</button>
+      <button type="button" class="sf-pill" data-ep="2" onclick="setScheduleFilter(2)">Ep 2</button>
+      <button type="button" class="sf-pill" data-ep="3" onclick="setScheduleFilter(3)">Ep 3</button>
+      <button type="button" class="sf-today" onclick="scrollScheduleToToday()">Today</button>
+    </div>
     <div class="full-schedule-wrap">
-      <table class="schedule-table">
-        <thead>
-          <tr><th>Day</th><th>Date</th><th>Episode</th><th>Events</th></tr>
-        </thead>
-        <tbody id="fullSchedule"></tbody>
-      </table>
+      <div class="timeline" id="fullSchedule"></div>
     </div>
   </div>
 </div>
@@ -242,9 +233,9 @@
 
 <!-- ASSET_VERSION: bump ?v= on the CSS/JS links below on every deploy
      so browsers fetch fresh copies instead of cached ones. -->
-<script defer src="assets/js/config.js?v=1"></script>
-<script defer src="assets/js/time.js?v=1"></script>
-<script defer src="assets/js/render.js?v=1"></script>
-<script defer src="assets/js/app.js?v=1"></script>
+<script defer src="assets/js/config.js?v=2"></script>
+<script defer src="assets/js/time.js?v=2"></script>
+<script defer src="assets/js/render.js?v=2"></script>
+<script defer src="assets/js/app.js?v=2"></script>
 </body>
 </html>
