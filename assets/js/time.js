@@ -312,7 +312,7 @@ function absDayToInfo(absDay, eraBaseStartMs){
 }
 
 function dateMsToEraInfo(dateMs, eraBaseStartMs){
-  const absDay = Math.round((dateMs - eraBaseStartMs) / 86400000) + 1;
+  const absDay = Math.floor((dateMs - eraBaseStartMs) / 86400000) + 1;
   return absDayToInfo(absDay, eraBaseStartMs);
 }
 
@@ -340,13 +340,18 @@ function getCurrentDatacronSet(nowMs){
 // event, so we can tell players the last event they'll actually get to
 // use the set in before it's removed.
 function getLastUsableGuildEvent(expiresMs, eraBaseStartMs){
-  let cursorMs = expiresMs;
+  const firstAbsDay = Math.floor((expiresMs - eraBaseStartMs) / 86400000) + 1;
   for(let back = 0; back <= 84; back++){
-    const info = dateMsToEraInfo(cursorMs, eraBaseStartMs);
-    const items = getEventsForDay(cursorMs, info.episode, info.dayInEp);
-    const usableItem = items.find(i => i.icon.startsWith('tw_') || i.icon.startsWith('gac_'));
-    if(usableItem) return { item: usableItem, dateMs: cursorMs };
-    cursorMs -= 86400000;
+    const absDay = firstAbsDay - back;
+    const info = absDayToInfo(absDay, eraBaseStartMs);
+    const dayStartMs = eraBaseStartMs + ((absDay - 1) * 86400000);
+    const items = getEventsForDay(dayStartMs, info.episode, info.dayInEp);
+    const usableItem = items.find(item => {
+      if(!item.icon.startsWith('tw_') && !item.icon.startsWith('gac_')) return false;
+      const startHour = item.icon.startsWith('gac_') ? 21 : 18;
+      return dayStartMs + (startHour * 3600000) < expiresMs;
+    });
+    if(usableItem) return { item: usableItem, dateMs: dayStartMs };
   }
   return null;
 }

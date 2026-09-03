@@ -59,10 +59,10 @@ function renderUnlockWindows(st){
       <div class="uw-body" style="--accent:var(--purple);--accent-dim:var(--purple-dim);--accent-border:var(--purple-border)">
         <div class="uw-img"><div class="art-badge">CQ</div><img src="${IMG_BASE}${CONQUEST_UNIT_IMAGE}" onerror="this.remove()"></div>
         <div class="uw-text">
-          <div class="sc-main"><div class="sc-val">Unlocks ${withOrdinal(new Date(dms(cqDateMs)).toLocaleDateString('en-GB',{timeZone: tz(),day:'numeric',month:'short'}))}</div><div class="sc-sub">Conquest Unit can be unlocked</div></div>
+          <div class="sc-main"><div class="sc-val">Unlocks ${withOrdinal(new Date(dms(gameDayDisplayMs(cqDateMs))).toLocaleDateString('en-GB',{timeZone: tz(),day:'numeric',month:'short'}))}</div><div class="sc-sub">Conquest Unit can be unlocked</div></div>
           <div class="sc-footer" style="flex-direction:column;align-items:flex-start;gap:2px;">
             <span>Usable in GAC: <span class="highlight">Week ${cqGacWeek} (${cqGac.format})</span></span>
-            <span>Roster Locks: ${withOrdinal(new Date(dms(cqNextSignupDate)).toLocaleDateString('en-GB',{timeZone: tz(),day:'numeric',month:'short'}))} (Defense Starts)</span>
+            <span>Roster Locks: ${withOrdinal(new Date(dms(gameDayDisplayMs(cqNextSignupDate))).toLocaleDateString('en-GB',{timeZone: tz(),day:'numeric',month:'short'}))} (Defense Starts)</span>
           </div>
         </div>
       </div>
@@ -72,10 +72,10 @@ function renderUnlockWindows(st){
       <div class="uw-body" style="--accent:var(--orange);--accent-dim:var(--orange-dim);--accent-border:var(--orange-border)">
         <div class="uw-img"><div class="art-badge">ERA</div><img src="${IMG_BASE}${ERA_UNIT_IMAGE}" onerror="this.remove()"></div>
         <div class="uw-text">
-          <div class="sc-main"><div class="sc-val">Starts ${withOrdinal(new Date(dms(eraDateMs)).toLocaleDateString('en-GB',{timeZone: tz(),day:'numeric',month:'short'}))}</div><div class="sc-sub">Era Units can be used in Legacy Gamemodes</div></div>
+          <div class="sc-main"><div class="sc-val">Starts ${withOrdinal(new Date(dms(gameDayDisplayMs(eraDateMs))).toLocaleDateString('en-GB',{timeZone: tz(),day:'numeric',month:'short'}))}</div><div class="sc-sub">Era Units can be used in Legacy Gamemodes</div></div>
           <div class="sc-footer" style="flex-direction:column;align-items:flex-start;gap:2px;">
              <span>Usable in GAC: <span class="highlight">Week ${eraGacWeek} (${eraGac.format})</span></span>
-             <span>Roster Locks: ${withOrdinal(new Date(dms(eraNextSignupDate)).toLocaleDateString('en-GB',{timeZone: tz(),day:'numeric',month:'short'}))} (Defense Starts)</span>
+             <span>Roster Locks: ${withOrdinal(new Date(dms(gameDayDisplayMs(eraNextSignupDate))).toLocaleDateString('en-GB',{timeZone: tz(),day:'numeric',month:'short'}))} (Defense Starts)</span>
           </div>
         </div>
       </div>
@@ -178,8 +178,8 @@ function renderMergedHero(st){
   document.getElementById('mhFill').style.width = fillPct + '%';
 
   const eraEndMs = st.currentEraStartMs + (83 * 86400000);
-  document.getElementById('mhStartDate').textContent = fmtDateUTC(st.currentEraStartMs);
-  document.getElementById('mhEndDate').textContent = fmtDateUTC(eraEndMs);
+  document.getElementById('mhStartDate').textContent = fmtDateUTC(gameDayDisplayMs(st.currentEraStartMs));
+  document.getElementById('mhEndDate').textContent = fmtDateUTC(gameDayDisplayMs(eraEndMs));
   document.getElementById('mhDaysRemaining').textContent = `${84 - st.bossEraDay} days remaining`;
 }
 
@@ -322,7 +322,7 @@ function explorerCardHTML(item, dateMs, relLabel, tbCtx){
     </div>
     <div class="xcard-body">
       <h4>${getFullScheduleLabel(item)}</h4>
-      <div class="xcard-date">${eventDateRangeLabel(item, dateMs, isTbCard ? tbCtx : null)}</div>
+      <div class="xcard-date">${eventDateRangeLabel(item, gameDayDisplayMs(dateMs), isTbCard ? tbCtx : null)}</div>
       ${picker}
     </div>
   </article>`;
@@ -345,12 +345,12 @@ function renderExplorer(st){
   for(let eraDay = winStart; eraDay < winEnd; eraDay++){
     const o = eraDay - (st.eraDay - 1);
     const d = explorerDayAt(st, o);
-    const parts = tzDayParts(d.dMs);
+    const parts = tzDayParts(gameDayDisplayMs(d.dMs));
     const cls = 'day-pill'
       + (o === 0 ? ' is-today' : '')
       + (o === explorerOffset ? ' is-selected' : '')
       + (d.items.length ? ' has-events' : '');
-    pills += `<button type="button" class="${cls}" onclick="jumpExplorer(${o})" aria-label="${fmtDateUTC(d.dMs)}${o === 0 ? ', today' : ''}">`
+    pills += `<button type="button" class="${cls}" onclick="jumpExplorer(${o})" aria-label="${fmtDateUTC(gameDayDisplayMs(d.dMs))}${o === 0 ? ', today' : ''}">`
       + `<span class="dp-dow">${parts.dow}</span>`
       + `<span class="dp-num">${parts.num}</span>`
       + `<span class="dp-dot"></span></button>`;
@@ -363,8 +363,8 @@ function renderExplorer(st){
   const cur = explorerDayAt(st, explorerOffset);
   const rel = relativeDayLabel(cur.offset);
   const headTitle = cur.offset === 0
-    ? `Now: ${fmtDateLongUTC(cur.dMs)}`
-    : `Upcoming ${rel.charAt(0).toLowerCase() + rel.slice(1)}: ${fmtDateLongUTC(cur.dMs)}`;
+    ? `Now: ${fmtDateLongUTC(gameDayDisplayMs(cur.dMs))}`
+    : `Upcoming ${rel.charAt(0).toLowerCase() + rel.slice(1)}: ${fmtDateLongUTC(gameDayDisplayMs(cur.dMs))}`;
   const bossName = BOSS_LOOP[(st.bossDayIndex - 1 + cur.offset) % BOSS_LOOP.length];
   const bossIcon = BOSS_ICONS[bossName];
   // Conquest indicator (mirrors the boss badge): shown on days 7-20
