@@ -239,9 +239,18 @@ function renderStatusDashboard(st){
 
 let explorerOffset = 0;
 const EXPLORER_WINDOW = 14;
+const EXPLORER_PILL_WIDTH = 44;
+const EXPLORER_GAP = 4;
 
 function explorerRangeFor(st){
   return Math.max(1, ERA_LENGTH_DAYS - st.eraDay + 1);
+}
+
+function explorerWindowSize(strip){
+  const available = strip.clientWidth;
+  if(!available) return EXPLORER_WINDOW;
+  return Math.max(1, Math.min(EXPLORER_WINDOW,
+    Math.floor((available + EXPLORER_GAP) / (EXPLORER_PILL_WIDTH + EXPLORER_GAP))));
 }
 
 function explorerDayAt(st, offset){
@@ -323,8 +332,10 @@ function renderExplorer(st){
 
   const range = explorerRangeFor(st);
   explorerOffset = Math.min(range - 1, Math.max(0, explorerOffset));
-  const winStart = explorerOffset;
-  const winEnd = Math.min(range, winStart + EXPLORER_WINDOW);
+  const windowSize = explorerWindowSize(strip);
+  const winStart = Math.max(0, Math.min(
+    explorerOffset - Math.floor(windowSize / 2), range - windowSize));
+  const winEnd = Math.min(range, winStart + windowSize);
   strip.scrollLeft = 0;
   let pills = '';
   for(let o = winStart; o < winEnd; o++){
