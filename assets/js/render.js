@@ -68,7 +68,7 @@ function renderUnlockWindows(st){
       </div>
     </div>
     <div class="status-card orange-card">
-      <div class="sc-header"><span class="sc-title">Era Units Available in Legacy Modes</span><span class="sc-badge orange">${eraBadge}</span></div>
+      <div class="sc-header"><span class="sc-title">End of Current Era</span><span class="sc-badge orange">${eraBadge}</span></div>
       <div class="uw-body" style="--accent:var(--orange);--accent-dim:var(--orange-dim);--accent-border:var(--orange-border)">
         <div class="uw-img"><div class="art-badge">ERA</div><img src="${IMG_BASE}${ERA_UNIT_IMAGE}" onerror="this.remove()"></div>
         <div class="uw-text">
