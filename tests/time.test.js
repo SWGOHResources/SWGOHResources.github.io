@@ -100,6 +100,12 @@ test('schedule lookups degrade instead of hanging on empty offsets', () => {
   assert.equal(engine.nextOccurrenceAbs(null, 50, 84), 50);
 });
 
+test('era unlock lookup skips an era that starts today', () => {
+  const engine = loadTimeEngine();
+  assert.equal(engine.nextOccurrenceAbs([1], 1, 84), 1);
+  assert.equal(engine.nextOccurrenceAbs([1], 2, 84), 85);
+});
+
 test('pre-era days wrap instead of going negative', () => {
   const engine = loadTimeEngine({ eraLength: 84 });
   const base = Date.parse('2026-07-28T00:00:00Z');

@@ -1,6 +1,7 @@
 const navToggle = document.getElementById('navToggle');
 const mobilePanel = document.getElementById('mobilePanel');
 const aboutModal = document.getElementById('aboutModal');
+let lastFocusedElement = null;
 
 function closeMobilePanel(){
   if(!navToggle || !mobilePanel) return;
@@ -10,6 +11,7 @@ function closeMobilePanel(){
 }
 
 navToggle?.addEventListener('click', () => {
+  if(!mobilePanel) return;
   const willOpen = !mobilePanel.classList.contains('open');
   navToggle.classList.toggle('open', willOpen);
   mobilePanel.classList.toggle('open', willOpen);
@@ -20,13 +22,19 @@ function closeAboutModal(){
   if(!aboutModal) return;
   aboutModal.classList.remove('open');
   aboutModal.setAttribute('aria-hidden', 'true');
+  document.body.classList.remove('modal-open');
+  lastFocusedElement?.focus();
+  lastFocusedElement = null;
 }
 
 function openAboutModal(){
   if(!aboutModal) return;
+  lastFocusedElement = document.activeElement;
   closeMobilePanel();
   aboutModal.classList.add('open');
   aboutModal.setAttribute('aria-hidden', 'false');
+  document.body.classList.add('modal-open');
+  aboutModal.querySelector('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')?.focus();
 }
 
 document.getElementById('openAboutBtnHeader')?.addEventListener('click', openAboutModal);
@@ -38,10 +46,30 @@ aboutModal?.addEventListener('click', event => {
   if(event.target === aboutModal) closeAboutModal();
 });
 document.addEventListener('keydown', event => {
-  if(event.key === 'Escape') closeAboutModal();
+  if(!aboutModal?.classList.contains('open')) return;
+  if(event.key === 'Escape') {
+    closeAboutModal();
+    return;
+  }
+  if(event.key !== 'Tab') return;
+  const focusables = Array.from(aboutModal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'));
+  if(!focusables.length) return;
+  const first = focusables[0];
+  const last = focusables[focusables.length - 1];
+  if(event.shiftKey && document.activeElement === first) {
+    last.focus();
+    event.preventDefault();
+  } else if(!event.shiftKey && document.activeElement === last) {
+    first.focus();
+    event.preventDefault();
+  }
 });
 
 function copyDiscordHandle(button){
+  if(!button || !navigator.clipboard || !navigator.clipboard.writeText){
+    alert('Discord username: granddom');
+    return;
+  }
   navigator.clipboard.writeText('granddom').then(() => {
     const originalText = button.innerHTML;
     button.classList.add('copied');

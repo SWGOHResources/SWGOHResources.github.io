@@ -26,7 +26,7 @@ function renderUnlockWindows(st){
 
   // --- ERA UNIT ---
   // Finds the NEXT era-start day (Era Changeover / Tuesday)
-  const eraAbs = nextOccurrenceAbs(ERA_START_OFFSETS, st.rawDayIndex, ERA_LENGTH_DAYS);
+  const eraAbs = nextOccurrenceAbs(ERA_START_OFFSETS, st.rawDayIndex + 1, ERA_LENGTH_DAYS);
   const eraInf = absDayToInfo(eraAbs, st.eraBaseStartMs);
   const eraDateMs = eraInf.dateMs;
   
