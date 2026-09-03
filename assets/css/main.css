@@ -301,16 +301,17 @@ body.modal-open .starfield span {
    track-sizing algorithm that can leave unclaimed space on wide
    viewports. */
 .unlock-grid {
-  /* Grid's default align-items:stretch was forcing every card in the
-     row to match the height of the tallest one (e.g. whichever card's
-     text happened to wrap an extra line), leaving a blank gap at the
-     bottom of the shorter cards. Sizing each card to its own content
-     removes that leftover space entirely instead of trying to hide it. */
-  align-items: start;
+  /* Equal-height cards: stretch every card to the tallest in the row,
+     then pin each card's footer to the bottom via margin-top:auto
+     below — so uneven text lengths never leave an awkward gap. */
+  align-items: stretch;
 }
 .unlock-grid > .status-card {
   min-width: 0;
 }
+.unlock-grid .uw-body { flex: 1; }
+.unlock-grid .uw-text { display: flex; flex-direction: column; }
+.unlock-grid .uw-text .sc-footer { margin-top: auto; }
 
 /* ─── Section Labels ─── */
 .section-head { display: flex; align-items: center; gap: 12px; margin: 32px 0 16px; }
