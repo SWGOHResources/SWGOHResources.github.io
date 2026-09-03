@@ -206,14 +206,29 @@ function fmtPhaseMoment(ms){
 }
 
 /* Rewrite the static rote/tb_ends labels for the run's guild
-   choice. Non-TB days pass through untouched. */
+   choice. Non-TB days pass through untouched. On 36h TBs, a day
+   whose phase boundary falls at 06:00 emits two cards — the old
+   phase ending and the new phase starting at that time — instead
+   of one confusing 18:00 marker. */
 function applyTbLabels(items, runCtx){
   if(!runCtx) return items;
   const def = tbChoiceForRun(runCtx);
-  return items.map(it => {
-    if(it.icon === 'rote') return { icon: it.icon, label: tbPhaseLabel(def, runCtx.offset) };
-    if(it.icon === 'tb_ends') return { icon: it.icon, label: `${def.name} Ends` };
-    return it;
+  return items.flatMap(it => {
+    if(it.icon === 'rote' && def.hoursPerPhase === 36 && runCtx.offset > 0){
+      const { phase } = tbPhaseAtOffset(def, runCtx.offset);
+      // Moment the current phase began (= previous phase ended).
+      const transMs = runCtx.phase1Ms + (18 * 3600000) + ((phase - 1) * def.hoursPerPhase * 3600000);
+      if(new Date(transMs).getUTCHours() === 6 && phase > 1){
+        return [
+          { icon: it.icon, label: `${def.name} Phase ${phase - 1} Ends`, tbEndMoment: transMs },
+          { icon: it.icon, label: `${def.name} Phase ${phase} Starts` },
+        ];
+      }
+      return [{ icon: it.icon, label: tbPhaseLabel(def, runCtx.offset) }];
+    }
+    if(it.icon === 'rote') return [{ icon: it.icon, label: tbPhaseLabel(def, runCtx.offset) }];
+    if(it.icon === 'tb_ends') return [{ icon: it.icon, label: `${def.name} Ends` }];
+    return [it];
   });
 }
 
@@ -397,6 +412,8 @@ function eventDateRangeLabel(item, dateMs, tbCtx){
   // markers render the phase's exact window instead of implying a
   // changeover at 18:00.
   if(item.icon === 'rote' && tbCtx && tbCtx.def.hoursPerPhase === 36 && tbCtx.phase1Ms != null){
+    // Mid-day boundary card: the old phase ends at an exact moment.
+    if(item.tbEndMoment != null) return fmtPhaseMoment(item.tbEndMoment);
     const { phase } = tbPhaseAtOffset(tbCtx.def, tbCtx.offset);
     const w = tbPhaseWindow(tbCtx.def, tbCtx.phase1Ms, phase - 1);
     return `${fmtPhaseMoment(w.startMs)} → ${fmtPhaseMoment(w.endMs)} · 36 hours`;
@@ -532,8 +549,11 @@ function getGuildEventSummary(episode, dayInEp, dateMs){
   const tbEnd = items.find(i => i.icon === 'tb_ends');
   if(tbEnd) return tbEnd.label;
 
-  const rote = items.find(i => i.icon === 'rote');
-  if(rote) return rote.label;
+  // Last match: on 36h boundary days the day holds both a
+  // "Phase X Ends" and a "Phase Y Starts" card — Now means the one
+  // that just started.
+  const roteItems = items.filter(i => i.icon === 'rote');
+  if(roteItems.length) return roteItems[roteItems.length - 1].label;
 
   return 'Guild Intermission';
 }
