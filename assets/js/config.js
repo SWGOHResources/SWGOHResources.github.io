@@ -107,9 +107,9 @@ const COMMON_DAYS = {
 
 const EPISODE_OVERRIDES = {
   1: {
-    1:  [ev('marquee_1'), ev('journey_reruns','Reruns Start'), ev('era_changeover','Era Changeover'), ev('tw_offense','Offense Phase Starts')],
+    1:  [ev('marquee_1'), ev('journey_rerun_1','Journey Rerun 1: Maul Hate Fueled Starts'), ev('journey_rerun_2','Journey Rerun 2: Cassian Andor Undercover Starts'), ev('era_changeover','Era Changeover'), ev('tw_offense','Offense Phase Starts')],
     7:  [ev('rote','Phase 1 Starts'), ev('conquest_start','2nd Conquest of Volume Starts'), ev('smugglersrun',"Smuggler's Run I")],
-    8:  [ev('era_challenge_1'), ev('rote','Phase 2 Starts'), ev('journey_reruns','Reruns End')],
+    8:  [ev('era_challenge_1'), ev('rote','Phase 2 Starts')],
     15: [ev('marquee_2'), ev('tw_offense','Offense Phase Starts')],
     21: [ev('conquest_end','2nd Conquest of Volume Ends'), ev('proving_ground','Proving Grounds'), ev('ultimate_journey','Ultimate Journey'), ev('smugglersrun',"Smuggler's Run I"), ev('rote','Phase 1 Starts')],
     22: [ev('era_challenge_2'), ev('rote','Phase 2 Starts')],
@@ -167,7 +167,7 @@ const CATEGORY_ICONS = {
   conquest: 'events/conquest.png',
   guild:    'events/tw.png',
   fleet:    'events/executor.png',
-  era:      'events/erajourney.png',
+  era:      'events/eraicon.png',
 };
 
 // Display tags that differ from the owning category (shown on cards).
@@ -192,7 +192,7 @@ const EVENT_ICONS = {
   gac_attack: 'events/gac.png',
   conquest_start: 'events/conquest.png',
   conquest_end: 'events/conquest.png',
-  era_changeover: 'events/erajourney.png',
+  era_changeover: 'events/eraicon.png',
   era_battle_1: 'events/erabattle1.png',
   era_battle_2: 'events/erabattle2.png',
   era_challenge_1: 'marquee/marquee1event.png',
@@ -209,7 +209,9 @@ const EVENT_ICONS = {
   marquee_6: 'marquee/marquee6event.png',
   proving_ground: 'events/provingground.png',
   ultimate_journey: 'events/ultimatejourney.png',
-  journey_reruns: 'events/journeyicon.png',
+  journey_rerun_1: 'events/journeyicon.png',
+  journey_rerun_2: 'events/journeyicon.png',
+  journey_rerun_3: 'events/journeyicon.png',
   journey_guide: 'events/journeyicon.png',
   fleet_executor: 'events/executor.png',
   fleet_leviathan: 'events/leviathan.png',

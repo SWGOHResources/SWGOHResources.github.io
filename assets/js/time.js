@@ -485,9 +485,8 @@ function relativeDayLabel(diffDays){
 }
 
 /* How long a changeover marker lasts. GAC/TW phases and TB phases run
-   24 hours until the next 18:00 UTC changeover; Conquest runs Day 7→20
-   (14 days). Anything else (marquees, journeys, fleet ships, payouts)
-   has no sheet-defined duration, so only its start date is shown. */
+  24 hours until the next 18:00 UTC changeover; Conquest runs Day 7→20
+  (14 days); the shared rerun window lasts one week. */
 const DAY_LONG_EVENTS = new Set([
   'gac_signup', 'gac_defense', 'gac_attack',
   'tw_signup', 'tw_defense', 'tw_offense',
@@ -500,6 +499,10 @@ function eventDateRangeLabel(item, dateMs, tbCtx){
     return `${fmtDayMonthUTC(dateMs)} → ${fmtDayMonthUTC(endMs)} · 14 days`;
   }
   const start = fmtDateLongUTC(dateMs);
+  if(item.icon.startsWith('journey_rerun_')){
+    const endMs = dateMs + (6 * 86400000);
+    return `${fmtDayMonthUTC(dateMs)} → ${fmtDayMonthUTC(endMs)} · 7 days`;
+  }
   // 36-hour TB phases (Separatist Might / Republic Offensive): phase
   // boundaries fall at 18:00 and 06:00 alternating, so mid-phase
   // markers render the phase's exact window instead of implying a
