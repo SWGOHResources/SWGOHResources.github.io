@@ -197,6 +197,15 @@ function renderStatusDashboard(st){
 
   const isGuildActive = todayGuildSummary.includes('TW') || todayGuildSummary.includes('TB ') || todayGuildSummary.includes(' Ends');
 
+  // TB picker on the status card too, so the guild can set their TB
+  // without scrolling to the schedule. Only during a TB week.
+  const todayRunCtx = tbRunContext(st.currentDayStartMs, st.episode, st.dayInEp);
+  const todayTbDef = todayRunCtx ? tbChoiceForRun(todayRunCtx) : null;
+  const todayTbCtx = todayRunCtx ? {
+    def: todayTbDef, offset: todayRunCtx.offset, side: todayRunCtx.side,
+    options: todayRunCtx.options, art: todayTbDef.art, showPicker: true
+  } : null;
+
   container.innerHTML = `
     <div class="status-card red-card">
       <div class="sc-header"><span class="sc-title">${gac.title}</span><span class="sc-badge ${gac.badgeClass}">${gac.status}</span></div>
@@ -217,6 +226,7 @@ function renderStatusDashboard(st){
         <div class="sc-sub" style="font-size:12px">Upcoming: <span style="color:var(--amber)">${tmrwGuildSummary}</span></div>
       </div>
       ${guildPhaseTrackerHTML(st)}
+      ${tbPickerHTML(todayTbCtx)}
     </div>
   `;
 }
@@ -248,6 +258,18 @@ function jumpExplorer(offset){
   renderAll();
 }
 
+/* Guild TB picker (shared by the dashboard status card and the
+   explorer Phase-1 cards). tbCtx comes from tbRunContext for the
+   relevant day; null off-TB weeks. */
+function tbPickerHTML(tbCtx){
+  if(!tbCtx) return '';
+  const sideName = tbCtx.side === 'dark' ? 'Dark Side' : 'Light Side';
+  const btns = tbCtx.options.map(o =>
+    `<button type="button" class="tb-pick-btn${o.id === tbCtx.def.id ? ' active' : ''}" onclick="setTbChoice('${o.id}')" aria-pressed="${o.id === tbCtx.def.id}">${o.name}</button>`
+  ).join('');
+  return `<div class="tb-pick" role="group" aria-label="Choose your guild's TB"><span class="tb-pick-label">${sideName} run — your TB:</span><div class="tb-pick-btns">${btns}</div></div>`;
+}
+
 function explorerCardHTML(item, dateMs, relLabel, tbCtx){
   const cat = categoryFor(item.icon);
   const meta = CATEGORY_META[cat];
@@ -261,14 +283,7 @@ function explorerCardHTML(item, dateMs, relLabel, tbCtx){
   // Guild TB picker: on Phase-1 days the guild picks which of the
   // run's 3 TBs (side's 2 + Neutral RotE) they are running. The
   // choice persists and drives the art + phase labels everywhere.
-  let picker = '';
-  if(tbCtx && tbCtx.showPicker && item.icon === 'rote'){
-    const sideName = tbCtx.side === 'dark' ? 'Dark Side' : 'Light Side';
-    const btns = tbCtx.options.map(o =>
-      `<button type="button" class="tb-pick-btn${o.id === tbCtx.def.id ? ' active' : ''}" onclick="setTbChoice('${o.id}')" aria-pressed="${o.id === tbCtx.def.id}">${o.name}</button>`
-    ).join('');
-    picker = `<div class="tb-pick" role="group" aria-label="Choose your guild's TB"><span class="tb-pick-label">${sideName} run — your TB:</span><div class="tb-pick-btns">${btns}</div></div>`;
-  }
+  const picker = (tbCtx && tbCtx.showPicker && item.icon === 'rote') ? tbPickerHTML(tbCtx) : '';
 
   return `<article class="xcard" style="${style}">
     <div class="xcard-art">
@@ -323,7 +338,7 @@ function renderExplorer(st){
   const tbDef = runCtx ? tbChoiceForRun(runCtx) : null;
   const tbCtx = runCtx ? {
     def: tbDef, offset: runCtx.offset, side: runCtx.side,
-    options: runCtx.options, art: IMG_BASE + tbDef.art,
+    options: runCtx.options, art: tbDef.art,
     showPicker: runCtx.offset === 0
   } : null;
   detail.innerHTML = `
