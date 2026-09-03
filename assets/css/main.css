@@ -133,8 +133,15 @@ body.modal-open .starfield span {
   font-family: var(--body); font-weight: 500; font-size: 12.5px; padding: 7px 10px; border-radius: var(--radius);
   cursor: pointer; transition: 0.15s; width: 240px; max-width: min(240px, 100%);
   appearance: none; -webkit-appearance: none; overflow: hidden; text-overflow: ellipsis;
+  padding-right: 28px;
+  background-image: linear-gradient(45deg, transparent 50%, var(--text3) 50%), linear-gradient(135deg, var(--text3) 50%, transparent 50%);
+  background-position: calc(100% - 14px) 50%, calc(100% - 9px) 50%;
+  background-size: 5px 5px, 5px 5px; background-repeat: no-repeat;
 }
-.tz-select:hover { border-color: var(--amber-border); color: var(--amber); }
+.tz-select:hover {
+  border-color: var(--amber-border); color: var(--amber);
+  background-image: linear-gradient(45deg, transparent 50%, var(--amber) 50%), linear-gradient(135deg, var(--amber) 50%, transparent 50%);
+}
 .tz-select:focus-visible { outline: 2px solid var(--amber-border); outline-offset: 1px; }
 
 /* ─── Mobile Nav  ─── */
@@ -167,6 +174,7 @@ body.modal-open .starfield span {
   }
   .mp-link.active { color: var(--amber); font-weight: 600; }
   .mp-divider { height: 8px; }
+  .mobile-panel .tz-select { width: 100%; max-width: 100%; }
   .mp-btn { width: 100%; justify-content: center; padding: 11px 14px; font-size: 13px; margin-bottom: 8px; }
 }
 
