@@ -256,6 +256,26 @@ test('locked TW remains usable after expiry and takes precedence over an overlap
   assert.equal(event.tw.twNumber, 1);
 });
 
+test('TW numbering identifies the second signup in a GAC week', () => {
+  const engine = loadTimeEngine({
+    gacStart: '2026-07-28',
+    commonDays: {
+      1: [{ icon: 'tw_signup', label: 'Signup Starts' }],
+      2: [{ icon: 'tw_defense', label: 'Defense Phase Starts' }],
+      3: [{ icon: 'tw_offense', label: 'Offense Phase Starts' }],
+      4: [{ icon: 'tw_payout', label: 'Payout' }, { icon: 'tw_signup', label: 'Signup Starts' }],
+      5: [{ icon: 'tw_defense', label: 'Defense Phase Starts' }],
+      6: [{ icon: 'tw_offense', label: 'Offense Phase Starts' }],
+      7: [{ icon: 'tw_payout', label: 'Payout' }],
+    },
+  });
+  const expiry = Date.parse('2026-08-04T18:00:00Z');
+  const event = engine.getLastUsableGuildEvent(expiry, Date.parse('2026-07-28T00:00:00Z'));
+
+  assert.equal(event.tw.item.icon, 'tw_payout');
+  assert.equal(event.tw.twNumber, 2);
+});
+
 test('datacron expiration is evaluated at 18:00 UTC', () => {
   const sets = [
     { name: 'Old', color: 'orange', expires: '2026-09-03' },
