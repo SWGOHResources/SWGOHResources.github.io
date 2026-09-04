@@ -613,14 +613,21 @@ function updateFooterMeta(){
   el.textContent = `Resets ${h}:00 UTC daily · showing ${tzDisplayName()} · loaded ${new Date(dms(Date.now())).toLocaleString('en-GB', { timeZone: tz(), hour12: false })}`;
 }
 
-function renderAll(){
+function renderAll(opts){
+  // Background ticks (clock/visibility) must not yank keyboard focus:
+  // regions rebuilt via innerHTML are skipped while focused inside
+  // them and catch up on the next tick after blur. Direct user
+  // actions (day jump, TB pick, tz change, changeovers) rebuild fully.
+  const preserveFocus = !!(opts && opts.preserveFocus);
+  const active = (typeof document !== 'undefined' && document.activeElement) || null;
+  const focused = el => !!(preserveFocus && active && el && el.contains(active));
   const st = getGameStatus();
   renderStaticMeta();
   renderMergedHero(st);
-  renderStatusDashboard(st);
-  renderUnlockWindows(st);
-  renderExplorer(st);
-  renderFullSchedule(st);
+  if(!focused(document.getElementById('statusDashboard'))) renderStatusDashboard(st);
+  if(!focused(document.getElementById('unlockWindows'))) renderUnlockWindows(st);
+  if(!focused(document.getElementById('dayStrip')) && !focused(document.getElementById('dayDetail'))) renderExplorer(st);
+  if(!focused(document.getElementById('fullSchedule'))) renderFullSchedule(st);
   updateFooterMeta();
   if(typeof syncTzSelects === 'function') syncTzSelects();
 }
