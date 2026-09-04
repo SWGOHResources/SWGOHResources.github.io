@@ -262,7 +262,7 @@ function renderStatusDashboard(st){
    ========================================================= */
 
 let explorerOffset = 0;
-const EXPLORER_WINDOW = 14;
+const EXPLORER_WINDOW = 7;
 const EXPLORER_PILL_WIDTH = 44;
 const EXPLORER_GAP = 4;
 
@@ -383,8 +383,10 @@ function renderExplorer(st){
 
   const dayPrev = document.getElementById('dayPrev');
   const dayNext = document.getElementById('dayNext');
+  const dayToday = document.getElementById('dayToday');
   if(dayPrev) dayPrev.disabled = explorerOffset <= bounds.minOffset;
   if(dayNext) dayNext.disabled = explorerOffset >= bounds.maxOffset;
+  if(dayToday) dayToday.disabled = explorerOffset === 0;
 
   const cur = explorerDayAt(st, explorerOffset);
   const rel = relativeDayLabel(cur.offset);

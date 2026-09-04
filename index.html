@@ -152,9 +152,13 @@
       <p>Events are shown when they are expected to occur, not when they will. For exact event timings, check <a href="https://swgoh.gg/events/" target="_blank" rel="noopener">swgoh.gg/events ↗</a></p>
     </div>
     <div class="explorer-nav">
-      <button type="button" class="day-arrow" id="dayPrev" onclick="shiftExplorer(-1)" aria-label="Previous day">‹</button>
+      <button type="button" class="day-arrow" id="dayPrev" onclick="shiftExplorer(-1)" aria-label="Previous day" title="Previous day">←</button>
       <div class="day-strip" id="dayStrip" role="group" aria-label="Choose a day"></div>
-      <button type="button" class="day-arrow" id="dayNext" onclick="shiftExplorer(1)" aria-label="Next day">›</button>
+      <button type="button" class="day-arrow" id="dayNext" onclick="shiftExplorer(1)" aria-label="Next day" title="Next day">→</button>
+    </div>
+    <div class="explorer-tools">
+      <button type="button" class="day-today" id="dayToday" onclick="jumpExplorer(0)">Today</button>
+      <span class="day-help">Select a date to see expected events</span>
     </div>
     <div class="day-detail" id="dayDetail"></div>
   </div>

@@ -418,21 +418,21 @@ body.modal-open .starfield span {
 }
 .explorer-nav { display: flex; align-items: stretch; gap: 8px; }
 .day-arrow {
-  flex: 0 0 auto; width: 38px; border-radius: var(--radius);
+  flex: 0 0 auto; width: 42px; border-radius: var(--radius);
   background: var(--void2); border: 1px solid var(--border2); color: var(--text2);
-  font-size: 20px; line-height: 1; cursor: pointer; transition: 0.15s;
+  font-size: 18px; line-height: 1; cursor: pointer; transition: 0.15s;
 }
 .day-arrow:hover:not(:disabled) { border-color: var(--ui-accent-border); color: var(--ui-accent); }
 .day-arrow:disabled { opacity: 0.3; cursor: default; }
 .day-strip {
-  flex: 1; display: grid; grid-template-columns: repeat(14, 1fr); gap: 4px;
-  min-width: 0; overflow-x: auto;
+  flex: 1; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px;
+  min-width: 0;
 }
 .day-pill {
   display: flex; flex-direction: column; align-items: center; gap: 1px;
-  padding: 7px 2px 6px; border-radius: var(--radius);
+  min-width: 0; padding: 8px 2px 7px; border-radius: var(--radius);
   background: var(--void2); border: 1px solid var(--border); color: var(--text2);
-  font-family: var(--body); cursor: pointer; transition: 0.15s; min-width: 44px;
+  font-family: var(--body); cursor: pointer; transition: 0.15s;
 }
 .day-pill:hover { border-color: var(--border2); color: var(--text); }
 .day-pill .dp-dow { font-size: 9px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text3); }
@@ -447,6 +447,15 @@ body.modal-open .starfield span {
   border-color: var(--cyan-border); background: var(--void3);
   box-shadow: inset 0 0 0 1px var(--text2);
 }
+.explorer-tools { display: flex; align-items: center; gap: 10px; margin: 10px 50px 0; }
+.day-today {
+  padding: 5px 11px; border: 1px solid var(--border2); border-radius: 5px;
+  background: transparent; color: var(--text2); font-family: var(--body);
+  font-size: 11px; font-weight: 600; cursor: pointer; transition: 0.15s;
+}
+.day-today:hover:not(:disabled) { border-color: var(--cyan-border); color: var(--cyan); }
+.day-today:disabled { color: var(--text3); cursor: default; opacity: 0.55; }
+.day-help { color: var(--text3); font-size: 10.5px; }
 
 .day-detail { margin-top: 16px; }
 .day-detail-head { margin-bottom: 12px; }
@@ -738,6 +747,13 @@ body.modal-open .starfield span {
 }
 
 @media (max-width: 600px) {
+  .explorer-nav { gap: 5px; }
+  .day-arrow { width: 34px; }
+  .day-strip { gap: 3px; }
+  .day-pill { padding-left: 1px; padding-right: 1px; }
+  .day-pill .dp-dow { font-size: 8px; }
+  .day-pill .dp-num { font-size: 13px; }
+  .explorer-tools { margin-left: 39px; margin-right: 39px; }
   .policy-page { padding-top: 28px; padding-bottom: 44px; }
   .policy-page .section-head { gap: 12px; }
   .policy-page .section-head h1 { font-size: 26px; }
