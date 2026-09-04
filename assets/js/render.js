@@ -274,10 +274,7 @@ function explorerBoundsFor(st){
 }
 
 function explorerWindowSize(strip){
-  const available = strip.clientWidth;
-  if(!available) return EXPLORER_WINDOW;
-  return Math.max(1, Math.min(EXPLORER_WINDOW,
-    Math.floor((available + EXPLORER_GAP) / (EXPLORER_PILL_WIDTH + EXPLORER_GAP))));
+  return EXPLORER_WINDOW;
 }
 
 function explorerDayAt(st, offset){
@@ -361,8 +358,9 @@ function renderExplorer(st){
   explorerOffset = Math.min(bounds.maxOffset, Math.max(bounds.minOffset, explorerOffset));
   const windowSize = explorerWindowSize(strip);
   const selectedEraDay = st.eraDay - 1 + explorerOffset;
-  const winStart = Math.max(0, Math.min(
-    selectedEraDay - Math.floor(windowSize / 2), ERA_LENGTH_DAYS - windowSize));
+  const winStart = Math.min(
+    Math.floor(selectedEraDay / windowSize) * windowSize,
+    ERA_LENGTH_DAYS - windowSize);
   const winEnd = Math.min(ERA_LENGTH_DAYS, winStart + windowSize);
   strip.scrollLeft = 0;
   let pills = '';
@@ -380,6 +378,16 @@ function renderExplorer(st){
       + `<span class="dp-dot"></span></button>`;
   }
   strip.innerHTML = pills;
+
+  const dayJump = document.getElementById('dayJump');
+  if(dayJump){
+    dayJump.innerHTML = Array.from({ length: ERA_LENGTH_DAYS }, (_, index) => {
+      const offset = index - (st.eraDay - 1);
+      const d = explorerDayAt(st, offset);
+      return `<option value="${offset}">Day ${d.dIdx} · ${fmtDateUTC(gameDayDisplayMs(d.dMs))}</option>`;
+    }).join('');
+  }
+  if(dayJump) dayJump.value = String(explorerOffset);
 
   const dayPrev = document.getElementById('dayPrev');
   const dayNext = document.getElementById('dayNext');
