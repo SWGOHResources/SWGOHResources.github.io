@@ -212,8 +212,8 @@ test('last usable guild event follows configured changeover hours', () => {
   });
   const expiry = Date.parse('2026-09-03T21:30:00Z');
   const event = engine.getLastUsableGuildEvent(expiry, Date.parse('2026-07-28T00:00:00Z'));
-  assert.equal(event.item.icon, 'gac_attack');
-  assert.equal(new Date(event.dateMs).toISOString(), '2026-08-31T00:00:00.000Z');
+  assert.equal(event.gac.item.icon, 'gac_attack');
+  assert.equal(new Date(event.gac.dateMs).toISOString(), '2026-08-31T00:00:00.000Z');
 });
 
 test('locked TW remains usable after expiry and takes precedence over an overlapping GAC phase', () => {
@@ -227,11 +227,10 @@ test('locked TW remains usable after expiry and takes precedence over an overlap
   const expiry = Date.parse('2026-07-30T18:00:00Z');
   const event = engine.getLastUsableGuildEvent(expiry, Date.parse('2026-07-28T00:00:00Z'));
 
-  assert.equal(event.item.icon, 'gac_attack');
-  assert.equal(new Date(event.dateMs).toISOString(), '2026-07-30T00:00:00.000Z');
-  assert.equal(event.gacWeek, 1);
-  assert.equal(event.gacFormat, '5v5');
-  assert.equal(event.twApplies, true);
+  assert.equal(event.gac.item.icon, 'gac_attack');
+  assert.equal(new Date(event.gac.dateMs).toISOString(), '2026-07-30T00:00:00.000Z');
+  assert.equal(event.tw.item.icon, 'tw_offense');
+  assert.equal(new Date(event.tw.dateMs).toISOString(), '2026-07-30T00:00:00.000Z');
 });
 
 test('datacron expiration is evaluated at 18:00 UTC', () => {

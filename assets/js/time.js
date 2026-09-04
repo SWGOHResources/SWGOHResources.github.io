@@ -436,13 +436,12 @@ function getCurrentDatacronSet(nowMs){
 }
 
 // A datacron set can only ever be equipped/used for Territory War and
-// GAC — never Territory Battle, Conquest, etc. This scans backward day
-// by day from the set's expiry date to find the most recent TW or GAC
-// event, so we can tell players the last event they'll actually get to
-// use the set in before it's removed.
+// GAC — never Territory Battle, Conquest, etc. This finds the most recent
+// usable event for each mode independently because TW and GAC can end at
+// different times.
 function getLastUsableGuildEvent(expiresMs, eraBaseStartMs){
   const firstAbsDay = Math.floor((expiresMs - eraBaseStartMs) / 86400000) + 1;
-  let lastUsable = null;
+  const lastUsable = { tw: null, gac: null };
   for(let offset = -ERA_LENGTH_DAYS; offset <= 1; offset++){
     const absDay = firstAbsDay + offset;
     const info = absDayToInfo(absDay, eraBaseStartMs);
@@ -467,31 +466,17 @@ function getLastUsableGuildEvent(expiresMs, eraBaseStartMs){
         }
       }
 
-      if(usableFromMs < expiresMs && (!lastUsable || itemStartMs > lastUsable.startMs)){
-        const gacInfo = gacInfoForTimestamp(itemStartMs);
-        const gacPhase = getGacRoundInfo(gacInfo.cycleDay).phase;
-        const twApplies = items.some(dayItem => {
-          if(!dayItem.icon.startsWith('tw_')) return false;
-          return dayStartMs + (stdHour() * 3600000) <= itemStartMs;
-        });
-        lastUsable = {
+      const mode = item.icon.startsWith('tw_') ? 'tw' : 'gac';
+      if(usableFromMs < expiresMs && (!lastUsable[mode] || itemStartMs > lastUsable[mode].startMs)){
+        lastUsable[mode] = {
           item,
           dateMs: dayStartMs,
           startMs: itemStartMs,
-          gacWeek: gacPhase === 'off' ? null : Math.ceil(gacInfo.cycleDay / 7),
-          gacFormat: gacPhase === 'off' ? null : gacInfo.format,
-          twApplies,
         };
       }
     });
   }
-  return lastUsable ? {
-    item: lastUsable.item,
-    dateMs: lastUsable.dateMs,
-    gacWeek: lastUsable.gacWeek,
-    gacFormat: lastUsable.gacFormat,
-    twApplies: lastUsable.twApplies,
-  } : null;
+  return lastUsable.tw || lastUsable.gac ? lastUsable : null;
 }
 
 function getDayEvents(episode, dayInEp){

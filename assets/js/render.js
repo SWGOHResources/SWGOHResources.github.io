@@ -50,9 +50,12 @@ function renderUnlockWindows(st){
   let lastUsableLabel = '—';
   if(lastUsable){
     const labels = [];
-    if(lastUsable.gacWeek) labels.push(`GAC Week ${lastUsable.gacWeek} (${lastUsable.gacFormat})`);
-    if(lastUsable.twApplies) labels.push('TW');
-    lastUsableLabel = labels.length ? labels.join(' + ') : getFullScheduleLabel(lastUsable.item);
+    if(lastUsable.gac){
+      const gacInfo = gacInfoForTimestamp(lastUsable.gac.startMs);
+      labels.push(`GAC Week ${Math.ceil(gacInfo.cycleDay / 7)} (${gacInfo.format})`);
+    }
+    if(lastUsable.tw) labels.push('TW');
+    lastUsableLabel = labels.join(' + ');
   }
 
   el.innerHTML = `
