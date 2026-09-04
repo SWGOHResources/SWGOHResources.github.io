@@ -344,8 +344,10 @@ function explorerCardHTML(item, dateMs, relLabel, tbCtx){
       <div class="art-badge">${tag.glyph}</div>
       ${imgTag}
       <div class="xcard-shade"></div>
-      <span class="xcard-cat">${tag.label}</span>
-      <span class="${relCls}">${relLabel}</span>
+      <div class="xcard-art-meta">
+        <span class="xcard-cat">${tag.label}</span>
+        <span class="${relCls}">${relLabel}</span>
+      </div>
     </div>
     <div class="xcard-body">
       <h4>${getFullScheduleLabel(item)}</h4>
