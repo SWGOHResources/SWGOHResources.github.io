@@ -58,10 +58,11 @@ function conquestEndDay(){
 
 function conquestDurationDays(){
   const start = conquestStartDay(), end = conquestEndDay();
+  const expected = end - start + 1;
   return (typeof CONQUEST_DURATION_DAYS !== 'undefined'
     && Number.isInteger(CONQUEST_DURATION_DAYS)
-    && CONQUEST_DURATION_DAYS > 0)
-    ? CONQUEST_DURATION_DAYS : end - start + 1;
+    && CONQUEST_DURATION_DAYS === expected)
+    ? CONQUEST_DURATION_DAYS : expected;
 }
 
 function conquestLockOffsetDays(){
@@ -722,22 +723,22 @@ function getGacStatus(st){
   const cycleStartMs = gacStartMs + (gacHour() * 3600000) + (gacNow.cycleNum * 28 * 86400000);
   const nextSignupMs = info.phase === 'off' ? cycleStartMs + (28 * 86400000) : cycleStartMs;
   const nextSignupDate = fmtDayMonthUTC(nextSignupMs);
+  const nextTransitionMs = info.phase === 'off'
+    ? nextSignupMs
+    : gacStartMs + ((gacNow.rawDays + 1) * 86400000) + (gacHour() * 3600000);
+  const transitionPhrase = formatGacUntil(st.nowMs, nextTransitionMs);
 
   if(info.phase === 'off'){
-     const daysUntilNext = 29 - st.gacCycleDay;
-     const untilPhrase = daysUntilNext === 1 ? 'in 1 day' : `in ${daysUntilNext} days`;
      return {
         status: 'OFF-WEEK',
         badgeClass: 'off',
         title: `Grand Arena (${format})`,
         main: 'Post-Season Off Week',
-        sub: `Next Signup opens ${untilPhrase} (${nextFormat}) · ${nextSignupDate}`,
+        sub: `Next Signup opens ${transitionPhrase} (${nextFormat}) · ${nextSignupDate}`,
         round: null,
         roundPhase: null
      };
   }
-
-  const untilPhrase = 'in 1 day'; 
 
   if(info.phase === 'signup'){
     const defenseDate = fmtDayMonthUTC(cycleStartMs + 86400000);
@@ -746,7 +747,7 @@ function getGacStatus(st){
       badgeClass: 'red',
       title: `Grand Arena (${format})`,
       main: `Week ${info.week} Signup Phase Open`,
-      sub: `Roster locks and Defense Phase starts ${untilPhrase} · ${defenseDate}`,
+      sub: `Roster locks and Defense Phase starts ${transitionPhrase} · ${defenseDate}`,
       round: null,
       roundPhase: null
     };
@@ -759,8 +760,8 @@ function getGacStatus(st){
       title: `Grand Arena (${format})`,
       main: `Round ${info.round} of 3 — Defense Phase`,
       sub: info.round === 1
-        ? `Roster lock-in · Round 1 Attack Phase begins ${untilPhrase}`
-        : `Round ${info.round} Attack Phase begins ${untilPhrase}`,
+        ? `Roster lock-in · Round 1 Attack Phase begins ${transitionPhrase}`
+        : `Round ${info.round} Attack Phase begins ${transitionPhrase}`,
       round: info.round,
       roundPhase: 'defense'
     };
@@ -769,8 +770,8 @@ function getGacStatus(st){
   if(info.phase === 'offense'){
     const isLastRound = info.round === 3;
     const subStr = isLastRound 
-       ? (info.week === 3 ? `Season ends ${untilPhrase}!` : `Week ${info.week} ends ${untilPhrase}`)
-       : `Round ${info.round + 1} Defense Phase begins ${untilPhrase}`;
+      ? (info.week === 3 ? `Season ends ${transitionPhrase}!` : `Week ${info.week} ends ${transitionPhrase}`)
+      : `Round ${info.round + 1} Defense Phase begins ${transitionPhrase}`;
     return {
       status: `WEEK ${info.week} · ROUND ${info.round} ATTACK`,
       badgeClass: 'red',
@@ -798,6 +799,17 @@ function conquestChapterForEpisode(episode){
 
 function conquestOrdinal(cNum){
   return ordinal(cNum);
+}
+
+function formatGacUntil(nowMs, targetMs){
+  const diffMs = targetMs - nowMs;
+  if(!Number.isFinite(diffMs) || diffMs <= 0) return 'now';
+  const minutes = Math.ceil(diffMs / 60000);
+  if(minutes < 60) return `in ${minutes} minute${minutes === 1 ? '' : 's'}`;
+  const hours = Math.ceil(diffMs / 3600000);
+  if(hours < 24) return `in ${hours} hour${hours === 1 ? '' : 's'}`;
+  const days = Math.ceil(diffMs / 86400000);
+  return `in ${days} day${days === 1 ? '' : 's'}`;
 }
 
 function conquestInfoForDay(episode, dayInEp){
@@ -1007,6 +1019,12 @@ function validateScheduleConfig(){
       && configuredConquestEnd >= configuredConquestStart
       && configuredConquestEnd <= episodeLength))
     issues.push('Conquest days must satisfy 1 <= START <= END <= EPISODE_LENGTH_DAYS.');
+  if(Number.isInteger(conquestDuration)
+    && conquestDuration > 0
+    && Number.isInteger(configuredConquestStart)
+    && Number.isInteger(configuredConquestEnd)
+    && conquestDuration !== configuredConquestEnd - configuredConquestStart + 1)
+    issues.push('CONQUEST_DURATION_DAYS must match the inclusive Conquest start/end day span.');
 
   if(typeof TB_DEFS === 'undefined' || !TB_DEFS || Object.keys(TB_DEFS).length === 0){
     issues.push('TB_DEFS is empty — Territory Battle labels cannot resolve.');

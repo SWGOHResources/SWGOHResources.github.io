@@ -74,6 +74,13 @@ test('GAC changes exactly at 21:00 UTC and remains independent', () => {
   assert.equal(engine.gacInfoForTimestamp(reset).format, '5v5');
 });
 
+test('GAC status reports the actual time until an intra-day transition', () => {
+  const engine = loadTimeEngine();
+  const status = engine.getGacStatus(engine.getGameStatus(Date.parse('2026-08-12T20:59:00Z')));
+
+  assert.match(status.sub, /in 1 minute/);
+});
+
 test('GAC card dates use the 21:00 UTC transition', () => {
   const engine = loadTimeEngine({ timeZone: 'UTC+03:00' });
   const dayStart = Date.parse('2026-08-11T00:00:00Z');
@@ -298,6 +305,14 @@ test('invalid conquest settings fall back without crashing status or labels', ()
   const issues = engine.validateScheduleConfig();
   assert.ok(issues.some(issue => issue.includes('Conquest days')));
   assert.ok(issues.some(issue => issue.includes('CONQUEST_DURATION_DAYS')));
+});
+
+test('mismatched conquest duration falls back to the configured day span', () => {
+  const engine = loadTimeEngine();
+  engine.CONQUEST_DURATION_DAYS = 10;
+
+  assert.equal(engine.conquestDurationDays(), 14);
+  assert.ok(engine.validateScheduleConfig().some(issue => issue.includes('must match')));
 });
 
 test('conquest upcoming status uses singular one-day wording', () => {
