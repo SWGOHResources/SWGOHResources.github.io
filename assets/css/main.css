@@ -583,6 +583,7 @@ body.modal-open .starfield span {
   contain: content;
 }
 .timeline { padding: 8px 0 12px; }
+.tl-ep + .tl-ep { margin-top: 6px; padding-top: 10px; border-top: 1px solid var(--border); }
 .tl-ep-head {
   display: flex; justify-content: space-between; align-items: baseline;
   font-family: var(--disp); font-size: 14px; font-weight: 700; color: var(--text);

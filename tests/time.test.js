@@ -470,3 +470,20 @@ test('TB phase summaries tense by the event start instant', () => {
     'Rise of the Empire Phase 4 Started'
   );
 });
+
+test('off-week GAC locks roll into Week 1 of the next cycle', () => {
+  const engine = loadTimeEngine();
+  // deepEqual can't cross the vm realm boundary (prototypes differ),
+  // so the week/format fields are compared individually.
+  const cases = [
+    [1, '5v5', 1, '5v5'],
+    [21, '5v5', 3, '5v5'],
+    [22, '5v5', 1, '3v3'],
+    [28, '3v3', 1, '5v5'],
+  ];
+  for (const [cycleDay, format, week, nextFormat] of cases) {
+    const usable = engine.gacUsableWeek(cycleDay, format);
+    assert.equal(usable.week, week);
+    assert.equal(usable.format, nextFormat);
+  }
+});

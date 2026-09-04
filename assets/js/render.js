@@ -22,8 +22,9 @@ function renderUnlockWindows(st){
 
   // Roster locks at the configured defense-phase offset.
   const cqNextSignupDate = cqDateMs + (86400000 * conquestLockOffsetDays());
-  const cqGac = gacInfoForDate(cqNextSignupDate);
-  const cqGacWeek = Math.ceil(cqGac.cycleDay / 7);
+  const cqGacInfo = gacInfoForDate(cqNextSignupDate);
+  const cqGac = gacUsableWeek(cqGacInfo.cycleDay, cqGacInfo.format);
+  const cqGacWeek = cqGac.week;
 
   // --- ERA UNIT ---
   // Finds the NEXT era-start day (Era Changeover / Tuesday)
@@ -33,12 +34,17 @@ function renderUnlockWindows(st){
   const eraDateMs = eraInf.dateMs;
   
   const eraDays = Math.round((eraDateMs - st.currentDayStartMs) / 86400000);
-  const eraBadge = eraAbs <= st.rawDayIndex || eraDays <= 0 ? 'THIS ERA' : `IN ${eraDays} DAY${eraDays === 1 ? '' : 'S'}`;
+  // Before launch the era hasn't started: count down to it instead of
+  // claiming THIS ERA. daysUntilEra already counts display-zone days.
+  const eraBadge = st.preEra
+    ? (st.daysUntilEra <= 0 ? 'TODAY' : `IN ${st.daysUntilEra} DAY${st.daysUntilEra === 1 ? '' : 'S'}`)
+    : (eraAbs <= st.rawDayIndex || eraDays <= 0 ? 'THIS ERA' : `IN ${eraDays} DAY${eraDays === 1 ? '' : 'S'}`);
 
   // Roster locks at the configured defense-phase offset.
   const eraNextSignupDate = eraDateMs + (86400000 * eraLockOffsetDays());
-  const eraGac = gacInfoForDate(eraNextSignupDate);
-  const eraGacWeek = Math.ceil(eraGac.cycleDay / 7);
+  const eraGacInfo = gacInfoForDate(eraNextSignupDate);
+  const eraGac = gacUsableWeek(eraGacInfo.cycleDay, eraGacInfo.format);
+  const eraGacWeek = eraGac.week;
 
   // --- DATACRON EXPIRATIONS ---
   const cron = getCurrentDatacronSet(st.nowMs);
@@ -53,7 +59,8 @@ function renderUnlockWindows(st){
     const labels = [];
     if(lastUsable.gac){
       const gacInfo = gacInfoForTimestamp(lastUsable.gac.startMs);
-      labels.push(`GAC Week ${Math.ceil(gacInfo.cycleDay / 7)} (${gacInfo.format})`);
+      const usable = gacUsableWeek(gacInfo.cycleDay, gacInfo.format);
+      labels.push(`GAC Week ${usable.week} (${usable.format})`);
     }
     if(lastUsable.tw) labels.push(lastUsable.tw.twNumber ? `TW ${lastUsable.tw.twNumber}` : 'TW');
     lastUsableLabel = labels.join(' + ');
