@@ -374,7 +374,7 @@ function renderExplorer(st){
       + (o === 0 ? ' is-today' : '')
       + (o === explorerOffset ? ' is-selected' : '')
       + (d.items.length ? ' has-events' : '');
-    pills += `<button type="button" class="${cls}" onclick="jumpExplorer(${o})" aria-label="${fmtDateUTC(gameDayDisplayMs(d.dMs))}${o === 0 ? ', today' : ''}">`
+    pills += `<button type="button" class="${cls}" onclick="jumpExplorer(${o})" aria-label="${fmtDateUTC(gameDayDisplayMs(d.dMs))}${o === 0 ? ', today' : ''}" aria-pressed="${o === explorerOffset}"${o === explorerOffset ? ' aria-current="date"' : ''}>`
       + `<span class="dp-dow">${parts.dow}</span>`
       + `<span class="dp-num">${parts.num}</span>`
       + `<span class="dp-dot"></span></button>`;
