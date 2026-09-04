@@ -157,6 +157,15 @@ function getGacRoundInfo(cycleDay){
   return { phase: 'off', round: null, week: null };
 }
 
+/* GAC week a newly unlocked/locked unit is first usable in. A date
+   landing in the off-week (cycle days 22-28, "week 4") rolls into
+   Week 1 of the next cycle, whose format flips. */
+function gacUsableWeek(cycleDay, format){
+  const week = Math.ceil(cycleDay / 7);
+  if(week <= 3) return { week, format };
+  return { week: 1, format: format === '5v5' ? '3v3' : '5v5' };
+}
+
 function gacEventsForDate(dateMs){
   const info = gacInfoForDate(dateMs);
   const rnd = getGacRoundInfo(info.cycleDay);
