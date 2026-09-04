@@ -14,6 +14,7 @@ function renderUnlockWindows(st){
   // Finds the NEXT conquest-end day (End of Episode 2 / Monday)
   const cqAbs = nextOccurrenceAbs(CONQUEST_END_OFFSETS, st.rawDayIndex, ERA_LENGTH_DAYS);
   const cqInf = absDayToInfo(cqAbs, st.eraBaseStartMs);
+  const cqChapter = conquestChapterForEpisode(cqInf.episode);
   const cqDateMs = cqInf.dateMs;
   
   const cqDays = Math.round((cqDateMs - st.currentDayStartMs) / 86400000);
@@ -57,7 +58,7 @@ function renderUnlockWindows(st){
 
   el.innerHTML = `
     <div class="status-card purple-card">
-      <div class="sc-header"><span class="sc-title">Conquest Unit (3rd of Volume)</span><span class="sc-badge purple">${cqBadge}</span></div>
+      <div class="sc-header"><span class="sc-title">Conquest Unit (${conquestOrdinal(cqChapter.cNum)} of Volume)</span><span class="sc-badge purple">${cqBadge}</span></div>
       <div class="uw-body" style="--accent:var(--purple);--accent-dim:var(--purple-dim);--accent-border:var(--purple-border)">
         <div class="uw-img"><div class="art-badge">CQ</div><img src="${IMG_BASE}${CONQUEST_UNIT_IMAGE}" onerror="this.remove()"></div>
         <div class="uw-text">
@@ -470,10 +471,9 @@ function getFullScheduleLabel(item){
 
 const fullScheduleCache = { eraStartMs: null, activeDay: null, tbChoices: null, tzKey: null };
 let scheduleFilterEp = 0; // 0 = all episodes
-const GAME_DAY_CHANGEOVER_HOURS = (typeof STD_CHANGEOVER_HOUR_UTC !== 'undefined') ? STD_CHANGEOVER_HOUR_UTC : 18;
 
 function gameDayDisplayMs(dateMs){
-  return dateMs + (GAME_DAY_CHANGEOVER_HOURS * 3600000);
+  return dateMs + (stdHour() * 3600000);
 }
 
 function fullScheduleTbChoiceKey(){
