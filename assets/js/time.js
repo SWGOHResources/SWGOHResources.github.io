@@ -10,8 +10,11 @@ function posMod(n, m){
 function parseDateOnlyMs(value){
   if(typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return NaN;
   const [year, month, day] = value.split('-').map(Number);
-  const dateMs = Date.UTC(year, month - 1, day);
-  const date = new Date(dateMs);
+  // Date.UTC treats years 0-99 as 1900-1999; set the full year explicitly.
+  const date = new Date(0);
+  date.setUTCHours(0, 0, 0, 0);
+  date.setUTCFullYear(year, month - 1, day);
+  const dateMs = date.getTime();
   return date.getUTCFullYear() === year
     && date.getUTCMonth() === month - 1
     && date.getUTCDate() === day

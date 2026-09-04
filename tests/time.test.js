@@ -230,6 +230,11 @@ test('date validation requires real canonical calendar dates', () => {
   assert.ok(invalid.validateScheduleConfig().some(issue => issue.includes('GAC_CYCLE_START_DATE')));
 });
 
+test('date-only parsing preserves years below 100', () => {
+  const engine = loadTimeEngine();
+  assert.equal(new Date(engine.parseDateOnlyMs('0001-01-01')).toISOString(), '0001-01-01T00:00:00.000Z');
+});
+
 test('invalid changeover hours fall back and are reported', () => {
   const engine = loadTimeEngine({ hours: { std: 25, gac: NaN } });
   assert.equal(engine.stdHour(), 18);
