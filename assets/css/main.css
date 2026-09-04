@@ -514,8 +514,8 @@ body.modal-open .starfield span {
   background: rgba(8,10,14,0.78);
   max-width: 100%; overflow-wrap: anywhere; min-width: 0;
 }
-.xcard-cat { color: var(--accent, var(--text)); border: 1px solid var(--accent-border, var(--border2)); }
-.xcard-rel { color: var(--text2); border: 1px solid var(--border2); white-space: nowrap; }
+.xcard-cat { color: var(--accent, var(--text)); border: 1px solid var(--accent-border, var(--border2)); justify-self: start; }
+.xcard-rel { color: var(--text2); border: 1px solid var(--border2); white-space: nowrap; justify-self: end; }
 .xcard-rel.is-today { color: var(--cyan); border-color: var(--cyan-border); }
 .xcard-body { padding: 10px 12px 12px; display: flex; flex-direction: column; flex: 1; }
 .xcard-body h4 {
