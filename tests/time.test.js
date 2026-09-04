@@ -6,7 +6,7 @@ import vm from 'node:vm';
 const timeSource = fs.readFileSync(new URL('../assets/js/time.js', import.meta.url), 'utf8');
 const dayMs = 86400000;
 
-function loadTimeEngine({ eraLength = 84, timeZone = 'UTC', datacronSets = [], gacStart = '2026-08-11', omit = [], hours = {}, lockOffsets = {} } = {}) {
+function loadTimeEngine({ eraLength = 84, timeZone = 'UTC', datacronSets = [], gacStart = '2026-08-11', omit = [], hours = {}, lockOffsets = {}, commonDays = {} } = {}) {
   const storage = new Map([['swgoh-tz', timeZone]]);
   const context = {
     console,
@@ -38,7 +38,7 @@ function loadTimeEngine({ eraLength = 84, timeZone = 'UTC', datacronSets = [], g
     TB_CHOICE_STORAGE_KEY: 'tb',
     MONTHLY_EVENTS: [],
     EPISODE_OVERRIDES: {},
-    COMMON_DAYS: {},
+    COMMON_DAYS: commonDays,
     DATACRON_SETS: datacronSets,
     CONQUEST_END_OFFSETS: [49],
     ERA_START_OFFSETS: [1],
@@ -214,6 +214,24 @@ test('last usable guild event follows configured changeover hours', () => {
   const event = engine.getLastUsableGuildEvent(expiry, Date.parse('2026-07-28T00:00:00Z'));
   assert.equal(event.item.icon, 'gac_attack');
   assert.equal(new Date(event.dateMs).toISOString(), '2026-08-31T00:00:00.000Z');
+});
+
+test('locked TW remains usable after expiry and takes precedence over an overlapping GAC phase', () => {
+  const engine = loadTimeEngine({
+    gacStart: '2026-07-28',
+    commonDays: {
+      2: [{ icon: 'tw_defense', label: 'Defense Phase Starts' }],
+      3: [{ icon: 'tw_offense', label: 'Offense Phase Starts' }],
+    },
+  });
+  const expiry = Date.parse('2026-07-30T18:00:00Z');
+  const event = engine.getLastUsableGuildEvent(expiry, Date.parse('2026-07-28T00:00:00Z'));
+
+  assert.equal(event.item.icon, 'gac_attack');
+  assert.equal(new Date(event.dateMs).toISOString(), '2026-07-30T00:00:00.000Z');
+  assert.equal(event.gacWeek, 1);
+  assert.equal(event.gacFormat, '5v5');
+  assert.equal(event.twApplies, true);
 });
 
 test('datacron expiration is evaluated at 18:00 UTC', () => {
