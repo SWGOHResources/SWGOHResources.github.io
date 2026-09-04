@@ -163,6 +163,15 @@ test('bad GAC start date falls back to a safe default', () => {
   assert.equal(info.rawDays, 0);
 });
 
+test('impossible GAC calendar dates fall back instead of rolling into another month', () => {
+  const engine = loadTimeEngine({ gacStart: '2026-02-31' });
+  const info = engine.gacInfoForTimestamp(Date.parse('2026-08-11T21:00:00Z'));
+  assert.equal(info.cycleDay, 1);
+  assert.equal(info.cycleNum, 0);
+  assert.equal(info.format, '5v5');
+  assert.equal(info.rawDays, 0);
+});
+
 test('GAC status uses a safe date when the start date is malformed or missing', () => {
   for (const options of [{ gacStart: 'not-a-date' }, { omit: ['GAC_CYCLE_START_DATE'] }]) {
     const engine = loadTimeEngine(options);
@@ -233,6 +242,11 @@ test('invalid roster lock offsets fall back and are reported', () => {
   assert.equal(engine.conquestLockOffsetDays(), 2);
   assert.equal(engine.eraLockOffsetDays(), 1);
   assert.equal(engine.validateScheduleConfig().filter(issue => issue.includes('ROSTER_LOCK_OFFSET')).length, 2);
+});
+
+test('missing TB rotation anchor degrades to the default side without throwing', () => {
+  const engine = loadTimeEngine({ omit: ['TB_SIDE_ANCHOR_DATE', 'TB_RUN_GAP_DAYS', 'TB_SIDE_ANCHOR_SIDE'] });
+  assert.equal(engine.tbSideForPhase1(Date.parse('2026-08-31')), 'light');
 });
 
 test('last usable guild event follows configured changeover hours', () => {
