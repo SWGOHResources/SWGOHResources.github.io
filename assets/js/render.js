@@ -355,7 +355,7 @@ function explorerCardHTML(item, dateMs, relLabel, tbCtx){
     </div>
     <div class="xcard-body">
       <h4>${getFullScheduleLabel(item)}</h4>
-      <div class="xcard-date">${eventDateRangeLabel(item, gameDayDisplayMs(dateMs), isTbCard ? tbCtx : null)}</div>
+      <div class="xcard-date">${eventDateRangeLabel(item, eventDisplayMs(item, dateMs), isTbCard ? tbCtx : null)}</div>
       ${picker}
     </div>
   </article>`;

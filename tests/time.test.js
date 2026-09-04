@@ -74,6 +74,20 @@ test('GAC changes exactly at 21:00 UTC and remains independent', () => {
   assert.equal(engine.gacInfoForTimestamp(reset).format, '5v5');
 });
 
+test('GAC card dates use the 21:00 UTC transition', () => {
+  const engine = loadTimeEngine({ timeZone: 'UTC+03:00' });
+  const dayStart = Date.parse('2026-08-11T00:00:00Z');
+
+  assert.equal(
+    engine.fmtDayMonthUTC(engine.eventDisplayMs({ icon: 'gac_signup' }, dayStart)),
+    '12th Aug'
+  );
+  assert.equal(
+    engine.fmtDayMonthUTC(engine.eventDisplayMs({ icon: 'tw_signup' }, dayStart)),
+    '11th Aug'
+  );
+});
+
 test('timezone offsets are validated and applied to display instants', () => {
   const engine = loadTimeEngine({ timeZone: 'UTC+05:30' });
   const instant = Date.parse('2026-09-03T18:00:00Z');
@@ -255,6 +269,25 @@ test('invalid roster lock offsets fall back and are reported', () => {
   assert.equal(engine.conquestLockOffsetDays(), 2);
   assert.equal(engine.eraLockOffsetDays(), 1);
   assert.equal(engine.validateScheduleConfig().filter(issue => issue.includes('ROSTER_LOCK_OFFSET')).length, 2);
+});
+
+test('invalid conquest settings fall back without crashing status or labels', () => {
+  const engine = loadTimeEngine();
+  engine.CONQUEST_START_DAY_IN_EP = '7';
+  engine.CONQUEST_END_DAY_IN_EP = 0;
+  engine.CONQUEST_DURATION_DAYS = NaN;
+
+  assert.equal(engine.conquestStartDay(), 7);
+  assert.equal(engine.conquestEndDay(), 20);
+  assert.equal(engine.conquestDurationDays(), 14);
+  assert.doesNotThrow(() => engine.getConquestStatus(engine.getGameStatus(Date.parse('2026-08-14T20:00:00Z'))));
+  assert.match(
+    engine.eventDateRangeLabel({ icon: 'conquest_start' }, Date.parse('2026-08-04T00:00:00Z')),
+    /14 days/
+  );
+  const issues = engine.validateScheduleConfig();
+  assert.ok(issues.some(issue => issue.includes('Conquest days')));
+  assert.ok(issues.some(issue => issue.includes('CONQUEST_DURATION_DAYS')));
 });
 
 test('missing TB rotation anchor degrades to the default side without throwing', () => {
