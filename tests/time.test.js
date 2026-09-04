@@ -235,6 +235,14 @@ test('date-only parsing preserves years below 100', () => {
   assert.equal(new Date(engine.parseDateOnlyMs('0001-01-01')).toISOString(), '0001-01-01T00:00:00.000Z');
 });
 
+test('conquest volume ordinals use the correct suffix', () => {
+  const engine = loadTimeEngine();
+  assert.equal(engine.conquestOrdinal(21), '21st');
+  assert.equal(engine.conquestOrdinal(22), '22nd');
+  assert.equal(engine.conquestOrdinal(23), '23rd');
+  assert.equal(engine.conquestOrdinal(24), '24th');
+});
+
 test('invalid changeover hours fall back and are reported', () => {
   const engine = loadTimeEngine({ hours: { std: 25, gac: NaN } });
   assert.equal(engine.stdHour(), 18);
