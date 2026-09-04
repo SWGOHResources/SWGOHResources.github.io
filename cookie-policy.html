@@ -9,6 +9,7 @@
   <meta name="robots" content="index, follow">
   <meta name="theme-color" content="#0b0d11">
   <meta name="color-scheme" content="dark">
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
   <link rel="icon" href="/assets/img/icons/favicon-32.png?v=1" type="image/png" sizes="32x32">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -29,29 +30,36 @@
       <button class="gear-btn mp-btn" id="openAboutBtnMobile">Report Issue</button>
     </div>
   </header>
+
+<aside class="cookie-notice" id="cookieNotice" hidden aria-label="Cookie notice">
+  <div>
+    <strong>Cookie notice</strong>
+    <p>We use one essential cookie to remember this notice. Schedule preferences stay on your device.</p>
+  </div>
+  <div class="cookie-actions">
+    <a href="cookie-policy.html">Cookie policy</a>
+    <button class="btn primary" id="dismissCookieNotice" type="button">Got it</button>
+  </div>
+</aside>
+
   <main class="wrap policy-page" id="main">
     <div class="section-head"><h1>Cookie Policy</h1><div class="rule"></div></div>
-    <p class="policy-updated">Last updated: 3 September 2026</p>
+    <p class="policy-updated">Last updated: 4 September 2026</p>
     <section class="policy-content">
-      <p class="policy-lead">This policy describes the small amount of browser storage used by SWGOH Resources and how you can clear it.</p>
-      <h2>What cookies are used</h2>
-      <p>SWGOH Resources uses one strictly functional cookie named <code>swgoh_cookie_notice</code>. It stores the value <code>dismissed</code> after you close the cookie notice so it is not shown on every visit.</p>
-      <p>This cookie is set for six months, applies to the site, and uses the <code>SameSite=Lax</code> setting. It contains no name, email address, account ID, or browsing history.</p>
-      <p>The cookie is created only after you select <strong>Got it</strong> in the notice. If you do not dismiss the notice, no consent cookie is written by this site.</p>
-      <h2>Other browser storage</h2>
-      <p>Timezone and Territory Battle choices are saved in local storage rather than cookies. They are used only to remember your display and planning preferences on this device.</p>
-      <p>Local storage is not sent to SWGOH Resources' server. It is read by the page when it loads so the schedule can use your chosen timezone and TB rotation settings.</p>
-      <h2>Third-party cookies</h2>
-      <p>The site does not embed advertising, analytics, or social tracking tools. Google Fonts may make a request for font files, and links to swgoh.gg are governed by that site when you follow them.</p>
-      <p>Once you leave this site, the destination may use cookies or other technologies under its own policy. This site cannot read or manage cookies set by another domain.</p>
+      <p class="policy-lead">One cookie. Local storage for your picks. That's everything.</p>
+      <h2>The cookie</h2>
+      <p>Dismissing the notice writes <code>swgoh_cookie_notice=dismissed</code> — six months, site-wide, <code>SameSite=Lax</code>. It holds no name, no email, no history. Ignore the notice and nothing gets written.</p>
+      <h2>Local storage, not cookies</h2>
+      <p>Timezone and Territory Battle picks live in local storage. Never sent anywhere — the page just reads them back to render your schedule.</p>
+      <h2>Third parties</h2>
+      <p>No ads, no analytics, no trackers embedded. Google Fonts fetches font files; swgoh.gg links leave the site. Past that border, their policies apply.</p>
       <h2>Your choices</h2>
-      <p>You can delete this cookie and local storage through your browser settings. Deleting them may cause the notice to appear again and reset your saved schedule preferences.</p>
-      <p>Most browsers also let you block cookies or clear site data automatically. Blocking the functional cookie does not prevent you from using the schedule, but the notice may appear again.</p>
-      <h2>Changes to this policy</h2>
-      <p>If the site's storage or external services change, this policy will be updated and the revision date above will change.</p>
+      <p>Wipe site data in your browser and the notice returns, picks reset. Blocking the cookie still leaves a working schedule — the notice just keeps showing up.</p>
+      <h2>Changes</h2>
+      <p>Storage changes land here first, with a new date above.</p>
     </section>
   </main>
-  <footer class="site-footer"><div class="footer-inner"><div class="footer-main"><div class="footer-brand-col"><div class="footer-brand">SWGOH<span>::</span>RESOURCES</div><p class="footer-tagline">Day-by-day GAC, Territory War, Territory Battle, Conquest and Marquee event tracker.</p></div><nav class="footer-links"><span class="footer-links-label">Navigate</span><a href="/">Home</a></nav><div class="footer-contact"><div class="creator-line">Maintained by <strong>Dom</strong> — found a schedule issue?</div><button class="discord-copy-btn" id="openAboutBtnFooter">Report an issue</button></div></div><div class="footer-rule"></div><div class="footer-legal"><p class="footer-note">Schedule shows expected dates based on the usual rotation, not live data — check live event timings at <a href="https://swgoh.gg/events/" target="_blank" rel="noopener">swgoh.gg/events</a>. Fan-made planning tool for Star Wars: Galaxy of Heroes. Not affiliated with, endorsed, sponsored, or specifically approved by Electronic Arts, Capital Games, Disney, or Lucasfilm. All game assets, trademarks, and character names are property of their respective owners.</p><nav class="legal-links" aria-label="Legal"><a href="privacy.html">Privacy</a><a href="cookie-policy.html">Cookies</a><a href="terms.html">Terms</a></nav><div class="footer-bottom"><span id="footerMeta"></span><span class="dot">·</span><span id="footerYear"></span></div></div></div></footer>
+  <footer class="site-footer"><div class="footer-inner"><div class="footer-main"><div class="footer-brand-col"><div class="footer-brand">SWGOH<span>::</span>RESOURCES</div><p class="footer-tagline">Day-by-day GAC, Territory War, Territory Battle, Conquest and Marquee event tracker.</p></div><nav class="footer-links"><span class="footer-links-label">Navigate</span><a href="/">Home</a></nav><div class="footer-contact"><div class="creator-line">Maintained by <strong>Dom</strong> — found a schedule issue?</div><button class="discord-copy-btn" onclick="copyDiscordHandle(this)" title="Click to copy Discord handle"><span>@granddom</span></button></div></div><div class="footer-rule"></div><div class="footer-legal"><p class="footer-note">Schedule shows expected dates based on the usual rotation, not live data — check live event timings at <a href="https://swgoh.gg/events/" target="_blank" rel="noopener">swgoh.gg/events</a>. Fan-made planning tool for Star Wars: Galaxy of Heroes. Not affiliated with, endorsed, sponsored, or specifically approved by Electronic Arts, Capital Games, Disney, or Lucasfilm. All game assets, trademarks, and character names are property of their respective owners.</p><nav class="legal-links" aria-label="Legal"><a href="privacy.html">Privacy</a><a href="cookie-policy.html">Cookies</a><a href="terms.html">Terms</a></nav><div class="footer-bottom"><span id="footerMeta"></span><span class="dot">·</span><span id="footerYear"></span></div></div></div></footer>
   <div class="modal-backdrop" id="aboutModal" aria-hidden="true"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="aboutModalTitle"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;"><h3 id="aboutModalTitle" style="font-family:var(--disp); font-size:18px;">Report an Issue</h3><button class="modal-close-x" id="closeAboutBtn" aria-label="Close"><span></span><span></span></button></div><p style="font-size:13px; color:var(--text2); margin-bottom:16px; line-height:1.6;">This tool is maintained by Dom. Report issues to him on Discord:</p><div style="background:var(--void2); border:1px solid var(--border2); border-radius:var(--radius); padding:14px; margin-bottom:16px; display:flex; align-items:center; justify-content:space-between; gap:10px;"><span style="font-weight:600; font-size:13px; color:var(--text);">Discord</span><button class="discord-copy-btn" onclick="copyDiscordHandle(this)"><span>@granddom</span></button></div><div style="display:flex; justify-content:flex-end;"><button class="btn primary" id="closeAboutBtn2">Close</button></div></div></div>
   <script src="assets/js/legal.js"></script>
 </body>

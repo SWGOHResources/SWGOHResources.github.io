@@ -39,7 +39,6 @@ function openAboutModal(){
 
 document.getElementById('openAboutBtnHeader')?.addEventListener('click', openAboutModal);
 document.getElementById('openAboutBtnMobile')?.addEventListener('click', openAboutModal);
-document.getElementById('openAboutBtnFooter')?.addEventListener('click', openAboutModal);
 document.getElementById('closeAboutBtn')?.addEventListener('click', closeAboutModal);
 document.getElementById('closeAboutBtn2')?.addEventListener('click', closeAboutModal);
 aboutModal?.addEventListener('click', event => {
@@ -85,3 +84,21 @@ document.getElementById('footerMeta')?.remove();
 document.querySelector('.footer-bottom .dot')?.remove();
 const footerYear = document.getElementById('footerYear');
 if(footerYear) footerYear.textContent = `© ${new Date().getFullYear()} SWGOH::RESOURCES`;
+
+/* Cookie notice — same behavior as the schedule page: one essential
+   cookie remembers the dismissal, everything else stays on-device. */
+const cookieNotice = document.getElementById('cookieNotice');
+const dismissCookieNotice = document.getElementById('dismissCookieNotice');
+const COOKIE_NOTICE_KEY = 'swgoh_cookie_notice';
+
+function hasCookie(name){
+  return document.cookie.split('; ').some(cookie => cookie.startsWith(`${name}=`));
+}
+
+function dismissCookies(){
+  document.cookie = `${COOKIE_NOTICE_KEY}=dismissed; max-age=15552000; path=/; SameSite=Lax`;
+  if(cookieNotice) cookieNotice.hidden = true;
+}
+
+if(cookieNotice && !hasCookie(COOKIE_NOTICE_KEY)) cookieNotice.hidden = false;
+if(dismissCookieNotice) dismissCookieNotice.addEventListener('click', dismissCookies);

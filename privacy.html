@@ -9,6 +9,7 @@
   <meta name="robots" content="index, follow">
   <meta name="theme-color" content="#0b0d11">
   <meta name="color-scheme" content="dark">
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
   <link rel="icon" href="/assets/img/icons/favicon-32.png?v=1" type="image/png" sizes="32x32">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -29,32 +30,41 @@
       <button class="gear-btn mp-btn" id="openAboutBtnMobile">Report Issue</button>
     </div>
   </header>
+
+<aside class="cookie-notice" id="cookieNotice" hidden aria-label="Cookie notice">
+  <div>
+    <strong>Cookie notice</strong>
+    <p>We use one essential cookie to remember this notice. Schedule preferences stay on your device.</p>
+  </div>
+  <div class="cookie-actions">
+    <a href="cookie-policy.html">Cookie policy</a>
+    <button class="btn primary" id="dismissCookieNotice" type="button">Got it</button>
+  </div>
+</aside>
+
   <main class="wrap policy-page" id="main">
     <div class="section-head"><h1>Privacy Policy</h1><div class="rule"></div></div>
-    <p class="policy-updated">Last updated: 3 September 2026</p>
+    <p class="policy-updated">Last updated: 4 September 2026</p>
     <section class="policy-content">
-      <p class="policy-lead">This policy explains what SWGOH Resources collects, what stays in your browser, and what happens when you follow links to other services.</p>
+      <p class="policy-lead">No accounts. No tracking. Here's everything that stays on your device.</p>
       <h2>What this site does</h2>
-      <p>SWGOH Resources is a fan-made schedule and planning tool for Star Wars: Galaxy of Heroes. It does not require an account and does not ask you to submit personal information.</p>
-      <p>You can browse the schedule without signing in, providing an email address, or creating a profile. The site is designed to work as a static website in your browser.</p>
-      <h2>Information stored on your device</h2>
-      <p>The site stores your display timezone and Territory Battle selections in your browser's local storage. These settings stay on your device and are used only to display the schedule you selected.</p>
-      <p>The site also stores a small functional cookie when you dismiss the cookie notice. This remembers that the notice was acknowledged. It does not identify you or track your activity.</p>
-      <p>These preferences are optional. You can remove them using your browser's site-data or storage controls, after which the site will return to its default display settings.</p>
-      <h2>Third-party services</h2>
-      <p>The site loads fonts from Google Fonts. Your browser may contact Google to retrieve those font files. The site also links to swgoh.gg for live event timings; following that link takes you to swgoh.gg and its own policies.</p>
-      <p>External services may process technical information such as your IP address when your browser requests their content. SWGOH Resources does not control those services and recommends reviewing their privacy policies directly.</p>
-      <h2>Analytics and advertising</h2>
-      <p>This site does not currently use analytics, advertising, behavioral tracking, or sale of personal information.</p>
-      <h2>Children's privacy</h2>
-      <p>This site is a general-audience schedule tool and is not directed at collecting information from children. Because the site does not require accounts or submissions, it is not designed to collect personal information from visitors.</p>
-      <h2>Changes to this policy</h2>
-      <p>This policy may be updated when the site's features or services change. The date above identifies the latest revision.</p>
+      <p>SWGOH Resources is a fan-made schedule tracker. No sign-in, no email, nothing to submit — open the page and read the schedule.</p>
+      <h2>Stored on your device</h2>
+      <p>Your timezone pick and Territory Battle selections live in this browser's local storage. Dismissing the cookie notice stores one cookie (<code>swgoh_cookie_notice=dismissed</code>). All of it stays on your device.</p>
+      <p>Clear the site's data in your browser settings and everything resets to defaults.</p>
+      <h2>Third parties</h2>
+      <p>Google Fonts serves the fonts. Links to swgoh.gg leave this site. Their policies apply on their end — this site controls neither.</p>
+      <h2>Analytics and ads</h2>
+      <p>None. No analytics, no ads, no behavioral tracking, nothing for sale.</p>
+      <h2>Children</h2>
+      <p>Nothing is collected from anyone, kids included — there are no accounts and nothing to submit.</p>
+      <h2>Changes</h2>
+      <p>This page changes when the site changes. The date above says when.</p>
       <h2>Contact</h2>
-      <p>For a site issue or privacy question, use the Report Issue link on the schedule page to contact the maintainer through Discord.</p>
+      <p>Schedule wrong, or a question about this page? Hit Report Issue (top right) to reach Dom on Discord.</p>
     </section>
   </main>
-  <footer class="site-footer"><div class="footer-inner"><div class="footer-main"><div class="footer-brand-col"><div class="footer-brand">SWGOH<span>::</span>RESOURCES</div><p class="footer-tagline">Day-by-day GAC, Territory War, Territory Battle, Conquest and Marquee event tracker.</p></div><nav class="footer-links"><span class="footer-links-label">Navigate</span><a href="/">Home</a></nav><div class="footer-contact"><div class="creator-line">Maintained by <strong>Dom</strong> — found a schedule issue?</div><button class="discord-copy-btn" id="openAboutBtnFooter">Report an issue</button></div></div><div class="footer-rule"></div><div class="footer-legal"><p class="footer-note">Schedule shows expected dates based on the usual rotation, not live data — check live event timings at <a href="https://swgoh.gg/events/" target="_blank" rel="noopener">swgoh.gg/events</a>. Fan-made planning tool for Star Wars: Galaxy of Heroes. Not affiliated with, endorsed, sponsored, or specifically approved by Electronic Arts, Capital Games, Disney, or Lucasfilm. All game assets, trademarks, and character names are property of their respective owners.</p><nav class="legal-links" aria-label="Legal"><a href="privacy.html">Privacy</a><a href="cookie-policy.html">Cookies</a><a href="terms.html">Terms</a></nav><div class="footer-bottom"><span id="footerMeta"></span><span class="dot">·</span><span id="footerYear"></span></div></div></div></footer>
+  <footer class="site-footer"><div class="footer-inner"><div class="footer-main"><div class="footer-brand-col"><div class="footer-brand">SWGOH<span>::</span>RESOURCES</div><p class="footer-tagline">Day-by-day GAC, Territory War, Territory Battle, Conquest and Marquee event tracker.</p></div><nav class="footer-links"><span class="footer-links-label">Navigate</span><a href="/">Home</a></nav><div class="footer-contact"><div class="creator-line">Maintained by <strong>Dom</strong> — found a schedule issue?</div><button class="discord-copy-btn" onclick="copyDiscordHandle(this)" title="Click to copy Discord handle"><span>@granddom</span></button></div></div><div class="footer-rule"></div><div class="footer-legal"><p class="footer-note">Schedule shows expected dates based on the usual rotation, not live data — check live event timings at <a href="https://swgoh.gg/events/" target="_blank" rel="noopener">swgoh.gg/events</a>. Fan-made planning tool for Star Wars: Galaxy of Heroes. Not affiliated with, endorsed, sponsored, or specifically approved by Electronic Arts, Capital Games, Disney, or Lucasfilm. All game assets, trademarks, and character names are property of their respective owners.</p><nav class="legal-links" aria-label="Legal"><a href="privacy.html">Privacy</a><a href="cookie-policy.html">Cookies</a><a href="terms.html">Terms</a></nav><div class="footer-bottom"><span id="footerMeta"></span><span class="dot">·</span><span id="footerYear"></span></div></div></div></footer>
   <div class="modal-backdrop" id="aboutModal" aria-hidden="true"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="aboutModalTitle"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;"><h3 id="aboutModalTitle" style="font-family:var(--disp); font-size:18px;">Report an Issue</h3><button class="modal-close-x" id="closeAboutBtn" aria-label="Close"><span></span><span></span></button></div><p style="font-size:13px; color:var(--text2); margin-bottom:16px; line-height:1.6;">This tool is maintained by Dom. Report issues to him on Discord:</p><div style="background:var(--void2); border:1px solid var(--border2); border-radius:var(--radius); padding:14px; margin-bottom:16px; display:flex; align-items:center; justify-content:space-between; gap:10px;"><span style="font-weight:600; font-size:13px; color:var(--text);">Discord</span><button class="discord-copy-btn" onclick="copyDiscordHandle(this)"><span>@granddom</span></button></div><div style="display:flex; justify-content:flex-end;"><button class="btn primary" id="closeAboutBtn2">Close</button></div></div></div>
   <script src="assets/js/legal.js"></script>
 </body>
