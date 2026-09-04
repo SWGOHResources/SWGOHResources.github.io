@@ -79,8 +79,10 @@ function getMonthlyEvents(dateMs){
   ========================================================= */
 
 function gacInfoForTimestamp(timestampMs){
-  const [gy, gm, gd] = (typeof GAC_CYCLE_START_DATE !== 'undefined' ? GAC_CYCLE_START_DATE : '').split('-').map(Number);
-  const gacStartMs = Date.UTC(gy, gm - 1, gd, gacHour(), 0, 0);
+  const configuredStartMs = parseDateOnlyMs(typeof GAC_CYCLE_START_DATE !== 'undefined' ? GAC_CYCLE_START_DATE : null);
+  const gacStartMs = Number.isFinite(configuredStartMs)
+    ? configuredStartMs + (gacHour() * 3600000)
+    : NaN;
   if(!Number.isFinite(gacStartMs) || !Number.isFinite(timestampMs)){
     return { cycleDay: 1, cycleNum: 0, format: '5v5', rawDays: 0 };
   }
@@ -170,9 +172,15 @@ function tbOptionsForSide(side){
 
 function tbSideForPhase1(phase1Ms){
   const anchor = parseDateOnlyMs(typeof TB_SIDE_ANCHOR_DATE !== 'undefined' ? TB_SIDE_ANCHOR_DATE : null);
-  const idx = Math.round((phase1Ms - anchor) / (TB_RUN_GAP_DAYS * 86400000));
+  const gapDays = (typeof TB_RUN_GAP_DAYS !== 'undefined'
+    && Number.isFinite(TB_RUN_GAP_DAYS)
+    && TB_RUN_GAP_DAYS > 0) ? TB_RUN_GAP_DAYS : 14;
+  const anchorSide = (typeof TB_SIDE_ANCHOR_SIDE !== 'undefined' && TB_SIDE_ANCHOR_SIDE === 'dark')
+    ? 'dark' : 'light';
+  if(!Number.isFinite(anchor) || !Number.isFinite(phase1Ms)) return anchorSide;
+  const idx = Math.round((phase1Ms - anchor) / (gapDays * 86400000));
   const even = (((idx % 2) + 2) % 2) === 0;
-  if(TB_SIDE_ANCHOR_SIDE === 'light') return even ? 'light' : 'dark';
+  if(anchorSide === 'light') return even ? 'light' : 'dark';
   return even ? 'dark' : 'light';
 }
 
