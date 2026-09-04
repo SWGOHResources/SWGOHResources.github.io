@@ -23,7 +23,8 @@ function tickCountdown(){
 
   // Refresh automatically if a standard or GAC changeover just occurred
   // (compare against the most recent past changeover, not the next future one)
-  const prevStdChangeoverMs = nextChangeoverMs - 86400000;
+  let prevStdChangeoverMs = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), stdH, 0, 0, 0);
+  if (nowMs < prevStdChangeoverMs) prevStdChangeoverMs -= 86400000;
   let prevGacChangeoverMs = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), gacH, 0, 0, 0);
   if (nowMs < prevGacChangeoverMs) prevGacChangeoverMs -= 86400000;
   if (nowMs - prevStdChangeoverMs < 2000 || nowMs - prevGacChangeoverMs < 2000) {
