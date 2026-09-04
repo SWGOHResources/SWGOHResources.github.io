@@ -298,6 +298,12 @@ function jumpExplorer(offset){
   renderAll();
 }
 
+function onDayJump(select){
+  if(!select || select.dataset.handledValue === select.value) return;
+  select.dataset.handledValue = select.value;
+  jumpExplorer(Number(select.value));
+}
+
 /* Guild TB picker. Full row (explorer Phase-1 cards) or compact
    collapsible (dashboard status card, so the Guild card stays level
    with GAC/Conquest). tbCtx comes from tbRunContext for the relevant
