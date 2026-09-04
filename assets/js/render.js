@@ -381,11 +381,15 @@ function renderExplorer(st){
 
   const dayJump = document.getElementById('dayJump');
   if(dayJump){
-    dayJump.innerHTML = Array.from({ length: ERA_LENGTH_DAYS }, (_, index) => {
-      const offset = index - (st.eraDay - 1);
-      const d = explorerDayAt(st, offset);
-      return `<option value="${offset}">Day ${d.dIdx} · ${fmtDateUTC(gameDayDisplayMs(d.dMs))}</option>`;
-    }).join('');
+    const jumpKey = `${st.eraBaseStartMs}|${ERA_LENGTH_DAYS}|${tz()}`;
+    if(dayJump.dataset.scheduleKey !== jumpKey){
+      dayJump.innerHTML = Array.from({ length: ERA_LENGTH_DAYS }, (_, index) => {
+        const offset = index - (st.eraDay - 1);
+        const d = explorerDayAt(st, offset);
+        return `<option value="${offset}">Day ${d.dIdx} · ${fmtDateUTC(gameDayDisplayMs(d.dMs))}</option>`;
+      }).join('');
+      dayJump.dataset.scheduleKey = jumpKey;
+    }
   }
   if(dayJump) dayJump.value = String(explorerOffset);
 
