@@ -503,16 +503,19 @@ body.modal-open .starfield span {
   position: absolute; inset: 0; z-index: 3;
   background: linear-gradient(180deg, rgba(8,10,14,0.05) 55%, rgba(8,10,14,0.72) 100%);
 }
+.xcard-art-meta {
+  position: absolute; z-index: 4; left: 8px; right: 8px; bottom: 8px;
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 5px;
+}
 .xcard-cat, .xcard-rel {
-  position: relative; z-index: 4;
   font-family: var(--body); font-size: 9px; font-weight: 700;
   letter-spacing: 0.07em; text-transform: uppercase;
   padding: 3px 8px; border-radius: 11px;
   background: rgba(8,10,14,0.78);
-  max-width: 100%; overflow-wrap: anywhere;
+  max-width: 100%; overflow-wrap: anywhere; min-width: 0;
 }
 .xcard-cat { color: var(--accent, var(--text)); border: 1px solid var(--accent-border, var(--border2)); }
-.xcard-rel { color: var(--text2); border: 1px solid var(--border2); align-self: flex-end; }
+.xcard-rel { color: var(--text2); border: 1px solid var(--border2); white-space: nowrap; }
 .xcard-rel.is-today { color: var(--cyan); border-color: var(--cyan-border); }
 .xcard-body { padding: 10px 12px 12px; display: flex; flex-direction: column; flex: 1; }
 .xcard-body h4 {
