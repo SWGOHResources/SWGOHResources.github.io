@@ -442,19 +442,56 @@ function getCurrentDatacronSet(nowMs){
 // use the set in before it's removed.
 function getLastUsableGuildEvent(expiresMs, eraBaseStartMs){
   const firstAbsDay = Math.floor((expiresMs - eraBaseStartMs) / 86400000) + 1;
-  for(let back = 0; back <= ERA_LENGTH_DAYS; back++){
-    const absDay = firstAbsDay - back;
+  let lastUsable = null;
+  for(let offset = -ERA_LENGTH_DAYS; offset <= 1; offset++){
+    const absDay = firstAbsDay + offset;
     const info = absDayToInfo(absDay, eraBaseStartMs);
     const dayStartMs = eraBaseStartMs + ((absDay - 1) * 86400000);
     const items = getEventsForDay(dayStartMs, info.episode, info.dayInEp);
-    const usableItem = items.find(item => {
-      if(!item.icon.startsWith('tw_') && !item.icon.startsWith('gac_')) return false;
+    items.forEach(item => {
+      if(!item.icon.startsWith('tw_') && !item.icon.startsWith('gac_')) return;
       const startHour = item.icon.startsWith('gac_') ? gacHour() : stdHour();
-      return dayStartMs + (startHour * 3600000) < expiresMs;
+      const itemStartMs = dayStartMs + (startHour * 3600000);
+      let usableFromMs = itemStartMs;
+
+      if(item.icon.endsWith('_attack') || item.icon.endsWith('_offense')){
+        const previousDayMs = dayStartMs - 86400000;
+        const previousInfo = absDayToInfo(absDay - 1, eraBaseStartMs);
+        const previousItems = getEventsForDay(previousDayMs, previousInfo.episode, previousInfo.dayInEp);
+        const defense = previousItems.find(previousItem =>
+          previousItem.icon === item.icon.replace(/_(attack|offense)$/, '_defense')
+        );
+        if(defense){
+          const defenseHour = defense.icon.startsWith('gac_') ? gacHour() : stdHour();
+          usableFromMs = previousDayMs + (defenseHour * 3600000);
+        }
+      }
+
+      if(usableFromMs < expiresMs && (!lastUsable || itemStartMs > lastUsable.startMs)){
+        const gacInfo = gacInfoForTimestamp(itemStartMs);
+        const gacPhase = getGacRoundInfo(gacInfo.cycleDay).phase;
+        const twApplies = items.some(dayItem => {
+          if(!dayItem.icon.startsWith('tw_')) return false;
+          return dayStartMs + (stdHour() * 3600000) <= itemStartMs;
+        });
+        lastUsable = {
+          item,
+          dateMs: dayStartMs,
+          startMs: itemStartMs,
+          gacWeek: gacPhase === 'off' ? null : Math.ceil(gacInfo.cycleDay / 7),
+          gacFormat: gacPhase === 'off' ? null : gacInfo.format,
+          twApplies,
+        };
+      }
     });
-    if(usableItem) return { item: usableItem, dateMs: dayStartMs };
   }
-  return null;
+  return lastUsable ? {
+    item: lastUsable.item,
+    dateMs: lastUsable.dateMs,
+    gacWeek: lastUsable.gacWeek,
+    gacFormat: lastUsable.gacFormat,
+    twApplies: lastUsable.twApplies,
+  } : null;
 }
 
 function getDayEvents(episode, dayInEp){

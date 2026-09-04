@@ -49,11 +49,10 @@ function renderUnlockWindows(st){
   const lastUsable = cron ? getLastUsableGuildEvent(cron.expiresMs, st.eraBaseStartMs) : null;
   let lastUsableLabel = '—';
   if(lastUsable){
-    lastUsableLabel = getFullScheduleLabel(lastUsable.item);
-    if(lastUsable.item.icon.startsWith('gac_')){
-      const lastUsableFormat = gacInfoForDate(lastUsable.dateMs).format;
-      lastUsableLabel = `${lastUsableFormat} ${lastUsableLabel}`;
-    }
+    const labels = [];
+    if(lastUsable.gacWeek) labels.push(`GAC Week ${lastUsable.gacWeek} (${lastUsable.gacFormat})`);
+    if(lastUsable.twApplies) labels.push('TW');
+    lastUsableLabel = labels.length ? labels.join(' + ') : getFullScheduleLabel(lastUsable.item);
   }
 
   el.innerHTML = `
