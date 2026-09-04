@@ -220,8 +220,8 @@ function renderStatusDashboard(st){
   const tmrwDayIndex = (st.eraDay % eraLengthDays()) + 1;
   const tmrwEpisode = Math.floor((tmrwDayIndex - 1) / episodeLengthDays()) + 1;
   const tmrwDayInEp = ((tmrwDayIndex - 1) % episodeLengthDays()) + 1;
-  const todayGuildSummary = getGuildEventSummary(st.episode, st.dayInEp, st.currentDayStartMs);
-  const tmrwGuildSummary = getGuildEventSummary(tmrwEpisode, tmrwDayInEp, st.currentDayStartMs + 86400000);
+  const todayGuildSummary = getGuildEventSummary(st.episode, st.dayInEp, st.currentDayStartMs, st.nowMs);
+  const tmrwGuildSummary = getGuildEventSummary(tmrwEpisode, tmrwDayInEp, st.currentDayStartMs + 86400000, st.nowMs);
 
   const isGuildActive = getDayEvents(st.episode, st.dayInEp)
     .some(i => i.icon.startsWith('tw_') || i.icon === 'rote' || i.icon === 'tb_ends');
@@ -328,7 +328,7 @@ function tbPickerHTML(tbCtx, compact){
   return `<div class="tb-pick" style="${pickerStyle}" role="group" aria-label="Select your current TB"><span class="tb-pick-label">Select your current TB:</span><div class="tb-pick-btns">${btns}</div></div>`;
 }
 
-function explorerCardHTML(item, dateMs, relLabel, tbCtx){
+function explorerCardHTML(item, dateMs, relLabel, tbCtx, nowMs){
   const cat = categoryFor(item.icon);
   const meta = CATEGORY_META[cat];
   const tag = tagFor(item.icon);
@@ -337,6 +337,7 @@ function explorerCardHTML(item, dateMs, relLabel, tbCtx){
   const style = `--accent:${meta.accent};--accent-dim:${meta.dim};--accent-border:${meta.border}`;
   const imgTag = asset ? `<img src="${IMG_BASE}${asset}" alt="" loading="lazy" onerror="this.remove()">` : '';
   const relCls = relLabel === 'Now' ? 'xcard-rel is-today' : 'xcard-rel';
+  const title = tenseByStart(getFullScheduleLabel(item), item, dateMs, nowMs);
 
   // Guild TB picker: on Phase-1 days the guild picks which of the
   // run's 3 TBs (side's 2 + Neutral RotE) they are running. The
@@ -354,7 +355,7 @@ function explorerCardHTML(item, dateMs, relLabel, tbCtx){
       </div>
     </div>
     <div class="xcard-body">
-      <h4>${getFullScheduleLabel(item)}</h4>
+      <h4>${title}</h4>
       <div class="xcard-date">${eventDateRangeLabel(item, eventDisplayMs(item, dateMs), isTbCard ? tbCtx : null)}</div>
       ${picker}
     </div>
@@ -454,7 +455,7 @@ function renderExplorer(st){
       </div>
     </div>
     ${cur.items.length
-      ? `<div class="xcard-deck">${cur.items.map(it => explorerCardHTML(it, cur.dMs, rel, tbCtx)).join('')}</div>`
+      ? `<div class="xcard-deck">${cur.items.map(it => explorerCardHTML(it, cur.dMs, rel, tbCtx, st.nowMs)).join('')}</div>`
       : `<p class="empty-note">No changeovers this day — nothing starts or ends.</p>`}`;
 }
 
@@ -485,9 +486,29 @@ function fullScheduleTbChoiceKey(){
   return ['light', 'dark'].map(side => tbStoredChoiceId(side) || 'rote').join('|');
 }
 
-function timelineChipHTML(item){
+function escAttr(s){
+  return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function timelineChipHTML(item, dateMs, nowMs){
   const meta = CATEGORY_META[categoryFor(item.icon)];
-  return `<span class="tl-chip" style="color:${meta.accent};border-color:${meta.border};background:${meta.dim}">${getFullScheduleLabel(item)}</span>`;
+  const base = getFullScheduleLabel(item);
+  const startMs = eventStartMs(item, dateMs);
+  const label = tensedLabel(base, startMs <= nowMs);
+  return `<span class="tl-chip" data-start="${startMs}" data-label="${escAttr(base)}" style="color:${meta.accent};border-color:${meta.border};background:${meta.dim}">${label}</span>`;
+}
+
+/* Flip timeline chips between future/past tense as changeovers pass,
+   without rebuilding the cached markup (a rebuild would lose the
+   modal's scroll position). Only chips whose tense actually flipped
+   are touched. */
+function refreshTimelineTense(container, nowMs){
+  if(!container || typeof nowMs !== 'number' || !Number.isFinite(nowMs)) return;
+  const chips = container.querySelectorAll('.tl-chip[data-start][data-label]');
+  for(const chip of chips){
+    const want = tensedLabel(chip.dataset.label, Number(chip.dataset.start) <= nowMs);
+    if(chip.textContent !== want) chip.textContent = want;
+  }
 }
 
 function renderFullSchedule(st){
@@ -524,7 +545,7 @@ function renderFullSchedule(st){
           html += `<div class="tl-day${idx === st.eraDay ? ' is-today' : ''}" data-day="${idx}">`
             + `<span class="tl-daynum">${idx}</span>`
             + `<span class="tl-date">${fmtDateUTC(gameDayDisplayMs(dateMs))}</span>`
-            + `<span class="tl-events">${items.length ? items.map(timelineChipHTML).join('') : '<span class="tl-none">—</span>'}</span></div>`;
+            + `<span class="tl-events">${items.length ? items.map(it => timelineChipHTML(it, dateMs, st.nowMs)).join('') : '<span class="tl-none">—</span>'}</span></div>`;
         }
       }
       html += `</div>`;
@@ -542,6 +563,7 @@ function renderFullSchedule(st){
     if(next) next.classList.add('is-today');
     fullScheduleCache.activeDay = st.eraDay;
   }
+  refreshTimelineTense(container, st.nowMs);
 }
 
 function applyScheduleFilter(){
