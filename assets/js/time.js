@@ -39,11 +39,25 @@ function gacHour(){
 }
 
 function conquestStartDay(){
-  return (typeof CONQUEST_START_DAY_IN_EP !== 'undefined') ? CONQUEST_START_DAY_IN_EP : 7;
+  return (typeof CONQUEST_START_DAY_IN_EP !== 'undefined'
+    && Number.isInteger(CONQUEST_START_DAY_IN_EP)
+    && CONQUEST_START_DAY_IN_EP >= 1)
+    ? CONQUEST_START_DAY_IN_EP : 7;
 }
 
 function conquestEndDay(){
-  return (typeof CONQUEST_END_DAY_IN_EP !== 'undefined') ? CONQUEST_END_DAY_IN_EP : 20;
+  return (typeof CONQUEST_END_DAY_IN_EP !== 'undefined'
+    && Number.isInteger(CONQUEST_END_DAY_IN_EP)
+    && CONQUEST_END_DAY_IN_EP >= 1)
+    ? CONQUEST_END_DAY_IN_EP : 20;
+}
+
+function conquestDurationDays(){
+  const start = conquestStartDay(), end = conquestEndDay();
+  return (typeof CONQUEST_DURATION_DAYS !== 'undefined'
+    && Number.isInteger(CONQUEST_DURATION_DAYS)
+    && CONQUEST_DURATION_DAYS > 0)
+    ? CONQUEST_DURATION_DAYS : end - start + 1;
 }
 
 function conquestLockOffsetDays(){
@@ -656,7 +670,7 @@ const DAY_LONG_EVENTS = new Set([
 
 function eventDateRangeLabel(item, dateMs, tbCtx){
   if(item.icon === 'conquest_start'){
-    const dur = (typeof CONQUEST_DURATION_DAYS !== 'undefined') ? CONQUEST_DURATION_DAYS : 14;
+    const dur = conquestDurationDays();
     const endMs = dateMs + ((dur - 1) * 86400000);
     return `${fmtDayMonthUTC(dateMs)} → ${fmtDayMonthUTC(endMs)} · ${dur} days`;
   }
@@ -686,6 +700,11 @@ function eventDateRangeLabel(item, dateMs, tbCtx){
     return `${fmtPhaseMoment(w.startMs)} → ${fmtPhaseMoment(w.endMs)} · 36 hours`;
   }
   return DAY_LONG_EVENTS.has(item.icon) ? `${start} · 24 hours` : start;
+}
+
+function eventDisplayMs(item, dateMs){
+  const hour = item && item.icon && item.icon.startsWith('gac_') ? gacHour() : stdHour();
+  return dateMs + (hour * 3600000);
 }
 
 function getGacStatus(st){
@@ -781,13 +800,13 @@ function conquestInfoForDay(episode, dayInEp){
   const start = conquestStartDay(), end = conquestEndDay();
   if(dayInEp < start || dayInEp > end) return null;
   const { cNum, note } = conquestChapterForEpisode(episode);
-  const total = (typeof CONQUEST_DURATION_DAYS !== 'undefined') ? CONQUEST_DURATION_DAYS : (end - start + 1);
+  const total = conquestDurationDays();
   return { active: true, day: dayInEp - start + 1, total, cNum, note, finalDay: dayInEp === end };
 }
 
 function getConquestStatus(st){
   const start = conquestStartDay(), end = conquestEndDay();
-  const total = (typeof CONQUEST_DURATION_DAYS !== 'undefined') ? CONQUEST_DURATION_DAYS : (end - start + 1);
+  const total = conquestDurationDays();
   const episodeCount = Math.ceil(ERA_LENGTH_DAYS / EPISODE_LENGTH_DAYS);
   let targetEp = st.episode;
   let targetDay = st.dayInEp;
@@ -909,6 +928,8 @@ function validateScheduleConfig(){
   const tbRunGap = typeof TB_RUN_GAP_DAYS !== 'undefined' ? TB_RUN_GAP_DAYS : null;
   const conquestLockOffset = typeof CONQUEST_ROSTER_LOCK_OFFSET_DAYS !== 'undefined'
     ? CONQUEST_ROSTER_LOCK_OFFSET_DAYS : null;
+  const conquestDuration = typeof CONQUEST_DURATION_DAYS !== 'undefined'
+    ? CONQUEST_DURATION_DAYS : null;
   const eraLockOffset = typeof ERA_ROSTER_LOCK_OFFSET_DAYS !== 'undefined'
     ? ERA_ROSTER_LOCK_OFFSET_DAYS : null;
   const datacronSets = typeof DATACRON_SETS !== 'undefined' ? DATACRON_SETS : null;
@@ -935,6 +956,9 @@ function validateScheduleConfig(){
   if(typeof ERA_ROSTER_LOCK_OFFSET_DAYS !== 'undefined'
     && (!Number.isInteger(eraLockOffset) || eraLockOffset < 0))
     issues.push('ERA_ROSTER_LOCK_OFFSET_DAYS must be a nonnegative integer.');
+  if(typeof CONQUEST_DURATION_DAYS !== 'undefined'
+    && (!Number.isInteger(conquestDuration) || conquestDuration <= 0))
+    issues.push('CONQUEST_DURATION_DAYS must be a positive integer.');
 
   if(typeof STD_CHANGEOVER_HOUR_UTC !== 'undefined'
     && (stdHour() === 18 && STD_CHANGEOVER_HOUR_UTC !== 18))
@@ -969,8 +993,15 @@ function validateScheduleConfig(){
   checkOffsets('CONQUEST_END_OFFSETS', conquestEndOffsets);
   checkOffsets('ERA_START_OFFSETS', eraStartOffsets);
 
-  const cs = conquestStartDay(), ce = conquestEndDay();
-  if(!(cs >= 1 && ce >= cs && ce <= episodeLength))
+  const configuredConquestStart = typeof CONQUEST_START_DAY_IN_EP !== 'undefined'
+    ? CONQUEST_START_DAY_IN_EP : 7;
+  const configuredConquestEnd = typeof CONQUEST_END_DAY_IN_EP !== 'undefined'
+    ? CONQUEST_END_DAY_IN_EP : 20;
+  if(!Number.isInteger(configuredConquestStart)
+    || !Number.isInteger(configuredConquestEnd)
+    || !(configuredConquestStart >= 1
+      && configuredConquestEnd >= configuredConquestStart
+      && configuredConquestEnd <= episodeLength))
     issues.push('Conquest days must satisfy 1 <= START <= END <= EPISODE_LENGTH_DAYS.');
 
   if(typeof TB_DEFS === 'undefined' || !TB_DEFS || Object.keys(TB_DEFS).length === 0){
