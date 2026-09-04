@@ -659,6 +659,11 @@ function getGacStatus(st){
   const format = st.gacFormat;
   const nextFormat = format === '5v5' ? '3v3' : '5v5';
   const info = getGacRoundInfo(st.gacCycleDay);
+  const gacNow = gacInfoForTimestamp(st.nowMs);
+  const [gy, gm, gd] = GAC_CYCLE_START_DATE.split('-').map(Number);
+  const cycleStartMs = Date.UTC(gy, gm - 1, gd, gacHour(), 0, 0) + (gacNow.cycleNum * 28 * 86400000);
+  const nextSignupMs = info.phase === 'off' ? cycleStartMs + (28 * 86400000) : cycleStartMs;
+  const nextSignupDate = fmtDayMonthUTC(nextSignupMs);
 
   if(info.phase === 'off'){
      const daysUntilNext = 29 - st.gacCycleDay;
@@ -668,7 +673,7 @@ function getGacStatus(st){
         badgeClass: 'off',
         title: `Grand Arena (${format})`,
         main: 'Post-Season Off Week',
-        sub: `Next Signup opens ${untilPhrase} (${nextFormat})`,
+        sub: `Next Signup opens ${untilPhrase} (${nextFormat}) · ${nextSignupDate}`,
         round: null,
         roundPhase: null
      };
@@ -677,12 +682,13 @@ function getGacStatus(st){
   const untilPhrase = 'in 1 day'; 
 
   if(info.phase === 'signup'){
+    const defenseDate = fmtDayMonthUTC(cycleStartMs + 86400000);
     return {
       status: `WEEK ${info.week} · SIGNUP`,
       badgeClass: 'red',
       title: `Grand Arena (${format})`,
       main: `Week ${info.week} Signup Phase Open`,
-      sub: `Roster locks and Defense Phase starts ${untilPhrase}`,
+      sub: `Roster locks and Defense Phase starts ${untilPhrase} · ${defenseDate}`,
       round: null,
       roundPhase: null
     };
@@ -765,27 +771,31 @@ function getConquestStatus(st){
 
   if (isUpcomingNextEp) {
     const daysUntil = (EPISODE_LENGTH_DAYS - st.dayInEp) + start;
+    const startDateMs = st.currentDayStartMs + (daysUntil * 86400000) + (stdHour() * 3600000);
     return {
       status: 'UPCOMING', badgeClass: 'purple', title: titleNote,
-      main: `Starts in ${daysUntil} days`,
+      main: `Starts in ${daysUntil} days · ${fmtDayMonthUTC(startDateMs)}`,
       sub: `Conquest Run ${cNum} will begin.`,
       cNum: cNum
     };
   } else if (targetDay < start) {
+    const daysUntil = start - targetDay;
+    const startDateMs = st.currentDayStartMs + (daysUntil * 86400000) + (stdHour() * 3600000);
     return {
       status: 'UPCOMING', badgeClass: 'purple', title: titleNote,
-      main: `Starts in ${start - targetDay} days`,
+      main: `Starts in ${daysUntil} days · ${fmtDayMonthUTC(startDateMs)}`,
       sub: `Event ${cNum} Starts`,
       cNum: cNum
     };
   } else if (targetDay >= start && targetDay <= end) {
     const cqDay = targetDay - start + 1;
     const remaining = end - targetDay;
+    const endDateMs = st.currentDayStartMs + (remaining * 86400000) + (stdHour() * 3600000);
     return {
       status: remaining === 0 ? 'FINAL DAY' : 'ACTIVE',
       badgeClass: 'purple', title: titleNote,
       main: `Conquest Day ${cqDay} of ${total}`,
-      sub: remaining === 0 ? 'Proving Grounds starts in 1 day' : `Ends in ${remaining} days`,
+      sub: remaining === 0 ? 'Proving Grounds starts in 1 day' : `Ends in ${remaining} days · ${fmtDayMonthUTC(endDateMs)}`,
       cNum: cNum
     };
   } else if (targetDay === overDay) {
