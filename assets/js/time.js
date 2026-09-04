@@ -7,14 +7,18 @@ function posMod(n, m){
   return ((n % m) + m) % m;
 }
 
+function utcDateMs(year, monthIndex, day, hour = 0){
+  const date = new Date(0);
+  date.setUTCHours(hour, 0, 0, 0);
+  date.setUTCFullYear(year, monthIndex, day);
+  return date.getTime();
+}
+
 function parseDateOnlyMs(value){
   if(typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return NaN;
   const [year, month, day] = value.split('-').map(Number);
-  // Date.UTC treats years 0-99 as 1900-1999; set the full year explicitly.
-  const date = new Date(0);
-  date.setUTCHours(0, 0, 0, 0);
-  date.setUTCFullYear(year, month - 1, day);
-  const dateMs = date.getTime();
+  const dateMs = utcDateMs(year, month - 1, day);
+  const date = new Date(dateMs);
   return date.getUTCFullYear() === year
     && date.getUTCMonth() === month - 1
     && date.getUTCDate() === day
@@ -78,7 +82,7 @@ function getMonthlyEvents(dateMs){
   if(typeof MONTHLY_EVENTS === 'undefined' || !MONTHLY_EVENTS) return [];
   const d = new Date(dateMs);
   const dom = d.getUTCDate();
-  const lastDom = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 0)).getUTCDate();
+  const lastDom = new Date(utcDateMs(d.getUTCFullYear(), d.getUTCMonth() + 1, 0)).getUTCDate();
   return MONTHLY_EVENTS
     .filter(m => m.lastDayOfMonth ? dom === lastDom : dom === m.dayOfMonth)
     .map(m => ev(m.icon, m.label));
@@ -341,7 +345,7 @@ function getGameStatus(nowMsInput){
   const d = eraStartDate.getUTCDate();
 
   // 1) Standard Event Changeover (STD_CHANGEOVER_HOUR_UTC)
-  const stdStartMs = Date.UTC(y, m - 1, d, stdHour(), 0, 0);
+  const stdStartMs = eraStartMs + (stdHour() * 3600000);
   const diffMs = nowMs - stdStartMs;
   const preEra = diffMs < 0;
   let rawDayIndex = Math.floor(diffMs / msPerDay) + 1;
@@ -354,8 +358,8 @@ function getGameStatus(nowMsInput){
   let daysUntilEra = 0;
   if(preEra){
     const nd = new Date(nowMs);
-    const startOfToday = Date.UTC(nd.getUTCFullYear(), nd.getUTCMonth(), nd.getUTCDate());
-    daysUntilEra = Math.max(0, Math.round((Date.UTC(y, m - 1, d) - startOfToday) / msPerDay));
+    const startOfToday = utcDateMs(nd.getUTCFullYear(), nd.getUTCMonth(), nd.getUTCDate());
+    daysUntilEra = Math.max(0, Math.round((eraStartMs - startOfToday) / msPerDay));
   }
 
   const eraDay = posMod(rawDayIndex - 1, ERA_LENGTH_DAYS) + 1;
@@ -367,7 +371,7 @@ function getGameStatus(nowMsInput){
 
   // Active Calendar Day associated with current changeover.
   // Weekday is rendered in the display timezone (game-day model stays UTC).
-  const currentDayStartMs = Date.UTC(y, m - 1, d, 0, 0, 0) + ((rawDayIndex - 1) * msPerDay);
+  const currentDayStartMs = eraStartMs + ((rawDayIndex - 1) * msPerDay);
   const activeDayParts = new Intl.DateTimeFormat('en-GB', {
     timeZone: tz(), weekday: 'long'
   }).formatToParts(new Date(dms(currentDayStartMs + (stdHour() * 3600000))));
@@ -390,8 +394,8 @@ function getGameStatus(nowMsInput){
     weekdayName,
     preEra,
     daysUntilEra,
-    currentEraStartMs: Date.UTC(y, m - 1, d, 0, 0, 0) + (cycleNum * ERA_LENGTH_DAYS * msPerDay),
-    eraBaseStartMs: Date.UTC(y, m - 1, d, 0, 0, 0),
+    currentEraStartMs: eraStartMs + (cycleNum * ERA_LENGTH_DAYS * msPerDay),
+    eraBaseStartMs: eraStartMs,
     currentDayStartMs,
     cycleNum,
     gacCycleDay: gacInfo.cycleDay,
@@ -684,7 +688,7 @@ function eventDateRangeLabel(item, dateMs, tbCtx){
     const originalDay = endMs.getUTCDate();
     endMs.setUTCDate(1);
     endMs.setUTCMonth(endMs.getUTCMonth() + 1);
-    const daysInEndMonth = new Date(Date.UTC(endMs.getUTCFullYear(), endMs.getUTCMonth() + 1, 0)).getUTCDate();
+    const daysInEndMonth = new Date(utcDateMs(endMs.getUTCFullYear(), endMs.getUTCMonth() + 1, 0)).getUTCDate();
     endMs.setUTCDate(Math.min(originalDay, daysInEndMonth));
     return `${fmtDayMonthUTC(dateMs)} → ${fmtDayMonthUTC(endMs.getTime())} · 1 month`;
   }
@@ -837,7 +841,7 @@ function getConquestStatus(st){
     const startDateMs = st.currentDayStartMs + (daysUntil * 86400000) + (stdHour() * 3600000);
     return {
       status: 'UPCOMING', badgeClass: 'purple', title: titleNote,
-      main: `Starts in ${daysUntil} days · ${fmtDayMonthUTC(startDateMs)}`,
+      main: `Starts in ${daysUntil} ${daysUntil === 1 ? 'day' : 'days'} · ${fmtDayMonthUTC(startDateMs)}`,
       sub: `Event ${cNum} Starts`,
       cNum: cNum
     };

@@ -249,6 +249,16 @@ test('date-only parsing preserves years below 100', () => {
   assert.equal(new Date(engine.parseDateOnlyMs('0001-01-01')).toISOString(), '0001-01-01T00:00:00.000Z');
 });
 
+test('era status preserves years below 100', () => {
+  const engine = loadTimeEngine();
+  engine.ERA_START_DATE = '0001-01-01';
+  const status = engine.getGameStatus(Date.parse('0001-01-01T18:00:00Z'));
+
+  assert.equal(new Date(status.currentDayStartMs).toISOString(), '0001-01-01T00:00:00.000Z');
+  assert.equal(status.preEra, false);
+  assert.equal(status.eraDay, 1);
+});
+
 test('conquest volume ordinals use the correct suffix', () => {
   const engine = loadTimeEngine();
   assert.equal(engine.conquestOrdinal(21), '21st');
@@ -288,6 +298,13 @@ test('invalid conquest settings fall back without crashing status or labels', ()
   const issues = engine.validateScheduleConfig();
   assert.ok(issues.some(issue => issue.includes('Conquest days')));
   assert.ok(issues.some(issue => issue.includes('CONQUEST_DURATION_DAYS')));
+});
+
+test('conquest upcoming status uses singular one-day wording', () => {
+  const engine = loadTimeEngine();
+  const status = engine.getConquestStatus(engine.getGameStatus(Date.parse('2026-08-02T19:00:00Z')));
+
+  assert.match(status.main, /^Starts in 1 day ·/);
 });
 
 test('missing TB rotation anchor degrades to the default side without throwing', () => {
