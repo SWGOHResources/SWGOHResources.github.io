@@ -388,3 +388,36 @@ test('datacron expiration is evaluated at 18:00 UTC', () => {
   assert.equal(engine.getCurrentDatacronSet(Date.parse('2026-09-03T18:00:00Z')).name, 'Old');
   assert.equal(engine.getCurrentDatacronSet(Date.parse('2026-09-03T18:00:01Z')).name, 'New');
 });
+
+test('relative day labels distinguish past from upcoming', () => {
+  const engine = loadTimeEngine();
+  assert.equal(engine.relativeDayLabel(0), 'Now');
+  assert.equal(engine.relativeDayLabel(1), 'In 1 day');
+  assert.equal(engine.relativeDayLabel(2), 'In 2 days');
+  assert.equal(engine.relativeDayLabel(-1), 'Yesterday');
+  assert.equal(engine.relativeDayLabel(-2), '2 days ago');
+});
+
+test('pre-era countdown follows the display timezone calendar', () => {
+  const engine = loadTimeEngine({ timeZone: 'UTC+14:00' });
+  // 2026-07-27T10:00Z is Jul 28 at +14; the changeover lands Jul 29 local.
+  const st = engine.getGameStatus(Date.parse('2026-07-27T10:00:00Z'));
+  assert.equal(st.preEra, true);
+  assert.equal(st.daysUntilEra, 1);
+  // 2026-07-28T10:00Z is Jul 29 at +14, the changeover's local day.
+  const sameDay = engine.getGameStatus(Date.parse('2026-07-28T10:00:00Z'));
+  assert.equal(sameDay.preEra, true);
+  assert.equal(sameDay.daysUntilEra, 0);
+});
+
+test('missing era lengths fall back without poisoning status', () => {
+  const engine = loadTimeEngine({ omit: ['ERA_LENGTH_DAYS', 'EPISODE_LENGTH_DAYS'] });
+  assert.equal(engine.eraLengthDays(), 84);
+  assert.equal(engine.episodeLengthDays(), 28);
+  const st = engine.getGameStatus(Date.parse('2026-08-14T20:00:00Z'));
+  assert.equal(st.eraDay, 18);
+  assert.equal(st.episode, 1);
+  assert.equal(st.dayInEp, 18);
+  assert.ok(engine.validateScheduleConfig().some(issue => issue.includes('ERA_LENGTH_DAYS')));
+  assert.ok(engine.validateScheduleConfig().some(issue => issue.includes('EPISODE_LENGTH_DAYS')));
+});

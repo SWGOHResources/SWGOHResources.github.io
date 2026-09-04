@@ -79,6 +79,24 @@ function eraLockOffsetDays(){
     ? ERA_ROSTER_LOCK_OFFSET_DAYS : 1;
 }
 
+/* Era/episode lengths with safe fallbacks so a missing / mistyped
+   config key degrades to the long-standing 84/28 shape instead of
+   NaN-poisoning every era calculation. validateScheduleConfig()
+   still reports the bad key. */
+function eraLengthDays(){
+  return (typeof ERA_LENGTH_DAYS !== 'undefined'
+    && Number.isInteger(ERA_LENGTH_DAYS)
+    && ERA_LENGTH_DAYS > 0)
+    ? ERA_LENGTH_DAYS : 84;
+}
+
+function episodeLengthDays(){
+  return (typeof EPISODE_LENGTH_DAYS !== 'undefined'
+    && Number.isInteger(EPISODE_LENGTH_DAYS)
+    && EPISODE_LENGTH_DAYS > 0)
+    ? EPISODE_LENGTH_DAYS : 28;
+}
+
 function getMonthlyEvents(dateMs){
   if(typeof MONTHLY_EVENTS === 'undefined' || !MONTHLY_EVENTS) return [];
   const d = new Date(dateMs);
@@ -340,10 +358,8 @@ function getGameStatus(nowMsInput){
   const configuredEraStartMs = parseDateOnlyMs(typeof ERA_START_DATE !== 'undefined' ? ERA_START_DATE : null);
   const eraStartMs = Number.isFinite(configuredEraStartMs)
     ? configuredEraStartMs : Date.UTC(2026, 6, 28);
-  const eraStartDate = new Date(eraStartMs);
-  const y = eraStartDate.getUTCFullYear();
-  const m = eraStartDate.getUTCMonth() + 1;
-  const d = eraStartDate.getUTCDate();
+  const eraLen = eraLengthDays();
+  const epLen = episodeLengthDays();
 
   // 1) Standard Event Changeover (STD_CHANGEOVER_HOUR_UTC)
   const stdStartMs = eraStartMs + (stdHour() * 3600000);
@@ -352,22 +368,22 @@ function getGameStatus(nowMsInput){
   let rawDayIndex = Math.floor(diffMs / msPerDay) + 1;
   if(preEra) rawDayIndex = 1;
 
-  // Calendar days from today until the era's first calendar day (0 =
-  // it starts today at the changeover). Wall-clock ceil() would say "2
-  // days" 30 hours out, which reads wrong — calendar math matches how
-  // players talk about reset days.
+  // Calendar days from today until the era's first changeover day (0 =
+  // it starts today at the changeover). Counted in the display
+  // timezone's calendar — a UTC date would be off by one near midnight
+  // for far-offset zones. Wall-clock ceil() would say "2 days" 30
+  // hours out, which reads wrong — calendar math matches how players
+  // talk about reset days.
   let daysUntilEra = 0;
   if(preEra){
-    const nd = new Date(nowMs);
-    const startOfToday = utcDateMs(nd.getUTCFullYear(), nd.getUTCMonth(), nd.getUTCDate());
-    daysUntilEra = Math.max(0, Math.round((eraStartMs - startOfToday) / msPerDay));
+    daysUntilEra = Math.max(0, Math.round((displayDayMarker(stdStartMs) - displayDayMarker(nowMs)) / msPerDay));
   }
 
-  const eraDay = posMod(rawDayIndex - 1, ERA_LENGTH_DAYS) + 1;
-  const cycleNum = Math.floor((rawDayIndex - 1) / ERA_LENGTH_DAYS);
+  const eraDay = posMod(rawDayIndex - 1, eraLen) + 1;
+  const cycleNum = Math.floor((rawDayIndex - 1) / eraLen);
 
-  const episode = Math.floor((eraDay - 1) / EPISODE_LENGTH_DAYS) + 1;
-  const dayInEp = posMod(eraDay - 1, EPISODE_LENGTH_DAYS) + 1;
+  const episode = Math.floor((eraDay - 1) / epLen) + 1;
+  const dayInEp = posMod(eraDay - 1, epLen) + 1;
   const week = Math.floor((dayInEp - 1) / 7) + 1;
 
   // Active Calendar Day associated with current changeover.
@@ -395,7 +411,7 @@ function getGameStatus(nowMsInput){
     weekdayName,
     preEra,
     daysUntilEra,
-    currentEraStartMs: eraStartMs + (cycleNum * ERA_LENGTH_DAYS * msPerDay),
+    currentEraStartMs: eraStartMs + (cycleNum * eraLen * msPerDay),
     eraBaseStartMs: eraStartMs,
     currentDayStartMs,
     cycleNum,
@@ -428,9 +444,11 @@ function nextOccurrenceAbs(offsetsInCycle, fromAbsDay, cycleLen){
 }
 
 function absDayToInfo(absDay, eraBaseStartMs){
-  const eraDay = posMod(absDay - 1, ERA_LENGTH_DAYS) + 1;
-  const episode = Math.floor((eraDay - 1) / EPISODE_LENGTH_DAYS) + 1;
-  const dayInEp = posMod(eraDay - 1, EPISODE_LENGTH_DAYS) + 1;
+  const eraLen = eraLengthDays();
+  const epLen = episodeLengthDays();
+  const eraDay = posMod(absDay - 1, eraLen) + 1;
+  const episode = Math.floor((eraDay - 1) / epLen) + 1;
+  const dayInEp = posMod(eraDay - 1, epLen) + 1;
   const week = Math.floor((dayInEp - 1) / 7) + 1;
   const dateMs = eraBaseStartMs + (absDay - 1) * 86400000;
   return { eraDay, episode, dayInEp, week, dateMs };
@@ -472,7 +490,7 @@ function getCurrentDatacronSet(nowMs){
 function getLastUsableGuildEvent(expiresMs, eraBaseStartMs){
   const firstAbsDay = Math.floor((expiresMs - eraBaseStartMs) / 86400000) + 1;
   const lastUsable = { tw: null, gac: null };
-  for(let offset = -ERA_LENGTH_DAYS; offset <= 1; offset++){
+  for(let offset = -eraLengthDays(); offset <= 1; offset++){
     const absDay = firstAbsDay + offset;
     const info = absDayToInfo(absDay, eraBaseStartMs);
     const dayStartMs = eraBaseStartMs + ((absDay - 1) * 86400000);
@@ -614,6 +632,21 @@ function dms(ms){
   const s = getTimeZoneSetting();
   const off = tzOffsetMinutes(s);
   return off != null ? ms + (off * 60000) : ms;
+}
+
+/* UTC-midnight marker for the calendar day an instant falls on in the
+   display zone (so day differences match what the user sees). */
+function displayDayMarker(ms){
+  const parts = new Intl.DateTimeFormat('en-GB', {
+    timeZone: tz(), year: 'numeric', month: 'numeric', day: 'numeric'
+  }).formatToParts(new Date(dms(ms)));
+  let y = 0, m = 0, d = 0;
+  for(const p of parts){
+    if(p.type === 'year') y = Number(p.value);
+    else if(p.type === 'month') m = Number(p.value);
+    else if(p.type === 'day') d = Number(p.value);
+  }
+  return utcDateMs(y, m - 1, d);
 }
 
 function tzDisplayName(){
@@ -823,7 +856,7 @@ function conquestInfoForDay(episode, dayInEp){
 function getConquestStatus(st){
   const start = conquestStartDay(), end = conquestEndDay();
   const total = conquestDurationDays();
-  const episodeCount = Math.ceil(ERA_LENGTH_DAYS / EPISODE_LENGTH_DAYS);
+  const episodeCount = Math.ceil(eraLengthDays() / episodeLengthDays());
   let targetEp = st.episode;
   let targetDay = st.dayInEp;
   let isUpcomingNextEp = false;
@@ -840,7 +873,7 @@ function getConquestStatus(st){
   const { cNum, note: titleNote } = conquestChapterForEpisode(targetEp);
 
   if (isUpcomingNextEp) {
-    const daysUntil = (EPISODE_LENGTH_DAYS - st.dayInEp) + start;
+    const daysUntil = (episodeLengthDays() - st.dayInEp) + start;
     const startDateMs = st.currentDayStartMs + (daysUntil * 86400000) + (stdHour() * 3600000);
     return {
       status: 'UPCOMING', badgeClass: 'purple', title: titleNote,

@@ -12,7 +12,7 @@ function renderUnlockWindows(st){
 
   // --- CONQUEST UNIT ---
   // Finds the NEXT conquest-end day (End of Episode 2 / Monday)
-  const cqAbs = nextOccurrenceAbs(CONQUEST_END_OFFSETS, st.rawDayIndex, ERA_LENGTH_DAYS);
+  const cqAbs = nextOccurrenceAbs(CONQUEST_END_OFFSETS, st.rawDayIndex, eraLengthDays());
   const cqInf = absDayToInfo(cqAbs, st.eraBaseStartMs);
   const cqChapter = conquestChapterForEpisode(cqInf.episode);
   const cqDateMs = cqInf.dateMs;
@@ -28,7 +28,7 @@ function renderUnlockWindows(st){
   // --- ERA UNIT ---
   // Finds the NEXT era-start day (Era Changeover / Tuesday)
   const nextEraFromDay = st.preEra ? st.rawDayIndex : st.rawDayIndex + 1;
-  const eraAbs = nextOccurrenceAbs(ERA_START_OFFSETS, nextEraFromDay, ERA_LENGTH_DAYS);
+  const eraAbs = nextOccurrenceAbs(ERA_START_OFFSETS, nextEraFromDay, eraLengthDays());
   const eraInf = absDayToInfo(eraAbs, st.eraBaseStartMs);
   const eraDateMs = eraInf.dateMs;
   
@@ -181,8 +181,8 @@ function guildPhaseTrackerHTML(st){
 function renderStaticMeta(){
   const setText = (id, text) => { const el = document.getElementById(id); if(el) el.textContent = text; };
   if(typeof ERA_NAME !== 'undefined') setText('eraTitle', `Event Schedule for ${ERA_NAME}`);
-  setText('mhOfVal', `/ ${ERA_LENGTH_DAYS}`);
-  setText('fullScheduleCount', `All ${ERA_LENGTH_DAYS} days of the current Era baseline.`);
+  setText('mhOfVal', `/ ${eraLengthDays()}`);
+  setText('fullScheduleCount', `All ${eraLengthDays()} days of the current Era baseline.`);
   const h = (typeof stdHour === 'function') ? stdHour() : 18;
   setText('cbLabel', `Next Changeover (${h}:00 UTC)`);
   const tzNote = `Changeovers happen at the same moment worldwide (${h}:00 UTC) — this only changes how times are shown`;
@@ -193,22 +193,22 @@ function renderStaticMeta(){
 }
 
 function renderMergedHero(st){
-  const episodeCount = Math.ceil(ERA_LENGTH_DAYS / EPISODE_LENGTH_DAYS);
-  const weeksPerEpisode = Math.ceil(EPISODE_LENGTH_DAYS / 7);
+  const episodeCount = Math.ceil(eraLengthDays() / episodeLengthDays());
+  const weeksPerEpisode = Math.ceil(episodeLengthDays() / 7);
   document.getElementById('mhDayVal').textContent = st.bossEraDay;
   document.getElementById('mhEpVal').textContent = `${st.episode} / ${episodeCount}`;
   document.getElementById('mhWeekVal').textContent = `${st.week} / ${weeksPerEpisode}`;
   document.getElementById('mhWeekdayVal').textContent = st.weekdayName;
 
-  const fillPct = Math.min(100, Math.max(0, (st.bossEraDay / ERA_LENGTH_DAYS) * 100));
+  const fillPct = Math.min(100, Math.max(0, (st.bossEraDay / eraLengthDays()) * 100));
   document.getElementById('mhFill').style.width = fillPct + '%';
 
-  const eraEndMs = st.currentEraStartMs + ((ERA_LENGTH_DAYS - 1) * 86400000);
+  const eraEndMs = st.currentEraStartMs + ((eraLengthDays() - 1) * 86400000);
   document.getElementById('mhStartDate').textContent = fmtDateUTC(gameDayDisplayMs(st.currentEraStartMs));
   document.getElementById('mhEndDate').textContent = fmtDateUTC(gameDayDisplayMs(eraEndMs));
   document.getElementById('mhDaysRemaining').textContent = st.preEra
     ? (st.daysUntilEra <= 0 ? 'Era starts today' : `Era starts in ${st.daysUntilEra} day${st.daysUntilEra === 1 ? '' : 's'}`)
-    : `${ERA_LENGTH_DAYS - st.bossEraDay} days remaining`;
+    : `${eraLengthDays() - st.bossEraDay} days remaining`;
 }
 
 function renderStatusDashboard(st){
@@ -217,9 +217,9 @@ function renderStatusDashboard(st){
   const gac = getGacStatus(st);
   const conq = getConquestStatus(st);
 
-  const tmrwDayIndex = (st.eraDay % ERA_LENGTH_DAYS) + 1;
-  const tmrwEpisode = Math.floor((tmrwDayIndex - 1) / EPISODE_LENGTH_DAYS) + 1;
-  const tmrwDayInEp = ((tmrwDayIndex - 1) % EPISODE_LENGTH_DAYS) + 1;
+  const tmrwDayIndex = (st.eraDay % eraLengthDays()) + 1;
+  const tmrwEpisode = Math.floor((tmrwDayIndex - 1) / episodeLengthDays()) + 1;
+  const tmrwDayInEp = ((tmrwDayIndex - 1) % episodeLengthDays()) + 1;
   const todayGuildSummary = getGuildEventSummary(st.episode, st.dayInEp, st.currentDayStartMs);
   const tmrwGuildSummary = getGuildEventSummary(tmrwEpisode, tmrwDayInEp, st.currentDayStartMs + 86400000);
 
@@ -273,7 +273,7 @@ const EXPLORER_GAP = 4;
 function explorerBoundsFor(st){
   return {
     minOffset: -(st.eraDay - 1),
-    maxOffset: ERA_LENGTH_DAYS - st.eraDay
+    maxOffset: eraLengthDays() - st.eraDay
   };
 }
 
@@ -283,9 +283,9 @@ function explorerWindowSize(strip){
 
 function explorerDayAt(st, offset){
   const dMs = st.currentDayStartMs + (offset * 86400000);
-  const dIdx = ((st.eraDay - 1 + offset) % ERA_LENGTH_DAYS + ERA_LENGTH_DAYS) % ERA_LENGTH_DAYS + 1;
-  const ep = Math.floor((dIdx - 1) / EPISODE_LENGTH_DAYS) + 1;
-  const dayInEp = ((dIdx - 1) % EPISODE_LENGTH_DAYS) + 1;
+  const dIdx = ((st.eraDay - 1 + offset) % eraLengthDays() + eraLengthDays()) % eraLengthDays() + 1;
+  const ep = Math.floor((dIdx - 1) / episodeLengthDays()) + 1;
+  const dayInEp = ((dIdx - 1) % episodeLengthDays()) + 1;
   const week = Math.floor((dayInEp - 1) / 7) + 1;
   return { offset, dMs, dIdx, ep, dayInEp, week, items: getEventsForDay(dMs, ep, dayInEp) };
 }
@@ -372,8 +372,8 @@ function renderExplorer(st){
   const selectedEraDay = st.eraDay - 1 + explorerOffset;
   const winStart = Math.min(
     Math.floor(selectedEraDay / windowSize) * windowSize,
-    ERA_LENGTH_DAYS - windowSize);
-  const winEnd = Math.min(ERA_LENGTH_DAYS, winStart + windowSize);
+    eraLengthDays() - windowSize);
+  const winEnd = Math.min(eraLengthDays(), winStart + windowSize);
   strip.scrollLeft = 0;
   let pills = '';
   for(let eraDay = winStart; eraDay < winEnd; eraDay++){
@@ -393,9 +393,9 @@ function renderExplorer(st){
 
   const dayJump = document.getElementById('dayJump');
   if(dayJump){
-    const jumpKey = `${st.eraBaseStartMs}|${ERA_LENGTH_DAYS}|${tz()}`;
+    const jumpKey = `${st.eraBaseStartMs}|${eraLengthDays()}|${tz()}`;
     if(dayJump.dataset.scheduleKey !== jumpKey){
-      dayJump.innerHTML = Array.from({ length: ERA_LENGTH_DAYS }, (_, index) => {
+      dayJump.innerHTML = Array.from({ length: eraLengthDays() }, (_, index) => {
         const offset = index - (st.eraDay - 1);
         const d = explorerDayAt(st, offset);
         return `<option value="${offset}">Day ${d.dIdx} · ${fmtDateUTC(gameDayDisplayMs(d.dMs))}</option>`;
@@ -416,7 +416,9 @@ function renderExplorer(st){
   const rel = relativeDayLabel(cur.offset);
   const headTitle = cur.offset === 0
     ? `Now: ${fmtDateLongUTC(gameDayDisplayMs(cur.dMs))}`
-    : `Upcoming ${rel.charAt(0).toLowerCase() + rel.slice(1)}: ${fmtDateLongUTC(gameDayDisplayMs(cur.dMs))}`;
+    : cur.offset > 0
+      ? `Upcoming ${rel.charAt(0).toLowerCase() + rel.slice(1)}: ${fmtDateLongUTC(gameDayDisplayMs(cur.dMs))}`
+      : `${rel}: ${fmtDateLongUTC(gameDayDisplayMs(cur.dMs))}`;
   const bossName = BOSS_LOOP[posMod(st.bossDayIndex - 1 + cur.offset, BOSS_LOOP.length)];
   const bossIcon = BOSS_ICONS[bossName];
   // Conquest indicator (mirrors the boss badge): shown on days 7-20
@@ -441,7 +443,7 @@ function renderExplorer(st){
     <div class="day-detail-head">
       <div>
         <h3>${headTitle}</h3>
-        <p>Day ${cur.dIdx} / ${ERA_LENGTH_DAYS} · Episode ${cur.ep}, Week ${cur.week}</p>
+        <p>Day ${cur.dIdx} / ${eraLengthDays()} · Episode ${cur.ep}, Week ${cur.week}</p>
       </div>
       <div class="day-indicators">
         <div class="day-boss" title="Coliseum boss rotates daily at 18:00 UTC">
@@ -502,10 +504,10 @@ function renderFullSchedule(st){
 
   if(!sameEra){
     let html = '';
-    const episodeCount = Math.ceil(ERA_LENGTH_DAYS / EPISODE_LENGTH_DAYS);
+    const episodeCount = Math.ceil(eraLengthDays() / episodeLengthDays());
     for(let ep = 1; ep <= episodeCount; ep++){
-      const firstDay = ((ep - 1) * EPISODE_LENGTH_DAYS) + 1;
-      const lastDay = Math.min(ep * EPISODE_LENGTH_DAYS, ERA_LENGTH_DAYS);
+      const firstDay = ((ep - 1) * episodeLengthDays()) + 1;
+      const lastDay = Math.min(ep * episodeLengthDays(), eraLengthDays());
       const epStartMs = st.currentEraStartMs + ((firstDay - 1) * 86400000);
       const epEndMs = st.currentEraStartMs + ((lastDay - 1) * 86400000);
       html += `<div class="tl-ep" data-ep="${ep}">`
@@ -516,7 +518,7 @@ function renderFullSchedule(st){
         const daysInWeek = Math.min(7, lastDay - firstDay + 1 - ((week - 1) * 7));
         for(let d = 1; d <= daysInWeek; d++){
           const dayInEp = (week - 1) * 7 + d;
-          const idx = (ep - 1) * EPISODE_LENGTH_DAYS + dayInEp;
+          const idx = (ep - 1) * episodeLengthDays() + dayInEp;
           const dateMs = st.currentEraStartMs + ((idx - 1) * 86400000);
           const items = getEventsForDay(dateMs, ep, dayInEp);
           html += `<div class="tl-day${idx === st.eraDay ? ' is-today' : ''}" data-day="${idx}">`
@@ -562,7 +564,7 @@ function scrollScheduleToToday(){
   const container = document.getElementById('fullSchedule');
   if(!container) return;
   if(scheduleFilterEp !== 0){
-    const todayEp = Math.floor((fullScheduleCache.activeDay - 1) / EPISODE_LENGTH_DAYS) + 1;
+    const todayEp = Math.floor((fullScheduleCache.activeDay - 1) / episodeLengthDays()) + 1;
     if(todayEp !== scheduleFilterEp) setScheduleFilter(0);
   }
   const row = container.querySelector(`.tl-day[data-day="${fullScheduleCache.activeDay}"]`);
