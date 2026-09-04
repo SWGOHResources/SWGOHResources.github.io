@@ -425,7 +425,7 @@ body.modal-open .starfield span {
 .day-arrow:hover:not(:disabled) { border-color: var(--ui-accent-border); color: var(--ui-accent); }
 .day-arrow:disabled { opacity: 0.3; cursor: default; }
 .day-strip {
-  flex: 1; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px;
+  flex: 1; display: grid; grid-template-columns: repeat(auto-fit, minmax(44px, 1fr)); gap: 6px;
   min-width: 0;
 }
 .day-pill {
@@ -441,11 +441,14 @@ body.modal-open .starfield span {
 .day-pill.has-events .dp-dot { background: var(--text3); }
 .day-pill.is-today { border-color: var(--cyan-border); }
 .day-pill.is-today .dp-num { color: var(--cyan); }
-.day-pill.is-selected { border-color: var(--text2); background: var(--void3); }
-.day-pill.is-selected:not(.is-today) .dp-num { color: var(--text); }
+.day-pill.is-selected {
+  border-color: var(--amber); background: var(--amber-dim); color: var(--text);
+  box-shadow: inset 0 0 0 1px var(--amber-border);
+}
+.day-pill.is-selected .dp-dow, .day-pill.is-selected .dp-num { color: var(--amber); }
+.day-pill.is-selected .dp-dot { background: var(--amber); }
 .day-pill.is-today.is-selected {
-  border-color: var(--cyan-border); background: var(--void3);
-  box-shadow: inset 0 0 0 1px var(--text2);
+  border-color: var(--amber); background: var(--amber-dim);
 }
 .explorer-tools { display: flex; align-items: center; gap: 10px; margin: 10px 50px 0; }
 .day-today {
@@ -749,7 +752,7 @@ body.modal-open .starfield span {
 @media (max-width: 600px) {
   .explorer-nav { gap: 5px; }
   .day-arrow { width: 34px; }
-  .day-strip { gap: 3px; }
+  .day-strip { grid-template-columns: repeat(auto-fit, minmax(40px, 1fr)); gap: 3px; }
   .day-pill { padding-left: 1px; padding-right: 1px; }
   .day-pill .dp-dow { font-size: 8px; }
   .day-pill .dp-num { font-size: 13px; }
