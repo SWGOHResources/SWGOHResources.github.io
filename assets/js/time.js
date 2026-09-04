@@ -774,7 +774,7 @@ function conquestChapterForEpisode(episode){
 }
 
 function conquestOrdinal(cNum){
-  return cNum === 1 ? '1st' : cNum === 2 ? '2nd' : cNum === 3 ? '3rd' : `${cNum}th`;
+  return ordinal(cNum);
 }
 
 function conquestInfoForDay(episode, dayInEp){
