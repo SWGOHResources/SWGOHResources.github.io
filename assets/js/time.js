@@ -471,7 +471,7 @@ function getLastUsableGuildEvent(expiresMs, eraBaseStartMs){
         const signupOffset = item.icon === 'tw_signup' ? 0 : item.icon === 'tw_defense' ? 1 : item.icon === 'tw_offense' ? 2 : 3;
         const signupStartMs = dayStartMs - (signupOffset * 86400000) + (stdHour() * 3600000);
         let signupCount = 0;
-        for(let dayOffset = -6; dayOffset <= 0; dayOffset++){
+        for(let dayOffset = -7; dayOffset <= 0; dayOffset++){
           const checkDayMs = dayStartMs + (dayOffset * 86400000);
           const checkInfo = absDayToInfo(absDay + dayOffset, eraBaseStartMs);
           const checkItems = getEventsForDay(checkDayMs, checkInfo.episode, checkInfo.dayInEp);
@@ -682,8 +682,10 @@ function getGacStatus(st){
   const nextFormat = format === '5v5' ? '3v3' : '5v5';
   const info = getGacRoundInfo(st.gacCycleDay);
   const gacNow = gacInfoForTimestamp(st.nowMs);
-  const [gy, gm, gd] = GAC_CYCLE_START_DATE.split('-').map(Number);
-  const cycleStartMs = Date.UTC(gy, gm - 1, gd, gacHour(), 0, 0) + (gacNow.cycleNum * 28 * 86400000);
+  const configuredStartMs = parseDateOnlyMs(typeof GAC_CYCLE_START_DATE !== 'undefined' ? GAC_CYCLE_START_DATE : null);
+  const gacStartMs = Number.isFinite(configuredStartMs)
+    ? configuredStartMs : Date.UTC(2026, 7, 11);
+  const cycleStartMs = gacStartMs + (gacHour() * 3600000) + (gacNow.cycleNum * 28 * 86400000);
   const nextSignupMs = info.phase === 'off' ? cycleStartMs + (28 * 86400000) : cycleStartMs;
   const nextSignupDate = fmtDayMonthUTC(nextSignupMs);
 

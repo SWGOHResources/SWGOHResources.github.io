@@ -163,6 +163,15 @@ test('bad GAC start date falls back to a safe default', () => {
   assert.equal(info.rawDays, 0);
 });
 
+test('GAC status uses a safe date when the start date is malformed or missing', () => {
+  for (const options of [{ gacStart: 'not-a-date' }, { omit: ['GAC_CYCLE_START_DATE'] }]) {
+    const engine = loadTimeEngine(options);
+    const status = engine.getGacStatus(engine.getGameStatus(Date.parse('2026-08-11T21:30:00Z')));
+    assert.doesNotMatch(status.sub, /Invalid Date/);
+    assert.match(status.sub, /12th Aug/);
+  }
+});
+
 test('datacron lookup handles empty and fully-expired configs', () => {
   const empty = loadTimeEngine({ datacronSets: [] });
   assert.equal(empty.getCurrentDatacronSet(Date.parse('2026-09-03T19:00:00Z')), null);
