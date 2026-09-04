@@ -468,20 +468,16 @@ function getLastUsableGuildEvent(expiresMs, eraBaseStartMs){
 
       let twNumber = null;
       if(modeIsTw(item.icon)){
-        const signupOffset = item.icon === 'tw_signup' ? 0 : item.icon === 'tw_defense' ? 1 : 2;
+        const signupOffset = item.icon === 'tw_signup' ? 0 : item.icon === 'tw_defense' ? 1 : item.icon === 'tw_offense' ? 2 : 3;
         const signupStartMs = dayStartMs - (signupOffset * 86400000) + (stdHour() * 3600000);
-        const signupGac = gacInfoForTimestamp(signupStartMs);
-        const signupWeekKey = `${signupGac.cycleNum}-${Math.ceil(signupGac.cycleDay / 7)}`;
         let signupCount = 0;
-        for(let dayOffset = -7; dayOffset <= 7; dayOffset++){
+        for(let dayOffset = -6; dayOffset <= 0; dayOffset++){
           const checkDayMs = dayStartMs + (dayOffset * 86400000);
           const checkInfo = absDayToInfo(absDay + dayOffset, eraBaseStartMs);
           const checkItems = getEventsForDay(checkDayMs, checkInfo.episode, checkInfo.dayInEp);
           if(checkItems.some(checkItem => {
             if(checkItem.icon !== 'tw_signup') return false;
-            const checkStartMs = checkDayMs + (stdHour() * 3600000);
-            const checkGac = gacInfoForTimestamp(checkStartMs);
-            return `${checkGac.cycleNum}-${Math.ceil(checkGac.cycleDay / 7)}` === signupWeekKey;
+            return checkDayMs + (stdHour() * 3600000) <= signupStartMs;
           })) signupCount++;
         }
         twNumber = signupCount || null;
