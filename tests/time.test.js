@@ -84,6 +84,19 @@ test('timezone offsets are validated and applied to display instants', () => {
   assert.equal(engine.tzOffsetMinutes('UTC+14:15'), null);
 });
 
+test('GAC and Conquest countdowns include dates in the selected timezone', () => {
+  const engine = loadTimeEngine({ timeZone: 'UTC+10:00' });
+  const gacStatus = engine.getGacStatus({
+    nowMs: Date.parse('2026-08-11T21:30:00Z'),
+    gacCycleDay: 1,
+    gacFormat: '5v5',
+  });
+  const conquestStatus = engine.getConquestStatus(engine.getGameStatus(Date.parse('2026-08-02T20:00:00Z')));
+
+  assert.match(gacStatus.sub, /13th Aug/);
+  assert.match(conquestStatus.main, /4th Aug/);
+});
+
 test('journey rerun month end clamps to the destination month', () => {
   const engine = loadTimeEngine({ timeZone: 'UTC' });
   const start = Date.parse('2026-01-31T18:00:00Z');
