@@ -6,7 +6,7 @@ import vm from 'node:vm';
 const timeSource = fs.readFileSync(new URL('../assets/js/time.js', import.meta.url), 'utf8');
 const dayMs = 86400000;
 
-function loadTimeEngine({ eraLength = 84, timeZone = 'UTC', datacronSets = [], gacStart = '2026-08-11', omit = [], hours = {}, lockOffsets = {}, commonDays = {} } = {}) {
+function loadTimeEngine({ eraLength = 84, timeZone = 'UTC', datacronSets = [], gacStart = '2026-08-11', omit = [], hours = {}, lockOffsets = {}, commonDays = {}, episodeOverrides = {}, monthlyEvents = [] } = {}) {
   const storage = new Map([['swgoh-tz', timeZone]]);
   const context = {
     console,
@@ -36,8 +36,8 @@ function loadTimeEngine({ eraLength = 84, timeZone = 'UTC', datacronSets = [], g
       rote: { name: 'Rise of the Empire', phases: 6, hoursPerPhase: 24 },
     },
     TB_CHOICE_STORAGE_KEY: 'tb',
-    MONTHLY_EVENTS: [],
-    EPISODE_OVERRIDES: {},
+    MONTHLY_EVENTS: monthlyEvents,
+    EPISODE_OVERRIDES: episodeOverrides,
     COMMON_DAYS: commonDays,
     DATACRON_SETS: datacronSets,
     CONQUEST_END_OFFSETS: [49],
@@ -486,4 +486,32 @@ test('off-week GAC locks roll into Week 1 of the next cycle', () => {
     assert.equal(usable.week, week);
     assert.equal(usable.format, nextFormat);
   }
+});
+
+test('validator flags malformed schedule tables', () => {
+  const engine = loadTimeEngine({
+    commonDays: { 3: 'oops', 4: [{ icon: 'tw_signup' }] },
+    episodeOverrides: { 1: { 7: [{ icon: 'rote', label: 'Phase 1 Starts' }] , 8: 'nope' } },
+    monthlyEvents: [{ icon: 'fleet_executor', label: 'Exec', dayOfMonth: 32 }],
+  });
+  const issues = engine.validateScheduleConfig();
+  assert.ok(issues.some(issue => issue.includes('COMMON_DAYS[3]')));
+  assert.ok(issues.some(issue => issue.includes('COMMON_DAYS[4][0]')));
+  assert.ok(issues.some(issue => issue.includes('EPISODE_OVERRIDES[1][8]')));
+  assert.ok(issues.some(issue => issue.includes('MONTHLY_EVENTS[0]')));
+});
+
+test('malformed schedule entries degrade instead of crashing', () => {
+  const engine = loadTimeEngine({
+    commonDays: { 5: ['oops', { icon: 'tw_offense', label: 'Offense Phase Starts' }, { icon: 'broken' }] },
+    monthlyEvents: 'nope',
+  });
+  const dayStart = Date.parse('2026-08-04T00:00:00Z');
+  assert.equal(engine.getDayEvents(1, 5).map(item => item.icon).join(','), 'tw_offense');
+  assert.equal(engine.getMonthlyEvents(dayStart).length, 0);
+  assert.doesNotThrow(() => engine.getEventsForDay(dayStart, 1, 5));
+  assert.equal(
+    engine.getGuildEventSummary(1, 5, dayStart, Date.parse('2026-08-04T19:00:00Z')),
+    'TW Offense Phase Started'
+  );
 });

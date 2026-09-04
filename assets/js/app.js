@@ -52,11 +52,17 @@ function dismissCookies(){
 if(cookieNotice && !hasCookie(COOKIE_NOTICE_KEY)) cookieNotice.hidden = false;
 if(dismissCookieNotice) dismissCookieNotice.addEventListener('click', dismissCookies);
 
-let lastFocusedElement = null;
+/* Opener per modal: two modals must never stack (backdrops pile up
+   and a single shared opener restores focus to the wrong place), so
+   opening one closes any other — without stealing its focus restore. */
+const modalOpeners = new Map();
 
 function openModal(modalEl) {
   if (!modalEl) return;
-  lastFocusedElement = document.activeElement;
+  document.querySelectorAll('.modal-backdrop.open').forEach(other => {
+    if (other !== modalEl) closeModal(other, { restoreFocus: false });
+  });
+  if (!modalOpeners.has(modalEl)) modalOpeners.set(modalEl, document.activeElement);
   modalEl.classList.add('open');
   modalEl.setAttribute('aria-hidden', 'false');
   document.body.classList.add('modal-open');
@@ -66,8 +72,9 @@ function openModal(modalEl) {
   if (focusables.length) focusables[0].focus();
 }
 
-function closeModal(modalEl) {
+function closeModal(modalEl, opts) {
   if (!modalEl) return;
+  const restoreFocus = !opts || opts.restoreFocus !== false;
   modalEl.classList.remove('open');
   modalEl.setAttribute('aria-hidden', 'true');
 
@@ -75,10 +82,9 @@ function closeModal(modalEl) {
     document.body.classList.remove('modal-open');
   }
 
-  if (lastFocusedElement) {
-    lastFocusedElement.focus();
-    lastFocusedElement = null;
-  }
+  const opener = modalOpeners.get(modalEl);
+  modalOpeners.delete(modalEl);
+  if (restoreFocus && opener && document.contains(opener)) opener.focus();
 }
 
 // Trap Focus Inside Open Modals & Close on Escape Key
@@ -201,11 +207,19 @@ function populateTzSelect(sel){
 
 function syncTzSelects(){
   const current = getTimeZoneSetting();
-  const inList = v => TIMEZONE_OPTIONS.includes(v) || UTC_OFFSET_OPTIONS.includes(v);
-  const value = inList(current) ? current : 'local';
   ['tzSelect', 'tzSelectMobile'].forEach(id => {
     const sel = document.getElementById(id);
-    if(sel && sel.options.length && sel.value !== value) sel.value = value;
+    if(!sel) return;
+    // A valid zone outside the preset lists (set via console) gets a
+    // dynamic option so the select shows the actual zone instead of
+    // misleadingly falling back to "Local".
+    if(current !== 'local' && ![...sel.options].some(o => o.value === current)){
+      const opt = document.createElement('option');
+      opt.value = current;
+      opt.textContent = tzSelectLabel(current);
+      sel.appendChild(opt);
+    }
+    if(sel.options.length && sel.value !== current) sel.value = current;
   });
 }
 
@@ -253,5 +267,5 @@ setInterval(tickCountdown, 1000);
 // Skip background re-renders while the tab is hidden; the next visible
 // tick catches up. Bump ASSET_VERSION in index.html on deploy so browsers
 // fetch fresh CSS/JS instead of serving cached copies.
-setInterval(() => { if(!document.hidden) renderAll(); }, 60000);
-document.addEventListener('visibilitychange', () => { if(!document.hidden) renderAll(); });
+setInterval(() => { if(!document.hidden) renderAll({ preserveFocus: true }); }, 60000);
+document.addEventListener('visibilitychange', () => { if(!document.hidden) renderAll({ preserveFocus: true }); });

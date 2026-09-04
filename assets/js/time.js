@@ -98,11 +98,13 @@ function episodeLengthDays(){
 }
 
 function getMonthlyEvents(dateMs){
-  if(typeof MONTHLY_EVENTS === 'undefined' || !MONTHLY_EVENTS) return [];
+  const monthly = (typeof MONTHLY_EVENTS !== 'undefined' && Array.isArray(MONTHLY_EVENTS)) ? MONTHLY_EVENTS : [];
+  if(monthly.length === 0) return [];
   const d = new Date(dateMs);
   const dom = d.getUTCDate();
   const lastDom = new Date(utcDateMs(d.getUTCFullYear(), d.getUTCMonth() + 1, 0)).getUTCDate();
-  return MONTHLY_EVENTS
+  return monthly
+    .filter(m => m && typeof m.icon === 'string' && typeof m.label === 'string')
     .filter(m => m.lastDayOfMonth ? dom === lastDom : dom === m.dayOfMonth)
     .map(m => ev(m.icon, m.label));
 }
@@ -558,9 +560,21 @@ function modeIsTw(icon){
   return icon.startsWith('tw_');
 }
 
+/* A schedule-table entry is usable when it carries a string icon and
+   label (renderers call .startsWith/.toUpperCase on both). Malformed
+   entries from a bad config edit are dropped instead of crashing the
+   page — validateScheduleConfig() reports them. */
+function validScheduleItem(item){
+  return !!item && typeof item.icon === 'string' && item.icon.length > 0
+    && typeof item.label === 'string';
+}
+
 function getDayEvents(episode, dayInEp){
-  const o = EPISODE_OVERRIDES[episode] && EPISODE_OVERRIDES[episode][dayInEp];
-  return o || COMMON_DAYS[dayInEp] || [];
+  const overrides = (typeof EPISODE_OVERRIDES !== 'undefined' && EPISODE_OVERRIDES) || {};
+  const common = (typeof COMMON_DAYS !== 'undefined' && COMMON_DAYS) || {};
+  const epTable = (overrides && overrides[episode]) || {};
+  const list = epTable[dayInEp] || common[dayInEp] || [];
+  return Array.isArray(list) ? list.filter(validScheduleItem) : [];
 }
 
 function getEventsForDay(dateMs, episode, dayInEp){
@@ -1070,6 +1084,63 @@ function validateScheduleConfig(){
     issues.push('CONQUEST_END_OFFSETS is empty — the conquest unlock card degrades to today.');
   if(!Array.isArray(eraStartOffsets) || eraStartOffsets.length === 0)
     issues.push('ERA_START_OFFSETS is empty — the era unlock card degrades to today.');
+
+  /* Schedule tables: every entry must be an {icon, label} object —
+     renderers call string methods on both, so a stray string or a
+     missing label crashes the page (getDayEvents filters these at
+     runtime, but the config should be fixed). */
+  const checkEventList = (name, list) => {
+    if(!Array.isArray(list)){
+      issues.push(`${name} must be an array of {icon, label} events.`);
+      return;
+    }
+    list.forEach((item, i) => {
+      if(!item || typeof item.icon !== 'string' || item.icon.length === 0)
+        issues.push(`${name}[${i}] needs a string icon.`);
+      else if(typeof item.label !== 'string')
+        issues.push(`${name}[${i}] needs a string label.`);
+    });
+  };
+
+  const commonDays = (typeof COMMON_DAYS !== 'undefined') ? COMMON_DAYS : null;
+  if(!commonDays || typeof commonDays !== 'object' || Array.isArray(commonDays)){
+    issues.push('COMMON_DAYS must be an object mapping days to event lists.');
+  } else {
+    Object.entries(commonDays).forEach(([day, list]) => {
+      if(!Number.isInteger(Number(day)) || Number(day) < 1)
+        issues.push(`COMMON_DAYS has invalid day "${day}".`);
+      else checkEventList(`COMMON_DAYS[${day}]`, list);
+    });
+  }
+
+  const episodeOverrides = (typeof EPISODE_OVERRIDES !== 'undefined') ? EPISODE_OVERRIDES : null;
+  if(episodeOverrides == null || typeof episodeOverrides !== 'object' || Array.isArray(episodeOverrides)){
+    issues.push('EPISODE_OVERRIDES must be an object mapping episodes to day tables.');
+  } else {
+    Object.entries(episodeOverrides).forEach(([ep, table]) => {
+      if(!table || typeof table !== 'object' || Array.isArray(table)){
+        issues.push(`EPISODE_OVERRIDES[${ep}] must be an object mapping days to event lists.`);
+        return;
+      }
+      Object.entries(table).forEach(([day, list]) => {
+        if(!Number.isInteger(Number(day)) || Number(day) < 1)
+          issues.push(`EPISODE_OVERRIDES[${ep}] has invalid day "${day}".`);
+        else checkEventList(`EPISODE_OVERRIDES[${ep}][${day}]`, list);
+      });
+    });
+  }
+
+  const monthlyEvents = (typeof MONTHLY_EVENTS !== 'undefined') ? MONTHLY_EVENTS : null;
+  if(!Array.isArray(monthlyEvents)){
+    issues.push('MONTHLY_EVENTS must be an array.');
+  } else {
+    monthlyEvents.forEach((m, i) => {
+      if(!m || typeof m.icon !== 'string' || !m.icon || typeof m.label !== 'string')
+        issues.push(`MONTHLY_EVENTS[${i}] needs a string icon and label.`);
+      else if(!m.lastDayOfMonth && (!Number.isInteger(m.dayOfMonth) || m.dayOfMonth < 1 || m.dayOfMonth > 31))
+        issues.push(`MONTHLY_EVENTS[${i}] needs a dayOfMonth from 1 to 31 or lastDayOfMonth.`);
+    });
+  }
 
   const checkOffsets = (name, offsets) => {
     if(!Array.isArray(offsets) || !Number.isInteger(eraLength) || eraLength <= 0) return;
