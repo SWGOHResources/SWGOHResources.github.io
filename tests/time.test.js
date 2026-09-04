@@ -97,6 +97,14 @@ test('GAC and Conquest countdowns include dates in the selected timezone', () =>
   assert.match(conquestStatus.main, /4th Aug/);
 });
 
+test('Conquest active countdown points to the Monday end boundary', () => {
+  const engine = loadTimeEngine();
+  const status = engine.getConquestStatus(engine.getGameStatus(Date.parse('2026-08-14T20:00:00Z')));
+
+  assert.equal(status.main, 'Conquest Day 12 of 14');
+  assert.match(status.sub, /^Ends in 3 days · 17th Aug$/);
+});
+
 test('journey rerun month end clamps to the destination month', () => {
   const engine = loadTimeEngine({ timeZone: 'UTC' });
   const start = Date.parse('2026-01-31T18:00:00Z');
@@ -233,6 +241,7 @@ test('locked TW remains usable after expiry and takes precedence over an overlap
   const engine = loadTimeEngine({
     gacStart: '2026-07-28',
     commonDays: {
+      1: [{ icon: 'tw_signup', label: 'Signup Starts' }],
       2: [{ icon: 'tw_defense', label: 'Defense Phase Starts' }],
       3: [{ icon: 'tw_offense', label: 'Offense Phase Starts' }],
     },
@@ -244,6 +253,7 @@ test('locked TW remains usable after expiry and takes precedence over an overlap
   assert.equal(new Date(event.gac.dateMs).toISOString(), '2026-07-30T00:00:00.000Z');
   assert.equal(event.tw.item.icon, 'tw_offense');
   assert.equal(new Date(event.tw.dateMs).toISOString(), '2026-07-30T00:00:00.000Z');
+  assert.equal(event.tw.twNumber, 1);
 });
 
 test('datacron expiration is evaluated at 18:00 UTC', () => {

@@ -54,7 +54,7 @@ function renderUnlockWindows(st){
       const gacInfo = gacInfoForTimestamp(lastUsable.gac.startMs);
       labels.push(`GAC Week ${Math.ceil(gacInfo.cycleDay / 7)} (${gacInfo.format})`);
     }
-    if(lastUsable.tw) labels.push('TW');
+    if(lastUsable.tw) labels.push(lastUsable.tw.twNumber ? `TW ${lastUsable.tw.twNumber}` : 'TW');
     lastUsableLabel = labels.join(' + ');
   }
 

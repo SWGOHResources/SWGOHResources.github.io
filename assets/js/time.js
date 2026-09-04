@@ -466,17 +466,43 @@ function getLastUsableGuildEvent(expiresMs, eraBaseStartMs){
         }
       }
 
+      let twNumber = null;
+      if(modeIsTw(item.icon)){
+        const signupOffset = item.icon === 'tw_signup' ? 0 : item.icon === 'tw_defense' ? 1 : 2;
+        const signupStartMs = dayStartMs - (signupOffset * 86400000) + (stdHour() * 3600000);
+        const signupGac = gacInfoForTimestamp(signupStartMs);
+        const signupWeekKey = `${signupGac.cycleNum}-${Math.ceil(signupGac.cycleDay / 7)}`;
+        let signupCount = 0;
+        for(let dayOffset = -7; dayOffset <= 7; dayOffset++){
+          const checkDayMs = dayStartMs + (dayOffset * 86400000);
+          const checkInfo = absDayToInfo(absDay + dayOffset, eraBaseStartMs);
+          const checkItems = getEventsForDay(checkDayMs, checkInfo.episode, checkInfo.dayInEp);
+          if(checkItems.some(checkItem => {
+            if(checkItem.icon !== 'tw_signup') return false;
+            const checkStartMs = checkDayMs + (stdHour() * 3600000);
+            const checkGac = gacInfoForTimestamp(checkStartMs);
+            return `${checkGac.cycleNum}-${Math.ceil(checkGac.cycleDay / 7)}` === signupWeekKey;
+          })) signupCount++;
+        }
+        twNumber = signupCount || null;
+      }
+
       const mode = item.icon.startsWith('tw_') ? 'tw' : 'gac';
       if(usableFromMs < expiresMs && (!lastUsable[mode] || itemStartMs > lastUsable[mode].startMs)){
         lastUsable[mode] = {
           item,
           dateMs: dayStartMs,
           startMs: itemStartMs,
+          twNumber,
         };
       }
     });
   }
   return lastUsable.tw || lastUsable.gac ? lastUsable : null;
+}
+
+function modeIsTw(icon){
+  return icon.startsWith('tw_');
 }
 
 function getDayEvents(episode, dayInEp){
@@ -774,7 +800,7 @@ function getConquestStatus(st){
     const startDateMs = st.currentDayStartMs + (daysUntil * 86400000) + (stdHour() * 3600000);
     return {
       status: 'UPCOMING', badgeClass: 'purple', title: titleNote,
-      main: `Starts in ${daysUntil} days · ${fmtDayMonthUTC(startDateMs)}`,
+      main: `Starts in ${daysUntil} ${daysUntil === 1 ? 'day' : 'days'} · ${fmtDayMonthUTC(startDateMs)}`,
       sub: `Conquest Run ${cNum} will begin.`,
       cNum: cNum
     };
@@ -790,12 +816,12 @@ function getConquestStatus(st){
   } else if (targetDay >= start && targetDay <= end) {
     const cqDay = targetDay - start + 1;
     const remaining = end - targetDay;
-    const endDateMs = st.currentDayStartMs + (remaining * 86400000) + (stdHour() * 3600000);
+    const endDateMs = st.currentDayStartMs + ((remaining + 1) * 86400000) + (stdHour() * 3600000);
     return {
       status: remaining === 0 ? 'FINAL DAY' : 'ACTIVE',
       badgeClass: 'purple', title: titleNote,
       main: `Conquest Day ${cqDay} of ${total}`,
-      sub: remaining === 0 ? 'Proving Grounds starts in 1 day' : `Ends in ${remaining} days · ${fmtDayMonthUTC(endDateMs)}`,
+      sub: remaining === 0 ? 'Proving Grounds starts in 1 day' : `Ends in ${remaining + 1} ${remaining === 0 ? 'day' : 'days'} · ${fmtDayMonthUTC(endDateMs)}`,
       cNum: cNum
     };
   } else if (targetDay === overDay) {
