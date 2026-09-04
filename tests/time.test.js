@@ -421,3 +421,52 @@ test('missing era lengths fall back without poisoning status', () => {
   assert.ok(engine.validateScheduleConfig().some(issue => issue.includes('ERA_LENGTH_DAYS')));
   assert.ok(engine.validateScheduleConfig().some(issue => issue.includes('EPISODE_LENGTH_DAYS')));
 });
+
+test('started events render in past tense', () => {
+  const engine = loadTimeEngine();
+  assert.equal(engine.tensedLabel('Phase 4 Starts', true), 'Phase 4 Started');
+  assert.equal(engine.tensedLabel('Territory Battle Ends', true), 'Territory Battle Ended');
+  assert.equal(engine.tensedLabel('Phase 4 Starts', false), 'Phase 4 Starts');
+  assert.equal(engine.tensedLabel('Payout', true), 'Payout');
+  assert.equal(engine.tensedLabel('Phase 2 Continues', true), 'Phase 2 Continues');
+});
+
+test('event start instants prefer TB transition moments over changeovers', () => {
+  const engine = loadTimeEngine();
+  const midnight = Date.parse('2026-08-10T00:00:00Z');
+  assert.equal(engine.eventStartMs({ icon: 'tw_signup' }, midnight), midnight + 18 * 3600000);
+  assert.equal(engine.eventStartMs({ icon: 'gac_attack' }, midnight), midnight + 21 * 3600000);
+  assert.equal(engine.eventStartMs({ icon: 'rote', tbStartMoment: midnight + 6 * 3600000 }, midnight), midnight + 6 * 3600000);
+  assert.equal(engine.eventStartMs({ icon: 'rote', tbEndMoment: midnight + 6 * 3600000 }, midnight), midnight + 6 * 3600000);
+});
+
+test('guild summaries tense by the event start instant', () => {
+  const engine = loadTimeEngine({
+    commonDays: { 5: [{ icon: 'tw_offense', label: 'Offense Phase Starts' }] },
+  });
+  const dayStart = Date.parse('2026-08-04T00:00:00Z');
+  assert.equal(
+    engine.getGuildEventSummary(1, 5, dayStart, Date.parse('2026-08-04T17:00:00Z')),
+    'TW Offense Phase Starts'
+  );
+  assert.equal(
+    engine.getGuildEventSummary(1, 5, dayStart, Date.parse('2026-08-04T19:00:00Z')),
+    'TW Offense Phase Started'
+  );
+  assert.equal(engine.getGuildEventSummary(1, 5, dayStart), 'TW Offense Phase Starts');
+});
+
+test('TB phase summaries tense by the event start instant', () => {
+  const engine = loadTimeEngine({
+    commonDays: { 10: [{ icon: 'rote', label: 'Phase 4 Starts' }] },
+  });
+  const dayStart = Date.parse('2026-08-10T00:00:00Z');
+  assert.equal(
+    engine.getGuildEventSummary(1, 10, dayStart, Date.parse('2026-08-10T10:00:00Z')),
+    'Rise of the Empire Phase 4 Starts'
+  );
+  assert.equal(
+    engine.getGuildEventSummary(1, 10, dayStart, Date.parse('2026-08-10T19:00:00Z')),
+    'Rise of the Empire Phase 4 Started'
+  );
+});

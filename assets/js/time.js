@@ -334,7 +334,7 @@ function applyTbLabels(items, runCtx){
       if(new Date(transMs).getUTCHours() === 6 && phase > 1){
         return [
           { icon: it.icon, label: `${def.name} Phase ${phase - 1} Ends`, tbEndMoment: transMs },
-          { icon: it.icon, label: `${def.name} Phase ${phase} Starts` },
+          { icon: it.icon, label: `${def.name} Phase ${phase} Starts`, tbStartMoment: transMs },
         ];
       }
       return [{ icon: it.icon, label: tbPhaseLabel(def, runCtx.offset) }];
@@ -745,6 +745,33 @@ function eventDisplayMs(item, dateMs){
   return dateMs + (hour * 3600000);
 }
 
+/* Start instant of a schedule card: 36h-TB boundary cards carry their
+   exact transition moment (tbStartMoment / tbEndMoment); everything
+   else starts at its day's changeover (18:00 UTC, 21:00 for GAC). */
+function eventStartMs(item, dateMs){
+  if(item && Number.isFinite(item.tbStartMoment)) return item.tbStartMoment;
+  if(item && Number.isFinite(item.tbEndMoment)) return item.tbEndMoment;
+  return eventDisplayMs(item, dateMs);
+}
+
+/* Event labels are authored in future tense ("Phase 4 Starts"). Once
+   the event's start instant has passed, render past tense ("Phase 4
+   Started"). Only the trailing verb flips — names, "Continues"
+   (still ongoing) and dateless labels pass through untouched. */
+function tensedLabel(label, started){
+  if(!started || typeof label !== 'string') return label;
+  if(label.endsWith('Starts')) return label.slice(0, -('Starts'.length)) + 'Started';
+  if(label.endsWith('Ends')) return label.slice(0, -('Ends'.length)) + 'Ended';
+  return label;
+}
+
+/* Tense a picked label by its start instant. Without a usable clock
+   (no nowMs) or day (no dateMs) the authored tense passes through. */
+function tenseByStart(label, item, dateMs, nowMs){
+  if(typeof nowMs !== 'number' || !Number.isFinite(nowMs) || dateMs == null) return label;
+  return tensedLabel(label, eventStartMs(item, dateMs) <= nowMs);
+}
+
 function getGacStatus(st){
   const format = st.gacFormat;
   const nextFormat = format === '5v5' ? '3v3' : '5v5';
@@ -911,20 +938,23 @@ function getConquestStatus(st){
   }
 }
 
-function getGuildEventSummary(episode, dayInEp, dateMs){
+/* nowMs is an optional clock override: when given, the picked label
+   is tensed by its start instant ("Signup Started" after today's
+   changeover, "Signup Starts" before/tomorrow). */
+function getGuildEventSummary(episode, dayInEp, dateMs, nowMs){
   const items = dateMs != null ? getEventsForDay(dateMs, episode, dayInEp) : getDayEvents(episode, dayInEp);
 
   const tw = items.find(i => i.icon.startsWith('tw_'));
-  if(tw) return `TW ${tw.label}`;
+  if(tw) return `TW ${tenseByStart(tw.label, tw, dateMs, nowMs)}`;
 
   const tbEnd = items.find(i => i.icon === 'tb_ends');
-  if(tbEnd) return tbEnd.label;
+  if(tbEnd) return tenseByStart(tbEnd.label, tbEnd, dateMs, nowMs);
 
   // Last match: on 36h boundary days the day holds both a
   // "Phase X Ends" and a "Phase Y Starts" card — Now means the one
   // that just started.
   const roteItems = items.filter(i => i.icon === 'rote');
-  if(roteItems.length) return roteItems[roteItems.length - 1].label;
+  if(roteItems.length) return tenseByStart(roteItems[roteItems.length - 1].label, roteItems[roteItems.length - 1], dateMs, nowMs);
 
   return 'Guild Intermission';
 }
