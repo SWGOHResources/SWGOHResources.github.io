@@ -428,11 +428,11 @@ function renderExplorer(st){
         <p>Day ${cur.dIdx} / ${ERA_LENGTH_DAYS} · Episode ${cur.ep}, Week ${cur.week}</p>
       </div>
       <div class="day-indicators">
-        ${cqBadge}
         <div class="day-boss" title="Coliseum boss rotates daily at 18:00 UTC">
         <img src="${IMG_BASE}${bossIcon}" alt="" loading="lazy" onerror="this.remove()">
         <div class="db-text"><span class="db-label">Coliseum boss</span><span class="db-name">${bossName}</span></div>
         </div>
+        ${cqBadge}
       </div>
     </div>
     ${cur.items.length

@@ -765,6 +765,8 @@ body.modal-open .starfield span {
   .day-pill .dp-num { font-size: 13px; }
   .explorer-tools { margin-left: 39px; margin-right: 39px; flex-wrap: wrap; }
   .day-jump { flex: 1; min-width: 0; }
+  .day-detail-head { flex-direction: column; }
+  .day-indicators { width: 100%; justify-content: flex-start; }
   .policy-page { padding-top: 28px; padding-bottom: 44px; }
   .policy-page .section-head { gap: 12px; }
   .policy-page .section-head h1 { font-size: 26px; }
