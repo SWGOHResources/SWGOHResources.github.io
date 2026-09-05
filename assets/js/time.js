@@ -638,6 +638,36 @@ function isDatacronDropDay(dateMs, eraDay){
   return d >= 5 && d <= 11;
 }
 
+/* Color of the set added by the drop on dateMs. Drops land on
+   Episode Day 2 — exactly one episode apart — so the color steps
+   through DATACRON_COLOR_ORDER by whole episodes from the anchor
+   drop (2026-08-26 added Blue; Jul 29 Green; before that Pink,
+   Orange, then looping). Unknown/missing config degrades to the
+   rotation's last color instead of a broken icon. */
+function datacronColorOrder(){
+  const fallback = ['orange', 'pink', 'green', 'blue'];
+  const order = (typeof DATACRON_COLOR_ORDER !== 'undefined' && Array.isArray(DATACRON_COLOR_ORDER))
+    ? DATACRON_COLOR_ORDER.filter(c => typeof c === 'string' && c.length > 0)
+    : [];
+  return order.length ? order : fallback;
+}
+
+function datacronColorForDrop(dateMs){
+  const order = datacronColorOrder();
+  const anchor = parseDateOnlyMs(typeof DATACRON_ANCHOR_DATE !== 'undefined' ? DATACRON_ANCHOR_DATE : null);
+  const anchorColor = (typeof DATACRON_ANCHOR_COLOR !== 'undefined' && order.includes(DATACRON_ANCHOR_COLOR))
+    ? DATACRON_ANCHOR_COLOR : order[order.length - 1];
+  if(!Number.isFinite(anchor) || !Number.isFinite(dateMs)) return anchorColor;
+  const periods = Math.round((dateMs - anchor) / (episodeLengthDays() * 86400000));
+  return order[posMod(order.indexOf(anchorColor) + periods, order.length)];
+}
+
+function datacronSetIconForDrop(dateMs){
+  const icon = `datacron_set_${datacronColorForDrop(dateMs)}`;
+  if(typeof EVENT_ICONS !== 'undefined' && EVENT_ICONS[icon]) return icon;
+  return 'datacron_set';
+}
+
 function getClientUpdateEvents(dateMs, episode, dayInEp){
   const eraDay = eraDayForEpisode(episode, dayInEp);
   if(!Number.isInteger(eraDay) || !Number.isFinite(dateMs)) return [];
@@ -648,7 +678,11 @@ function getClientUpdateEvents(dateMs, episode, dayInEp){
   const datacron = isDatacronDropDay(dateMs, eraDay);
   const biweekly = isBiweeklyClientUpdateDay(dateMs);
   if(datacron || biweekly) out.push(ev('client_update', 'Client Update'));
-  if(datacron) out.push(ev('datacron_set', 'New Datacron Set Added'));
+  if(datacron){
+    const color = datacronColorForDrop(dateMs);
+    const colorLabel = color.charAt(0).toUpperCase() + color.slice(1);
+    out.push(ev(datacronSetIconForDrop(dateMs), `New Datacron Set Added (${colorLabel})`));
+  }
   return out;
 }
 
@@ -1133,6 +1167,11 @@ function validateScheduleConfig(){
     issues.push('GAC_CYCLE_START_DATE is missing or not YYYY-MM-DD.');
   if(typeof CLIENT_UPDATE_ANCHOR_DATE !== 'undefined' && !isDateStr(CLIENT_UPDATE_ANCHOR_DATE))
     issues.push('CLIENT_UPDATE_ANCHOR_DATE is missing or not YYYY-MM-DD.');
+  if(typeof DATACRON_ANCHOR_DATE !== 'undefined' && !isDateStr(DATACRON_ANCHOR_DATE))
+    issues.push('DATACRON_ANCHOR_DATE is missing or not YYYY-MM-DD.');
+  if(typeof DATACRON_ANCHOR_COLOR !== 'undefined'
+    && !(typeof CRON_COLOR_META !== 'undefined' && DATACRON_ANCHOR_COLOR in CRON_COLOR_META))
+    issues.push(`DATACRON_ANCHOR_COLOR "${DATACRON_ANCHOR_COLOR}" is not a known datacron color.`);
   if(!isDateStr(typeof TB_SIDE_ANCHOR_DATE !== 'undefined' ? TB_SIDE_ANCHOR_DATE : null))
     issues.push('TB_SIDE_ANCHOR_DATE is missing or not YYYY-MM-DD.');
   if(!(tbRunGap > 0))
