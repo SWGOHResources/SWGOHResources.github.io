@@ -184,6 +184,7 @@ const CATEGORY_META = {
   guild:    { label: 'GUILD',    glyph: 'GLD', accent: 'var(--amber)',  dim: 'var(--amber-dim)',  border: 'var(--amber-border)' },
   fleet:    { label: 'FLEET',    glyph: 'FLT', accent: 'var(--steel)',  dim: 'var(--steel-dim)',  border: 'var(--steel-border)' },
   era:      { label: 'ERA',      glyph: 'ERA', accent: 'var(--orange)', dim: 'var(--orange-dim)', border: 'var(--orange-border)' },
+  update:   { label: 'UPDATE',   glyph: 'UPD', accent: 'var(--steel)',  dim: 'var(--steel-dim)',  border: 'var(--steel-border)' },
 };
 
 const CATEGORY_ICONS = {
@@ -192,6 +193,7 @@ const CATEGORY_ICONS = {
   guild:    'events/tw.png',
   fleet:    'events/executor.png',
   era:      'events/eraicon.png',
+  update:   'events/clientupdate.png',
 };
 
 // Display tags that differ from the owning category (shown on cards).
