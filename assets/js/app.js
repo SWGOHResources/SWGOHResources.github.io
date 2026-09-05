@@ -249,18 +249,19 @@ if(footerYearEl){ footerYearEl.textContent = `© ${new Date().getFullYear()} SWG
   const field = document.getElementById('starfield');
   if(!field) return;
   const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  for(let i = 0; i < 70; i++){
+  for(let i = 0; i < 110; i++){
     const s = document.createElement('span');
     const r = Math.random();
-    const size = r < 0.6 ? 1 : r < 0.9 ? 2 : 3;
+    const size = r < 0.55 ? 1 : r < 0.88 ? 2 : 3;
+    if(size === 3) s.classList.add('bright');
     s.style.width = s.style.height = size + 'px';
     s.style.left = Math.random() * 100 + '%';
     s.style.top = Math.random() * 100 + '%';
     const tint = Math.random();
     if(tint < 0.16) s.classList.add('cool');
     else if(tint < 0.26) s.classList.add('warm');
-    const base = (0.25 + Math.random() * 0.55).toFixed(2);
-    if(!reduceMotion && Math.random() < 0.3){
+    const base = (0.3 + Math.random() * 0.55).toFixed(2);
+    if(!reduceMotion && Math.random() < 0.45){
       s.classList.add('tw');
       s.style.setProperty('--o', base);
       s.style.animationDuration = (3 + Math.random() * 5).toFixed(2) + 's';
