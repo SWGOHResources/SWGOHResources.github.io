@@ -262,6 +262,8 @@ if(typeof validateScheduleConfig === 'function'){
 }
 
 renderAll();
+if(typeof requestIdleCallback === 'function') requestIdleCallback(() => preloadCardAssets(), { timeout: 2000 });
+else setTimeout(() => preloadCardAssets(), 0);
 tickCountdown();
 setInterval(tickCountdown, 1000);
 // Skip background re-renders while the tab is hidden; the next visible
