@@ -36,6 +36,20 @@ const GAC_CYCLE_START_DATE = '2026-08-11'; // Day 1 (Signup) of the 5v5 season
 const CLIENT_UPDATE_ANCHOR_DATE = '2026-09-02'; // a Wednesday with a client update
 
 /* =========================================================
+ DATACRON DROP ROTATION — each Wednesday-before-conquest drop
+  adds the next color in this fixed order. Anchor: the 2026-08-26
+  drop added the Blue set (previous drop Green, then Pink, then
+  Orange, looping). Drops land on Episode Day 2, exactly one
+  episode apart, so time.js steps the rotation by whole episodes
+  from this anchor. If CG ever breaks the cadence, correct the
+  anchor date/color here.
+  ========================================================= */
+
+const DATACRON_COLOR_ORDER = ['orange', 'pink', 'green', 'blue'];
+const DATACRON_ANCHOR_DATE = '2026-08-26'; // a drop Wednesday that added…
+const DATACRON_ANCHOR_COLOR = 'blue'; // …this color
+
+/* =========================================================
  DATACRON SET CONFIGURATION — EDIT WHEN A NEW SET IS ANNOUNCED
   Datacron sets rotate through colors in a fixed order:
     Orange -> Pink -> Green -> Blue -> (repeats)
@@ -244,9 +258,10 @@ const EVENT_ICONS = {
   fleet_profundity: 'events/profundity.png',
   client_update: 'events/clientupdate.png',
   shipment_update: 'events/shipmentchange.png',
-  // Next set in the Orange -> Pink -> Green -> Blue rotation is Blue;
-  // point this at the new color when the rotation advances.
-  datacron_set: 'datacrons/datacron_blue.png'
+  datacron_set_orange: 'datacrons/datacron_orange.png',
+  datacron_set_pink: 'datacrons/datacron_pink.png',
+  datacron_set_green: 'datacrons/datacron_green.png',
+  datacron_set_blue: 'datacrons/datacron_blue.png'
 };
 
 /* =========================================================
