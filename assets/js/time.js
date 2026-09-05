@@ -192,6 +192,9 @@ function categoryFor(icon){
   if(icon.startsWith('conquest') || icon === 'proving_ground') return 'conquest';
   if(icon.startsWith('tw') || icon === 'rote' || icon === 'tb_ends' || icon === 'smugglersrun') return 'guild';
   if(icon.startsWith('fleet')) return 'fleet';
+  // Blue-tinted UPDATE category so the transparent client/shipment
+  // art sits on steel-dim instead of the clashing orange ERA dim.
+  if(icon === 'client_update' || icon === 'shipment_update') return 'update';
   return 'era'; 
 }
 
