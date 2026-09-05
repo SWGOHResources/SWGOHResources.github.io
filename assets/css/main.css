@@ -820,5 +820,9 @@ body.modal-open .starfield span.tw {
   .policy-page .section-head .rule { max-width: none; }
   .policy-content { padding-left: 20px; }
   .mh-main-val { font-size: 28px; }
+  .mh-right {
+    border-left: none; border-top: 1px solid var(--border); width: 100%; padding: 12px 0 0; justify-content: space-between;
+  }
+  .mh-right .cb-timer { font-size: 26px; }
   .tl-day { flex-wrap: wrap; gap: 6px; }
 }
