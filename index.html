@@ -152,17 +152,19 @@
       <div class="day-strip" id="dayStrip" role="group" aria-label="Choose a day"></div>
       <button type="button" class="day-arrow" id="dayNext" onclick="shiftExplorer(1)" aria-label="Next day" title="Next day">→</button>
     </div>
-    <div class="explorer-tools">
-      <div class="jump-field jump-field-day">
-        <label class="day-jump-label" for="dayJump">Jump to day</label>
-        <select class="tz-select day-jump" id="dayJump" aria-label="Jump to an era day" oninput="onJumpSelect(this)" onchange="onJumpSelect(this)"></select>
+      <div class="explorer-tools">
+        <!-- Mobile toggle for jump selectors -->
+        <button type="button" class="jump-toggle" id="jumpToggle" aria-expanded="false">Show Jump Selectors</button>
+        <div class="jump-field jump-field-day">
+          <label class="day-jump-label" for="dayJump">Jump to day</label>
+          <select class="tz-select day-jump" id="dayJump" aria-label="Jump to an era day" oninput="onJumpSelect(this)" onchange="onJumpSelect(this)"></select>
+        </div>
+        <div class="jump-field jump-field-event">
+          <label class="day-jump-label" for="eventJump">Jump to event</label>
+          <select class="tz-select day-jump" id="eventJump" aria-label="Jump to a marquee, journey, fleet or Proving Grounds event" oninput="onJumpSelect(this)" onchange="onJumpSelect(this)"></select>
+        </div>
+        <button type="button" class="day-today" id="dayToday" onclick="jumpExplorer(0)">Today</button>
       </div>
-      <div class="jump-field jump-field-event">
-        <label class="day-jump-label" for="eventJump">Jump to event</label>
-        <select class="tz-select day-jump" id="eventJump" aria-label="Jump to a marquee, journey, fleet or Proving Grounds event" oninput="onJumpSelect(this)" onchange="onJumpSelect(this)"></select>
-      </div>
-      <button type="button" class="day-today" id="dayToday" onclick="jumpExplorer(0)">Today</button>
-    </div>
     <div class="day-detail" id="dayDetail"></div>
   </div>
   </section>
