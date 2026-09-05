@@ -152,7 +152,9 @@
       <div class="day-strip" id="dayStrip" role="group" aria-label="Choose a day"></div>
       <button type="button" class="day-arrow" id="dayNext" onclick="shiftExplorer(1)" aria-label="Next day" title="Next day">→</button>
     </div>
-    <div class="explorer-tools">
+    <div class="explorer-tools" id="explorerTools">
+      <button type="button" class="gear-btn" id="toggleJumpBtn" onclick="toggleJumpSelectors()" aria-expanded="false" aria-controls="jumpFields">Jump selectors</button>
+      <div id="jumpFields" class="jump-fields-wrap">
       <div class="jump-field jump-field-day">
         <label class="day-jump-label" for="dayJump">Jump to day</label>
         <select class="tz-select day-jump" id="dayJump" aria-label="Jump to an era day" oninput="onJumpSelect(this)" onchange="onJumpSelect(this)"></select>
