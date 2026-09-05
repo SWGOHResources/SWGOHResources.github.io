@@ -709,9 +709,15 @@ body.modal-open .starfield span.tw {
   display: flex; align-items: center; justify-content: space-between; gap: 10px;
 }
 .about-discord-label { font-weight: 600; font-size: 13px; color: var(--text); }
+.about-discord .discord-copy-btn { width: auto; }
 .about-actions { display: flex; justify-content: flex-end; }
 .about-modal .btn.primary { background: var(--amber); border-color: var(--amber); color: #1a1104; font-weight: 700; }
 .about-modal .btn.primary:hover { background: #ecbc72; }
+@media (max-width: 600px) {
+  .modal { padding: 18px; }
+  .about-sub { margin-bottom: 12px; }
+  .about-discord { padding: 12px; margin-bottom: 12px; }
+}
 
 .btn {
   font-family: var(--body); font-size: 11.5px; padding: 8px 16px; border-radius: var(--radius);
