@@ -123,7 +123,26 @@ test('Conquest active countdown points to the Monday end boundary', () => {
   const status = engine.getConquestStatus(engine.getGameStatus(Date.parse('2026-08-14T20:00:00Z')));
 
   assert.equal(status.main, 'Conquest Day 12 of 14');
-  assert.match(status.sub, /^Ends in 3 days · 17th Aug$/);
+  assert.match(status.sub, /^Ends in 2 days · 17th Aug$/);
+});
+
+test('conquest countdown counts full days after today', () => {
+  const engine = loadTimeEngine();
+  // Day 5 of 14 (Ep1 dep 11): 9 full days remain, not 10.
+  const status = engine.getConquestStatus(engine.getGameStatus(Date.parse('2026-08-07T19:00:00Z')));
+
+  assert.equal(status.main, 'Conquest Day 5 of 14');
+  assert.match(status.sub, /^Ends in 9 days · 17th Aug$/);
+});
+
+test('dashboard countdowns truncate instead of rounding up', () => {
+  const engine = loadTimeEngine();
+  assert.equal(engine.formatGacUntil(0, 25 * 3600000), 'in 1 day');
+  assert.equal(engine.formatGacUntil(0, 47 * 3600000), 'in 1 day');
+  assert.equal(engine.formatGacUntil(0, 49 * 3600000), 'in 2 days');
+  assert.equal(engine.formatGacUntil(0, 22 * 3600000 + 5 * 60000), 'in 22 hours');
+  assert.equal(engine.formatGacUntil(0, 90 * 1000), 'in 1 minute');
+  assert.equal(engine.formatGacUntil(0, 30 * 1000), 'in 1 minute');
 });
 
 test('journey rerun month end clamps to the destination month', () => {

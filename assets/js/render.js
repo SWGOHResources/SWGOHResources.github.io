@@ -49,7 +49,9 @@ function renderUnlockWindows(st){
   // --- DATACRON EXPIRATIONS ---
   const cron = getCurrentDatacronSet(st.nowMs);
   const cronMeta = (cron && CRON_COLOR_META[cron.color]) || CRON_COLOR_META.orange;
-  const daysLeft = cron ? Math.ceil((cron.expiresMs - st.nowMs) / 86400000) : 0;
+  // Truncated like the other dashboard counts: 28d 23h out reads
+  // "28 DAYS LEFT", and the last 24h read "FINAL DAY".
+  const daysLeft = cron ? Math.floor((cron.expiresMs - st.nowMs) / 86400000) : 0;
   const cronBadgeLabel = !cron ? 'NO SET'
     : cron.allExpired ? 'EXPIRED'
     : daysLeft <= 0 ? 'FINAL DAY' : `${daysLeft} DAY${daysLeft === 1 ? '' : 'S'} LEFT`;
@@ -418,16 +420,22 @@ function renderExplorer(st){
   }
 
   // Curated event menu: marquee, journey guide, fleet mastery and
-  // Proving Grounds occurrences only, in chronological order. Labels
-  // tense by each event's start instant; values are absolute era days
-  // so the menu never goes stale as days pass (only the tense flips,
-  // hence eraDay in the key).
+  // Proving Grounds occurrences only, grouped by type with the event
+  // name first for scannability. Labels tense by each event's start
+  // instant; values are absolute era days so the menu never goes stale
+  // as days pass (only the tense flips, hence eraDay in the key).
   const eventJump = document.getElementById('eventJump');
   if(eventJump){
     const eventKey = `${st.eraBaseStartMs}|${eraLengthDays()}|${tz()}|${st.eraDay}`;
     if(eventJump.dataset.scheduleKey !== eventKey){
       const epLen = episodeLengthDays();
-      let opts = '<option value="">Select event…</option>';
+      const groups = [
+        { title: 'Marquee', test: icon => icon.startsWith('marquee_') },
+        { title: 'Journey Guide', test: icon => icon === 'journey_guide' },
+        { title: 'Fleet Mastery', test: icon => icon.startsWith('fleet_') },
+        { title: 'Proving Grounds', test: icon => icon === 'proving_ground' },
+      ];
+      const hits = groups.map(() => []);
       for(let idx = 1; idx <= eraLengthDays(); idx++){
         const ep = Math.floor((idx - 1) / epLen) + 1;
         const dep = ((idx - 1) % epLen) + 1;
@@ -435,9 +443,14 @@ function renderExplorer(st){
         getEventsForDay(dateMs, ep, dep)
           .filter(it => isJumpToEvent(it.icon))
           .forEach(it => {
-            opts += `<option value="${idx}">Day ${idx} · ${tenseByStart(it.label, it, dateMs, st.nowMs)}</option>`;
+            const gi = groups.findIndex(g => g.test(it.icon));
+            if(gi >= 0) hits[gi].push(`<option value="${idx}">${tenseByStart(it.label, it, dateMs, st.nowMs)} · Day ${idx}</option>`);
           });
       }
+      let opts = '<option value="">Select event…</option>';
+      groups.forEach((g, gi) => {
+        if(hits[gi].length) opts += `<optgroup label="${g.title}">${hits[gi].join('')}</optgroup>`;
+      });
       eventJump.innerHTML = opts;
       eventJump.dataset.scheduleKey = eventKey;
     }

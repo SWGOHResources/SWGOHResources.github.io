@@ -1027,14 +1027,17 @@ function conquestOrdinal(cNum){
   return ordinal(cNum);
 }
 
+/* Countdown phrasing truncates (floor) so counts match how players
+   count: 25 hours out reads "in 1 day", not "in 2 days". Sub-minute
+   diffs read "in 1 minute" rather than "in 0 minutes". */
 function formatGacUntil(nowMs, targetMs){
   const diffMs = targetMs - nowMs;
   if(!Number.isFinite(diffMs) || diffMs <= 0) return 'now';
-  const minutes = Math.ceil(diffMs / 60000);
+  const minutes = Math.max(1, Math.floor(diffMs / 60000));
   if(minutes < 60) return `in ${minutes} minute${minutes === 1 ? '' : 's'}`;
-  const hours = Math.ceil(diffMs / 3600000);
+  const hours = Math.floor(diffMs / 3600000);
   if(hours < 24) return `in ${hours} hour${hours === 1 ? '' : 's'}`;
-  const days = Math.ceil(diffMs / 86400000);
+  const days = Math.floor(diffMs / 86400000);
   return `in ${days} day${days === 1 ? '' : 's'}`;
 }
 
@@ -1085,13 +1088,15 @@ function getConquestStatus(st){
     };
   } else if (targetDay >= start && targetDay <= end) {
     const cqDay = targetDay - start + 1;
+    // Full days left after today: day 5 of 14 reads "Ends in 9 days",
+    // matching how players count (the end date alongside stays exact).
     const remaining = end - targetDay;
     const endDateMs = st.currentDayStartMs + ((remaining + 1) * 86400000) + (stdHour() * 3600000);
     return {
       status: remaining === 0 ? 'FINAL DAY' : 'ACTIVE',
       badgeClass: 'purple', title: titleNote,
       main: `Conquest Day ${cqDay} of ${total}`,
-      sub: remaining === 0 ? 'Proving Grounds starts in 1 day' : `Ends in ${remaining + 1} ${remaining === 0 ? 'day' : 'days'} · ${fmtDayMonthUTC(endDateMs)}`,
+      sub: remaining === 0 ? 'Proving Grounds starts in 1 day' : `Ends in ${remaining} ${remaining === 1 ? 'day' : 'days'} · ${fmtDayMonthUTC(endDateMs)}`,
       cNum: cNum
     };
   } else if (targetDay === overDay) {
