@@ -181,6 +181,23 @@ const MONTHLY_EVENTS = [
   { icon: 'fleet_profundity', label: 'Stardust Transmission (Profundity) Starts', lastDayOfMonth: true },
 ];
 
+/* =========================================================
+ JUMP-TO-EVENT MENU — the only icons listed in the explorer's
+  "Jump to event" dropdown: marquee events, journey guide
+  unlocks, fleet masteries and Proving Grounds. A matcher ending
+  in "_" matches a whole family (marquee_1..6); anything else
+  must equal the icon exactly.
+  ========================================================= */
+
+const JUMP_EVENT_MATCHERS = [
+  'marquee_',
+  'journey_guide',
+  'fleet_executor',
+  'fleet_leviathan',
+  'fleet_profundity',
+  'proving_ground',
+];
+
 const BOSS_LOOP = [
   'Krayt Dragon',
   'Zeffo Tomb Guardians',

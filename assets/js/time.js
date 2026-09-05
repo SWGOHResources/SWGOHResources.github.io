@@ -702,6 +702,16 @@ function getClientUpdateEvents(dateMs, episode, dayInEp){
   return out;
 }
 
+/* Explorer "Jump to event" menu: only marquee-family icons, journey
+   guide unlocks, fleet masteries and Proving Grounds (see
+   JUMP_EVENT_MATCHERS — a matcher ending in "_" matches the whole
+   family, anything else must equal the icon exactly). */
+function isJumpToEvent(icon){
+  const matchers = (typeof JUMP_EVENT_MATCHERS !== 'undefined' && Array.isArray(JUMP_EVENT_MATCHERS)) ? JUMP_EVENT_MATCHERS : [];
+  if(typeof icon !== 'string' || icon.length === 0) return false;
+  return matchers.some(m => typeof m === 'string' && m.length > 0 && (m.endsWith('_') ? icon.startsWith(m) : icon === m));
+}
+
 function getDayEvents(episode, dayInEp){
   const overrides = (typeof EPISODE_OVERRIDES !== 'undefined' && EPISODE_OVERRIDES) || {};
   const common = (typeof COMMON_DAYS !== 'undefined' && COMMON_DAYS) || {};
@@ -1219,6 +1229,11 @@ function validateScheduleConfig(){
       if(!isDateStr(s && s.expires)) issues.push(`DATACRON_SETS[${i}] has a bad expires date.`);
       if(s && typeof s.added !== 'undefined' && !isDateStr(s.added)) issues.push(`DATACRON_SETS[${i}] has a bad added date.`);
     });
+  }
+
+  const jumpMatchers = (typeof JUMP_EVENT_MATCHERS !== 'undefined') ? JUMP_EVENT_MATCHERS : null;
+  if(jumpMatchers != null && (!Array.isArray(jumpMatchers) || !jumpMatchers.every(m => typeof m === 'string' && m.length > 0))){
+    issues.push('JUMP_EVENT_MATCHERS must be an array of non-empty icon strings.');
   }
 
   if(!Array.isArray(conquestEndOffsets) || conquestEndOffsets.length === 0)
