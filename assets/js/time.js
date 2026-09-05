@@ -573,7 +573,8 @@ function validScheduleItem(item){
  CLIENT UPDATES + DATACRON DROPS (Wednesday rules)
   - Shipment update: Wednesday of era week 2 (era days 8-14),
     once per 84-day era. Previous era's shards go to shipments.
-    It IS that week's client update (no duplicate generic card).
+    Shown as TWO cards: the regular client update plus a
+    separate shipment change card.
   - Datacron drop: Wednesday of the calendar week before a
     conquest starts (any conquest of any volume). Currently
     conquests start Monday (Day 7), so this is the prior
@@ -638,7 +639,7 @@ function getClientUpdateEvents(dateMs, episode, dayInEp){
   const eraDay = eraDayForEpisode(episode, dayInEp);
   if(!Number.isInteger(eraDay) || !Number.isFinite(dateMs)) return [];
   if(isShipmentUpdateDay(dateMs, eraDay)){
-    return [ev('client_update', 'Client Update - Previous Era Shards Added to Shipments')];
+    return [ev('client_update', 'Client Update'), ev('shipment_update', 'Previous Era Shards Added to Shipments')];
   }
   const out = [];
   const datacron = isDatacronDropDay(dateMs, eraDay);

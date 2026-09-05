@@ -240,7 +240,8 @@ const EVENT_ICONS = {
   fleet_executor: 'events/executor.png',
   fleet_leviathan: 'events/leviathan.png',
   fleet_profundity: 'events/profundity.png',
-  client_update: 'events/eraicon.png',
+  client_update: 'events/clientupdate.png',
+  shipment_update: 'events/shipmentchange.png',
   // Next set in the Orange -> Pink -> Green -> Blue rotation is Blue;
   // point this at the new color when the rotation advances.
   datacron_set: 'datacrons/datacron_blue.png'
