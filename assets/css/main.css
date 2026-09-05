@@ -80,17 +80,33 @@ body {
   flex-direction: column;
 }
 
-/* ─── Starfield ─── */
+/* ─── Backdrop: nebula glow + starfield (both static layers; only a
+   fraction of stars twinkle, each on its own cycle) ─── */
 .starfield { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
-.starfield span {
-  position: absolute; width: 2px; height: 2px; border-radius: 50%; background: #eae7e0;
-  animation: twinkle 4.5s ease-in-out infinite;
+.starfield::before {
+  content: ""; position: absolute; inset: 0;
+  background:
+    radial-gradient(1100px 650px at 88% -8%, rgba(79, 143, 224, 0.08), transparent 62%),
+    radial-gradient(950px 620px at -12% 32%, rgba(86, 184, 173, 0.055), transparent 60%),
+    radial-gradient(1000px 750px at 55% 118%, rgba(150, 134, 214, 0.06), transparent 62%);
 }
-@keyframes twinkle { 0%, 100% { opacity: 0.15; } 50% { opacity: 0.85; } }
+.starfield span {
+  position: absolute; border-radius: 50%; background: #e8e4da;
+}
+.starfield span.cool { background: #bcd3f5; }
+.starfield span.warm { background: #f2e3c8; }
+.starfield span.tw {
+  animation-name: twinkle; animation-timing-function: ease-in-out; animation-iteration-count: infinite;
+  animation-duration: 5s;
+}
+@keyframes twinkle { 0%, 100% { opacity: calc(var(--o, 0.6) * 0.3); } 50% { opacity: var(--o, 0.6); } }
 
-/* Pause starfield animation when modal is active */
-body.modal-open .starfield span {
+/* Pause star twinkle when modal is active; kill it for reduced motion */
+body.modal-open .starfield span.tw {
   animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+  .starfield span.tw { animation: none; }
 }
 
 .top-header {

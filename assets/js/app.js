@@ -241,15 +241,33 @@ function onTzChange(sel){
 const footerYearEl = document.getElementById('footerYear');
 if(footerYearEl){ footerYearEl.textContent = `© ${new Date().getFullYear()} SWGOH::RESOURCES`; }
 
-/* Starfield Background */
+/* Backdrop starfield: mostly static stars at varied sizes and
+   brightness, a few warm/cool tinted, ~30% twinkling on independent
+   cycles around their own base opacity. Negative delays start each
+   twinkler mid-cycle so there is no synchronized flash on load. */
 (function(){
   const field = document.getElementById('starfield');
   if(!field) return;
-  for(let i = 0; i < 50; i++){
+  const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  for(let i = 0; i < 70; i++){
     const s = document.createElement('span');
+    const r = Math.random();
+    const size = r < 0.6 ? 1 : r < 0.9 ? 2 : 3;
+    s.style.width = s.style.height = size + 'px';
     s.style.left = Math.random() * 100 + '%';
     s.style.top = Math.random() * 100 + '%';
-    s.style.animationDelay = (Math.random() * 4.5).toFixed(2) + 's';
+    const tint = Math.random();
+    if(tint < 0.16) s.classList.add('cool');
+    else if(tint < 0.26) s.classList.add('warm');
+    const base = (0.25 + Math.random() * 0.55).toFixed(2);
+    if(!reduceMotion && Math.random() < 0.3){
+      s.classList.add('tw');
+      s.style.setProperty('--o', base);
+      s.style.animationDuration = (3 + Math.random() * 5).toFixed(2) + 's';
+      s.style.animationDelay = (-Math.random() * 8).toFixed(2) + 's';
+    } else {
+      s.style.opacity = base;
+    }
     field.appendChild(s);
   }
 })();
