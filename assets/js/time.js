@@ -668,20 +668,36 @@ function datacronSetIconForDrop(dateMs){
   return 'datacron_set';
 }
 
+/* Name of the set introduced by the drop on dateMs, matched by the
+   set's "added" date (and color, guarding against typos). Drops
+   with no matching entry — future sets not yet announced — return
+   null so the card falls back to the color. */
+function datacronNameForDrop(dateMs, color){
+  if(!Number.isFinite(dateMs)) return null;
+  const sets = (typeof DATACRON_SETS !== 'undefined' && Array.isArray(DATACRON_SETS)) ? DATACRON_SETS : [];
+  for(const s of sets){
+    if(!s || typeof s.name !== 'string' || !s.name.length || typeof s.added !== 'string') continue;
+    if(parseDateOnlyMs(s.added) === dateMs && (!color || s.color === color)) return s.name;
+  }
+  return null;
+}
+
 function getClientUpdateEvents(dateMs, episode, dayInEp){
   const eraDay = eraDayForEpisode(episode, dayInEp);
   if(!Number.isInteger(eraDay) || !Number.isFinite(dateMs)) return [];
-  if(isShipmentUpdateDay(dateMs, eraDay)){
-    return [ev('client_update', 'Client Update'), ev('shipment_update', 'Previous Era Shards Added to Shipments')];
-  }
-  const out = [];
+  // Single shared client_update card: a day that is both a special
+  // Wednesday and a cadence Wednesday must not emit it twice.
+  const shipment = isShipmentUpdateDay(dateMs, eraDay);
   const datacron = isDatacronDropDay(dateMs, eraDay);
   const biweekly = isBiweeklyClientUpdateDay(dateMs);
-  if(datacron || biweekly) out.push(ev('client_update', 'Client Update'));
+  const out = [];
+  if(shipment || datacron || biweekly) out.push(ev('client_update', 'Client Update'));
+  if(shipment) out.push(ev('shipment_update', 'Previous Era Shards Added to Shipments'));
   if(datacron){
     const color = datacronColorForDrop(dateMs);
-    const colorLabel = color.charAt(0).toUpperCase() + color.slice(1);
-    out.push(ev(datacronSetIconForDrop(dateMs), `New Datacron Set Added (${colorLabel})`));
+    const name = datacronNameForDrop(dateMs, color);
+    const bracket = name || (color.charAt(0).toUpperCase() + color.slice(1));
+    out.push(ev(datacronSetIconForDrop(dateMs), `New Datacron Set Added (${bracket})`));
   }
   return out;
 }
@@ -1201,6 +1217,7 @@ function validateScheduleConfig(){
       if(!s || !s.name) issues.push(`DATACRON_SETS[${i}] is missing a name.`);
       if(colors.length && !colors.includes(s.color)) issues.push(`DATACRON_SETS[${i}] has unknown color "${s.color}".`);
       if(!isDateStr(s && s.expires)) issues.push(`DATACRON_SETS[${i}] has a bad expires date.`);
+      if(s && typeof s.added !== 'undefined' && !isDateStr(s.added)) issues.push(`DATACRON_SETS[${i}] has a bad added date.`);
     });
   }
 
