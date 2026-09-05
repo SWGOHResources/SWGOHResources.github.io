@@ -95,6 +95,8 @@ body {
 }
 .starfield span.cool { background: #bcd3f5; }
 .starfield span.warm { background: #f2e3c8; }
+/* Faint halo on the largest stars only — keeps them present without noise */
+.starfield span.bright { box-shadow: 0 0 5px 1px rgba(232, 228, 218, 0.35); }
 .starfield span.tw {
   animation-name: twinkle; animation-timing-function: ease-in-out; animation-iteration-count: infinite;
   animation-duration: 5s;
@@ -221,11 +223,11 @@ body.modal-open .starfield span.tw {
 .policy-page { max-width: 900px; padding-top: 42px; padding-bottom: 64px; }
 .policy-page .section-head { margin: 0 0 10px; gap: 18px; }
 .policy-page .section-head h1 { font-family: var(--disp); font-size: 32px; line-height: 1.15; letter-spacing: -0.01em; color: var(--text); }
-.policy-page .section-head .rule { max-width: 280px; background: var(--orange-border); }
-.policy-updated { color: var(--orange); font-family: var(--mono); font-size: 10px; letter-spacing: 0.04em; text-transform: uppercase; margin: 0 0 34px; }
+.policy-page .section-head .rule { max-width: 280px; background: var(--amber-border); }
+.policy-updated { color: var(--amber); font-family: var(--mono); font-size: 10px; letter-spacing: 0.04em; text-transform: uppercase; margin: 0 0 34px; }
 .policy-content { max-width: 720px; border-left: 1px solid var(--border2); padding: 2px 0 4px 32px; }
 .policy-lead { color: var(--text); font-size: 15px; line-height: 1.8; max-width: 60em; margin-bottom: 34px; }
-.policy-content h2 { counter-increment: policy-section; margin: 32px 0 9px; font-family: var(--disp); font-size: 14px; letter-spacing: 0.03em; color: var(--orange); }
+.policy-content h2 { counter-increment: policy-section; margin: 32px 0 9px; font-family: var(--disp); font-size: 14px; letter-spacing: 0.03em; color: var(--amber); }
 .policy-content h2::before { content: counter(policy-section, decimal-leading-zero) "  "; color: var(--text3); font-family: var(--mono); font-size: 10px; font-weight: 500; letter-spacing: 0; }
 .policy-content h2:first-child { margin-top: 0; }
 .policy-content { counter-reset: policy-section; }
