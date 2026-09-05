@@ -48,7 +48,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/main.css?v=25">
+  <link rel="stylesheet" href="assets/css/main.css?v=26">
 </head>
 <body>
 
@@ -96,15 +96,12 @@
 
   <section class="merged-hero" id="mergedHero" aria-label="Era progress">
     <div class="mh-left">
-      <div class="sc-header">
-        <h1 class="mh-tag" id="eraTitle">Event Schedule</h1>
-        <span class="sc-badge off" id="mhWeekdayVal">--</span>
-      </div>
+      <h1 class="mh-tag" id="eraTitle">Event Schedule</h1>
       <div class="mh-title-row">
         <div class="mh-main-val">Day <span id="mhDayVal">--</span><span class="mh-of" id="mhOfVal">/ 84</span></div>
-        <span class="sc-badge amber" id="mhDaysRemaining">-- days left in Era</span>
+        <div class="mh-remaining" id="mhDaysRemaining">-- days left in Era</div>
       </div>
-      <p class="mh-sub">Episode <span id="mhEpVal">--</span> · Week <span id="mhWeekVal">--</span></p>
+      <p class="mh-sub">Episode <span id="mhEpVal">--</span> · Week <span id="mhWeekVal">--</span> · <span id="mhWeekdayVal">--</span></p>
       <div class="mh-progress-wrap">
         <div class="mh-progress-bar">
           <div class="mh-progress-fill" id="mhFill" style="width: 0%"></div>
@@ -117,9 +114,11 @@
     </div>
 
     <div class="mh-right">
-      <div class="cb-label" id="cbLabel">Next Changeover (18:00 UTC)</div>
+      <div class="cb-text">
+        <div class="cb-label" id="cbLabel">Next Changeover (18:00 UTC)</div>
+        <div class="cb-sub">Era Day & Episode Changeover</div>
+      </div>
       <div class="cb-timer" id="countdown">--:--:--</div>
-      <div class="cb-sub">Era Day & Episode Changeover</div>
     </div>
   </section>
 

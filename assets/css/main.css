@@ -256,26 +256,26 @@ body.modal-open .starfield span.tw {
 }
 .explorer-note p a:hover { text-decoration: underline; }
 
-/* ─── Era Banner (card language: eyebrow header + badge, flat meta
-   row, glowing rail, open countdown column) ─── */
+/* ─── Era Banner: editorial stat block. No pills — hierarchy comes
+   from type. Countdown is a horizontal stat, not a boxed panel, so
+   the stacked mobile layout stays compact with no dead space. ─── */
 .merged-hero {
   position: relative; overflow: hidden;
   background: var(--void1);
   border: 1px solid var(--amber-border);
   border-radius: var(--radius-lg);
-  padding: 20px 28px 22px; margin-bottom: 24px; display: grid; grid-template-columns: 1fr auto;
+  padding: 20px 28px; margin-bottom: 24px; display: grid; grid-template-columns: 1fr auto;
   gap: 28px; align-items: center;
 }
-.mh-left { display: flex; flex-direction: column; gap: 12px; position: relative; z-index: 1; min-width: 0; }
-.mh-left .sc-header { margin-bottom: 0; }
+.mh-left { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
 .mh-tag { font-family: var(--body); font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text3); }
-.mh-title-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
-.mh-main-val { font-family: var(--disp); font-size: 32px; font-weight: 700; color: var(--text); line-height: 1; letter-spacing: -0.01em; white-space: nowrap; }
+.mh-title-row { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+.mh-main-val { font-family: var(--disp); font-size: 32px; font-weight: 700; color: var(--text); line-height: 1.1; letter-spacing: -0.01em; white-space: nowrap; }
 .mh-main-val .mh-of { font-size: 16px; font-weight: 600; color: var(--text3); margin-left: 4px; letter-spacing: 0; }
 .mh-main-val span:not(.mh-of) { color: var(--amber); }
-
-.mh-sub { font-size: 12px; color: var(--text2); }
-.mh-sub span { font-family: var(--mono); font-size: 12px; font-weight: 600; color: var(--text); }
+.mh-remaining { font-family: var(--disp); font-size: 15px; font-weight: 700; color: var(--amber); white-space: nowrap; }
+.mh-sub { font-size: 12.5px; color: var(--text2); }
+.mh-sub span { color: var(--text); font-weight: 600; }
 
 .mh-progress-wrap { width: 100%; max-width: 560px; }
 .mh-progress-bar {
@@ -289,16 +289,17 @@ body.modal-open .starfield span.tw {
 .mh-progress-labels { display: flex; justify-content: space-between; font-family: var(--body); font-size: 10px; color: var(--text3); margin-top: 6px; }
 
 .mh-right {
-  position: relative; z-index: 1; text-align: left;
+  display: flex; flex-direction: row; align-items: center; gap: 16px;
   background: transparent; border: none; border-left: 1px solid var(--border); border-radius: 0;
-  padding: 2px 0 2px 28px; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; gap: 2px;
+  padding: 4px 0 4px 28px; text-align: left;
 }
-.mh-right .cb-label { font-family: var(--body); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text3); }
+.mh-right .cb-text { display: flex; flex-direction: column; gap: 2px; }
+.mh-right .cb-label { font-family: var(--body); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text3); white-space: nowrap; }
 .mh-right .cb-timer {
-  font-family: var(--mono); font-size: 32px; font-weight: 700; color: var(--amber);
-  letter-spacing: 0.05em; margin: 2px 0; font-variant-numeric: tabular-nums;
+  font-family: var(--mono); font-size: 30px; font-weight: 700; color: var(--amber);
+  letter-spacing: 0.05em; font-variant-numeric: tabular-nums; white-space: nowrap;
 }
-.mh-right .cb-sub { font-size: 11px; color: var(--text2); }
+.mh-right .cb-sub { font-size: 11px; color: var(--text2); white-space: nowrap; }
 
 .hero-grid {
   display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 24px;
@@ -763,10 +764,11 @@ body.modal-open .starfield span.tw {
 }
 
 @media (max-width: 900px) {
-  .merged-hero { grid-template-columns: 1fr; gap: 16px; padding: 16px; }
-  .mh-left { gap: 10px; }
+  .merged-hero { grid-template-columns: 1fr; gap: 14px; padding: 16px; }
+  .mh-left { gap: 8px; }
   .mh-title-row { gap: 10px; }
-  .mh-right { border-left: none; border-top: 1px solid var(--border); width: 100%; padding: 12px 0 0; align-items: flex-start; }
+  .mh-right { border-left: none; border-top: 1px solid var(--border); width: 100%; padding: 12px 0 0; justify-content: space-between; }
+  .mh-right .cb-timer { font-size: 26px; }
   .hero-grid { grid-template-columns: 1fr; }
   .explorer { padding: 12px; }
   .xcard { flex-basis: 168px; }
@@ -791,6 +793,5 @@ body.modal-open .starfield span.tw {
   .policy-page .section-head .rule { max-width: none; }
   .policy-content { padding-left: 20px; }
   .mh-main-val { font-size: 28px; }
-  .mh-right .cb-timer { font-size: 28px; }
   .tl-day { flex-wrap: wrap; gap: 6px; }
 }
