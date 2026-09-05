@@ -205,8 +205,8 @@ function renderMergedHero(st){
   const episodeCount = Math.ceil(eraLengthDays() / episodeLengthDays());
   const weeksPerEpisode = Math.ceil(episodeLengthDays() / 7);
   document.getElementById('mhDayVal').textContent = st.bossEraDay;
-  document.getElementById('mhEpVal').textContent = `${st.episode} / ${episodeCount}`;
-  document.getElementById('mhWeekVal').textContent = `${st.week} / ${weeksPerEpisode}`;
+  document.getElementById('mhEpVal').textContent = `${st.episode} of ${episodeCount}`;
+  document.getElementById('mhWeekVal').textContent = `${st.week} of ${weeksPerEpisode}`;
   document.getElementById('mhWeekdayVal').textContent = st.weekdayName;
 
   const fillPct = Math.min(100, Math.max(0, (st.bossEraDay / eraLengthDays()) * 100));

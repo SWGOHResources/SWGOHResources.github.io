@@ -48,7 +48,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/main.css?v=24">
+  <link rel="stylesheet" href="assets/css/main.css?v=25">
 </head>
 <body>
 
@@ -98,18 +98,13 @@
     <div class="mh-left">
       <div class="sc-header">
         <h1 class="mh-tag" id="eraTitle">Event Schedule</h1>
-        <span class="sc-badge amber" id="mhDaysRemaining">-- days left in Era</span>
+        <span class="sc-badge off" id="mhWeekdayVal">--</span>
       </div>
       <div class="mh-title-row">
         <div class="mh-main-val">Day <span id="mhDayVal">--</span><span class="mh-of" id="mhOfVal">/ 84</span></div>
-        <div class="mh-meta-strip">
-          <div class="mh-meta-item"><span class="mh-meta-label">Episode</span><span class="mh-meta-val" id="mhEpVal">-- / 3</span></div>
-          <span class="mh-meta-divider"></span>
-          <div class="mh-meta-item"><span class="mh-meta-label">Week</span><span class="mh-meta-val" id="mhWeekVal">-- / 4</span></div>
-          <span class="mh-meta-divider"></span>
-          <div class="mh-meta-item"><span class="mh-meta-label">Day (In-Game)</span><span class="mh-meta-val" id="mhWeekdayVal">--</span></div>
-        </div>
+        <span class="sc-badge amber" id="mhDaysRemaining">-- days left in Era</span>
       </div>
+      <p class="mh-sub">Episode <span id="mhEpVal">--</span> · Week <span id="mhWeekVal">--</span></p>
       <div class="mh-progress-wrap">
         <div class="mh-progress-bar">
           <div class="mh-progress-fill" id="mhFill" style="width: 0%"></div>
@@ -151,7 +146,7 @@
   <div class="explorer">
     <div class="explorer-note" role="note">
       <span class="en-dot" aria-hidden="true">!</span>
-      <p>Events are shown when they are expected to occur, not when they will. For exact event timings, check <a href="https://swgoh.gg/events/" target="_blank" rel="noopener">swgoh.gg/events ↗</a></p>
+      <p>Events are shown when they are expected to occur, not when they will. For exact event timings check <a href="https://swgoh.gg/events/" target="_blank" rel="noopener">swgoh.gg/events ↗</a></p>
     </div>
     <div class="explorer-nav">
       <button type="button" class="day-arrow" id="dayPrev" onclick="shiftExplorer(-1)" aria-label="Previous day" title="Previous day">←</button>
@@ -213,7 +208,7 @@
     <div class="modal-head">
       <div>
         <h3 id="fullScheduleTitle">Full Era Schedule</h3>
-        <p><span id="fullScheduleCount">All 84 days of the current Era baseline.</span> Territory Battle labels follow your saved Light/Dark selections. Expected dates — for live timings, check <a href="https://swgoh.gg/events/" target="_blank" rel="noopener" style="color:var(--cyan);">swgoh.gg/events</a>.</p>
+        <p><span id="fullScheduleCount">All 84 days of the current Era baseline.</span> Territory Battle labels follow your saved Light/Dark selections. Expected dates — for live timings check <a href="https://swgoh.gg/events/" target="_blank" rel="noopener" style="color:var(--cyan);">swgoh.gg/events</a>.</p>
       </div>
       <button class="modal-close-x" id="closeFullScheduleBtn" aria-label="Close"><span></span><span></span></button>
     </div>
@@ -258,7 +253,7 @@
      so browsers fetch fresh copies instead of cached ones. -->
 <script defer src="assets/js/config.js?v=20"></script>
 <script defer src="assets/js/time.js?v=25"></script>
-<script defer src="assets/js/render.js?v=18"></script>
+<script defer src="assets/js/render.js?v=19"></script>
 <script defer src="assets/js/app.js?v=15"></script>
 </body>
 </html>
