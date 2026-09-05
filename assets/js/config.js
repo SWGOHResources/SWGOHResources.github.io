@@ -64,6 +64,7 @@ const DATACRON_SETS = [
   { name: 'For Old Times',       color: 'orange', expires: '2026-09-03', hasFDC: false },
   { name: 'Necessary Means',     color: 'pink',    expires: '2026-10-01', hasFDC: false },
   { name: 'Supremacy Directive', color: 'green',   expires: '2026-10-29', hasFDC: true  },
+  { name: 'Art of Command',      color: 'blue',    expires: '2026-11-26', hasFDC: false },
 ];
 
 const CRON_COLOR_META = {
