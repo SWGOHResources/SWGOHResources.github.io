@@ -269,23 +269,13 @@ body.modal-open .starfield span.tw {
 .mh-left { display: flex; flex-direction: column; gap: 12px; position: relative; z-index: 1; min-width: 0; }
 .mh-left .sc-header { margin-bottom: 0; }
 .mh-tag { font-family: var(--body); font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text3); }
-.mh-title-row { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+.mh-title-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
 .mh-main-val { font-family: var(--disp); font-size: 32px; font-weight: 700; color: var(--text); line-height: 1; letter-spacing: -0.01em; white-space: nowrap; }
 .mh-main-val .mh-of { font-size: 16px; font-weight: 600; color: var(--text3); margin-left: 4px; letter-spacing: 0; }
 .mh-main-val span:not(.mh-of) { color: var(--amber); }
 
-.mh-meta-strip {
-  display: flex; align-items: center; gap: 16px;
-  background: transparent; border: none; border-radius: 0;
-  padding: 0;
-}
-.mh-meta-item { display: flex; flex-direction: column; gap: 3px; }
-.mh-meta-label {
-  font-family: var(--body); font-size: 9.5px; font-weight: 600; text-transform: uppercase;
-  letter-spacing: 0.08em; color: var(--text3); white-space: nowrap;
-}
-.mh-meta-val { font-family: var(--mono); font-size: 13px; font-weight: 600; color: var(--text); white-space: nowrap; }
-.mh-meta-divider { width: 1px; height: 26px; background: var(--border2); flex: 0 0 auto; }
+.mh-sub { font-size: 12px; color: var(--text2); }
+.mh-sub span { font-family: var(--mono); font-size: 12px; font-weight: 600; color: var(--text); }
 
 .mh-progress-wrap { width: 100%; max-width: 560px; }
 .mh-progress-bar {
@@ -773,8 +763,10 @@ body.modal-open .starfield span.tw {
 }
 
 @media (max-width: 900px) {
-  .merged-hero { grid-template-columns: 1fr; padding: 18px 20px; }
-  .mh-right { border-left: none; border-top: 1px solid var(--border); width: 100%; padding: 14px 0 0; align-items: flex-start; }
+  .merged-hero { grid-template-columns: 1fr; gap: 16px; padding: 16px; }
+  .mh-left { gap: 10px; }
+  .mh-title-row { gap: 10px; }
+  .mh-right { border-left: none; border-top: 1px solid var(--border); width: 100%; padding: 12px 0 0; align-items: flex-start; }
   .hero-grid { grid-template-columns: 1fr; }
   .explorer { padding: 12px; }
   .xcard { flex-basis: 168px; }
