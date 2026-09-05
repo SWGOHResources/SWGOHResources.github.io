@@ -157,8 +157,10 @@
       <button type="button" class="day-arrow" id="dayNext" onclick="shiftExplorer(1)" aria-label="Next day" title="Next day">→</button>
     </div>
     <div class="explorer-tools">
-      <label class="day-jump-label" for="dayJump">Jump to</label>
-      <select class="tz-select day-jump" id="dayJump" aria-label="Jump to an era day" oninput="onDayJump(this)" onchange="onDayJump(this)"></select>
+      <label class="day-jump-label" for="dayJump">Jump to day</label>
+      <select class="tz-select day-jump" id="dayJump" aria-label="Jump to an era day" oninput="onJumpSelect(this)" onchange="onJumpSelect(this)"></select>
+      <label class="day-jump-label" for="eventJump">Jump to event</label>
+      <select class="tz-select day-jump" id="eventJump" aria-label="Jump to a marquee, journey, fleet or Proving Grounds event" oninput="onJumpSelect(this)" onchange="onJumpSelect(this)"></select>
       <button type="button" class="day-today" id="dayToday" onclick="jumpExplorer(0)">Today</button>
     </div>
     <div class="day-detail" id="dayDetail"></div>
@@ -252,9 +254,9 @@
 
 <!-- ASSET_VERSION: bump ?v= on the CSS/JS links below on every deploy
      so browsers fetch fresh copies instead of cached ones. -->
-<script defer src="assets/js/config.js?v=19"></script>
-<script defer src="assets/js/time.js?v=22"></script>
-<script defer src="assets/js/render.js?v=15"></script>
+<script defer src="assets/js/config.js?v=20"></script>
+<script defer src="assets/js/time.js?v=24"></script>
+<script defer src="assets/js/render.js?v=16"></script>
 <script defer src="assets/js/app.js?v=13"></script>
 </body>
 </html>

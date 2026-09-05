@@ -309,10 +309,14 @@ function jumpExplorer(offset){
   renderAll();
 }
 
-function onDayJump(select){
-  if(!select || select.dataset.handledValue === select.value) return;
-  select.dataset.handledValue = select.value;
-  jumpExplorer(Number(select.value));
+/* Jump selects carry absolute era days and reset to their placeholder
+   after jumping — they are pure jump controls, never a mirror of the
+   currently selected day. */
+function onJumpSelect(select){
+  if(!select || select.value === '') return;
+  const st = getGameStatus();
+  jumpExplorer(Number(select.value) - st.eraDay);
+  select.value = '';
 }
 
 /* Guild TB picker. Full row (explorer Phase-1 cards) or compact
@@ -403,15 +407,41 @@ function renderExplorer(st){
   if(dayJump){
     const jumpKey = `${st.eraBaseStartMs}|${eraLengthDays()}|${tz()}`;
     if(dayJump.dataset.scheduleKey !== jumpKey){
-      dayJump.innerHTML = Array.from({ length: eraLengthDays() }, (_, index) => {
-        const offset = index - (st.eraDay - 1);
-        const d = explorerDayAt(st, offset);
-        return `<option value="${offset}">Day ${d.dIdx} · ${fmtDateUTC(gameDayDisplayMs(d.dMs))}</option>`;
-      }).join('');
+      let opts = '<option value="">Select day…</option>';
+      for(let idx = 1; idx <= eraLengthDays(); idx++){
+        const dMs = st.currentEraStartMs + ((idx - 1) * 86400000);
+        opts += `<option value="${idx}">Day ${idx} · ${fmtDateUTC(gameDayDisplayMs(dMs))}</option>`;
+      }
+      dayJump.innerHTML = opts;
       dayJump.dataset.scheduleKey = jumpKey;
     }
   }
-  if(dayJump) dayJump.value = String(explorerOffset);
+
+  // Curated event menu: marquee, journey guide, fleet mastery and
+  // Proving Grounds occurrences only, in chronological order. Labels
+  // tense by each event's start instant; values are absolute era days
+  // so the menu never goes stale as days pass (only the tense flips,
+  // hence eraDay in the key).
+  const eventJump = document.getElementById('eventJump');
+  if(eventJump){
+    const eventKey = `${st.eraBaseStartMs}|${eraLengthDays()}|${tz()}|${st.eraDay}`;
+    if(eventJump.dataset.scheduleKey !== eventKey){
+      const epLen = episodeLengthDays();
+      let opts = '<option value="">Select event…</option>';
+      for(let idx = 1; idx <= eraLengthDays(); idx++){
+        const ep = Math.floor((idx - 1) / epLen) + 1;
+        const dep = ((idx - 1) % epLen) + 1;
+        const dateMs = st.currentEraStartMs + ((idx - 1) * 86400000);
+        getEventsForDay(dateMs, ep, dep)
+          .filter(it => isJumpToEvent(it.icon))
+          .forEach(it => {
+            opts += `<option value="${idx}">Day ${idx} · ${tenseByStart(it.label, it, dateMs, st.nowMs)}</option>`;
+          });
+      }
+      eventJump.innerHTML = opts;
+      eventJump.dataset.scheduleKey = eventKey;
+    }
+  }
 
   const dayPrev = document.getElementById('dayPrev');
   const dayNext = document.getElementById('dayNext');
