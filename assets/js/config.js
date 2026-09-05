@@ -56,15 +56,18 @@ const DATACRON_ANCHOR_COLOR = 'blue'; // …this color
   A new set is introduced roughly every 28 days, but each individual
   set stays equippable longer than 28 days, so up to 4 sets can be
   active/overlapping at once. "expires" is the date (UTC) the set
-  is removed. Set hasFDC: true for sets that add Fleet/Faction
-  Datacrons (FDCs) on top of the normal set — adjust manually.
+  is removed. "added" is the drop Wednesday that introduced the set
+  (drives the name on the "New Datacron Set Added" schedule card —
+  drops with no matching entry fall back to the color). Set hasFDC:
+  true for sets that add Fleet/Faction Datacrons (FDCs) on top of
+  the normal set — adjust manually.
   ========================================================= */
 
 const DATACRON_SETS = [
-  { name: 'For Old Times',       color: 'orange', expires: '2026-09-03', hasFDC: false },
-  { name: 'Necessary Means',     color: 'pink',    expires: '2026-10-01', hasFDC: false },
-  { name: 'Supremacy Directive', color: 'green',   expires: '2026-10-29', hasFDC: true  },
-  { name: 'Art of Command',      color: 'blue',    expires: '2026-11-26', hasFDC: false },
+  { name: 'For Old Times',       color: 'orange', added: '2026-06-03', expires: '2026-09-03', hasFDC: false },
+  { name: 'Necessary Means',     color: 'pink',   added: '2026-07-01', expires: '2026-10-01', hasFDC: false },
+  { name: 'Supremacy Directive', color: 'green',  added: '2026-07-29', expires: '2026-10-29', hasFDC: true  },
+  { name: 'Art of Command',      color: 'blue',   added: '2026-08-26', expires: '2026-11-26', hasFDC: false },
 ];
 
 const CRON_COLOR_META = {
