@@ -342,7 +342,7 @@ function explorerCardHTML(item, dateMs, relLabel, tbCtx, nowMs){
   const isTbCard = tbCtx && (item.icon === 'rote' || item.icon === 'tb_ends');
   const asset = isTbCard ? tbCtx.art : assetFor(item.icon);
   const style = `--accent:${meta.accent};--accent-dim:${meta.dim};--accent-border:${meta.border}`;
-  const imgTag = asset ? `<img src="${IMG_BASE}${asset}" alt="" loading="lazy" onerror="this.remove()">` : '';
+  const imgTag = asset ? `<img src="${IMG_BASE}${asset}" alt="" loading="eager" decoding="async" onerror="this.remove()">` : '';
   const relCls = relLabel === 'Now' ? 'xcard-rel is-today' : 'xcard-rel';
   const title = tenseByStart(getFullScheduleLabel(item), item, dateMs, nowMs);
 
@@ -434,7 +434,7 @@ function renderExplorer(st){
   const cq = conquestInfoForDay(cur.ep, cur.dayInEp);
   const cqBadge = cq
     ? `<div class="day-conquest" title="Conquest ${cq.cNum} — ${cq.note}${cq.finalDay ? ' (final day)' : ''}">`
-      + `<img src="${IMG_BASE}${CONQUEST_UNIT_IMAGE}" alt="" loading="lazy" onerror="this.remove()">`
+      + `<img src="${IMG_BASE}${CONQUEST_UNIT_IMAGE}" alt="" loading="eager" decoding="async" onerror="this.remove()">`
       + `<div class="db-text"><span class="db-label">Conquest · C${cq.cNum}</span><span class="db-name">Day ${cq.day} of ${cq.total}${cq.finalDay ? ' — Final' : ''}</span></div>`
       + `</div>`
     : '';
@@ -455,7 +455,7 @@ function renderExplorer(st){
       </div>
       <div class="day-indicators">
         <div class="day-boss" title="Coliseum boss rotates daily at 18:00 UTC">
-        <img src="${IMG_BASE}${bossIcon}" alt="" loading="lazy" onerror="this.remove()">
+        <img src="${IMG_BASE}${bossIcon}" alt="" loading="eager" decoding="async" onerror="this.remove()">
         <div class="db-text"><span class="db-label">Coliseum boss</span><span class="db-name">${bossName}</span></div>
         </div>
         ${cqBadge}
@@ -598,6 +598,39 @@ function scrollScheduleToToday(){
   }
   const row = container.querySelector(`.tl-day[data-day="${fullScheduleCache.activeDay}"]`);
   if(row) row.scrollIntoView({ block: 'center' });
+}
+
+/* =========================================================
+   CARD ART PRELOAD
+   The explorer rebuilds its <img> nodes on every day change.
+   Without warming the cache first, each flip re-fetches and
+   re-decodes the art, flashing the fallback badge/background
+   for a split second. Preloading every possible card asset once
+   at startup keeps day changes instant (all local, ~30 files).
+   ========================================================= */
+
+let cardAssetsPreloaded = false;
+
+function preloadCardAssets(){
+  if(cardAssetsPreloaded) return;
+  cardAssetsPreloaded = true;
+  try {
+    const base = (typeof IMG_BASE !== 'undefined' && IMG_BASE) || 'assets/img/';
+    const urls = new Set();
+    const add = v => { if(typeof v === 'string' && v) urls.add(base + v); };
+    if(typeof EVENT_ICONS !== 'undefined') Object.values(EVENT_ICONS).forEach(add);
+    if(typeof CATEGORY_ICONS !== 'undefined') Object.values(CATEGORY_ICONS).forEach(add);
+    if(typeof TB_DEFS !== 'undefined') Object.values(TB_DEFS).forEach(d => d && add(d.art));
+    if(typeof BOSS_ICONS !== 'undefined') Object.values(BOSS_ICONS).forEach(add);
+    if(typeof CRON_COLOR_META !== 'undefined') Object.values(CRON_COLOR_META).forEach(m => m && add(m.asset));
+    if(typeof CONQUEST_UNIT_IMAGE !== 'undefined') add(CONQUEST_UNIT_IMAGE);
+    if(typeof ERA_UNIT_IMAGE !== 'undefined') add(ERA_UNIT_IMAGE);
+    urls.forEach(url => {
+      const im = new Image();
+      im.decoding = 'async';
+      im.src = url;
+    });
+  } catch(e){}
 }
 
 /* =========================================================
