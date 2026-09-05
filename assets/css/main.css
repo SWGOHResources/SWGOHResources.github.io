@@ -204,18 +204,18 @@ body.modal-open .starfield span.tw {
   position: fixed; left: 16px; right: 16px; bottom: 16px; z-index: 250;
   display: flex; align-items: center; justify-content: space-between; gap: 18px;
   max-width: 760px; margin: 0 auto; padding: 14px 16px;
-  background: var(--void2); border: 1px solid var(--border2); border-left: 3px solid var(--orange);
+  background: var(--void2); border: 1px solid var(--border2); border-left: 3px solid var(--amber);
   border-radius: var(--radius); box-shadow: 0 12px 32px rgba(0,0,0,0.45);
 }
 .cookie-notice[hidden] { display: none; }
 .cookie-notice strong { display: block; font-family: var(--disp); font-size: 12px; color: var(--text); }
 .cookie-notice p { margin-top: 2px; color: var(--text2); font-size: 11px; }
 .cookie-actions { display: flex; align-items: center; gap: 12px; flex: 0 0 auto; }
-.cookie-actions a { color: var(--orange); font-size: 11px; text-decoration: none; white-space: nowrap; }
+.cookie-actions a { color: var(--amber); font-size: 11px; text-decoration: none; white-space: nowrap; }
 .cookie-actions a:hover { text-decoration: underline; }
 .cookie-actions .btn { white-space: nowrap; }
-.cookie-actions .btn.primary { background: var(--orange); border-color: var(--orange); color: #211205; }
-.cookie-actions .btn.primary:hover { background: #ed9658; }
+.cookie-actions .btn.primary { background: var(--amber); border-color: var(--amber); color: #211205; }
+.cookie-actions .btn.primary:hover { background: #ecbc72; }
 
 /* ─── Policy pages ─── */
 .policy-page { max-width: 900px; padding-top: 42px; padding-bottom: 64px; }
