@@ -186,21 +186,6 @@ if(navToggle && mobilePanel){
   });
 }
 
-/* Jump selectors toggle for mobile */
-const jumpToggle = document.getElementById('jumpToggle');
-function toggleJumpSelectors(){
-  const fields = document.querySelectorAll('.jump-field');
-  fields.forEach(f => f.classList.toggle('show'));
-  const anyShown = document.querySelector('.jump-field.show') !== null;
-  if(jumpToggle){
-    jumpToggle.setAttribute('aria-expanded', String(anyShown));
-    jumpToggle.textContent = anyShown ? 'Hide Jump Selectors' : 'Show Jump Selectors';
-  }
-}
-if(jumpToggle){
-  jumpToggle.addEventListener('click', toggleJumpSelectors);
-}
-
 /* Display timezone picker (header + mobile panel). Defaults to the
    device's timezone; the choice persists and re-renders all dates. */
 function tzSelectLabel(value){
