@@ -569,6 +569,85 @@ function validScheduleItem(item){
     && typeof item.label === 'string';
 }
 
+/* =========================================================
+ CLIENT UPDATES + DATACRON DROPS (Wednesday rules)
+  - Shipment update: Wednesday of era week 2 (era days 8-14),
+    once per 84-day era. Previous era's shards go to shipments.
+    It IS that week's client update (no duplicate generic card).
+  - Datacron drop: Wednesday of the calendar week before a
+    conquest starts (any conquest of any volume). Currently
+    conquests start Monday (Day 7), so this is the prior
+    Wednesday (Day 2). Detected as: Wednesday + next conquest
+    start 5-11 days out (Wed+5=Mon .. Wed+11=Sun of next week),
+    so it survives conquest-day / era-start moves. It also
+    carries a client update (off-cadence extra).
+  - Generic: every other Wednesday, 14-day cadence anchored to
+    CLIENT_UPDATE_ANCHOR_DATE (2026-09-02 had an update).
+  Weekday is UTC calendar day (dateMs is UTC midnight), matching
+  the rest of the engine.
+  ========================================================= */
+
+function isWednesdayUtc(dateMs){
+  return Number.isFinite(dateMs) && new Date(dateMs).getUTCDay() === 3;
+}
+
+function clientUpdateAnchorMs(){
+  return parseDateOnlyMs(typeof CLIENT_UPDATE_ANCHOR_DATE !== 'undefined' ? CLIENT_UPDATE_ANCHOR_DATE : null);
+}
+
+function isBiweeklyClientUpdateDay(dateMs){
+  const anchor = clientUpdateAnchorMs();
+  if(!Number.isFinite(anchor) || !Number.isFinite(dateMs)) return false;
+  if(!isWednesdayUtc(dateMs)) return false;
+  const diffDays = Math.round((dateMs - anchor) / 86400000);
+  return posMod(diffDays, 14) === 0;
+}
+
+function eraDayForEpisode(episode, dayInEp){
+  if(!Number.isInteger(episode) || !Number.isInteger(dayInEp)) return NaN;
+  return ((episode - 1) * episodeLengthDays()) + dayInEp;
+}
+
+function isShipmentUpdateDay(dateMs, eraDay){
+  return Number.isInteger(eraDay) && eraDay >= 8 && eraDay <= 14 && isWednesdayUtc(dateMs);
+}
+
+function daysUntilNextConquest(eraDay){
+  if(!Number.isInteger(eraDay)) return Infinity;
+  const eraLen = eraLengthDays();
+  const epLen = episodeLengthDays();
+  const start = conquestStartDay();
+  const episodeCount = Math.ceil(eraLen / epLen);
+  let best = Infinity;
+  for(let e = 1; e <= episodeCount; e++){
+    const s = ((e - 1) * epLen) + start;
+    if(s < 1 || s > eraLen) continue;
+    const d = posMod(s - eraDay, eraLen);
+    if(d < best) best = d;
+  }
+  return best;
+}
+
+function isDatacronDropDay(dateMs, eraDay){
+  if(!isWednesdayUtc(dateMs)) return false;
+  const d = daysUntilNextConquest(eraDay);
+  return d >= 5 && d <= 11;
+}
+
+function getClientUpdateEvents(dateMs, episode, dayInEp){
+  const eraDay = eraDayForEpisode(episode, dayInEp);
+  if(!Number.isInteger(eraDay) || !Number.isFinite(dateMs)) return [];
+  if(isShipmentUpdateDay(dateMs, eraDay)){
+    return [ev('client_update', 'Client Update - Previous Era Shards Added to Shipments')];
+  }
+  const out = [];
+  const datacron = isDatacronDropDay(dateMs, eraDay);
+  const biweekly = isBiweeklyClientUpdateDay(dateMs);
+  if(datacron || biweekly) out.push(ev('client_update', 'Client Update'));
+  if(datacron) out.push(ev('datacron_set', 'New Datacron Set Added'));
+  return out;
+}
+
 function getDayEvents(episode, dayInEp){
   const overrides = (typeof EPISODE_OVERRIDES !== 'undefined' && EPISODE_OVERRIDES) || {};
   const common = (typeof COMMON_DAYS !== 'undefined' && COMMON_DAYS) || {};
@@ -579,7 +658,7 @@ function getDayEvents(episode, dayInEp){
 
 function getEventsForDay(dateMs, episode, dayInEp){
   const runCtx = tbRunContext(dateMs, episode, dayInEp);
-  return applyTbLabels([...getDayEvents(episode, dayInEp), ...gacEventsForDate(dateMs), ...getMonthlyEvents(dateMs)], runCtx);
+  return applyTbLabels([...getDayEvents(episode, dayInEp), ...getClientUpdateEvents(dateMs, episode, dayInEp), ...gacEventsForDate(dateMs), ...getMonthlyEvents(dateMs)], runCtx);
 }
 
 function ordinal(n){
@@ -1048,6 +1127,8 @@ function validateScheduleConfig(){
     issues.push('EPISODE_LENGTH_DAYS is longer than ERA_LENGTH_DAYS.');
   if(!isDateStr(typeof GAC_CYCLE_START_DATE !== 'undefined' ? GAC_CYCLE_START_DATE : null))
     issues.push('GAC_CYCLE_START_DATE is missing or not YYYY-MM-DD.');
+  if(typeof CLIENT_UPDATE_ANCHOR_DATE !== 'undefined' && !isDateStr(CLIENT_UPDATE_ANCHOR_DATE))
+    issues.push('CLIENT_UPDATE_ANCHOR_DATE is missing or not YYYY-MM-DD.');
   if(!isDateStr(typeof TB_SIDE_ANCHOR_DATE !== 'undefined' ? TB_SIDE_ANCHOR_DATE : null))
     issues.push('TB_SIDE_ANCHOR_DATE is missing or not YYYY-MM-DD.');
   if(!(tbRunGap > 0))

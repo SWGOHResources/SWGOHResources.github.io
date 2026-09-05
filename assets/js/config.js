@@ -22,6 +22,20 @@ const GAC_CHANGEOVER_HOUR_UTC = 21; // GAC resets 3h after the daily changeover
 const GAC_CYCLE_START_DATE = '2026-08-11'; // Day 1 (Signup) of the 5v5 season
 
 /* =========================================================
+ CLIENT UPDATE / DATACRON DROP CADENCE — EDIT ANCHOR IF CG
+  SHIFTS THE PATCH DAY
+  Generic client updates land every other Wednesday. Anchor is a
+  known update Wednesday; the week of 2026-09-02 (Sat 5 Sep 2026)
+  had an update, so 2026-09-02 anchors the 14-day cadence.
+  Special-case Wednesdays (previous-era shipment shards once per
+  era on the Wednesday of era week 2; datacron set the Wednesday
+  of the week before each conquest) are derived in time.js — they
+  also carry a client update (datacron weeks are off-cadence extras).
+  ========================================================= */
+
+const CLIENT_UPDATE_ANCHOR_DATE = '2026-09-02'; // a Wednesday with a client update
+
+/* =========================================================
  DATACRON SET CONFIGURATION — EDIT WHEN A NEW SET IS ANNOUNCED
   Datacron sets rotate through colors in a fixed order:
     Orange -> Pink -> Green -> Blue -> (repeats)
@@ -225,7 +239,11 @@ const EVENT_ICONS = {
   journey_guide: 'events/erajourney.png',
   fleet_executor: 'events/executor.png',
   fleet_leviathan: 'events/leviathan.png',
-  fleet_profundity: 'events/profundity.png'
+  fleet_profundity: 'events/profundity.png',
+  client_update: 'events/eraicon.png',
+  // Next set in the Orange -> Pink -> Green -> Blue rotation is Blue;
+  // point this at the new color when the rotation advances.
+  datacron_set: 'datacrons/datacron_blue.png'
 };
 
 /* =========================================================
