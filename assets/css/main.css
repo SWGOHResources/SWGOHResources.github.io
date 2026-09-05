@@ -216,7 +216,7 @@ body.modal-open .starfield span.tw {
 .cookie-actions a { color: var(--amber); font-size: 11px; text-decoration: none; white-space: nowrap; }
 .cookie-actions a:hover { text-decoration: underline; }
 .cookie-actions .btn { white-space: nowrap; }
-.cookie-actions .btn.primary { background: var(--amber); border-color: var(--amber); color: #211205; }
+.cookie-actions .btn.primary { background: var(--amber); border-color: var(--amber); color: #211205; font-weight: 700; }
 .cookie-actions .btn.primary:hover { background: #ecbc72; }
 
 /* ─── Policy pages ─── */
@@ -463,19 +463,21 @@ body.modal-open .starfield span.tw {
 .day-pill.is-today.is-selected {
   border-color: var(--amber); background: var(--amber-dim);
 }
-.explorer-tools { display: flex; align-items: center; gap: 10px; margin: 10px 50px 0; flex-wrap: wrap; }
-.jump-field { display: flex; align-items: center; gap: 8px; }
-.day-jump-label { color: var(--text3); font-size: 10.5px; white-space: nowrap; }
+.explorer-tools { display: flex; align-items: flex-end; gap: 12px; margin: 10px 50px 0; flex-wrap: wrap; }
+.jump-field { display: flex; flex-direction: column; align-items: stretch; gap: 4px; flex: 1; min-width: 160px; }
+.jump-field-event { flex: 2; min-width: 200px; }
+.day-jump-label { color: var(--text2); font-size: 11px; font-weight: 600; white-space: nowrap; }
 .day-jump {
-  width: 220px; max-width: min(220px, 100%); font-size: 11px;
+  width: 100%; max-width: 100%; font-size: 11px;
 }
 .day-jump:focus-visible { outline-color: var(--amber-border); }
 .day-today {
-  padding: 5px 11px; border: 1px solid var(--border2); border-radius: 5px;
+  padding: 7px 14px; border: 1px solid var(--border2); border-radius: 5px;
   background: transparent; color: var(--text2); font-family: var(--body);
   font-size: 11px; font-weight: 600; cursor: pointer; transition: 0.15s;
+  align-self: flex-end; white-space: nowrap;
 }
-.day-today:hover:not(:disabled) { border-color: var(--cyan-border); color: var(--cyan); }
+.day-today:hover:not(:disabled) { border-color: var(--amber-border); color: var(--amber); }
 .day-today:disabled { color: var(--text3); cursor: default; opacity: 0.55; }
 .day-help { color: var(--text3); font-size: 10.5px; }
 
@@ -614,7 +616,7 @@ body.modal-open .starfield span.tw {
 }
 .tl-day + .tl-day { border-top: 1px solid var(--border); border-radius: 0; }
 .tl-day.is-today { background: rgba(86, 184, 173, 0.08); border: 1px solid var(--cyan-border); border-radius: var(--radius); }
-.tl-day.is-today .tl-daynum { background: var(--cyan); color: #06251f; }
+.tl-day.is-today .tl-daynum { background: var(--cyan); color: #06251f; font-weight: 700; }
 .tl-daynum {
   flex: 0 0 auto; width: 30px; height: 30px; border-radius: 8px;
   display: inline-flex; align-items: center; justify-content: center;
@@ -694,11 +696,28 @@ body.modal-open .starfield span.tw {
 .modal-close-x:hover { border-color: var(--ui-accent-border); }
 .modal-close-x:hover span { background: var(--ui-accent); }
 
+/* ─── Report-issue modal (amber scheme) ─── */
+.about-modal .about-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+.about-modal h3 { font-family: var(--disp); font-size: 18px; color: var(--text); }
+.about-modal .modal-close-x:hover { border-color: var(--amber-border); }
+.about-modal .modal-close-x:hover span { background: var(--amber); }
+.about-sub { font-size: 13px; color: var(--text2); margin-bottom: 16px; line-height: 1.6; }
+.about-sub strong { color: var(--text); }
+.about-discord {
+  background: var(--void2); border: 1px solid var(--border2); border-left: 3px solid var(--amber);
+  border-radius: var(--radius); padding: 14px; margin-bottom: 16px;
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+}
+.about-discord-label { font-weight: 600; font-size: 13px; color: var(--text); }
+.about-actions { display: flex; justify-content: flex-end; }
+.about-modal .btn.primary { background: var(--amber); border-color: var(--amber); color: #1a1104; font-weight: 700; }
+.about-modal .btn.primary:hover { background: #ecbc72; }
+
 .btn {
   font-family: var(--body); font-size: 11.5px; padding: 8px 16px; border-radius: var(--radius);
   cursor: pointer; border: 1px solid var(--border); background: var(--void2); color: var(--text2); transition: 0.15s;
 }
-.btn.primary { background: var(--ui-accent); color: #06251f; border-color: var(--ui-accent); font-weight: 600; }
+.btn.primary { background: var(--ui-accent); color: #06251f; border-color: var(--ui-accent); font-weight: 700; }
 .btn.primary:hover { background: #72d2c5; }
 
 .discord-copy-btn {
@@ -785,9 +804,8 @@ body.modal-open .starfield span.tw {
   .day-pill .dp-dow { font-size: 8px; }
   .day-pill .dp-num { font-size: 13px; }
   .explorer-tools { margin-left: 39px; margin-right: 39px; flex-wrap: wrap; }
-  .jump-field { flex: 1 1 100%; flex-direction: column; align-items: stretch; gap: 4px; }
-  .jump-field .day-jump { flex: none; width: 100%; max-width: 100%; }
-  .explorer-tools .day-today { width: 100%; padding: 7px 11px; }
+  .jump-field, .jump-field-event { flex: 1 1 100%; min-width: 0; }
+  .explorer-tools .day-today { width: 100%; align-self: stretch; }
   .day-detail-head { flex-direction: column; }
   .day-indicators { width: 100%; justify-content: flex-start; }
   .policy-page { padding-top: 28px; padding-bottom: 44px; }

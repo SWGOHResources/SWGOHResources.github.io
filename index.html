@@ -48,7 +48,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/main.css?v=27">
+  <link rel="stylesheet" href="assets/css/main.css?v=28">
 </head>
 <body>
 
@@ -153,11 +153,11 @@
       <button type="button" class="day-arrow" id="dayNext" onclick="shiftExplorer(1)" aria-label="Next day" title="Next day">→</button>
     </div>
     <div class="explorer-tools">
-      <div class="jump-field">
+      <div class="jump-field jump-field-day">
         <label class="day-jump-label" for="dayJump">Jump to day</label>
         <select class="tz-select day-jump" id="dayJump" aria-label="Jump to an era day" oninput="onJumpSelect(this)" onchange="onJumpSelect(this)"></select>
       </div>
-      <div class="jump-field">
+      <div class="jump-field jump-field-event">
         <label class="day-jump-label" for="eventJump">Jump to event</label>
         <select class="tz-select day-jump" id="eventJump" aria-label="Jump to a marquee, journey, fleet or Proving Grounds event" oninput="onJumpSelect(this)" onchange="onJumpSelect(this)"></select>
       </div>
@@ -229,24 +229,24 @@
 </div>
 
 <div class="modal-backdrop" id="aboutModal" aria-hidden="true">
-  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="aboutModalTitle">
-<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-      <h3 id="aboutModalTitle" style="font-family:var(--disp); font-size:18px;">Report an Issue</h3>
+  <div class="modal about-modal" role="dialog" aria-modal="true" aria-labelledby="aboutModalTitle">
+    <div class="about-head">
+      <h3 id="aboutModalTitle">Report an Issue</h3>
       <button class="modal-close-x" id="closeAboutBtn" aria-label="Close"><span></span><span></span></button>
     </div>
 
-    <p style="font-size:13px; color:var(--text2); margin-bottom:16px; line-height:1.6;">
-      This tool is maintained by Dom. Report issues to him on Discord:
+    <p class="about-sub">
+      This tool is maintained by <strong>Dom</strong>. Report issues to him on Discord:
     </p>
 
-    <div style="background:var(--void2); border:1px solid var(--border2); border-radius:var(--radius); padding:14px; margin-bottom:16px; display:flex; align-items:center; justify-content:space-between; gap:10px;">
-      <span style="font-weight:600; font-size:13px; color:var(--text);">Discord</span>
+    <div class="about-discord">
+      <span class="about-discord-label">Discord</span>
       <button class="discord-copy-btn" onclick="copyDiscordHandle(this)">
         <span>@granddom</span>
       </button>
     </div>
 
-    <div style="display:flex; justify-content:flex-end;">
+    <div class="about-actions">
       <button class="btn primary" id="closeAboutBtn2">Close</button>
     </div>
   </div>
