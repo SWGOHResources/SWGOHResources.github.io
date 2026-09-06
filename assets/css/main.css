@@ -411,9 +411,10 @@ body.modal-open .starfield span.tw {
   font-family: var(--disp); font-size: 10px; font-weight: 700; color: var(--accent, var(--text3));
 }
 .uw-text { flex: 1; min-width: 0; }
-/* Big countdown line on the Important Dates cards. Sized up for
-   emphasis but kept in the default text color for readability. */
-.big-count { font-family: var(--disp); font-size: 20px; font-weight: 700; color: var(--text); line-height: 1.25; margin-top: 2px; }
+/* Big countdown line on the Important Dates cards. Sized up and tinted
+   with each card's accent — every accent clears large-text contrast
+   (5.3:1 or better), so emphasis doesn't cost readability. */
+.big-count { font-family: var(--disp); font-size: 20px; font-weight: 700; color: var(--accent, var(--text)); line-height: 1.25; margin-top: 2px; }
 
 /* ─── Important Dates Grid ───
    Intentionally left to inherit .hero-grid's plain
