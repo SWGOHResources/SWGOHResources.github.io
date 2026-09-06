@@ -26,6 +26,7 @@
   <meta property="og:image:width" content="512">
   <meta property="og:image:height" content="512">
   <meta property="og:image:type" content="image/png">
+  <meta property="og:image:alt" content="SWGOH Resources event schedule icon">
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary">
@@ -154,16 +155,16 @@
     </div>
     <button type="button" class="jump-toggle" id="jumpToggle" aria-expanded="false" aria-controls="explorerTools"><span>Jump to day / event</span><span class="jt-chev" aria-hidden="true">▾</span></button>
     <div class="explorer-tools" id="explorerTools">
-        <div class="jump-field jump-field-day">
-          <label class="day-jump-label" for="dayJump">Jump to day</label>
-          <select class="tz-select day-jump" id="dayJump" aria-label="Jump to an era day" oninput="onJumpSelect(this)" onchange="onJumpSelect(this)"></select>
-        </div>
-        <div class="jump-field jump-field-event">
-          <label class="day-jump-label" for="eventJump">Jump to event</label>
-          <select class="tz-select day-jump" id="eventJump" aria-label="Jump to a marquee, journey, fleet or Proving Grounds event" oninput="onJumpSelect(this)" onchange="onJumpSelect(this)"></select>
-        </div>
-        <button type="button" class="day-today" id="dayToday" onclick="jumpExplorer(0)">Today</button>
+      <div class="jump-field jump-field-day">
+        <label class="day-jump-label" for="dayJump">Jump to day</label>
+        <select class="tz-select day-jump" id="dayJump" aria-label="Jump to an era day" oninput="onJumpSelect(this)" onchange="onJumpSelect(this)"></select>
       </div>
+      <div class="jump-field jump-field-event">
+        <label class="day-jump-label" for="eventJump">Jump to event</label>
+        <select class="tz-select day-jump" id="eventJump" aria-label="Jump to a marquee, journey, fleet or Proving Grounds event" oninput="onJumpSelect(this)" onchange="onJumpSelect(this)"></select>
+      </div>
+      <button type="button" class="day-today" id="dayToday" onclick="jumpExplorer(0)">Today</button>
+    </div>
     <div class="day-detail" id="dayDetail"></div>
   </div>
   </section>
@@ -256,8 +257,8 @@
 <!-- ASSET_VERSION: bump ?v= on the CSS/JS links below on every deploy
      so browsers fetch fresh copies instead of cached ones. -->
 <script defer src="assets/js/config.js?v=20"></script>
-<script defer src="assets/js/time.js?v=25"></script>
-<script defer src="assets/js/render.js?v=19"></script>
-<script defer src="assets/js/app.js?v=16"></script>
+<script defer src="assets/js/time.js?v=26"></script>
+<script defer src="assets/js/render.js?v=20"></script>
+<script defer src="assets/js/app.js?v=17"></script>
 </body>
 </html>

@@ -92,7 +92,7 @@ const dismissCookieNotice = document.getElementById('dismissCookieNotice');
 const COOKIE_NOTICE_KEY = 'swgoh_cookie_notice';
 
 function hasCookie(name){
-  return document.cookie.split('; ').some(cookie => cookie.startsWith(`${name}=`));
+  return document.cookie.split(';').some(cookie => cookie.trim().split('=')[0] === name);
 }
 
 function dismissCookies(){
