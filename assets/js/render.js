@@ -444,7 +444,7 @@ function renderExplorer(st){
           .filter(it => isJumpToEvent(it.icon))
           .forEach(it => {
             const gi = groups.findIndex(g => g.test(it.icon));
-            if(gi >= 0) hits[gi].push(`<option value="${idx}">${tenseByStart(it.label, it, dateMs, st.nowMs)} · Day ${idx}</option>`);
+            if(gi >= 0) hits[gi].push(`<option value="${idx}">${escHTML(tenseByStart(it.label, it, dateMs, st.nowMs))} · Day ${idx}</option>`);
           });
       }
       let opts = '<option value="">Select event…</option>';
@@ -525,7 +525,7 @@ function getFullScheduleLabel(item){
    FULL ERA TIMELINE (modal)
    ========================================================= */
 
-const fullScheduleCache = { eraStartMs: null, activeDay: null, tbChoices: null, tzKey: null };
+const fullScheduleCache = { eraStartMs: null, activeDay: null, tbChoices: null, tzKey: null, cfgKey: null };
 let scheduleFilterEp = 0; // 0 = all episodes
 
 function gameDayDisplayMs(dateMs){
@@ -537,7 +537,14 @@ function fullScheduleTbChoiceKey(){
 }
 
 function escAttr(s){
-  return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+/* Visible-text escaping for labels injected via innerHTML. Config data
+   is trusted, but a stray & or < in a future label must not break the
+   markup (e.g. "Myths & Legends" must render literally). */
+function escHTML(s){
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
 function timelineChipHTML(item, dateMs, nowMs){
@@ -545,7 +552,7 @@ function timelineChipHTML(item, dateMs, nowMs){
   const base = getFullScheduleLabel(item);
   const startMs = eventStartMs(item, dateMs);
   const label = tensedLabel(base, startMs <= nowMs);
-  return `<span class="tl-chip" data-start="${startMs}" data-label="${escAttr(base)}" style="color:${meta.accent};border-color:${meta.border};background:${meta.dim}">${label}</span>`;
+  return `<span class="tl-chip" data-start="${startMs}" data-label="${escAttr(base)}" style="color:${meta.accent};border-color:${meta.border};background:${meta.dim}">${escHTML(label)}</span>`;
 }
 
 /* Flip timeline chips between future/past tense as changeovers pass,
@@ -567,11 +574,14 @@ function renderFullSchedule(st){
   const tbChoices = fullScheduleTbChoiceKey();
   // Timezone is part of the cache key: every date string in the
   // timeline is rendered in the display zone, so a tz change must
-  // rebuild rather than reuse the cached markup.
+  // rebuild rather than reuse the cached markup. Changeover hours and
+  // era/episode lengths also shift every timestamp, so they join the key.
   const tzKey = (typeof getTimeZoneSetting === 'function') ? getTimeZoneSetting() : 'local';
+  const cfgKey = [stdHour(), gacHour(), eraLengthDays(), episodeLengthDays()].join('|');
   const sameEra = fullScheduleCache.eraStartMs === st.currentEraStartMs
     && fullScheduleCache.tbChoices === tbChoices
-    && fullScheduleCache.tzKey === tzKey;
+    && fullScheduleCache.tzKey === tzKey
+    && fullScheduleCache.cfgKey === cfgKey;
 
   if(!sameEra){
     let html = '';
@@ -605,6 +615,7 @@ function renderFullSchedule(st){
     fullScheduleCache.activeDay = st.eraDay;
     fullScheduleCache.tbChoices = tbChoices;
     fullScheduleCache.tzKey = tzKey;
+    fullScheduleCache.cfgKey = cfgKey;
     applyScheduleFilter();
   } else if(fullScheduleCache.activeDay !== st.eraDay){
     const prev = container.querySelector(`.tl-day[data-day="${fullScheduleCache.activeDay}"]`);

@@ -497,11 +497,35 @@ function getCurrentDatacronSet(nowMs){
   return { ...withMs[withMs.length - 1], allExpired: true };
 }
 
+/* Memoized: renderUnlockWindows calls this on every render (including
+   the 60s background tick), and each call scans ~85 days × event
+   lookups plus per-TW-hit 7-day numbering scans. Inputs only change
+   when the datacron config, TB picks, era base or changeover hours
+   change, so cache on all of them. */
+const _lastUsableCache = { key: null, value: null };
+
+function lastUsableCacheKey(expiresMs, eraBaseStartMs){
+  let tbChoices = '';
+  try {
+    tbChoices = ['light', 'dark'].map(side => tbStoredChoiceId(side) || 'rote').join('|');
+  } catch(e){}
+  return [expiresMs, eraBaseStartMs, stdHour(), gacHour(), eraLengthDays(), tbChoices].join('|');
+}
+
 // A datacron set can only ever be equipped/used for Territory War and
 // GAC — never Territory Battle, Conquest, etc. This finds the most recent
 // usable event for each mode independently because TW and GAC can end at
 // different times.
 function getLastUsableGuildEvent(expiresMs, eraBaseStartMs){
+  const key = lastUsableCacheKey(expiresMs, eraBaseStartMs);
+  if(_lastUsableCache.key === key) return _lastUsableCache.value;
+  const value = _getLastUsableGuildEventUncached(expiresMs, eraBaseStartMs);
+  _lastUsableCache.key = key;
+  _lastUsableCache.value = value;
+  return value;
+}
+
+function _getLastUsableGuildEventUncached(expiresMs, eraBaseStartMs){
   const firstAbsDay = Math.floor((expiresMs - eraBaseStartMs) / 86400000) + 1;
   const lastUsable = { tw: null, gac: null };
   for(let offset = -eraLengthDays(); offset <= 1; offset++){
