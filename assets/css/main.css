@@ -108,7 +108,10 @@ body.modal-open .starfield span.tw {
   animation-play-state: paused;
 }
 @media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
   .starfield span.tw { animation: none; }
+  .xcard, .xcard:hover { transform: none; }
+  .mh-progress-fill, .day-pill, .tab-btn, .xcard, .jump-toggle .jt-chev { transition: none; }
 }
 
 .top-header {
@@ -255,6 +258,16 @@ body.modal-open .starfield span.tw {
   color: var(--amber); font-weight: 700; text-decoration: none; white-space: nowrap;
 }
 .explorer-note p a:hover { text-decoration: underline; }
+
+/* ─── Stale-era banner (shown when the configured era has ended) ─── */
+.stale-banner {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--red-dim); border: 1px solid var(--red-border);
+  border-radius: var(--radius); padding: 8px 12px; margin-bottom: 12px;
+}
+.stale-banner[hidden] { display: none; }
+.stale-banner p { flex: 1; min-width: 0; font-size: 12px; color: var(--text2); line-height: 1.5; }
+.stale-banner strong { color: var(--red); }
 
 /* ─── Era Banner: editorial stat block. No pills — hierarchy comes
    from type. Countdown is a horizontal stat, not a boxed panel, so
@@ -552,6 +565,13 @@ body.modal-open .starfield span.tw {
   min-height: 2.8em; overflow-wrap: anywhere;
 }
 .xcard-date { font-family: var(--mono); font-size: 11px; color: var(--text2); margin-top: 6px; }
+.xcard-cal {
+  margin-top: 8px; padding: 6px 10px; border: 1px dashed var(--border2); border-radius: var(--radius);
+  background: transparent; color: var(--text3); font-family: var(--body);
+  font-size: 10.5px; font-weight: 600; cursor: pointer; transition: 0.15s; width: 100%;
+}
+.xcard-cal:hover { border-color: var(--amber-border); color: var(--amber); }
+.xcard-cal:focus-visible { outline: 2px solid var(--amber-border); outline-offset: 1px; }
 
 /* ─── Guild TB picker (on TB Phase-1 cards) ─── */
 .tb-pick { margin-top: 6px; border-top: 1px solid var(--border); padding-top: 6px; }

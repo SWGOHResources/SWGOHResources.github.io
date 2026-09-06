@@ -218,6 +218,25 @@ function renderMergedHero(st){
   document.getElementById('mhDaysRemaining').textContent = st.preEra
     ? (st.daysUntilEra <= 0 ? 'Era starts today' : `Era starts in ${st.daysUntilEra} day${st.daysUntilEra === 1 ? '' : 's'}`)
     : `${eraLengthDays() - st.bossEraDay} days remaining`;
+
+  // Stale-era banner: the engine rolls into a phantom next cycle once the
+  // configured era ends. Anchor staleness to the configured BASE era
+  // (not the rolling cycle, which would hide the banner again after
+  // rollover): any now past the base era's final changeover means the
+  // config is outdated. Hidden again once ERA_START_DATE is updated.
+  const staleBanner = document.getElementById('staleBanner');
+  if(staleBanner){
+    const baseEndMs = st.eraBaseStartMs + ((eraLengthDays() - 1) * 86400000);
+    const baseOverMs = baseEndMs + 86400000 + (stdHour() * 3600000);
+    const stale = !st.preEra && st.nowMs >= baseOverMs;
+    staleBanner.hidden = !stale;
+    if(stale){
+      const endLabel = fmtDateLongUTC(gameDayDisplayMs(baseEndMs));
+      const eraName = (typeof ERA_NAME !== 'undefined' && ERA_NAME) ? ERA_NAME : 'This era';
+      const textEl = document.getElementById('staleBannerText');
+      if(textEl) textEl.innerHTML = `<strong>${escHTML(eraName)}</strong> ended ${endLabel} — dates below are the old rotation until the schedule is updated.`;
+    }
+  }
 }
 
 function renderStatusDashboard(st){
@@ -302,13 +321,27 @@ function explorerDayAt(st, offset){
 function shiftExplorer(delta){
   const bounds = explorerBoundsFor(getGameStatus());
   explorerOffset = Math.min(bounds.maxOffset, Math.max(bounds.minOffset, explorerOffset + delta));
+  syncDayHash();
   renderAll();
 }
 
 function jumpExplorer(offset){
   const bounds = explorerBoundsFor(getGameStatus());
   explorerOffset = Math.min(bounds.maxOffset, Math.max(bounds.minOffset, offset));
+  syncDayHash();
   renderAll();
+}
+
+/* Shareable day links: every explorer move publishes #day-N (absolute
+   era day) via replaceState — no history spam, and the URL is always
+   copy-pasteable. app.js reads it on load and on hashchange. */
+function syncDayHash(){
+  try {
+    if(typeof location === 'undefined' || typeof history === 'undefined') return;
+    const st = getGameStatus();
+    const want = '#day-' + (st.eraDay + explorerOffset);
+    if(location.hash !== want) history.replaceState(null, '', want);
+  } catch(e){}
 }
 
 /* Jump selects carry absolute era days and reset to their placeholder
@@ -357,6 +390,13 @@ function explorerCardHTML(item, dateMs, relLabel, tbCtx, nowMs){
   // choice persists and drives the art + phase labels everywhere.
   const picker = (tbCtx && tbCtx.showPicker && item.icon === 'rote') ? tbPickerHTML(tbCtx) : '';
 
+  // Calendar export: start/end precomputed so the click handler only
+  // reads dataset (no TB context lookup at click time).
+  const calBase = getFullScheduleLabel(item);
+  const calStart = eventStartMs(item, dateMs);
+  const calEnd = icsEndMs(item, dateMs, isTbCard ? tbCtx : null);
+  const calDesc = `${eventDateRangeLabel(item, eventDisplayMs(item, dateMs), isTbCard ? tbCtx : null)} · Expected date, not live data — check swgoh.gg/events.`;
+
   return `<article class="xcard" style="${style}">
     <div class="xcard-art">
       <div class="art-badge">${tag.glyph}</div>
@@ -370,9 +410,49 @@ function explorerCardHTML(item, dateMs, relLabel, tbCtx, nowMs){
     <div class="xcard-body">
       <h4>${title}</h4>
       <div class="xcard-date">${eventDateRangeLabel(item, eventDisplayMs(item, dateMs), isTbCard ? tbCtx : null)}</div>
+      <button type="button" class="xcard-cal" data-icon="${escAttr(item.icon)}" data-title="${escAttr(calBase)}" data-start="${calStart}" data-end="${calEnd}" data-desc="${escAttr(calDesc)}" title="Download a calendar file (.ics) for this event">+ Calendar</button>
       ${picker}
     </div>
   </article>`;
+}
+
+/* Calendar (.ics) download for one event card. Dataset carries the
+   precomputed untensed title + start/end instants; the file is built
+   client-side — no network, no tracking. */
+function icsStamp(ms){
+  const d = new Date(ms);
+  const p = n => String(n).padStart(2, '0');
+  return `${d.getUTCFullYear()}${p(d.getUTCMonth() + 1)}${p(d.getUTCDate())}T${p(d.getUTCHours())}${p(d.getUTCMinutes())}${p(d.getUTCSeconds())}Z`;
+}
+
+function icsEscape(s){
+  return String(s).replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n');
+}
+
+function downloadICS(data){
+  if(!data || !Number.isFinite(Number(data.start)) || !Number.isFinite(Number(data.end))) return;
+  const startMs = Number(data.start), endMs = Math.max(Number(data.end), Number(data.start));
+  const lines = [
+    'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//SWGOH Resources//Event Schedule//EN', 'BEGIN:VEVENT',
+    `UID:swgoh-${startMs}-${String(data.icon || 'event').replace(/[^a-z0-9_-]+/gi, '')}@swgohresources.github.io`,
+    `DTSTAMP:${icsStamp(Date.now())}`,
+    `DTSTART:${icsStamp(startMs)}`,
+    `DTEND:${icsStamp(endMs)}`,
+    `SUMMARY:${icsEscape(data.title || 'SWGOH event')}`,
+    `DESCRIPTION:${icsEscape(data.desc || '')}`,
+    'END:VEVENT', 'END:VCALENDAR',
+  ];
+  try {
+    const blob = new Blob([lines.join('\r\n')], { type: 'text/calendar' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `swgoh-${String(data.icon || 'event').replace(/[^a-z0-9_-]+/gi, '')}-${startMs}.ics`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 5000);
+  } catch(e){}
 }
 
 function renderExplorer(st){

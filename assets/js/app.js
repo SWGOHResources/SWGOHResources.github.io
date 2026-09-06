@@ -168,6 +168,15 @@ function setTbChoice(id, side){
   }
 }
 
+/* Calendar export (event cards are rebuilt on every render, so a
+   delegated listener outlives the buttons). Null-safe if render.js
+   failed to load. */
+document.addEventListener('click', e => {
+  const btn = e.target && e.target.closest ? e.target.closest('.xcard-cal') : null;
+  if(!btn) return;
+  if(typeof downloadICS === 'function') downloadICS(btn.dataset);
+});
+
 /* Mobile Nav Panel (null-safe: a missing toggle must not halt init) */
 const navToggle = document.getElementById('navToggle');
 
@@ -200,6 +209,37 @@ function setJumpOpen(open){
 if(jumpToggle && explorerTools){
   jumpToggle.addEventListener('click', () => {
     setJumpOpen(!explorerTools.classList.contains('open'));
+  });
+}
+
+/* Shareable day links (#day-N): honour the hash on load (set the offset
+   directly to avoid a double render) and follow it on hashchange so
+   pasted links and back/forward work while the page is open. */
+function applyDayHash(){
+  if(typeof dayFromHash !== 'function') return;
+  const day = dayFromHash(typeof location !== 'undefined' ? location.hash : '');
+  if(day == null) return;
+  try {
+    const st = getGameStatus();
+    const bounds = explorerBoundsFor(st);
+    explorerOffset = Math.min(bounds.maxOffset, Math.max(bounds.minOffset, day - st.eraDay));
+  } catch(e){}
+}
+if(typeof window !== 'undefined' && typeof window.addEventListener === 'function'){
+  window.addEventListener('hashchange', () => {
+    const before = (typeof explorerOffset === 'number') ? explorerOffset : 0;
+/* Offline support: register the service worker (skipped on file:// and
+   in old browsers). Failures are silent — the page works without it. */
+if(typeof navigator !== 'undefined' && 'serviceWorker' in navigator
+  && typeof location !== 'undefined' && location.protocol.indexOf('http') === 0
+  && typeof window !== 'undefined' && typeof window.addEventListener === 'function'){
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  });
+}
+
+applyDayHash();
+    if(explorerOffset !== before) renderAll();
   });
 }
 
@@ -297,6 +337,7 @@ if(typeof validateScheduleConfig === 'function'){
   if(configIssues.length) console.warn('[swgoh-schedule] config issues:\n- ' + configIssues.join('\n- '));
 }
 
+applyDayHash();
 renderAll();
 if(typeof requestIdleCallback === 'function') requestIdleCallback(() => preloadCardAssets(), { timeout: 2000 });
 else setTimeout(() => preloadCardAssets(), 0);

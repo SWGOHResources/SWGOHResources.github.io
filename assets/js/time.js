@@ -887,6 +887,18 @@ function relativeDayLabel(diffDays){
   return `${Math.abs(diffDays)} days ago`;
 }
 
+/* Absolute era day (1-based) encoded in the shareable URL hash
+   (#day-N), or null when the hash isn't a day link. Bounds-checked
+   against the configured era length. Pure parsing — safe to test. */
+function dayFromHash(hash){
+  const m = /^#day-(\d+)$/.exec(hash || '');
+  if(!m) return null;
+  const day = Number(m[1]);
+  if(!Number.isInteger(day)) return null;
+  if(day < 1 || day > eraLengthDays()) return null;
+  return day;
+}
+
 /* How long a changeover marker lasts. GAC/TW phases and TB phases run
   24 hours until the next 18:00 UTC changeover; Conquest runs Day 7→20
   (14 days); Journey Rerun 1 lasts one week and Journey Rerun 2 lasts one month. */
@@ -933,6 +945,32 @@ function eventDateRangeLabel(item, dateMs, tbCtx){
 function eventDisplayMs(item, dateMs){
   const hour = item && item.icon && item.icon.startsWith('gac_') ? gacHour() : stdHour();
   return dateMs + (hour * 3600000);
+}
+
+/* Calendar-export end instant for a schedule card. Mirrors the spans
+   shown by eventDateRangeLabel (conquest length, journey windows,
+   36h TB phase windows, 24h changeover events); anything dateless
+   gets a 1-hour block. Pure — safe to unit test. */
+function icsEndMs(item, dateMs, tbCtx){
+  const start = eventStartMs(item, dateMs);
+  if(item.icon === 'conquest_start') return start + (conquestDurationDays() * 86400000);
+  if(item.icon === 'journey_rerun_1') return start + (7 * 86400000);
+  if(item.icon === 'journey_rerun_2'){
+    const end = new Date(dateMs);
+    const originalDay = end.getUTCDate();
+    end.setUTCDate(1);
+    end.setUTCMonth(end.getUTCMonth() + 1);
+    const daysInEndMonth = new Date(utcDateMs(end.getUTCFullYear(), end.getUTCMonth() + 1, 0)).getUTCDate();
+    end.setUTCDate(Math.min(originalDay, daysInEndMonth));
+    return end.getTime() + (stdHour() * 3600000);
+  }
+  if(item.icon === 'rote' && tbCtx && tbCtx.def && tbCtx.def.hoursPerPhase === 36 && tbCtx.phase1Ms != null){
+    if(item.tbEndMoment != null) return start + 3600000;
+    const { phase } = tbPhaseAtOffset(tbCtx.def, tbCtx.offset);
+    return tbPhaseWindow(tbCtx.def, tbCtx.phase1Ms, phase - 1).endMs;
+  }
+  if(DAY_LONG_EVENTS.has(item.icon)) return start + 86400000;
+  return start + 3600000;
 }
 
 /* Start instant of a schedule card: 36h-TB boundary cards carry their

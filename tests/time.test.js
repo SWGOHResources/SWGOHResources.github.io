@@ -534,3 +534,43 @@ test('malformed schedule entries degrade instead of crashing', () => {
     'TW Offense Phase Started'
   );
 });
+
+test('day hash links parse absolute era days', () => {
+  const engine = loadTimeEngine();
+  assert.equal(engine.dayFromHash('#day-1'), 1);
+  assert.equal(engine.dayFromHash('#day-84'), 84);
+  assert.equal(engine.dayFromHash('#day-0'), null);
+  assert.equal(engine.dayFromHash('#day-85'), null);
+  assert.equal(engine.dayFromHash(''), null);
+  assert.equal(engine.dayFromHash('#foo'), null);
+  assert.equal(engine.dayFromHash('#day-abc'), null);
+  assert.equal(engine.dayFromHash(null), null);
+});
+
+test('day hash bounds follow the configured era length', () => {
+  const engine = loadTimeEngine({ eraLength: 56 });
+  assert.equal(engine.dayFromHash('#day-56'), 56);
+  assert.equal(engine.dayFromHash('#day-57'), null);
+});
+
+test('calendar export end instants mirror the displayed spans', () => {
+  const engine = loadTimeEngine();
+  const dayStart = Date.parse('2026-08-04T00:00:00Z');
+  // GAC starts at 21:00 UTC, everything else at the 18:00 changeover.
+  assert.equal(
+    engine.icsEndMs({ icon: 'gac_signup' }, dayStart),
+    dayStart + (21 * 3600000) + 86400000
+  );
+  assert.equal(
+    engine.icsEndMs({ icon: 'tw_offense' }, dayStart),
+    dayStart + (18 * 3600000) + 86400000
+  );
+  assert.equal(
+    engine.icsEndMs({ icon: 'conquest_start' }, dayStart),
+    dayStart + (18 * 3600000) + (14 * 86400000)
+  );
+  assert.equal(
+    engine.icsEndMs({ icon: 'client_update' }, dayStart),
+    dayStart + (18 * 3600000) + 3600000
+  );
+});
