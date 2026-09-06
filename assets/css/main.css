@@ -411,10 +411,11 @@ body.modal-open .starfield span.tw {
   font-family: var(--disp); font-size: 10px; font-weight: 700; color: var(--accent, var(--text3));
 }
 .uw-text { flex: 1; min-width: 0; }
-/* Big countdown line on the Important Dates cards. Sized up and tinted
-   with each card's accent — every accent clears large-text contrast
-   (5.3:1 or better), so emphasis doesn't cost readability. */
-.big-count { font-family: var(--disp); font-size: 20px; font-weight: 700; color: var(--accent, var(--text)); line-height: 1.25; margin-top: 2px; }
+/* Big countdown line on the Important Dates cards. Hero-style display
+   type (like .mh-main-val): large accent value with a smaller muted
+   date suffix. Every accent clears large-text contrast (5.3:1+). */
+.big-count { font-family: var(--disp); font-size: 28px; font-weight: 700; color: var(--accent, var(--text)); line-height: 1.15; letter-spacing: -0.01em; margin-top: 2px; }
+.big-count .bc-date { font-size: 14px; font-weight: 600; color: var(--text3); letter-spacing: 0; white-space: nowrap; }
 
 /* ─── Important Dates Grid ───
    Intentionally left to inherit .hero-grid's plain

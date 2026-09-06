@@ -21,8 +21,8 @@ function renderUnlockWindows(st){
   const cqUnlocked = cqAbs <= st.rawDayIndex || cqDays <= 0;
   const cqDateLabel = withOrdinal(new Date(dms(gameDayDisplayMs(cqDateMs))).toLocaleDateString('en-GB',{timeZone: tz(),day:'numeric',month:'short'}));
   const cqCountLabel = cqUnlocked
-    ? `Unlocked (${cqDateLabel})`
-    : `In ${cqDays} day${cqDays === 1 ? '' : 's'} (${cqDateLabel})`;
+    ? 'Unlocked'
+    : `In ${cqDays} day${cqDays === 1 ? '' : 's'}`;
   const cqSubLabel = cqUnlocked
     ? 'The new conquest unit is playable'
     : 'The new conquest unit becomes playable';
@@ -45,8 +45,8 @@ function renderUnlockWindows(st){
   // claiming THIS ERA. daysUntilEra already counts display-zone days.
   const eraDateLabel = withOrdinal(new Date(dms(gameDayDisplayMs(eraDateMs))).toLocaleDateString('en-GB',{timeZone: tz(),day:'numeric',month:'short'}));
   const eraCountLabel = st.preEra
-    ? (st.daysUntilEra <= 0 ? `Today (${eraDateLabel})` : `In ${st.daysUntilEra} day${st.daysUntilEra === 1 ? '' : 's'} (${eraDateLabel})`)
-    : (eraAbs <= st.rawDayIndex || eraDays <= 0 ? `Live now (${eraDateLabel})` : `In ${eraDays} day${eraDays === 1 ? '' : 's'} (${eraDateLabel})`);
+    ? (st.daysUntilEra <= 0 ? 'Today' : `In ${st.daysUntilEra} day${st.daysUntilEra === 1 ? '' : 's'}`)
+    : (eraAbs <= st.rawDayIndex || eraDays <= 0 ? 'Live now' : `In ${eraDays} day${eraDays === 1 ? '' : 's'}`);
   const eraSubLabel = st.preEra ? 'The new era begins' : 'Current era ends and units enter legacy modes';
 
   // Roster locks at the configured defense-phase offset.
@@ -64,8 +64,8 @@ function renderUnlockWindows(st){
   const daysLeft = cron ? Math.floor((cron.expiresMs - st.nowMs) / 86400000) : 0;
   const cronExpiresLabel = cron ? withOrdinal(new Date(dms(cron.expiresMs)).toLocaleDateString('en-GB',{timeZone: tz(),day:'numeric',month:'short'})) : '';
   const cronCountLabel = !cron ? ''
-    : cron.allExpired ? `Expired (${cronExpiresLabel})`
-    : daysLeft <= 0 ? `Expires today (${cronExpiresLabel})` : `In ${daysLeft} day${daysLeft === 1 ? '' : 's'} (${cronExpiresLabel})`;
+    : cron.allExpired ? 'Expired'
+    : daysLeft <= 0 ? 'Expires today' : `In ${daysLeft} day${daysLeft === 1 ? '' : 's'}`;
   const cronSubLabel = !cron ? 'Add the next set to DATACRON_SETS in config.js'
     : cron.allExpired ? `${cron.name} has expired. Add the next set to DATACRON_SETS`
     : `${cron.name}${cron.hasFDC ? ' + FDC' : ''} expires to inbox`;
@@ -88,7 +88,7 @@ function renderUnlockWindows(st){
       <div class="uw-body" style="--accent:var(--purple);--accent-dim:var(--purple-dim);--accent-border:var(--purple-border)">
         <div class="uw-img"><div class="art-badge">CQ</div><img src="${IMG_BASE}${CONQUEST_UNIT_IMAGE}" onerror="this.remove()"></div>
         <div class="uw-text">
-          <div class="sc-main"><div class="big-count">${cqCountLabel}</div><div class="sc-sub">${cqSubLabel}</div></div>
+          <div class="sc-main"><div class="big-count">${cqCountLabel} <span class="bc-date">(${cqDateLabel})</span></div><div class="sc-sub">${cqSubLabel}</div></div>
           <div class="sc-footer" style="flex-direction:column;align-items:flex-start;gap:2px;">
             <span>Usable in GAC: <span class="highlight">Week ${cqGacWeek} (${cqGac.format})</span></span>
             <span>Roster locks: ${withOrdinal(new Date(dms(gameDayDisplayMs(cqNextSignupDate))).toLocaleDateString('en-GB',{timeZone: tz(),day:'numeric',month:'short'}))} (Defense Starts)</span>
@@ -101,7 +101,7 @@ function renderUnlockWindows(st){
       <div class="uw-body" style="--accent:var(--orange);--accent-dim:var(--orange-dim);--accent-border:var(--orange-border)">
         <div class="uw-img"><div class="art-badge">ERA</div><img src="${IMG_BASE}${ERA_UNIT_IMAGE}" onerror="this.remove()"></div>
         <div class="uw-text">
-          <div class="sc-main"><div class="big-count">${eraCountLabel}</div><div class="sc-sub">${eraSubLabel}</div></div>
+          <div class="sc-main"><div class="big-count">${eraCountLabel} <span class="bc-date">(${eraDateLabel})</span></div><div class="sc-sub">${eraSubLabel}</div></div>
           <div class="sc-footer" style="flex-direction:column;align-items:flex-start;gap:2px;">
              <span>Usable in GAC: <span class="highlight">Week ${eraGacWeek} (${eraGac.format})</span></span>
              <span>Roster locks: ${withOrdinal(new Date(dms(gameDayDisplayMs(eraNextSignupDate))).toLocaleDateString('en-GB',{timeZone: tz(),day:'numeric',month:'short'}))} (Defense Starts)</span>
@@ -115,7 +115,7 @@ function renderUnlockWindows(st){
         <div class="uw-img"><div class="art-badge">${cronMeta.label.slice(0,3).toUpperCase()}</div><img src="${IMG_BASE}${cronMeta.asset}" onerror="this.remove()"></div>
         <div class="uw-text">
           <div class="sc-main">
-            <div class="big-count">${cron ? cronCountLabel : 'No set configured'}</div>
+            <div class="big-count">${cron ? `${cronCountLabel} <span class="bc-date">(${cronExpiresLabel})</span>` : 'No set configured'}</div>
             <div class="sc-sub">${cronSubLabel}</div>
           </div>
           <div class="sc-footer" style="flex-direction:column;align-items:flex-start;gap:2px;">
