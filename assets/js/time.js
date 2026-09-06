@@ -949,32 +949,6 @@ function eventDisplayMs(item, dateMs){
   return dateMs + (hour * 3600000);
 }
 
-/* Calendar-export end instant for a schedule card. Mirrors the spans
-   shown by eventDateRangeLabel (conquest length, journey windows,
-   36h TB phase windows, 24h changeover events); anything dateless
-   gets a 1-hour block. Pure — safe to unit test. */
-function icsEndMs(item, dateMs, tbCtx){
-  const start = eventStartMs(item, dateMs);
-  if(item.icon === 'conquest_start') return start + (conquestDurationDays() * 86400000);
-  if(item.icon === 'journey_rerun_1') return start + (7 * 86400000);
-  if(item.icon === 'journey_rerun_2'){
-    const end = new Date(dateMs);
-    const originalDay = end.getUTCDate();
-    end.setUTCDate(1);
-    end.setUTCMonth(end.getUTCMonth() + 1);
-    const daysInEndMonth = new Date(utcDateMs(end.getUTCFullYear(), end.getUTCMonth() + 1, 0)).getUTCDate();
-    end.setUTCDate(Math.min(originalDay, daysInEndMonth));
-    return end.getTime() + (stdHour() * 3600000);
-  }
-  if(item.icon === 'rote' && tbCtx && tbCtx.def && tbCtx.def.hoursPerPhase === 36 && tbCtx.phase1Ms != null){
-    if(item.tbEndMoment != null) return start + 3600000;
-    const { phase } = tbPhaseAtOffset(tbCtx.def, tbCtx.offset);
-    return tbPhaseWindow(tbCtx.def, tbCtx.phase1Ms, phase - 1).endMs;
-  }
-  if(DAY_LONG_EVENTS.has(item.icon)) return start + 86400000;
-  return start + 3600000;
-}
-
 /* Start instant of a schedule card: 36h-TB boundary cards carry their
    exact transition moment (tbStartMoment / tbEndMoment); everything
    else starts at its day's changeover (18:00 UTC, 21:00 for GAC). */
