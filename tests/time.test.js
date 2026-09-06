@@ -4,7 +4,18 @@ import test from 'node:test';
 import vm from 'node:vm';
 
 const timeSource = fs.readFileSync(new URL('../assets/js/time.js', import.meta.url), 'utf8');
+const configSource = fs.readFileSync(new URL('../assets/js/config.js', import.meta.url), 'utf8');
+const renderSource = fs.readFileSync(new URL('../assets/js/render.js', import.meta.url), 'utf8');
 const dayMs = 86400000;
+
+/* Real EVENT_ICONS from config.js so validator unknown-icon checks run
+   against the true allowlist (config has no DOM deps, so it loads clean). */
+const _configCtx = { ev: (icon, label) => ({ icon, label }) };
+vm.createContext(_configCtx);
+vm.runInContext(configSource, _configCtx);
+// NOTE: const-declared globals aren't context properties — read it back
+// by evaluating inside the same realm.
+const realEventIcons = vm.runInContext('EVENT_ICONS', _configCtx);
 
 function loadTimeEngine({ eraLength = 84, timeZone = 'UTC', datacronSets = [], gacStart = '2026-08-11', omit = [], hours = {}, lockOffsets = {}, commonDays = {}, episodeOverrides = {}, monthlyEvents = [] } = {}) {
   const storage = new Map([['swgoh-tz', timeZone]]);
@@ -36,6 +47,8 @@ function loadTimeEngine({ eraLength = 84, timeZone = 'UTC', datacronSets = [], g
       rote: { name: 'Rise of the Empire', phases: 6, hoursPerPhase: 24 },
     },
     TB_CHOICE_STORAGE_KEY: 'tb',
+    TW_PHASE_ICONS: ['tw_signup', 'tw_defense', 'tw_offense'],
+    EVENT_ICONS: realEventIcons,
     MONTHLY_EVENTS: monthlyEvents,
     EPISODE_OVERRIDES: episodeOverrides,
     COMMON_DAYS: commonDays,
@@ -51,6 +64,49 @@ function loadTimeEngine({ eraLength = 84, timeZone = 'UTC', datacronSets = [], g
   vm.createContext(context);
   vm.runInContext(timeSource, context);
   return context;
+}
+
+/* Full stack (config + time + render) with a stub DOM, for testing
+   rendered output like the explorer day pills. */
+function loadRenderEngine({ timeZone = 'UTC' } = {}) {
+  const storage = new Map([['swgoh-tz', timeZone]]);
+  const mkEl = () => ({
+    innerHTML: '', textContent: '', hidden: false, disabled: false,
+    scrollLeft: 0, dataset: {}, style: {}, value: '', title: '',
+    contains: () => false,
+    querySelector: () => null,
+    querySelectorAll: () => [],
+  });
+  const els = {};
+  const context = {
+    console,
+    Intl,
+    Date,
+    Math,
+    Number,
+    String,
+    Object,
+    Array,
+    Set,
+    parseInt,
+    localStorage: {
+      getItem: key => storage.get(key) ?? null,
+      setItem: (key, value) => storage.set(key, value),
+    },
+    history: { replaceState: () => {} },
+    document: {
+      activeElement: null,
+      getElementById: id => els[id] ??= mkEl(),
+      querySelectorAll: () => [],
+      createElement: () => mkEl(),
+      body: mkEl(),
+    },
+  };
+  vm.createContext(context);
+  vm.runInContext(configSource, context);
+  vm.runInContext(timeSource, context);
+  vm.runInContext(renderSource, context);
+  return { ctx: context, els };
 }
 
 test('era rollover follows configured lengths', () => {
@@ -573,4 +629,37 @@ test('calendar export end instants mirror the displayed spans', () => {
     engine.icsEndMs({ icon: 'client_update' }, dayStart),
     dayStart + (18 * 3600000) + 3600000
   );
+});
+
+test('day pills show era-day numbers with a calendar caption', () => {
+  const { ctx, els } = loadRenderEngine();
+  const run = src => vm.runInContext(src, ctx);
+  const st = run('getGameStatus()');
+  run(`explorerOffset = ${-(st.eraDay - 1)}; renderExplorer(getGameStatus())`);
+  const nums = [...els.dayStrip.innerHTML.matchAll(/dp-num">(\d+)/g)].map(m => Number(m[1]));
+  assert.deepEqual(nums, [1, 2, 3, 4, 5, 6, 7]);
+  assert.match(els.dayStrip.innerHTML, /dp-date">28 Jul</);
+  assert.match(els.dayStrip.innerHTML, /aria-label="Day 1, /);
+});
+
+test('timezone parts include the calendar month', () => {
+  const engine = loadTimeEngine({ timeZone: 'UTC' });
+  const parts = engine.tzDayParts(Date.parse('2026-08-04T18:00:00Z'));
+  assert.equal(parts.dow, 'Tue');
+  assert.equal(parts.num, '4');
+  assert.equal(parts.month, 'Aug');
+});
+
+test('unknown TW icons hide the tracker but keep the label, and are reported', () => {
+  const engine = loadTimeEngine({
+    commonDays: { 18: [{ icon: 'tw_bogus', label: 'Bogus Phase Starts' }] },
+  });
+  const st = engine.getGameStatus(Date.parse('2026-08-14T20:00:00Z'));
+  assert.equal(st.dayInEp, 18);
+  assert.equal(engine.getGuildPhaseInfo(st), null);
+  assert.equal(
+    engine.getGuildEventSummary(st.episode, st.dayInEp, st.currentDayStartMs, st.nowMs),
+    'TW Bogus Phase Started'
+  );
+  assert.ok(engine.validateScheduleConfig().some(issue => issue.includes('tw_bogus')));
 });

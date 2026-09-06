@@ -28,7 +28,7 @@ function tickCountdown(){
   let prevGacChangeoverMs = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), gacH, 0, 0, 0);
   if (nowMs < prevGacChangeoverMs) prevGacChangeoverMs -= 86400000;
   if (nowMs - prevStdChangeoverMs < 2000 || nowMs - prevGacChangeoverMs < 2000) {
-    renderAll();
+    renderAll({ preserveFocus: true });
   }
 }
 
