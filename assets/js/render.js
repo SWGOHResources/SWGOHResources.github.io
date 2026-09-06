@@ -18,7 +18,14 @@ function renderUnlockWindows(st){
   const cqDateMs = cqInf.dateMs;
   
   const cqDays = Math.round((cqDateMs - st.currentDayStartMs) / 86400000);
-  const cqBadge = cqAbs <= st.rawDayIndex || cqDays <= 0 ? 'UNLOCKED' : `IN ${cqDays} DAY${cqDays === 1 ? '' : 'S'}`;
+  const cqUnlocked = cqAbs <= st.rawDayIndex || cqDays <= 0;
+  const cqDateLabel = withOrdinal(new Date(dms(gameDayDisplayMs(cqDateMs))).toLocaleDateString('en-GB',{timeZone: tz(),day:'numeric',month:'short'}));
+  const cqCountLabel = cqUnlocked
+    ? `Unlocked (${cqDateLabel})`
+    : `In ${cqDays} day${cqDays === 1 ? '' : 's'} (${cqDateLabel})`;
+  const cqSubLabel = cqUnlocked
+    ? 'The new conquest unit is playable'
+    : 'The new conquest unit becomes playable';
 
   // Roster locks at the configured defense-phase offset.
   const cqNextSignupDate = cqDateMs + (86400000 * conquestLockOffsetDays());
@@ -36,9 +43,11 @@ function renderUnlockWindows(st){
   const eraDays = Math.round((eraDateMs - st.currentDayStartMs) / 86400000);
   // Before launch the era hasn't started: count down to it instead of
   // claiming THIS ERA. daysUntilEra already counts display-zone days.
-  const eraBadge = st.preEra
-    ? (st.daysUntilEra <= 0 ? 'TODAY' : `IN ${st.daysUntilEra} DAY${st.daysUntilEra === 1 ? '' : 'S'}`)
-    : (eraAbs <= st.rawDayIndex || eraDays <= 0 ? 'THIS ERA' : `IN ${eraDays} DAY${eraDays === 1 ? '' : 'S'}`);
+  const eraDateLabel = withOrdinal(new Date(dms(gameDayDisplayMs(eraDateMs))).toLocaleDateString('en-GB',{timeZone: tz(),day:'numeric',month:'short'}));
+  const eraCountLabel = st.preEra
+    ? (st.daysUntilEra <= 0 ? `Today (${eraDateLabel})` : `In ${st.daysUntilEra} day${st.daysUntilEra === 1 ? '' : 's'} (${eraDateLabel})`)
+    : (eraAbs <= st.rawDayIndex || eraDays <= 0 ? `Live now (${eraDateLabel})` : `In ${eraDays} day${eraDays === 1 ? '' : 's'} (${eraDateLabel})`);
+  const eraSubLabel = st.preEra ? 'The new era begins' : 'Current era ends and units enter legacy modes';
 
   // Roster locks at the configured defense-phase offset.
   const eraNextSignupDate = eraDateMs + (86400000 * eraLockOffsetDays());
@@ -50,11 +59,16 @@ function renderUnlockWindows(st){
   const cron = getCurrentDatacronSet(st.nowMs);
   const cronMeta = (cron && CRON_COLOR_META[cron.color]) || CRON_COLOR_META.orange;
   // Truncated like the other dashboard counts: 28d 23h out reads
-  // "28 DAYS LEFT", and the last 24h read "FINAL DAY".
+  // "Expires in 28 days". Kept in the default text color at a larger
+  // size for emphasis — coloring it hurt readability.
   const daysLeft = cron ? Math.floor((cron.expiresMs - st.nowMs) / 86400000) : 0;
-  const cronBadgeLabel = !cron ? 'NO SET'
-    : cron.allExpired ? 'EXPIRED'
-    : daysLeft <= 0 ? 'FINAL DAY' : `${daysLeft} DAY${daysLeft === 1 ? '' : 'S'} LEFT`;
+  const cronExpiresLabel = cron ? withOrdinal(new Date(dms(cron.expiresMs)).toLocaleDateString('en-GB',{timeZone: tz(),day:'numeric',month:'short'})) : '';
+  const cronCountLabel = !cron ? ''
+    : cron.allExpired ? `Expired (${cronExpiresLabel})`
+    : daysLeft <= 0 ? `Expires today (${cronExpiresLabel})` : `In ${daysLeft} day${daysLeft === 1 ? '' : 's'} (${cronExpiresLabel})`;
+  const cronSubLabel = !cron ? 'Add the next set to DATACRON_SETS in config.js'
+    : cron.allExpired ? `${cron.name} has expired. Add the next set to DATACRON_SETS`
+    : `${cron.name}${cron.hasFDC ? ' + FDC' : ''} expires to inbox`;
   const lastUsable = cron ? getLastUsableGuildEvent(cron.expiresMs, st.eraBaseStartMs) : null;
   let lastUsableLabel = '—';
   if(lastUsable){
@@ -70,43 +84,43 @@ function renderUnlockWindows(st){
 
   el.innerHTML = `
     <div class="status-card purple-card">
-      <div class="sc-header"><span class="sc-title">Conquest Unit (${conquestOrdinal(cqChapter.cNum)} of Volume)</span><span class="sc-badge purple">${cqBadge}</span></div>
+      <div class="sc-header"><span class="sc-title">Conquest Unit (${conquestOrdinal(cqChapter.cNum)} of Volume)</span></div>
       <div class="uw-body" style="--accent:var(--purple);--accent-dim:var(--purple-dim);--accent-border:var(--purple-border)">
         <div class="uw-img"><div class="art-badge">CQ</div><img src="${IMG_BASE}${CONQUEST_UNIT_IMAGE}" onerror="this.remove()"></div>
         <div class="uw-text">
-          <div class="sc-main"><div class="sc-val">Unlocks ${withOrdinal(new Date(dms(gameDayDisplayMs(cqDateMs))).toLocaleDateString('en-GB',{timeZone: tz(),day:'numeric',month:'short'}))}</div><div class="sc-sub">Conquest Unit can be unlocked</div></div>
+          <div class="sc-main"><div class="big-count">${cqCountLabel}</div><div class="sc-sub">${cqSubLabel}</div></div>
           <div class="sc-footer" style="flex-direction:column;align-items:flex-start;gap:2px;">
             <span>Usable in GAC: <span class="highlight">Week ${cqGacWeek} (${cqGac.format})</span></span>
-            <span>Roster Locks: ${withOrdinal(new Date(dms(gameDayDisplayMs(cqNextSignupDate))).toLocaleDateString('en-GB',{timeZone: tz(),day:'numeric',month:'short'}))} (Defense Starts)</span>
+            <span>Roster locks: ${withOrdinal(new Date(dms(gameDayDisplayMs(cqNextSignupDate))).toLocaleDateString('en-GB',{timeZone: tz(),day:'numeric',month:'short'}))} (Defense Starts)</span>
           </div>
         </div>
       </div>
     </div>
     <div class="status-card orange-card">
-      <div class="sc-header"><span class="sc-title">End of Current Era</span><span class="sc-badge orange">${eraBadge}</span></div>
+      <div class="sc-header"><span class="sc-title">End of Current Era</span></div>
       <div class="uw-body" style="--accent:var(--orange);--accent-dim:var(--orange-dim);--accent-border:var(--orange-border)">
         <div class="uw-img"><div class="art-badge">ERA</div><img src="${IMG_BASE}${ERA_UNIT_IMAGE}" onerror="this.remove()"></div>
         <div class="uw-text">
-          <div class="sc-main"><div class="sc-val">Starts ${withOrdinal(new Date(dms(gameDayDisplayMs(eraDateMs))).toLocaleDateString('en-GB',{timeZone: tz(),day:'numeric',month:'short'}))}</div><div class="sc-sub">Era Units can be used in Legacy Gamemodes</div></div>
+          <div class="sc-main"><div class="big-count">${eraCountLabel}</div><div class="sc-sub">${eraSubLabel}</div></div>
           <div class="sc-footer" style="flex-direction:column;align-items:flex-start;gap:2px;">
              <span>Usable in GAC: <span class="highlight">Week ${eraGacWeek} (${eraGac.format})</span></span>
-             <span>Roster Locks: ${withOrdinal(new Date(dms(gameDayDisplayMs(eraNextSignupDate))).toLocaleDateString('en-GB',{timeZone: tz(),day:'numeric',month:'short'}))} (Defense Starts)</span>
+             <span>Roster locks: ${withOrdinal(new Date(dms(gameDayDisplayMs(eraNextSignupDate))).toLocaleDateString('en-GB',{timeZone: tz(),day:'numeric',month:'short'}))} (Defense Starts)</span>
           </div>
         </div>
       </div>
     </div>
     <div class="status-card" style="border-color:${cronMeta.border}">
-      <div class="sc-header"><span class="sc-title">Datacron Expirations</span><span class="sc-badge" style="background:${cronMeta.dim};color:${cronMeta.accent};border:1px solid ${cronMeta.border}">${cronBadgeLabel}</span></div>
+      <div class="sc-header"><span class="sc-title">Datacron Expirations</span></div>
       <div class="uw-body" style="--accent:${cronMeta.accent};--accent-dim:${cronMeta.dim};--accent-border:${cronMeta.border}">
         <div class="uw-img"><div class="art-badge">${cronMeta.label.slice(0,3).toUpperCase()}</div><img src="${IMG_BASE}${cronMeta.asset}" onerror="this.remove()"></div>
         <div class="uw-text">
           <div class="sc-main">
-            <div class="sc-val">${cron ? cron.name : 'No datacron set configured'}${cron && cron.hasFDC ? ' <span style="color:var(--text3);font-size:11px;font-weight:600;">+ FDC</span>' : ''}</div>
-            <div class="sc-sub">${!cron ? 'Add the next set to DATACRON_SETS in config.js' : cron.allExpired ? 'This set has expired — add the next set to DATACRON_SETS' : 'This Datacron Set will expire to your inbox'}</div>
+            <div class="big-count">${cron ? cronCountLabel : 'No set configured'}</div>
+            <div class="sc-sub">${cronSubLabel}</div>
           </div>
           <div class="sc-footer" style="flex-direction:column;align-items:flex-start;gap:2px;">
-            <span>Expires: <span class="highlight">${cron ? withOrdinal(new Date(dms(cron.expiresMs)).toLocaleDateString('en-GB',{timeZone: tz(),day:'numeric',month:'short',year:'numeric'})) : '—'}</span></span>
             <span>Last usable: <span class="highlight">${lastUsableLabel}</span></span>
+            <span>Tip: dismantle unused datacrons manually</span>
           </div>
         </div>
       </div>
