@@ -481,7 +481,19 @@ body.modal-open .starfield span.tw {
 .day-today:disabled { color: var(--text3); cursor: default; opacity: 0.55; }
 .day-help { color: var(--text3); font-size: 10.5px; }
 
-/* Jump toggle button default hidden (shown on mobile via media query) */
+/* Jump toggle: hidden on desktop (jump controls always visible there),
+   shown on small screens where the jump controls collapse. */
+.jump-toggle {
+  display: none; width: 100%; margin: 10px 0 0;
+  padding: 8px 12px; border: 1px solid var(--border2); border-radius: var(--radius);
+  background: var(--void2); color: var(--text2); font-family: var(--body);
+  font-size: 11.5px; font-weight: 600; cursor: pointer; transition: 0.15s;
+  align-items: center; justify-content: space-between;
+}
+.jump-toggle:hover { border-color: var(--amber-border); color: var(--amber); }
+.jump-toggle .jt-chev { transition: transform 0.2s ease; }
+.jump-toggle[aria-expanded="true"] .jt-chev { transform: rotate(180deg); }
+.jump-toggle:focus-visible { outline: 2px solid var(--amber-border); outline-offset: 1px; }
 .day-detail { margin-top: 16px; }
 .day-detail-head { margin-bottom: 12px; }
 .day-detail-head h3 { font-family: var(--disp); font-size: 17px; font-weight: 700; color: var(--text); }
@@ -813,7 +825,9 @@ body.modal-open .starfield span.tw {
   .day-pill { padding-left: 1px; padding-right: 1px; }
   .day-pill .dp-dow { font-size: 8px; }
   .day-pill .dp-num { font-size: 13px; }
-  .explorer-tools { margin-left: 39px; margin-right: 39px; flex-wrap: wrap; }
+  .jump-toggle { display: flex; margin: 10px 39px 0; width: auto; }
+  .explorer-tools { display: none; margin-left: 39px; margin-right: 39px; flex-wrap: wrap; }
+  .explorer-tools.open { display: flex; }
   .jump-field, .jump-field-event { flex: 1 1 100%; min-width: 0; }
   .explorer-tools .day-today { width: 100%; align-self: stretch; }
   .day-detail-head { flex-direction: column; }

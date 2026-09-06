@@ -186,6 +186,23 @@ if(navToggle && mobilePanel){
   });
 }
 
+/* Jump-to collapse (small screens only; the toggle is hidden on
+   desktop where the jump controls are always visible). The tools
+   element is static markup so the open state survives renderAll(). */
+const jumpToggle = document.getElementById('jumpToggle');
+const explorerTools = document.getElementById('explorerTools');
+
+function setJumpOpen(open){
+  if(!jumpToggle || !explorerTools) return;
+  explorerTools.classList.toggle('open', open);
+  jumpToggle.setAttribute('aria-expanded', String(open));
+}
+if(jumpToggle && explorerTools){
+  jumpToggle.addEventListener('click', () => {
+    setJumpOpen(!explorerTools.classList.contains('open'));
+  });
+}
+
 /* Display timezone picker (header + mobile panel). Defaults to the
    device's timezone; the choice persists and re-renders all dates. */
 function tzSelectLabel(value){
