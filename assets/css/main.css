@@ -258,6 +258,9 @@ body.modal-open .starfield span.tw {
   color: var(--amber); font-weight: 700; text-decoration: none; white-space: nowrap;
 }
 .explorer-note p a:hover { text-decoration: underline; }
+/* Inline external-link icon (replaces the ↗ text glyph, which renders
+   as an emoji-style character on some mobile platforms). */
+.ext-icon { display: inline-block; vertical-align: -1px; margin-left: 2px; }
 
 /* ─── Stale-era banner (shown when the configured era has ended) ─── */
 .stale-banner {
@@ -448,7 +451,7 @@ body.modal-open .starfield span.tw {
   background: var(--void2); border: 1px solid var(--border2); color: var(--text2);
   font-size: 18px; line-height: 1; cursor: pointer; transition: 0.15s;
 }
-.day-arrow:hover:not(:disabled) { border-color: var(--ui-accent-border); color: var(--ui-accent); }
+.day-arrow:hover:not(:disabled) { border-color: var(--amber-border); color: var(--amber); }
 .day-arrow:disabled { opacity: 0.3; cursor: default; }
 .day-strip {
   flex: 1; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px;
