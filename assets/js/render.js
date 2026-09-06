@@ -390,13 +390,6 @@ function explorerCardHTML(item, dateMs, relLabel, tbCtx, nowMs){
   // choice persists and drives the art + phase labels everywhere.
   const picker = (tbCtx && tbCtx.showPicker && item.icon === 'rote') ? tbPickerHTML(tbCtx) : '';
 
-  // Calendar export: start/end precomputed so the click handler only
-  // reads dataset (no TB context lookup at click time).
-  const calBase = getFullScheduleLabel(item);
-  const calStart = eventStartMs(item, dateMs);
-  const calEnd = icsEndMs(item, dateMs, isTbCard ? tbCtx : null);
-  const calDesc = `${eventDateRangeLabel(item, eventDisplayMs(item, dateMs), isTbCard ? tbCtx : null)} · Expected date, not live data — check swgoh.gg/events.`;
-
   return `<article class="xcard" style="${style}">
     <div class="xcard-art">
       <div class="art-badge">${tag.glyph}</div>
@@ -410,49 +403,9 @@ function explorerCardHTML(item, dateMs, relLabel, tbCtx, nowMs){
     <div class="xcard-body">
       <h4>${title}</h4>
       <div class="xcard-date">${eventDateRangeLabel(item, eventDisplayMs(item, dateMs), isTbCard ? tbCtx : null)}</div>
-      <button type="button" class="xcard-cal" data-icon="${escAttr(item.icon)}" data-title="${escAttr(calBase)}" data-start="${calStart}" data-end="${calEnd}" data-desc="${escAttr(calDesc)}" title="Download a calendar file (.ics) for this event">+ Calendar</button>
       ${picker}
     </div>
   </article>`;
-}
-
-/* Calendar (.ics) download for one event card. Dataset carries the
-   precomputed untensed title + start/end instants; the file is built
-   client-side — no network, no tracking. */
-function icsStamp(ms){
-  const d = new Date(ms);
-  const p = n => String(n).padStart(2, '0');
-  return `${d.getUTCFullYear()}${p(d.getUTCMonth() + 1)}${p(d.getUTCDate())}T${p(d.getUTCHours())}${p(d.getUTCMinutes())}${p(d.getUTCSeconds())}Z`;
-}
-
-function icsEscape(s){
-  return String(s).replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n');
-}
-
-function downloadICS(data){
-  if(!data || !Number.isFinite(Number(data.start)) || !Number.isFinite(Number(data.end))) return;
-  const startMs = Number(data.start), endMs = Math.max(Number(data.end), Number(data.start));
-  const lines = [
-    'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//SWGOH Resources//Event Schedule//EN', 'BEGIN:VEVENT',
-    `UID:swgoh-${startMs}-${String(data.icon || 'event').replace(/[^a-z0-9_-]+/gi, '')}@swgohresources.github.io`,
-    `DTSTAMP:${icsStamp(Date.now())}`,
-    `DTSTART:${icsStamp(startMs)}`,
-    `DTEND:${icsStamp(endMs)}`,
-    `SUMMARY:${icsEscape(data.title || 'SWGOH event')}`,
-    `DESCRIPTION:${icsEscape(data.desc || '')}`,
-    'END:VEVENT', 'END:VCALENDAR',
-  ];
-  try {
-    const blob = new Blob([lines.join('\r\n')], { type: 'text/calendar' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `swgoh-${String(data.icon || 'event').replace(/[^a-z0-9_-]+/gi, '')}-${startMs}.ics`;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 5000);
-  } catch(e){}
 }
 
 function renderExplorer(st){

@@ -168,15 +168,6 @@ function setTbChoice(id, side){
   }
 }
 
-/* Calendar export (event cards are rebuilt on every render, so a
-   delegated listener outlives the buttons). Null-safe if render.js
-   failed to load. */
-document.addEventListener('click', e => {
-  const btn = e.target && e.target.closest ? e.target.closest('.xcard-cal') : null;
-  if(!btn) return;
-  if(typeof downloadICS === 'function') downloadICS(btn.dataset);
-});
-
 /* Mobile Nav Panel (null-safe: a missing toggle must not halt init) */
 const navToggle = document.getElementById('navToggle');
 

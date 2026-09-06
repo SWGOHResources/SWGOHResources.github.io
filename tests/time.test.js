@@ -609,28 +609,6 @@ test('day hash bounds follow the configured era length', () => {
   assert.equal(engine.dayFromHash('#day-57'), null);
 });
 
-test('calendar export end instants mirror the displayed spans', () => {
-  const engine = loadTimeEngine();
-  const dayStart = Date.parse('2026-08-04T00:00:00Z');
-  // GAC starts at 21:00 UTC, everything else at the 18:00 changeover.
-  assert.equal(
-    engine.icsEndMs({ icon: 'gac_signup' }, dayStart),
-    dayStart + (21 * 3600000) + 86400000
-  );
-  assert.equal(
-    engine.icsEndMs({ icon: 'tw_offense' }, dayStart),
-    dayStart + (18 * 3600000) + 86400000
-  );
-  assert.equal(
-    engine.icsEndMs({ icon: 'conquest_start' }, dayStart),
-    dayStart + (18 * 3600000) + (14 * 86400000)
-  );
-  assert.equal(
-    engine.icsEndMs({ icon: 'client_update' }, dayStart),
-    dayStart + (18 * 3600000) + 3600000
-  );
-});
-
 test('day pills show era-day numbers with a calendar caption', () => {
   const { ctx, els } = loadRenderEngine();
   const run = src => vm.runInContext(src, ctx);
