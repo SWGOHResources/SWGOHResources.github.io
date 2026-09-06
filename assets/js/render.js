@@ -396,6 +396,11 @@ function explorerCardHTML(item, dateMs, relLabel, tbCtx, nowMs){
   const asset = isTbCard ? tbCtx.art : assetFor(item.icon);
   const style = `--accent:${meta.accent};--accent-dim:${meta.dim};--accent-border:${meta.border}`;
   const imgTag = asset ? `<img src="${IMG_BASE}${asset}" alt="" loading="eager" decoding="async" onerror="this.remove()">` : '';
+  // Square sources can't cover the portrait frame without decapitation,
+  // so they render contained over a blurred fill of themselves: uniform
+  // card size, nothing stretched, nothing sliced.
+  const fillTag = (asset && isFitArt(item.icon))
+    ? `<div class="art-fill" aria-hidden="true" style="background-image:url(&quot;${IMG_BASE}${asset}&quot;)"></div>` : '';
   const relCls = relLabel === 'Now' ? 'xcard-rel is-today' : 'xcard-rel';
   const title = tenseByStart(getFullScheduleLabel(item), item, dateMs, nowMs);
 
@@ -405,8 +410,9 @@ function explorerCardHTML(item, dateMs, relLabel, tbCtx, nowMs){
   const picker = (tbCtx && tbCtx.showPicker && item.icon === 'rote') ? tbPickerHTML(tbCtx) : '';
 
   return `<article class="xcard" style="${style}">
-    <div class="xcard-art">
+    <div class="xcard-art${isFitArt(item.icon) ? ' fit' : ''}">
       <div class="art-badge">${tag.glyph}</div>
+      ${fillTag}
       ${imgTag}
       <div class="xcard-shade"></div>
       <div class="xcard-art-meta">

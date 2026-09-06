@@ -81,9 +81,9 @@ const CRON_COLOR_META = {
  EVENT DATA MODEL (EXACT SHEET9 MAPPING)
   ========================================================= */
 
-// Marquee / era-challenge art is full portrait art in-game. The square
-// marquee3 and marquee5 images in assets/img/marquee/ are placeholders —
-// swap in the real portraits when available (same filenames, no code
+// Marquee / era-challenge art is full portrait art in-game. The
+// marquee5 image in assets/img/marquee/ is a square placeholder —
+// swap in the real portrait when available (same filename, no code
 // changes needed).
 const MARQUEE_NAMES = {
   marquee_1: 'Mara Jade Skywalker',
@@ -285,9 +285,21 @@ const EVENT_ICONS = {
   datacron_set_blue: 'datacrons/datacron_blue.png'
 };
 
+/* Icons whose art is a subject on a transparent background (viewed to
+   verify). Full-bleed square scenes (TW battles, Smuggler's Run) cover
+   the portrait card frame cleanly, but transparent subjects would be
+   decapitated by the crop — they render contained over a blurred fill
+   of themselves instead. Keep this in sync when art is swapped. */
+const FIT_ART_ICONS = [
+  'gac_signup', 'gac_defense', 'gac_attack',
+  'era_changeover',
+  'client_update', 'shipment_update',
+  'marquee_5', 'era_challenge_5',
+];
+
 /* =========================================================
-   TIME ENGINE
-   ========================================================= */
+ TIME ENGINE
+ ========================================================= */
 
 const ERA_LENGTH_DAYS = 84;
 
