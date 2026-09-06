@@ -187,6 +187,15 @@ function assetFor(icon){
   return EVENT_ICONS[icon] || CATEGORY_ICONS[cat] || null;
 }
 
+/* Transparent-subject icons (see FIT_ART_ICONS in config.js) render
+   contained over a blurred fill instead of cover-cropped.
+   Pure — safe to test. */
+function isFitArt(icon){
+  const set = (typeof FIT_ART_ICONS !== 'undefined' && Array.isArray(FIT_ART_ICONS))
+    ? FIT_ART_ICONS : [];
+  return typeof icon === 'string' && set.includes(icon);
+}
+
 function categoryFor(icon){
   if(icon.startsWith('gac')) return 'gac';
   if(icon.startsWith('conquest') || icon === 'proving_ground') return 'conquest';
