@@ -851,16 +851,18 @@ function setTimeZone(v){
   return true;
 }
 
-/* Weekday-short + day-number of an instant in the display zone
-   (for the explorer day pills). */
+/* Weekday-short + calendar day/month of an instant in the display zone
+   (for the explorer day pills: the big number is the era day, the
+   caption underneath is the calendar date). */
 function tzDayParts(ms){
-  const parts = new Intl.DateTimeFormat('en-GB', { timeZone: tz(), weekday: 'short', day: 'numeric' }).formatToParts(new Date(dms(ms)));
-  let dow = '', num = '';
+  const parts = new Intl.DateTimeFormat('en-GB', { timeZone: tz(), weekday: 'short', day: 'numeric', month: 'short' }).formatToParts(new Date(dms(ms)));
+  let dow = '', num = '', month = '';
   for(const p of parts){
     if(p.type === 'weekday') dow = p.value;
     if(p.type === 'day') num = p.value;
+    if(p.type === 'month') month = p.value;
   }
-  return { dow, num };
+  return { dow, num, month };
 }
 
 function fmtDateUTC(ms){
@@ -1311,7 +1313,12 @@ function validateScheduleConfig(){
   /* Schedule tables: every entry must be an {icon, label} object —
      renderers call string methods on both, so a stray string or a
      missing label crashes the page (getDayEvents filters these at
-     runtime, but the config should be fixed). */
+     runtime, but the config should be fixed). Icons must also exist in
+     EVENT_ICONS — every legitimate schedule icon does, so anything else
+     is a typo that would render with fallback art (or no tracker). */
+  const knownIcons = (typeof EVENT_ICONS !== 'undefined' && EVENT_ICONS)
+    ? new Set([...Object.keys(EVENT_ICONS), 'datacron_set'])
+    : null;
   const checkEventList = (name, list) => {
     if(!Array.isArray(list)){
       issues.push(`${name} must be an array of {icon, label} events.`);
@@ -1322,6 +1329,8 @@ function validateScheduleConfig(){
         issues.push(`${name}[${i}] needs a string icon.`);
       else if(typeof item.label !== 'string')
         issues.push(`${name}[${i}] needs a string label.`);
+      else if(knownIcons && !knownIcons.has(item.icon))
+        issues.push(`${name}[${i}] has unknown icon "${item.icon}".`);
     });
   };
 
@@ -1416,6 +1425,10 @@ function getGuildPhaseInfo(st){
   if(active.type === 'tw'){
     if(active.info.icon === 'tw_payout') return { type: 'tw', complete: true };
     const idx = TW_PHASE_ICONS.indexOf(active.info.icon);
+    // Unknown TW icon (config typo): no tracker rather than a tracker
+    // with no active phase. The label still renders and
+    // validateScheduleConfig() reports the bad icon.
+    if(idx < 0) return null;
     return { type: 'tw', phaseIndex: idx };
   } else {
     if(active.info.icon === 'tb_ends') return { type: 'tb', complete: true, phases: active.info.phases || 6 };

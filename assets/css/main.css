@@ -463,6 +463,7 @@ body.modal-open .starfield span.tw {
 .day-pill:hover { border-color: var(--border2); color: var(--text); }
 .day-pill .dp-dow { font-size: 9px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text3); }
 .day-pill .dp-num { font-family: var(--disp); font-size: 14px; font-weight: 700; color: var(--text); }
+.day-pill .dp-date { font-family: var(--mono); font-size: 9px; color: var(--text3); white-space: nowrap; }
 .day-pill .dp-dot { width: 4px; height: 4px; border-radius: 50%; background: transparent; margin-top: 2px; }
 .day-pill.has-events .dp-dot { background: var(--text3); }
 .day-pill.is-today { border-color: var(--cyan-border); }
@@ -845,6 +846,7 @@ body.modal-open .starfield span.tw {
   .day-pill { padding-left: 1px; padding-right: 1px; }
   .day-pill .dp-dow { font-size: 8px; }
   .day-pill .dp-num { font-size: 13px; }
+  .day-pill .dp-date { display: none; }
   .jump-toggle { display: flex; margin: 10px 39px 0; width: auto; }
   .explorer-tools { display: none; margin-left: 39px; margin-right: 39px; flex-wrap: wrap; }
   .explorer-tools.open { display: flex; }
