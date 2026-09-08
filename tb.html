@@ -1,65 +1,599 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TB Tool — Rise of the Empire | SWGOH Resources</title>
-  <meta name="description" content="Territory Battle planner: battle map, planet missions and recommended team comps for Rise of the Empire.">
-  <link rel="canonical" href="https://swgohresources.github.io/tb.html">
-  <meta name="robots" content="index, follow">
-  <meta name="theme-color" content="#0b0d11">
-  <meta name="color-scheme" content="dark">
-  <link rel="icon" href="/favicon.ico" type="image/x-icon">
-  <link rel="icon" href="/assets/img/icons/favicon-32.png?v=1" type="image/png" sizes="32x32">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/assets/css/main.css?v=44">
-  <link rel="stylesheet" href="/assets/css/tb.css?v=1">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rise of the Empire — TB3 Territory Battle Map (3D)</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%;background:#01030a}
+  body{background:#01030a;min-height:100vh;min-height:100dvh;margin:0;padding:0;overflow:hidden;
+    font-family:"Sora","Inter","Arial Narrow",Arial,sans-serif}
+  .cabinet{width:100vw;height:100vh;height:100dvh;position:relative;background:#01030a;overflow:hidden}
+  /* table chrome removed — no table assets available */
+  .screen{position:absolute;inset:0;overflow:hidden;background:#020913}
+  /* deep-space backdrop like the reference: near-black top, blue nebula low corners */
+  .space{position:absolute;inset:0;
+    background:radial-gradient(45% 38% at 12% 96%,rgba(24,95,175,.55),rgba(24,95,175,0) 70%),
+    radial-gradient(45% 38% at 88% 96%,rgba(24,95,175,.5),rgba(24,95,175,0) 70%),
+    radial-gradient(130% 100% at 50% 0%,#071a33 0%,#040f22 34%,#010711 62%,#000309 100%)}
+  .space .stars{position:absolute;inset:0;background-size:cover;background-repeat:no-repeat;opacity:.9}
+  /* cloud nebula layers removed — the grey wash wasn't part of the look */
+  .space .vig{position:absolute;inset:0;background:radial-gradient(115% 100% at 50% 42%,transparent 55%,rgba(0,0,5,.55) 100%)}
+  #gl{position:absolute;inset:0;width:100%;height:100%;z-index:6;display:block;cursor:grab}
+  #gl:active{cursor:grabbing}
+  #loader{position:absolute;inset:0;z-index:15;display:flex;align-items:center;justify-content:center;
+    color:#9fe8ff;letter-spacing:.2em;font-size:12px;background:rgba(1,4,10,.6)}
+  .bstars{position:absolute;z-index:12;transform:translate(-50%,0);white-space:nowrap;pointer-events:none;
+    text-shadow:0 0 6px rgba(255,190,0,.9)}
+  .bstars img{width:clamp(11px,1.9vw,20px);height:auto;filter:drop-shadow(0 0 4px rgba(255,190,0,.9))}
+  .dstars img.ds{width:1em;height:1em;vertical-align:-0.1em;filter:drop-shadow(0 0 4px rgba(255,190,0,.9))}
+  /* holo projector + console removed with the table chrome */
+  .hud{position:absolute;top:0;left:0;right:0;z-index:40;pointer-events:none;display:flex;
+    justify-content:space-between;align-items:flex-start;padding:1.1% 2.2% 0}
+  .hud-left{display:flex;gap:8px;align-items:flex-start}
+  .circ{width:34px;height:34px;min-width:34px;border-radius:50%;
+    background:radial-gradient(circle at 35% 30%,#2a3d5a,#060b14 70%);
+    border:2px solid rgba(120,210,245,.8);box-shadow:0 0 8px rgba(80,200,245,.5),inset 0 0 8px rgba(0,0,0,.8);
+    display:flex;align-items:center;justify-content:center;color:#cfefff;font-weight:800}
+  .title{line-height:1.05;text-shadow:0 2px 0 #000,0 0 8px rgba(0,0,0,.9)}
+  .title b{display:block;color:#f2f5f7;font-size:clamp(10px,2vw,21px);letter-spacing:.06em}
+  .title span{display:block;color:#e8b64c;font-size:clamp(8px,1.5vw,15px);letter-spacing:.02em;text-shadow:0 1px 0 #000}
+  .hud-right{display:flex;align-items:center;gap:8px;text-shadow:0 2px 0 #000}
+  .stars-pill{color:#d7f3ff;font-weight:800;font-size:clamp(10px,1.9vw,19px)}
+  .stars-pill i{color:#ffcf1f;font-style:normal;text-shadow:0 0 8px rgba(255,200,0,.8)}
+  /* phase indicator removed */
+  .chat{position:absolute;left:1.1%;bottom:4%;z-index:40;width:34px;height:34px;border-radius:50%;
+    background:radial-gradient(circle at 35% 30%,#2a3d5a,#060b14 70%);
+    border:2px solid rgba(120,210,245,.7);display:flex;align-items:center;justify-content:center}
+  .chat svg{width:60%;height:60%;fill:#cfefff}
+  .hint{position:absolute;right:12px;bottom:10px;z-index:41;pointer-events:none;color:#7fb8d8;
+    font-size:11px;letter-spacing:.08em;text-shadow:0 1px 0 #000;opacity:.9;transition:opacity 1.5s}
+  /* ------- planet detail (zoomed) panel, like the in-game screenshot ------- */
+  #detail{position:absolute;inset:0;z-index:10;display:flex;flex-direction:column;pointer-events:none;
+    padding-top:clamp(52px,8vh,76px)}
+  #detail[hidden]{display:none}
+  .d-head{background:linear-gradient(#06243f,#041627);border-bottom:2px solid #0e3a5c;
+    padding:10px 14px 12px;pointer-events:none;box-shadow:0 4px 18px rgba(0,0,0,.6)}
+  .d-row1{display:flex;align-items:center;gap:10px}
+  .d-row1 img{width:30px;height:30px;object-fit:contain;filter:brightness(1.6)}
+  .d-row1 b{color:#f2f7fb;font-size:clamp(16px,3vw,30px);letter-spacing:.02em;flex:1}
+  .d-row1 .dstars{color:#0b2c44;font-size:clamp(16px,3vw,30px);letter-spacing:4px;
+    text-shadow:0 0 1px #3fd6f5,-1px -1px 0 #3fd6f5,1px -1px 0 #3fd6f5,-1px 1px 0 #3fd6f5,1px 1px 0 #3fd6f5}
+  .d-row1 .dstars .earned{color:#ffd21f;text-shadow:0 0 8px rgba(255,190,0,.9)}
+  .d-score{color:#cfe3f2;font-size:clamp(11px,2vw,19px);margin-top:4px}
+  .d-score b{color:#ffd76a}
+  .d-bar{position:relative;height:14px;background:#020a14;border:1px solid #12344d;margin-top:6px}
+  #dFill{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,#2f9fd8,#5fd4f5);width:10%}
+  .d-bar .tick{position:absolute;top:-4px;width:3px;height:20px;background:#e8b64c;box-shadow:0 0 4px rgba(232,182,76,.9)}
+  .d-bar .tick::after{content:"";position:absolute;left:-4px;top:-6px;border:5px solid transparent;border-top-color:#e8b64c}
+  .d-ticks{position:relative;height:20px;color:#9fd8ef;font-size:clamp(9px,1.6vw,15px)}
+  .d-ticks span{position:absolute;transform:translateX(-50%)}
+  .d-ticks i{font-style:normal;color:#0e3a5c;text-shadow:0 0 1px #3fd6f5}
+  .d-desc{color:#4fd2f2;font-size:clamp(11px,2vw,18px);margin-top:2px;text-shadow:0 1px 0 #000}
+  #hudBack{pointer-events:none}
+  #hudBack.on{pointer-events:auto;cursor:pointer}
+  .mnode{position:absolute;z-index:16;transform:translate(-50%,-50%);pointer-events:auto;cursor:pointer;
+    width:clamp(40px,7vw,64px);aspect-ratio:1;background:none;border:none}
+  .mnode .disc{position:absolute;inset:0;border-radius:50%;
+    background:radial-gradient(circle at 40% 35%,rgba(40,120,200,.9),rgba(4,16,34,.95) 70%);
+    border:2px solid rgba(120,220,255,.95);
+    box-shadow:0 0 12px rgba(80,200,255,.8),inset 0 0 10px rgba(80,200,255,.4);
+    display:flex;align-items:center;justify-content:center}
+  .mnode .disc img{width:62%;height:62%;object-fit:contain;pointer-events:none;
+    filter:brightness(1.6) drop-shadow(0 0 3px rgba(160,230,255,.9))}
+  .mnode .ped{position:absolute;left:50%;top:96%;width:44%;height:15%;transform:translateX(-50%);
+    background:linear-gradient(rgba(120,220,255,.95),rgba(20,80,140,.9));
+    clip-path:polygon(12% 0,88% 0,100% 100%,0 100%)}
+  .mnode .beam{display:none;position:absolute;left:50%;bottom:88%;width:10px;height:130%;transform:translateX(-50%);
+    background:linear-gradient(to top,rgba(160,255,200,.9),rgba(160,255,200,0));filter:blur(1px)}
+  .mnode.sel .disc{border-color:rgba(110,255,150,.95);
+    box-shadow:0 0 16px rgba(80,255,140,.9),inset 0 0 12px rgba(80,255,140,.4)}
+  .mnode.sel .beam{display:block}
+  .mnode.grey .disc{filter:grayscale(1) brightness(.55)}
+  .mnode.grey,.mnode.locked{cursor:default}
+  .mnode.locked .disc{border-color:rgba(255,70,80,.9)}
+  .mnode.locked .ban{position:absolute;inset:-6px;border-radius:50%;border:4px solid rgba(255,45,55,.95);
+    box-shadow:0 0 10px rgba(255,0,0,.7);z-index:2}
+  .mnode.locked .slash{position:absolute;left:6%;right:6%;top:50%;height:4px;margin-top:-2px;
+    background:rgba(255,45,55,.95);transform:rotate(-38deg);box-shadow:0 0 8px rgba(255,0,0,.8);z-index:2}
+  .mnode .nstars{position:absolute;top:114%;left:50%;transform:translateX(-50%);display:flex;gap:2px;
+    align-items:center;white-space:nowrap}
+  .mnode .nstars img{width:13px;height:13px}
+  .mnode .nstars span{color:#0e2c46;font-size:14px;text-shadow:0 0 1px #3fd6f5}
+  .mnode.home .disc{background:radial-gradient(circle at 40% 35%,rgba(30,140,90,.9),rgba(3,18,14,.95) 70%);
+    border-color:rgba(110,255,150,.95)}
+  .mnode.home .hstars{position:absolute;top:114%;left:50%;transform:translateX(-50%);color:#0b2c44;
+    font-size:13px;letter-spacing:2px;white-space:nowrap;text-shadow:0 0 1px #3fd6f5}
+  /* ------- mission panel (right side, only after tapping a mission) ------- */
+  #mission{position:absolute;top:clamp(52px,8vh,76px);right:0;bottom:0;width:min(430px,44%);z-index:34;overflow-y:auto;
+    background:linear-gradient(rgba(4,26,48,.97),rgba(2,12,26,.97));
+    border-left:2px solid rgba(64,210,245,.7);box-shadow:-12px 0 30px rgba(0,0,0,.6);
+    padding:10px 12px 12px;pointer-events:auto}
+  #mission[hidden]{display:none}
+  .m-head{display:flex;align-items:center;gap:8px;border-bottom:2px solid rgba(64,210,245,.4);padding-bottom:8px}
+  .m-head>img{width:30px;height:30px;object-fit:contain;filter:brightness(1.5)}
+  .m-head b{flex:1;color:#f2f7fb;font-size:clamp(15px,2.4vw,24px)}
+  .m-squad{display:flex;align-items:center;gap:5px;color:#cfefff;font-weight:800;font-size:clamp(11px,1.8vw,16px)}
+  .m-squad img{width:24px;height:24px;object-fit:contain}
+  .m-sec h4{color:#7de8f7;font-size:clamp(10px,1.5vw,13px);letter-spacing:.06em;margin:10px 0 3px;
+    border-bottom:1px solid rgba(125,232,247,.35);padding-bottom:2px}
+  .m-sec p{color:#e8f1f8;font-size:clamp(11px,1.8vw,16px);line-height:1.35}
+  .m-abil{display:flex;gap:8px;margin-top:6px}
+  .m-abil img{width:clamp(34px,5vw,52px);height:clamp(34px,5vw,52px);object-fit:contain;
+    border:2px solid rgba(125,232,247,.8);border-radius:8px;background:rgba(6,30,52,.8);padding:3px}
+  .m-abil img.gold{border-color:#ffb300;box-shadow:0 0 8px rgba(255,179,0,.7)}
+  .m-units{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:6px}
+  .unit{position:relative;text-align:center}
+  .u-ring{position:absolute;left:50%;top:0;width:88%;aspect-ratio:1;transform:translateX(-50%);border-radius:50%;
+    background:conic-gradient(from -32deg,rgba(255,30,45,.95) 0 28deg,transparent 28deg 62deg,rgba(255,30,45,.95) 62deg 122deg,transparent 122deg 156deg,rgba(255,30,45,.95) 156deg 216deg,transparent 216deg 360deg);
+    filter:drop-shadow(0 0 4px rgba(255,0,0,.6))}
+  .u-face{position:relative;width:64%;aspect-ratio:1;margin:13% auto 0;border-radius:50%;
+    background:radial-gradient(circle at 35% 30%,#26344c,#05080f 70%);border:2px solid #0e2438;
+    display:flex;align-items:center;justify-content:center;overflow:hidden}
+  .u-face img{width:70%;height:70%;object-fit:contain;filter:brightness(.85)}
+  .u-relic{position:absolute;left:4%;top:46%;width:22px;height:22px;border-radius:50%;
+    background:radial-gradient(circle at 35% 30%,#9b5cff,#4a1d96 70%);border:1px solid #d6b3ff;
+    color:#fff;font-weight:800;font-size:12px;line-height:20px}
+  .u-stars{display:flex;justify-content:center;gap:1px;margin-top:2px}
+  .u-stars img{width:11px;height:11px}
+  .u-flag{margin-top:2px;background:#05080f;border:1px solid #e8b64c;color:#ffd76a;
+    font-size:9px;font-weight:800;letter-spacing:.04em;padding:2px 0}
+  .m-note{margin-top:10px;display:flex;gap:8px;align-items:center;
+    background:linear-gradient(90deg,#3a2a12,#241a08);border:1px solid #e8b64c;border-radius:6px;
+    padding:8px;color:#ffe1a1;font-size:clamp(10px,1.6vw,14px)}
+  .m-note img{width:26px;height:26px;flex-shrink:0;object-fit:contain}
+  .m-btns{display:flex;gap:8px;margin-top:10px}
+  .m-btns button{border-radius:8px;font-weight:800;letter-spacing:.06em;cursor:pointer;
+    padding:12px 0;font-size:clamp(13px,2vw,18px)}
+  #mBack{flex:0 0 30%;background:#0a1828;border:2px solid rgba(120,210,245,.8);color:#cfefff}
+  #mBattle{flex:1;background:linear-gradient(#37c837,#1a8f1a);border:2px solid #7dff7d;color:#fff;
+    text-shadow:0 2px 0 rgba(0,0,0,.4);box-shadow:0 0 12px rgba(40,200,40,.5)}
+  @media (max-aspect-ratio:1/1){#mission{top:auto;left:0;right:0;bottom:0;width:auto;max-height:48%;
+    border-left:none;border-top:2px solid rgba(64,210,245,.7);box-shadow:0 -12px 30px rgba(0,0,0,.6)}}
+  @media (max-width:640px){.circ,.chat{width:26px;height:26px;min-width:26px}}
+  @media (max-width:700px){#mission{width:62%}.u-relic{width:16px;height:16px;font-size:9px;line-height:14px}
+    .u-flag{font-size:7px}.m-abil img{width:30px;height:30px}}
+</style>
 </head>
 <body>
-  <a class="skip-link" href="#main">Skip to TB tool</a>
-
-  <header class="top-header">
-    <div class="topbar">
-      <a href="/" class="topbar-title"><img src="/assets/img/icons/favicon-32.png" alt="SWGOH Resources" class="topbar-logo" width="20" height="20">SWGOH<span class="divider-glyph">::</span><span>RESOURCES</span></a>
-      <nav class="topbar-tabs" aria-label="Primary"><a class="tab-btn" href="/">Home</a></nav>
-      <div class="topbar-actions"><button class="gear-btn" id="openAboutBtnHeader">Report Issue</button></div>
-      <button class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false" aria-controls="mobilePanel"><span></span><span></span><span></span></button>
+<div class="cabinet">
+  <div class="screen" id="screen">
+    <div class="space"><div class="stars"></div><div class="vig"></div></div>
+    <canvas id="gl"></canvas>
+    <div id="loader">LOADING TB3&nbsp;&nbsp;·&nbsp;&nbsp;RISE OF THE EMPIRE</div>
+    <div class="hud">
+      <div class="hud-left"><div class="circ" id="hudBack">◀</div>
+        <div class="title"><b>RISE OF THE EMPIRE</b><span>Guild GP: 495,563,158</span></div></div>
+      <div class="hud-right"><div class="stars-pill"><i>★</i> 9 / 54</div><div class="circ">⛨</div></div>
     </div>
-    <div class="mobile-panel" id="mobilePanel">
-      <a class="mp-link" href="/">Home</a>
-      <div class="mp-divider"></div>
-      <button class="gear-btn mp-btn" id="openAboutBtnMobile">Report Issue</button>
+    <div class="chat"><svg viewBox="0 0 24 24"><path d="M4 3h16a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H9l-5 4V4a1 1 0 0 1 1-1zm3 5v2h10V8H7zm0 3.5V13h7v-1.5H7z"/></svg></div>
+    <div class="hint" id="hint">drag to slide · wheel to zoom · double-click to reset</div>
+    <div id="detail" hidden>
+      <div class="d-head">
+        <div class="d-row1"><img id="dWing" alt=""><b id="dName">Dathomir</b><span class="dstars" id="dStars"></span></div>
+        <div class="d-score"><b id="dCur"></b> / <span id="dNext"></span> (Next Star)</div>
+        <div class="d-bar"><div id="dFill"></div></div>
+        <div class="d-ticks" id="dTicks"></div>
+        <div class="d-desc" id="dDesc"></div>
+      </div>
     </div>
-  </header>
-
-<aside class="cookie-notice" id="cookieNotice" hidden aria-label="Cookie notice">
-  <div>
-    <strong>Cookie notice</strong>
-    <p>We use one essential cookie to remember this notice. Schedule preferences stay on your device.</p>
+    <aside id="mission" hidden>
+      <div class="m-head"><img id="mIcon" alt=""><b id="mName">Combat Mission</b>
+        <span class="m-squad"><img id="mSquadIcon" alt=""><span id="mSquad">32 / 50</span></span></div>
+      <div class="m-sec"><h4>REQUIREMENTS</h4><p id="mReq"></p></div>
+      <div class="m-sec"><h4>REWARDS</h4><p id="mRew"></p></div>
+      <div class="m-sec"><h4>ABILITIES AFFECTING TERRITORY</h4><div class="m-abil" id="mAbil"></div></div>
+      <div class="m-sec"><h4>MISSION UNITS</h4><div class="m-units" id="mUnits"></div></div>
+      <div class="m-note"><img id="mNoteIcon" alt=""><span id="mNote"></span></div>
+      <div class="m-btns"><button id="mBack" type="button">◀ BACK</button><button id="mBattle" type="button">BATTLE (1)</button></div>
+    </aside>
   </div>
-  <div class="cookie-actions">
-    <a href="cookie-policy.html">Cookie policy</a>
-    <button class="btn primary" id="dismissCookieNotice" type="button">Got it</button>
-  </div>
-</aside>
+</div>
+<script>
+(async function(){
+"use strict";
+/* surface failures instead of freezing silently */
+addEventListener('error',e=>{try{const l=document.getElementById('loader');if(l){l.style.display='flex';l.textContent='ERROR: '+(e.message||'script error');}}catch(_){}});
+addEventListener('unhandledrejection',e=>{try{const l=document.getElementById('loader');if(l){l.style.display='flex';l.textContent='ERROR: '+((e.reason&&e.reason.message)||e.reason||'load failed');}}catch(_){}});
+const canvas=document.getElementById('gl'), screen=document.getElementById('screen'), loader=document.getElementById('loader');
+const detail=document.getElementById('detail');
+const mission=document.getElementById('mission');
+const gl=canvas.getContext('webgl',{alpha:true,antialias:true});
+if(!gl){loader.textContent='WEBGL UNAVAILABLE';return;}
 
-  <main class="tb-stage" id="main">
-    <div class="section-head">
-      <h2>TB Tool</h2>
-      <span class="sub">Rise of the Empire · battle map, missions and comps</span>
-      <div class="rule"></div>
-    </div>
-    <div id="tbApp">
-      <p class="tb-empty">Loading battle data…</p>
-    </div>
-  </main>
+const M4={
+  mul(a,b){const o=new Float32Array(16);for(let c=0;c<4;c++)for(let r=0;r<4;r++){o[c*4+r]=a[r]*b[c*4]+a[4+r]*b[c*4+1]+a[8+r]*b[c*4+2]+a[12+r]*b[c*4+3];}return o;},
+  persp(fovy,asp,n,f){const t=1/Math.tan(fovy/2),o=new Float32Array(16);o[0]=t/asp;o[5]=t;o[10]=(f+n)/(n-f);o[11]=-1;o[14]=2*f*n/(n-f);return o;},
+  lookAt(e,c,up){const z=((v)=>{const l=Math.hypot(...v);return[v[0]/l,v[1]/l,v[2]/l];})([e[0]-c[0],e[1]-c[1],e[2]-c[2]]);
+    const x=((v)=>{const l=Math.hypot(...v);return[v[0]/l,v[1]/l,v[2]/l];})([up[1]*z[2]-up[2]*z[1],up[2]*z[0]-up[0]*z[2],up[0]*z[1]-up[1]*z[0]]);
+    const y=[z[1]*x[2]-z[2]*x[1],z[2]*x[0]-z[0]*x[2],z[0]*x[1]-z[1]*x[0]];
+    return new Float32Array([x[0],y[0],z[0],0,x[1],y[1],z[1],0,x[2],y[2],z[2],0,
+      -(x[0]*e[0]+x[1]*e[1]+x[2]*e[2]),-(y[0]*e[0]+y[1]*e[1]+y[2]*e[2]),-(z[0]*e[0]+z[1]*e[1]+z[2]*e[2]),1]);},
+  model(x,y,z,s,ry){const c=Math.cos(ry),s2=Math.sin(ry);
+    return new Float32Array([s*c,0,-s*s2,0, 0,s,0,0, s*s2,0,s*c,0, x,y,z,1]);}
+};
+function shader(t,s){const h=gl.createShader(t);gl.shaderSource(h,s);gl.compileShader(h);
+  if(!gl.getShaderParameter(h,gl.COMPILE_STATUS))throw new Error(gl.getShaderInfoLog(h));return h;}
+function program(vs,fs){const p=gl.createProgram();gl.attachShader(p,shader(gl.VERTEX_SHADER,vs));
+  gl.attachShader(p,shader(gl.FRAGMENT_SHADER,fs));gl.linkProgram(p);
+  if(!gl.getProgramParameter(p,gl.LINK_STATUS))throw new Error(gl.getProgramInfoLog(p));return p;}
+const progT=program(`
+  attribute vec3 aP;attribute vec3 aN;attribute vec2 aU;
+  uniform mat4 uMVP,uM;uniform float uRY;varying vec2 vU;varying vec3 vN;
+  void main(){float c=cos(uRY),s=sin(uRY);vN=mat3(uM)*vec3(c*aN.x+s*aN.z,aN.y,-s*aN.x+c*aN.z);
+    vU=aU;gl_Position=uMVP*vec4(aP,1.0);}`,
+ `precision mediump float;varying vec2 vU;varying vec3 vN;
+  uniform sampler2D uTex;uniform vec3 uTint;uniform vec3 uLight;uniform float uDark;
+  void main(){vec3 n=normalize(vN);vec3 L=normalize(uLight);vec3 V=normalize(vec3(0.25,0.8,0.9));
+    float dif=max(dot(n,L),0.0);vec3 tex=texture2D(uTex,vU).rgb*uDark;
+    vec3 col=tex*(0.45+0.8*dif)+uTint*0.07;
+    vec3 H=normalize(L+V);col+=vec3(0.32)*pow(max(dot(n,H),0.0),24.0)*dif;
+    col+=uTint*pow(1.0-abs(dot(n,V)),2.5)*0.5;
+    gl_FragColor=vec4(col,1.0);}`);
+const progF=program(`
+  attribute vec3 aP;uniform mat4 uMVP;void main(){gl_Position=uMVP*vec4(aP,1.0);}`,
+ `precision mediump float;uniform vec3 uColor;uniform float uAlpha;
+  void main(){gl_FragColor=vec4(uColor,uAlpha);}`);
 
-  <footer class="site-footer"><div class="footer-inner"><div class="footer-main"><div class="footer-brand-col"><div class="footer-brand">SWGOH<span>::</span>RESOURCES</div><p class="footer-tagline">Day-by-day GAC, Territory War, Territory Battle, Conquest and Marquee event tracker.</p></div><nav class="footer-links"><span class="footer-links-label">Navigate</span><a href="/">Home</a><a href="/tb.html" aria-current="page">TB Tool</a></nav><div class="footer-contact"><div class="creator-line">Maintained by <strong>Dom</strong> — found a schedule issue?</div><button class="discord-copy-btn" onclick="copyDiscordHandle(this)" title="Click to copy Discord handle"><span>@granddom</span></button></div></div><div class="footer-rule"></div><div class="footer-legal"><p class="footer-note">Team comps are community recommendations, not live data. Fan-made planning tool for Star Wars: Galaxy of Heroes. Not affiliated with, endorsed, sponsored, or specifically approved by Electronic Arts, Capital Games, Disney, or Lucasfilm. All game assets, trademarks, and character names are property of their respective owners.</p><nav class="legal-links" aria-label="Legal"><a href="privacy.html">Privacy</a><a href="cookie-policy.html">Cookies</a><a href="terms.html">Terms</a></nav><div class="footer-bottom"><span id="footerMeta"></span><span class="dot">·</span><span id="footerYear"></span></div></div></div></footer>
-  <div class="modal-backdrop" id="aboutModal" aria-hidden="true"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="aboutModalTitle"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;"><h3 id="aboutModalTitle" style="font-family:var(--disp); font-size:18px;">Report an Issue</h3><button class="modal-close-x" id="closeAboutBtn" aria-label="Close"><span></span><span></span></button></div><p style="font-size:13px; color:var(--text2); margin-bottom:16px; line-height:1.6;">This tool is maintained by Dom. Report issues to him on Discord:</p><div style="background:var(--void2); border:1px solid var(--border2); border-radius:var(--radius); padding:14px; margin-bottom:16px; display:flex; align-items:center; justify-content:space-between; gap:10px;"><span style="font-weight:600; font-size:13px; color:var(--text);">Discord</span><button class="discord-copy-btn" onclick="copyDiscordHandle(this)"><span>@granddom</span></button></div><div style="display:flex; justify-content:flex-end;"><button class="btn primary" id="closeAboutBtn2">Close</button></div></div></div>
-  <script src="assets/js/legal.js"></script>
-  <script src="assets/js/tb-data.js?v=1"></script>
-  <script src="assets/js/tb-tool.js?v=1"></script>
+async function loadOBJ(url){
+  const txt=await (await fetch(url)).text();
+  const V=[],T=[],N=[],pos=[],nrm=[],uv=[],idx=[];const map=new Map();let k=0;
+  function vert(v,vt,vn){const key=v+'/'+vt+'/'+vn;if(map.has(key))return map.get(key);
+    const p=V[v].split(' ').map(Number),id=k++;map.set(key,id);
+    pos.push(p[0],p[1],p[2]);
+    if(vn!==''&&N[vn]){const n=N[vn].split(' ').map(Number);nrm.push(n[0],n[1],n[2]);}else nrm.push(0,1,0);
+    if(vt!==''&&T[vt]){const t=T[vt].split(' ').map(Number);uv.push(t[0],t[1]||0);}else uv.push(0.5,0.5);
+    return id;}
+  for(const line of txt.split('\n')){
+    if(line.startsWith('v '))V.push(line.slice(2).trim());
+    else if(line.startsWith('vt '))T.push(line.slice(3).trim());
+    else if(line.startsWith('vn '))N.push(line.slice(3).trim());
+    else if(line.startsWith('f ')){const vs=line.slice(2).trim().split(/\s+/).map(s=>{const[a,b,c]=s.split('/');return vert(+a-1,b??'',c??'');});
+      for(let i=1;i<vs.length-1;i++)idx.push(vs[0],vs[i],vs[i+1]);}
+  }
+  let cx=0,cy=0,cz=0;const n=pos.length/3;
+  for(let i=0;i<n;i++){cx+=pos[i*3];cy+=pos[i*3+1];cz+=pos[i*3+2];}cx/=n;cy/=n;cz/=n;
+  let r=0;for(let i=0;i<n;i++){const d=Math.hypot(pos[i*3]-cx,pos[i*3+1]-cy,pos[i*3+2]-cz);if(d>r)r=d;}
+  for(let i=0;i<n;i++){pos[i*3]=(pos[i*3]-cx)/r;pos[i*3+1]=(pos[i*3+1]-cy)/r;pos[i*3+2]=(pos[i*3+2]-cz)/r;}
+  for(let i=0;i<n;i++){const l=Math.hypot(nrm[i*3],nrm[i*3+1],nrm[i*3+2])||1;nrm[i*3]/=l;nrm[i*3+1]/=l;nrm[i*3+2]/=l;}
+  function buf(d){const b=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,b);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(d),gl.STATIC_DRAW);return b;}
+  const ib=gl.createBuffer();gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,ib);gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,new Uint16Array(idx),gl.STATIC_DRAW);
+  return{pb:buf(pos),nb:buf(nrm),ub:buf(uv),ib,count:idx.length};
+}
+function loadTex(url){return new Promise((res,rej)=>{const im=new Image();im.onload=()=>{
+  const t=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,t);gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,1);
+  gl.texImage2D(gl.TEXTURE_2D,0,gl.RGB,gl.RGB,gl.UNSIGNED_BYTE,im);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR_MIPMAP_LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);gl.generateMipmap(gl.TEXTURE_2D);res(t);};
+  im.onerror=rej;im.src=url;});}
+
+/* ================= TB3 Rise of the Empire layout =================
+   Fan of SECTOR cells around a focus below-screen. Each planet sits at
+   the CENTER of its cell: ring = phase (1 bottom .. 6 top), spoke = lane.
+   Boundaries (arcs + spokes) are drawn BETWEEN planets so every planet
+   rests inside its gap, like the reference. */
+const RED=[1,0.16,0.22],YEL=[1,0.68,0.05],CYN=[0.5,0.9,0.97];
+const D='TB/territorymap/', UI='TB/territoryui/sprites/territoryui_view_rgba_atlas/';
+const RINGS=[0.45,0.62,0.79,0.96,1.13,1.30,1.48];           // 7 boundaries -> 6 phase bands
+const MID=[0.535,0.705,0.875,1.045,1.215,1.39];             // planet ring per phase (bottom->top)
+const LANES={D:-0.66,M:0.05,L:0.72};                        // spoke angle per column (dark/mixed/light)
+const FLAT=0.62, CZ=0.85;                                   // rings bow around a center below-screen
+const polar=(a,r)=>[Math.sin(a)*r, CZ-Math.cos(a)*r*FLAT];
+const PLANETS=[
+  {t:'deathstar%20tex.png',lane:RED,col:'D',ph:6,name:'Death Star',star:0,cur:'8,412,009',next:'158,960,938',ticks:[['159M',159],['254M',254],['339M',339]],desc:'Destroy the Death Star!',nodes:'dd'},
+  {t:'mala_planet_tex.png',lane:RED,col:'D',ph:5,name:'Malachor',star:0,cur:'11,204,551',next:'158,960,938',ticks:[['159M',159],['254M',254],['339M',339]],desc:'Survive the trials of Malachor!',nodes:'dd',squad:'32 / 50',pts:'721,744',req:'Dark Side or Neutral (Relic 9+)',note:'1) SEE + Sith tanks vs Hera/Sabine/Chopper. Alt: GMT Clones (omi needed)'},
+  {t:'med_medstation_tex.png',lane:RED,col:'D',ph:4,name:'Med Station',star:0,cur:'9,876,330',next:'158,960,938',ticks:[['159M',159],['254M',254],['339M',339]],desc:'Board the Medical Station!',nodes:'dd'},
+  {t:'dath_planet_tex.png',lane:RED,col:'D',ph:3,name:'Dathomir',star:0,cur:'14,957,316',next:'158,960,938',ticks:[['159M',159],['254M',254],['339M',339]],desc:'Engage the Nightsisters on Dathomir!',nodes:'dathomir'},
+  {t:'geo_planet_tex.png',lane:RED,col:'D',ph:2,name:'Geonosis',star:1,cur:'96,410,772',next:'158,960,938',ticks:[['159M',159],['254M',254],['339M',339]],desc:'Storm the foundries of Geonosis!',nodes:'dd'},
+  {t:'mus_planet_tex.png',lane:RED,col:'D',ph:1,name:'Mustafar',star:3,cur:'312,008,455',next:'339,000,000',ticks:[['159M',159],['254M',254],['339M',339]],desc:'Conquer Mustafar!',boss:1,nodes:'dd'},
+  {t:'scar_planet_tex.png',lane:YEL,col:'L',ph:6,name:'Scarif',star:0,cur:'7,990,104',next:'158,960,938',ticks:[['159M',159],['254M',254],['339M',339]],desc:'Steal the plans on Scarif!',nodes:'ll'},
+  {t:'ring_of_kafrene_tex.png',lane:YEL,col:'L',ph:5,name:'Kafrene',star:0,cur:'12,033,918',next:'158,960,938',ticks:[['159M',159],['254M',254],['339M',339]],desc:'Ambush on the Ring of Kafrene!',nodes:'ll'},
+  {t:'loth_planet_tex.png',lane:YEL,col:'L',ph:4,name:'Lothal',star:0,cur:'10,556,201',next:'158,960,938',ticks:[['159M',159],['254M',254],['339M',339]],desc:'Liberate Lothal!',nodes:'ll'},
+  {t:'kash_planet_tex.png',lane:YEL,col:'L',ph:3,name:'Kashyyyk',star:1,cur:'88,120,467',next:'158,960,938',ticks:[['159M',159],['254M',254],['339M',339]],desc:'Defend Kashyyyk!',nodes:'ll'},
+  {t:'brac_planet_tex.png',lane:YEL,col:'L',ph:2,name:'Bracca',star:2,cur:'141,309,882',next:'158,960,938',ticks:[['159M',159],['254M',254],['339M',339]],desc:'Scrap over Bracca!',nodes:'ll'},
+  {t:'cor_planet_tex.png',lane:YEL,col:'L',ph:1,name:'Coruscant',star:3,cur:'301,447,109',next:'339,000,000',ticks:[['159M',159],['254M',254],['339M',339]],desc:'Take the capital: Coruscant!',boss:1,nodes:'ll'},
+  {t:'hoth_planet_tex.png',lane:CYN,col:'M',ph:6,name:'Hoth',star:0,dark:.55,cur:'8,771,450',next:'158,960,938',ticks:[['159M',159],['254M',254],['339M',339]],desc:'Hold Echo Base on Hoth!',nodes:'mm'},
+  {t:'van_planet_tex.png',lane:CYN,col:'M',ph:5,name:'Vandor',star:0,cur:'6,209,833',next:'158,960,938',ticks:[['159M',159],['254M',254],['339M',339]],desc:'Heist on Vandor!',small:1,nodes:'mm'},
+  {t:'kes_planet_tex.png',lane:CYN,col:'M',ph:5,name:'Kessel Bonus',star:0,cur:'4,102,500',next:'158,960,938',ticks:[['159M',159],['254M',254],['339M',339]],desc:'Bonus: Kessel spice run!',small:1,nodes:'mm'},
+  {t:'kes_planet_tex.png',lane:CYN,col:'M',ph:4,name:'Kessel',star:0,cur:'9,314,027',next:'158,960,938',ticks:[['159M',159],['254M',254],['339M',339]],desc:'Run the Kessel mines!',nodes:'mm'},
+  {t:'fel_planet_tex.png',lane:CYN,col:'M',ph:3,name:'Felucia',star:1,cur:'72,884,193',next:'158,960,938',ticks:[['159M',159],['254M',254],['339M',339]],desc:'Push through Felucia!',nodes:'mm'},
+  {t:'tat_planet_tex.png',lane:CYN,col:'M',ph:2,name:'Tatooine',star:1,cur:'61,502,718',next:'158,960,938',ticks:[['159M',159],['254M',254],['339M',339]],desc:'Skirmish on Tatooine!',small:1,nodes:'mm'},
+  {t:'core_planet_tex.png',lane:CYN,col:'M',ph:1,name:'Corellia',star:3,cur:'288,915,640',next:'339,000,000',ticks:[['159M',159],['254M',254],['339M',339]],desc:'Strike at Corellia!',boss:1,nodes:'mm'},
+];
+const ROUTES=[[0,1,2,3,4,5],[6,7,8,9,10,11],[12,13,15,16,17,18]];
+for(const p of PLANETS){
+  let a=LANES[p.col];
+  if(p.small)a+=(p.name.includes('Bonus')?0.055:-0.055);   // bonus pair sits side-by-side in one cell
+  const r=p.small?MID[p.ph-1]+0.045:MID[p.ph-1];
+  const [x,z]=polar(a,r);p.x=x;p.z=z;p.y=0;
+  p.s=p.boss?0.10:(p.small?0.034:0.058);
+}
+const sphere=await loadOBJ(D+'planet_mesh.obj');
+const texCache={};async function tex(f){if(!texCache[f])texCache[f]=await loadTex(D+f);return texCache[f];}
+for(const p of PLANETS)p.tex=await tex(p.t);
+
+/* sector grid: arcs on RINGS boundaries + spokes BETWEEN lane columns */
+const grid=[];
+function seg(a,b){grid.push(a[0],a[1],a[2],b[0],b[1],b[2]);}
+const SPAN=[-1.05,1.12];
+for(const r of RINGS)
+  for(let a=SPAN[0];a<SPAN[1];a+=0.03){const[x1,z1]=polar(a,r),[x2,z2]=polar(a+0.03,r);seg([x1,-0.035,z1],[x2,-0.035,z2]);}
+for(const a of [-1.05,-0.86,-0.80,-0.52,-0.19,0.30,0.38,0.56,0.88,1.10]){
+  const[x1,z1]=polar(a,RINGS[0]),[x2,z2]=polar(a,RINGS[RINGS.length-1]);seg([x1,-0.035,z1],[x2,-0.035,z2]);
+}
+/* staggered cell joints for the game look */
+for(const[a0,a1,r]of[[-0.80,-0.66,0.875],[-0.14,0.20,1.045],[0.58,0.86,0.875],[-0.66,-0.52,0.705],[0.05,0.24,0.705]]){
+  const[x1,z1]=polar(a0,r),[x2,z2]=polar(a1,r);seg([x1,-0.035,z1],[x2,-0.035,z2]);
+}
+const gridBuf=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,gridBuf);
+gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(grid),gl.STATIC_DRAW);
+const gridN=grid.length/3;
+
+function ribbon(pts,w){const v=[],ix=[];let base=0;
+  for(let i=0;i<pts.length;i++){const p=pts[i],q=pts[Math.min(i+1,pts.length-1)],o=pts[Math.max(i-1,0)];
+    let dx=q.x-o.x,dz=q.z-o.z;const l=Math.hypot(dx,dz)||1;dx/=l;dz/=l;
+    v.push(p.x+dz*w,0.008,p.z-dx*w, p.x-dz*w,0.008,p.z+dx*w);
+    if(i>0)ix.push(base-2,base-1,base,base-1,base+1,base);base+=2;}
+  const b=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,b);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(v),gl.STATIC_DRAW);
+  const ib=gl.createBuffer();gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,ib);gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,new Uint16Array(ix),gl.STATIC_DRAW);
+  return{b,ib,n:ix.length};}
+const ribbons=ROUTES.map(r=>{const pts=r.map(i=>PLANETS[i]);return{core:ribbon(pts,0.011),glow:ribbon(pts,0.028),lane:pts[0].lane};});
+
+const bosses=PLANETS.map((p,i)=>({...p,i})).filter(p=>p.boss);
+const starDivs=bosses.map(()=>{const d=document.createElement('div');d.className='bstars';
+  d.innerHTML='<img src="TB/TB%20star.png" alt="star"><img src="TB/TB%20star.png" alt="star"><img src="TB/TB%20star.png" alt="star">';screen.appendChild(d);return d;});
+
+/* ---------- camera, pick, zoom-to-planet ---------- */
+const BASE_T=[0,-0.04,0.22];
+const BASE_D=1.56;
+let cur={t:BASE_T.slice(),d:BASE_D},anim=null,focus=null,headH=150;
+/* top-down slide camera: drag pans the map, wheel zooms. No rotate. */
+function eyeTop(t,d){return[t[0],t[1]+d*0.95,t[2]+d*0.34];}
+let downXY=null,downSX=0,downSY=0,downMoved=99;
+function wpp(){return 2*cur.d*Math.tan(0.36)/Math.max(1,canvas.height);}
+canvas.addEventListener('pointerdown',e=>{downXY=[e.clientX,e.clientY];downSX=e.clientX;downSY=e.clientY;downMoved=0;anim=null;canvas.setPointerCapture(e.pointerId);});
+canvas.addEventListener('pointermove',e=>{if(!downXY)return;
+  downMoved=Math.max(downMoved,Math.hypot(e.clientX-downSX,e.clientY-downSY));
+  const w=wpp();
+  cur.t[0]=Math.min(1.7,Math.max(-1.7,cur.t[0]-(e.clientX-downXY[0])*w));
+  cur.t[2]=Math.min(1.2,Math.max(-0.7,cur.t[2]-(e.clientY-downXY[1])*w));
+  downXY=[e.clientX,e.clientY];});
+canvas.addEventListener('wheel',e=>{e.preventDefault();anim=null;
+  cur.d=Math.min(3.2,Math.max(0.45,cur.d*(1+Math.sign(e.deltaY)*0.12)));},{passive:false});
+canvas.addEventListener('pointerup',e=>{const moved=downXY?downMoved:99;downXY=null;
+  if(moved<6)pick(e.clientX,e.clientY);});
+canvas.addEventListener('dblclick',()=>{if(!focus)anim={k:0,fromT:cur.t.slice(),fromD:cur.d,toT:BASE_T.slice(),toD:BASE_D};});
+function resize(){const r=screen.getBoundingClientRect();canvas.width=Math.max(2,r.width);canvas.height=Math.max(2,r.height);gl.viewport(0,0,canvas.width,canvas.height);paintStars();}
+/* Procedural starfield: the stars32 texture is a glow sprite, not a star tile,
+   so tiling it smeared colored blobs everywhere. Paint tiny sharp stars instead. */
+function paintStars(){
+  const el=document.querySelector('.space .stars');if(!el)return;
+  const r=screen.getBoundingClientRect(),W=Math.max(320,Math.round(r.width)),H=Math.max(200,Math.round(r.height));
+  const c=document.createElement('canvas');c.width=W;c.height=H;
+  const g=c.getContext('2d');g.clearRect(0,0,W,H);
+  let seed=1234567;const rnd=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296;};
+  const n=Math.round(W*H/4200);
+  for(let i=0;i<n;i++){
+    const x=rnd()*W,y=rnd()*H,tw=rnd(),s=tw>0.93?1.8:(tw>0.7?1.2:0.8),a=0.25+rnd()*0.6;
+    g.fillStyle=rnd()>0.75?`rgba(170,210,255,${a})`:`rgba(255,255,255,${a})`;
+    g.beginPath();g.arc(x,y,s,0,6.2832);g.fill();
+    if(tw>0.965){const gr=g.createRadialGradient(x,y,0,x,y,s*5);
+      gr.addColorStop(0,`rgba(200,225,255,${(a*0.8).toFixed(2)})`);gr.addColorStop(1,'rgba(200,225,255,0)');
+      g.fillStyle=gr;g.beginPath();g.arc(x,y,s*5,0,6.2832);g.fill();}
+  }
+  el.style.backgroundImage=`url(${c.toDataURL()})`;
+}
+addEventListener('resize',resize);resize();
+function project(x,y,z,MVP){const v=[x*MVP[0]+y*MVP[4]+z*MVP[8]+MVP[12],x*MVP[1]+y*MVP[5]+z*MVP[9]+MVP[13],
+  x*MVP[2]+y*MVP[6]+z*MVP[10]+MVP[14],x*MVP[3]+y*MVP[7]+z*MVP[11]+MVP[15]];
+  const r=screen.getBoundingClientRect();return[(v[0]/v[3]*0.5+0.5)*r.width,(1-(v[1]/v[3]*0.5+0.5))*r.height,v[3]];}
+let lastPV=null;
+function pick(cx,cy){
+  if(focus){back();return;}
+  const r=screen.getBoundingClientRect(),mx=cx-r.left,my=cy-r.top;let best=null,bd=1e9;
+  PLANETS.forEach((p,i)=>{const s=project(p.x,p.y,p.z,lastPV);if(s[2]<=0)return;
+    const pr=p.s*900/Math.max(1,s[2])/r.width*r.width*0.09+p.s*260;
+    const d=Math.hypot(s[0]-mx,s[1]-my);
+    if(d<Math.max(30,pr*3.2)&&d<bd){bd=d;best=i;}});
+  if(best!==null)zoomIn(best);
+}
+/* ---------- detail panel ---------- */
+const ICONS={ship:UI+'ter_icon_ship_combat_active.png',char:UI+'ter_icon_character_combat_active.png',
+  recon:UI+'ter_icon_recon.png',deploy:UI+'ter_icon_deploy_active.png',
+  platoon:UI+'ter_combatlog_platoon.png',special:UI+'ter_combatlog_special.png',wing:UI+'ter_icon_war_attack.png',
+  war:UI+'ter_icon_war_attack.png',strike:UI+'ter_icon_strike.png',boss:UI+'ter_icon_boss.png',
+  grey:UI+'ter_icon_character_combat_disabled.png'};
+PLANETS.forEach((p,i)=>{p.idx=i;});
+const NODESETS={
+  dathomir:[{i:'platoon',lock:1},{i:'ship',lock:1},{i:'ship'},{i:'boss',grey:1},{i:'ship'},{i:'deploy',lock:1,home:1}],
+  dd:[{i:'platoon',lock:1},{i:'char'},{i:'ship'},{i:'boss',grey:1},{i:'ship'},{i:'deploy',lock:1}],
+  ll:[{i:'char'},{i:'ship'},{i:'recon'},{i:'boss',grey:1},{i:'deploy'},{i:'platoon',lock:1}],
+  mm:[{i:'ship'},{i:'char'},{i:'boss',grey:1},{i:'recon'},{i:'deploy'},{i:'platoon',lock:1}],
+};
+const NODE_OFF=[[-0.52,0.3],[-0.12,0.58],[0.5,0.5],[0.68,-0.12],[0.12,-0.55],[-0.6,-0.35]];
+let nodeDivs=[];
+function zoomIn(i){
+  const p=PLANETS[i];focus=p;
+  anim={k:0,fromT:cur.t.slice(),fromD:cur.d,toT:[p.x,p.y,p.z-p.s*0.5],toD:p.s*5.2};
+  // header like the in-game screenshot
+  document.getElementById('dWing').src=ICONS.wing;
+  document.getElementById('dName').textContent=p.name;
+  document.getElementById('dStars').innerHTML=[0,1,2].map(s=>s<p.star?`<img class="ds" src="TB/TB%20star.png" alt="earned star">`:`<span>★</span>`).join('');
+  document.getElementById('dCur').textContent=p.cur;
+  document.getElementById('dNext').textContent=p.next;
+  const bar=document.querySelector('.d-bar');bar.querySelectorAll('.tick').forEach(e=>e.remove());
+  const maxT=Math.max(...p.ticks.map(t=>t[1]));
+  for(const[label,v]of p.ticks){const t=document.createElement('div');t.className='tick';t.style.left=(v/maxT*100)+'%';bar.appendChild(t);}
+  const tk=document.getElementById('dTicks');tk.innerHTML='';
+  p.ticks.forEach(([label,v],idx)=>{const s=document.createElement('span');
+    const pct=v/maxT*100;s.style.left=pct+'%';
+    s.style.transform=idx===0?'translateX(2px)':(idx===p.ticks.length-1?'translateX(-100%)':'translateX(-50%)');
+    s.innerHTML=`${label} <i>★</i>`;tk.appendChild(s);});
+  headH=document.querySelector('.d-head').getBoundingClientRect().height;
+  const nums=p.cur.replace(/,/g,'')/1e6;
+  document.getElementById('dFill').style.width=Math.min(100,nums/maxT*100)+'%';
+  document.getElementById('dDesc').textContent=p.desc;
+  // mission nodes over the surface
+  nodeDivs.forEach(d=>d.remove());nodeDivs=[];
+  const floatIdx=NODESETS[p.nodes].findIndex(n=>n.i==='ship'&&!n.lock&&!n.grey);
+  NODESETS[p.nodes].forEach((n,k)=>{
+    const d=document.createElement('div');
+    d.className='mnode'+(n.home?' home':'')+(n.lock&&!n.home?' locked':'')+(n.grey?' grey':'');
+    d.innerHTML=`<div class="disc"><img src="${ICONS[n.i]}" alt=""></div>`
+      +(n.home?'':'<div class="ped"></div>')+'<div class="beam"></div>'
+      +(n.lock&&!n.home?'<div class="ban"></div><div class="slash"></div>':'')
+      +(n.home?'<div class="hstars">★★★</div>':'')
+      +((n.lock&&n.i==='platoon')?'<div class="nstars"><img src="TB/TB%20star.png" alt=""><img src="TB/TB%20star.png" alt=""><span>★</span></div>':'');
+    d.dataset.k=k;d.dataset.fl=(k===floatIdx&&!n.home)?'1':'';screen.appendChild(d);nodeDivs.push(d);
+    if(!n.lock||n.home)d.addEventListener('click',ev=>{ev.stopPropagation();selectMission(k);});
+  });
+  missionIdx=null;mission.hidden=true;
+  detail.hidden=false;
+  starDivs.forEach(d=>d.style.display='none');
+  const marks={D:['✖','#ff4d5e'],L:['✖','#7de8f7'],M:['✖','#ffd21f']};
+  document.querySelector('.title b').innerHTML=`<span style="color:${marks[p.col][1]}">${marks[p.col][0]}</span> ${p.name}`;
+  document.getElementById('hudBack').classList.add('on');
+}
+function zoomOut(){focus=null;missionIdx=null;mission.hidden=true;nodeDivs.forEach(d=>d.remove());nodeDivs=[];
+  anim={k:0,fromT:cur.t.slice(),fromD:cur.d,toT:BASE_T.slice(),toD:BASE_D};
+  detail.hidden=true;starDivs.forEach(d=>d.style.display='');
+  document.querySelector('.title b').textContent='RISE OF THE EMPIRE';
+  document.getElementById('hudBack').classList.remove('on');}
+let missionIdx=null;
+function kindOf(n){return n.i==='ship'||n.i==='char'?'Combat':n.i==='recon'?'Recon':n.i==='deploy'?'Deploy':n.i==='special'?'Special':'Platoon';}
+function defaultPts(i){return (520+((i*167)%340))+','+(100+((i*89)%800));}
+function defaultNote(p){return p.col==='D'?'1) Bring your best Dark Side tanks. Alt: check platoons first.':p.col==='L'?'1) Bring your best Light Side teams. Alt: check platoons first.':'1) Bring your best mixed teams. Alt: check platoons first.';}
+function selectMission(k){
+  const p=focus;if(!p)return;
+  const set=NODESETS[p.nodes],n=set[k];if(!n||(n.lock&&!n.home))return;
+  missionIdx=k;
+  detail.hidden=true;
+  const asp0=canvas.width/Math.max(1,canvas.height);
+  const sh0=p.s*1.05*Math.min(1,asp0/1.6);
+  anim={k:0,fromT:cur.t.slice(),fromD:cur.d,toT:asp0<1?[p.x,p.y,p.z-p.s*0.5+sh0]:[p.x+sh0,p.y,p.z-p.s*0.5],toD:cur.d};
+  nodeDivs.forEach(d=>d.classList.toggle('sel',+d.dataset.k===k));
+  document.getElementById('mIcon').src=ICONS[n.i];
+  document.getElementById('mName').textContent=kindOf(n)+' Mission';
+  document.getElementById('mSquadIcon').src=ICONS.platoon;
+  document.getElementById('mSquad').textContent=p.squad||'32 / 50';
+  document.getElementById('mReq').textContent=p.req||(p.col==='D'?'Dark Side or Neutral (Relic 9+)':p.col==='L'?'Light Side or Neutral (Relic 9+)':'Any Alignment (Relic 9+)');
+  document.getElementById('mRew').textContent=`Earn Territory Points for completing this battle! (Up to ${p.pts||defaultPts(p.idx)})`;
+  const ab=document.getElementById('mAbil');ab.innerHTML='';
+  ['war','strike','recon','deploy','boss'].forEach((a,j)=>{const im=document.createElement('img');im.src=ICONS[a];im.alt=a;if(j===4)im.className='gold';ab.appendChild(im);});
+  const un=document.getElementById('mUnits');un.innerHTML='';
+  const star7='<img src="TB/TB%20star.png" alt="">'.repeat(7);
+  for(let j=0;j<8;j++){const c=document.createElement('div');c.className='unit';
+    c.innerHTML=`<div class="u-ring"></div><div class="u-face"><img src="${ICONS.grey}" alt="unit"></div><div class="u-relic">9</div><div class="u-stars">${star7}</div><div class="u-flag">UNDEPLOYED</div>`;
+    un.appendChild(c);}
+  document.getElementById('mNoteIcon').src=ICONS.deploy;
+  document.getElementById('mNote').textContent=p.note||defaultNote(p);
+  document.getElementById('mBattle').textContent=`BATTLE (${p.battle||1})`;
+  mission.hidden=false;
+}
+function back(){
+  if(!focus)return;
+  if(missionIdx!==null){const p=focus;missionIdx=null;mission.hidden=true;detail.hidden=false;
+    nodeDivs.forEach(d=>d.classList.remove('sel'));
+    anim={k:0,fromT:cur.t.slice(),fromD:cur.d,toT:[p.x,p.y,p.z-p.s*0.5],toD:cur.d};}
+  else zoomOut();
+}
+document.getElementById('hudBack').addEventListener('click',e=>{e.stopPropagation();back();});
+document.getElementById('mBack').addEventListener('click',e=>{e.stopPropagation();back();});
+document.getElementById('mBattle').addEventListener('click',e=>{e.stopPropagation();});
+addEventListener('keydown',e=>{if(e.key==='Escape'&&focus)back();});
+
+loader.style.display='none';
+setTimeout(()=>{const h=document.getElementById('hint');if(h)h.style.opacity='0';},9000);
+let t0=performance.now();
+(function frame(){
+  const t=(performance.now()-t0)/1000;
+  if(anim){anim.k=Math.min(1,anim.k+0.025);
+    const e=anim.k<0.5?2*anim.k*anim.k:1-Math.pow(-2*anim.k+2,2)/2;
+    cur.t=anim.fromT.map((v,i)=>v+(anim.toT[i]-v)*e);cur.d=anim.fromD+(anim.toD-anim.fromD)*e;
+    if(anim.k>=1)anim=null;}
+  const asp=canvas.width/Math.max(1,canvas.height);
+  const P=M4.persp(0.72,asp,0.02,30);
+  const eye=eyeTop(cur.t,cur.d);
+  const V=M4.lookAt(eye,cur.t,[0,1,0]),PV=M4.mul(P,V);lastPV=PV;
+  gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
+  // sector grid (map only — detail shows the one planet alone in space).
+  // NOTE: attribute/uniform locations are frame-scoped: the planet glow pass
+  // below needs them even when the grid itself is skipped.
+  gl.useProgram(progF);
+  gl.bindBuffer(gl.ARRAY_BUFFER,gridBuf);
+  const gloc=gl.getAttribLocation(progF,'aP');gl.enableVertexAttribArray(gloc);gl.vertexAttribPointer(gloc,3,gl.FLOAT,false,0,0);
+  const uMVPf=gl.getUniformLocation(progF,'uMVP'),uCf=gl.getUniformLocation(progF,'uColor'),uAf=gl.getUniformLocation(progF,'uAlpha');
+  if(!focus){
+  gl.disable(gl.DEPTH_TEST);gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE);
+  gl.uniformMatrix4fv(uMVPf,false,PV);gl.uniform3fv(uCf,[0.25,0.84,0.96]);gl.uniform1f(uAf,0.6);
+  gl.drawArrays(gl.LINES,0,gridN);
+  for(const r of ribbons)for(const[mesh,a]of[[r.glow,0.20],[r.core,0.95]]){
+    gl.bindBuffer(gl.ARRAY_BUFFER,mesh.b);gl.enableVertexAttribArray(gloc);gl.vertexAttribPointer(gloc,3,gl.FLOAT,false,0,0);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,mesh.ib);
+    gl.uniform3fv(uCf,r.lane);gl.uniform1f(uAf,a);gl.drawElements(gl.TRIANGLES,mesh.n,gl.UNSIGNED_SHORT,0);}
+  }
+  gl.disable(gl.BLEND);gl.enable(gl.DEPTH_TEST);
+  // planets: real OBJ sphere + real TB textures
+  gl.useProgram(progT);
+  const lP=gl.getAttribLocation(progT,'aP'),lN=gl.getAttribLocation(progT,'aN'),lU=gl.getAttribLocation(progT,'aU');
+  gl.enableVertexAttribArray(lP);gl.bindBuffer(gl.ARRAY_BUFFER,sphere.pb);gl.vertexAttribPointer(lP,3,gl.FLOAT,false,0,0);
+  gl.enableVertexAttribArray(lN);gl.bindBuffer(gl.ARRAY_BUFFER,sphere.nb);gl.vertexAttribPointer(lN,3,gl.FLOAT,false,0,0);
+  gl.enableVertexAttribArray(lU);gl.bindBuffer(gl.ARRAY_BUFFER,sphere.ub);gl.vertexAttribPointer(lU,2,gl.FLOAT,false,0,0);
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,sphere.ib);
+  const uMVP=gl.getUniformLocation(progT,'uMVP'),uM=gl.getUniformLocation(progT,'uM'),uTex=gl.getUniformLocation(progT,'uTex'),
+        uTint=gl.getUniformLocation(progT,'uTint'),uLight=gl.getUniformLocation(progT,'uLight'),
+        uRY=gl.getUniformLocation(progT,'uRY'),uDark=gl.getUniformLocation(progT,'uDark');
+  gl.uniform3fv(uLight,[0.35,0.8,0.6]);
+  const hideFace=focus?0.35:1;
+  for(const p of PLANETS){if(focus&&p!==focus)continue;
+    const ry=t*0.15+p.x*3,M=M4.model(p.x,p.y,p.z,p.s,ry);
+    gl.uniformMatrix4fv(uM,false,M);gl.uniformMatrix4fv(uMVP,false,M4.mul(PV,M));
+    gl.uniform1f(uRY,ry);gl.uniform3fv(uTint,p.lane);gl.uniform1f(uDark,(p.dark||1)*(p===focus?1.25:1));
+    gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,p.tex);gl.uniform1i(uTex,0);
+    gl.drawElements(gl.TRIANGLES,sphere.count,gl.UNSIGNED_SHORT,0);
+    if(p===focus)continue;
+    gl.useProgram(progF);gl.disable(gl.DEPTH_TEST);gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE);
+    gl.enableVertexAttribArray(gloc);gl.bindBuffer(gl.ARRAY_BUFFER,sphere.pb);gl.vertexAttribPointer(gloc,3,gl.FLOAT,false,0,0);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,sphere.ib);
+    gl.uniformMatrix4fv(uMVPf,false,M4.mul(PV,M4.model(p.x,p.y,p.z,p.s*1.3,ry)));
+    gl.uniform3fv(uCf,p.lane);gl.uniform1f(uAf,(p.boss?0.4:0.22)*hideFace);
+    gl.enable(gl.CULL_FACE);gl.cullFace(gl.FRONT);
+    gl.drawElements(gl.TRIANGLES,sphere.count,gl.UNSIGNED_SHORT,0);
+    gl.disable(gl.CULL_FACE);gl.disable(gl.BLEND);gl.enable(gl.DEPTH_TEST);
+    gl.useProgram(progT);
+    gl.enableVertexAttribArray(lP);gl.bindBuffer(gl.ARRAY_BUFFER,sphere.pb);gl.vertexAttribPointer(lP,3,gl.FLOAT,false,0,0);
+    gl.enableVertexAttribArray(lN);gl.bindBuffer(gl.ARRAY_BUFFER,sphere.nb);gl.vertexAttribPointer(lN,3,gl.FLOAT,false,0,0);
+    gl.enableVertexAttribArray(lU);gl.bindBuffer(gl.ARRAY_BUFFER,sphere.ub);gl.vertexAttribPointer(lU,2,gl.FLOAT,false,0,0);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,sphere.ib);
+  }
+  if(!focus){const r0=screen.getBoundingClientRect();
+    bosses.forEach((b,i)=>{const s=project(b.x,b.y-b.s*1.6,b.z,PV);
+      const vis=s[2]>0&&s[0]>-20&&s[0]<r0.width+20&&s[1]>40&&s[1]<r0.height+20;
+      starDivs[i].style.visibility=vis?'visible':'hidden';
+      if(!vis)return;
+      starDivs[i].style.left=s[0]+'px';starDivs[i].style.top=s[1]+'px';});}
+  else{ // mission nodes ride the zoomed planet's front face
+    const p=focus,f=p.s;
+    const fw=[cur.t[0]-eye[0],cur.t[1]-eye[1],cur.t[2]-eye[2]];const fl=Math.hypot(...fw);
+    const F=fw.map(v=>v/fl);
+    let R=[F[2],0,-F[0]];const rl=Math.hypot(...R)||1;R=R.map(v=>v/rl);
+    const U=[R[1]*F[2]-R[2]*F[1],R[2]*F[0]-R[0]*F[2],R[0]*F[1]-R[1]*F[0]];
+    nodeDivs.forEach(d=>{const[ox,oy]=NODE_OFF[+d.dataset.k];
+      let wx,wy,wz;
+      if(d.dataset.fl==='1'){wx=p.x+0.45*f;wy=p.y+0.9*f;wz=p.z-1.3*f;}
+      else{wx=p.x+ox*f;wz=p.z-oy*f;
+        wy=p.y+Math.sqrt(Math.max(0.03*f*f,f*f-(wx-p.x)*(wx-p.x)-(wz-p.z)*(wz-p.z)));}
+      const s=project(wx,wy,wz,PV);
+      const r0=screen.getBoundingClientRect();
+      const vis=s[2]>0&&s[0]>-30&&s[0]<r0.width+30&&s[1]>30&&s[1]<r0.height+30;
+      d.style.visibility=vis?'visible':'hidden';
+      if(!vis)return;
+      d.style.left=s[0]+'px';d.style.top=s[1]+'px';});
+  }
+  requestAnimationFrame(frame);
+})();
+})();
+</script>
 </body>
 </html>
