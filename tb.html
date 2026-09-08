@@ -16,7 +16,7 @@
     border-bottom:3px solid #ffd21f;text-shadow:0 1px 0 #000}
   .cabinet{width:100vw;flex:1;min-height:0;position:relative;background:#01030a;overflow:hidden}
   /* back lives in the planet header row now */
-  #screen.detail .hud,#screen.detail .chat,#screen.detail .hint{display:none}
+  #screen.detail .hud,#screen.detail .hint{display:none}
   /* table chrome removed — no table assets available */
   .screen{position:absolute;inset:0;overflow:hidden;background:#020913}
   /* deep-space backdrop like the reference: near-black top, blue nebula low corners */
@@ -39,10 +39,6 @@
   .hud{position:absolute;top:0;left:0;right:0;z-index:40;pointer-events:none;display:flex;
     justify-content:space-between;align-items:flex-start;padding:1.1% 2.2% 0}
   .hud-left{display:flex;gap:8px;align-items:flex-start}
-  .circ{width:34px;height:34px;min-width:34px;border-radius:50%;
-    background:radial-gradient(circle at 35% 30%,#2a3d5a,#060b14 70%);
-    border:2px solid rgba(120,210,245,.8);box-shadow:0 0 8px rgba(80,200,245,.5),inset 0 0 8px rgba(0,0,0,.8);
-    display:flex;align-items:center;justify-content:center;color:#cfefff;font-weight:800}
   .title{line-height:1.05;text-shadow:0 2px 0 #000,0 0 8px rgba(0,0,0,.9)}
   .title b{display:block;color:#f2f5f7;font-size:clamp(10px,2vw,21px);letter-spacing:.06em}
   .title span{display:block;color:#e8b64c;font-size:clamp(8px,1.5vw,15px);letter-spacing:.02em;text-shadow:0 1px 0 #000}
@@ -50,10 +46,6 @@
   .stars-pill{color:#d7f3ff;font-weight:800;font-size:clamp(10px,1.9vw,19px)}
   .stars-pill i{color:#ffcf1f;font-style:normal;text-shadow:0 0 8px rgba(255,200,0,.8)}
   /* phase indicator removed */
-  .chat{position:absolute;left:1.1%;bottom:4%;z-index:40;width:34px;height:34px;border-radius:50%;
-    background:radial-gradient(circle at 35% 30%,#2a3d5a,#060b14 70%);
-    border:2px solid rgba(120,210,245,.7);display:flex;align-items:center;justify-content:center}
-  .chat svg{width:60%;height:60%;fill:#cfefff}
   .hint{position:absolute;right:12px;bottom:10px;z-index:41;pointer-events:none;color:#7fb8d8;
     font-size:11px;letter-spacing:.08em;text-shadow:0 1px 0 #000;opacity:.9;transition:opacity 1.5s}
   /* ------- planet detail (zoomed) panel, like the in-game screenshot ------- */
@@ -83,8 +75,6 @@
   .d-ticks span{position:absolute;transform:translateX(-50%)}
   .d-ticks i{font-style:normal;color:#0e3a5c;text-shadow:0 0 1px #3fd6f5}
   .d-desc{color:#4fd2f2;font-size:clamp(11px,2vw,18px);margin-top:2px;text-shadow:0 1px 0 #000}
-  #hudBack{pointer-events:none}
-  #hudBack.on{pointer-events:auto;cursor:pointer}
   .mnode{position:absolute;z-index:16;transform:translate(-50%,-50%);pointer-events:auto;cursor:pointer;
     width:clamp(40px,7vw,64px);aspect-ratio:1;background:none;border:none}
   .mnode .disc{position:absolute;inset:0;border-radius:50%;
@@ -151,6 +141,12 @@
     background:linear-gradient(90deg,#3a2a12,#241a08);border:1px solid #e8b64c;border-radius:6px;
     padding:8px;color:#ffe1a1;font-size:clamp(10px,1.6vw,14px)}
   .m-note img{width:26px;height:26px;flex-shrink:0;object-fit:contain}
+  #mLog[hidden]{display:none}
+  .logrow{display:flex;gap:8px;align-items:flex-start;padding:7px 2px;border-bottom:1px solid rgba(125,232,247,.15)}
+  .logrow img{width:26px;height:26px;object-fit:contain;flex-shrink:0;filter:brightness(1.4)}
+  .logrow p{flex:1;color:#e8f1f8;font-size:clamp(10px,1.6vw,14px);line-height:1.3}
+  .logrow p b{color:#fff}
+  .logrow span{color:#9fd8ef;font-size:11px;white-space:nowrap}
   .m-btns{display:flex;gap:8px;margin-top:10px}
   .m-btns button{border-radius:8px;font-weight:800;letter-spacing:.06em;cursor:pointer;
     padding:12px 0;font-size:clamp(13px,2vw,18px)}
@@ -158,8 +154,7 @@
     text-shadow:0 2px 0 rgba(0,0,0,.4);box-shadow:0 0 12px rgba(40,200,40,.5)}
   @media (max-aspect-ratio:1/1){#detail{top:auto;left:0;right:0;bottom:0;width:auto;max-height:48%;
     border-left:none;border-top:2px solid rgba(64,210,245,.7);box-shadow:0 -12px 30px rgba(0,0,0,.6)}}
-  @media (max-width:640px){.circ,.chat{width:26px;height:26px;min-width:26px}}
-  @media (max-width:700px){#mission{width:62%}.u-relic{width:16px;height:16px;font-size:9px;line-height:14px}
+  @media (max-width:700px){#detail{width:62%}.u-relic{width:16px;height:16px;font-size:9px;line-height:14px}
     .u-flag{font-size:7px}.m-abil img{width:30px;height:30px}}
 </style>
 </head>
@@ -171,11 +166,10 @@
     <canvas id="gl"></canvas>
     <div id="loader">LOADING TB3&nbsp;&nbsp;·&nbsp;&nbsp;RISE OF THE EMPIRE</div>
     <div class="hud">
-      <div class="hud-left"><div class="circ" id="hudBack">◀</div>
+      <div class="hud-left">
         <div class="title"><b>RISE OF THE EMPIRE</b><span>Guild GP: 495,563,158</span></div></div>
-      <div class="hud-right"><div class="stars-pill"><i>★</i> 9 / 54</div><div class="circ">⛨</div></div>
+      <div class="hud-right"><div class="stars-pill"><i>★</i> 9 / 56</div></div>
     </div>
-    <div class="chat"><svg viewBox="0 0 24 24"><path d="M4 3h16a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H9l-5 4V4a1 1 0 0 1 1-1zm3 5v2h10V8H7zm0 3.5V13h7v-1.5H7z"/></svg></div>
     <div class="hint" id="hint">drag to slide · wheel to zoom · double-click to reset</div>
     <aside id="detail" hidden>
       <div class="d-head">
@@ -185,6 +179,7 @@
         <div class="d-ticks" id="dTicks"></div>
         <div class="d-desc" id="dDesc"></div>
       </div>
+      <div id="mLog" hidden></div>
       <div id="missionBody" hidden>
       <div class="m-head"><img id="mIcon" alt=""><b id="mName">Combat Mission</b>
         <span class="m-squad"><img id="mSquadIcon" alt=""><span id="mSquad">32 / 50</span></span></div>
@@ -207,6 +202,7 @@ addEventListener('unhandledrejection',e=>{try{const l=document.getElementById('l
 const canvas=document.getElementById('gl'), screen=document.getElementById('screen'), loader=document.getElementById('loader');
 const detail=document.getElementById('detail');
 const mission=document.getElementById('missionBody');
+const logEl=document.getElementById('mLog');
 const gl=canvas.getContext('webgl',{alpha:true,antialias:true});
 if(!gl){loader.textContent='WEBGL UNAVAILABLE';return;}
 
@@ -289,33 +285,34 @@ const LANES={D:-0.66,N:0.05,L:0.72};                        // spoke angle per c
 const FLAT=0.62, CZ=0.85;                                   // rings bow around a center below-screen
 const polar=(a,r)=>[Math.sin(a)*r, CZ-Math.cos(a)*r*FLAT];
 const PLANETS=[
-  {t:'deathstar%20tex.png',lane:RED,col:'D',ph:6,name:'Death Star',star:0,cur:'8,412,009',next:'158,960,938',ticks:[['159M',159],['254M',254],['339M',339]],desc:'Destroy the Death Star!',nodes:'dd'},
-  {t:'mala_planet_tex.png',lane:RED,col:'D',ph:5,name:'Malachor',star:0,cur:'11,204,551',next:'158,960,938',ticks:[['159M',159],['254M',254],['339M',339]],desc:'Survive the trials of Malachor!',nodes:'dd',squad:'32 / 50',pts:'721,744',req:'Dark Side or Neutral (Relic 9+)',note:'1) SEE + Sith tanks vs Hera/Sabine/Chopper. Alt: GMT Clones (omi needed)'},
-  {t:'med_medstation_tex.png',lane:RED,col:'D',ph:4,name:'Med Station',star:0,cur:'9,876,330',next:'158,960,938',ticks:[['159M',159],['254M',254],['339M',339]],desc:'Board the Medical Station!',nodes:'dd'},
-  {t:'dath_planet_tex.png',lane:RED,col:'D',ph:3,name:'Dathomir',star:0,cur:'14,957,316',next:'158,960,938',ticks:[['159M',159],['254M',254],['339M',339]],desc:'Engage the Nightsisters on Dathomir!',nodes:'dathomir'},
-  {t:'geo_planet_tex.png',lane:RED,col:'D',ph:2,name:'Geonosis',star:1,cur:'96,410,772',next:'158,960,938',ticks:[['159M',159],['254M',254],['339M',339]],desc:'Storm the foundries of Geonosis!',nodes:'dd'},
-  {t:'mus_planet_tex.png',lane:RED,col:'D',ph:1,name:'Mustafar',star:3,cur:'312,008,455',next:'339,000,000',ticks:[['159M',159],['254M',254],['339M',339]],desc:'Conquer Mustafar!',boss:1,nodes:'dd'},
-  {t:'hoth_planet_tex.png',lane:YEL,col:'N',ph:6,name:'Hoth',star:0,dark:.55,cur:'8,771,450',next:'158,960,938',ticks:[['159M',159],['254M',254],['339M',339]],desc:'Hold Echo Base on Hoth!',nodes:'mm'},
-  {t:'van_planet_tex.png',lane:YEL,col:'N',ph:5,name:'Vandor',star:0,cur:'6,209,833',next:'158,960,938',ticks:[['159M',159],['254M',254],['339M',339]],desc:'Heist on Vandor!',small:1,nodes:'mm'},
-  {t:'kes_planet_tex.png',lane:YEL,col:'N',ph:5,name:'Kessel Bonus',star:0,cur:'4,102,500',next:'158,960,938',ticks:[['159M',159],['254M',254],['339M',339]],desc:'Bonus: Kessel spice run!',small:1,nodes:'mm'},
-  {t:'kes_planet_tex.png',lane:YEL,col:'N',ph:4,name:'Kessel',star:0,cur:'9,314,027',next:'158,960,938',ticks:[['159M',159],['254M',254],['339M',339]],desc:'Run the Kessel mines!',nodes:'mm'},
-  {t:'tat_planet_tex.png',lane:YEL,col:'N',ph:3,name:'Tatooine',star:1,cur:'61,502,718',next:'158,960,938',ticks:[['159M',159],['254M',254],['339M',339]],desc:'Skirmish on Tatooine!',nodes:'mm'},
-  {t:'fel_planet_tex.png',lane:YEL,col:'N',ph:2,name:'Felucia',star:1,cur:'72,884,193',next:'158,960,938',ticks:[['159M',159],['254M',254],['339M',339]],desc:'Push through Felucia!',nodes:'mm'},
-  {t:'core_planet_tex.png',lane:YEL,col:'N',ph:1,name:'Corellia',star:3,cur:'288,915,640',next:'339,000,000',ticks:[['159M',159],['254M',254],['339M',339]],desc:'Strike at Corellia!',boss:1,nodes:'mm'},
-  {t:'scar_planet_tex.png',lane:CYN,col:'L',ph:6,name:'Scarif',star:0,cur:'7,990,104',next:'158,960,938',ticks:[['159M',159],['254M',254],['339M',339]],desc:'Steal the plans on Scarif!',nodes:'ll'},
-  {t:'ring_of_kafrene_tex.png',lane:CYN,col:'L',ph:5,name:'Kafrene',star:0,cur:'12,033,918',next:'158,960,938',ticks:[['159M',159],['254M',254],['339M',339]],desc:'Ambush on the Ring of Kafrene!',nodes:'ll'},
-  {t:'loth_planet_tex.png',lane:CYN,col:'L',ph:4,name:'Lothal',star:0,cur:'10,556,201',next:'158,960,938',ticks:[['159M',159],['254M',254],['339M',339]],desc:'Liberate Lothal!',nodes:'ll'},
-  {t:'kash_planet_tex.png',lane:CYN,col:'L',ph:3,name:'Kashyyyk',star:1,cur:'88,120,467',next:'158,960,938',ticks:[['159M',159],['254M',254],['339M',339]],desc:'Defend Kashyyyk!',nodes:'ll'},
-  {t:'brac_planet_tex.png',lane:CYN,col:'L',ph:2,name:'Bracca',star:2,cur:'141,309,882',next:'158,960,938',ticks:[['159M',159],['254M',254],['339M',339]],desc:'Scrap over Bracca!',nodes:'ll'},
-  {t:'cor_planet_tex.png',lane:CYN,col:'L',ph:1,name:'Coruscant',star:3,cur:'301,447,109',next:'339,000,000',ticks:[['159M',159],['254M',254],['339M',339]],desc:'Take the capital: Coruscant!',boss:1,nodes:'ll'},
+  {t:'deathstar%20tex.png',lane:RED,col:'D',ph:6,name:'Death Star',star:1,cur:'210,447,319',next:'1,246,272,567',ticks:[['583M',582632425],['1.06B',1059331682],['1.25B',1246272567]],desc:'Destroy the Death Star!',nodes:'dd',pts:'1,151,719',req:'Dark Side (Relic 9+). Iden Versio, Darth Vader. TIE Fighter fleet.'},
+  {t:'mala_planet_tex.png',lane:RED,col:'D',ph:5,name:'Malachor',star:0,cur:'11,204,551',next:'729,948,167',ticks:[['341M',341250768],['620M',620455942],['730M',729948167]],desc:'Survive the trials of Malachor!',nodes:'dd',squad:'32 / 50',pts:'721,744',req:'Dark Side or Neutral (Relic 9+)',note:'1) SEE + Sith tanks vs Hera/Sabine/Chopper. Alt: GMT Clones (omi needed)'},
+  {t:'med_medstation_tex.png',lane:RED,col:'D',ph:4,name:'Med Station',star:0,cur:'88,014,377',next:'500,304,479',ticks:[['235M',235143105],['400M',400243583],['500M',500304479]],desc:'Board the Medical Station!',nodes:'dd',pts:'493,594',req:'Dark Side (Relic 8+). Inquisitors + Third Sister special. No fleet.'},
+  {t:'dath_planet_tex.png',lane:RED,col:'D',ph:3,name:'Dathomir',star:0,cur:'14,957,316',next:'339,116,667',ticks:[['159M',158960938],['254M',254337500],['339M',339116667]],desc:'Engage the Nightsisters on Dathomir!',nodes:'dathomir',pts:'341,250',req:'Dark Side (Relic 7+). Empire, Doctor Aphra. Nightsisters + Merrin special.'},
+  {t:'geo_planet_tex.png',lane:RED,col:'D',ph:2,name:'Geonosis',star:1,cur:'61,330,105',next:'316,000,000',ticks:[['148M',148125000],['237M',237000000],['316M',316000000]],desc:'Storm the foundries of Geonosis!',nodes:'dd',pts:'250,000',req:'Dark Side (Relic 6+). Full Geonosian team.'},
+  {t:'mus_planet_tex.png',lane:RED,col:'D',ph:1,name:'Mustafar',star:1,cur:'48,210,336',next:'248,333,333',ticks:[['116M',116406250],['186M',186250000],['248M',248333333]],desc:'Conquer Mustafar!',boss:1,nodes:'dd',pts:'200,000',req:'Dark Side (Relic 5+). Final mission requires Lord Vader.'},
+  {t:'hoth_planet_tex.png',lane:YEL,col:'N',ph:6,name:'Hoth',star:1,dark:.55,cur:'198,330,104',next:'1,246,272,567',ticks:[['583M',582632425],['1.06B',1059331682],['1.25B',1246272567]],desc:'Hold Echo Base on Hoth!',nodes:'mm',pts:'1,151,719',req:'Dark Side + Light Side (Relic 9+). Jabba. Aphra + BT-1 + 0-0-0 special.'},
+  {t:'van_planet_tex.png',lane:YEL,col:'N',ph:5,name:'Vandor',star:1,cur:'120,455,930',next:'729,948,167',ticks:[['341M',341250768],['620M',620455942],['730M',729948167]],desc:'Heist on Vandor!',nodes:'mm',pts:'721,744',req:'Dark Side + Light Side (Relic 9+). Jabba. Young Han + Vandor Chewbacca special.'},
+  {t:'kes_planet_tex.png',lane:YEL,col:'N',ph:4,name:'Kessel',star:0,cur:'91,355,090',next:'500,304,479',ticks:[['235M',235143105],['400M',400243583],['500M',500304479]],desc:'Run the Kessel mines!',nodes:'mm',pts:'493,594',req:'Dark Side + Light Side (Relic 8+). Jabba. Qi\'ra + L3-37 special. Ghost fleet.'},
+  {t:'tat_planet_tex.png',lane:YEL,col:'N',ph:3,name:'Tatooine',star:1,cur:'74,220,510',next:'407,366,667',ticks:[['191M',190953125],['306M',305525000],['407M',407366667]],desc:'Skirmish on Tatooine!',nodes:'mm',pts:'341,250',req:'Dark Side + Light Side (Relic 7+). Jabba, Fennec. Grand Inquisitor special. Mandalorians unlock Mandalore.'},
+  {t:'fel_planet_tex.png',lane:YEL,col:'N',ph:2,name:'Felucia',star:1,cur:'57,902,441',next:'316,000,000',ticks:[['148M',148125000],['237M',237000000],['316M',316000000]],desc:'Lush Felucia awaits!',nodes:'mm',pts:'250,000',req:'Dark Side + Light Side (Relic 6+). Young Lando, Jabba, Hondo special.'},
+  {t:'core_planet_tex.png',lane:YEL,col:'N',ph:1,name:'Corellia',star:1,cur:'52,014,220',next:'238,333,333',ticks:[['112M',111718750],['179M',178750000],['238M',238333333]],desc:'Smugglers run on Corellia!',nodes:'mm',pts:'200,000',req:'Dark Side + Light Side (Relic 5+). Jabba, Aphra, Qi\'ra + Young Han special.'},
+  {t:'man_planet_tex.png',lane:YEL,col:'N',ph:4,name:'Mandalore',star:0,cur:'41,903,517',next:'396,497,300',ticks:[['198M',197748650],['316M',316397840],['396M',396497300]],desc:'Unlocked via Tatooine special!',nodes:'mm',pts:'493,594',bonus:1,boff:0.16,req:'Bo-Katan (Mandalor) + Moff Gideon (Relic 8+). Gauntlet fleet.'},
+  {t:'scar_planet_tex.png',lane:CYN,col:'L',ph:6,name:'Scarif',star:1,cur:'201,774,882',next:'1,188,686,629',ticks:[['556M',555710999],['1.01B',1010383635],['1.19B',1188686629]],desc:'Steal the plans on Scarif!',nodes:'ll',pts:'1,151,719',req:'Light Side (Relic 9+). Baze + Chirrut + Pathfinders, Cassian + Pao + K-2SO. Profundity fleet.'},
+  {t:'ring_of_kafrene_tex.png',lane:CYN,col:'L',ph:5,name:'Kafrene',star:1,cur:'133,902,418',next:'729,948,167',ticks:[['341M',341250768],['620M',620455942],['730M',729948167]],desc:'Ambush on the Ring of Kafrene!',nodes:'ll',pts:'721,744',req:'Light Side (Relic 9+). Cassian Andor + K-2SO.'},
+  {t:'loth_planet_tex.png',lane:CYN,col:'L',ph:4,name:'Lothal',star:0,cur:'95,207,664',next:'524,984,167',ticks:[['247M',246742558],['420M',419987333],['525M',524984167]],desc:'Liberate Lothal!',nodes:'ll',pts:'493,594',req:'Jedi, Phoenix, Light Side (Relic 8+).'},
+  {t:'kash_planet_tex.png',lane:CYN,col:'L',ph:3,name:'Kashyyyk',star:1,cur:'69,845,133',next:'407,366,667',ticks:[['191M',190953125],['306M',305525000],['407M',407366667]],desc:'Defend Kashyyyk!',nodes:'ll',pts:'341,250',req:'Wookiees, Light Side, Rebels + Saw Gerrera (Relic 7+). Profundity fleet.'},
+  {t:'brac_planet_tex.png',lane:CYN,col:'L',ph:2,name:'Bracca',star:1,cur:'55,118,207',next:'303,500,000',ticks:[['142M',142265625],['228M',227625000],['304M',303500000]],desc:'Scrap over Bracca!',nodes:'ll',pts:'250,000',req:'Light Side (Relic 6+, special Relic 7+). Cere Junda + Cal Kestis unlock Zeffo (30 clears).'},
+  {t:'cor_planet_tex.png',lane:CYN,col:'L',ph:1,name:'Coruscant',star:2,cur:'235,047,833',next:'248,333,333',ticks:[['116M',116406250],['186M',186250000],['248M',248333333]],desc:'Escape Coruscant during Order 66!',nodes:'ll',pts:'200,000',req:'Light Side (Relic 5+). Jedi, Mace Windu + Kit Fisto.'},
+  {t:'zef_planet_tex.png',lane:CYN,col:'L',ph:3,name:'Zeffo',star:0,cur:'38,410,222',next:'287,179,167',ticks:[['144M',143589583],['230M',229743333],['287M',287179167]],desc:'Unlocked via Bracca special!',nodes:'ll',pts:'341,250',bonus:1,boff:0.16,req:'Light Side + Unaligned Force + Clones (Relic 7+). Jedi Knight Cal Kestis.'},
 ];
-const ROUTES=[[0,1,2,3,4,5],[6,7,9,10,11,12],[13,14,15,16,17,18]];
+const ROUTES=[[0,1,2,3,4,5],[6,7,8,9,10,11],[13,14,15,16,17,18]];
 for(const p of PLANETS){
   let a=LANES[p.col];
-  if(p.small)a+=(p.name.includes('Bonus')?0.055:-0.055);   // bonus pair sits side-by-side in one cell
-  const r=p.small?MID[p.ph-1]+0.045:MID[p.ph-1];
+  if(p.bonus)a+=p.boff;   // bonus planets sit just outside their unlock planet's cell
+  const r=MID[p.ph-1]+(p.bonus?0.06:0);
   const [x,z]=polar(a,r);p.x=x;p.z=z;p.y=0;
-  p.s=p.boss?0.10:(p.small?0.034:0.058);
+  p.s=p.boss?0.10:(p.bonus?0.045:0.058);
 }
 const sphere=await loadOBJ(D+'planet_mesh.obj');
 /* one alignment border per zone column (dark/neutral/light), shared game-space
@@ -351,14 +348,18 @@ for(const p of PLANETS)p.tex=await tex(p.t);
 /* sector grid: arcs on RINGS boundaries + spokes BETWEEN lane columns */
 const grid=[];
 function seg(a,b){grid.push(a[0],a[1],a[2],b[0],b[1],b[2]);}
-const SPAN=[-1.05,1.12];
+/* dense irregular sector mosaic like the reference: zone arcs drawn twice for
+   glow, many spokes, plus seeded cross-links so cells vary like the game */
+const SPAN=[-1.15,1.20];
 for(const r of RINGS)
-  for(let a=SPAN[0];a<SPAN[1];a+=0.03){const[x1,z1]=polar(a,r),[x2,z2]=polar(a+0.03,r);seg([x1,-0.035,z1],[x2,-0.035,z2]);}
-for(const a of [-1.05,-0.86,-0.80,-0.52,-0.19,0.30,0.38,0.56,0.88,1.10]){
-  const[x1,z1]=polar(a,RINGS[0]),[x2,z2]=polar(a,RINGS[RINGS.length-1]);seg([x1,-0.035,z1],[x2,-0.035,z2]);
+  for(let a=SPAN[0];a<SPAN[1];a+=0.03){const[x1,z1]=polar(a,r),[x2,z2]=polar(a+0.03,r);seg([x1,-0.035,z1],[x2,-0.035,z2]);seg([x1,-0.035,z1],[x2,-0.035,z2]);}
+for(let a=SPAN[0];a<=SPAN[1];a+=0.09){
+  const[x1,z1]=polar(a,RINGS[0]-0.04),[x2,z2]=polar(a,RINGS[RINGS.length-1]+0.10);seg([x1,-0.035,z1],[x2,-0.035,z2]);
 }
-/* staggered cell joints for the game look */
-for(const[a0,a1,r]of[[-0.80,-0.66,0.875],[-0.14,0.20,1.045],[0.58,0.86,0.875],[-0.66,-0.52,0.705],[0.05,0.24,0.705]]){
+let gseed=987654321;const grnd=()=>{gseed=(gseed*1664525+1013904223)>>>0;return gseed/4294967296;};
+for(let k=0;k<90;k++){
+  const a0=SPAN[0]+grnd()*(SPAN[1]-SPAN[0]-0.15),a1=a0+0.06+grnd()*0.10;
+  const r=RINGS[1+Math.floor(grnd()*(RINGS.length-2))]+(grnd()-0.5)*0.05;
   const[x1,z1]=polar(a0,r),[x2,z2]=polar(a1,r);seg([x1,-0.035,z1],[x2,-0.035,z2]);
 }
 const gridBuf=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,gridBuf);
@@ -483,20 +484,29 @@ function zoomIn(i){
     d.dataset.k=k;d.dataset.fl=(k===floatIdx&&!n.home)?'1':'';screen.appendChild(d);nodeDivs.push(d);
     if(!n.lock||n.home)d.addEventListener('click',ev=>{ev.stopPropagation();selectMission(k);});
   });
+  // guild combat log feed for this planet
+  logEl.innerHTML='';
+  const who=['Yawn','Targell','Braba Goro','Vex','Mira','Dax','Sable'];
+  const when=['1h 9m','1h 6m','59m','43m','31m','25m','18m'];
+  for(let li=0;li<7;li++){const dep=li%2===1;
+    const amt=(140+((p.idx*37+li*53)%70))+','+(100+((p.idx*61+li*137)%800));
+    const row=document.createElement('div');row.className='logrow';
+    row.innerHTML=`<img src="${dep?ICONS.deploy:ICONS.char}" alt="">`+
+      `<p><b>${who[li%who.length]}</b>: ${dep?`Deployed ${amt} points`:`Completed a Combat Mission (2/2 waves), earning ${p.pts||'200,000'} Territory Points`}</p><span>${when[li]}</span>`;
+    logEl.appendChild(row);}
+  logEl.hidden=false;
   missionIdx=null;mission.hidden=true;
   detail.hidden=false;
   screen.classList.add('detail');
   starDivs.forEach(d=>d.style.display='none');
   const marks={D:['✖','#ff4d5e'],N:['✖','#ffb300'],L:['✖','#7de8f7']};
   document.querySelector('.title b').innerHTML=`<span style="color:${marks[p.col][1]}">${marks[p.col][0]}</span> ${p.name}`;
-  document.getElementById('hudBack').classList.add('on');
 }
-function zoomOut(){focus=null;missionIdx=null;mission.hidden=true;nodeDivs.forEach(d=>d.remove());nodeDivs=[];
+function zoomOut(){focus=null;missionIdx=null;mission.hidden=true;logEl.hidden=true;nodeDivs.forEach(d=>d.remove());nodeDivs=[];
   anim={k:0,fromT:cur.t.slice(),fromD:cur.d,toT:BASE_T.slice(),toD:BASE_D};
   detail.hidden=true;starDivs.forEach(d=>d.style.display='');
   screen.classList.remove('detail');
-  document.querySelector('.title b').textContent='RISE OF THE EMPIRE';
-  document.getElementById('hudBack').classList.remove('on');}
+  document.querySelector('.title b').textContent='RISE OF THE EMPIRE';}
 let missionIdx=null;
 function kindOf(n){return n.i==='ship'||n.i==='char'?'Combat':n.i==='recon'?'Recon':n.i==='deploy'?'Deploy':n.i==='special'?'Special':'Platoon';}
 function defaultPts(i){return (520+((i*167)%340))+','+(100+((i*89)%800));}
@@ -525,16 +535,16 @@ function selectMission(k){
   document.getElementById('mNoteIcon').src=ICONS.deploy;
   document.getElementById('mNote').textContent=p.note||defaultNote(p);
   document.getElementById('mBattle').textContent=`BATTLE (${p.battle||1})`;
+  logEl.hidden=true;
   mission.hidden=false;
 }
 function back(){
   if(!focus)return;
-  if(missionIdx!==null){const p=focus;missionIdx=null;mission.hidden=true;detail.hidden=false;
+  if(missionIdx!==null){const p=focus;missionIdx=null;mission.hidden=true;detail.hidden=false;logEl.hidden=false;
     nodeDivs.forEach(d=>d.classList.remove('sel'));
     anim={k:0,fromT:cur.t.slice(),fromD:cur.d,toT:[p.x,p.y,p.z-p.s*0.5],toD:cur.d};}
   else zoomOut();
 }
-document.getElementById('hudBack').addEventListener('click',e=>{e.stopPropagation();back();});
 document.getElementById('sideBack').addEventListener('click',e=>{e.stopPropagation();back();});
 document.getElementById('mBattle').addEventListener('click',e=>{e.stopPropagation();});
 addEventListener('keydown',e=>{if(e.key==='Escape'&&focus)back();});
