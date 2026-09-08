@@ -286,20 +286,20 @@ const PLANETS=[
   {t:'tat_planet_tex.png',lane:YEL,col:'N',ph:3,name:'Tatooine',star:1,cur:'74,220,510',next:'407,366,667',ticks:[['191M',190953125],['306M',305525000],['407M',407366667]],desc:'Skirmish on Tatooine!',nodes:'mm',pts:'341,250',req:'Dark Side + Light Side (Relic 7+). Jabba, Fennec. Grand Inquisitor special. Mandalorians unlock Mandalore.'},
   {t:'fel_planet_tex.png',lane:YEL,col:'N',ph:2,name:'Felucia',star:1,cur:'57,902,441',next:'316,000,000',ticks:[['148M',148125000],['237M',237000000],['316M',316000000]],desc:'Lush Felucia awaits!',nodes:'mm',pts:'250,000',req:'Dark Side + Light Side (Relic 6+). Young Lando, Jabba, Hondo special.'},
   {t:'core_planet_tex.png',lane:YEL,col:'N',ph:1,name:'Corellia',star:1,cur:'52,014,220',next:'238,333,333',ticks:[['112M',111718750],['179M',178750000],['238M',238333333]],desc:'Smugglers run on Corellia!',nodes:'mm',pts:'200,000',req:'Dark Side + Light Side (Relic 5+). Jabba, Aphra, Qi\'ra + Young Han special.'},
-  {t:'man_planet_tex.png',lane:YEL,col:'N',ph:4,name:'Mandalore',star:0,cur:'41,903,517',next:'396,497,300',ticks:[['198M',197748650],['316M',316397840],['396M',396497300]],desc:'Unlocked via Tatooine special!',nodes:'mm',pts:'493,594',bonus:1,boff:0.16,req:'Bo-Katan (Mandalor) + Moff Gideon (Relic 8+). Gauntlet fleet.'},
+  {t:'man_planet_tex.png',lane:YEL,col:'N',ph:4,name:'Mandalore',star:0,cur:'41,903,517',next:'396,497,300',ticks:[['198M',197748650],['316M',316397840],['396M',396497300]],desc:'Unlocked via Tatooine special!',nodes:'mm',pts:'493,594',bonus:1,boff:-0.16,req:'Bo-Katan (Mandalor) + Moff Gideon (Relic 8+). Gauntlet fleet.'},
   {t:'scar_planet_tex.png',lane:CYN,col:'L',ph:6,name:'Scarif',star:1,cur:'201,774,882',next:'1,188,686,629',ticks:[['556M',555710999],['1.01B',1010383635],['1.19B',1188686629]],desc:'Steal the plans on Scarif!',nodes:'ll',pts:'1,151,719',req:'Light Side (Relic 9+). Baze + Chirrut + Pathfinders, Cassian + Pao + K-2SO. Profundity fleet.'},
   {t:'ring_of_kafrene_tex.png',lane:CYN,col:'L',ph:5,name:'Kafrene',star:1,cur:'133,902,418',next:'729,948,167',ticks:[['341M',341250768],['620M',620455942],['730M',729948167]],desc:'Ambush on the Ring of Kafrene!',nodes:'ll',pts:'721,744',req:'Light Side (Relic 9+). Cassian Andor + K-2SO.'},
   {t:'loth_planet_tex.png',lane:CYN,col:'L',ph:4,name:'Lothal',star:0,cur:'95,207,664',next:'524,984,167',ticks:[['247M',246742558],['420M',419987333],['525M',524984167]],desc:'Liberate Lothal!',nodes:'ll',pts:'493,594',req:'Jedi, Phoenix, Light Side (Relic 8+).'},
   {t:'kash_planet_tex.png',lane:CYN,col:'L',ph:3,name:'Kashyyyk',star:1,cur:'69,845,133',next:'407,366,667',ticks:[['191M',190953125],['306M',305525000],['407M',407366667]],desc:'Defend Kashyyyk!',nodes:'ll',pts:'341,250',req:'Wookiees, Light Side, Rebels + Saw Gerrera (Relic 7+). Profundity fleet.'},
   {t:'brac_planet_tex.png',lane:CYN,col:'L',ph:2,name:'Bracca',star:1,cur:'55,118,207',next:'303,500,000',ticks:[['142M',142265625],['228M',227625000],['304M',303500000]],desc:'Scrap over Bracca!',nodes:'ll',pts:'250,000',req:'Light Side (Relic 6+, special Relic 7+). Cere Junda + Cal Kestis unlock Zeffo (30 clears).'},
   {t:'cor_planet_tex.png',lane:CYN,col:'L',ph:1,name:'Coruscant',star:2,cur:'235,047,833',next:'248,333,333',ticks:[['116M',116406250],['186M',186250000],['248M',248333333]],desc:'Escape Coruscant during Order 66!',nodes:'ll',pts:'200,000',req:'Light Side (Relic 5+). Jedi, Mace Windu + Kit Fisto.'},
-  {t:'zef_planet_tex.png',lane:CYN,col:'L',ph:3,name:'Zeffo',star:0,cur:'38,410,222',next:'287,179,167',ticks:[['144M',143589583],['230M',229743333],['287M',287179167]],desc:'Unlocked via Bracca special!',nodes:'ll',pts:'341,250',bonus:1,boff:0.16,req:'Light Side + Unaligned Force + Clones (Relic 7+). Jedi Knight Cal Kestis.'},
+  {t:'zef_planet_tex.png',lane:CYN,col:'L',ph:3,name:'Zeffo',star:0,cur:'38,410,222',next:'287,179,167',ticks:[['144M',143589583],['230M',229743333],['287M',287179167]],desc:'Unlocked via Bracca special!',nodes:'ll',pts:'341,250',bonus:1,boff:-0.16,req:'Light Side + Unaligned Force + Clones (Relic 7+). Jedi Knight Cal Kestis.'},
 ];
 const ROUTES=[[0,1,2,3,4,5],[6,7,8,9,10,11],[13,14,15,16,17,18]];
 for(const p of PLANETS){
   let a=LANES[p.col];
-  if(p.bonus)a+=p.boff;   // bonus planets sit just outside their unlock planet's cell
-  const r=MID[p.ph-1]+(p.bonus?0.06:0);
+  if(p.bonus)a+=p.boff;   // bonus sits beside its planet on the middle-facing side
+  const r=MID[p.ph-1]+(p.bonus?0.03:0);
   const [x,z]=polar(a,r);p.x=x;p.z=z;p.y=0;
   p.s=p.boss?0.10:(p.bonus?0.045:0.058);
 }
@@ -334,28 +334,8 @@ const bmat=(()=>{let ax0=1e9,ax1=-1e9,az0=1e9,az1=-1e9;
 const texCache={};async function tex(f){if(!texCache[f])texCache[f]=await loadTex(D+f);return texCache[f];}
 for(const p of PLANETS)p.tex=await tex(p.t);
 
-/* sector grid: arcs on RINGS boundaries + spokes BETWEEN lane columns */
-/* sector grid like the reference: bright zone-boundary arcs + spokes, faint
-   mid-band arcs for texture, sparse short links hugging boundaries only */
-const SPAN=[-1.25,1.30];
-const gridB=[],gridF=[];
-function seg(arr,a,b){arr.push(a[0],a[1],a[2],b[0],b[1],b[2]);}
-for(const r of RINGS)
-  for(let a=SPAN[0];a<SPAN[1];a+=0.035){const[x1,z1]=polar(a,r),[x2,z2]=polar(a+0.035,r);seg(gridB,[x1,-0.035,z1],[x2,-0.035,z2]);}
-for(const r of MID)
-  for(let a=SPAN[0];a<SPAN[1];a+=0.045){const[x1,z1]=polar(a,r),[x2,z2]=polar(a+0.045,r);seg(gridF,[x1,-0.035,z1],[x2,-0.035,z2]);}
-for(let a=SPAN[0];a<=SPAN[1];a+=0.13){
-  const[x1,z1]=polar(a,RINGS[0]-0.04),[x2,z2]=polar(a,RINGS[RINGS.length-1]+0.10);seg(gridB,[x1,-0.035,z1],[x2,-0.035,z2]);
-}
-let gseed=987654321;const grnd=()=>{gseed=(gseed*1664525+1013904223)>>>0;return gseed/4294967296;};
-for(let k=0;k<36;k++){
-  const a0=SPAN[0]+grnd()*(SPAN[1]-SPAN[0]-0.2),a1=a0+0.08+grnd()*0.08;
-  const rb=RINGS[1+Math.floor(grnd()*(RINGS.length-2))],r=rb+(grnd()-0.5)*0.04;
-  const[x1,z1]=polar(a0,r),[x2,z2]=polar(a1,r);seg(gridB,[x1,-0.035,z1],[x2,-0.035,z2]);
-}
-function mkbuf(arr){const b=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,b);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(arr),gl.STATIC_DRAW);return b;}
-const gridBb=mkbuf(gridB),gridFb=mkbuf(gridF);
-const gridBN=gridB.length/3,gridFN=gridF.length/3;
+/* backing sector grid scrapped: planets sit in their alignment-border slots,
+   framed by zone borders + lane routes only */
 
 function ribbon(pts,w){const v=[],ix=[];let base=0;
   for(let i=0;i<pts.length;i++){const p=pts[i],q=pts[Math.min(i+1,pts.length-1)],o=pts[Math.max(i-1,0)];
@@ -559,17 +539,10 @@ let t0=performance.now();
   // NOTE: attribute/uniform locations are frame-scoped: the planet glow pass
   // below needs them even when the grid itself is skipped.
   gl.useProgram(progF);
-  gl.bindBuffer(gl.ARRAY_BUFFER,gridBb);
-  const gloc=gl.getAttribLocation(progF,'aP');gl.enableVertexAttribArray(gloc);gl.vertexAttribPointer(gloc,3,gl.FLOAT,false,0,0);
+  const gloc=gl.getAttribLocation(progF,'aP');gl.enableVertexAttribArray(gloc);
   const uMVPf=gl.getUniformLocation(progF,'uMVP'),uCf=gl.getUniformLocation(progF,'uColor'),uAf=gl.getUniformLocation(progF,'uAlpha');
   if(!focus){
   gl.disable(gl.DEPTH_TEST);gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE);
-  gl.uniformMatrix4fv(uMVPf,false,PV);gl.uniform3fv(uCf,[0.35,0.9,1.0]);gl.uniform1f(uAf,0.55);
-  gl.drawArrays(gl.LINES,0,gridBN);
-  gl.bindBuffer(gl.ARRAY_BUFFER,gridFb);
-  gl.enableVertexAttribArray(gloc);gl.vertexAttribPointer(gloc,3,gl.FLOAT,false,0,0);
-  gl.uniform3fv(uCf,[0.35,0.9,1.0]);gl.uniform1f(uAf,0.20);
-  gl.drawArrays(gl.LINES,0,gridFN);
   for(const r of ribbons)for(const[mesh,a]of[[r.glow,0.20],[r.core,0.95]]){
     gl.bindBuffer(gl.ARRAY_BUFFER,mesh.b);gl.enableVertexAttribArray(gloc);gl.vertexAttribPointer(gloc,3,gl.FLOAT,false,0,0);
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,mesh.ib);
