@@ -15,11 +15,7 @@
     background:repeating-linear-gradient(45deg,#2a0605 0 18px,#160303 18px 36px);
     border-bottom:3px solid #ffd21f;text-shadow:0 1px 0 #000}
   .cabinet{width:100vw;flex:1;min-height:0;position:relative;background:#01030a;overflow:hidden}
-  #detailBack{position:absolute;left:12px;top:12px;z-index:42;width:40px;height:40px;border-radius:50%;
-    display:none;align-items:center;justify-content:center;font-size:18px;font-weight:900;color:#cfefff;
-    cursor:pointer;background:radial-gradient(circle at 35% 30%,#2a3d5a,#060b14 70%);
-    border:2px solid rgba(120,210,245,.8);box-shadow:0 0 8px rgba(80,200,245,.5)}
-  #screen.detail #detailBack{display:flex}
+  /* back lives in the planet header row now */
   #screen.detail .hud,#screen.detail .chat,#screen.detail .hint{display:none}
   /* table chrome removed — no table assets available */
   .screen{position:absolute;inset:0;overflow:hidden;background:#020913}
@@ -61,11 +57,16 @@
   .hint{position:absolute;right:12px;bottom:10px;z-index:41;pointer-events:none;color:#7fb8d8;
     font-size:11px;letter-spacing:.08em;text-shadow:0 1px 0 #000;opacity:.9;transition:opacity 1.5s}
   /* ------- planet detail (zoomed) panel, like the in-game screenshot ------- */
-  #detail{position:absolute;inset:0;z-index:10;display:flex;flex-direction:column;pointer-events:none;
-    padding-top:clamp(52px,8vh,76px)}
+  #detail{position:absolute;top:clamp(52px,8vh,76px);right:0;bottom:0;width:min(430px,44%);z-index:34;
+    overflow-y:auto;background:linear-gradient(rgba(4,26,48,.97),rgba(2,12,26,.97));
+    border-left:2px solid rgba(64,210,245,.7);box-shadow:-12px 0 30px rgba(0,0,0,.6);
+    padding:10px 12px 12px;pointer-events:auto}
   #detail[hidden]{display:none}
   .d-head{background:linear-gradient(#06243f,#041627);border-bottom:2px solid #0e3a5c;
-    padding:10px 14px 12px;pointer-events:none;box-shadow:0 4px 18px rgba(0,0,0,.6)}
+    padding:0 0 10px;box-shadow:0 4px 18px rgba(0,0,0,.6)}
+  #sideBack{width:32px;height:32px;min-width:32px;border-radius:50%;cursor:pointer;
+    background:radial-gradient(circle at 35% 30%,#2a3d5a,#060b14 70%);
+    border:2px solid rgba(120,210,245,.8);color:#cfefff;font-weight:900;font-size:14px}
   .d-row1{display:flex;align-items:center;gap:10px}
   .d-row1 img{width:30px;height:30px;object-fit:contain;filter:brightness(1.6)}
   .d-row1 b{color:#f2f7fb;font-size:clamp(16px,3vw,30px);letter-spacing:.02em;flex:1}
@@ -117,11 +118,7 @@
   .mnode.home .hstars{position:absolute;top:114%;left:50%;transform:translateX(-50%);color:#0b2c44;
     font-size:13px;letter-spacing:2px;white-space:nowrap;text-shadow:0 0 1px #3fd6f5}
   /* ------- mission panel (right side, only after tapping a mission) ------- */
-  #mission{position:absolute;top:clamp(52px,8vh,76px);right:0;bottom:0;width:min(430px,44%);z-index:34;overflow-y:auto;
-    background:linear-gradient(rgba(4,26,48,.97),rgba(2,12,26,.97));
-    border-left:2px solid rgba(64,210,245,.7);box-shadow:-12px 0 30px rgba(0,0,0,.6);
-    padding:10px 12px 12px;pointer-events:auto}
-  #mission[hidden]{display:none}
+  #missionBody[hidden]{display:none}
   .m-head{display:flex;align-items:center;gap:8px;border-bottom:2px solid rgba(64,210,245,.4);padding-bottom:8px}
   .m-head>img{width:30px;height:30px;object-fit:contain;filter:brightness(1.5)}
   .m-head b{flex:1;color:#f2f7fb;font-size:clamp(15px,2.4vw,24px)}
@@ -157,10 +154,9 @@
   .m-btns{display:flex;gap:8px;margin-top:10px}
   .m-btns button{border-radius:8px;font-weight:800;letter-spacing:.06em;cursor:pointer;
     padding:12px 0;font-size:clamp(13px,2vw,18px)}
-  #mBack{flex:0 0 30%;background:#0a1828;border:2px solid rgba(120,210,245,.8);color:#cfefff}
   #mBattle{flex:1;background:linear-gradient(#37c837,#1a8f1a);border:2px solid #7dff7d;color:#fff;
     text-shadow:0 2px 0 rgba(0,0,0,.4);box-shadow:0 0 12px rgba(40,200,40,.5)}
-  @media (max-aspect-ratio:1/1){#mission{top:auto;left:0;right:0;bottom:0;width:auto;max-height:48%;
+  @media (max-aspect-ratio:1/1){#detail{top:auto;left:0;right:0;bottom:0;width:auto;max-height:48%;
     border-left:none;border-top:2px solid rgba(64,210,245,.7);box-shadow:0 -12px 30px rgba(0,0,0,.6)}}
   @media (max-width:640px){.circ,.chat{width:26px;height:26px;min-width:26px}}
   @media (max-width:700px){#mission{width:62%}.u-relic{width:16px;height:16px;font-size:9px;line-height:14px}
@@ -170,8 +166,7 @@
 <body>
 <div id="proto">⚠ PROTOTYPE — THIS TB TOOL IS UNFINISHED. EXPECT BUGS AND PLACEHOLDER DATA. ⚠</div>
 <div class="cabinet">
-  <div class="screen" id="screen">
-    <div id="detailBack" title="Back">◀</div>
+    <div class="screen" id="screen">
     <div class="space"><div class="stars"></div><div class="vig"></div></div>
     <canvas id="gl"></canvas>
     <div id="loader">LOADING TB3&nbsp;&nbsp;·&nbsp;&nbsp;RISE OF THE EMPIRE</div>
@@ -182,16 +177,15 @@
     </div>
     <div class="chat"><svg viewBox="0 0 24 24"><path d="M4 3h16a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H9l-5 4V4a1 1 0 0 1 1-1zm3 5v2h10V8H7zm0 3.5V13h7v-1.5H7z"/></svg></div>
     <div class="hint" id="hint">drag to slide · wheel to zoom · double-click to reset</div>
-    <div id="detail" hidden>
+    <aside id="detail" hidden>
       <div class="d-head">
-        <div class="d-row1"><img id="dWing" alt=""><b id="dName">Dathomir</b><span class="dstars" id="dStars"></span></div>
+        <div class="d-row1"><button id="sideBack" type="button" title="Back">◀</button><img id="dWing" alt=""><b id="dName">Dathomir</b><span class="dstars" id="dStars"></span></div>
         <div class="d-score"><b id="dCur"></b> / <span id="dNext"></span> (Next Star)</div>
         <div class="d-bar"><div id="dFill"></div></div>
         <div class="d-ticks" id="dTicks"></div>
         <div class="d-desc" id="dDesc"></div>
       </div>
-    </div>
-    <aside id="mission" hidden>
+      <div id="missionBody" hidden>
       <div class="m-head"><img id="mIcon" alt=""><b id="mName">Combat Mission</b>
         <span class="m-squad"><img id="mSquadIcon" alt=""><span id="mSquad">32 / 50</span></span></div>
       <div class="m-sec"><h4>REQUIREMENTS</h4><p id="mReq"></p></div>
@@ -199,7 +193,8 @@
       <div class="m-sec"><h4>ABILITIES AFFECTING TERRITORY</h4><div class="m-abil" id="mAbil"></div></div>
       <div class="m-sec"><h4>MISSION UNITS</h4><div class="m-units" id="mUnits"></div></div>
       <div class="m-note"><img id="mNoteIcon" alt=""><span id="mNote"></span></div>
-      <div class="m-btns"><button id="mBack" type="button">◀ BACK</button><button id="mBattle" type="button">BATTLE (1)</button></div>
+      <div class="m-btns"><button id="mBattle" type="button">BATTLE (1)</button></div>
+      </div>
     </aside>
   </div>
 </div>
@@ -211,7 +206,7 @@ addEventListener('error',e=>{try{const l=document.getElementById('loader');if(l)
 addEventListener('unhandledrejection',e=>{try{const l=document.getElementById('loader');if(l){l.style.display='flex';l.textContent='ERROR: '+((e.reason&&e.reason.message)||e.reason||'load failed');}}catch(_){}});
 const canvas=document.getElementById('gl'), screen=document.getElementById('screen'), loader=document.getElementById('loader');
 const detail=document.getElementById('detail');
-const mission=document.getElementById('mission');
+const mission=document.getElementById('missionBody');
 const gl=canvas.getContext('webgl',{alpha:true,antialias:true});
 if(!gl){loader.textContent='WEBGL UNAVAILABLE';return;}
 
@@ -290,7 +285,7 @@ const RED=[1,0.16,0.22],YEL=[1,0.68,0.05],CYN=[0.5,0.9,0.97];
 const D='TB/territorymap/', UI='TB/territoryui/sprites/territoryui_view_rgba_atlas/';
 const RINGS=[0.45,0.62,0.79,0.96,1.13,1.30,1.48];           // 7 boundaries -> 6 phase bands
 const MID=[0.535,0.705,0.875,1.045,1.215,1.39];             // planet ring per phase (bottom->top)
-const LANES={D:-0.66,M:0.05,L:0.72};                        // spoke angle per column (dark/mixed/light)
+const LANES={D:-0.66,N:0.05,L:0.72};                        // spoke angle per column (dark/neutral/light)
 const FLAT=0.62, CZ=0.85;                                   // rings bow around a center below-screen
 const polar=(a,r)=>[Math.sin(a)*r, CZ-Math.cos(a)*r*FLAT];
 const PLANETS=[
@@ -300,21 +295,21 @@ const PLANETS=[
   {t:'dath_planet_tex.png',lane:RED,col:'D',ph:3,name:'Dathomir',star:0,cur:'14,957,316',next:'158,960,938',ticks:[['159M',159],['254M',254],['339M',339]],desc:'Engage the Nightsisters on Dathomir!',nodes:'dathomir'},
   {t:'geo_planet_tex.png',lane:RED,col:'D',ph:2,name:'Geonosis',star:1,cur:'96,410,772',next:'158,960,938',ticks:[['159M',159],['254M',254],['339M',339]],desc:'Storm the foundries of Geonosis!',nodes:'dd'},
   {t:'mus_planet_tex.png',lane:RED,col:'D',ph:1,name:'Mustafar',star:3,cur:'312,008,455',next:'339,000,000',ticks:[['159M',159],['254M',254],['339M',339]],desc:'Conquer Mustafar!',boss:1,nodes:'dd'},
-  {t:'scar_planet_tex.png',lane:YEL,col:'L',ph:6,name:'Scarif',star:0,cur:'7,990,104',next:'158,960,938',ticks:[['159M',159],['254M',254],['339M',339]],desc:'Steal the plans on Scarif!',nodes:'ll'},
-  {t:'ring_of_kafrene_tex.png',lane:YEL,col:'L',ph:5,name:'Kafrene',star:0,cur:'12,033,918',next:'158,960,938',ticks:[['159M',159],['254M',254],['339M',339]],desc:'Ambush on the Ring of Kafrene!',nodes:'ll'},
-  {t:'loth_planet_tex.png',lane:YEL,col:'L',ph:4,name:'Lothal',star:0,cur:'10,556,201',next:'158,960,938',ticks:[['159M',159],['254M',254],['339M',339]],desc:'Liberate Lothal!',nodes:'ll'},
-  {t:'kash_planet_tex.png',lane:YEL,col:'L',ph:3,name:'Kashyyyk',star:1,cur:'88,120,467',next:'158,960,938',ticks:[['159M',159],['254M',254],['339M',339]],desc:'Defend Kashyyyk!',nodes:'ll'},
-  {t:'brac_planet_tex.png',lane:YEL,col:'L',ph:2,name:'Bracca',star:2,cur:'141,309,882',next:'158,960,938',ticks:[['159M',159],['254M',254],['339M',339]],desc:'Scrap over Bracca!',nodes:'ll'},
-  {t:'cor_planet_tex.png',lane:YEL,col:'L',ph:1,name:'Coruscant',star:3,cur:'301,447,109',next:'339,000,000',ticks:[['159M',159],['254M',254],['339M',339]],desc:'Take the capital: Coruscant!',boss:1,nodes:'ll'},
-  {t:'hoth_planet_tex.png',lane:CYN,col:'M',ph:6,name:'Hoth',star:0,dark:.55,cur:'8,771,450',next:'158,960,938',ticks:[['159M',159],['254M',254],['339M',339]],desc:'Hold Echo Base on Hoth!',nodes:'mm'},
-  {t:'van_planet_tex.png',lane:CYN,col:'M',ph:5,name:'Vandor',star:0,cur:'6,209,833',next:'158,960,938',ticks:[['159M',159],['254M',254],['339M',339]],desc:'Heist on Vandor!',small:1,nodes:'mm'},
-  {t:'kes_planet_tex.png',lane:CYN,col:'M',ph:5,name:'Kessel Bonus',star:0,cur:'4,102,500',next:'158,960,938',ticks:[['159M',159],['254M',254],['339M',339]],desc:'Bonus: Kessel spice run!',small:1,nodes:'mm'},
-  {t:'kes_planet_tex.png',lane:CYN,col:'M',ph:4,name:'Kessel',star:0,cur:'9,314,027',next:'158,960,938',ticks:[['159M',159],['254M',254],['339M',339]],desc:'Run the Kessel mines!',nodes:'mm'},
-  {t:'fel_planet_tex.png',lane:CYN,col:'M',ph:3,name:'Felucia',star:1,cur:'72,884,193',next:'158,960,938',ticks:[['159M',159],['254M',254],['339M',339]],desc:'Push through Felucia!',nodes:'mm'},
-  {t:'tat_planet_tex.png',lane:CYN,col:'M',ph:2,name:'Tatooine',star:1,cur:'61,502,718',next:'158,960,938',ticks:[['159M',159],['254M',254],['339M',339]],desc:'Skirmish on Tatooine!',small:1,nodes:'mm'},
-  {t:'core_planet_tex.png',lane:CYN,col:'M',ph:1,name:'Corellia',star:3,cur:'288,915,640',next:'339,000,000',ticks:[['159M',159],['254M',254],['339M',339]],desc:'Strike at Corellia!',boss:1,nodes:'mm'},
+  {t:'hoth_planet_tex.png',lane:YEL,col:'N',ph:6,name:'Hoth',star:0,dark:.55,cur:'8,771,450',next:'158,960,938',ticks:[['159M',159],['254M',254],['339M',339]],desc:'Hold Echo Base on Hoth!',nodes:'mm'},
+  {t:'van_planet_tex.png',lane:YEL,col:'N',ph:5,name:'Vandor',star:0,cur:'6,209,833',next:'158,960,938',ticks:[['159M',159],['254M',254],['339M',339]],desc:'Heist on Vandor!',small:1,nodes:'mm'},
+  {t:'kes_planet_tex.png',lane:YEL,col:'N',ph:5,name:'Kessel Bonus',star:0,cur:'4,102,500',next:'158,960,938',ticks:[['159M',159],['254M',254],['339M',339]],desc:'Bonus: Kessel spice run!',small:1,nodes:'mm'},
+  {t:'kes_planet_tex.png',lane:YEL,col:'N',ph:4,name:'Kessel',star:0,cur:'9,314,027',next:'158,960,938',ticks:[['159M',159],['254M',254],['339M',339]],desc:'Run the Kessel mines!',nodes:'mm'},
+  {t:'tat_planet_tex.png',lane:YEL,col:'N',ph:3,name:'Tatooine',star:1,cur:'61,502,718',next:'158,960,938',ticks:[['159M',159],['254M',254],['339M',339]],desc:'Skirmish on Tatooine!',nodes:'mm'},
+  {t:'fel_planet_tex.png',lane:YEL,col:'N',ph:2,name:'Felucia',star:1,cur:'72,884,193',next:'158,960,938',ticks:[['159M',159],['254M',254],['339M',339]],desc:'Push through Felucia!',nodes:'mm'},
+  {t:'core_planet_tex.png',lane:YEL,col:'N',ph:1,name:'Corellia',star:3,cur:'288,915,640',next:'339,000,000',ticks:[['159M',159],['254M',254],['339M',339]],desc:'Strike at Corellia!',boss:1,nodes:'mm'},
+  {t:'scar_planet_tex.png',lane:CYN,col:'L',ph:6,name:'Scarif',star:0,cur:'7,990,104',next:'158,960,938',ticks:[['159M',159],['254M',254],['339M',339]],desc:'Steal the plans on Scarif!',nodes:'ll'},
+  {t:'ring_of_kafrene_tex.png',lane:CYN,col:'L',ph:5,name:'Kafrene',star:0,cur:'12,033,918',next:'158,960,938',ticks:[['159M',159],['254M',254],['339M',339]],desc:'Ambush on the Ring of Kafrene!',nodes:'ll'},
+  {t:'loth_planet_tex.png',lane:CYN,col:'L',ph:4,name:'Lothal',star:0,cur:'10,556,201',next:'158,960,938',ticks:[['159M',159],['254M',254],['339M',339]],desc:'Liberate Lothal!',nodes:'ll'},
+  {t:'kash_planet_tex.png',lane:CYN,col:'L',ph:3,name:'Kashyyyk',star:1,cur:'88,120,467',next:'158,960,938',ticks:[['159M',159],['254M',254],['339M',339]],desc:'Defend Kashyyyk!',nodes:'ll'},
+  {t:'brac_planet_tex.png',lane:CYN,col:'L',ph:2,name:'Bracca',star:2,cur:'141,309,882',next:'158,960,938',ticks:[['159M',159],['254M',254],['339M',339]],desc:'Scrap over Bracca!',nodes:'ll'},
+  {t:'cor_planet_tex.png',lane:CYN,col:'L',ph:1,name:'Coruscant',star:3,cur:'301,447,109',next:'339,000,000',ticks:[['159M',159],['254M',254],['339M',339]],desc:'Take the capital: Coruscant!',boss:1,nodes:'ll'},
 ];
-const ROUTES=[[0,1,2,3,4,5],[6,7,8,9,10,11],[12,13,15,16,17,18]];
+const ROUTES=[[0,1,2,3,4,5],[6,7,9,10,11,12],[13,14,15,16,17,18]];
 for(const p of PLANETS){
   let a=LANES[p.col];
   if(p.small)a+=(p.name.includes('Bonus')?0.055:-0.055);   // bonus pair sits side-by-side in one cell
@@ -323,6 +318,33 @@ for(const p of PLANETS){
   p.s=p.boss?0.10:(p.small?0.034:0.058);
 }
 const sphere=await loadOBJ(D+'planet_mesh.obj');
+/* one alignment border per zone column (dark/neutral/light), shared game-space
+   frame mapped onto our map with a single uniform transform */
+async function loadBorder(url){
+  const txt=await (await fetch(url)).text();
+  const V=[],pos=[],idx=[];const map=new Map();let k=0;
+  let x0=1e9,x1=-1e9,z0=1e9,z1=-1e9;
+  function vi(v){if(map.has(v))return map.get(v);
+    const p=V[v].split(' ').map(Number),id=k++;map.set(v,id);
+    pos.push(p[0],0,p[2]);
+    if(p[0]<x0)x0=p[0];if(p[0]>x1)x1=p[0];if(p[2]<z0)z0=p[2];if(p[2]>z1)z1=p[2];
+    return id;}
+  for(const line of txt.split('\n')){
+    if(line.startsWith('v '))V.push(line.slice(2).trim());
+    else if(line.startsWith('f ')){const vs=line.slice(2).trim().split(/\s+/).map(s=>vi(+s.split('/')[0]-1));
+      for(let i=1;i<vs.length-1;i++)idx.push(vs[0],vs[i],vs[i+1]);}
+  }
+  const pb=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,pb);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(pos),gl.STATIC_DRAW);
+  const ib=gl.createBuffer();gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,ib);gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,new Uint16Array(idx),gl.STATIC_DRAW);
+  return{pb,ib,n:idx.length,x0,x1,z0,z1};
+}
+const borders=[];
+for(const [u,c] of [[D+'alignment_border_dark.obj',RED],[D+'alignment_border_neutral.obj',YEL],[D+'alignment_border_light.obj',CYN]])
+  borders.push({...await loadBorder(u),color:c});
+const bmat=(()=>{let ax0=1e9,ax1=-1e9,az0=1e9,az1=-1e9;
+  for(const b of borders){ax0=Math.min(ax0,b.x0);ax1=Math.max(ax1,b.x1);az0=Math.min(az0,b.z0);az1=Math.max(az1,b.z1);}
+  const s=Math.min(2.1/(ax1-ax0),1.11/(az1-az0));
+  return new Float32Array([s,0,0,0, 0,s,0,0, 0,0,s,0, -1.05-ax0*s,-0.02,0.385-((az0+az1)/2)*s,1]);})();
 const texCache={};async function tex(f){if(!texCache[f])texCache[f]=await loadTex(D+f);return texCache[f];}
 for(const p of PLANETS)p.tex=await tex(p.t);
 
@@ -465,7 +487,7 @@ function zoomIn(i){
   detail.hidden=false;
   screen.classList.add('detail');
   starDivs.forEach(d=>d.style.display='none');
-  const marks={D:['✖','#ff4d5e'],L:['✖','#7de8f7'],M:['✖','#ffd21f']};
+  const marks={D:['✖','#ff4d5e'],N:['✖','#ffb300'],L:['✖','#7de8f7']};
   document.querySelector('.title b').innerHTML=`<span style="color:${marks[p.col][1]}">${marks[p.col][0]}</span> ${p.name}`;
   document.getElementById('hudBack').classList.add('on');
 }
@@ -483,7 +505,6 @@ function selectMission(k){
   const p=focus;if(!p)return;
   const set=NODESETS[p.nodes],n=set[k];if(!n||(n.lock&&!n.home))return;
   missionIdx=k;
-  detail.hidden=true;
   const asp0=canvas.width/Math.max(1,canvas.height);
   const sh0=p.s*1.05*Math.min(1,asp0/1.6);
   anim={k:0,fromT:cur.t.slice(),fromD:cur.d,toT:asp0<1?[p.x,p.y,p.z-p.s*0.5+sh0]:[p.x+sh0,p.y,p.z-p.s*0.5],toD:cur.d};
@@ -514,8 +535,7 @@ function back(){
   else zoomOut();
 }
 document.getElementById('hudBack').addEventListener('click',e=>{e.stopPropagation();back();});
-document.getElementById('detailBack').addEventListener('click',e=>{e.stopPropagation();back();});
-document.getElementById('mBack').addEventListener('click',e=>{e.stopPropagation();back();});
+document.getElementById('sideBack').addEventListener('click',e=>{e.stopPropagation();back();});
 document.getElementById('mBattle').addEventListener('click',e=>{e.stopPropagation();});
 addEventListener('keydown',e=>{if(e.key==='Escape'&&focus)back();});
 
@@ -548,6 +568,14 @@ let t0=performance.now();
     gl.bindBuffer(gl.ARRAY_BUFFER,mesh.b);gl.enableVertexAttribArray(gloc);gl.vertexAttribPointer(gloc,3,gl.FLOAT,false,0,0);
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,mesh.ib);
     gl.uniform3fv(uCf,r.lane);gl.uniform1f(uAf,a);gl.drawElements(gl.TRIANGLES,mesh.n,gl.UNSIGNED_SHORT,0);}
+  // one alignment border per zone, enclosing its whole column
+  for(const b of borders){
+    gl.bindBuffer(gl.ARRAY_BUFFER,b.pb);
+    gl.enableVertexAttribArray(gloc);gl.vertexAttribPointer(gloc,3,gl.FLOAT,false,0,0);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,b.ib);
+    gl.uniformMatrix4fv(uMVPf,false,M4.mul(PV,bmat));
+    gl.uniform3fv(uCf,b.color);gl.uniform1f(uAf,0.55);
+    gl.drawElements(gl.TRIANGLES,b.n,gl.UNSIGNED_SHORT,0);}
   }
   gl.disable(gl.BLEND);gl.enable(gl.DEPTH_TEST);
   // planets: real OBJ sphere + real TB textures
@@ -602,7 +630,8 @@ let t0=performance.now();
         wy=p.y+Math.sqrt(Math.max(0.03*f*f,f*f-(wx-p.x)*(wx-p.x)-(wz-p.z)*(wz-p.z)));}
       const s=project(wx,wy,wz,PV);
       const r0=screen.getBoundingClientRect();
-      const vis=s[2]>0&&s[0]>-30&&s[0]<r0.width+30&&s[1]>30&&s[1]<r0.height+30;
+      const maxX=r0.width-detail.getBoundingClientRect().width+30;
+      const vis=s[2]>0&&s[0]>-30&&s[0]<maxX&&s[1]>30&&s[1]<r0.height+30;
       d.style.visibility=vis?'visible':'hidden';
       if(!vis)return;
       d.style.left=s[0]+'px';d.style.top=s[1]+'px';});
