@@ -204,7 +204,10 @@ const M4={
     return new Float32Array([x[0],y[0],z[0],0,x[1],y[1],z[1],0,x[2],y[2],z[2],0,
       -(x[0]*e[0]+x[1]*e[1]+x[2]*e[2]),-(y[0]*e[0]+y[1]*e[1]+y[2]*e[2]),-(z[0]*e[0]+z[1]*e[1]+z[2]*e[2]),1]);},
   model(x,y,z,s,ry){const c=Math.cos(ry),s2=Math.sin(ry);
-    return new Float32Array([s*c,0,-s*s2,0, 0,s,0,0, s*s2,0,s*c,0, x,y,z,1]);}
+    return new Float32Array([s*c,0,-s*s2,0, 0,s,0,0, s*s2,0,s*c,0, x,y,z,1]);},
+  modelTilt(x,y,z,s,ry,tilt){const c=Math.cos(ry),s2=Math.sin(ry),ct=Math.cos(tilt),st=Math.sin(tilt);
+    const R=M4.mul([1,0,0,0, 0,ct,st,0, 0,-st,ct,0, 0,0,0,1],[s*c,0,-s*s2,0, 0,s,0,0, s*s2,0,s*c,0, 0,0,0,1]);
+    R[12]=x;R[13]=y;R[14]=z;return R;}
 };
 function shader(t,s){const h=gl.createShader(t);gl.shaderSource(h,s);gl.compileShader(h);
   if(!gl.getShaderParameter(h,gl.COMPILE_STATUS))throw new Error(gl.getShaderInfoLog(h));return h;}
@@ -213,14 +216,14 @@ function program(vs,fs){const p=gl.createProgram();gl.attachShader(p,shader(gl.V
   if(!gl.getProgramParameter(p,gl.LINK_STATUS))throw new Error(gl.getProgramInfoLog(p));return p;}
 const progT=program(`
   attribute vec3 aP;attribute vec3 aN;attribute vec2 aU;
-  uniform mat4 uMVP,uM;uniform float uRY;varying vec2 vU;varying vec3 vN;
-  void main(){float c=cos(uRY),s=sin(uRY);vN=mat3(uM)*vec3(c*aN.x+s*aN.z,aN.y,-s*aN.x+c*aN.z);
+  uniform mat4 uMVP,uM;varying vec2 vU;varying vec3 vN;
+  void main(){vN=mat3(uM)*aN;
     vU=aU;gl_Position=uMVP*vec4(aP,1.0);}`,
  `precision mediump float;varying vec2 vU;varying vec3 vN;
   uniform sampler2D uTex;uniform vec3 uTint;uniform vec3 uLight;uniform float uDark;
   void main(){vec3 n=normalize(vN);vec3 L=normalize(uLight);vec3 V=normalize(vec3(0.25,0.8,0.9));
     float dif=max(dot(n,L),0.0);vec3 tex=texture2D(uTex,vU).rgb*uDark;
-    vec3 col=tex*(0.45+0.8*dif)+uTint*0.07;
+    vec3 col=tex*(0.38+0.9*dif)+uTint*0.06;
     vec3 H=normalize(L+V);col+=vec3(0.32)*pow(max(dot(n,H),0.0),24.0)*dif;
     col+=uTint*pow(1.0-abs(dot(n,V)),2.5)*0.5;
     gl_FragColor=vec4(col,1.0);}`);
@@ -258,21 +261,25 @@ function loadTex(url){return new Promise((res,rej)=>{const im=new Image();im.onl
   const t=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,t);gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,1);
   gl.texImage2D(gl.TEXTURE_2D,0,gl.RGB,gl.RGB,gl.UNSIGNED_BYTE,im);
   gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR_MIPMAP_LINEAR);
-  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);gl.generateMipmap(gl.TEXTURE_2D);res(t);};
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.REPEAT);
+  gl.generateMipmap(gl.TEXTURE_2D);res(t);};
   im.onerror=rej;im.src=url;});}
 
 /* ================= TB3 Rise of the Empire layout =================
-   Fan of SECTOR cells around a focus below-screen. Each planet sits at
-   the CENTER of its cell: ring = phase (1 bottom .. 6 top), spoke = lane.
-   Boundaries (arcs + spokes) are drawn BETWEEN planets so every planet
-   rests inside its gap, like the reference. */
+   Planets ride up the middle of their alignment zone (bottom -> top),
+   zig-zagging side to side so each one sits INSIDE its border cell
+   instead of on a straight spoke, like the reference. */
 const RED=[1,0.16,0.22],YEL=[1,0.68,0.05],CYN=[0.5,0.9,0.97];
 const D='TB/territorymap/', UI='TB/territoryui/sprites/territoryui_view_rgba_atlas/';
-const RINGS=[0.45,0.62,0.79,0.96,1.13,1.30,1.48];           // 7 boundaries -> 6 phase bands
-const MID=[0.535,0.705,0.875,1.045,1.215,1.39];             // planet ring per phase (bottom->top)
-const LANES={D:-0.66,N:0.05,L:0.72};                        // spoke angle per column (dark/neutral/light)
-const FLAT=0.90, CZ=0.85;                                   // rings bow around a center below-screen
-const polar=(a,r)=>[Math.sin(a)*r, CZ-Math.cos(a)*r*FLAT];
+// zone spines in border (game) space: bottom-center -> top-center, inset from edges
+const AXIS={
+  D:{bx:-0.60,bz:0.48,tx:-0.48,tz:-0.30},
+  N:{bx:-0.01,bz:0.28,tx:0.00,tz:-0.40},
+  L:{bx:0.60,bz:0.48,tx:0.48,tz:-0.30},
+};
+// lateral zig-zag per phase (bottom -> top): alternate sides, calm down at the narrow tip
+const ZIG=[0.06,-0.07,0.07,-0.06,0.05,-0.03];
 const PLANETS=[
   {t:'deathstar%20tex.png',lane:RED,col:'D',ph:6,name:'Death Star',star:1,cur:'210,447,319',next:'1,246,272,567',ticks:[['583M',582632425],['1.06B',1059331682],['1.25B',1246272567]],desc:'Destroy the Death Star!',nodes:'dd',pts:'1,151,719',req:'Dark Side (Relic 9+). Iden Versio, Darth Vader. TIE Fighter fleet.'},
   {t:'mala_planet_tex.png',lane:RED,col:'D',ph:5,name:'Malachor',star:0,cur:'11,204,551',next:'729,948,167',ticks:[['341M',341250768],['620M',620455942],['730M',729948167]],desc:'Survive the trials of Malachor!',nodes:'dd',squad:'32 / 50',pts:'721,744',req:'Dark Side or Neutral (Relic 9+)',note:'1) SEE + Sith tanks vs Hera/Sabine/Chopper. Alt: GMT Clones (omi needed)'},
@@ -296,12 +303,25 @@ const PLANETS=[
   {t:'zef_planet_tex.png',lane:CYN,col:'L',ph:3,name:'Zeffo',star:0,cur:'38,410,222',next:'287,179,167',ticks:[['144M',143589583],['230M',229743333],['287M',287179167]],desc:'Unlocked via Bracca special!',nodes:'ll',pts:'341,250',bonus:1,boff:-0.16,req:'Light Side + Unaligned Force + Clones (Relic 7+). Jedi Knight Cal Kestis.'},
 ];
 const ROUTES=[[0,1,2,3,4,5],[6,7,8,9,10,11],[13,14,15,16,17,18]];
-for(const p of PLANETS){
-  let a=LANES[p.col];
-  if(p.bonus)a+=p.boff;   // bonus sits beside its planet on the middle-facing side
-  const r=MID[p.ph-1]+(p.bonus?0.03:0);
-  const [x,z]=polar(a,r);p.x=x;p.z=z;p.y=0;
-  p.s=p.boss?0.10:(p.bonus?0.045:0.058);
+for(const [p,i] of PLANETS.map((p,i)=>[p,i])){
+  if(p.bonus)continue;   // placed after parents below
+  const ax=AXIS[p.col],t=(p.ph-1)/5;
+  const zig=ZIG[p.ph-1]*(p.col==='N'?0.7:1);
+  p.x=ax.bx+(ax.tx-ax.bx)*t+zig;
+  p.z=ax.bz+(ax.tz-ax.bz)*t;
+  p.y=0;
+  p.s=p.boss?0.075:0.052*(1-t*0.15);
+  p.tilt=Math.PI/2;   // edge-on: poles sit on the rim, texture reads without pinch
+}
+// bonus planets sit beside their parent, still inside the same zone
+{
+  const byName={};PLANETS.forEach(p=>byName[p.name]=p);
+  const put=(name,parent,dx,dz)=>{
+    const q=byName[parent];byName[name].x=q.x+dx;byName[name].y=0;byName[name].z=q.z+dz;
+    byName[name].s=0.042;byName[name].tilt=Math.PI/2;
+  };
+  put('Mandalore','Tatooine',-0.13,0.06);
+  put('Zeffo','Bracca',-0.13,0.06);
 }
 const sphere=await loadOBJ(D+'planet_mesh.obj');
 /* one alignment border per zone column (dark/neutral/light), shared game-space
@@ -327,10 +347,11 @@ async function loadBorder(url){
 const borders=[];
 for(const [u,c] of [[D+'alignment_border_dark.obj',RED],[D+'alignment_border_neutral.obj',YEL],[D+'alignment_border_light.obj',CYN]])
   borders.push({...await loadBorder(u),color:c});
+/* borders stay put: one shared uniform transform keeps the three zones interlocked */
 const bmat=(()=>{let ax0=1e9,ax1=-1e9,az0=1e9,az1=-1e9;
   for(const b of borders){ax0=Math.min(ax0,b.x0);ax1=Math.max(ax1,b.x1);az0=Math.min(az0,b.z0);az1=Math.max(az1,b.z1);}
   const s=Math.min(2.1/(ax1-ax0),1.11/(az1-az0));
-  return new Float32Array([s,0,0,0, 0,s,0,0, 0,0,s,0, -1.05-ax0*s,-0.02,0.385-((az0+az1)/2)*s,1]);})();
+  return new Float32Array([s,0,0,0, 0,s,0,0, 0,0,s,0, -1.05-ax0*s,-0.02,0.05-((az0+az1)/2)*s,1]);})();
 const texCache={};async function tex(f){if(!texCache[f])texCache[f]=await loadTex(D+f);return texCache[f];}
 for(const p of PLANETS)p.tex=await tex(p.t);
 
@@ -566,20 +587,20 @@ let t0=performance.now();
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,sphere.ib);
   const uMVP=gl.getUniformLocation(progT,'uMVP'),uM=gl.getUniformLocation(progT,'uM'),uTex=gl.getUniformLocation(progT,'uTex'),
         uTint=gl.getUniformLocation(progT,'uTint'),uLight=gl.getUniformLocation(progT,'uLight'),
-        uRY=gl.getUniformLocation(progT,'uRY'),uDark=gl.getUniformLocation(progT,'uDark');
+        uDark=gl.getUniformLocation(progT,'uDark');
   gl.uniform3fv(uLight,[0.35,0.8,0.6]);
   const hideFace=focus?0.35:1;
   for(const p of PLANETS){if(focus&&p!==focus)continue;
-    const ry=t*0.15+p.x*3,M=M4.model(p.x,p.y,p.z,p.s,ry);
+    const ry=t*0.15+p.x*3,M=M4.modelTilt(p.x,p.y,p.z,p.s,ry,p.tilt);
     gl.uniformMatrix4fv(uM,false,M);gl.uniformMatrix4fv(uMVP,false,M4.mul(PV,M));
-    gl.uniform1f(uRY,ry);gl.uniform3fv(uTint,p.lane);gl.uniform1f(uDark,(p.dark||1)*(p===focus?1.25:1));
+    gl.uniform3fv(uTint,p.lane);gl.uniform1f(uDark,(p.dark||1)*(p===focus?1.25:1));
     gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,p.tex);gl.uniform1i(uTex,0);
     gl.drawElements(gl.TRIANGLES,sphere.count,gl.UNSIGNED_SHORT,0);
     if(p===focus)continue;
-    gl.useProgram(progF);gl.disable(gl.DEPTH_TEST);gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE);
+    gl.useProgram(progF);gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE);
     gl.enableVertexAttribArray(gloc);gl.bindBuffer(gl.ARRAY_BUFFER,sphere.pb);gl.vertexAttribPointer(gloc,3,gl.FLOAT,false,0,0);
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,sphere.ib);
-    gl.uniformMatrix4fv(uMVPf,false,M4.mul(PV,M4.model(p.x,p.y,p.z,p.s*1.3,ry)));
+    gl.uniformMatrix4fv(uMVPf,false,M4.mul(PV,M4.modelTilt(p.x,p.y,p.z,p.s*1.3,ry,p.tilt)));
     gl.uniform3fv(uCf,p.lane);gl.uniform1f(uAf,(p.boss?0.4:0.22)*hideFace);
     gl.enable(gl.CULL_FACE);gl.cullFace(gl.FRONT);
     gl.drawElements(gl.TRIANGLES,sphere.count,gl.UNSIGNED_SHORT,0);
