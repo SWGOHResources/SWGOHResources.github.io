@@ -8,8 +8,19 @@
   *{margin:0;padding:0;box-sizing:border-box}
   html,body{height:100%;background:#01030a}
   body{background:#01030a;min-height:100vh;min-height:100dvh;margin:0;padding:0;overflow:hidden;
+    display:flex;flex-direction:column;
     font-family:"Sora","Inter","Arial Narrow",Arial,sans-serif}
-  .cabinet{width:100vw;height:100vh;height:100dvh;position:relative;background:#01030a;overflow:hidden}
+  #proto{flex:0 0 auto;z-index:60;text-align:center;font-weight:800;letter-spacing:.05em;
+    font-size:clamp(10px,1.6vw,14px);color:#ffd21f;padding:7px 10px;
+    background:repeating-linear-gradient(45deg,#2a0605 0 18px,#160303 18px 36px);
+    border-bottom:3px solid #ffd21f;text-shadow:0 1px 0 #000}
+  .cabinet{width:100vw;flex:1;min-height:0;position:relative;background:#01030a;overflow:hidden}
+  #detailBack{position:absolute;left:12px;top:12px;z-index:42;width:40px;height:40px;border-radius:50%;
+    display:none;align-items:center;justify-content:center;font-size:18px;font-weight:900;color:#cfefff;
+    cursor:pointer;background:radial-gradient(circle at 35% 30%,#2a3d5a,#060b14 70%);
+    border:2px solid rgba(120,210,245,.8);box-shadow:0 0 8px rgba(80,200,245,.5)}
+  #screen.detail #detailBack{display:flex}
+  #screen.detail .hud,#screen.detail .chat,#screen.detail .hint{display:none}
   /* table chrome removed — no table assets available */
   .screen{position:absolute;inset:0;overflow:hidden;background:#020913}
   /* deep-space backdrop like the reference: near-black top, blue nebula low corners */
@@ -157,8 +168,10 @@
 </style>
 </head>
 <body>
+<div id="proto">⚠ PROTOTYPE — THIS TB TOOL IS UNFINISHED. EXPECT BUGS AND PLACEHOLDER DATA. ⚠</div>
 <div class="cabinet">
   <div class="screen" id="screen">
+    <div id="detailBack" title="Back">◀</div>
     <div class="space"><div class="stars"></div><div class="vig"></div></div>
     <canvas id="gl"></canvas>
     <div id="loader">LOADING TB3&nbsp;&nbsp;·&nbsp;&nbsp;RISE OF THE EMPIRE</div>
@@ -450,6 +463,7 @@ function zoomIn(i){
   });
   missionIdx=null;mission.hidden=true;
   detail.hidden=false;
+  screen.classList.add('detail');
   starDivs.forEach(d=>d.style.display='none');
   const marks={D:['✖','#ff4d5e'],L:['✖','#7de8f7'],M:['✖','#ffd21f']};
   document.querySelector('.title b').innerHTML=`<span style="color:${marks[p.col][1]}">${marks[p.col][0]}</span> ${p.name}`;
@@ -458,6 +472,7 @@ function zoomIn(i){
 function zoomOut(){focus=null;missionIdx=null;mission.hidden=true;nodeDivs.forEach(d=>d.remove());nodeDivs=[];
   anim={k:0,fromT:cur.t.slice(),fromD:cur.d,toT:BASE_T.slice(),toD:BASE_D};
   detail.hidden=true;starDivs.forEach(d=>d.style.display='');
+  screen.classList.remove('detail');
   document.querySelector('.title b').textContent='RISE OF THE EMPIRE';
   document.getElementById('hudBack').classList.remove('on');}
 let missionIdx=null;
@@ -499,6 +514,7 @@ function back(){
   else zoomOut();
 }
 document.getElementById('hudBack').addEventListener('click',e=>{e.stopPropagation();back();});
+document.getElementById('detailBack').addEventListener('click',e=>{e.stopPropagation();back();});
 document.getElementById('mBack').addEventListener('click',e=>{e.stopPropagation();back();});
 document.getElementById('mBattle').addEventListener('click',e=>{e.stopPropagation();});
 addEventListener('keydown',e=>{if(e.key==='Escape'&&focus)back();});
