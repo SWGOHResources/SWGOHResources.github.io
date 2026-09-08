@@ -92,17 +92,6 @@
   .mnode.sel .disc{border-color:rgba(110,255,150,.95);
     box-shadow:0 0 16px rgba(80,255,140,.9),inset 0 0 12px rgba(80,255,140,.4)}
   .mnode.sel .beam{display:block}
-  .mnode.grey .disc{filter:grayscale(1) brightness(.55)}
-  .mnode.grey,.mnode.locked{cursor:default}
-  .mnode.locked .disc{border-color:rgba(255,70,80,.9)}
-  .mnode.locked .ban{position:absolute;inset:-6px;border-radius:50%;border:4px solid rgba(255,45,55,.95);
-    box-shadow:0 0 10px rgba(255,0,0,.7);z-index:2}
-  .mnode.locked .slash{position:absolute;left:6%;right:6%;top:50%;height:4px;margin-top:-2px;
-    background:rgba(255,45,55,.95);transform:rotate(-38deg);box-shadow:0 0 8px rgba(255,0,0,.8);z-index:2}
-  .mnode .nstars{position:absolute;top:114%;left:50%;transform:translateX(-50%);display:flex;gap:2px;
-    align-items:center;white-space:nowrap}
-  .mnode .nstars img{width:13px;height:13px}
-  .mnode .nstars span{color:#0e2c46;font-size:14px;text-shadow:0 0 1px #3fd6f5}
   .mnode.home .disc{background:radial-gradient(circle at 40% 35%,rgba(30,140,90,.9),rgba(3,18,14,.95) 70%);
     border-color:rgba(110,255,150,.95)}
   .mnode.home .hstars{position:absolute;top:114%;left:50%;transform:translateX(-50%);color:#0b2c44;
@@ -282,7 +271,7 @@ const D='TB/territorymap/', UI='TB/territoryui/sprites/territoryui_view_rgba_atl
 const RINGS=[0.45,0.62,0.79,0.96,1.13,1.30,1.48];           // 7 boundaries -> 6 phase bands
 const MID=[0.535,0.705,0.875,1.045,1.215,1.39];             // planet ring per phase (bottom->top)
 const LANES={D:-0.66,N:0.05,L:0.72};                        // spoke angle per column (dark/neutral/light)
-const FLAT=0.62, CZ=0.85;                                   // rings bow around a center below-screen
+const FLAT=0.90, CZ=0.85;                                   // rings bow around a center below-screen
 const polar=(a,r)=>[Math.sin(a)*r, CZ-Math.cos(a)*r*FLAT];
 const PLANETS=[
   {t:'deathstar%20tex.png',lane:RED,col:'D',ph:6,name:'Death Star',star:1,cur:'210,447,319',next:'1,246,272,567',ticks:[['583M',582632425],['1.06B',1059331682],['1.25B',1246272567]],desc:'Destroy the Death Star!',nodes:'dd',pts:'1,151,719',req:'Dark Side (Relic 9+). Iden Versio, Darth Vader. TIE Fighter fleet.'},
@@ -346,25 +335,27 @@ const texCache={};async function tex(f){if(!texCache[f])texCache[f]=await loadTe
 for(const p of PLANETS)p.tex=await tex(p.t);
 
 /* sector grid: arcs on RINGS boundaries + spokes BETWEEN lane columns */
-const grid=[];
-function seg(a,b){grid.push(a[0],a[1],a[2],b[0],b[1],b[2]);}
-/* dense irregular sector mosaic like the reference: zone arcs drawn twice for
-   glow, many spokes, plus seeded cross-links so cells vary like the game */
-const SPAN=[-1.15,1.20];
+/* sector grid like the reference: bright zone-boundary arcs + spokes, faint
+   mid-band arcs for texture, sparse short links hugging boundaries only */
+const SPAN=[-1.25,1.30];
+const gridB=[],gridF=[];
+function seg(arr,a,b){arr.push(a[0],a[1],a[2],b[0],b[1],b[2]);}
 for(const r of RINGS)
-  for(let a=SPAN[0];a<SPAN[1];a+=0.03){const[x1,z1]=polar(a,r),[x2,z2]=polar(a+0.03,r);seg([x1,-0.035,z1],[x2,-0.035,z2]);seg([x1,-0.035,z1],[x2,-0.035,z2]);}
-for(let a=SPAN[0];a<=SPAN[1];a+=0.09){
-  const[x1,z1]=polar(a,RINGS[0]-0.04),[x2,z2]=polar(a,RINGS[RINGS.length-1]+0.10);seg([x1,-0.035,z1],[x2,-0.035,z2]);
+  for(let a=SPAN[0];a<SPAN[1];a+=0.035){const[x1,z1]=polar(a,r),[x2,z2]=polar(a+0.035,r);seg(gridB,[x1,-0.035,z1],[x2,-0.035,z2]);}
+for(const r of MID)
+  for(let a=SPAN[0];a<SPAN[1];a+=0.045){const[x1,z1]=polar(a,r),[x2,z2]=polar(a+0.045,r);seg(gridF,[x1,-0.035,z1],[x2,-0.035,z2]);}
+for(let a=SPAN[0];a<=SPAN[1];a+=0.13){
+  const[x1,z1]=polar(a,RINGS[0]-0.04),[x2,z2]=polar(a,RINGS[RINGS.length-1]+0.10);seg(gridB,[x1,-0.035,z1],[x2,-0.035,z2]);
 }
 let gseed=987654321;const grnd=()=>{gseed=(gseed*1664525+1013904223)>>>0;return gseed/4294967296;};
-for(let k=0;k<90;k++){
-  const a0=SPAN[0]+grnd()*(SPAN[1]-SPAN[0]-0.15),a1=a0+0.06+grnd()*0.10;
-  const r=RINGS[1+Math.floor(grnd()*(RINGS.length-2))]+(grnd()-0.5)*0.05;
-  const[x1,z1]=polar(a0,r),[x2,z2]=polar(a1,r);seg([x1,-0.035,z1],[x2,-0.035,z2]);
+for(let k=0;k<36;k++){
+  const a0=SPAN[0]+grnd()*(SPAN[1]-SPAN[0]-0.2),a1=a0+0.08+grnd()*0.08;
+  const rb=RINGS[1+Math.floor(grnd()*(RINGS.length-2))],r=rb+(grnd()-0.5)*0.04;
+  const[x1,z1]=polar(a0,r),[x2,z2]=polar(a1,r);seg(gridB,[x1,-0.035,z1],[x2,-0.035,z2]);
 }
-const gridBuf=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,gridBuf);
-gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(grid),gl.STATIC_DRAW);
-const gridN=grid.length/3;
+function mkbuf(arr){const b=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,b);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(arr),gl.STATIC_DRAW);return b;}
+const gridBb=mkbuf(gridB),gridFb=mkbuf(gridF);
+const gridBN=gridB.length/3,gridFN=gridF.length/3;
 
 function ribbon(pts,w){const v=[],ix=[];let base=0;
   for(let i=0;i<pts.length;i++){const p=pts[i],q=pts[Math.min(i+1,pts.length-1)],o=pts[Math.max(i-1,0)];
@@ -375,14 +366,17 @@ function ribbon(pts,w){const v=[],ix=[];let base=0;
   const ib=gl.createBuffer();gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,ib);gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,new Uint16Array(ix),gl.STATIC_DRAW);
   return{b,ib,n:ix.length};}
 const ribbons=ROUTES.map(r=>{const pts=r.map(i=>PLANETS[i]);return{core:ribbon(pts,0.011),glow:ribbon(pts,0.028),lane:pts[0].lane};});
+// bonus unlock links: Bracca -> Zeffo, Mandalore -> Tatooine
+for(const [a,b] of [[17,19],[12,9]]){const pts=[PLANETS[a],PLANETS[b]];
+  ribbons.push({core:ribbon(pts,0.011),glow:ribbon(pts,0.028),lane:pts[0].lane});}
 
 const bosses=PLANETS.map((p,i)=>({...p,i})).filter(p=>p.boss);
 const starDivs=bosses.map(()=>{const d=document.createElement('div');d.className='bstars';
   d.innerHTML='<img src="TB/TB%20star.png" alt="star"><img src="TB/TB%20star.png" alt="star"><img src="TB/TB%20star.png" alt="star">';screen.appendChild(d);return d;});
 
 /* ---------- camera, pick, zoom-to-planet ---------- */
-const BASE_T=[0,-0.04,0.22];
-const BASE_D=1.56;
+const BASE_T=[0,-0.04,0.06];
+const BASE_D=1.45;
 let cur={t:BASE_T.slice(),d:BASE_D},anim=null,focus=null,headH=150;
 /* top-down slide camera: drag pans the map, wheel zooms. No rotate. */
 function eyeTop(t,d){return[t[0],t[1]+d*0.95,t[2]+d*0.34];}
@@ -393,7 +387,7 @@ canvas.addEventListener('pointermove',e=>{if(!downXY)return;
   downMoved=Math.max(downMoved,Math.hypot(e.clientX-downSX,e.clientY-downSY));
   const w=wpp();
   cur.t[0]=Math.min(1.7,Math.max(-1.7,cur.t[0]-(e.clientX-downXY[0])*w));
-  cur.t[2]=Math.min(1.2,Math.max(-0.7,cur.t[2]-(e.clientY-downXY[1])*w));
+  cur.t[2]=Math.min(1.0,Math.max(-0.8,cur.t[2]-(e.clientY-downXY[1])*w));
   downXY=[e.clientX,e.clientY];});
 canvas.addEventListener('wheel',e=>{e.preventDefault();anim=null;
   cur.d=Math.min(3.2,Math.max(0.45,cur.d*(1+Math.sign(e.deltaY)*0.12)));},{passive:false});
@@ -442,10 +436,10 @@ const ICONS={ship:UI+'ter_icon_ship_combat_active.png',char:UI+'ter_icon_charact
   grey:UI+'ter_icon_character_combat_disabled.png'};
 PLANETS.forEach((p,i)=>{p.idx=i;});
 const NODESETS={
-  dathomir:[{i:'platoon',lock:1},{i:'ship',lock:1},{i:'ship'},{i:'boss',grey:1},{i:'ship'},{i:'deploy',lock:1,home:1}],
-  dd:[{i:'platoon',lock:1},{i:'char'},{i:'ship'},{i:'boss',grey:1},{i:'ship'},{i:'deploy',lock:1}],
-  ll:[{i:'char'},{i:'ship'},{i:'recon'},{i:'boss',grey:1},{i:'deploy'},{i:'platoon',lock:1}],
-  mm:[{i:'ship'},{i:'char'},{i:'boss',grey:1},{i:'recon'},{i:'deploy'},{i:'platoon',lock:1}],
+  dathomir:[{i:'platoon'},{i:'ship'},{i:'ship'},{i:'char'},{i:'ship'},{i:'deploy',home:1}],
+  dd:[{i:'platoon'},{i:'char'},{i:'ship'},{i:'recon'},{i:'ship'},{i:'deploy'}],
+  ll:[{i:'char'},{i:'ship'},{i:'recon'},{i:'char'},{i:'deploy'},{i:'platoon'}],
+  mm:[{i:'ship'},{i:'char'},{i:'ship'},{i:'recon'},{i:'deploy'},{i:'platoon'}],
 };
 const NODE_OFF=[[-0.52,0.3],[-0.12,0.58],[0.5,0.5],[0.68,-0.12],[0.12,-0.55],[-0.6,-0.35]];
 let nodeDivs=[];
@@ -472,17 +466,15 @@ function zoomIn(i){
   document.getElementById('dDesc').textContent=p.desc;
   // mission nodes over the surface
   nodeDivs.forEach(d=>d.remove());nodeDivs=[];
-  const floatIdx=NODESETS[p.nodes].findIndex(n=>n.i==='ship'&&!n.lock&&!n.grey);
+  const floatIdx=NODESETS[p.nodes].findIndex(n=>n.i==='ship');
   NODESETS[p.nodes].forEach((n,k)=>{
     const d=document.createElement('div');
-    d.className='mnode'+(n.home?' home':'')+(n.lock&&!n.home?' locked':'')+(n.grey?' grey':'');
+    d.className='mnode'+(n.home?' home':'');
     d.innerHTML=`<div class="disc"><img src="${ICONS[n.i]}" alt=""></div>`
       +(n.home?'':'<div class="ped"></div>')+'<div class="beam"></div>'
-      +(n.lock&&!n.home?'<div class="ban"></div><div class="slash"></div>':'')
-      +(n.home?'<div class="hstars">★★★</div>':'')
-      +((n.lock&&n.i==='platoon')?'<div class="nstars"><img src="TB/TB%20star.png" alt=""><img src="TB/TB%20star.png" alt=""><span>★</span></div>':'');
+      +(n.home?'<div class="hstars">★★★</div>':'');
     d.dataset.k=k;d.dataset.fl=(k===floatIdx&&!n.home)?'1':'';screen.appendChild(d);nodeDivs.push(d);
-    if(!n.lock||n.home)d.addEventListener('click',ev=>{ev.stopPropagation();selectMission(k);});
+    d.addEventListener('click',ev=>{ev.stopPropagation();selectMission(k);});
   });
   // guild combat log feed for this planet
   logEl.innerHTML='';
@@ -513,7 +505,7 @@ function defaultPts(i){return (520+((i*167)%340))+','+(100+((i*89)%800));}
 function defaultNote(p){return p.col==='D'?'1) Bring your best Dark Side tanks. Alt: check platoons first.':p.col==='L'?'1) Bring your best Light Side teams. Alt: check platoons first.':'1) Bring your best mixed teams. Alt: check platoons first.';}
 function selectMission(k){
   const p=focus;if(!p)return;
-  const set=NODESETS[p.nodes],n=set[k];if(!n||(n.lock&&!n.home))return;
+  const set=NODESETS[p.nodes],n=set[k];if(!n)return;
   missionIdx=k;
   const asp0=canvas.width/Math.max(1,canvas.height);
   const sh0=p.s*1.05*Math.min(1,asp0/1.6);
@@ -567,13 +559,17 @@ let t0=performance.now();
   // NOTE: attribute/uniform locations are frame-scoped: the planet glow pass
   // below needs them even when the grid itself is skipped.
   gl.useProgram(progF);
-  gl.bindBuffer(gl.ARRAY_BUFFER,gridBuf);
+  gl.bindBuffer(gl.ARRAY_BUFFER,gridBb);
   const gloc=gl.getAttribLocation(progF,'aP');gl.enableVertexAttribArray(gloc);gl.vertexAttribPointer(gloc,3,gl.FLOAT,false,0,0);
   const uMVPf=gl.getUniformLocation(progF,'uMVP'),uCf=gl.getUniformLocation(progF,'uColor'),uAf=gl.getUniformLocation(progF,'uAlpha');
   if(!focus){
   gl.disable(gl.DEPTH_TEST);gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE);
-  gl.uniformMatrix4fv(uMVPf,false,PV);gl.uniform3fv(uCf,[0.25,0.84,0.96]);gl.uniform1f(uAf,0.6);
-  gl.drawArrays(gl.LINES,0,gridN);
+  gl.uniformMatrix4fv(uMVPf,false,PV);gl.uniform3fv(uCf,[0.35,0.9,1.0]);gl.uniform1f(uAf,0.55);
+  gl.drawArrays(gl.LINES,0,gridBN);
+  gl.bindBuffer(gl.ARRAY_BUFFER,gridFb);
+  gl.enableVertexAttribArray(gloc);gl.vertexAttribPointer(gloc,3,gl.FLOAT,false,0,0);
+  gl.uniform3fv(uCf,[0.35,0.9,1.0]);gl.uniform1f(uAf,0.20);
+  gl.drawArrays(gl.LINES,0,gridFN);
   for(const r of ribbons)for(const[mesh,a]of[[r.glow,0.20],[r.core,0.95]]){
     gl.bindBuffer(gl.ARRAY_BUFFER,mesh.b);gl.enableVertexAttribArray(gloc);gl.vertexAttribPointer(gloc,3,gl.FLOAT,false,0,0);
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,mesh.ib);
