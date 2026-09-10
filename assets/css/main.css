@@ -82,7 +82,7 @@ body {
 
 /* ─── Backdrop: nebula glow + starfield (both static layers; only a
    fraction of stars twinkle, each on its own cycle) ─── */
-.starfield { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+.starfield { position: fixed; inset: 0; pointer-events: none; z-index: 0; contain: strict; }
 .starfield::before {
   content: ""; position: absolute; inset: 0;
   background:
@@ -95,8 +95,10 @@ body {
 }
 .starfield span.cool { background: #bcd3f5; }
 .starfield span.warm { background: #f2e3c8; }
-/* Faint halo on the largest stars only — keeps them present without noise */
-.starfield span.bright { box-shadow: 0 0 5px 1px rgba(232, 228, 218, 0.35); }
+/* Faint halo on the largest stars only — removed box-shadow: it forces
+   the compositor to repaint the whole layer on every twinkle frame.
+   Brightness alone reads the same at 1-3px sizes. */
+.starfield span.bright { opacity: 0.9; }
 .starfield span.tw {
   animation-name: twinkle; animation-timing-function: ease-in-out; animation-iteration-count: infinite;
   animation-duration: 5s;
@@ -531,6 +533,10 @@ body.modal-open .starfield span.tw {
   background: var(--void2); border: 1px solid var(--border);
   border-radius: var(--radius-lg); overflow: hidden;
   transition: border-color 0.2s, transform 0.2s;
+  /* Skip layout/paint for offscreen cards in the horizontal deck and the
+     84-row timeline until they near the viewport. */
+  content-visibility: auto;
+  contain-intrinsic-size: auto 320px;
 }
 .xcard:hover { border-color: var(--accent-border, var(--border2)); transform: translateY(-2px); }
 .xcard-art {
@@ -548,7 +554,10 @@ body.modal-open .starfield span.tw {
 .art-fill {
   position: absolute; inset: -10px; z-index: 1;
   background-size: cover; background-position: center; background-repeat: no-repeat;
-  filter: blur(14px) brightness(0.75) saturate(1.25);
+  /* blur(14px) rasterizes a full extra layer per card — 8px reads the same
+     behind the contained subject at a fraction of the paint cost. */
+  filter: blur(8px) brightness(0.75) saturate(1.25);
+  transform: translateZ(0);
 }
 .xcard-art .art-badge {
   position: absolute; inset: 0; z-index: 1;
@@ -658,6 +667,8 @@ body.modal-open .starfield span.tw {
 .tl-day {
   display: flex; align-items: baseline; gap: 10px;
   padding: 7px 8px; border-radius: var(--radius); border: 1px solid transparent;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 48px;
 }
 .tl-day + .tl-day { border-top: 1px solid var(--border); border-radius: 0; }
 .tl-day.is-today { background: rgba(86, 184, 173, 0.08); border: 1px solid var(--cyan-border); border-radius: var(--radius); }
