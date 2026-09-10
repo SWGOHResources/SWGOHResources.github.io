@@ -290,14 +290,20 @@ const footerYearEl = document.getElementById('footerYear');
 if(footerYearEl){ footerYearEl.textContent = `© ${new Date().getFullYear()} SWGOH::RESOURCES`; }
 
 /* Backdrop starfield: mostly static stars at varied sizes and
-   brightness, a few warm/cool tinted, ~30% twinkling on independent
+   brightness, a few warm/cool tinted, ~25% twinkling on independent
    cycles around their own base opacity. Negative delays start each
-   twinkler mid-cycle so there is no synchronized flash on load. */
+   twinkler mid-cycle so there is no synchronized flash on load.
+   Kept to ~70 nodes / ~18 animating: 110 nodes with 50 infinite
+   opacity animations kept the compositor busy on every frame,
+   which read as scroll jank on low-end devices. */
 (function(){
   const field = document.getElementById('starfield');
   if(!field) return;
   const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  for(let i = 0; i < 110; i++){
+  const saveData = typeof navigator !== 'undefined' && navigator.connection && navigator.connection.saveData;
+  const STAR_COUNT = 70;
+  const TWINKLE_ODDS = 0.25;
+  for(let i = 0; i < STAR_COUNT; i++){
     const s = document.createElement('span');
     const r = Math.random();
     const size = r < 0.55 ? 1 : r < 0.88 ? 2 : 3;
@@ -309,7 +315,7 @@ if(footerYearEl){ footerYearEl.textContent = `© ${new Date().getFullYear()} SWG
     if(tint < 0.16) s.classList.add('cool');
     else if(tint < 0.26) s.classList.add('warm');
     const base = (0.3 + Math.random() * 0.55).toFixed(2);
-    if(!reduceMotion && Math.random() < 0.45){
+    if(!reduceMotion && !saveData && Math.random() < TWINKLE_ODDS){
       s.classList.add('tw');
       s.style.setProperty('--o', base);
       s.style.animationDuration = (3 + Math.random() * 5).toFixed(2) + 's';
@@ -330,12 +336,47 @@ if(typeof validateScheduleConfig === 'function'){
 
 applyDayHash();
 renderAll();
-if(typeof requestIdleCallback === 'function') requestIdleCallback(() => preloadCardAssets(), { timeout: 2000 });
-else setTimeout(() => preloadCardAssets(), 0);
+function schedulePreload(){
+  if(typeof preloadCardAssets !== 'function') return;
+  try {
+    const conn = (typeof navigator !== 'undefined' && navigator.connection) || null;
+    // On Save-Data / 2G the 30-image warm-up competes with the critical
+    // path — skip it and let images load lazily on demand instead.
+    if(conn && (conn.saveData || /^(slow-2g|2g)$/.test(conn.effectiveType || ''))) return;
+  } catch(e){}
+  preloadCardAssets();
+}
+if(typeof requestIdleCallback === 'function') requestIdleCallback(schedulePreload, { timeout: 4000 });
+else setTimeout(schedulePreload, 3000);
 tickCountdown();
 setInterval(tickCountdown, 1000);
-// Skip background re-renders while the tab is hidden; the next visible
-// tick catches up. Bump ASSET_VERSION in index.html on deploy so browsers
-// fetch fresh CSS/JS instead of serving cached copies.
-setInterval(() => { if(!document.hidden) renderAll({ preserveFocus: true }); }, 60000);
+// Background refresh used to rebuild the whole DOM (dashboards, explorer,
+// 84-day timeline) every 60s — visible scroll jank on low-end phones.
+// Most minutes nothing schedule-relevant changed, so only re-render when
+// the era day / timezone actually moved; otherwise just flip chip tenses
+// and the footer timestamp in place (no layout rebuild).
+let lastBgKey = null;
+function bgRefreshKey(st){
+  try {
+    const tzKey = (typeof getTimeZoneSetting === 'function') ? getTimeZoneSetting() : 'local';
+    return `${st.currentEraStartMs}|${st.eraDay}|${tzKey}`;
+  } catch(e){ return null; }
+}
+try { lastBgKey = bgRefreshKey(getGameStatus()); } catch(e){}
+setInterval(() => {
+  if(document.hidden) return;
+  let st = null;
+  try { st = getGameStatus(); } catch(e){ return; }
+  const key = bgRefreshKey(st);
+  if(key !== lastBgKey){
+    lastBgKey = key;
+    renderAll({ preserveFocus: true });
+    return;
+  }
+  try {
+    const tl = document.getElementById('fullSchedule');
+    if(tl && typeof refreshTimelineTense === 'function') refreshTimelineTense(tl, st.nowMs);
+    if(typeof updateFooterMeta === 'function') updateFooterMeta();
+  } catch(e){}
+}, 60000);
 document.addEventListener('visibilitychange', () => { if(!document.hidden) renderAll({ preserveFocus: true }); });

@@ -3,7 +3,7 @@
    (this automatically picks up ?v= cache-busters); page navigations
    go network-first so the schedule stays fresh, falling back to cache
    offline. Bump CACHE below on deploys that change the app shell. */
-const CACHE = 'swgoh-schedule-v1';
+const CACHE = 'swgoh-schedule-v2';
 const CORE = ['/', '/index.html', '/site.webmanifest'];
 
 self.addEventListener('install', event => {

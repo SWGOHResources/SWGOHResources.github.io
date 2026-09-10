@@ -335,9 +335,8 @@ function tbPhaseWindow(def, phase1Ms, idx){
 
 function fmtPhaseMoment(ms){
   const d = new Date(dms(ms));
-  const zone = tz();
-  const date = withOrdinal(d.toLocaleDateString('en-GB', { timeZone: zone, weekday: 'short', day: 'numeric', month: 'short' }));
-  const time = d.toLocaleTimeString('en-GB', { timeZone: zone, hour: '2-digit', minute: '2-digit', hour12: false });
+  const date = withOrdinal(__formatter('wdS|day|monS').format(d));
+  const time = __formatter('hhmm').format(d);
   return `${date} ${time}`;
 }
 
@@ -412,9 +411,7 @@ function getGameStatus(nowMsInput){
   // Active Calendar Day associated with current changeover.
   // Weekday is rendered in the display timezone (game-day model stays UTC).
   const currentDayStartMs = eraStartMs + ((rawDayIndex - 1) * msPerDay);
-  const activeDayParts = new Intl.DateTimeFormat('en-GB', {
-    timeZone: tz(), weekday: 'long'
-  }).formatToParts(new Date(dms(currentDayStartMs + (stdHour() * 3600000))));
+  const activeDayParts = __formatter('wdL').formatToParts(new Date(dms(currentDayStartMs + (stdHour() * 3600000))));
   const weekdayName = activeDayParts.find(p => p.type === 'weekday').value;
 
   // 2) GAC Cycle — independent 28-day cycle, own reference date, own changeover.
@@ -836,9 +833,7 @@ function dms(ms){
 /* UTC-midnight marker for the calendar day an instant falls on in the
    display zone (so day differences match what the user sees). */
 function displayDayMarker(ms){
-  const parts = new Intl.DateTimeFormat('en-GB', {
-    timeZone: tz(), year: 'numeric', month: 'numeric', day: 'numeric'
-  }).formatToParts(new Date(dms(ms)));
+  const parts = __formatter('yearN|monN|day').formatToParts(new Date(dms(ms)));
   let y = 0, m = 0, d = 0;
   for(const p of parts){
     if(p.type === 'year') y = Number(p.value);
@@ -862,9 +857,36 @@ function setTimeZone(v){
 
 /* Weekday-short + calendar day/month of an instant in the display zone
    (for the explorer day pills: the big number is the era day, the
-   caption underneath is the calendar date). */
+   caption underneath is the calendar date).
+   Perf: every render builds dozens of dates (7 pills + per-card labels
+   + 84 timeline rows). Constructing a new Intl.DateTimeFormat per call
+   is the hottest per-render cost, so formatters are cached per
+   timezone + option set. Output is identical — only the constructor
+   call is skipped. */
+const __fmtCache = new Map();
+function __formatter(opts){
+  const zone = tz();
+  const key = zone + '|' + opts;
+  let f = __fmtCache.get(key);
+  if(!f){
+    const o = { timeZone: zone };
+    if(opts.includes('wdS')){ o.weekday = 'short'; }
+    else if(opts.includes('wdL')){ o.weekday = 'long'; }
+    if(opts.includes('day')) o.day = 'numeric';
+    if(opts.includes('monS')) o.month = 'short';
+    else if(opts.includes('monL')) o.month = 'long';
+    else if(opts.includes('monN')) o.month = 'numeric';
+    if(opts.includes('yearN')) o.year = 'numeric';
+    if(opts.includes('hhmm')){ o.hour = '2-digit'; o.minute = '2-digit'; o.hour12 = false; }
+    f = new Intl.DateTimeFormat('en-GB', o);
+    // Timezone list is tiny (local + a few presets); cap defensively.
+    if(__fmtCache.size > 40) __fmtCache.clear();
+    __fmtCache.set(key, f);
+  }
+  return f;
+}
 function tzDayParts(ms){
-  const parts = new Intl.DateTimeFormat('en-GB', { timeZone: tz(), weekday: 'short', day: 'numeric', month: 'short' }).formatToParts(new Date(dms(ms)));
+  const parts = __formatter('wdS|day|monS').formatToParts(new Date(dms(ms)));
   let dow = '', num = '', month = '';
   for(const p of parts){
     if(p.type === 'weekday') dow = p.value;
@@ -875,18 +897,15 @@ function tzDayParts(ms){
 }
 
 function fmtDateUTC(ms){
-  const d = new Date(dms(ms));
-  return withOrdinal(d.toLocaleDateString('en-GB', { timeZone: tz(), weekday: 'short', day: 'numeric', month: 'short' }));
+  return withOrdinal(__formatter('wdS|day|monS').format(new Date(dms(ms))));
 }
 
 function fmtDateLongUTC(ms){
-  const d = new Date(dms(ms));
-  return withOrdinal(d.toLocaleDateString('en-GB', { timeZone: tz(), weekday: 'long', day: 'numeric', month: 'long' }));
+  return withOrdinal(__formatter('wdL|day|monL').format(new Date(dms(ms))));
 }
 
 function fmtDayMonthUTC(ms){
-  const d = new Date(dms(ms));
-  return withOrdinal(d.toLocaleDateString('en-GB', { timeZone: tz(), day: 'numeric', month: 'short' }));
+  return withOrdinal(__formatter('day|monS').format(new Date(dms(ms))));
 }
 
 /* Relative day label vs the active (today) changeover day */

@@ -19,7 +19,7 @@ function renderUnlockWindows(st){
   
   const cqDays = Math.round((cqDateMs - st.currentDayStartMs) / 86400000);
   const cqUnlocked = cqAbs <= st.rawDayIndex || cqDays <= 0;
-  const cqDateLabel = withOrdinal(new Date(dms(gameDayDisplayMs(cqDateMs))).toLocaleDateString('en-GB',{timeZone: tz(),day:'numeric',month:'short'}));
+  const cqDateLabel = fmtDayMonthUTC(gameDayDisplayMs(cqDateMs));
   const cqCountLabel = cqUnlocked
     ? 'Unlocked'
     : `In ${cqDays} day${cqDays === 1 ? '' : 's'}`;
@@ -43,7 +43,7 @@ function renderUnlockWindows(st){
   const eraDays = Math.round((eraDateMs - st.currentDayStartMs) / 86400000);
   // Before launch the era hasn't started: count down to it instead of
   // claiming THIS ERA. daysUntilEra already counts display-zone days.
-  const eraDateLabel = withOrdinal(new Date(dms(gameDayDisplayMs(eraDateMs))).toLocaleDateString('en-GB',{timeZone: tz(),day:'numeric',month:'short'}));
+  const eraDateLabel = fmtDayMonthUTC(gameDayDisplayMs(eraDateMs));
   const eraCountLabel = st.preEra
     ? (st.daysUntilEra <= 0 ? 'Today' : `In ${st.daysUntilEra} day${st.daysUntilEra === 1 ? '' : 's'}`)
     : (eraAbs <= st.rawDayIndex || eraDays <= 0 ? 'Live now' : `In ${eraDays} day${eraDays === 1 ? '' : 's'}`);
@@ -62,7 +62,7 @@ function renderUnlockWindows(st){
   // "Expires in 28 days". Kept in the default text color at a larger
   // size for emphasis — coloring it hurt readability.
   const daysLeft = cron ? Math.floor((cron.expiresMs - st.nowMs) / 86400000) : 0;
-  const cronExpiresLabel = cron ? withOrdinal(new Date(dms(cron.expiresMs)).toLocaleDateString('en-GB',{timeZone: tz(),day:'numeric',month:'short'})) : '';
+  const cronExpiresLabel = cron ? fmtDayMonthUTC(cron.expiresMs) : '';
   const cronCountLabel = !cron ? ''
     : cron.allExpired ? 'Expired'
     : daysLeft <= 0 ? 'Expires today' : `In ${daysLeft} day${daysLeft === 1 ? '' : 's'}`;
@@ -86,12 +86,12 @@ function renderUnlockWindows(st){
     <div class="status-card purple-card">
       <div class="sc-header"><span class="sc-title">Conquest Unit (${conquestOrdinal(cqChapter.cNum)} of Volume)</span></div>
       <div class="uw-body" style="--accent:var(--purple);--accent-dim:var(--purple-dim);--accent-border:var(--purple-border)">
-        <div class="uw-img"><div class="art-badge">CQ</div><img src="${IMG_BASE}${CONQUEST_UNIT_IMAGE}" onerror="this.remove()"></div>
+        <div class="uw-img"><div class="art-badge">CQ</div><img src="${IMG_BASE}${CONQUEST_UNIT_IMAGE}" alt="" loading="lazy" decoding="async" onerror="this.remove()"></div>
         <div class="uw-text">
           <div class="sc-main"><div class="big-count">${cqCountLabel} <span class="bc-date">(${cqDateLabel})</span></div><div class="sc-sub">${cqSubLabel}</div></div>
           <div class="sc-footer" style="flex-direction:column;align-items:flex-start;gap:2px;">
             <span>Usable in GAC: <span class="highlight">Week ${cqGacWeek} (${cqGac.format})</span></span>
-            <span>Roster locks: ${withOrdinal(new Date(dms(gameDayDisplayMs(cqNextSignupDate))).toLocaleDateString('en-GB',{timeZone: tz(),day:'numeric',month:'short'}))} (Defense Starts)</span>
+            <span>Roster locks: ${fmtDayMonthUTC(gameDayDisplayMs(cqNextSignupDate))} (Defense Starts)</span>
           </div>
         </div>
       </div>
@@ -99,12 +99,12 @@ function renderUnlockWindows(st){
     <div class="status-card orange-card">
       <div class="sc-header"><span class="sc-title">End of Current Era</span></div>
       <div class="uw-body" style="--accent:var(--orange);--accent-dim:var(--orange-dim);--accent-border:var(--orange-border)">
-        <div class="uw-img"><div class="art-badge">ERA</div><img src="${IMG_BASE}${ERA_UNIT_IMAGE}" onerror="this.remove()"></div>
+        <div class="uw-img"><div class="art-badge">ERA</div><img src="${IMG_BASE}${ERA_UNIT_IMAGE}" alt="" loading="lazy" decoding="async" onerror="this.remove()"></div>
         <div class="uw-text">
           <div class="sc-main"><div class="big-count">${eraCountLabel} <span class="bc-date">(${eraDateLabel})</span></div><div class="sc-sub">${eraSubLabel}</div></div>
           <div class="sc-footer" style="flex-direction:column;align-items:flex-start;gap:2px;">
              <span>Usable in GAC: <span class="highlight">Week ${eraGacWeek} (${eraGac.format})</span></span>
-             <span>Roster locks: ${withOrdinal(new Date(dms(gameDayDisplayMs(eraNextSignupDate))).toLocaleDateString('en-GB',{timeZone: tz(),day:'numeric',month:'short'}))} (Defense Starts)</span>
+             <span>Roster locks: ${fmtDayMonthUTC(gameDayDisplayMs(eraNextSignupDate))} (Defense Starts)</span>
           </div>
         </div>
       </div>
@@ -112,7 +112,7 @@ function renderUnlockWindows(st){
     <div class="status-card" style="border-color:${cronMeta.border}">
       <div class="sc-header"><span class="sc-title">Datacron Expirations</span></div>
       <div class="uw-body" style="--accent:${cronMeta.accent};--accent-dim:${cronMeta.dim};--accent-border:${cronMeta.border}">
-        <div class="uw-img"><div class="art-badge">${cronMeta.label.slice(0,3).toUpperCase()}</div><img src="${IMG_BASE}${cronMeta.asset}" onerror="this.remove()"></div>
+        <div class="uw-img"><div class="art-badge">${cronMeta.label.slice(0,3).toUpperCase()}</div><img src="${IMG_BASE}${cronMeta.asset}" alt="" loading="lazy" decoding="async" onerror="this.remove()"></div>
         <div class="uw-text">
           <div class="sc-main">
             <div class="big-count">${cron ? `${cronCountLabel} <span class="bc-date">(${cronExpiresLabel})</span>` : 'No set configured'}</div>
@@ -395,7 +395,7 @@ function explorerCardHTML(item, dateMs, relLabel, tbCtx, nowMs){
   const isTbCard = tbCtx && (item.icon === 'rote' || item.icon === 'tb_ends');
   const asset = isTbCard ? tbCtx.art : assetFor(item.icon);
   const style = `--accent:${meta.accent};--accent-dim:${meta.dim};--accent-border:${meta.border}`;
-  const imgTag = asset ? `<img src="${IMG_BASE}${asset}" alt="" loading="eager" decoding="async" onerror="this.remove()">` : '';
+  const imgTag = asset ? `<img src="${IMG_BASE}${asset}" alt="" loading="lazy" fetchpriority="low" decoding="async" onerror="this.remove()">` : '';
   // Square sources can't cover the portrait frame without decapitation,
   // so they render contained over a blurred fill of themselves: uniform
   // card size, nothing stretched, nothing sliced.
@@ -531,7 +531,7 @@ function renderExplorer(st){
   const cq = conquestInfoForDay(cur.ep, cur.dayInEp);
   const cqBadge = cq
     ? `<div class="day-conquest" title="Conquest ${cq.cNum} — ${cq.note}${cq.finalDay ? ' (final day)' : ''}">`
-      + `<img src="${IMG_BASE}${CONQUEST_UNIT_IMAGE}" alt="" loading="eager" decoding="async" onerror="this.remove()">`
+      + `<img src="${IMG_BASE}${CONQUEST_UNIT_IMAGE}" alt="" loading="lazy" fetchpriority="low" decoding="async" onerror="this.remove()">`
       + `<div class="db-text"><span class="db-label">Conquest · C${cq.cNum}</span><span class="db-name">Day ${cq.day} of ${cq.total}${cq.finalDay ? ' — Final' : ''}</span></div>`
       + `</div>`
     : '';
@@ -552,7 +552,7 @@ function renderExplorer(st){
       </div>
       <div class="day-indicators">
         <div class="day-boss" title="Coliseum boss rotates daily at 18:00 UTC">
-        <img src="${IMG_BASE}${bossIcon}" alt="" loading="eager" decoding="async" onerror="this.remove()">
+        <img src="${IMG_BASE}${bossIcon}" alt="" loading="lazy" fetchpriority="low" decoding="async" onerror="this.remove()">
         <div class="db-text"><span class="db-label">Coliseum boss</span><span class="db-name">${bossName}</span></div>
         </div>
         ${cqBadge}
