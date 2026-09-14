@@ -19,7 +19,6 @@ function renderUnlockWindows(st){
   
   const cqDays = Math.round((cqDateMs - st.currentDayStartMs) / 86400000);
   const cqUnlocked = cqAbs <= st.rawDayIndex || cqDays <= 0;
-  const cqDateLabel = fmtDayMonthUTC(gameDayDisplayMs(cqDateMs));
   const cqUnlockMs = cqDateMs + (stdHour() * 3600000);
   // The unit itself is never in the data feed — once its conquest ends
   // the name is still unannounced, so never claim it is playable.
@@ -28,9 +27,10 @@ function renderUnlockWindows(st){
   const cqMain = cqUnlocked
     ? 'Unit yet to be announced'
     : subDayCount(st.nowMs, cqUnlockMs, `In ${cqDays} day${cqDays === 1 ? '' : 's'}`);
+  const cqDateLine = fmtDateLongUTC(gameDayDisplayMs(cqDateMs));
   const cqSub = cqUnlocked
-    ? `Ended ${cqDateLabel} — new conquest unit yet to be announced`
-    : `${cqDateLabel} — the new conquest unit becomes playable`;
+    ? 'Conquest over — new unit yet to be announced'
+    : 'The new conquest unit becomes playable';
 
   // Roster locks at the configured defense-phase offset.
   const cqNextSignupDate = cqDateMs + (86400000 * conquestLockOffsetDays());
@@ -48,14 +48,14 @@ function renderUnlockWindows(st){
   const eraDays = Math.round((eraDateMs - st.currentDayStartMs) / 86400000);
   // Before launch the era hasn't started: count down to it instead of
   // claiming THIS ERA. daysUntilEra already counts display-zone days.
-  const eraDateLabel = fmtDayMonthUTC(gameDayDisplayMs(eraDateMs));
   const eraUnlockMs = eraDateMs + (stdHour() * 3600000);
   const eraCountLabel = st.preEra
     ? (st.daysUntilEra <= 0 ? 'Today' : `In ${st.daysUntilEra} day${st.daysUntilEra === 1 ? '' : 's'}`)
     : (eraAbs <= st.rawDayIndex || eraDays <= 0 ? 'Live now' : subDayCount(st.nowMs, eraUnlockMs, `In ${eraDays} day${eraDays === 1 ? '' : 's'}`));
   const eraBadge = st.preEra ? 'UPCOMING' : (eraDays <= 7 ? 'ENDING' : 'ACTIVE');
   const eraMain = eraCountLabel;
-  const eraSub = st.preEra ? `${eraDateLabel} — the new era begins` : `${eraDateLabel} — current era ends, units enter legacy modes`;
+  const eraDateLine = fmtDateLongUTC(gameDayDisplayMs(eraDateMs));
+  const eraSub = st.preEra ? 'The new era begins' : 'Current era ends, units enter legacy modes';
 
   // Roster locks at the configured defense-phase offset.
   const eraNextSignupDate = eraDateMs + (86400000 * eraLockOffsetDays());
@@ -69,16 +69,16 @@ function renderUnlockWindows(st){
   // Truncated like the other dashboard counts: 28d 23h out reads
   // "Expires in 28 days".
   const daysLeft = cron ? Math.floor((cron.expiresMs - st.nowMs) / 86400000) : 0;
-  const cronExpiresLabel = cron ? fmtDayMonthUTC(cron.expiresMs) : '';
   const cronCountLabel = !cron ? ''
     : cron.allExpired ? 'Expired'
     : subDayCount(st.nowMs, cron.expiresMs, daysLeft <= 0 ? 'Expires today' : `In ${daysLeft} day${daysLeft === 1 ? '' : 's'}`);
   const cronBadge = !cron ? 'NONE' : cron.allExpired ? 'EXPIRED' : 'ACTIVE';
   const cronBadgeClass = (!cron || cron.allExpired) ? 'off' : 'orange';
   const cronMain = cron ? cronCountLabel : 'No set configured';
+  const cronDateLine = cron ? fmtDateLongUTC(cron.expiresMs) : '';
   const cronSub = !cron ? 'Add the next set to DATACRON_SETS in config.js'
-    : cron.allExpired ? `${cronExpiresLabel} — ${cron.name} has expired, add the next set to DATACRON_SETS`
-    : `${cronExpiresLabel} — ${cron.name}${cron.hasFDC ? ' + FDC' : ''} expires to inbox`;
+    : cron.allExpired ? `${cron.name} has expired, add the next set to DATACRON_SETS`
+    : `${cron.name}${cron.hasFDC ? ' + FDC' : ''} expires to inbox`;
   const lastUsable = cron ? getLastUsableGuildEvent(cron.expiresMs, st.eraBaseStartMs) : null;
   let lastUsableLabel = '—';
   if(lastUsable){
@@ -98,7 +98,7 @@ function renderUnlockWindows(st){
       <div class="uw-body" style="--accent:var(--purple);--accent-dim:var(--purple-dim);--accent-border:var(--purple-border)">
         <div class="uw-img"><div class="art-badge">CQ</div><img src="${IMG_BASE}${CONQUEST_UNIT_IMAGE}" alt="" loading="lazy" decoding="async" onerror="this.remove()"></div>
         <div class="uw-text">
-          <div class="sc-main"><div class="sc-val">${cqMain}</div><div class="sc-sub">${cqSub}</div></div>
+          <div class="sc-main"><div class="sc-val">${cqMain}</div><div class="uw-date">${cqDateLine}</div><div class="sc-sub">${cqSub}</div></div>
           <div class="sc-footer" style="flex-direction:column;align-items:flex-start;gap:2px;">
             <span>Usable in GAC: <span class="highlight">Week ${cqGacWeek} (${cqGac.format})</span></span>
             <span>Roster locks: ${fmtDayMonthUTC(gameDayDisplayMs(cqNextSignupDate))} (Defense Starts)</span>
@@ -111,7 +111,7 @@ function renderUnlockWindows(st){
       <div class="uw-body" style="--accent:var(--orange);--accent-dim:var(--orange-dim);--accent-border:var(--orange-border)">
         <div class="uw-img"><div class="art-badge">ERA</div><img src="${IMG_BASE}${ERA_UNIT_IMAGE}" alt="" loading="lazy" decoding="async" onerror="this.remove()"></div>
         <div class="uw-text">
-          <div class="sc-main"><div class="sc-val">${eraMain}</div><div class="sc-sub">${eraSub}</div></div>
+          <div class="sc-main"><div class="sc-val">${eraMain}</div><div class="uw-date">${eraDateLine}</div><div class="sc-sub">${eraSub}</div></div>
           <div class="sc-footer" style="flex-direction:column;align-items:flex-start;gap:2px;">
             <span>Usable in GAC: <span class="highlight">Week ${eraGacWeek} (${eraGac.format})</span></span>
             <span>Roster locks: ${fmtDayMonthUTC(gameDayDisplayMs(eraNextSignupDate))} (Defense Starts)</span>
@@ -126,6 +126,7 @@ function renderUnlockWindows(st){
         <div class="uw-text">
           <div class="sc-main">
             <div class="sc-val">${cronMain}</div>
+            ${cron ? `<div class="uw-date">${cronDateLine}</div>` : ''}
             <div class="sc-sub">${cronSub}</div>
           </div>
           <div class="sc-footer" style="flex-direction:column;align-items:flex-start;gap:2px;">
@@ -401,8 +402,17 @@ function liveCardMeta(e){
   const icon = liveRotationIcon(e);
   const cat = icon ? categoryFor(icon) : 'era';
   const glyph = icon ? tagFor(icon).glyph : CATEGORY_META.era.glyph;
+  const label = icon ? tagFor(icon).label : CATEGORY_META.era.label;
   const art = (icon && assetFor(icon)) || 'events/eraicon.png';
-  return { cat, glyph, art };
+  return { cat, glyph, label, art };
+}
+
+/* Display art for a live event. Conquest always wears the CONQUEST
+   banner — the pulled promo art (conquest pass ads) is the wrong
+   image on every schedule surface. */
+function liveDisplayArt(e, meta){
+  if(e && e.kind === 'conquest') return meta.art;
+  return (e && e.art) || meta.art;
 }
 
 /* Live events render exactly like rotation cards (same art frame,
@@ -413,7 +423,7 @@ function liveCardHTML(e, relLabel){
   const meta = liveCardMeta(e);
   const catMeta = (typeof CATEGORY_META !== 'undefined' && CATEGORY_META[meta.cat]) || {};
   const style = `--accent:${catMeta.accent || 'var(--text3)'};--accent-dim:${catMeta.dim || 'transparent'};--accent-border:${catMeta.border || 'var(--border)'}`;
-  const art = e.art || meta.art;
+  const art = liveDisplayArt(e, meta);
   const relCls = relLabel === 'Now' ? 'xcard-rel is-today'
     : relLabel === 'Expired' ? 'xcard-rel is-expired' : 'xcard-rel';
   return `<article class="xcard" style="${style}">
@@ -426,8 +436,9 @@ function liveCardHTML(e, relLabel){
       </div>
     </div>
     <div class="xcard-body">
+      <div class="xcard-kicker">${escHTML(meta.label)}</div>
       <h4>${escHTML(e.name)}</h4>
-      <div class="xcard-date">${escHTML(liveEventTimeLabel(e.startMs))} – ${escHTML(liveEventTimeLabel(e.endMs))}</div>
+      <div class="xcard-date">${escHTML(liveEventTimeLabel(e.startMs))} → ${escHTML(liveEventTimeLabel(e.endMs))}</div>
     </div>
   </article>`;
 }
@@ -441,7 +452,7 @@ function preloadLiveArt(){
     if(!liveEventsCache || !Array.isArray(liveEventsCache.events)) return;
     const base = (typeof IMG_BASE !== 'undefined' && IMG_BASE) || 'assets/img/';
     liveEventsCache.events.forEach(e => {
-      const art = e.art || (liveCardMeta(e) || {}).art;
+      const art = liveDisplayArt(e, liveCardMeta(e) || {});
       if(typeof art !== 'string' || !art) return;
       const im = new Image();
       im.decoding = 'async';
@@ -530,11 +541,12 @@ function onJumpSelect(select){
   select.value = '';
 }
 
-/* Guild TB picker. Full row (explorer Phase-1 cards) or compact
-   collapsible (dashboard status card, so the Guild card stays level
-   with GAC/Conquest). tbCtx comes from tbRunContext for the relevant
-   day; null off-TB weeks. The active button always carries a ✓ and
-   the compact summary always names the selection. */
+/* Guild TB picker. Always-visible 3-button row (explorer Phase-1
+   cards and the dashboard status card alike): no collapsing, no
+   wrapping sub-lines, so the row is a constant height and nothing
+   around it shifts when the pick changes. tbCtx comes from
+   tbRunContext for the relevant day; null off-TB weeks. The active
+   button carries a ✓. */
 function tbPickerHTML(tbCtx, compact){
   if(!tbCtx) return '';
   const guildAccent = CATEGORY_META.guild;
@@ -542,12 +554,10 @@ function tbPickerHTML(tbCtx, compact){
   const btns = tbCtx.options.map(o => {
     const active = o.id === tbCtx.def.id;
     const selectedLabel = active ? ', selected' : '';
-    return `<button type="button" class="tb-pick-btn${active ? ' active' : ''}" onclick="setTbChoice('${o.id}','${tbCtx.side}')" aria-pressed="${active}" aria-label="${o.name}${selectedLabel}" title="${o.short || o.name}${active ? ' — selected' : ''}">${active ? '<span class="tb-pick-check" aria-hidden="true">✓</span>' : ''}<span>${o.tag}</span>${active ? '<span class="tb-pick-selected">Selected</span>' : ''}</button>`;
+    return `<button type="button" class="tb-pick-btn${active ? ' active' : ''}" onclick="setTbChoice('${o.id}','${tbCtx.side}')" aria-pressed="${active}" aria-label="${o.name}${selectedLabel}" title="${o.short || o.name}${active ? ' — selected' : ''}">${active ? '<span class="tb-pick-check" aria-hidden="true">✓</span>' : ''}<span>${o.tag}</span></button>`;
   }).join('');
-  if(compact){
-    return `<details class="tb-pick tb-pick-compact" style="${pickerStyle}"><summary aria-label="Current Territory Battle: ${tbCtx.def.name}. Change selection"><span class="tb-pick-label">TB: <strong>${tbCtx.def.name}</strong></span><span class="tb-pick-change">Change <span aria-hidden="true">▾</span></span></summary><div class="tb-pick-btns">${btns}</div></details>`;
-  }
-  return `<div class="tb-pick" style="${pickerStyle}" role="group" aria-label="Select your current TB"><span class="tb-pick-label">Select your current TB:</span><div class="tb-pick-btns">${btns}</div></div>`;
+  const label = compact ? `TB: <strong>${tbCtx.def.name}</strong>` : 'Select your current TB:';
+  return `<div class="tb-pick" style="${pickerStyle}" role="group" aria-label="Select your current TB"><span class="tb-pick-label">${label}</span><div class="tb-pick-btns">${btns}</div></div>`;
 }
 
 function explorerCardHTML(item, dateMs, relLabel, tbCtx, nowMs){
@@ -558,9 +568,9 @@ function explorerCardHTML(item, dateMs, relLabel, tbCtx, nowMs){
   const asset = isTbCard ? tbCtx.art : assetFor(item.icon);
   const style = `--accent:${meta.accent};--accent-dim:${meta.dim};--accent-border:${meta.border}`;
   const imgTag = asset ? `<img src="${IMG_BASE}${asset}" alt="" loading="lazy" fetchpriority="low" decoding="async" onerror="this.remove()">` : '';
-  // Square sources can't cover the portrait frame without decapitation,
-  // so they render contained over a blurred fill of themselves: uniform
-  // card size, nothing stretched, nothing sliced.
+  // Contained sources (transparent subjects, square scenes) render over
+  // a blurred fill of themselves: uniform card size, whole image
+  // visible, nothing stretched, nothing sliced. See FIT_ART_ICONS.
   const fillTag = (asset && isFitArt(item.icon))
     ? `<div class="art-fill" aria-hidden="true" style="background-image:url(&quot;${IMG_BASE}${asset}&quot;)"></div>` : '';
   const relCls = relLabel === 'Now' ? 'xcard-rel is-today' : 'xcard-rel';
@@ -582,6 +592,7 @@ function explorerCardHTML(item, dateMs, relLabel, tbCtx, nowMs){
       </div>
     </div>
     <div class="xcard-body">
+      <div class="xcard-kicker">${escHTML(tag.label)}</div>
       <h4>${title}</h4>
       <div class="xcard-date">${eventDateRangeLabel(item, eventDisplayMs(item, dateMs), isTbCard ? tbCtx : null)}</div>
       ${picker}
@@ -648,7 +659,7 @@ function liveBadgesHTML(ongoing, dayStartMs){
     .filter(e => e.endMs - e.startMs > 24 * 3600000)
     .map(e => {
       const meta = liveCardMeta(e);
-      const art = e.art || meta.art;
+      const art = liveDisplayArt(e, meta);
       const total = liveDayTotal(e);
       const day = Math.min(Math.max(liveDayNum(e, dayStartMs), 1), total);
       const kindCls = e.kind === 'conquest' ? ' day-live-cq' : '';
@@ -658,6 +669,51 @@ function liveBadgesHTML(ongoing, dayStartMs){
         + `<span class="db-name">${escHTML(e.name)}</span></div></div>`;
     }).join('');
   return badges;
+}
+
+/* Indicator-row badges for multi-day rotation windows (marquee, era
+   challenges, journey guides) covering the viewed day — the hardcoded
+   counterpart of the live "Day X of Y" badges above. Skipped when a
+   live event of the same family touches the day (its badge wins). */
+function rotationWindowKind(icon){
+  if(icon.startsWith('marquee_')) return 'marquee';
+  if(icon.startsWith('era_challenge_')) return 'era-challenge';
+  if(icon === 'journey_guide') return 'journey';
+  return null;
+}
+function rotationWindowName(icon){
+  const names = (typeof MARQUEE_NAMES !== 'undefined' && MARQUEE_NAMES) || {};
+  let m = /^marquee_(\d+)$/.exec(icon || '');
+  if(m && names[`marquee_${m[1]}`]) return `${names[`marquee_${m[1]}`]} Marquee`;
+  m = /^era_challenge_(\d+)$/.exec(icon || '');
+  if(m && names[`marquee_${m[1]}`]) return `${names[`marquee_${m[1]}`]} Era Challenge`;
+  if(icon === 'journey_guide'){
+    const unit = (typeof JOURNEY_GUIDE_UNIT !== 'undefined' && JOURNEY_GUIDE_UNIT) || 'Journey';
+    return `${unit} Journey Guide`;
+  }
+  return icon;
+}
+function rotationBadgesHTML(windows, dayLive){
+  const liveKinds = new Set((dayLive || []).map(e => e && e.kind).filter(Boolean));
+  // A live event of the same family already badges the day (or shows
+  // its own card), so the rotation window stays out of the way.
+  return (windows || [])
+    .filter(w => {
+      const kind = rotationWindowKind(w.icon);
+      return !!kind && !liveKinds.has(kind);
+    })
+    .map(w => {
+      const icon = w.icon;
+      const cat = categoryFor(icon);
+      const meta = (typeof CATEGORY_META !== 'undefined' && CATEGORY_META[cat]) || {};
+      const art = (typeof assetFor === 'function' && assetFor(icon)) || 'events/eraicon.png';
+      const name = rotationWindowName(icon);
+      const style = `--accent:${meta.accent || 'var(--text3)'};--accent-dim:${meta.dim || 'transparent'};--accent-border:${meta.border || 'var(--border)'}`;
+      return `<div class="day-badge" style="${style}" title="${escHTML(name)}, day ${w.day} of ${w.total}">`
+        + `<img src="${IMG_BASE}${art}" alt="" loading="lazy" decoding="async" onerror="this.remove()">`
+        + `<div class="db-text"><span class="db-label">Day ${w.day} of ${w.total}</span>`
+        + `<span class="db-name">${escHTML(name)}</span></div></div>`;
+    }).join('');
 }
 
 function renderExplorer(st){
@@ -790,6 +846,10 @@ function renderExplorer(st){
   // Live conquest data replaces the rotation estimate — never show both
   // conquest badges side by side.
   const showCqBadge = !dayLive.some(e => e.kind === 'conquest');
+  // Multi-day rotation windows (marquee, era challenges, journey
+  // guides) covering the day, unless live data already badges them.
+  const windowBadges = (typeof rotationWindowsForDay === 'function')
+    ? rotationBadgesHTML(rotationWindowsForDay(cur.ep, cur.dayInEp), dayLive) : '';
   const covered = liveCoveredIcons(starting);
   const rotationCards = cur.items
     .filter(it => !covered.has(it.icon))
@@ -806,6 +866,7 @@ function renderExplorer(st){
         <div class="db-text"><span class="db-label">Coliseum boss</span><span class="db-name">${bossName}</span></div>
         </div>
         ${showCqBadge ? cqBadge : ''}
+        ${windowBadges}
         ${liveBadges}
       </div>
     </div>

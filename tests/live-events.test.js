@@ -430,6 +430,58 @@ test('live cards mirror rotation structure, art and accents', () => {
   assert.doesNotMatch(marquee, /xcard-art-top|xcard-promo|xcard-livepill|xcard-countdown/);
 });
 
+test('live conquest surfaces wear the banner, never promo art', () => {
+  const { ctx } = loadRenderEngine();
+  const run = src => vm.runInContext(src, ctx);
+  const card = run(`liveCardHTML(
+    { id: 'c', name: 'Conquest', kind: 'conquest', art: 'live/conquestpass-promo-basic-01.png', startMs: ${NOW - H}, endMs: ${NOW + H} },
+    'Now')`);
+  assert.match(card, /events\/conquest\.png/);
+  assert.doesNotMatch(card, /conquestpass-promo/);
+  const badges = run(`liveBadgesHTML(
+    [{ id: 'c', name: 'Conquest', kind: 'conquest', art: 'live/conquestpass-promo-basic-01.png', startMs: ${NOW - 2 * 86400000}, endMs: ${NOW + 5 * 86400000} }],
+    ${NOW})`);
+  assert.match(badges, /events\/conquest\.png/);
+  assert.doesNotMatch(badges, /conquestpass-promo/);
+});
+
+test('rotation window badges render Day X of Y and yield to live kinds', () => {
+  const { ctx } = loadRenderEngine();
+  const run = src => vm.runInContext(src, ctx);
+  const html = run(`rotationBadgesHTML([{ icon: 'marquee_1', day: 3, total: 7 }], [])`);
+  assert.match(html, /day-badge/);
+  assert.match(html, /Day 3 of 7/);
+  assert.match(html, /Mara Jade Skywalker Marquee/);
+  assert.equal(run(`rotationBadgesHTML([{ icon: 'marquee_1', day: 3, total: 7 }], [{ kind: 'marquee' }])`), '');
+  assert.equal(run(`rotationBadgesHTML([], [])`), '');
+});
+
+test('cards carry a family kicker above the title', () => {
+  const { ctx } = loadRenderEngine();
+  const run = src => vm.runInContext(src, ctx);
+  const rotation = run(`explorerCardHTML({ icon: 'marquee_1', label: 'Marquee' }, ${NOW}, 'Now', null, ${NOW})`);
+  assert.match(rotation, /xcard-kicker">ERA</);
+  const live = run(`liveCardHTML(
+    { id: 'm', name: 'Blade And Bastion', kind: 'marquee', startMs: ${NOW - H}, endMs: ${NOW + H} },
+    'Now')`);
+  assert.match(live, /xcard-kicker">ERA</);
+});
+
+test('tb picker is a constant-height row with no collapse or wrap lines', () => {
+  const { ctx } = loadRenderEngine();
+  const run = src => vm.runInContext(src, ctx);
+  const mk = compact => `tbPickerHTML({ def: { id: 'rote', name: 'Rise of the Empire' }, side: 'light', options: [
+    { id: 'rebel_assault', name: 'Hoth Rebel Assault', short: 'Rebel Assault', tag: 'Hoth' },
+    { id: 'republic_offensive', name: 'Geonosis Republic Offensive', short: 'Republic Offensive', tag: 'Geo' },
+    { id: 'rote', name: 'Rise of the Empire', short: 'Rise of the Empire', tag: 'ROTE' }
+  ] }, ${compact})`;
+  for (const html of [run(mk(true)), run(mk(false))]) {
+    assert.match(html, /tb-pick-btn/);
+    assert.doesNotMatch(html, /<details/);
+    assert.doesNotMatch(html, /tb-pick-selected/);
+    assert.match(html, /aria-pressed="true"/);
+  }
+});
 test('shared fallback icons never pre-empt specific textures', async () => {
   // Regression: a shared icon file on disk (or a fast icon download)
   // must not claim an event whose own texture simply hasn't been tried

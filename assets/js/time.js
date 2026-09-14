@@ -1228,6 +1228,40 @@ function conquestInfoForDay(episode, dayInEp){
   return { active: true, day: dayInEp - start + 1, total, cNum, note, finalDay: dayInEp === end };
 }
 
+/* Multi-day rotation windows covering (episode, dayInEp), for the
+   explorer's indicator row (mirrors the conquest badge + live "Day X
+   of Y" badges). Marquee and era challenges run 7 days from their
+   start day; journey guide unlocks run 14 days. Start days are read
+   from the episode tables (not hardcoded), so rotation edits flow
+   through. Returns [{ icon, day, total }]. */
+function rotationWindowsForDay(episode, dayInEp){
+  const out = [];
+  if(!Number.isInteger(episode) || !Number.isInteger(dayInEp)) return out;
+  const overrides = (typeof EPISODE_OVERRIDES !== 'undefined' && EPISODE_OVERRIDES) || {};
+  const epTable = overrides[episode] || {};
+  const starts = {}; // icon -> sorted start days within the episode
+  for(const [dStr, list] of Object.entries(epTable)){
+    const d = Number(dStr);
+    if(!Number.isInteger(d) || !Array.isArray(list)) continue;
+    for(const it of list){
+      if(!it || typeof it.icon !== 'string') continue;
+      if(!/^(marquee_\d+|era_challenge_\d+|journey_guide)$/.test(it.icon)) continue;
+      if(!Array.isArray(starts[it.icon])) starts[it.icon] = [];
+      if(!starts[it.icon].includes(d)) starts[it.icon].push(d);
+    }
+  }
+  for(const [icon, days] of Object.entries(starts)){
+    const total = icon === 'journey_guide' ? 14 : 7;
+    for(const s of days.sort((a, b) => a - b)){
+      if(dayInEp >= s && dayInEp < s + total){
+        out.push({ icon, day: dayInEp - s + 1, total });
+        break;
+      }
+    }
+  }
+  return out;
+}
+
 function getConquestStatus(st){
   const start = conquestStartDay(), end = conquestEndDay();
   const total = conquestDurationDays();

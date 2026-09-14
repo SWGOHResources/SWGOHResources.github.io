@@ -808,10 +808,10 @@ test('unknown TW icons hide the tracker but keep the label, and are reported', (
 
 test('fit-art detection follows the config allowlist', () => {
   const engine = loadTimeEngine();
-  for (const icon of ['gac_attack', 'era_changeover', 'client_update', 'shipment_update', 'marquee_5', 'era_challenge_5']) {
+  for (const icon of ['gac_attack', 'era_changeover', 'client_update', 'shipment_update', 'marquee_5', 'era_challenge_5', 'tw_signup', 'tw_offense', 'tw_defense', 'tw_payout', 'smugglersrun']) {
     assert.equal(engine.isFitArt(icon), true, icon);
   }
-  for (const icon of ['tw_signup', 'tw_offense', 'smugglersrun', 'marquee_1', 'rote', 'conquest_start', 'fleet_executor', null, '']) {
+  for (const icon of ['marquee_1', 'rote', 'conquest_start', 'fleet_executor', null, '']) {
     assert.equal(engine.isFitArt(icon), false, String(icon));
   }
 });
@@ -824,15 +824,32 @@ test('fit-art icons all exist in EVENT_ICONS', () => {
   }
 });
 
+test('rotation windows cover marquee, era-challenge and journey spans', () => {
+  const engine = loadTimeEngine({ episodeOverrides: {
+    1: { 1: [{ icon: 'marquee_1', label: 'M' }], 8: [{ icon: 'era_challenge_1', label: 'E' }] },
+    3: { 1: [{ icon: 'journey_guide', label: 'J' }], 15: [{ icon: 'journey_guide', label: 'J' }] },
+  } });
+  // VM-realm objects fail deepStrictEqual on prototype — compare JSON.
+  const win = (ep, day) => JSON.stringify(engine.rotationWindowsForDay(ep, day));
+  assert.equal(win(1, 3), JSON.stringify([{ icon: 'marquee_1', day: 3, total: 7 }]));
+  assert.equal(win(1, 10), JSON.stringify([{ icon: 'era_challenge_1', day: 3, total: 7 }]));
+  assert.equal(win(1, 20), '[]');
+  assert.equal(win(3, 20), JSON.stringify([{ icon: 'journey_guide', day: 6, total: 14 }]));
+  assert.equal(win(3, 29), '[]');
+});
+
 test('transparent-subject cards render contained over a blurred fill', () => {
   const { ctx } = loadRenderEngine();
   const run = src => vm.runInContext(src, ctx);
   const fit = run(`explorerCardHTML({icon:"gac_attack",label:"GAC Round 1 Attack (Week 1)"}, Date.parse("2026-08-04T00:00:00Z"), "Now", null, 0)`);
-  const scene = run(`explorerCardHTML({icon:"tw_offense",label:"Offense Phase Starts"}, Date.parse("2026-08-04T00:00:00Z"), "Now", null, 0)`);
+  const square = run(`explorerCardHTML({icon:"tw_offense",label:"Offense Phase Starts"}, Date.parse("2026-08-04T00:00:00Z"), "Now", null, 0)`);
   const tall = run(`explorerCardHTML({icon:"marquee_1",label:"Marquee"}, Date.parse("2026-08-04T00:00:00Z"), "Now", null, 0)`);
+  const cover = run(`explorerCardHTML({icon:"conquest_start",label:"Conquest Starts"}, Date.parse("2026-08-04T00:00:00Z"), "Now", null, 0)`);
   assert.ok(fit.includes('xcard-art fit'));
   assert.ok(fit.includes('art-fill'));
-  for (const plain of [scene, tall]) {
+  assert.ok(square.includes('xcard-art fit'));
+  assert.ok(square.includes('art-fill'));
+  for (const plain of [tall, cover]) {
     assert.ok(!plain.includes('xcard-art fit'));
     assert.ok(!plain.includes('art-fill'));
   }
