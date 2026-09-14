@@ -96,6 +96,24 @@ npm run events:pull
 `tests/live-events.test.js` fails if the committed snapshot is older
 than 48h, so a broken refresh shows up in CI.
 
+## Phone notifications
+
+`.github/workflows/notify.yml` checks rotation + live starts every 30
+minutes and pushes anything starting within ~45 minutes to your phone
+via [ntfy](https://ntfy.sh) (free, no account). One-time setup:
+
+1. Install the ntfy app (Android / iOS) and subscribe to a long random
+   topic, e.g. `swgoh-schedule-x7q9-...` (the randomness is the privacy).
+2. Repo Settings → Secrets and variables → Actions → New repository
+   secret: `NTFY_TOPIC` = that topic. Optional `NTFY_URL` variable if
+   you self-host ntfy (defaults to `https://ntfy.sh`).
+3. Actions → Event notifications → Run workflow (or wait for the next
+   half hour). Test locally first: `NTFY_TOPIC=... DRY_RUN=1 node
+   scripts/notify-upcoming.mjs`.
+
+Sent keys persist in `assets/data/notify-state.json` (auto-committed),
+so delayed/retried runs never double-send.
+
 Scripts load in order at the end of `<body>` as deferred classic scripts
 (ordered, non-blocking) so `onclick="…"` handlers keep working:
 
