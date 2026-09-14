@@ -859,6 +859,34 @@ function tzDisplayName(){
   return s === 'UTC' ? 'UTC (game time)' : s;
 }
 
+/* Short zone tag for event start times ("UTC", "BST", "UTC+05:30").
+   Cached per setting; manual offsets echo the setting itself since
+   they render shifted through UTC. */
+let tzShortCache = { key: null, abbr: '' };
+function tzShort(){
+  const setting = (typeof getTimeZoneSetting === 'function') ? getTimeZoneSetting() : 'local';
+  if(tzShortCache.key !== setting){
+    let abbr = setting;
+    if(tzOffsetMinutes(setting) == null){
+      const zone = (typeof tz === 'function') ? tz() : 'UTC';
+      abbr = zone;
+      try {
+        const parts = new Intl.DateTimeFormat('en-GB', { timeZone: zone, timeZoneName: 'short' }).formatToParts(new Date());
+        const tzPart = parts.find(p => p.type === 'timeZoneName');
+        if(tzPart && tzPart.value) abbr = tzPart.value;
+      } catch(e){}
+    }
+    tzShortCache = { key: setting, abbr };
+  }
+  return tzShortCache.abbr;
+}
+
+/* Absolute start instant in the display zone: "Sat, 12th Sep, 18:00
+   UTC". Card rows + live labels share it — one source of truth. */
+function fmtEventStart(ms){
+  return `${withOrdinal(__formatter('wdS|day|monS|hhmm').format(new Date(dms(ms))))} ${tzShort()}`;
+}
+
 function setTimeZone(v){
   if(v !== 'local' && tzOffsetMinutes(v) == null && !validTimeZone(v)) return false;
   try { localStorage.setItem(TZ_STORAGE_KEY, v); } catch(e){}
@@ -1051,6 +1079,37 @@ function eventDateRangeLabel(item, dateMs, tbCtx){
     return `${fmtPhaseMoment(w.startMs)} → ${fmtPhaseMoment(w.endMs)} · 36 hours`;
   }
   return DAY_LONG_EVENTS.has(item.icon) ? `${start} · 24 hours` : start;
+}
+
+/* Duration of a rotation card in whole hours — null when the marker
+   has no real span (moment markers, updates, payouts…). Marquee /
+   era challenges run 7 days, journey guides 14, conquest per config;
+   TB phases follow their run's hours-per-phase. Powers the card
+   "starts X · N hrs" row. */
+function eventDurationHours(item, dateMs, tbCtx){
+  const icon = item && item.icon;
+  if(typeof icon !== 'string') return null;
+  if(icon === 'conquest_start') return conquestDurationDays() * 24;
+  if(icon === 'journey_rerun_1') return 7 * 24;
+  if(icon === 'journey_rerun_2'){
+    // Same month-span math as eventDateRangeLabel above.
+    const endMs = new Date(dateMs);
+    const originalDay = endMs.getUTCDate();
+    endMs.setUTCDate(1);
+    endMs.setUTCMonth(endMs.getUTCMonth() + 1);
+    const daysInEndMonth = new Date(utcDateMs(endMs.getUTCFullYear(), endMs.getUTCMonth() + 1, 0)).getUTCDate();
+    endMs.setUTCDate(Math.min(originalDay, daysInEndMonth));
+    return Math.max(1, Math.round((endMs.getTime() - dateMs) / 3600000));
+  }
+  if(icon === 'rote' || icon === 'tb_ends'){
+    if(item.tbEndMoment != null) return null;
+    const def = tbCtx && tbCtx.def;
+    return (def && Number.isFinite(def.hoursPerPhase)) ? def.hoursPerPhase : 24;
+  }
+  if(icon.startsWith('marquee_') || icon.startsWith('era_challenge_')) return 7 * 24;
+  if(icon === 'journey_guide') return 14 * 24;
+  if(DAY_LONG_EVENTS.has(icon)) return 24;
+  return null;
 }
 
 /* Per-family rotation start hour (UTC). GAC keeps its own 21:00

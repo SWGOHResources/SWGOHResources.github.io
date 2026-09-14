@@ -824,6 +824,30 @@ test('fit-art icons all exist in EVENT_ICONS', () => {
   }
 });
 
+test('event durations read in whole hours, markers read null', () => {
+  const engine = loadTimeEngine();
+  const day = Date.parse('2026-08-04T00:00:00Z');
+  assert.equal(engine.eventDurationHours({ icon: 'conquest_start' }, day, null), 336);
+  assert.equal(engine.eventDurationHours({ icon: 'marquee_1' }, day, null), 168);
+  assert.equal(engine.eventDurationHours({ icon: 'era_challenge_2' }, day, null), 168);
+  assert.equal(engine.eventDurationHours({ icon: 'journey_guide' }, day, null), 336);
+  assert.equal(engine.eventDurationHours({ icon: 'journey_rerun_1' }, day, null), 168);
+  assert.equal(engine.eventDurationHours({ icon: 'tw_offense' }, day, null), 24);
+  assert.equal(engine.eventDurationHours({ icon: 'smugglersrun' }, day, null), 24);
+  assert.equal(engine.eventDurationHours({ icon: 'rote' }, day, null), 24);
+  assert.equal(engine.eventDurationHours({ icon: 'rote' }, day, { def: { hoursPerPhase: 36 } }), 36);
+  assert.equal(engine.eventDurationHours({ icon: 'rote', tbEndMoment: day }, day, { def: { hoursPerPhase: 36 } }), null);
+  for (const icon of ['tw_payout', 'client_update', 'proving_ground', 'era_changeover', 'fleet_executor', null, '']) {
+    assert.equal(engine.eventDurationHours({ icon }, day, null), null, String(icon));
+  }
+});
+
+test('event starts render weekday, date, clock and zone', () => {
+  const engine = loadTimeEngine({ timeZone: 'UTC' });
+  // 2026-09-12 is a Saturday.
+  assert.match(engine.fmtEventStart(Date.parse('2026-09-12T18:00:00Z')), /Sat.*12th Sep.*18:00 UTC/);
+});
+
 test('rotation windows cover marquee, era-challenge and journey spans', () => {
   const engine = loadTimeEngine({ episodeOverrides: {
     1: { 1: [{ icon: 'marquee_1', label: 'M' }], 8: [{ icon: 'era_challenge_1', label: 'E' }] },

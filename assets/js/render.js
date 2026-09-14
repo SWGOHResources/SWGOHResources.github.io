@@ -326,31 +326,20 @@ function renderStatusDashboard(st){
 
 let liveEventsCache = null;
 
-/* Short zone tag for live card times ("UTC", "BST", "GMT+1"…),
-   resolved in the display zone and cached per zone so cards don't
-   each construct an Intl formatter. Times render in the display
-   zone, so the tag names it — no silent UTC assumption. */
-let liveTzAbbrCache = { zone: null, abbr: '' };
-function liveTzAbbr(){
-  const zone = (typeof tz === 'function') ? tz() : 'UTC';
-  if(liveTzAbbrCache.zone !== zone){
-    let abbr = zone;
-    try {
-      const parts = new Intl.DateTimeFormat('en-GB', { timeZone: zone, timeZoneName: 'short' }).formatToParts(new Date());
-      const tzPart = parts.find(p => p.type === 'timeZoneName');
-      if(tzPart && tzPart.value) abbr = tzPart.value;
-    } catch(e){}
-    liveTzAbbrCache = { zone, abbr };
-  }
-  return liveTzAbbrCache.abbr;
+/* Start + span row for schedule cards: the absolute start instant
+   left ("Sat, 12th Sep, 18:00 UTC"), the duration right ("36 hrs").
+   Duration omitted when the marker has no real span. */
+function cardWhenRow(startMs, durH){
+  const start = escHTML(fmtEventStart(startMs));
+  const dur = Number.isFinite(durH) ? `<span class="xw-dur">${durH} hrs</span>` : '';
+  return `<div class="xcard-date"><span class="xw-start">${start}</span>${dur}</div>`;
 }
 
-function liveEventTimeLabel(ms){
-  try {
-    return withOrdinal(__formatter('day|monS|hhmm').format(new Date(dms(ms)))) + ' ' + liveTzAbbr();
-  } catch(e){
-    return new Date(ms).toUTCString();
-  }
+/* Whole-hour span of a live event — null when the window is missing
+   or inverted. */
+function liveDurationHours(e){
+  if(!e || !Number.isFinite(e.startMs) || !Number.isFinite(e.endMs) || e.endMs <= e.startMs) return null;
+  return Math.max(1, Math.round((e.endMs - e.startMs) / 3600000));
 }
 
 /* Card art per live kind. Marquee / era-challenge events reuse the
@@ -438,7 +427,7 @@ function liveCardHTML(e, relLabel){
     <div class="xcard-body">
       <div class="xcard-kicker">${escHTML(meta.label)}</div>
       <h4>${escHTML(e.name)}</h4>
-      <div class="xcard-date">${escHTML(liveEventTimeLabel(e.startMs))} → ${escHTML(liveEventTimeLabel(e.endMs))}</div>
+      ${cardWhenRow(e.startMs, liveDurationHours(e))}
     </div>
   </article>`;
 }
@@ -594,7 +583,7 @@ function explorerCardHTML(item, dateMs, relLabel, tbCtx, nowMs){
     <div class="xcard-body">
       <div class="xcard-kicker">${escHTML(tag.label)}</div>
       <h4>${title}</h4>
-      <div class="xcard-date">${eventDateRangeLabel(item, eventDisplayMs(item, dateMs), isTbCard ? tbCtx : null)}</div>
+      ${cardWhenRow(eventStartMs(item, dateMs), (typeof eventDurationHours === 'function') ? eventDurationHours(item, dateMs, isTbCard ? tbCtx : null) : null)}
       ${picker}
     </div>
   </article>`;

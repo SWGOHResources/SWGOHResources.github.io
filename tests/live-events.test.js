@@ -430,6 +430,20 @@ test('live cards mirror rotation structure, art and accents', () => {
   assert.doesNotMatch(marquee, /xcard-art-top|xcard-promo|xcard-livepill|xcard-countdown/);
 });
 
+test('cards show start instant plus whole-hour duration', () => {
+  const { ctx } = loadRenderEngine();
+  const run = src => vm.runInContext(src, ctx);
+  const rotation = run(`explorerCardHTML({ icon: 'tw_offense', label: 'Offense Phase Starts' }, ${NOW}, 'Now', null, ${NOW})`);
+  assert.match(rotation, /xw-start">\w{3}.*\d{2}:\d{2} UTC/);
+  assert.match(rotation, /xw-dur">24 hrs</);
+  const live = run(`liveCardHTML(
+    { id: 'm', name: 'Blade And Bastion', kind: 'marquee', startMs: ${NOW - H}, endMs: ${NOW + H} },
+    'Now')`);
+  assert.match(live, /xw-dur">2 hrs</);
+  const moment = run(`explorerCardHTML({ icon: 'client_update', label: 'Client Update' }, ${NOW}, 'Now', null, ${NOW})`);
+  assert.match(moment, /xw-start"/);
+  assert.doesNotMatch(moment, /xw-dur/);
+});
 test('live conquest surfaces wear the banner, never promo art', () => {
   const { ctx } = loadRenderEngine();
   const run = src => vm.runInContext(src, ctx);

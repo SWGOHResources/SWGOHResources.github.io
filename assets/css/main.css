@@ -617,7 +617,9 @@ input:focus-visible, summary:focus-visible, [tabindex]:focus-visible {
   min-height: 2.8em; overflow-wrap: anywhere;
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
 }
-.xcard-date { font-family: var(--mono); font-size: 11px; color: var(--text2); margin-top: auto; padding-top: 6px; }
+.xcard-date { font-family: var(--mono); font-size: 11px; color: var(--text2); margin-top: auto; padding-top: 6px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 2px 8px; }
+.xw-start { min-width: 0; }
+.xw-dur { flex: 0 0 auto; font-weight: 700; color: var(--accent, var(--text)); }
 
 /* ─── Guild TB picker (on TB Phase-1 cards + dashboard status card) ───
    Always-visible 3-button row at a constant height: nothing opens,
