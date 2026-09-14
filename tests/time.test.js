@@ -794,8 +794,27 @@ test('upcomingStarts collects real starts inside the window', () => {
   assert.ok(!out.some(c => c.key.includes('|l3|')), 'distant live skipped');
   const keys = Array.from(out, c => c.key);
   assert.equal(new Set(keys).size, keys.length, 'keys unique');
+  const validCats = new Set(Array.from(vm.runInContext('ALERT_CATEGORIES', ctx), c => c.id));
+  for (const c of out) assert.ok(validCats.has(c.category), `${c.key} → ${c.category}`);
   const starts = Array.from(out, c => c.startMs);
   assert.deepEqual([...starts].sort((a, b) => a - b), starts, 'sorted');
+});
+
+test('alert categories group rotation icons and live kinds', () => {
+  const engine = loadTimeEngine();
+  const cases = [
+    ['marquee_1', null, 'marquee'], ['era_challenge_2', null, 'marquee'],
+    ['conquest_start', null, 'conquest'], ['proving_ground', null, 'conquest'],
+    ['rote', null, 'tb'], ['tb_ends', null, 'tb'],
+    ['tw_offense', null, 'tw'], ['gac_attack', null, 'gac'],
+    ['fleet_executor', null, 'fleet'], ['smugglersrun', null, 'other'],
+    [null, 'marquee', 'marquee'], [null, 'era-challenge', 'marquee'],
+    [null, 'conquest', 'conquest'], [null, 'proving-grounds', 'conquest'],
+    [null, 'fleet', 'fleet'], [null, 'assault', 'other'],
+    [null, 'smugglers-run', 'other'], [null, 'whatever', 'other'],
+  ];
+  for (const [icon, kind, want] of cases) assert.equal(engine.alertCategoryFor(icon, kind), want, `${icon}/${kind}`);
+  assert.deepEqual(Array.from(vm.runInContext('ALERT_DEFAULT_CATS', engine)), ['marquee', 'conquest', 'tb', 'tw', 'gac', 'fleet']);
 });
 
 test('day pills show era-day numbers with a calendar caption', () => {

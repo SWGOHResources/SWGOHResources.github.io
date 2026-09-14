@@ -594,13 +594,14 @@ function upcomingStarts(st, liveEvents, nowMs, lookaheadMs, catchupMs){
         key: `rot|${item.icon}|${day.dMs}`,
         title: tenseByStart(getFullScheduleLabel(item), item, day.dMs, nowMs),
         startMs,
+        category: alertCategoryFor(item.icon, null),
       });
     }
   }
   for(const e of liveEvents || []){
     if(!e || e.kind === 'gac') continue;
     if(!(e.startMs >= from && e.startMs <= to)) continue;
-    out.push({ key: `live|${e.id}|${e.startMs}`, title: e.name, startMs: e.startMs });
+    out.push({ key: `live|${e.id}|${e.startMs}`, title: e.name, startMs: e.startMs, category: alertCategoryFor(null, e.kind) });
   }
   out.sort((a, b) => a.startMs - b.startMs);
   return out;

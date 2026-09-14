@@ -129,6 +129,18 @@ document.getElementById('openAboutBtnMobile')?.addEventListener('click', () => o
 document.getElementById('closeAboutBtn')?.addEventListener('click', () => closeModal(aboutModal));
 document.getElementById('closeAboutBtn2')?.addEventListener('click', () => closeModal(aboutModal));
 
+const alertsModal = document.getElementById('alertsModal');
+document.getElementById('closeAlertsBtn')?.addEventListener('click', () => closeModal(alertsModal));
+document.getElementById('closeAlertsBtn2')?.addEventListener('click', () => closeModal(alertsModal));
+alertsModal?.addEventListener('click', e => { if(e.target === alertsModal) closeModal(alertsModal); });
+document.getElementById('alertsEnabledBox')?.addEventListener('change', e => onAlertsMasterChange(e.target));
+document.getElementById('alertCatsBox')?.addEventListener('change', e => {
+  if(e.target && e.target.dataset && e.target.dataset.cat){
+    writeAlertCat(e.target.dataset.cat, e.target.checked);
+    onAlertCatsChange();
+  }
+});
+
 scheduleModal?.addEventListener('click', e => { if(e.target === scheduleModal) closeModal(scheduleModal); });
 aboutModal?.addEventListener('click', e => { if(e.target === aboutModal) closeModal(aboutModal); });
 
@@ -242,8 +254,8 @@ applyDayHash();
    persist per device; seen keys prune after 7 days. */
 const ALERTS_KEY = 'swgoh-alerts';
 const ALERTS_SEEN_KEY = 'swgoh-alerts-seen';
-const ALERT_LOOKAHEAD_MS = 15 * 60000;
-const ALERT_CATCHUP_MS = 2 * 60000;
+const ALERT_LOOKAHEAD_MS = 60 * 60000;
+const ALERT_CATCHUP_MS = 15 * 60000;
 function alertsEnabled(){
   try { return localStorage.getItem(ALERTS_KEY) === '1'; } catch(e){ return false; }
 }
@@ -261,26 +273,79 @@ function syncAlertsButtons(){
     b.classList.toggle('on', on);
     const label = b.querySelector('.ab-label');
     if(label) label.textContent = blocked ? 'Alerts blocked' : (on ? 'Alerts on' : 'Alerts');
-    b.title = blocked
-      ? 'Notifications are blocked for this site — allow them in the browser site settings, then toggle again.'
-      : (on ? 'Event start alerts on — tap to turn off.' : 'Notify me ~15 minutes before events start (asks permission).');
+    b.title = 'Open event alert settings.'
   });
 }
-async function toggleAlerts(){
-  if(typeof Notification === 'undefined'){ alert('This browser does not support notifications.'); return; }
-  if(alertsEnabled()){ setAlertsEnabled(false); return; }
+/* Per-category preferences. Majors default on, "other" defaults off;
+   anything the user touches is stored explicitly. */
+const ALERT_CATS_KEY = 'swgoh-alert-cats';
+function alertCatMeta(){
+  try {
+    if(typeof ALERT_CATEGORIES !== 'undefined' && Array.isArray(ALERT_CATEGORIES)) return ALERT_CATEGORIES;
+  } catch(e){}
+  return [];
+}
+function alertDefaultOn(id){
+  try {
+    if(typeof ALERT_DEFAULT_CATS !== 'undefined') return ALERT_DEFAULT_CATS.includes(id);
+  } catch(e){}
+  return id !== 'other';
+}
+function readAlertCats(){
+  try {
+    const p = JSON.parse(localStorage.getItem(ALERT_CATS_KEY) || '{}');
+    return (p && typeof p === 'object') ? p : {};
+  } catch(e){ return {}; }
+}
+function alertCatOn(id){
+  const saved = readAlertCats();
+  if(Object.prototype.hasOwnProperty.call(saved, id)) return !!saved[id];
+  return alertDefaultOn(id);
+}
+function writeAlertCat(id, on){
+  const saved = readAlertCats();
+  saved[id] = !!on;
+  try { localStorage.setItem(ALERT_CATS_KEY, JSON.stringify(saved)); } catch(e){}
+}
+function buildAlertsCats(){
+  const box = document.getElementById('alertCatsBox');
+  if(!box) return;
+  const prefs = readAlertCats();
+  box.innerHTML = alertCatMeta().map(c => {
+    const on = Object.prototype.hasOwnProperty.call(prefs, c.id) ? !!prefs[c.id] : alertDefaultOn(c.id);
+    return `<label class="alert-row"><input type="checkbox" data-cat="${c.id}"${on ? ' checked' : ''}> <span>${c.label}</span></label>`;
+  }).join('');
+}
+function openAlertsModal(){
+  if(typeof alertsModal === 'undefined' || !alertsModal) return;
+  buildAlertsCats();
+  const master = document.getElementById('alertsEnabledBox');
+  if(master) master.checked = alertsEnabled() && typeof Notification !== 'undefined' && Notification.permission === 'granted';
+  openModal(alertsModal);
+}
+async function onAlertsMasterChange(box){
+  if(!box.checked){ setAlertsEnabled(false); return; }
+  if(typeof Notification === 'undefined'){ alert('This browser does not support notifications.'); box.checked = false; return; }
   if(Notification.permission === 'denied'){
+    alert('Notifications are blocked for this site. Allow them in the browser site settings, then enable again.');
+    box.checked = false;
     syncAlertsButtons();
-    alert('Notifications are blocked for this site. Allow them in the browser site settings, then toggle Alerts again.');
     return;
   }
   try {
     const perm = await Notification.requestPermission();
     setAlertsEnabled(perm === 'granted');
+    box.checked = perm === 'granted';
     if(perm !== 'granted') alert('Notifications were not allowed — Alerts stays off.');
-  } catch(e){ /* dismissed */
+    else syncPushSubscription();
+  } catch(e){
+    box.checked = false;
     syncAlertsButtons();
   }
+}
+function onAlertCatsChange(){
+  syncAlertsButtons();
+  syncPushSubscription();
 }
 async function fireAlert(title, body, tag){
   const opts = { body, tag, icon: '/assets/img/icons/favicon-32.png', data: { url: '/' } };
@@ -308,7 +373,8 @@ setInterval(async () => {
     if(typeof upcomingStarts !== 'function' || typeof getGameStatus !== 'function') return;
     const st = getGameStatus();
     const live = (typeof liveEventsCache !== 'undefined' && liveEventsCache && liveEventsCache.events) || [];
-    const cands = upcomingStarts(st, live, st.nowMs, ALERT_LOOKAHEAD_MS, ALERT_CATCHUP_MS);
+    const cands = upcomingStarts(st, live, st.nowMs, ALERT_LOOKAHEAD_MS, ALERT_CATCHUP_MS)
+      .filter(c => alertCatOn(c.category));
     if(!cands.length) return;
     const seen = readAlertSeen();
     let changed = false;
@@ -327,6 +393,69 @@ setInterval(async () => {
   } catch(e){}
 }, 30000);
 syncAlertsButtons();
+
+/* Closed-phone pushes via the user's Firebase (FCM). Everything here
+   is guarded: placeholder config, offline CDN or unsupported browsers
+   resolve null and in-site alerts are unaffected. Device tokens +
+   chosen categories sync to Firestore (push_subscriptions/{token})
+   for the CI sender; the worker (sw.js) shows arriving pushes. */
+function firebaseConfig(){
+  try {
+    const c = (typeof FIREBASE_CONFIG !== 'undefined') ? FIREBASE_CONFIG
+      : (typeof window !== 'undefined' && window.FIREBASE_CONFIG) || null;
+    if(!c || !c.apiKey || !c.projectId || !c.messagingSenderId || !c.appId) return null;
+    if(/REPLACE|PLACEHOLDER/.test(c.apiKey)) return null;
+    if(!c.vapidKey || /REPLACE|PLACEHOLDER/.test(c.vapidKey)) return null;
+    return c;
+  } catch(e){ return null; }
+}
+let firebasePromise = null;
+function ensureFirebase(){
+  const cfg = firebaseConfig();
+  if(!cfg) return Promise.resolve(null);
+  if(firebasePromise) return firebasePromise;
+  firebasePromise = (async () => {
+    try {
+      if(typeof document === 'undefined') return null;
+      const load = src => new Promise((res, rej) => {
+        const s = document.createElement('script');
+        s.src = src; s.async = true;
+        s.onload = res; s.onerror = () => rej(new Error('load failed'));
+        document.head.appendChild(s);
+        setTimeout(() => rej(new Error('timeout')), 15000);
+      });
+      const base = 'https://www.gstatic.com/firebasejs/10.12.2/';
+      await load(base + 'firebase-app-compat.js');
+      await load(base + 'firebase-messaging-compat.js');
+      await load(base + 'firebase-firestore-compat.js');
+      if(typeof firebase === 'undefined') return null;
+      const app = firebase.initializeApp({
+        apiKey: cfg.apiKey, authDomain: cfg.authDomain, projectId: cfg.projectId,
+        storageBucket: cfg.storageBucket, messagingSenderId: cfg.messagingSenderId, appId: cfg.appId,
+      });
+      let messaging = null, db = null;
+      try { if(firebase.messaging.isSupported()) messaging = firebase.messaging(app); } catch(e){}
+      try { db = firebase.firestore(app); } catch(e){}
+      return { messaging, db, vapidKey: cfg.vapidKey };
+    } catch(e){ return null; }
+  })();
+  return firebasePromise;
+}
+async function syncPushSubscription(){
+  try {
+    const fb = await ensureFirebase();
+    if(!fb || !fb.messaging || !fb.db) return;
+    if(typeof Notification === 'undefined' || Notification.permission !== 'granted') return;
+    const reg = ('serviceWorker' in navigator) ? await navigator.serviceWorker.ready : undefined;
+    let token = null;
+    try { token = await fb.messaging.getToken({ vapidKey: fb.vapidKey, serviceWorkerRegistration: reg }); }
+    catch(e){ return; }
+    if(!token) return;
+    const cats = alertCatMeta().filter(c => alertCatOn(c.id)).map(c => c.id);
+    await fb.db.collection('push_subscriptions').doc(token).set(
+      { categories: cats, updatedAt: Date.now() }, { merge: true });
+  } catch(e){ /* in-site alerts unaffected */ }
+}
 
 /* Display timezone picker (header + mobile panel). Defaults to the
    device's timezone; the choice persists and re-renders all dates. */

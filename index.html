@@ -49,7 +49,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@700;800&family=Inter:wght@400;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/main.css?v=60">
+  <link rel="stylesheet" href="assets/css/main.css?v=61">
 </head>
 <body>
 
@@ -68,7 +68,7 @@
     </nav>
     <div class="topbar-actions" id="topbarActions">
       <select class="tz-select" id="tzSelect" aria-label="Display timezone" title="Changeovers happen at the same moment worldwide (18:00 UTC) — this only changes how times are shown"></select>
-      <button class="gear-btn" id="alertsBtn" aria-pressed="false" onclick="toggleAlerts()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="ab-label">Alerts</span></button>
+      <button class="gear-btn" id="alertsBtn" aria-pressed="false" onclick="openAlertsModal()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="ab-label">Alerts</span></button>
       <button class="gear-btn" id="openAboutBtnHeader">Report Issue</button>
       <button class="gear-btn" id="openFullScheduleBtn">Full Schedule</button>
     </div>
@@ -78,7 +78,7 @@
     <a class="mp-link active" href="/">Home</a>
     <div class="mp-divider"></div>
     <select class="tz-select mp-btn" id="tzSelectMobile" aria-label="Display timezone" title="Changeovers happen at the same moment worldwide (18:00 UTC) — this only changes how times are shown"></select>
-    <button class="gear-btn mp-btn" id="alertsBtnMobile" aria-pressed="false" onclick="toggleAlerts()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="ab-label">Alerts</span></button>
+    <button class="gear-btn mp-btn" id="alertsBtnMobile" aria-pressed="false" onclick="openAlertsModal()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="ab-label">Alerts</span></button>
     <button class="gear-btn mp-btn" id="openAboutBtnMobile">Report Issue</button>
     <button class="gear-btn mp-btn" id="openFullScheduleBtnMobile">Full Schedule</button>
   </div>
@@ -237,6 +237,28 @@
   </div>
 </div>
 
+<div class="modal-backdrop" id="alertsModal" aria-hidden="true">
+  <div class="modal about-modal" role="dialog" aria-modal="true" aria-labelledby="alertsModalTitle">
+    <div class="about-head">
+      <h3 id="alertsModalTitle">Event Alerts</h3>
+      <button class="modal-close-x" id="closeAlertsBtn" aria-label="Close"><span></span><span></span></button>
+    </div>
+
+    <p class="about-sub">
+      Get notified <strong>about an hour before</strong> these start
+      (or just after, if you open the page late), while this page is
+      open. Closed-phone pushes come from Firebase — see README.
+    </p>
+
+    <label class="alert-row alert-master"><input type="checkbox" id="alertsEnabledBox"> <span>Enable alerts on this device</span></label>
+    <div class="alert-cats" id="alertCatsBox" role="group" aria-label="Alert categories"></div>
+
+    <div class="about-actions">
+      <button class="btn primary" id="closeAlertsBtn2">Done</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-backdrop" id="aboutModal" aria-hidden="true">
   <div class="modal about-modal" role="dialog" aria-modal="true" aria-labelledby="aboutModalTitle">
     <div class="about-head">
@@ -263,9 +285,10 @@
 
 <!-- ASSET_VERSION: bump ?v= on the CSS/JS links below on every deploy
      so browsers fetch fresh copies instead of cached ones. -->
+<script src="firebase-config.js?v=2"></script>
 <script defer src="assets/js/config.js?v=27"></script>
-<script defer src="assets/js/time.js?v=39"></script>
-<script defer src="assets/js/render.js?v=62"></script>
-<script defer src="assets/js/app.js?v=25"></script>
+<script defer src="assets/js/time.js?v=40"></script>
+<script defer src="assets/js/render.js?v=63"></script>
+<script defer src="assets/js/app.js?v=26"></script>
 </body>
 </html>

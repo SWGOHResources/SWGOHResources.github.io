@@ -99,30 +99,42 @@ than 48h, so a broken refresh shows up in CI.
 ## Phone notifications
 
 `.github/workflows/notify.yml` checks rotation + live starts every 30
-minutes and pushes anything starting within ~45 minutes to your phone
-via [ntfy](https://ntfy.sh) (free, no account). One-time setup:
+minutes and pushes anything starting within ~45 minutes to your phone.
+Two channels, both optional and configured via repo secrets:
 
-1. Install the ntfy app (Android / iOS) and subscribe to a long random
-   topic, e.g. `swgoh-schedule-x7q9-...` (the randomness is the privacy).
-2. Repo Settings → Secrets and variables → Actions → New repository
-   secret: `NTFY_TOPIC` = that topic. Optional `NTFY_URL` variable if
-   you self-host ntfy (defaults to `https://ntfy.sh`).
-3. Actions → Event notifications → Run workflow (or wait for the next
-   half hour). Test locally first: `NTFY_TOPIC=... DRY_RUN=1 node
-   scripts/notify-upcoming.mjs`.
+- **ntfy** ([ntfy.sh](https://ntfy.sh), free, no account): one shared
+  topic. majors only by default (`NOTIFY_CATEGORIES` env overrides).
+  Setup: install the ntfy app (Android / iOS), subscribe to a long
+  random topic, add repo secret `NTFY_TOPIC` (+ optional `NTFY_URL`).
+- **Firebase (FCM)**: per-device, per-category pushes to a closed phone.
+  Setup:
+  1. Console → Project settings → Cloud Messaging → Web configuration
+     → Generate key pair → paste the VAPID key into
+     `firebase-config.js` (`vapidKey`).
+  2. Build → Firestore Database → Create database, then Rules:
+     `allow create, update: if true;` on
+     `match /push_subscriptions/{token}` (scoped writes; tighten later).
+  3. Project settings → Service accounts → Generate new private key →
+     repo secret `FIREBASE_SERVICE_ACCOUNT` = the whole JSON.
+  4. On your phone open the site, Alerts → enable + pick categories —
+     the device registers itself. iOS Safari needs the site added to
+     the Home Screen first.
 
-Sent keys persist in `assets/data/notify-state.json` (auto-committed),
-so delayed/retried runs never double-send.
+Test locally first: `NTFY_TOPIC=... DRY_RUN=1 node
+scripts/notify-upcoming.mjs`. Sent keys persist in
+`assets/data/notify-state.json` (auto-committed), so delayed/retried
+runs never double-send.
 
 ## In-site alerts (no setup, page must be open)
 
-The header **Alerts** button uses the browser Notifications API plus the
-service worker: while the page is open it checks every 30s and notifies
-~15 minutes before event starts (same picker as the CI script, so
-wording matches). Toggle + seen state persist per device. On iOS Safari
-the site must be added to the Home Screen before permission can be
-granted. This covers an open phone/desktop browser; pushes to a closed
-phone still need the ntfy workflow above.
+The header **Alerts** button opens notification settings: master switch
+plus per-category checkboxes (Marquee, Conquest, TB, TW, GAC, Fleet on
+by default; other events off). While the page is open it checks every
+30s and notifies about an hour before event starts (or just after, if
+you open the page late). Toggle + seen state persist per device. On iOS
+Safari the site must be added to the Home Screen before permission can
+be granted. This covers an open phone/desktop browser; pushes to a
+closed phone need Firebase above.
 
 Scripts load in order at the end of `<body>` as deferred classic scripts
 (ordered, non-blocking) so `onclick="…"` handlers keep working:

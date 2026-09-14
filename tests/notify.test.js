@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { collectNotifications, phraseUntil } from '../scripts/notify-upcoming.mjs';
+import { collectNotifications, filterByCategories, phraseUntil } from '../scripts/notify-upcoming.mjs';
 
 const NOW = Date.parse('2026-09-14T16:00:00Z');
 const M = 60000;
@@ -29,6 +29,18 @@ test('picker dedups already-notified keys and prunes week-old state', () => {
   );
   assert.deepEqual(send.map(c => c.key), ['b']);
   assert.ok(!('old' in notified) && notified.a && notified.b);
+});
+
+test('category filter keeps majors for the shared topic', () => {
+  const send = [
+    { key: 'a', category: 'marquee' },
+    { key: 'b', category: 'other' },
+    { key: 'c', category: 'tw' },
+  ];
+  assert.deepEqual(
+    filterByCategories(send, new Set(['marquee', 'tw'])).map((c) => c.key),
+    ['a', 'c'],
+  );
 });
 
 test('phrasing counts down and back up from the start', () => {

@@ -3,7 +3,29 @@
    (this automatically picks up ?v= cache-busters); page navigations
    go network-first so the schedule stays fresh, falling back to cache
    offline. Bump CACHE below on deploys that change the app shell. */
-const CACHE = 'swgoh-schedule-v3';
+const CACHE = 'swgoh-schedule-v4';
+
+// Closed-phone pushes (FCM): only when firebase-config.js holds real
+// credentials. CDN/offline failures skip silently — push stays off.
+try {
+  self.importScripts('/firebase-config.js');
+  const fbCfg = self.FIREBASE_CONFIG || null;
+  if (fbCfg && fbCfg.apiKey && !/REPLACE|PLACEHOLDER/.test(fbCfg.apiKey)
+      && fbCfg.vapidKey && !/REPLACE|PLACEHOLDER/.test(fbCfg.vapidKey)) {
+    self.importScripts('https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js');
+    self.importScripts('https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js');
+    firebase.initializeApp(fbCfg);
+    firebase.messaging().onBackgroundMessage(payload => {
+      const n = payload.notification || {};
+      const d = payload.data || {};
+      const title = n.title || d.title || 'SWGOH event starting';
+      const body = n.body || d.body || '';
+      self.registration.showNotification(title, {
+        body, icon: '/assets/img/icons/favicon-32.png', data: { url: d.url || '/' },
+      });
+    });
+  }
+} catch (e) { /* Firebase push stays off */ }
 const CORE = ['/', '/index.html', '/site.webmanifest'];
 
 self.addEventListener('install', event => {

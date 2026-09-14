@@ -27,6 +27,45 @@ const LOOKAHEAD_MS = 45 * 60 * 1000;
 const CATCHUP_MS = 10 * 60 * 1000;
 const STATE_PATH = new URL('../assets/data/notify-state.json', import.meta.url);
 const LIVE_PATH = new URL('../assets/data/live-events.json', import.meta.url);
+// ntfy is a single shared topic: filter to the majors by default
+// (override with NOTIFY_CATEGORIES="marquee,tw,..."). FCM instead uses
+// each device's own category prefs from Firestore.
+const NOTIFY_CATS = new Set(
+  (process.env.NOTIFY_CATEGORIES ?? 'marquee,conquest,tb,tw,gac,fleet').split(',').map((s) => s.trim()).filter(Boolean),
+);
+
+export function filterByCategories(send, keep) {
+  return send.filter((c) => keep.has(c.category));
+}
+
+let fcm = null; // { app, admin } once initialised
+let fcmFailed = false;
+async function fcmGet() {
+  if (fcm || fcmFailed) return fcm;
+  const svc = process.env.FIREBASE_SERVICE_ACCOUNT ?? '';
+  if (!svc) return null;
+  try {
+    const admin = (await import('firebase-admin')).default;
+    const app = admin.initializeApp({ credential: admin.credential.cert(JSON.parse(svc)) }, 'notify');
+    fcm = { app, admin };
+  } catch (err) {
+    console.warn(`FCM unavailable (${err.message})`);
+    fcmFailed = true;
+  }
+  return fcm;
+}
+
+async function readSubscribers() {
+  const f = await fcmGet();
+  if (!f) return null; // FCM not configured
+  try {
+    const snap = await f.admin.firestore().collection('push_subscriptions').get();
+    return snap.docs.map((d) => ({ token: d.id, categories: d.get('categories') || [] }));
+  } catch (err) {
+    console.warn(`FCM subscriber read failed (${err.message})`);
+    return [];
+  }
+}
 
 // Pure picker (tested): which candidate starts are new + inside the
 // window. candidates: [{ key, label, startMs, detail }].
@@ -96,39 +135,76 @@ async function main() {
   // One shared picker (render.js upcomingStarts): rotation markers at
   // their real start instants plus live events, inside the window.
   const picked = run(`upcomingStarts(getGameStatus(${nowMs}), ${JSON.stringify(liveList)}, ${nowMs}, ${LOOKAHEAD_MS}, ${CATCHUP_MS})`);
-  const candidates = picked.map((c) => ({ key: c.key, title: c.title, startMs: c.startMs }));
+  const candidates = picked.map((c) => ({ key: c.key, title: c.title, startMs: c.startMs, category: c.category }));
 
   const state = readJson(STATE_PATH) ?? {};
   console.log(`checked ${candidates.length} upcoming starts (${liveList.length} live)`);
   const { send, notified } = collectNotifications(candidates, state, nowMs);
 
-  if (!NTFY_TOPIC) {
-    console.log(`NTFY_TOPIC not set — ${send.length} notification(s) pending, sending nothing.`);
-    for (const c of send) console.log(`  [dry] ${c.title} — ${phraseUntil(nowMs, c.startMs)}`);
+  const ntfyOn = !!NTFY_TOPIC;
+  const fcmOn = !!(process.env.FIREBASE_SERVICE_ACCOUNT ?? '');
+  if (!ntfyOn && !fcmOn) {
+    console.log(`${send.length} notification(s) pending — no channel configured (NTFY_TOPIC / FIREBASE_SERVICE_ACCOUNT).`);
+    for (const c of send) console.log(`  [pending] [${c.category}] ${c.title} — ${phraseUntil(nowMs, c.startMs)}`);
     return;
+  }
+
+  let subs = [];
+  if (fcmOn) {
+    const got = await readSubscribers();
+    subs = got ?? [];
+    if (got) console.log(`FCM: ${subs.length} subscribed device(s)`);
   }
 
   let sent = 0;
   for (const c of send) {
     const when = phraseUntil(nowMs, c.startMs);
     const time = new Date(c.startMs).toISOString().slice(0, 16).replace('T', ' ') + ' UTC';
+    const body = `${c.title} — ${when} (${time})`;
     if (DRY_RUN) {
-      console.log(`[dry] ${c.title} — ${when} (${time})`);
+      console.log(`[dry] [${c.category}] ${body}`);
       continue;
     }
-    try {
-      const res = await fetch(`${NTFY_URL}/${encodeURIComponent(NTFY_TOPIC)}`, {
-        method: 'POST',
-        headers: { Title: c.title, Priority: '3', Tags: 'bell' },
-        body: `${c.title} — ${when} (${time})`,
-      });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      console.log(`sent: ${c.title} — ${when}`);
-      sent++;
-    } catch (err) {
-      console.warn(`send failed for ${c.key} (${err.message}) — will retry next run`);
-      delete notified[c.key];
+    let ok = true;
+    if (ntfyOn && NOTIFY_CATS.has(c.category)) {
+      try {
+        const res = await fetch(`${NTFY_URL}/${encodeURIComponent(NTFY_TOPIC)}`, {
+          method: 'POST',
+          headers: { Title: c.title, Priority: '3', Tags: 'bell' },
+          body,
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        console.log(`ntfy sent: ${body}`);
+      } catch (err) {
+        console.warn(`ntfy failed for ${c.key} (${err.message}) — will retry next run`);
+        ok = false;
+      }
     }
+    if (fcmOn) {
+      const tokens = subs.filter((s) => (s.categories || []).includes(c.category)).map((s) => s.token);
+      if (!tokens.length) {
+        console.log(`FCM: no subscribers for ${c.category}, skipping push`);
+      } else {
+        const f = await fcmGet();
+        if (!f) {
+          ok = false;
+        } else {
+          try {
+            const resp = await f.admin.messaging().sendEachForMulticast({
+              tokens,
+              notification: { title: c.title, body },
+            });
+            console.log(`FCM: ${resp.successCount}/${tokens.length} sent — ${c.title}`);
+            if (resp.failureCount > 0) ok = false;
+          } catch (err) {
+            console.warn(`FCM failed for ${c.key} (${err.message}) — will retry next run`);
+            ok = false;
+          }
+        }
+      }
+    }
+    if (ok) sent++;
+    else delete notified[c.key];
   }
 
   if (!DRY_RUN && JSON.stringify(notified) !== JSON.stringify(state)) {

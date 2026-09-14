@@ -24,9 +24,13 @@ jobs:
         uses: actions/setup-node@v5
         with:
           node-version: 24
+      - name: Install FCM sender
+        if: ${{ secrets.FIREBASE_SERVICE_ACCOUNT != '' }}
+        run: npm install --no-save firebase-admin
       - name: Send upcoming-event notifications
         env:
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
         run: node scripts/notify-upcoming.mjs
       - name: Commit notification state
         run: |
