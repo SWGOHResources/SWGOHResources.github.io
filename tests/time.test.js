@@ -181,23 +181,25 @@ test('Conquest active countdown points to the Monday end boundary', () => {
   const status = engine.getConquestStatus(engine.getGameStatus(Date.parse('2026-08-14T20:00:00Z')));
 
   assert.equal(status.main, 'Conquest Day 12 of 14');
-  assert.match(status.sub, /^Ends in 2 days · 17th Aug$/);
+  assert.match(status.sub, /^Ends in under 3 days · 17th Aug$/);
 });
 
 test('conquest countdown counts full days after today', () => {
   const engine = loadTimeEngine();
-  // Day 5 of 14 (Ep1 dep 11): 9 full days remain, not 10.
+  // Day 5 of 14 (Ep1 dep 11): 9d23h out rounds up, owned explicitly.
   const status = engine.getConquestStatus(engine.getGameStatus(Date.parse('2026-08-07T19:00:00Z')));
 
   assert.equal(status.main, 'Conquest Day 5 of 14');
-  assert.match(status.sub, /^Ends in 9 days · 17th Aug$/);
+  assert.match(status.sub, /^Ends in under 10 days · 17th Aug$/);
 });
 
-test('dashboard countdowns truncate instead of rounding up', () => {
+test('dashboard countdowns own their rounding with over/under days', () => {
   const engine = loadTimeEngine();
-  assert.equal(engine.formatGacUntil(0, 25 * 3600000), 'in 1 day');
-  assert.equal(engine.formatGacUntil(0, 47 * 3600000), 'in 1 day');
-  assert.equal(engine.formatGacUntil(0, 49 * 3600000), 'in 2 days');
+  assert.equal(engine.formatGacUntil(0, 25 * 3600000), 'in over 1 day');
+  assert.equal(engine.formatGacUntil(0, 47 * 3600000), 'in under 2 days');
+  assert.equal(engine.formatGacUntil(0, 49 * 3600000), 'in over 2 days');
+  assert.equal(engine.formatGacUntil(0, 48 * 3600000), 'in 2 days');
+  assert.equal(engine.formatGacUntil(0, 24 * 3600000), 'in 1 day');
   assert.equal(engine.formatGacUntil(0, 22 * 3600000 + 5 * 60000), 'in 22 hours');
   assert.equal(engine.formatGacUntil(0, 90 * 1000), 'in 1 minute');
   assert.equal(engine.formatGacUntil(0, 30 * 1000), 'in 1 minute');
@@ -392,11 +394,84 @@ test('mismatched conquest duration falls back to the configured day span', () =>
   assert.ok(engine.validateScheduleConfig().some(issue => issue.includes('must match')));
 });
 
-test('conquest upcoming status uses singular one-day wording', () => {
+test('conquest upcoming status counts to the start instant', () => {
   const engine = loadTimeEngine();
+  // 23h out reads in hours, not "Starts in 1 day".
   const status = engine.getConquestStatus(engine.getGameStatus(Date.parse('2026-08-02T19:00:00Z')));
 
-  assert.match(status.main, /^Starts in 1 day ·/);
+  assert.match(status.main, /^Starts in 23 hours ·/);
+});
+
+test('rotation cards use each family’s real daily start, not 18:00', () => {
+  const engine = loadTimeEngine();
+  const day = Date.parse('2026-09-14T00:00:00Z');
+  const at = (icon) => new Date(engine.eventDisplayMs({ icon }, day)).toISOString();
+  // Live game data: smuggling runs 10:00, fleet mastery 07:00 UTC.
+  assert.equal(at('smugglersrun'), '2026-09-14T10:00:00.000Z');
+  assert.equal(at('fleet_executor'), '2026-09-14T07:00:00.000Z');
+  assert.equal(at('proving_ground'), '2026-09-14T18:00:00.000Z');
+  // TW/TB go at 17:00 UTC; GAC/conquest/marquee/era keep theirs.
+  assert.equal(at('tw_offense'), '2026-09-14T17:00:00.000Z');
+  assert.equal(at('rote'), '2026-09-14T17:00:00.000Z');
+  assert.equal(at('tb_ends'), '2026-09-14T17:00:00.000Z');
+  assert.equal(at('gac_attack'), '2026-09-14T21:00:00.000Z');
+  assert.equal(at('conquest_start'), '2026-09-14T18:00:00.000Z');
+  assert.equal(at('marquee_1'), '2026-09-14T18:00:00.000Z');
+  // …so tense flips at the real start: a smuggling run at noon UTC
+  // has started (10:00), even though the 18:00 changeover is ahead.
+  assert.equal(
+    engine.tenseByStart("Smuggler's Run I Starts", { icon: 'smugglersrun' }, day, Date.parse('2026-09-14T12:00:00Z')),
+    "Smuggler's Run I Started"
+  );
+  assert.equal(
+    engine.tenseByStart("Smuggler's Run I Starts", { icon: 'smugglersrun' }, day, Date.parse('2026-09-14T09:00:00Z')),
+    "Smuggler's Run I Starts"
+  );
+});
+
+test('important-dates labels count hours under 24h out', () => {
+  const engine = loadTimeEngine();
+  const now = Date.parse('2026-09-14T14:55:00Z');
+  assert.equal(engine.subDayCount(now, now + 3 * 3600000, 'In 1 day'), 'In 3h');
+  assert.equal(engine.subDayCount(now, now + 20 * 60000, 'Expires today'), 'In 20m');
+  assert.equal(engine.subDayCount(now, now + 3 * dayMs, 'In 3 days'), 'In 3 days');
+  assert.equal(engine.subDayCount(now, now + 24 * 3600000, 'In 1 day'), 'In 1 day');
+  assert.equal(engine.subDayCount(now, now - 1000, 'Expires today'), 'Expires today');
+  assert.equal(engine.subDayCount(now, null, 'In 1 day'), 'In 1 day');
+});
+
+test('explorer opens on the incoming day shortly before changeover', () => {
+  const engine = loadTimeEngine();
+  const dayStart = Date.parse('2026-09-13T00:00:00Z');
+  const changeover = dayStart + dayMs + 18 * 3600000; // next 18:00 UTC
+  assert.equal(engine.activeDayPreviewHours(), 3);
+  // 2h out previews the incoming day; 5h out stays on the in-game day.
+  assert.equal(engine.defaultExplorerOffset(changeover - 2 * 3600000, dayStart), 1);
+  assert.equal(engine.defaultExplorerOffset(changeover - 5 * 3600000, dayStart), 0);
+  // Exactly at/past the changeover there is nothing to preview.
+  assert.equal(engine.defaultExplorerOffset(changeover, dayStart), 0);
+  assert.equal(engine.defaultExplorerOffset(changeover + 1000, dayStart), 0);
+  assert.equal(engine.defaultExplorerOffset(null, dayStart), 0);
+});
+
+test('event-start pills count to each event start', () => {
+  const engine = loadTimeEngine();
+  const now = Date.parse('2026-09-14T14:55:00Z');
+  // 18:00 changeover event 3h05m out; GAC at 21:00 is 6h05m out.
+  assert.equal(engine.relForEventStart(Date.parse('2026-09-14T18:00:00Z'), now, 'In 1 day'), 'In 3h 5m');
+  assert.equal(engine.relForEventStart(Date.parse('2026-09-14T21:00:00Z'), now, 'In 1 day'), 'In 6h 5m');
+  // 36h-TB 06:00 moment 20m out reads in minutes.
+  assert.equal(engine.relForEventStart(Date.parse('2026-09-14T15:15:00Z'), now, 'In 1 day'), 'In 20m');
+  // Minutes disambiguate events sharing an hour: 2h45m vs 2h05m.
+  assert.equal(engine.relForEventStart(now + (2 * 3600 + 45 * 60) * 1000, now, 'In 1 day'), 'In 2h 45m');
+  assert.equal(engine.relForEventStart(now + (2 * 3600 + 5 * 60) * 1000, now, 'In 1 day'), 'In 2h 5m');
+  assert.equal(engine.formatHoursMinutes(2 * 3600000 + 45 * 60000), '2h 45m');
+  assert.equal(engine.formatHoursMinutes(45 * 60000), '45m');
+  assert.equal(engine.formatHoursMinutes(30000), '1m');
+  // Already started reads Now; far starts keep the day wording.
+  assert.equal(engine.relForEventStart(now - 1000, now, 'In 1 day'), 'Now');
+  assert.equal(engine.relForEventStart(now + 3 * dayMs, now, 'In 3 days'), 'In 3 days');
+  assert.equal(engine.relForEventStart(null, now, 'In 1 day'), 'In 1 day');
 });
 
 test('missing TB rotation anchor degrades to the default side without throwing', () => {
@@ -475,6 +550,21 @@ test('relative day labels distinguish past from upcoming', () => {
   assert.equal(engine.relativeDayLabel(-2), '2 days ago');
 });
 
+test('relative day labels count hours when tomorrow is hours away', () => {
+  const engine = loadTimeEngine();
+  const dayStart = Date.UTC(2026, 8, 13); // midnight UTC game-day base
+  const changeover = dayStart + dayMs + 18 * 3600000; // tomorrow's 18:00 UTC
+  // 3h out reads as hours, not "In 1 day".
+  assert.equal(engine.relativeDayLabel(1, changeover - 3 * 3600000, dayStart), 'In 3h');
+  // Under an hour reads in minutes.
+  assert.equal(engine.relativeDayLabel(1, changeover - 30 * 60000, dayStart), 'In 30m');
+  // Just after today's changeover, tomorrow is ~24h out — still day wording past 24h.
+  assert.equal(engine.relativeDayLabel(1, dayStart + 18 * 3600000 - 60000, dayStart), 'In 1 day');
+  // Day offsets beyond tomorrow are untouched by the hours logic.
+  assert.equal(engine.relativeDayLabel(2, changeover - 3 * 3600000, dayStart), 'In 2 days');
+  assert.equal(engine.relativeDayLabel(0, changeover - 3 * 3600000, dayStart), 'Now');
+});
+
 test('pre-era countdown follows the display timezone calendar', () => {
   const engine = loadTimeEngine({ timeZone: 'UTC+14:00' });
   // 2026-07-27T10:00Z is Jul 28 at +14; the changeover lands Jul 29 local.
@@ -511,7 +601,7 @@ test('started events render in past tense', () => {
 test('event start instants prefer TB transition moments over changeovers', () => {
   const engine = loadTimeEngine();
   const midnight = Date.parse('2026-08-10T00:00:00Z');
-  assert.equal(engine.eventStartMs({ icon: 'tw_signup' }, midnight), midnight + 18 * 3600000);
+  assert.equal(engine.eventStartMs({ icon: 'tw_signup' }, midnight), midnight + 17 * 3600000);
   assert.equal(engine.eventStartMs({ icon: 'gac_attack' }, midnight), midnight + 21 * 3600000);
   assert.equal(engine.eventStartMs({ icon: 'rote', tbStartMoment: midnight + 6 * 3600000 }, midnight), midnight + 6 * 3600000);
   assert.equal(engine.eventStartMs({ icon: 'rote', tbEndMoment: midnight + 6 * 3600000 }, midnight), midnight + 6 * 3600000);
@@ -523,14 +613,51 @@ test('guild summaries tense by the event start instant', () => {
   });
   const dayStart = Date.parse('2026-08-04T00:00:00Z');
   assert.equal(
-    engine.getGuildEventSummary(1, 5, dayStart, Date.parse('2026-08-04T17:00:00Z')),
+    engine.getGuildEventSummary(1, 5, dayStart, Date.parse('2026-08-04T16:00:00Z')),
     'TW Offense Phase Starts'
   );
   assert.equal(
-    engine.getGuildEventSummary(1, 5, dayStart, Date.parse('2026-08-04T19:00:00Z')),
+    engine.getGuildEventSummary(1, 5, dayStart, Date.parse('2026-08-04T18:00:00Z')),
     'TW Offense Phase Started'
   );
   assert.equal(engine.getGuildEventSummary(1, 5, dayStart), 'TW Offense Phase Starts');
+});
+
+test('TW payout days read as intermission on the guild card', () => {
+  const engine = loadTimeEngine({
+    commonDays: { 5: [{ icon: 'tw_payout', label: 'Payout' }] },
+  });
+  const dayStart = Date.parse('2026-08-04T00:00:00Z');
+  // Payout lands in the inbox in seconds — no event is running.
+  assert.equal(engine.getGuildEventSummary(1, 5, dayStart, Date.parse('2026-08-04T19:00:00Z')), 'Guild Intermission');
+});
+
+test('bonus proving grounds runs the day before proving grounds', () => {
+  const { ctx } = loadRenderEngine();
+  const run = src => vm.runInContext(src, ctx);
+  for (const ep of [1, 2, 3]) {
+    const pre = run(`getDayEvents(${ep}, 20).map(i => i.label)`);
+    const pg = run(`getDayEvents(${ep}, 21).map(i => i.label)`);
+    assert.ok(pre.some(l => /Bonus Proving Grounds/.test(l)), `ep ${ep} day 20 bonus`);
+    assert.ok(pre.some(l => l === 'Payout'), `ep ${ep} day 20 keeps payout`);
+    assert.ok(pg.some(l => l === 'Proving Grounds'), `ep ${ep} day 21 regular`);
+  }
+  // Same art, accent and start hour as the regular card.
+  const bonus = run(`JSON.stringify({ art: assetFor('proving_ground'), cat: categoryFor('proving_ground'),
+    start: eventDisplayMs({ icon: 'proving_ground' }, ${Date.parse('2026-08-10T00:00:00Z')}) })`);
+  assert.equal(
+    bonus,
+    JSON.stringify({ art: 'events/provingground.png', cat: 'conquest', start: Date.parse('2026-08-10T18:00:00Z') })
+  );
+});
+
+test('GAC pill names week and round without the phase suffix', () => {
+  const engine = loadTimeEngine();
+  for (const stamp of ['2026-08-12T12:00:00Z', '2026-08-13T12:00:00Z', '2026-08-14T12:00:00Z', '2026-08-15T12:00:00Z']) {
+    const s = engine.getGacStatus(engine.getGameStatus(Date.parse(stamp)));
+    assert.match(s.status, /^Week \d+(, Round \d+)?$/);
+  }
+  assert.equal(engine.getGacStatus(engine.getGameStatus(Date.parse('2026-08-11T12:00:00Z'))).status, 'OFF-WEEK');
 });
 
 test('TB phase summaries tense by the event start instant', () => {
@@ -609,6 +736,29 @@ test('day hash bounds follow the configured era length', () => {
   const engine = loadTimeEngine({ eraLength: 56 });
   assert.equal(engine.dayFromHash('#day-56'), 56);
   assert.equal(engine.dayFromHash('#day-57'), null);
+});
+
+test('future cards count to their own start instant, not the changeover', () => {
+  const { ctx, els } = loadRenderEngine();
+  const run = src => vm.runInContext(src, ctx);
+  // Find a future day whose rotation includes a GAC card (21:00 UTC start).
+  const off = run(`(() => {
+    const st = getGameStatus();
+    for (let o = 1; o <= 13; o++) {
+      const d = explorerDayAt(st, o);
+      if (d.items.some(i => i.icon.startsWith('gac_'))) return o;
+    }
+    return null;
+  })()`);
+  assert.ok(off, 'expected a GAC rotation day ahead');
+  run(`explorerOffset = ${off}; renderExplorer(getGameStatus())`);
+  // Every pill counts forward on a future day — never past wording…
+  const pills = [...els.dayDetail.innerHTML.matchAll(/xcard-rel[^"]*">([^<]+)</g)].map(m => m[1]);
+  assert.ok(pills.length > 0, 'expected cards on the GAC day');
+  for (const p of pills) assert.match(p, /^(Now|In )/);
+  assert.ok(!pills.some(p => /Yesterday|ago/.test(p)), 'no past wording on a future day');
+  // …and GAC pills never claim the 18:00 changeover moment.
+  assert.ok(pills.some(p => /^In /.test(p)), 'expected countdown pills');
 });
 
 test('day pills show era-day numbers with a calendar caption', () => {

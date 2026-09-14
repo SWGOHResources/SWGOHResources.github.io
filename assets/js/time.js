@@ -308,8 +308,17 @@ function tbSetChoice(id, side){
   return true;
 }
 
+/* TW/TB phase hour (UTC): guild phases go an hour before the daily
+   changeover. Configurable via TW_TB_HOUR_UTC. */
+function twTbHour(){
+  return (typeof TW_TB_HOUR_UTC !== 'undefined'
+    && Number.isInteger(TW_TB_HOUR_UTC)
+    && TW_TB_HOUR_UTC >= 0 && TW_TB_HOUR_UTC < 24)
+    ? TW_TB_HOUR_UTC : 17;
+}
+
 /* Phase index (1-based) + whether a new phase starts at this
-   day's 18:00 UTC marker. offset 0-5 across the 6-day run.
+   day's guild-phase marker. offset 0-5 across the 6-day run.
    24h TBs start a phase daily; 36h TBs start one every 1.5
    days (offsets 1 and 4 continue the current phase). */
 function tbPhaseAtOffset(def, offset){
@@ -325,11 +334,11 @@ function tbPhaseLabel(def, offset){
 }
 
 /* Exact window of a tier-2 (36h) phase. phase1Ms is midnight UTC of
-   the Phase-1 day; the run opens 18:00 that day. idx is 0-based,
-   so mid-phase markers render the true span (e.g. Wed 06:00 →
-   Thu 18:00) instead of implying a changeover at 18:00. */
+   the Phase-1 day; the run opens at the guild-phase hour that day.
+   idx is 0-based, so mid-phase markers render the true span
+   (e.g. Wed 05:00 → Thu 17:00) instead of implying a changeover. */
 function tbPhaseWindow(def, phase1Ms, idx){
-  const startMs = phase1Ms + (stdHour() * 3600000) + (idx * def.hoursPerPhase * 3600000);
+  const startMs = phase1Ms + (twTbHour() * 3600000) + (idx * def.hoursPerPhase * 3600000);
   return { startMs, endMs: startMs + (def.hoursPerPhase * 3600000) };
 }
 
@@ -342,9 +351,9 @@ function fmtPhaseMoment(ms){
 
 /* Rewrite the static rote/tb_ends labels for the run's guild
    choice. Non-TB days pass through untouched. On 36h TBs, a day
-   whose phase boundary falls at 06:00 emits two cards — the old
+   whose phase boundary falls at 05:00 emits two cards — the old
    phase ending and the new phase starting at that time — instead
-   of one confusing 18:00 marker. */
+   of one confusing guild-phase marker. */
 function applyTbLabels(items, runCtx){
   if(!runCtx) return items;
   const def = tbChoiceForRun(runCtx);
@@ -352,8 +361,8 @@ function applyTbLabels(items, runCtx){
     if(it.icon === 'rote' && def.hoursPerPhase === 36 && runCtx.offset > 0){
       const { phase } = tbPhaseAtOffset(def, runCtx.offset);
       // Moment the current phase began (= previous phase ended).
-      const transMs = runCtx.phase1Ms + (stdHour() * 3600000) + ((phase - 1) * def.hoursPerPhase * 3600000);
-      if(new Date(transMs).getUTCHours() === 6 && phase > 1){
+      const transMs = runCtx.phase1Ms + (twTbHour() * 3600000) + ((phase - 1) * def.hoursPerPhase * 3600000);
+      if(new Date(transMs).getUTCHours() === 5 && phase > 1){
         return [
           { icon: it.icon, label: `${def.name} Phase ${phase - 1} Ends`, tbEndMoment: transMs },
           { icon: it.icon, label: `${def.name} Phase ${phase} Starts`, tbStartMoment: transMs },
@@ -541,7 +550,7 @@ function _getLastUsableGuildEventUncached(expiresMs, eraBaseStartMs){
     const items = getEventsForDay(dayStartMs, info.episode, info.dayInEp);
     items.forEach(item => {
       if(!item.icon.startsWith('tw_') && !item.icon.startsWith('gac_')) return;
-      const startHour = item.icon.startsWith('gac_') ? gacHour() : stdHour();
+      const startHour = item.icon.startsWith('gac_') ? gacHour() : twTbHour();
       const itemStartMs = dayStartMs + (startHour * 3600000);
       let usableFromMs = itemStartMs;
 
@@ -553,7 +562,7 @@ function _getLastUsableGuildEventUncached(expiresMs, eraBaseStartMs){
           previousItem.icon === item.icon.replace(/_(attack|offense)$/, '_defense')
         );
         if(defense){
-          const defenseHour = defense.icon.startsWith('gac_') ? gacHour() : stdHour();
+          const defenseHour = defense.icon.startsWith('gac_') ? gacHour() : twTbHour();
           usableFromMs = previousDayMs + (defenseHour * 3600000);
         }
       }
@@ -561,7 +570,7 @@ function _getLastUsableGuildEventUncached(expiresMs, eraBaseStartMs){
       let twNumber = null;
       if(modeIsTw(item.icon)){
         const signupOffset = item.icon === 'tw_signup' ? 0 : item.icon === 'tw_defense' ? 1 : item.icon === 'tw_offense' ? 2 : 3;
-        const signupStartMs = dayStartMs - (signupOffset * 86400000) + (stdHour() * 3600000);
+        const signupStartMs = dayStartMs - (signupOffset * 86400000) + (twTbHour() * 3600000);
         let signupCount = 0;
         for(let dayOffset = -7; dayOffset <= 0; dayOffset++){
           const checkDayMs = dayStartMs + (dayOffset * 86400000);
@@ -569,7 +578,7 @@ function _getLastUsableGuildEventUncached(expiresMs, eraBaseStartMs){
           const checkItems = getEventsForDay(checkDayMs, checkInfo.episode, checkInfo.dayInEp);
           if(checkItems.some(checkItem => {
             if(checkItem.icon !== 'tw_signup') return false;
-            return checkDayMs + (stdHour() * 3600000) <= signupStartMs;
+            return checkDayMs + (twTbHour() * 3600000) <= signupStartMs;
           })) signupCount++;
         }
         twNumber = signupCount || null;
@@ -908,13 +917,81 @@ function fmtDayMonthUTC(ms){
   return withOrdinal(__formatter('day|monS').format(new Date(dms(ms))));
 }
 
-/* Relative day label vs the active (today) changeover day */
-function relativeDayLabel(diffDays){
+/* Relative day label vs the active (today) changeover day.
+   Hours-aware when nowMs + dayStartMs are given: tomorrow's game day
+   can be hours away (e.g. 3h before the 18:00 UTC changeover), and
+   "In 1 day" reads wrong there — so count down in hours/minutes
+   under 24h. Called with one arg it keeps the plain day wording. */
+function relativeDayLabel(diffDays, nowMs, dayStartMs){
   if(diffDays === 0) return 'Now';
-  if(diffDays === 1) return 'In 1 day';
   if(diffDays === -1) return 'Yesterday';
+  if(diffDays === 1 && Number.isFinite(nowMs) && Number.isFinite(dayStartMs)){
+    const startMs = dayStartMs + 86400000 + (stdHour() * 3600000);
+    const msLeft = startMs - nowMs;
+    if(msLeft > 0 && msLeft < 24 * 3600000) return `In ${formatHoursMinutes(msLeft)}`;
+  }
+  if(diffDays === 1) return 'In 1 day';
   if(diffDays > 1) return `In ${diffDays} days`;
   return `${Math.abs(diffDays)} days ago`;
+}
+
+/* Hours before the changeover when the explorer opens on the incoming
+   day. Configurable via ACTIVE_DAY_PREVIEW_HOURS; 0 disables the
+   preview (always open on the in-game day). */
+function activeDayPreviewHours(){
+  return (typeof ACTIVE_DAY_PREVIEW_HOURS !== 'undefined'
+    && Number.isFinite(ACTIVE_DAY_PREVIEW_HOURS)
+    && ACTIVE_DAY_PREVIEW_HOURS >= 0)
+    ? ACTIVE_DAY_PREVIEW_HOURS : 3;
+}
+
+/* Default explorer offset at load: the incoming ("active") day when its
+   changeover is within the preview window, else the current in-game
+   day (0). A shared day link (#day-N) always wins over this. */
+function defaultExplorerOffset(nowMs, dayStartMs){
+  if(!Number.isFinite(nowMs) || !Number.isFinite(dayStartMs)) return 0;
+  const nextStartMs = dayStartMs + 86400000 + (stdHour() * 3600000);
+  const msLeft = nextStartMs - nowMs;
+  if(msLeft > 0 && msLeft <= activeDayPreviewHours() * 3600000) return 1;
+  return 0;
+}
+
+/* Card pill for one event's own start instant (pass eventStartMs for
+   rotation cards, e.startMs for live ones): already started reads
+   "Now", otherwise the truncated duration ("In 3h", "In 30m",
+   "In 1 day") — the same phrasing as the GAC dashboard countdown.
+   GAC (21:00 UTC) and TB transition moments (06:00 on 36h TBs) flow
+   through eventStartMs, so every card counts to its real start
+   instead of the day's generic changeover. Falls back to the
+   day-level wording without a usable clock. */
+function relForEventStart(startMs, nowMs, dayFallback){
+  if(!Number.isFinite(startMs) || !Number.isFinite(nowMs)) return dayFallback;
+  const left = startMs - nowMs;
+  if(left <= 0) return 'Now';
+  if(left < 86400000) return `In ${formatHoursMinutes(left)}`;
+  const until = formatDayCount(left);
+  return until.charAt(0).toUpperCase() + until.slice(1);
+}
+
+/* Terse sub-day duration ("2h 45m", "45m", "2h" when exact) so events
+   minutes apart never share one label. Floored, like the dashboard's
+   truncation convention — never claims sooner than reality. */
+function formatHoursMinutes(ms){
+  const h = Math.floor(ms / 3600000);
+  const m = Math.floor((ms % 3600000) / 60000);
+  if(h < 1) return `${Math.max(1, m)}m`;
+  return m > 0 ? `${h}h ${m}m` : `${h}h`;
+}
+
+/* Near-instant precision for day-count labels ("Important Dates"
+   cards): under 24h out, "In 1 day" reads wrong 3h out — count hours
+   ("In 2h 45m") or minutes ("In 20m") instead. At 24h+ the existing
+   day wording passes through untouched. */
+function subDayCount(nowMs, targetMs, dayLabel){
+  if(!Number.isFinite(nowMs) || !Number.isFinite(targetMs)) return dayLabel;
+  const left = targetMs - nowMs;
+  if(left <= 0 || left >= 86400000) return dayLabel;
+  return `In ${formatHoursMinutes(left)}`;
 }
 
 /* Absolute era day (1-based) encoded in the shareable URL hash
@@ -972,9 +1049,30 @@ function eventDateRangeLabel(item, dateMs, tbCtx){
   return DAY_LONG_EVENTS.has(item.icon) ? `${start} · 24 hours` : start;
 }
 
+/* Per-family rotation start hour (UTC). GAC keeps its own 21:00
+   changeover; smuggling runs / fleet mastery follow their real daily
+   times from live game data (10:00 / 07:00), not the 18:00 TW/TB
+   changeover everything else uses. Reads EVENT_START_HOURS from
+   config.js with built-in fallbacks so older configs keep working. */
+function eventStartHourForIcon(icon){
+  const table = (typeof EVENT_START_HOURS !== 'undefined' && EVENT_START_HOURS) || {};
+  if(icon === 'smugglersrun') return Number.isFinite(table['smugglers-run']) ? table['smugglers-run'] : 10;
+  if(icon && icon.startsWith('fleet_')) return Number.isFinite(table.fleet) ? table.fleet : 7;
+  if(icon === 'proving_ground') return Number.isFinite(table['proving-grounds']) ? table['proving-grounds'] : 18;
+  if(icon === 'rote' || icon === 'tb_ends' || (icon && icon.startsWith('tw_'))) return twTbHour();
+  return null;
+}
+
+function provingGroundHour(){
+  const table = (typeof EVENT_START_HOURS !== 'undefined' && EVENT_START_HOURS) || {};
+  return Number.isFinite(table['proving-grounds']) ? table['proving-grounds'] : 18;
+}
+
 function eventDisplayMs(item, dateMs){
-  const hour = item && item.icon && item.icon.startsWith('gac_') ? gacHour() : stdHour();
-  return dateMs + (hour * 3600000);
+  const icon = item && item.icon;
+  if(icon && icon.startsWith('gac_')) return dateMs + (gacHour() * 3600000);
+  const famHour = eventStartHourForIcon(icon);
+  return dateMs + ((famHour != null ? famHour : stdHour()) * 3600000);
 }
 
 /* Start instant of a schedule card: 36h-TB boundary cards carry their
@@ -1035,7 +1133,7 @@ function getGacStatus(st){
   if(info.phase === 'signup'){
     const defenseDate = fmtDayMonthUTC(cycleStartMs + 86400000);
     return {
-      status: `WEEK ${info.week} · SIGNUP`,
+      status: `Week ${info.week}`,
       badgeClass: 'red',
       title: `Grand Arena (${format})`,
       main: `Week ${info.week} Signup Phase Open`,
@@ -1047,7 +1145,7 @@ function getGacStatus(st){
 
   if(info.phase === 'defense'){
     return {
-      status: `WEEK ${info.week} · ROUND ${info.round} DEFENSE`,
+      status: `Week ${info.week}, Round ${info.round}`,
       badgeClass: 'red',
       title: `Grand Arena (${format})`,
       main: `Round ${info.round} of 3 — Defense Phase`,
@@ -1061,11 +1159,11 @@ function getGacStatus(st){
 
   if(info.phase === 'offense'){
     const isLastRound = info.round === 3;
-    const subStr = isLastRound 
+    const subStr = isLastRound
       ? (info.week === 3 ? `Season ends ${transitionPhrase}!` : `Week ${info.week} ends ${transitionPhrase}`)
       : `Round ${info.round + 1} Defense Phase begins ${transitionPhrase}`;
     return {
-      status: `WEEK ${info.week} · ROUND ${info.round} ATTACK`,
+      status: `Week ${info.week}, Round ${info.round}`,
       badgeClass: 'red',
       title: `Grand Arena (${format})`,
       main: `Round ${info.round} of 3 — Attack Phase`,
@@ -1093,9 +1191,21 @@ function conquestOrdinal(cNum){
   return ordinal(cNum);
 }
 
-/* Countdown phrasing truncates (floor) so counts match how players
-   count: 25 hours out reads "in 1 day", not "in 2 days". Sub-minute
-   diffs read "in 1 minute" rather than "in 0 minutes". */
+/* Day-count phrasing that owns its rounding: exact days read
+   "in N days", rounding up reads "in under N days", rounding down
+   reads "in over N days" — a timer never silently rounds. */
+function formatDayCount(diffMs){
+  const d = diffMs / 86400000;
+  const n = Math.max(1, Math.round(d));
+  const word = `day${n === 1 ? '' : 's'}`;
+  if(Math.abs(d - n) < 1e-9) return `in ${n} ${word}`;
+  return n > d ? `in under ${n} ${word}` : `in over ${n} ${word}`;
+}
+
+/* Countdown phrasing truncates (floor) below a day so counts match how
+   players count: 22 hours out reads "in 22 hours", not "in 1 day".
+   Sub-minute diffs read "in 1 minute" rather than "in 0 minutes".
+   Day counts own their rounding via formatDayCount. */
 function formatGacUntil(nowMs, targetMs){
   const diffMs = targetMs - nowMs;
   if(!Number.isFinite(diffMs) || diffMs <= 0) return 'now';
@@ -1103,8 +1213,7 @@ function formatGacUntil(nowMs, targetMs){
   if(minutes < 60) return `in ${minutes} minute${minutes === 1 ? '' : 's'}`;
   const hours = Math.floor(diffMs / 3600000);
   if(hours < 24) return `in ${hours} hour${hours === 1 ? '' : 's'}`;
-  const days = Math.floor(diffMs / 86400000);
-  return `in ${days} day${days === 1 ? '' : 's'}`;
+  return formatDayCount(diffMs);
 }
 
 function conquestInfoForDay(episode, dayInEp){
@@ -1139,7 +1248,7 @@ function getConquestStatus(st){
     const startDateMs = st.currentDayStartMs + (daysUntil * 86400000) + (stdHour() * 3600000);
     return {
       status: 'UPCOMING', badgeClass: 'purple', title: titleNote,
-      main: `Starts in ${daysUntil} ${daysUntil === 1 ? 'day' : 'days'} · ${fmtDayMonthUTC(startDateMs)}`,
+      main: `Starts ${formatGacUntil(st.nowMs, startDateMs)} · ${fmtDayMonthUTC(startDateMs)}`,
       sub: `Conquest Run ${cNum} will begin.`,
       cNum: cNum
     };
@@ -1148,21 +1257,23 @@ function getConquestStatus(st){
     const startDateMs = st.currentDayStartMs + (daysUntil * 86400000) + (stdHour() * 3600000);
     return {
       status: 'UPCOMING', badgeClass: 'purple', title: titleNote,
-      main: `Starts in ${daysUntil} ${daysUntil === 1 ? 'day' : 'days'} · ${fmtDayMonthUTC(startDateMs)}`,
+      main: `Starts ${formatGacUntil(st.nowMs, startDateMs)} · ${fmtDayMonthUTC(startDateMs)}`,
       sub: `Event ${cNum} Starts`,
       cNum: cNum
     };
   } else if (targetDay >= start && targetDay <= end) {
     const cqDay = targetDay - start + 1;
-    // Full days left after today: day 5 of 14 reads "Ends in 9 days",
-    // matching how players count (the end date alongside stays exact).
+    // Durations own their rounding: day 5 of 14 (9d23h out) reads
+    // "Ends in under 10 days", and a final evening reads
+    // "Ends in 5 hours". The end date alongside stays exact.
     const remaining = end - targetDay;
     const endDateMs = st.currentDayStartMs + ((remaining + 1) * 86400000) + (stdHour() * 3600000);
+    const pgStartMs = st.currentDayStartMs + 86400000 + (provingGroundHour() * 3600000);
     return {
       status: remaining === 0 ? 'FINAL DAY' : 'ACTIVE',
       badgeClass: 'purple', title: titleNote,
       main: `Conquest Day ${cqDay} of ${total}`,
-      sub: remaining === 0 ? 'Proving Grounds starts in 1 day' : `Ends in ${remaining} ${remaining === 1 ? 'day' : 'days'} · ${fmtDayMonthUTC(endDateMs)}`,
+      sub: remaining === 0 ? `Proving Grounds starts ${formatGacUntil(st.nowMs, pgStartMs)}` : `Ends ${formatGacUntil(st.nowMs, endDateMs)} · ${fmtDayMonthUTC(endDateMs)}`,
       cNum: cNum
     };
   } else if (targetDay === overDay) {
@@ -1181,7 +1292,9 @@ function getConquestStatus(st){
 function getGuildEventSummary(episode, dayInEp, dateMs, nowMs){
   const items = dateMs != null ? getEventsForDay(dateMs, episode, dayInEp) : getDayEvents(episode, dayInEp);
 
-  const tw = items.find(i => i.icon.startsWith('tw_'));
+  // Payout hits the inbox in ~30 seconds — no event is actually running,
+  // so it reads as Intermission rather than an active TW.
+  const tw = items.find(i => i.icon.startsWith('tw_') && i.icon !== 'tw_payout');
   if(tw) return `TW ${tenseByStart(tw.label, tw, dateMs, nowMs)}`;
 
   const tbEnd = items.find(i => i.icon === 'tb_ends');
@@ -1289,6 +1402,12 @@ function validateScheduleConfig(){
   if(typeof GAC_CHANGEOVER_HOUR_UTC !== 'undefined'
     && (gacHour() === 21 && GAC_CHANGEOVER_HOUR_UTC !== 21))
     issues.push('GAC_CHANGEOVER_HOUR_UTC must be an integer from 0 to 23.');
+  if(typeof ACTIVE_DAY_PREVIEW_HOURS !== 'undefined'
+    && !(Number.isFinite(ACTIVE_DAY_PREVIEW_HOURS) && ACTIVE_DAY_PREVIEW_HOURS >= 0))
+    issues.push('ACTIVE_DAY_PREVIEW_HOURS must be a non-negative number.');
+  if(typeof TW_TB_HOUR_UTC !== 'undefined'
+    && (!Number.isInteger(TW_TB_HOUR_UTC) || TW_TB_HOUR_UTC < 0 || TW_TB_HOUR_UTC > 23))
+    issues.push('TW_TB_HOUR_UTC must be an integer from 0 to 23.');
 
   if(!Array.isArray(datacronSets) || datacronSets.length === 0){
     issues.push('DATACRON_SETS is empty — the datacron card has nothing to show.');

@@ -261,9 +261,10 @@ body.modal-open .starfield span.tw {
 }
 .explorer-note p a:hover { text-decoration: underline; }
 /* ─── Live in-game overlay (Comlink game data, day-by-day explorer) ─── */
-/* Long runners sit in the indicators row like the coliseum boss. */
-.day-boss.day-live { border-color: var(--green-border); }
-.day-live .db-name { color: var(--green); }
+/* Long runners sit in the indicators row like the coliseum boss — same
+   boss-orange accent, so the whole row reads as one family. */
+.day-boss.day-live { border-color: var(--orange-border); }
+.day-live .db-name { color: var(--orange); }
 /* Inline external-link icon (replaces the ↗ text glyph, which renders
    as an emoji-style character on some mobile platforms). */
 .ext-icon { display: inline-block; vertical-align: -1px; margin-left: 2px; }
@@ -589,7 +590,7 @@ body.modal-open .starfield span.tw {
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   color: var(--text2); border: 1px solid var(--border2); flex: 0 1 auto; margin-left: auto;
 }
-.xcard-rel.is-today { color: var(--cyan); border-color: var(--cyan-border); }
+.xcard-rel.is-today { color: var(--amber); border-color: var(--amber-border); }
 .xcard-body { padding: 10px 12px 12px; display: flex; flex-direction: column; flex: 1; }
 .xcard-body h4 {
   font-size: 12.5px; font-weight: 600; color: var(--text); line-height: 1.4;
@@ -719,6 +720,10 @@ body.modal-open .starfield span.tw {
 }
 .db-name { font-family: var(--disp); font-size: 13.5px; font-weight: 700; color: var(--orange); line-height: 1.25; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .day-conquest .db-name { color: var(--purple); }
+/* Live conquest badges keep the conquest family's purple; every other
+   live badge uses the boss-orange row accent. */
+.day-boss.day-live-cq { border-color: var(--purple-border); }
+.day-live-cq .db-name { color: var(--purple); }
 
 /* ─── Modal Backdrop ─── */
 .modal-backdrop {
@@ -865,7 +870,16 @@ body.modal-open .starfield span.tw {
 }
 
 @media (max-width: 600px) {
+  .wrap { padding: 16px 12px; }
+  .explorer { padding: 12px 10px; }
   .explorer-nav { gap: 5px; }
+  /* Sticky day changer: pills + arrows stay pinned under the site
+     header while the cards scroll, so you can flip days and read
+     event names at the same time. Top offset clears the 56px header. */
+  .explorer-nav {
+    position: sticky; top: 62px; z-index: 50;
+    background: var(--void1); padding: 6px 0;
+  }
   .day-arrow { width: 34px; }
   .day-strip { gap: 3px; }
   .day-pill { padding-left: 1px; padding-right: 1px; }
@@ -877,8 +891,18 @@ body.modal-open .starfield span.tw {
   .explorer-tools.open { display: flex; }
   .jump-field, .jump-field-event { flex: 1 1 100%; min-width: 0; }
   .explorer-tools .day-today { width: 100%; align-self: stretch; }
-  .day-detail-head { flex-direction: column; }
-  .day-indicators { width: 100%; justify-content: flex-start; }
+  .day-detail-head { flex-direction: column; gap: 8px; }
+  .day-detail-head h3 { font-size: 15px; }
+  /* One compact horizontally-scrolling badge row instead of a tall
+     wrapping stack, so the event cards start higher up the screen. */
+  .day-indicators {
+    width: 100%; justify-content: flex-start;
+    flex-wrap: nowrap; overflow-x: auto; padding-bottom: 2px;
+  }
+  .day-boss, .day-conquest { flex: 0 0 auto; gap: 8px; padding: 6px 10px 6px 6px; }
+  .day-boss img, .day-conquest img { width: 32px; height: 32px; }
+  .db-name { font-size: 12px; }
+  .xcard { flex-basis: 152px; }
   .policy-page { padding-top: 28px; padding-bottom: 44px; }
   .policy-page .section-head { gap: 12px; }
   .policy-page .section-head h1 { font-size: 26px; }

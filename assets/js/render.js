@@ -20,9 +20,10 @@ function renderUnlockWindows(st){
   const cqDays = Math.round((cqDateMs - st.currentDayStartMs) / 86400000);
   const cqUnlocked = cqAbs <= st.rawDayIndex || cqDays <= 0;
   const cqDateLabel = fmtDayMonthUTC(gameDayDisplayMs(cqDateMs));
+  const cqUnlockMs = cqDateMs + (stdHour() * 3600000);
   const cqCountLabel = cqUnlocked
     ? 'Unlocked'
-    : `In ${cqDays} day${cqDays === 1 ? '' : 's'}`;
+    : subDayCount(st.nowMs, cqUnlockMs, `In ${cqDays} day${cqDays === 1 ? '' : 's'}`);
   const cqSubLabel = cqUnlocked
     ? 'The new conquest unit is playable'
     : 'The new conquest unit becomes playable';
@@ -44,9 +45,10 @@ function renderUnlockWindows(st){
   // Before launch the era hasn't started: count down to it instead of
   // claiming THIS ERA. daysUntilEra already counts display-zone days.
   const eraDateLabel = fmtDayMonthUTC(gameDayDisplayMs(eraDateMs));
+  const eraUnlockMs = eraDateMs + (stdHour() * 3600000);
   const eraCountLabel = st.preEra
     ? (st.daysUntilEra <= 0 ? 'Today' : `In ${st.daysUntilEra} day${st.daysUntilEra === 1 ? '' : 's'}`)
-    : (eraAbs <= st.rawDayIndex || eraDays <= 0 ? 'Live now' : `In ${eraDays} day${eraDays === 1 ? '' : 's'}`);
+    : (eraAbs <= st.rawDayIndex || eraDays <= 0 ? 'Live now' : subDayCount(st.nowMs, eraUnlockMs, `In ${eraDays} day${eraDays === 1 ? '' : 's'}`));
   const eraSubLabel = st.preEra ? 'The new era begins' : 'Current era ends and units enter legacy modes';
 
   // Roster locks at the configured defense-phase offset.
@@ -65,7 +67,7 @@ function renderUnlockWindows(st){
   const cronExpiresLabel = cron ? fmtDayMonthUTC(cron.expiresMs) : '';
   const cronCountLabel = !cron ? ''
     : cron.allExpired ? 'Expired'
-    : daysLeft <= 0 ? 'Expires today' : `In ${daysLeft} day${daysLeft === 1 ? '' : 's'}`;
+    : subDayCount(st.nowMs, cron.expiresMs, daysLeft <= 0 ? 'Expires today' : `In ${daysLeft} day${daysLeft === 1 ? '' : 's'}`);
   const cronSubLabel = !cron ? 'Add the next set to DATACRON_SETS in config.js'
     : cron.allExpired ? `${cron.name} has expired. Add the next set to DATACRON_SETS`
     : `${cron.name}${cron.hasFDC ? ' + FDC' : ''} expires to inbox`;
@@ -266,7 +268,7 @@ function renderStatusDashboard(st){
   const tmrwGuildSummary = getGuildEventSummary(tmrwEpisode, tmrwDayInEp, st.currentDayStartMs + 86400000, st.nowMs);
 
   const isGuildActive = getDayEvents(st.episode, st.dayInEp)
-    .some(i => i.icon.startsWith('tw_') || i.icon === 'rote' || i.icon === 'tb_ends');
+    .some(i => (i.icon.startsWith('tw_') && i.icon !== 'tw_payout') || i.icon === 'rote' || i.icon === 'tb_ends');
 
   // TB picker on the status card too, so the guild can set their TB
   // without scrolling to the schedule. Only during a TB week.
@@ -619,7 +621,8 @@ function liveBadgesHTML(ongoing, dayStartMs){
       const art = e.art || meta.art;
       const total = liveDayTotal(e);
       const day = Math.min(Math.max(liveDayNum(e, dayStartMs), 1), total);
-      return `<div class="day-boss day-live" title="${escHTML(e.name)}, day ${day} of ${total}">`
+      const kindCls = e.kind === 'conquest' ? ' day-live-cq' : '';
+      return `<div class="day-boss day-live${kindCls}" title="${escHTML(e.name)}, day ${day} of ${total}">`
         + `<img src="${IMG_BASE}${art}" alt="" loading="lazy" decoding="async" onerror="this.remove()">`
         + `<div class="db-text"><span class="db-label">Day ${day} of ${total}</span>`
         + `<span class="db-name">${escHTML(e.name)}</span></div></div>`;
@@ -717,7 +720,7 @@ function renderExplorer(st){
   if(dayToday) dayToday.disabled = explorerOffset === 0;
 
   const cur = explorerDayAt(st, explorerOffset);
-  const rel = relativeDayLabel(cur.offset);
+  const rel = relativeDayLabel(cur.offset, st.nowMs, st.currentDayStartMs);
   const headTitle = cur.offset === 0
     ? `Now: ${fmtDateLongUTC(gameDayDisplayMs(cur.dMs))}`
     : cur.offset > 0
@@ -744,7 +747,11 @@ function renderExplorer(st){
     showPicker: runCtx.offset === 0
   } : null;
   const { starting, ongoing } = splitLiveDay(liveEventsForDay(cur.dMs), cur.dMs);
-  const liveCards = starting.map(e => liveCardHTML(e, rel)).join('');
+  // Card pills count to each event's own start instant (eventStartMs:
+  // GAC at 21:00 UTC, TB transition moments) — not the day's generic
+  // changeover. Today and past days keep the shared day wording.
+  const cardRel = startMs => cur.offset > 0 ? relForEventStart(startMs, st.nowMs, rel) : rel;
+  const liveCards = starting.map(e => liveCardHTML(e, cardRel(e.startMs))).join('');
   const liveBadges = liveBadgesHTML(ongoing, cur.dMs);
   // Live conquest data replaces the rotation estimate — never show both
   // conquest badges side by side.
@@ -752,7 +759,7 @@ function renderExplorer(st){
   const covered = liveCoveredIcons(starting);
   const rotationCards = cur.items
     .filter(it => !covered.has(it.icon))
-    .map(it => explorerCardHTML(it, cur.dMs, rel, tbCtx, st.nowMs)).join('');
+    .map(it => explorerCardHTML(it, cur.dMs, cardRel(eventStartMs(it, cur.dMs)), tbCtx, st.nowMs)).join('');
   detail.innerHTML = `
     <div class="day-detail-head">
       <div>

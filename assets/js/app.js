@@ -335,6 +335,23 @@ if(typeof validateScheduleConfig === 'function'){
 }
 
 applyDayHash();
+// No shared day link: open on the "active" day — the incoming day when
+// its changeover is hours away, else the current in-game day. The
+// Today button still jumps back to the in-game day.
+try {
+  if(typeof dayFromHash === 'function'
+    && dayFromHash(typeof location !== 'undefined' ? location.hash : '') == null
+    && typeof defaultExplorerOffset === 'function'
+    && typeof getGameStatus === 'function'
+    && typeof explorerBoundsFor === 'function'){
+    const st0 = getGameStatus();
+    if(!st0.preEra){
+      const bounds0 = explorerBoundsFor(st0);
+      const defOff = defaultExplorerOffset(st0.nowMs, st0.currentDayStartMs);
+      explorerOffset = Math.min(bounds0.maxOffset, Math.max(bounds0.minOffset, defOff));
+    }
+  }
+} catch(e){}
 renderAll();
 if(typeof loadLiveEvents === 'function') loadLiveEvents();
 function schedulePreload(){

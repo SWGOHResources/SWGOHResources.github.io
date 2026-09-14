@@ -78,8 +78,9 @@ fleet ship…) the rotation card is suppressed so nothing shows twice.
 GAC is excluded
 from the feed — Comlink exposes no round info, so the hardcoded
 per-round GAC cards cover it. The snapshot refreshes itself via
-`.github/workflows/live-events.yml` (daily after the 18:00 UTC
-changeover). Manual refresh works the same way:
+`.github/workflows/live-events.yml` (every 4 hours, including
+18:20 UTC just after the 18:00 UTC changeover, so late client updates
+are caught overnight). Manual refresh works the same way:
 
 ```sh
 # Terminal 1 — Comlink + asset extractor (needs Docker)

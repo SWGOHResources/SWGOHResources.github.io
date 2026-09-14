@@ -11,6 +11,30 @@ const ERA_START_DATE = '2026-07-28'; // Day 1 baseline (Tuesday, July 28, 2026 -
    change them here — every countdown, cycle and label follows. */
 const STD_CHANGEOVER_HOUR_UTC = 18; // era-day / TB / conquest changeover
 const GAC_CHANGEOVER_HOUR_UTC = 21; // GAC resets 3h after the daily changeover
+/* Explorer default near changeover: when the next 18:00 UTC changeover
+   is this many hours away (or less), the schedule opens on the incoming
+   ("active") day instead of the current in-game day — its events are
+   the ones about to start. The Today button still jumps to the
+   in-game day. */
+const ACTIVE_DAY_PREVIEW_HOURS = 3;
+
+/* Real daily start times (UTC) per rotation family. Everything used to
+   assume the 18:00 TW/TB changeover — live Comlink data proves
+   otherwise: assault/omega/fleet go at 07:00, smuggling runs and
+   credit heists at 10:00. TW/TB/GAC/conquest/marquee/era keep their
+   changeover times. Missing keys fall back to the defaults in
+   time.js, so older configs keep working. */
+const EVENT_START_HOURS = {
+  'smugglers-run': 10,
+  fleet: 7,
+  'proving-grounds': 18,
+};
+
+/* TW + TB phases go an hour before the 18:00 daily changeover. Used for
+   phase tenses, countdown pills, 36h-TB transition moments and
+   datacron "last usable event" math — everything that keys off when a
+   guild phase actually starts. */
+const TW_TB_HOUR_UTC = 17;
 
 /* =========================================================
  GAC CONFIGURATION
@@ -153,6 +177,7 @@ const EPISODE_OVERRIDES = {
     7:  [ev('rote','Phase 1 Starts'), ev('conquest_start','2nd Conquest of Volume Starts'), ev('smugglersrun',"Smuggler's Run I")],
     8:  [ev('era_challenge_1'), ev('journey_rerun_1','Journey Rerun 1: Maul Hate Fueled Starts'), ev('journey_rerun_2','Journey Rerun 2: Cassian Andor Undercover Starts'), ev('rote','Phase 2 Starts')],
     15: [ev('marquee_2'), ev('tw_offense','Offense Phase Starts')],
+    20: [ev('tw_payout','Payout'), ev('proving_ground','Bonus Proving Grounds (Conquest Pass+ Holders Only)')],
     21: [ev('conquest_end','2nd Conquest of Volume Ends'), ev('proving_ground','Proving Grounds'), ev('ultimate_journey','Ultimate Journey'), ev('smugglersrun',"Smuggler's Run I"), ev('rote','Phase 1 Starts')],
     22: [ev('era_challenge_2'), ev('rote','Phase 2 Starts')],
   },
@@ -161,6 +186,7 @@ const EPISODE_OVERRIDES = {
     7:  [ev('rote','Phase 1 Starts'), ev('conquest_start','3rd Conquest of Volume Starts'), ev('smugglersrun',"Smuggler's Run I")],
     8:  [ev('era_challenge_3'), ev('rote','Phase 2 Starts')],
     15: [ev('marquee_4'), ev('tw_offense','Offense Phase Starts')],
+    20: [ev('tw_payout','Payout'), ev('proving_ground','Bonus Proving Grounds (Conquest Pass+ Holders Only)')],
     21: [ev('conquest_end','Conquest Ends (Unit First Playable)'), ev('proving_ground','Proving Grounds'), ev('ultimate_journey','Ultimate Journey'), ev('smugglersrun',"Smuggler's Run I"), ev('rote','Phase 1 Starts')],
     22: [ev('era_challenge_4'), ev('rote','Phase 2 Starts')],
   },
@@ -169,6 +195,7 @@ const EPISODE_OVERRIDES = {
     7:  [ev('rote','Phase 1 Starts'), ev('conquest_start','1st Conquest of New Volume Starts'), ev('smugglersrun',"Smuggler's Run I")],
     8:  [ev('era_challenge_5'), ev('rote','Phase 2 Starts')],
     15: [ev('marquee_6'), ev('journey_guide',`${JOURNEY_GUIDE_UNIT} 6/7★ Guide Unlock`), ev('tw_offense','Offense Phase Starts')],
+    20: [ev('tw_payout','Payout'), ev('proving_ground','Bonus Proving Grounds (Conquest Pass+ Holders Only)')],
     21: [ev('conquest_end','1st Conquest of New Volume Ends'), ev('proving_ground','Proving Grounds'), ev('ultimate_journey','Ultimate Journey'), ev('smugglersrun',"Smuggler's Run I"), ev('rote','Phase 1 Starts')],
     22: [ev('era_challenge_6'), ev('rote','Phase 2 Starts')],
   }

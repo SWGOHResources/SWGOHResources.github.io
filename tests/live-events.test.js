@@ -295,6 +295,21 @@ test('mid-span long runners show as boss-row badges, not cards', () => {
   assert.doesNotMatch(els.dayStrip.innerHTML, /has-live/);
 });
 
+test('live conquest badges keep the conquest purple, others use boss orange', () => {
+  const { ctx, els } = loadRenderEngine();
+  const run = src => vm.runInContext(src, ctx);
+  const dayStart = run('getGameStatus().currentDayStartMs');
+  run(`liveEventsCache = { pulledAt: ${NOW}, gameDataVersion: 'v', events: [
+    { id: 'c', name: 'Live Conquest', kind: 'conquest', art: 'live/x.png',
+      startMs: ${dayStart} - 2 * 86400000 + 3600000, endMs: ${dayStart} + 5 * 86400000 },
+    { id: 'm', name: 'Live Marquee', kind: 'marquee', art: 'live/y.png',
+      startMs: ${dayStart} - 2 * 86400000 + 3600000, endMs: ${dayStart} + 5 * 86400000 }
+  ] }`);
+  run('renderExplorer(getGameStatus())');
+  assert.match(els.dayDetail.innerHTML, /day-boss day-live day-live-cq/);
+  assert.match(els.dayDetail.innerHTML, /day-boss day-live" title="Live Marquee/);
+});
+
 test('short mid-span events show nothing that day', () => {
   const { ctx, els } = loadRenderEngine();
   const run = src => vm.runInContext(src, ctx);

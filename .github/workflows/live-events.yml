@@ -2,11 +2,16 @@ name: Live events
 
 # Keeps assets/data/live-events.json fresh without manual pulls:
 # spins up swgoh-comlink, runs the pull script, commits when the
-# snapshot changed. Runs daily after the 18:00 UTC changeover, plus
-# on demand via workflow_dispatch.
+# snapshot changed. Runs every 4 hours — including 18:20 UTC just
+# after the 18:00 UTC changeover, with overnight runs covering client
+# updates that land anywhere from 20 minutes to ~10 hours later
+# (plus Tue/Fri surprise drops) — and on demand via workflow_dispatch.
+# Polling for "new data" costs the same as pulling (Comlink must be up
+# either way), so frequent full pulls subsume it; timestamp-only churn
+# is skipped in the commit step below.
 on:
   schedule:
-    - cron: '20 18 * * *'
+    - cron: '20 2,6,10,14,18,22 * * *'
   workflow_dispatch:
 
 permissions:
@@ -44,9 +49,30 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add assets/data/live-events.json assets/img/live
+          # Skip timestamp-only churn: the pull script always rewrites
+          # pulledAt, so compare meaningful content (gameDataVersion +
+          # events) against HEAD. Commit when data/art actually changed,
+          # or as a heartbeat when the last snapshot is >20h old (keeps
+          # the <48h freshness test green and proves the job is alive).
+          node --input-type=module -e "
+            import { execSync } from 'node:child_process';
+            import fs from 'node:fs';
+            const cur = JSON.parse(fs.readFileSync('assets/data/live-events.json', 'utf8'));
+            let old = null;
+            try { old = JSON.parse(execSync('git show HEAD:assets/data/live-events.json', { encoding: 'utf8' })); } catch {}
+            const same = !!old && old.gameDataVersion === cur.gameDataVersion
+              && JSON.stringify(old.events) === JSON.stringify(cur.events);
+            const ageH = old ? (Date.now() - old.pulledAt) / 36e5 : 99;
+            if (same && ageH < 20) {
+              execSync('git restore --staged assets/data/live-events.json && git checkout -- assets/data/live-events.json');
+              console.log('no data change (snapshot age ' + ageH.toFixed(1) + 'h) — skipping timestamp commit');
+            } else {
+              console.log(same ? 'heartbeat commit (snapshot age ' + ageH.toFixed(1) + 'h)' : 'data changed — committing');
+            }
+          "
           if git diff --staged --quiet; then
             echo "live events unchanged"
           else
-            git commit -m "Live events snapshot $(date -u +%F)"
+            git commit -m "Live events snapshot $(date -u +%F_%H%M)"
             git push
           fi
