@@ -96,6 +96,15 @@ npm run events:pull
 `tests/live-events.test.js` fails if the committed snapshot is older
 than 48h, so a broken refresh shows up in CI.
 
+> Git workflow: the bots (`live-events.yml`, `notify.yml`) push to
+> `main` on a schedule, so `main` moves under you. Always run
+> `npm run sync` (fetch + rebase onto `origin/main`) before editing
+> or committing. Don't commit `assets/data/live-events.json`,
+> `assets/data/notify-state.json`, or `assets/img/live/` by hand
+> unless you're doing an intentional manual refresh — a local
+> pre-commit hook blocks `main` commits made while behind upstream
+> for exactly this reason.
+
 ## In-site alerts (no setup, page must be open)
 
 The header **Alerts** button opens notification settings: master switch

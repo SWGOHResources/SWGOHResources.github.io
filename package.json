@@ -5,6 +5,7 @@
   "scripts": {
     "test": "node --test",
     "sitemap": "node scripts/stamp-sitemap.mjs",
-    "events:pull": "node scripts/pull-live-events.mjs"
+    "events:pull": "node scripts/pull-live-events.mjs",
+    "sync": "git fetch origin && git rebase origin/main"
   }
 }
