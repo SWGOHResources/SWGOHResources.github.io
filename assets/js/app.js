@@ -336,6 +336,7 @@ if(typeof validateScheduleConfig === 'function'){
 
 applyDayHash();
 renderAll();
+if(typeof loadLiveEvents === 'function') loadLiveEvents();
 function schedulePreload(){
   if(typeof preloadCardAssets !== 'function') return;
   try {

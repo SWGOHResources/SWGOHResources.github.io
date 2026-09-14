@@ -49,7 +49,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@700;800&family=Inter:wght@400;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/main.css?v=45">
+  <link rel="stylesheet" href="assets/css/main.css?v=54">
 </head>
 <body>
 
@@ -142,16 +142,16 @@
   </section>
 
   <!-- Day-by-day schedule explorer -->
-  <section aria-label="Expected Event Schedule explorer">
+  <section aria-label="Event Schedule explorer">
   <div class="section-head">
-    <h2>Expected Event Schedule</h2>
-    <span class="sub">Browse day by day · expected dates, not live data</span>
+    <h2>Event Schedule</h2>
+    <span class="sub">Browse day by day · live timings mixed with the expected rotation</span>
     <div class="rule"></div>
   </div>
   <div class="explorer">
     <div class="explorer-note" role="note">
       <span class="en-dot" aria-hidden="true">!</span>
-      <p>Events are shown when they are expected to occur, not when they will. For exact event timings check <a href="https://swgoh.gg/events/" target="_blank" rel="noopener">swgoh.gg/events <svg class="ext-icon" width="11" height="11" viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M4 2h6v6M10 2 5.5 6.5M10 7v3H2V2h3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a></p>
+      <p>Cards pulled from live game data carry real start/end times (refreshed daily). The rest follow the expected rotation — for exact timings check <a href="https://swgoh.gg/events/" target="_blank" rel="noopener">swgoh.gg/events <svg class="ext-icon" width="11" height="11" viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M4 2h6v6M10 2 5.5 6.5M10 7v3H2V2h3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a></p>
     </div>
     <div class="explorer-nav">
       <button type="button" class="day-arrow" id="dayPrev" onclick="shiftExplorer(-1)" aria-label="Previous day" title="Previous day">←</button>
@@ -202,7 +202,7 @@
     <div class="footer-rule"></div>
 
     <div class="footer-legal">
-      <p class="footer-note">Schedule shows expected dates based on the usual rotation, not live data — check live event timings at <a href="https://swgoh.gg/events/" target="_blank" rel="noopener">swgoh.gg/events</a>. Fan-made planning tool for Star Wars: Galaxy of Heroes. Not affiliated with, endorsed, sponsored, or specifically approved by Electronic Arts, Capital Games, Disney, or Lucasfilm. All game assets, trademarks, and character names are property of their respective owners.</p>
+      <p class="footer-note">Schedule mixes expected rotation dates with live game data — check live event timings at <a href="https://swgoh.gg/events/" target="_blank" rel="noopener">swgoh.gg/events</a>. Fan-made planning tool for Star Wars: Galaxy of Heroes. Not affiliated with, endorsed, sponsored, or specifically approved by Electronic Arts, Capital Games, Disney, or Lucasfilm. All game assets, trademarks, and character names are property of their respective owners.</p>
       <nav class="legal-links" aria-label="Legal"><a href="privacy.html">Privacy</a><a href="cookie-policy.html">Cookies</a><a href="terms.html">Terms</a></nav>
       <div class="footer-bottom">
         <span id="footerMeta"></span>
@@ -263,7 +263,7 @@
      so browsers fetch fresh copies instead of cached ones. -->
 <script defer src="assets/js/config.js?v=23"></script>
 <script defer src="assets/js/time.js?v=32"></script>
-<script defer src="assets/js/render.js?v=41"></script>
-<script defer src="assets/js/app.js?v=21"></script>
+<script defer src="assets/js/render.js?v=54"></script>
+<script defer src="assets/js/app.js?v=22"></script>
 </body>
 </html>

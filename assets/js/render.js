@@ -304,6 +304,117 @@ function renderStatusDashboard(st){
 }
 
 /* =========================================================
+   LIVE IN-GAME EVENTS (Comlink game data)
+   assets/data/live-events.json is written by
+   scripts/pull-live-events.mjs (`npm run events:pull`). Loaded once on
+   startup so a missing/slow file never blocks renderAll(); re-rendered
+   from cache on later renderAll() calls (e.g. timezone changes).
+   ========================================================= */
+
+let liveEventsCache = null;
+
+function liveEventTimeLabel(ms){
+  try {
+    return withOrdinal(__formatter('day|monS|hhmm').format(new Date(dms(ms))));
+  } catch(e){
+    return new Date(ms).toUTCString();
+  }
+}
+
+/* Card art per live kind. Marquee / era-challenge events reuse the
+   matching unit portrait from MARQUEE_NAMES (by unit id or name);
+   everything else maps to the closest existing event art. */
+function liveCardMarqueeNum(e){
+  // Compare alphanumeric-only so unit ids ("STORMTROOPERCONCEPT") match
+  // display names ("Stormtrooper (Concept)") and vice versa.
+  const norm = s => String(s || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+  const hay = norm(`${e.unit || ''} ${e.name || ''}`);
+  if(typeof MARQUEE_NAMES !== 'object' || !hay) return null;
+  for(const [key, name] of Object.entries(MARQUEE_NAMES)){
+    const m = /^marquee_(\d+)$/.exec(key);
+    const needle = norm(name);
+    if(m && needle && hay.includes(needle)) return m[1];
+  }
+  return null;
+}
+
+/* Closest rotation icon for a live event, so live cards reuse the exact
+   art, accent, tag and badge of their hardcoded counterparts —
+   assetFor / categoryFor / tagFor stay the single source of truth.
+   Null when the family has no rotation card (assault/omega). */
+function liveRotationIcon(e){
+  if(e.kind === 'marquee' || e.kind === 'era-challenge'){
+    const n = liveCardMarqueeNum(e);
+    if(n) return e.kind === 'marquee' ? `marquee_${n}` : `era_challenge_${n}`;
+    return null;
+  }
+  switch(e.kind){
+    case 'gac': return 'gac_attack';
+    case 'conquest': return 'conquest_start';
+    case 'fleet': {
+      const id = String(e.id || '').toUpperCase();
+      if(id.includes('LEVIATHAN')) return 'fleet_leviathan';
+      if(id.includes('PROFUNDITY')) return 'fleet_profundity';
+      return 'fleet_executor';
+    }
+    case 'smugglers-run':
+    case 'credit-heist': return 'smugglersrun';
+    case 'daily-challenge':
+    case 'proving-grounds': return 'proving_ground';
+    case 'journey': return 'journey_guide';
+    default: return null;
+  }
+}
+
+function liveCardMeta(e){
+  const icon = liveRotationIcon(e);
+  const cat = icon ? categoryFor(icon) : 'era';
+  const glyph = icon ? tagFor(icon).glyph : CATEGORY_META.era.glyph;
+  const art = (icon && assetFor(icon)) || 'events/eraicon.png';
+  return { cat, glyph, art };
+}
+
+/* Live events render exactly like rotation cards (same art frame,
+   badge and body) — only the art is the pulled game texture and the
+   title/dates come from live data. The timing pill is the viewed day's
+   relative label, identical to hardcoded cards on the same day. */
+function liveCardHTML(e, relLabel){
+  const meta = liveCardMeta(e);
+  const catMeta = (typeof CATEGORY_META !== 'undefined' && CATEGORY_META[meta.cat]) || {};
+  const style = `--accent:${catMeta.accent || 'var(--text3)'};--accent-dim:${catMeta.dim || 'transparent'};--accent-border:${catMeta.border || 'var(--border)'}`;
+  const art = e.art || meta.art;
+  const relCls = relLabel === 'Now' ? 'xcard-rel is-today' : 'xcard-rel';
+  return `<article class="xcard" style="${style}">
+    <div class="xcard-art">
+      <div class="art-badge">${escHTML(meta.glyph)}</div>
+      <img src="${IMG_BASE}${art}" alt="" loading="lazy" fetchpriority="low" decoding="async" onerror="this.remove()">
+      <div class="xcard-shade"></div>
+      <div class="xcard-art-meta">
+        <span class="${relCls}">${relLabel}</span>
+      </div>
+    </div>
+    <div class="xcard-body">
+      <h4>${escHTML(e.name)}</h4>
+      <div class="xcard-date">${escHTML(liveEventTimeLabel(e.startMs))} – ${escHTML(liveEventTimeLabel(e.endMs))}</div>
+    </div>
+  </article>`;
+}
+
+async function loadLiveEvents(){
+  // Fills the cache the day-by-day explorer overlays. No section of its
+  // own — without a snapshot the explorer simply shows the rotation.
+  if(typeof fetch !== 'function') return;
+  try {
+    const res = await fetch('assets/data/live-events.json', { cache: 'no-store' });
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    liveEventsCache = await res.json();
+    if(typeof renderAll === 'function') renderAll({ preserveFocus: true });
+  } catch(e){
+    if(typeof console !== 'undefined' && console.warn) console.warn('[swgoh-schedule] live events unavailable:', e.message);
+  }
+}
+
+/* =========================================================
    SCHEDULE EXPLORER (day-by-day wide cards)
    ========================================================= */
 
@@ -416,7 +527,6 @@ function explorerCardHTML(item, dateMs, relLabel, tbCtx, nowMs){
       ${imgTag}
       <div class="xcard-shade"></div>
       <div class="xcard-art-meta">
-        <span class="xcard-cat">${tag.label}</span>
         <span class="${relCls}">${relLabel}</span>
       </div>
     </div>
@@ -426,6 +536,76 @@ function explorerCardHTML(item, dateMs, relLabel, tbCtx, nowMs){
       ${picker}
     </div>
   </article>`;
+}
+
+/* Live snapshot overlay for the day-by-day explorer: every event from
+   live-events.json whose window touches the viewed UTC calendar day.
+   GAC is skipped even if present — Comlink has no round info, the
+   hardcoded per-round GAC cards cover it. Empty (no snapshot yet)
+   means "expected rotation only". */
+function liveEventsForDay(dayStartMs){
+  if(!liveEventsCache || !Array.isArray(liveEventsCache.events)) return [];
+  const dayEndMs = dayStartMs + 86400000;
+  return liveEventsCache.events
+    .filter(e => e.kind !== 'gac' && e.startMs < dayEndMs && e.endMs > dayStartMs)
+    .sort((a, b) => a.startMs - b.startMs);
+}
+
+/* A day shows full cards only for what happens on it: events starting
+   (or ending) that day. Longer runners (over 24h) also get a persistent
+   badge in the indicators row — same shape as the coliseum boss, with
+   their pulled art and a "Day X of Y" caption. */
+function splitLiveDay(dayEvents, dayStartMs){
+  const dayEndMs = dayStartMs + 86400000;
+  return {
+    starting: dayEvents.filter(e => e.startMs >= dayStartMs && e.startMs < dayEndMs),
+    ongoing: dayEvents.filter(e => !(e.startMs >= dayStartMs && e.startMs < dayEndMs)),
+  };
+}
+
+/* Rotation icons a live starting card already covers — the hardcoded
+   rotation entry for the same happening is suppressed so a day never
+   shows both (e.g. live Smuggler's Run + rotation Smuggler's Run).
+   Reuses liveRotationIcon so display and suppression agree — except
+   Credit Heist, which shares smuggling-run art but is a different
+   event and must not suppress it. */
+function liveCoveredIcons(starting){
+  const covered = new Set();
+  for(const e of starting){
+    // Credit Heist shares smuggling-run art but is a different event;
+    // GAC live entries carry no round info, so the precise hardcoded
+    // round cards always win. Neither suppresses rotation.
+    if(e.kind === 'credit-heist' || e.kind === 'gac') continue;
+    const icon = liveRotationIcon(e);
+    if(icon) covered.add(icon);
+    if(e.kind === 'conquest') covered.add('conquest_end');
+  }
+  return covered;
+}
+function liveDayTotal(e){
+  return Math.max(1, Math.round((e.endMs - e.startMs) / 86400000));
+}
+
+function liveDayNum(e, dayStartMs){
+  const d = new Date(e.startMs);
+  const startDay = Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
+  return Math.floor((dayStartMs - startDay) / 86400000) + 1;
+}
+
+function liveBadgesHTML(ongoing, dayStartMs){
+  const badges = ongoing
+    .filter(e => e.endMs - e.startMs > 24 * 3600000)
+    .map(e => {
+      const meta = liveCardMeta(e);
+      const art = e.art || meta.art;
+      const total = liveDayTotal(e);
+      const day = Math.min(Math.max(liveDayNum(e, dayStartMs), 1), total);
+      return `<div class="day-boss day-live" title="${escHTML(e.name)}, day ${day} of ${total}">`
+        + `<img src="${IMG_BASE}${art}" alt="" loading="lazy" decoding="async" onerror="this.remove()">`
+        + `<div class="db-text"><span class="db-label">Day ${day} of ${total}</span>`
+        + `<span class="db-name">${escHTML(e.name)}</span></div></div>`;
+    }).join('');
+  return badges;
 }
 
 function renderExplorer(st){
@@ -544,6 +724,16 @@ function renderExplorer(st){
     phase1Ms: runCtx.phase1Ms, options: runCtx.options, art: tbDef.art,
     showPicker: runCtx.offset === 0
   } : null;
+  const { starting, ongoing } = splitLiveDay(liveEventsForDay(cur.dMs), cur.dMs);
+  const liveCards = starting.map(e => liveCardHTML(e, rel)).join('');
+  const liveBadges = liveBadgesHTML(ongoing, cur.dMs);
+  // Live conquest data replaces the rotation estimate — never show both
+  // conquest badges side by side.
+  const showCqBadge = !liveEventsForDay(cur.dMs).some(e => e.kind === 'conquest');
+  const covered = liveCoveredIcons(starting);
+  const rotationCards = cur.items
+    .filter(it => !covered.has(it.icon))
+    .map(it => explorerCardHTML(it, cur.dMs, rel, tbCtx, st.nowMs)).join('');
   detail.innerHTML = `
     <div class="day-detail-head">
       <div>
@@ -555,11 +745,12 @@ function renderExplorer(st){
         <img src="${IMG_BASE}${bossIcon}" alt="" loading="lazy" fetchpriority="low" decoding="async" onerror="this.remove()">
         <div class="db-text"><span class="db-label">Coliseum boss</span><span class="db-name">${bossName}</span></div>
         </div>
-        ${cqBadge}
+        ${showCqBadge ? cqBadge : ''}
+        ${liveBadges}
       </div>
     </div>
-    ${cur.items.length
-      ? `<div class="xcard-deck">${cur.items.map(it => explorerCardHTML(it, cur.dMs, rel, tbCtx, st.nowMs)).join('')}</div>`
+    ${liveCards || rotationCards
+      ? `<div class="xcard-deck">${liveCards}${rotationCards}</div>`
       : `<p class="empty-note">No changeovers this day — nothing starts or ends.</p>`}`;
 }
 

@@ -1,0 +1,142 @@
+{
+ "pulledAt": 1789346491040,
+ "gameDataVersion": "0.40.5:MoxBSQUYRjuplwCT1HagpQ",
+ "events": [
+  {
+   "id": "CONQUEST_VOL24",
+   "name": "Conquest",
+   "kind": "conquest",
+   "startMs": 1788199200000,
+   "endMs": 1789408800000,
+   "live": true,
+   "art": "live/conquestpass-promo-basic-01.png"
+  },
+  {
+   "id": "EVENT_MARQUEE_STORMTROOPERCONCEPT",
+   "name": "Blade and Bastion",
+   "kind": "marquee",
+   "unit": "STORMTROOPERCONCEPT",
+   "startMs": 1788890400000,
+   "endMs": 1789495200000,
+   "live": true,
+   "art": "live/events-stormtrooperconcept.png"
+  },
+  {
+   "id": "EVENT_ASSAULT_EWOK",
+   "name": "Forest Moon Assault Battles",
+   "kind": "assault",
+   "startMs": 1789196400000,
+   "endMs": 1789282800000,
+   "live": false,
+   "art": "live/events-forestmoon.png"
+  },
+  {
+   "id": "EVENT_RESOURCE_CONTRABAND_CARGO",
+   "name": "Contraband Cargo",
+   "kind": "event",
+   "startMs": 1789293600000,
+   "endMs": 1789380000000,
+   "live": true,
+   "art": "live/events-contrabandcargo.png"
+  },
+  {
+   "id": "EVENT_OMEGA_BATTLES_02_CORUSCANT",
+   "name": "Coruscant Omega Battles",
+   "kind": "omega",
+   "startMs": 1789369200000,
+   "endMs": 1789455600000,
+   "live": false,
+   "art": "live/events-galactic-challenges-coruscant.png"
+  },
+  {
+   "id": "EVENT_RESOURCE_SMUGGLERS_RUN",
+   "name": "Smuggler's Run",
+   "kind": "smugglers-run",
+   "startMs": 1789380000000,
+   "endMs": 1789466400000,
+   "live": false,
+   "art": "live/events-smugglersrun.png"
+  },
+  {
+   "id": "EVENT_FLEET_MASTERY_EXECUTOR",
+   "name": "Discarded Doctrine",
+   "kind": "fleet",
+   "startMs": 1789455600000,
+   "endMs": 1789542000000,
+   "live": false,
+   "art": "live/events-executor.png"
+  },
+  {
+   "id": "EVENT_ASSAULT_EMPIRE",
+   "name": "Military Might Assault Battles",
+   "kind": "assault",
+   "startMs": 1789455600000,
+   "endMs": 1789542000000,
+   "live": false,
+   "art": "live/events-empirehorde.png"
+  },
+  {
+   "id": "EC22_ImperialTrooperRogueOneScarif_1785717445",
+   "name": "Stormtrooper (Concept) Era Challenge",
+   "kind": "era-challenge",
+   "startMs": 1789495200000,
+   "endMs": 1790100000000,
+   "live": false,
+   "art": "live/events-stormtrooperconcept.png"
+  },
+  {
+   "id": "EVENT_ASSAULT_DARKSIDE",
+   "name": "Secrets and Shadows Assault Battle",
+   "kind": "assault",
+   "startMs": 1789542000000,
+   "endMs": 1789628400000,
+   "live": false,
+   "art": "live/events-nightsisters-assault.png"
+  },
+  {
+   "id": "EVENT_CREDIT_HEIST_GETAWAY_V2",
+   "name": "Credit Heist",
+   "kind": "credit-heist",
+   "startMs": 1789639200000,
+   "endMs": 1789725600000,
+   "live": false,
+   "art": "live/events-creditheist.png"
+  },
+  {
+   "id": "EVENT_OMEGA_BATTLES_07_HOTH",
+   "name": "Hoth Omega Battles",
+   "kind": "omega",
+   "startMs": 1789714800000,
+   "endMs": 1789801200000,
+   "live": false,
+   "art": "live/events-galactic-challenges-hoth.png"
+  },
+  {
+   "id": "EVENT_FLEET_MASTERY_LEVIATHAN",
+   "name": "Dark Sovereign",
+   "kind": "fleet",
+   "startMs": 1789887600000,
+   "endMs": 1789974000000,
+   "live": false,
+   "art": "live/events-leviathan.png"
+  },
+  {
+   "id": "EVENT_OMEGA_BATTLES_03_DATHOMIR",
+   "name": "Dathomir Omega Battles",
+   "kind": "omega",
+   "startMs": 1789974000000,
+   "endMs": 1790060400000,
+   "live": false,
+   "art": "live/events-galacticchallenges-dathomir.png"
+  },
+  {
+   "id": "EVENT_SPECIAL_DEFENSE_OF_DATHOMIR",
+   "name": "Defense of Dathomir",
+   "kind": "event",
+   "startMs": 1790060400000,
+   "endMs": 1790146800000,
+   "live": false,
+   "art": "live/events-dathomir-battle.png"
+  }
+ ]
+}

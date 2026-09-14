@@ -1,0 +1,52 @@
+name: Live events
+
+# Keeps assets/data/live-events.json fresh without manual pulls:
+# spins up swgoh-comlink, runs the pull script, commits when the
+# snapshot changed. Runs daily after the 18:00 UTC changeover, plus
+# on demand via workflow_dispatch.
+on:
+  schedule:
+    - cron: '20 18 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  pull:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Start swgoh-comlink and asset extractor
+        run: |
+          docker run -d --name swgoh-comlink \
+            --env APP_NAME=swgohresources-schedule \
+            -p 3500:3000 ghcr.io/swgoh-utils/swgoh-comlink:latest
+          docker run -d --name swgoh-ae \
+            -p 3123:8080 ghcr.io/swgoh-utils/swgoh-ae2:latest
+          for i in $(seq 1 24); do
+            if curl -sf --max-time 5 http://localhost:3500/enums -o /dev/null \
+              && curl -sf --max-time 5 http://localhost:3123/swagger/v1/swagger.json -o /dev/null; then
+              echo "services ready"; exit 0
+            fi
+            sleep 5
+          done
+          echo "services did not become ready"; docker logs swgoh-comlink; docker logs swgoh-ae; exit 1
+      - name: Pull live events
+        run: COMLINK_URL=http://localhost:3500 AE_URL=http://localhost:3123 npm run events:pull
+      - name: Commit updated snapshot
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add assets/data/live-events.json assets/img/live
+          if git diff --staged --quiet; then
+            echo "live events unchanged"
+          else
+            git commit -m "Live events snapshot $(date -u +%F)"
+            git push
+          fi

@@ -260,6 +260,10 @@ body.modal-open .starfield span.tw {
   color: var(--amber); font-weight: 700; text-decoration: none; white-space: nowrap;
 }
 .explorer-note p a:hover { text-decoration: underline; }
+/* ─── Live in-game overlay (Comlink game data, day-by-day explorer) ─── */
+/* Long runners sit in the indicators row like the coliseum boss. */
+.day-boss.day-live { border-color: var(--green-border); }
+.day-live .db-name { color: var(--green); }
 /* Inline external-link icon (replaces the ↗ text glyph, which renders
    as an emoji-style character on some mobile platforms). */
 .ext-icon { display: inline-block; vertical-align: -1px; margin-left: 2px; }
@@ -575,17 +579,17 @@ body.modal-open .starfield span.tw {
 }
 .xcard-art-meta {
   position: absolute; z-index: 4; left: 8px; right: 8px; bottom: 8px;
-  display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 5px;
+  display: flex; flex-wrap: wrap; gap: 5px; align-items: center;
 }
-.xcard-cat, .xcard-rel {
+.xcard-rel {
   font-family: var(--body); font-size: 9px; font-weight: 700;
   letter-spacing: 0.07em; text-transform: uppercase;
   padding: 3px 8px; border-radius: 11px;
   background: rgba(8,10,14,0.78);
-  max-width: 100%; overflow-wrap: anywhere; min-width: 0;
+  min-width: 0; max-width: 100%;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  color: var(--text2); border: 1px solid var(--border2); flex: 0 1 auto; margin-left: auto;
 }
-.xcard-cat { color: var(--accent, var(--text)); border: 1px solid var(--accent-border, var(--border2)); justify-self: start; }
-.xcard-rel { color: var(--text2); border: 1px solid var(--border2); white-space: nowrap; justify-self: end; }
 .xcard-rel.is-today { color: var(--cyan); border-color: var(--cyan-border); }
 .xcard-body { padding: 10px 12px 12px; display: flex; flex-direction: column; flex: 1; }
 .xcard-body h4 {
@@ -696,12 +700,12 @@ body.modal-open .starfield span.tw {
 .day-detail-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
 .day-indicators { display: flex; gap: 8px; flex-wrap: wrap; flex: 0 1 auto; justify-content: flex-end; }
 .day-boss {
-  display: flex; align-items: center; gap: 10px; flex: 0 0 auto;
+  display: flex; align-items: center; gap: 10px; flex: 0 1 auto; min-width: 0;
   background: var(--void2); border: 1px solid var(--orange-border); border-radius: var(--radius-lg);
   padding: 8px 14px 8px 8px;
 }
 .day-conquest {
-  display: flex; align-items: center; gap: 10px; flex: 0 0 auto;
+  display: flex; align-items: center; gap: 10px; flex: 0 1 auto; min-width: 0;
   background: var(--void2); border: 1px solid var(--purple-border); border-radius: var(--radius-lg);
   padding: 8px 14px 8px 8px;
 }
@@ -709,12 +713,12 @@ body.modal-open .starfield span.tw {
   width: 40px; height: 40px; border-radius: 9px; object-fit: cover; display: block;
   border: 1px solid var(--border2); background: var(--void3);
 }
-.db-text { display: flex; flex-direction: column; gap: 1px; }
+.db-text { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
 .db-label {
   font-family: var(--body); font-size: 9px; font-weight: 600; text-transform: uppercase;
   letter-spacing: 0.08em; color: var(--text3);
 }
-.db-name { font-family: var(--disp); font-size: 13.5px; font-weight: 700; color: var(--orange); line-height: 1.25; }
+.db-name { font-family: var(--disp); font-size: 13.5px; font-weight: 700; color: var(--orange); line-height: 1.25; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .day-conquest .db-name { color: var(--purple); }
 
 /* ─── Modal Backdrop ─── */

@@ -42,6 +42,58 @@ GitHub Pages.
   touches `config.js`.
 - `site.webmanifest`, `robots.txt`, `sitemap.xml`, `.nojekyll`,
   `favicon.ico` — standard Pages/PWA plumbing.
+- `scripts/pull-live-events.mjs` + `assets/data/live-events.json` +
+  `assets/img/live/` — live in-game events. The script talks to a
+  running [swgoh-comlink](https://github.com/swgoh-utils/swgoh-comlink)
+  instance (`COMLINK_URL`, default `http://localhost:3500`), pulls
+  `/getEvents` + English names (Title Cased with acronyms kept, filler
+  suffixes like "Resource Event" trimmed since the type pill shows it),
+  keeps time-limited events in a −1d/+14d window (permanent
+  journey/legend unlocks, GAC rounds, and daily credit/ability/gear/ship
+  challenges excluded), then downloads each event's real banner art
+  through
+  [swgoh-ae2](https://github.com/swgoh-utils/swgoh-ae2) (`AE_URL`,
+  default `http://localhost:3123`) into `assets/img/live/` (path stored
+  as `art` per event; bundled art is the fallback when a texture isn't
+  downloadable). `assets/img/live/` is a persistent library — files
+  already on disk are reused as-is and nothing is auto-deleted, since
+  events rerun and re-downloads can flake; each event's primary texture
+  is always tried before any shared fallback icon. The day-by-day
+  explorer renders them as standard cards
+  — art, accent and badge all resolved through the same
+  `EVENT_ICONS`/`CATEGORY_META` maps as the hardcoded rotation, so the
+  two can never drift apart.
+
+## Live event refresh
+
+The day-by-day explorer overlays `assets/data/live-events.json` on top
+of the expected rotation: live events render first as standard cards
+with the same relative-day pill as hardcoded cards, then the rotation
+cards. A day shows full live cards only
+for what happens on it (events starting or ending that day); events
+running longer than 24h also sit in the indicators row as badges shaped
+like the coliseum boss, with their art and a "Day X of Y" caption.
+Where a live card covers a rotation entry (same smuggling run, marquee,
+fleet ship…) the rotation card is suppressed so nothing shows twice.
+GAC is excluded
+from the feed — Comlink exposes no round info, so the hardcoded
+per-round GAC cards cover it. The snapshot refreshes itself via
+`.github/workflows/live-events.yml` (daily after the 18:00 UTC
+changeover). Manual refresh works the same way:
+
+```sh
+# Terminal 1 — Comlink + asset extractor (needs Docker)
+docker run --name swgoh-comlink -d --env APP_NAME=my-app \
+  -p 3500:3000 ghcr.io/swgoh-utils/swgoh-comlink:latest
+docker run --name swgoh-ae -d \
+  -p 3123:8080 ghcr.io/swgoh-utils/swgoh-ae2:latest
+
+# Terminal 2 — pull + commit the fresh snapshot (events + art)
+npm run events:pull
+```
+
+`tests/live-events.test.js` fails if the committed snapshot is older
+than 48h, so a broken refresh shows up in CI.
 
 Scripts load in order at the end of `<body>` as deferred classic scripts
 (ordered, non-blocking) so `onclick="…"` handlers keep working:
