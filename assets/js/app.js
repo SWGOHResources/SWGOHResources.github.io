@@ -140,6 +140,11 @@ document.getElementById('alertCatsBox')?.addEventListener('change', e => {
     onAlertCatsChange();
   }
 });
+document.getElementById('exportAlertsBtn')?.addEventListener('click', exportSettings);
+document.getElementById('importAlertsFile')?.addEventListener('change', e => {
+  importSettingsFile(e.target && e.target.files && e.target.files[0]);
+  e.target.value = '';
+});
 
 scheduleModal?.addEventListener('click', e => { if(e.target === scheduleModal) closeModal(scheduleModal); });
 aboutModal?.addEventListener('click', e => { if(e.target === aboutModal) closeModal(aboutModal); });
@@ -323,8 +328,20 @@ function openAlertsModal(){
   if(master) master.checked = alertsEnabled() && typeof Notification !== 'undefined' && Notification.permission === 'granted';
   openModal(alertsModal);
 }
+/* Deletes this device's push subscription so disabling alerts also
+   opts out of closed-phone pushes (the token doc would otherwise sit
+   in Firestore until its token naturally dies). */
+async function removePushSubscription(){
+  try {
+    const fb = await ensureFirebase();
+    if(!fb || !fb.messaging || !fb.db) return;
+    let token = null;
+    try { token = await fb.messaging.getToken({ vapidKey: fb.vapidKey }); } catch(e){ return; }
+    if(token) await fb.db.collection('push_subscriptions').doc(token).delete();
+  } catch(e){}
+}
 async function onAlertsMasterChange(box){
-  if(!box.checked){ setAlertsEnabled(false); return; }
+  if(!box.checked){ setAlertsEnabled(false); removePushSubscription(); return; }
   if(typeof Notification === 'undefined'){ alert('This browser does not support notifications.'); box.checked = false; return; }
   if(Notification.permission === 'denied'){
     alert('Notifications are blocked for this site. Allow them in the browser site settings, then enable again.');
@@ -346,6 +363,62 @@ async function onAlertsMasterChange(box){
 function onAlertCatsChange(){
   syncAlertsButtons();
   syncPushSubscription();
+}
+
+/* Settings backup: clearing browser/site data wipes every local pick
+   (timezone, TB choices, alert switch + categories) with no way back,
+   so the Alerts panel can export them to a file and re-import later.
+   Seen-alert history is deliberately excluded — it rebuilds itself. */
+function settingsSnapshot(){
+  const out = { app: 'swgoh-schedule-settings', version: 1, exportedAt: Date.now(), values: {} };
+  const keys = [];
+  try {
+    if(typeof TZ_STORAGE_KEY !== 'undefined') keys.push(TZ_STORAGE_KEY);
+    if(typeof TB_CHOICE_STORAGE_KEY !== 'undefined'){
+      keys.push(TB_CHOICE_STORAGE_KEY, `${TB_CHOICE_STORAGE_KEY}-light`, `${TB_CHOICE_STORAGE_KEY}-dark`);
+    }
+  } catch(e){}
+  keys.push('swgoh-alerts', 'swgoh-alert-cats');
+  for(const k of keys){
+    try {
+      const v = localStorage.getItem(k);
+      if(v != null) out.values[k] = v;
+    } catch(e){}
+  }
+  return out;
+}
+function exportSettings(){
+  try {
+    const blob = new Blob([JSON.stringify(settingsSnapshot(), null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'swgoh-schedule-settings.json';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+  } catch(e){ alert('Settings export failed in this browser.'); }
+}
+function importSettingsFile(file){
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const data = JSON.parse(reader.result);
+      if(!data || data.app !== 'swgoh-schedule-settings' || typeof data.values !== 'object') throw new Error('bad file');
+      for(const [k, v] of Object.entries(data.values)){
+        if(typeof v !== 'string') continue;
+        try { localStorage.setItem(k, v); } catch(e){}
+      }
+      if(typeof renderAll === 'function') renderAll();
+      if(typeof syncTzSelects === 'function') syncTzSelects();
+      syncAlertsButtons();
+      buildAlertsCats();
+      syncPushSubscription();
+      alert('Settings restored.');
+    } catch(e){ alert('That file is not a valid settings backup.'); }
+  };
+  reader.onerror = () => alert('Could not read that file.');
+  reader.readAsText(file);
 }
 async function fireAlert(title, body, tag){
   const opts = { body, tag, icon: '/assets/img/icons/favicon-32.png', data: { url: '/' } };

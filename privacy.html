@@ -14,7 +14,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/assets/css/main.css?v=44">
+  <link rel="stylesheet" href="/assets/css/main.css?v=61">
 </head>
 <body>
   <header class="top-header">
@@ -44,24 +44,42 @@
 
   <main class="wrap policy-page" id="main">
     <div class="section-head"><h1>Privacy Policy</h1><div class="rule"></div></div>
-    <p class="policy-updated">Last updated: 4 September 2026</p>
+    <p class="policy-updated">Last updated: 14 September 2026</p>
     <section class="policy-content">
-      <p class="policy-lead">No accounts. No tracking. Here's everything that stays on your device.</p>
-      <h2>What this site does</h2>
-      <p>SWGOH Resources is a fan-made schedule tracker. No sign-in, no email, nothing to submit — open the page and read the schedule.</p>
-      <h2>Stored on your device</h2>
-      <p>Your timezone pick and Territory Battle selections live in this browser's local storage. Dismissing the cookie notice stores one cookie (<code>swgoh_cookie_notice=dismissed</code>). All of it stays on your device.</p>
-      <p>Clear the site's data in your browser settings and everything resets to defaults.</p>
+      <p class="policy-lead">No accounts. No analytics. No ads. This page lists everything the site stores or sends, and why.</p>
+      <h2>Who operates this site</h2>
+      <p>SWGOH Resources is a non-commercial fan project maintained by an individual (Dom) and hosted as a static site on GitHub Pages. There is no company, no data protection officer, and no customer database — the contact route for anything on this page is the Report Issue button (top right), which reaches Dom on Discord.</p>
+      <h2>What we collect by default: nothing</h2>
+      <p>Simply reading the schedule sends us nothing identifying. There are no accounts, no sign-in, no email fields, no analytics beacons, no advertising trackers, and nothing is sold or shared for marketing — there is nothing to sell. Like any website, the hosting infrastructure (GitHub Pages) necessarily processes technical connection data such as IP addresses to deliver pages; that logging sits with the host under its own policies and is not visible to or used by this project.</p>
+      <h2>What stays in your browser</h2>
+      <p>Your preferences never leave your device unless you switch on the features below. Everything is stored with standard browser storage and is read back only to render the page for you:</p>
+      <p><strong>Display timezone</strong> (<code>swgoh-tz</code>) — how you like times shown. Kept until you change it or clear site data.</p>
+      <p><strong>Territory Battle picks</strong> (<code>swgoh-tb-choice</code>, plus per-side variants) — which TB your guild runs, so phase labels and art follow your selection. Kept until changed or cleared.</p>
+      <p><strong>Alert switch, categories and history</strong> (<code>swgoh-alerts</code>, <code>swgoh-alert-cats</code>, <code>swgoh-alerts-seen</code>) — whether in-site alerts are on, which event families you chose, and which alerts already fired so nothing repeats. Alert history prunes itself after 7 days; the rest stays until changed or cleared. The Alerts panel can export all of these to a file you keep.</p>
+      <p><strong>Cookie-notice dismissal</strong> (<code>swgoh_cookie_notice=dismissed</code>) — a single cookie, six months, <code>SameSite=Lax</code>, holding nothing but the fact you dismissed the notice. The full inventory, including expiry behaviour, is in the <a href="cookie-policy.html">Cookie Policy</a>.</p>
+      <p>Clearing the site's data in your browser settings wipes all of the above at once and the site returns to defaults.</p>
+      <h2>Notifications and push data</h2>
+      <p>Browser notification permission itself is held by your browser, not by this site. In-site alerts are computed locally from the schedule and never transmit anything.</p>
+      <p>Closed-phone pushes are strictly opt-in and only exist if you enable alerts <em>and</em> the site is connected to Firebase (see the Alerts panel). In that case two things happen: the Firebase SDK keeps a push token on your device, and a record containing that token, your chosen alert categories and a timestamp is written to the project's Firestore database (<code>push_subscriptions/{token}</code>) so the scheduled sender knows where to deliver. No name, email, location or message content beyond the event reminder itself is stored. Disabling alerts deletes that record automatically; dead tokens are cleaned up by the sender.</p>
+      <p>The alternative ntfy channel (see README) posts event reminders to a topic you choose. ntfy sees the topic and message text only — it is never given anything identifying by this site.</p>
       <h2>Third parties</h2>
-      <p>Google Fonts serves the fonts. Links to swgoh.gg leave this site. Their policies apply on their end — this site controls neither.</p>
-      <h2>Analytics and ads</h2>
-      <p>None. No analytics, no ads, no behavioral tracking, nothing for sale.</p>
+      <p><strong>GitHub Pages</strong> hosts these files and delivers them over HTTPS. <strong>Google Fonts</strong> serves the typefaces, which means your browser requests font files from Google when pages load. <strong>Firebase/Google</strong> is involved only if you enable push alerts, as described above. <strong>swgoh.gg</strong> links leave this site entirely. <strong>Discord</strong> is only a contact channel if you choose to message. Each of these parties operates under its own policies, which this project does not control.</p>
+      <h2>Legal bases (UK/EU visitors)</h2>
+      <p>Where data protection law requires a basis: push-alert processing rests on your <strong>consent</strong> (the Alerts switch — withdraw it any time by switching off, with the same ease as switching on); local preferences rest on consent via your use of the settings; any residual hosting/technical processing rests on <strong>legitimate interests</strong> in operating a secure, working website. There is no profiling and no automated decision-making.</p>
+      <h2>How long data is kept</h2>
+      <p>Browser preferences persist until you clear them. Push subscription records persist until you disable alerts, the token expires, or the sender's cleanup removes a dead token. Exported settings files live wherever you save them — they are yours to keep or delete.</p>
+      <h2>Your rights</h2>
+      <p>You hold the usual data rights — access, correction, deletion, portability, objection and restriction — and because almost everything lives in your own browser, you can exercise most of them instantly: inspect anything in developer tools, export it from the Alerts panel, or wipe it via clear-site-data. For the server-side push record, disabling alerts deletes it. Anything else, including questions about these rights, goes through the Report Issue button, and substantive requests are answered within one month.</p>
       <h2>Children</h2>
-      <p>Nothing is collected from anyone, kids included — there are no accounts and nothing to submit.</p>
-      <h2>Changes</h2>
-      <p>This page changes when the site changes. The date above says when.</p>
+      <p>The schedule is general-audience game information with no accounts and nothing to submit, so nothing is knowingly collected from children. A parent or guardian who believes a child has enabled push alerts on a shared device can simply switch alerts off, which removes the subscription.</p>
+      <h2>Security</h2>
+      <p>Traffic is HTTPS-only, stored data is limited to what the features need, and push delivery uses platform credentials held as repository secrets rather than in the site's code. No system is impregnable; suspected issues can be reported the same way as schedule errors.</p>
+      <h2>International transfers</h2>
+      <p>Hosting and any enabled push infrastructure may process data outside your country (including the US, where GitHub and Google operate). Where UK/EU rules apply, the transfer relies on the same consent described above and on those providers' published safeguards.</p>
+      <h2>Changes to this policy</h2>
+      <p>New features mean new paragraphs here first, with a fresh date above. Continued use after a change means you accept the updated page.</p>
       <h2>Contact</h2>
-      <p>Schedule wrong, or a question about this page? Hit Report Issue (top right) to reach Dom on Discord.</p>
+      <p>Corrections, rights requests, or questions about this page: hit Report Issue (top right) to reach Dom on Discord.</p>
     </section>
   </main>
   <footer class="site-footer"><div class="footer-inner"><div class="footer-main"><div class="footer-brand-col"><div class="footer-brand">SWGOH<span>::</span>RESOURCES</div><p class="footer-tagline">Day-by-day GAC, Territory War, Territory Battle, Conquest and Marquee event tracker.</p></div><nav class="footer-links"><span class="footer-links-label">Navigate</span><a href="/">Home</a></nav><div class="footer-contact"><div class="creator-line">Maintained by <strong>Dom</strong> — found a schedule issue?</div><button class="discord-copy-btn" onclick="copyDiscordHandle(this)" title="Click to copy Discord handle"><span>@granddom</span></button></div></div><div class="footer-rule"></div><div class="footer-legal"><p class="footer-note">Schedule mixes expected rotation dates with live game data — check live event timings at <a href="https://swgoh.gg/events/" target="_blank" rel="noopener">swgoh.gg/events</a>. Fan-made planning tool for Star Wars: Galaxy of Heroes. Not affiliated with, endorsed, sponsored, or specifically approved by Electronic Arts, Capital Games, Disney, or Lucasfilm. All game assets, trademarks, and character names are property of their respective owners.</p><nav class="legal-links" aria-label="Legal"><a href="privacy.html">Privacy</a><a href="cookie-policy.html">Cookies</a><a href="terms.html">Terms</a></nav><div class="footer-bottom"><span id="footerMeta"></span><span class="dot">·</span><span id="footerYear"></span></div></div></div></footer>

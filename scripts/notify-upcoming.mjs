@@ -38,6 +38,24 @@ export function filterByCategories(send, keep) {
   return send.filter((c) => keep.has(c.category));
 }
 
+// FCM per-message error codes meaning "this token will never work
+// again" — their Firestore docs are deleted so later runs stop
+// retrying dead devices. Anything else (network blips, quota)
+// keeps the key for retry.
+const DEAD_TOKEN_CODES = new Set([
+  'messaging/registration-token-not-registered',
+  'messaging/invalid-argument',
+]);
+
+export function deadTokens(response, tokens) {
+  const out = [];
+  for (let i = 0; i < tokens.length; i++) {
+    const err = response?.responses?.[i]?.error;
+    if (err && DEAD_TOKEN_CODES.has(err.code)) out.push(tokens[i]);
+  }
+  return out;
+}
+
 let fcm = null; // { app, admin } once initialised
 let fcmFailed = false;
 async function fcmGet() {
@@ -190,12 +208,20 @@ async function main() {
           ok = false;
         } else {
           try {
-            const resp = await f.admin.messaging().sendEachForMulticast({
-              tokens,
-              notification: { title: c.title, body },
-            });
-            console.log(`FCM: ${resp.successCount}/${tokens.length} sent — ${c.title}`);
-            if (resp.failureCount > 0) ok = false;
+          const resp = await f.admin.messaging().sendEachForMulticast({
+            tokens,
+            notification: { title: c.title, body },
+          });
+          console.log(`FCM: ${resp.successCount}/${tokens.length} sent — ${c.title}`);
+          for (const dead of deadTokens(resp, tokens)) {
+            try {
+              await f.admin.firestore().collection('push_subscriptions').doc(dead).delete();
+              console.log(`FCM: removed dead token ${dead.slice(0, 12)}…`);
+            } catch (err) {
+              console.warn(`FCM: dead-token cleanup failed (${err.message})`);
+            }
+          }
+          if (resp.failureCount >= tokens.length) ok = false;
           } catch (err) {
             console.warn(`FCM failed for ${c.key} (${err.message}) — will retry next run`);
             ok = false;

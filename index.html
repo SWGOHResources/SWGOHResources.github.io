@@ -253,6 +253,13 @@
     <label class="alert-row alert-master"><input type="checkbox" id="alertsEnabledBox"> <span>Enable alerts on this device</span></label>
     <div class="alert-cats" id="alertCatsBox" role="group" aria-label="Alert categories"></div>
 
+    <div class="alert-backup">
+      <button class="btn" id="exportAlertsBtn" type="button">Export settings</button>
+      <label class="btn" for="importAlertsFile">Import settings</label>
+      <input type="file" id="importAlertsFile" accept="application/json,.json" hidden>
+    </div>
+    <p class="alert-backup-note">Saves timezone, TB picks and alert choices to a file — re-import after clearing browser data.</p>
+
     <div class="about-actions">
       <button class="btn primary" id="closeAlertsBtn2">Done</button>
     </div>
@@ -289,6 +296,6 @@
 <script defer src="assets/js/config.js?v=27"></script>
 <script defer src="assets/js/time.js?v=40"></script>
 <script defer src="assets/js/render.js?v=63"></script>
-<script defer src="assets/js/app.js?v=26"></script>
+<script defer src="assets/js/app.js?v=27"></script>
 </body>
 </html>

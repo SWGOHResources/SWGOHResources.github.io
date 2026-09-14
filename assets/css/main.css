@@ -790,6 +790,9 @@ body.modal-open .starfield span.tw {
 .alert-cats { display: grid; gap: 6px; margin-bottom: 16px; }
 .alert-cats .alert-row { margin-bottom: 0; font-weight: 500; color: var(--text2); }
 .alert-cats .alert-row span small { display: block; font-weight: 400; font-size: 11px; color: var(--text3); }
+.alert-backup { display: flex; gap: 8px; margin-bottom: 8px; }
+.alert-backup .btn { flex: 1; text-align: center; justify-content: center; cursor: pointer; }
+.alert-backup-note { font-size: 11px; color: var(--text3); line-height: 1.5; margin-bottom: 16px; }
 .about-modal .btn.primary { background: var(--amber); border-color: var(--amber); color: #1a1104; font-weight: 700; }
 .about-modal .btn.primary:hover { background: #ecbc72; }
 @media (max-width: 600px) {

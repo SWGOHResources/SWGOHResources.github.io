@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { collectNotifications, filterByCategories, phraseUntil } from '../scripts/notify-upcoming.mjs';
+import { collectNotifications, deadTokens, filterByCategories, phraseUntil } from '../scripts/notify-upcoming.mjs';
 
 const NOW = Date.parse('2026-09-14T16:00:00Z');
 const M = 60000;
@@ -41,6 +41,19 @@ test('category filter keeps majors for the shared topic', () => {
     filterByCategories(send, new Set(['marquee', 'tw'])).map((c) => c.key),
     ['a', 'c'],
   );
+});
+
+test('dead FCM tokens are identified for cleanup, live ones kept', () => {
+  const resp = {
+    responses: [
+      {},
+      { error: { code: 'messaging/registration-token-not-registered' } },
+      { error: { code: 'messaging/invalid-argument' } },
+      { error: { code: 'messaging/quota-exceeded' } },
+    ],
+  };
+  assert.deepEqual(deadTokens(resp, ['t0', 't1', 't2', 't3']), ['t1', 't2']);
+  assert.deepEqual(deadTokens(null, ['t0']), []);
 });
 
 test('phrasing counts down and back up from the start', () => {
