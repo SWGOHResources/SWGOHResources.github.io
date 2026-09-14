@@ -1,5 +1,5 @@
 {
- "pulledAt": 1789346491040,
+ "pulledAt": 1789422824643,
  "gameDataVersion": "0.40.5:MoxBSQUYRjuplwCT1HagpQ",
  "events": [
   {
@@ -8,7 +8,7 @@
    "kind": "conquest",
    "startMs": 1788199200000,
    "endMs": 1789408800000,
-   "live": true,
+   "live": false,
    "art": "live/conquestpass-promo-basic-01.png"
   },
   {
@@ -22,21 +22,12 @@
    "art": "live/events-stormtrooperconcept.png"
   },
   {
-   "id": "EVENT_ASSAULT_EWOK",
-   "name": "Forest Moon Assault Battles",
-   "kind": "assault",
-   "startMs": 1789196400000,
-   "endMs": 1789282800000,
-   "live": false,
-   "art": "live/events-forestmoon.png"
-  },
-  {
    "id": "EVENT_RESOURCE_CONTRABAND_CARGO",
    "name": "Contraband Cargo",
    "kind": "event",
    "startMs": 1789293600000,
    "endMs": 1789380000000,
-   "live": true,
+   "live": false,
    "art": "live/events-contrabandcargo.png"
   },
   {
@@ -45,7 +36,7 @@
    "kind": "omega",
    "startMs": 1789369200000,
    "endMs": 1789455600000,
-   "live": false,
+   "live": true,
    "art": "live/events-galactic-challenges-coruscant.png"
   },
   {
@@ -54,7 +45,7 @@
    "kind": "smugglers-run",
    "startMs": 1789380000000,
    "endMs": 1789466400000,
-   "live": false,
+   "live": true,
    "art": "live/events-smugglersrun.png"
   },
   {
@@ -137,6 +128,15 @@
    "endMs": 1790146800000,
    "live": false,
    "art": "live/events-dathomir-battle.png"
+  },
+  {
+   "id": "EVENT_ASSAULT_REBEL",
+   "name": "Rebel Roundup Assault Battle",
+   "kind": "assault",
+   "startMs": 1790146800000,
+   "endMs": 1790233200000,
+   "live": false,
+   "art": "live/events-rebelassult.png"
   }
  ]
 }
