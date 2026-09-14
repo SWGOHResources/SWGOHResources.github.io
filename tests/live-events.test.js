@@ -246,17 +246,16 @@ test('live cards fall back to generic art for unknown kinds', () => {
 test('explorer day view overlays live events touching that day', () => {
   const { ctx, els } = loadRenderEngine();
   const run = src => vm.runInContext(src, ctx);
+  // Unit-level: overlap follows the UTC calendar day bucket.
+  // Anchored to dayStart — now-based offsets flake outside 18:00-00:00 UTC,
+  // when Date.now() sits in the next calendar bucket past currentDayStartMs.
+  const dayStart = run('getGameStatus().currentDayStartMs');
   const now = run('Date.now()');
   run(`liveEventsCache = { pulledAt: ${now}, gameDataVersion: 'v', events: [
-    { id: 'a', name: 'Live Thing', kind: 'marquee', startMs: ${now - 3600000}, endMs: ${now + 3600000} },
-    { id: 'b', name: 'Far Future', kind: 'omega', startMs: ${now + 30 * 86400000}, endMs: ${now + 31 * 86400000} }
+    { id: 'a', name: 'Live Thing', kind: 'marquee', startMs: ${dayStart} + 3600000, endMs: ${dayStart} + 7200000 },
+    { id: 'b', name: 'Far Future', kind: 'omega', startMs: ${dayStart} + 30 * 86400000 + 3600000, endMs: ${dayStart} + 31 * 86400000 }
   ] }`);
-  // Unit-level: overlap follows the UTC calendar day bucket.
-  // (Anchored to dayStart — now-based offsets flake near midnight.)
-  const dayStart = run('getGameStatus().currentDayStartMs');
   assert.equal(run(`liveEventsForDay(${dayStart}).length`), 1);
-  run(`liveEventsCache.events[1].startMs = ${dayStart} + 30 * 86400000 + 3600000;
-       liveEventsCache.events[1].endMs = ${dayStart} + 31 * 86400000;`);
   assert.equal(run(`liveEventsForDay(${dayStart} + 30 * 86400000).length`), 1);
   assert.equal(run(`liveEventsForDay(${dayStart} + 5 * 86400000).length`), 0);
   // Rendered: viewed day leads with live image cards carrying the same
