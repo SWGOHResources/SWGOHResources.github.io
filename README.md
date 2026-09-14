@@ -114,6 +114,16 @@ via [ntfy](https://ntfy.sh) (free, no account). One-time setup:
 Sent keys persist in `assets/data/notify-state.json` (auto-committed),
 so delayed/retried runs never double-send.
 
+## In-site alerts (no setup, page must be open)
+
+The header **Alerts** button uses the browser Notifications API plus the
+service worker: while the page is open it checks every 30s and notifies
+~15 minutes before event starts (same picker as the CI script, so
+wording matches). Toggle + seen state persist per device. On iOS Safari
+the site must be added to the Home Screen before permission can be
+granted. This covers an open phone/desktop browser; pushes to a closed
+phone still need the ntfy workflow above.
+
 Scripts load in order at the end of `<body>` as deferred classic scripts
 (ordered, non-blocking) so `onclick="…"` handlers keep working:
 

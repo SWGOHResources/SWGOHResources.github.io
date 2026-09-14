@@ -91,34 +91,15 @@ async function main() {
   const nowMs = Date.now();
   const ctx = loadEngine();
   const run = (src) => vm.runInContext(src, ctx);
-  const st = run(`getGameStatus(${nowMs})`);
-  const candidates = [];
-
-  // Rotation markers today + tomorrow at their real start instants.
-  for (const off of [0, 1]) {
-    const day = run(`explorerDayAt(getGameStatus(${nowMs}), ${off})`);
-    for (const item of day.items ?? []) {
-      if (item.icon === 'tw_payout') continue; // 30s inbox moment, not an event
-      const startMs = run(`eventStartMs(${JSON.stringify(item)}, ${day.dMs})`);
-      const label = run(`tenseByStart(getFullScheduleLabel(${JSON.stringify(item)}), ${JSON.stringify(item)}, ${day.dMs}, ${nowMs})`);
-      candidates.push({
-        key: `rot|${item.icon}|${day.dMs}`,
-        title: label,
-        startMs,
-        detail: `Day ${day.dIdx}`,
-      });
-    }
-  }
-
-  // Live Comlink events starting in the window.
   const live = readJson(LIVE_PATH);
-  for (const e of live?.events ?? []) {
-    if (e.kind === 'gac') continue; // hardcoded round cards cover GAC
-    candidates.push({ key: `live|${e.id}|${e.startMs}`, title: e.name, startMs: e.startMs, detail: 'live' });
-  }
+  const liveList = (live?.events ?? []).map((e) => ({ id: e.id, kind: e.kind, name: e.name, startMs: e.startMs }));
+  // One shared picker (render.js upcomingStarts): rotation markers at
+  // their real start instants plus live events, inside the window.
+  const picked = run(`upcomingStarts(getGameStatus(${nowMs}), ${JSON.stringify(liveList)}, ${nowMs}, ${LOOKAHEAD_MS}, ${CATCHUP_MS})`);
+  const candidates = picked.map((c) => ({ key: c.key, title: c.title, startMs: c.startMs }));
 
   const state = readJson(STATE_PATH) ?? {};
-  console.log(`checked ${candidates.length} upcoming starts (${live?.events?.length ?? 0} live)`);
+  console.log(`checked ${candidates.length} upcoming starts (${liveList.length} live)`);
   const { send, notified } = collectNotifications(candidates, state, nowMs);
 
   if (!NTFY_TOPIC) {

@@ -773,6 +773,31 @@ test('future cards count to their own start instant, not the changeover', () => 
   assert.ok(pills.some(p => /^In /.test(p)), 'expected countdown pills');
 });
 
+test('upcomingStarts collects real starts inside the window', () => {
+  const { ctx } = loadRenderEngine();
+  const run = src => vm.runInContext(src, ctx);
+  // 30 minutes before tomorrow's changeover: 18:00 markers included,
+  // 21:00 GAC excluded with a 45-minute lookahead.
+  const now = run('getGameStatus().currentDayStartMs + 86400000 + 17.5 * 3600000');
+  const out = run(`upcomingStarts(getGameStatus(${now}), [
+    { id: 'l1', kind: 'marquee', name: 'Live Soon', startMs: ${now} + 10 * 60000 },
+    { id: 'l2', kind: 'gac', name: 'Live GAC', startMs: ${now} + 10 * 60000 },
+    { id: 'l3', kind: 'omega', name: 'Too Far', startMs: ${now} + 5 * 3600000 }
+  ], ${now}, 45 * 60000, 10 * 60000)`);
+  assert.ok(out.length >= 1, 'expected rotation + live candidates');
+  for (const c of out) {
+    assert.ok(c.startMs >= now - 10 * 60000 && c.startMs <= now + 45 * 60000, `${c.key} in window`);
+    assert.ok(!c.key.includes('tw_payout'), 'no payout markers');
+  }
+  assert.ok(out.some(c => c.key.startsWith('live|l1|')), 'live event included');
+  assert.ok(!out.some(c => c.key.includes('|l2|')), 'live GAC skipped');
+  assert.ok(!out.some(c => c.key.includes('|l3|')), 'distant live skipped');
+  const keys = Array.from(out, c => c.key);
+  assert.equal(new Set(keys).size, keys.length, 'keys unique');
+  const starts = Array.from(out, c => c.startMs);
+  assert.deepEqual([...starts].sort((a, b) => a - b), starts, 'sorted');
+});
+
 test('day pills show era-day numbers with a calendar caption', () => {
   const { ctx, els } = loadRenderEngine();
   const run = src => vm.runInContext(src, ctx);

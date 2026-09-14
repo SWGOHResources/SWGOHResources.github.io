@@ -3,7 +3,7 @@
    (this automatically picks up ?v= cache-busters); page navigations
    go network-first so the schedule stays fresh, falling back to cache
    offline. Bump CACHE below on deploys that change the app shell. */
-const CACHE = 'swgoh-schedule-v2';
+const CACHE = 'swgoh-schedule-v3';
 const CORE = ['/', '/index.html', '/site.webmanifest'];
 
 self.addEventListener('install', event => {
@@ -64,6 +64,25 @@ self.addEventListener('fetch', event => {
         }
         return res;
       });
+    })
+  );
+});
+
+// Tapping an event alert focuses the open schedule (or opens it).
+self.addEventListener('notificationclick', event => {
+  event.notification.close();
+  const url = (event.notification.data && event.notification.data.url) || '/';
+  event.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clients => {
+      for (const c of clients) {
+        if ('focus' in c) {
+          try {
+            if ('navigate' in c) c.navigate(new URL(url, self.location.origin).href);
+          } catch (e) {}
+          return c.focus();
+        }
+      }
+      return self.clients.openWindow(url);
     })
   );
 });

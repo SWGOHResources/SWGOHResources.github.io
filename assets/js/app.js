@@ -234,6 +234,100 @@ applyDayHash();
   });
 }
 
+/* In-site event alerts — independent of the CI ntfy script (which
+   pushes to a closed phone). While this page is open, every 30s check
+   for starts inside 15 minutes and raise a local notification through
+   the service worker. Needs Notification permission (on iOS Safari the
+   site must be added to the Home Screen first). Toggle + seen keys
+   persist per device; seen keys prune after 7 days. */
+const ALERTS_KEY = 'swgoh-alerts';
+const ALERTS_SEEN_KEY = 'swgoh-alerts-seen';
+const ALERT_LOOKAHEAD_MS = 15 * 60000;
+const ALERT_CATCHUP_MS = 2 * 60000;
+function alertsEnabled(){
+  try { return localStorage.getItem(ALERTS_KEY) === '1'; } catch(e){ return false; }
+}
+function setAlertsEnabled(on){
+  try { localStorage.setItem(ALERTS_KEY, on ? '1' : '0'); } catch(e){}
+  syncAlertsButtons();
+}
+function syncAlertsButtons(){
+  const on = alertsEnabled();
+  const blocked = typeof Notification !== 'undefined' && Notification.permission === 'denied';
+  ['alertsBtn', 'alertsBtnMobile'].forEach(id => {
+    const b = document.getElementById(id);
+    if(!b) return;
+    b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    b.classList.toggle('on', on);
+    const label = b.querySelector('.ab-label');
+    if(label) label.textContent = blocked ? 'Alerts blocked' : (on ? 'Alerts on' : 'Alerts');
+    b.title = blocked
+      ? 'Notifications are blocked for this site — allow them in the browser site settings, then toggle again.'
+      : (on ? 'Event start alerts on — tap to turn off.' : 'Notify me ~15 minutes before events start (asks permission).');
+  });
+}
+async function toggleAlerts(){
+  if(typeof Notification === 'undefined'){ alert('This browser does not support notifications.'); return; }
+  if(alertsEnabled()){ setAlertsEnabled(false); return; }
+  if(Notification.permission === 'denied'){
+    syncAlertsButtons();
+    alert('Notifications are blocked for this site. Allow them in the browser site settings, then toggle Alerts again.');
+    return;
+  }
+  try {
+    const perm = await Notification.requestPermission();
+    setAlertsEnabled(perm === 'granted');
+    if(perm !== 'granted') alert('Notifications were not allowed — Alerts stays off.');
+  } catch(e){ /* dismissed */
+    syncAlertsButtons();
+  }
+}
+async function fireAlert(title, body, tag){
+  const opts = { body, tag, icon: '/assets/img/icons/favicon-32.png', data: { url: '/' } };
+  try {
+    if('serviceWorker' in navigator){
+      const reg = await navigator.serviceWorker.ready;
+      await reg.showNotification(title, opts);
+      return;
+    }
+  } catch(e){}
+  try {
+    if('Notification' in window && Notification.permission === 'granted') new Notification(title, opts);
+  } catch(e){}
+}
+function readAlertSeen(){
+  try { return JSON.parse(localStorage.getItem(ALERTS_SEEN_KEY) || '{}'); } catch(e){ return {}; }
+}
+function writeAlertSeen(seen){
+  try { localStorage.setItem(ALERTS_SEEN_KEY, JSON.stringify(seen)); } catch(e){}
+}
+setInterval(async () => {
+  try {
+    if(!alertsEnabled()) return;
+    if(typeof Notification === 'undefined' || Notification.permission !== 'granted') return;
+    if(typeof upcomingStarts !== 'function' || typeof getGameStatus !== 'function') return;
+    const st = getGameStatus();
+    const live = (typeof liveEventsCache !== 'undefined' && liveEventsCache && liveEventsCache.events) || [];
+    const cands = upcomingStarts(st, live, st.nowMs, ALERT_LOOKAHEAD_MS, ALERT_CATCHUP_MS);
+    if(!cands.length) return;
+    const seen = readAlertSeen();
+    let changed = false;
+    for(const c of cands){
+      if(seen[c.key]) continue;
+      seen[c.key] = c.startMs;
+      changed = true;
+      const until = (typeof formatGacUntil === 'function') ? formatGacUntil(st.nowMs, c.startMs) : 'soon';
+      const time = new Date(c.startMs).toISOString().slice(11, 16) + ' UTC';
+      fireAlert(c.title, `${until === 'now' ? 'Starting now' : 'Starts ' + until} (${time})`, c.key);
+    }
+    for(const k of Object.keys(seen)){
+      if(seen[k] < st.nowMs - 7 * 86400000){ delete seen[k]; changed = true; }
+    }
+    if(changed) writeAlertSeen(seen);
+  } catch(e){}
+}, 30000);
+syncAlertsButtons();
+
 /* Display timezone picker (header + mobile panel). Defaults to the
    device's timezone; the choice persists and re-renders all dates. */
 function tzSelectLabel(value){

@@ -573,6 +573,39 @@ function liveEventsForDay(dayStartMs){
     .sort((a, b) => a.startMs - b.startMs);
 }
 
+/* Upcoming-start candidates for alerts, shared by the in-site Alerts
+   toggle (app.js) and the CI ntfy script: rotation markers today +
+   tomorrow at their real start instants (eventStartMs) plus live
+   events, inside [nowMs-catchupMs, nowMs+lookaheadMs]. TW payout is
+   skipped (30 seconds, not an event); live GAC is skipped (hardcoded
+   round cards cover it). Titles carry card tense at nowMs. */
+function upcomingStarts(st, liveEvents, nowMs, lookaheadMs, catchupMs){
+  const out = [];
+  if(!st || !Number.isFinite(nowMs)) return out;
+  const from = nowMs - (catchupMs || 0);
+  const to = nowMs + (lookaheadMs || 0);
+  for(const off of [0, 1]){
+    const day = explorerDayAt(st, off);
+    for(const item of day.items || []){
+      if(item.icon === 'tw_payout') continue;
+      const startMs = eventStartMs(item, day.dMs);
+      if(!(startMs >= from && startMs <= to)) continue;
+      out.push({
+        key: `rot|${item.icon}|${day.dMs}`,
+        title: tenseByStart(getFullScheduleLabel(item), item, day.dMs, nowMs),
+        startMs,
+      });
+    }
+  }
+  for(const e of liveEvents || []){
+    if(!e || e.kind === 'gac') continue;
+    if(!(e.startMs >= from && e.startMs <= to)) continue;
+    out.push({ key: `live|${e.id}|${e.startMs}`, title: e.name, startMs: e.startMs });
+  }
+  out.sort((a, b) => a.startMs - b.startMs);
+  return out;
+}
+
 /* A day shows full cards only for what happens on it: events starting
    (or ending) that day. Longer runners (over 24h) also get a persistent
    badge in the indicators row — same shape as the coliseum boss, with

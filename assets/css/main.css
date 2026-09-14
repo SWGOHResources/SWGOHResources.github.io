@@ -151,6 +151,8 @@ body.modal-open .starfield span.tw {
   cursor: pointer; transition: 0.15s; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;
 }
 .gear-btn:hover { border-color: var(--amber-border); color: var(--amber); }
+.gear-btn.on { border-color: var(--amber-border); color: var(--amber); }
+.gear-btn svg { flex: 0 0 auto; }
 
 /* ─── Timezone picker ─── */
 .tz-select {
