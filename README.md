@@ -96,34 +96,23 @@ npm run events:pull
 `tests/live-events.test.js` fails if the committed snapshot is older
 than 48h, so a broken refresh shows up in CI.
 
-> Git workflow: the bots (`live-events.yml`, `notify.yml`) push to
+> Git workflow: the `live-events.yml` bot pushes to
 > `main` on a schedule, so `main` moves under you. Always run
 > `npm run sync` (fetch + rebase onto `origin/main`) before editing
-> or committing. Don't commit `assets/data/live-events.json`,
-> `assets/data/notify-state.json`, or `assets/img/live/` by hand
+> or committing. Don't commit `assets/data/live-events.json`
+> or `assets/img/live/` by hand
 > unless you're doing an intentional manual refresh — a local
 > pre-commit hook blocks `main` commits made while behind upstream
 > for exactly this reason.
-
-## In-site alerts (no setup, page must be open)
-
-The header **Alerts** button opens notification settings: master switch
-plus per-category checkboxes (Marquee, Conquest, TB, TW, GAC, Fleet on
-by default; other events off). While the page is open it checks every
-30s and notifies about an hour before event starts (or just after, if
-you open the page late). Toggle + seen state persist per device. On iOS
-Safari the site must be added to the Home Screen before permission can
-be granted. This covers an open phone/desktop browser; pushes to a
-closed phone need Firebase above.
 
 Scripts load in order at the end of `<body>` as deferred classic scripts
 (ordered, non-blocking) so `onclick="…"` handlers keep working:
 
 ```html
-<script defer src="assets/js/config.js?v=13"></script>
-<script defer src="assets/js/time.js?v=13"></script>
-<script defer src="assets/js/render.js?v=11"></script>
-<script defer src="assets/js/app.js?v=11"></script>
+<script defer src="assets/js/config.js?v=27"></script>
+<script defer src="assets/js/time.js?v=41"></script>
+<script defer src="assets/js/render.js?v=64"></script>
+<script defer src="assets/js/app.js?v=28"></script>
 ```
 
 Bump the `?v=` number on every deploy, or browsers may keep serving

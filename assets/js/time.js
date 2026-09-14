@@ -197,6 +197,7 @@ function isFitArt(icon){
 }
 
 function categoryFor(icon){
+  if(typeof icon !== 'string') return 'era';
   if(icon.startsWith('gac')) return 'gac';
   if(icon.startsWith('conquest') || icon === 'proving_ground') return 'conquest';
   if(icon.startsWith('tw') || icon === 'rote' || icon === 'tb_ends' || icon === 'smugglersrun') return 'guild';
@@ -995,37 +996,6 @@ function subDayCount(nowMs, targetMs, dayLabel){
   if(left < 86400000) return `In ${formatHoursMinutes(left)}`;
   const until = formatDayCount(left);
   return until.charAt(0).toUpperCase() + until.slice(1);
-}
-
-/* Alert categories (notification settings). Majors default on;
-   "other" (smuggling runs, updates, one-offs…) defaults off. */
-const ALERT_CATEGORIES = [
-  { id: 'marquee', label: 'Marquee' },
-  { id: 'conquest', label: 'Conquest' },
-  { id: 'tb', label: 'Territory Battles' },
-  { id: 'tw', label: 'Territory Wars' },
-  { id: 'gac', label: 'Grand Arena' },
-  { id: 'fleet', label: 'Fleet Mastery' },
-  { id: 'other', label: 'Other events' },
-];
-const ALERT_DEFAULT_CATS = ['marquee', 'conquest', 'tb', 'tw', 'gac', 'fleet'];
-
-/* Rotation icon / live kind → alert category. */
-function alertCategoryFor(icon, kind){
-  const ic = String(icon || '');
-  if(/^marquee_|^era_challenge_/.test(ic)) return 'marquee';
-  if(/^conquest/.test(ic) || ic === 'proving_ground') return 'conquest';
-  if(ic === 'rote' || ic === 'tb_ends') return 'tb';
-  if(/^tw_/.test(ic)) return 'tw';
-  if(/^gac_/.test(ic)) return 'gac';
-  if(/^fleet_/.test(ic)) return 'fleet';
-  const k = String(kind || '');
-  if(k === 'marquee' || k === 'era-challenge') return 'marquee';
-  if(k === 'conquest' || k === 'proving-grounds') return 'conquest';
-  if(k === 'fleet') return 'fleet';
-  if(k === 'gac') return 'gac';
-  if(k === 'tb' || k === 'tw') return k;
-  return 'other';
 }
 
 /* Absolute era day (1-based) encoded in the shareable URL hash

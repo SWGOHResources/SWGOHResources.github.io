@@ -72,6 +72,7 @@ function copyDiscordHandle(button){
   navigator.clipboard.writeText('granddom').then(() => {
     const originalText = button.innerHTML;
     button.classList.add('copied');
+    button.setAttribute('aria-live', 'polite');
     button.innerHTML = '<span>✓ Copied!</span>';
     setTimeout(() => {
       button.classList.remove('copied');

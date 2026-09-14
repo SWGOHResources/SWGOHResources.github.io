@@ -53,7 +53,7 @@ function renderUnlockWindows(st){
   const eraCountLabel = st.preEra
     ? (st.daysUntilEra <= 0 ? 'Today' : `In ${st.daysUntilEra} day${st.daysUntilEra === 1 ? '' : 's'}`)
     : (eraAbs <= st.rawDayIndex || eraDays <= 0 ? 'Live now' : subDayCount(st.nowMs, eraUnlockMs, `In ${eraDays} day${eraDays === 1 ? '' : 's'}`));
-  const eraBadge = st.preEra ? 'UPCOMING' : 'ENDING';
+  const eraBadge = st.preEra ? 'UPCOMING' : (eraDays <= 7 ? 'ENDING' : 'ACTIVE');
   const eraMain = eraCountLabel;
   const eraSub = st.preEra ? `${eraDateLabel} — the new era begins` : `${eraDateLabel} — current era ends, units enter legacy modes`;
 
@@ -226,6 +226,7 @@ function renderStaticMeta(){
 }
 
 function renderMergedHero(st){
+  if(!document.getElementById('mhDayVal')) return;
   const episodeCount = Math.ceil(eraLengthDays() / episodeLengthDays());
   const weeksPerEpisode = Math.ceil(episodeLengthDays() / 7);
   document.getElementById('mhDayVal').textContent = st.bossEraDay;
@@ -265,6 +266,7 @@ function renderMergedHero(st){
 
 function renderStatusDashboard(st){
   const container = document.getElementById('statusDashboard');
+  if(!container) return;
 
   const gac = getGacStatus(st);
   const conq = getConquestStatus(st);
@@ -304,8 +306,8 @@ function renderStatusDashboard(st){
     <div class="status-card amber-card">
       <div class="sc-header"><span class="sc-title">Guild Events</span><span class="sc-badge ${isGuildActive ? 'amber' : 'off'}">${isGuildActive ? 'ACTIVE' : 'IDLE'}</span></div>
       <div class="sc-main" style="margin-bottom:0">
-        <div class="sc-val" style="font-size:15px;margin-bottom:2px">Now: <span style="color:var(--text);font-weight:600">${todayGuildSummary}</span></div>
-        <div class="sc-sub" style="font-size:12px">Upcoming: <span style="color:var(--amber)">${tmrwGuildSummary}</span></div>
+        <div class="sc-val" style="font-size:15px;margin-bottom:2px">Today: <span style="color:var(--text);font-weight:600">${todayGuildSummary}</span></div>
+        <div class="sc-sub" style="font-size:12px">Tomorrow: <span style="color:var(--amber)">${tmrwGuildSummary}</span></div>
       </div>
       ${guildPhaseTrackerHTML(st)}
       ${tbPickerHTML(todayTbCtx, true)}
@@ -323,9 +325,28 @@ function renderStatusDashboard(st){
 
 let liveEventsCache = null;
 
+/* Short zone tag for live card times ("UTC", "BST", "GMT+1"…),
+   resolved in the display zone and cached per zone so cards don't
+   each construct an Intl formatter. Times render in the display
+   zone, so the tag names it — no silent UTC assumption. */
+let liveTzAbbrCache = { zone: null, abbr: '' };
+function liveTzAbbr(){
+  const zone = (typeof tz === 'function') ? tz() : 'UTC';
+  if(liveTzAbbrCache.zone !== zone){
+    let abbr = zone;
+    try {
+      const parts = new Intl.DateTimeFormat('en-GB', { timeZone: zone, timeZoneName: 'short' }).formatToParts(new Date());
+      const tzPart = parts.find(p => p.type === 'timeZoneName');
+      if(tzPart && tzPart.value) abbr = tzPart.value;
+    } catch(e){}
+    liveTzAbbrCache = { zone, abbr };
+  }
+  return liveTzAbbrCache.abbr;
+}
+
 function liveEventTimeLabel(ms){
   try {
-    return withOrdinal(__formatter('day|monS|hhmm').format(new Date(dms(ms))));
+    return withOrdinal(__formatter('day|monS|hhmm').format(new Date(dms(ms)))) + ' ' + liveTzAbbr();
   } catch(e){
     return new Date(ms).toUTCString();
   }
@@ -581,40 +602,6 @@ function liveEventsForDay(dayStartMs){
     .sort((a, b) => a.startMs - b.startMs);
 }
 
-/* Upcoming-start candidates for alerts, shared by the in-site Alerts
-   toggle (app.js) and the CI ntfy script: rotation markers today +
-   tomorrow at their real start instants (eventStartMs) plus live
-   events, inside [nowMs-catchupMs, nowMs+lookaheadMs]. TW payout is
-   skipped (30 seconds, not an event); live GAC is skipped (hardcoded
-   round cards cover it). Titles carry card tense at nowMs. */
-function upcomingStarts(st, liveEvents, nowMs, lookaheadMs, catchupMs){
-  const out = [];
-  if(!st || !Number.isFinite(nowMs)) return out;
-  const from = nowMs - (catchupMs || 0);
-  const to = nowMs + (lookaheadMs || 0);
-  for(const off of [0, 1]){
-    const day = explorerDayAt(st, off);
-    for(const item of day.items || []){
-      if(item.icon === 'tw_payout') continue;
-      const startMs = eventStartMs(item, day.dMs);
-      if(!(startMs >= from && startMs <= to)) continue;
-      out.push({
-        key: `rot|${item.icon}|${day.dMs}`,
-        title: tenseByStart(getFullScheduleLabel(item), item, day.dMs, nowMs),
-        startMs,
-        category: alertCategoryFor(item.icon, null),
-      });
-    }
-  }
-  for(const e of liveEvents || []){
-    if(!e || e.kind === 'gac') continue;
-    if(!(e.startMs >= from && e.startMs <= to)) continue;
-    out.push({ key: `live|${e.id}|${e.startMs}`, title: e.name, startMs: e.startMs, category: alertCategoryFor(null, e.kind) });
-  }
-  out.sort((a, b) => a.startMs - b.startMs);
-  return out;
-}
-
 /* A day shows full cards only for what happens on it: events starting
    (or ending) that day. Longer runners (over 24h) also get a persistent
    badge in the indicators row — same shape as the coliseum boss, with
@@ -764,11 +751,10 @@ function renderExplorer(st){
 
   const cur = explorerDayAt(st, explorerOffset);
   const rel = relativeDayLabel(cur.offset, st.nowMs, st.currentDayStartMs);
+  const relCap = rel.charAt(0).toUpperCase() + rel.slice(1);
   const headTitle = cur.offset === 0
-    ? `Now: ${fmtDateLongUTC(gameDayDisplayMs(cur.dMs))}`
-    : cur.offset > 0
-      ? `Upcoming ${rel.charAt(0).toLowerCase() + rel.slice(1)}: ${fmtDateLongUTC(gameDayDisplayMs(cur.dMs))}`
-      : `${rel}: ${fmtDateLongUTC(gameDayDisplayMs(cur.dMs))}`;
+    ? `Today: ${fmtDateLongUTC(gameDayDisplayMs(cur.dMs))}`
+    : `${relCap}: ${fmtDateLongUTC(gameDayDisplayMs(cur.dMs))}`;
   const bossName = BOSS_LOOP[posMod(st.bossDayIndex - 1 + cur.offset, BOSS_LOOP.length)];
   const bossIcon = BOSS_ICONS[bossName];
   // Conquest indicator (mirrors the boss badge): shown on days 7-20
@@ -789,7 +775,8 @@ function renderExplorer(st){
     phase1Ms: runCtx.phase1Ms, options: runCtx.options, art: tbDef.art,
     showPicker: runCtx.offset === 0
   } : null;
-  const { starting, ongoing } = splitLiveDay(liveEventsForDay(cur.dMs), cur.dMs);
+  const dayLive = liveEventsForDay(cur.dMs);
+  const { starting, ongoing } = splitLiveDay(dayLive, cur.dMs);
   // Card pills count to each event's own start instant (eventStartMs:
   // GAC at 21:00 UTC, TB transition moments) — not the day's generic
   // changeover. Today and past days keep the shared day wording.
@@ -802,7 +789,7 @@ function renderExplorer(st){
   const liveBadges = liveBadgesHTML(ongoing, cur.dMs);
   // Live conquest data replaces the rotation estimate — never show both
   // conquest badges side by side.
-  const showCqBadge = !liveEventsForDay(cur.dMs).some(e => e.kind === 'conquest');
+  const showCqBadge = !dayLive.some(e => e.kind === 'conquest');
   const covered = liveCoveredIcons(starting);
   const rotationCards = cur.items
     .filter(it => !covered.has(it.icon))
@@ -823,7 +810,7 @@ function renderExplorer(st){
       </div>
     </div>
     ${liveCards || rotationCards
-      ? `<div class="xcard-deck">${liveCards}${rotationCards}</div>`
+      ? `<div class="xcard-deck" tabindex="0" role="region" aria-label="Events this day">${liveCards}${rotationCards}</div>`
       : `<p class="empty-note">No changeovers this day — nothing starts or ends.</p>`}`;
 }
 
@@ -948,7 +935,9 @@ function renderFullSchedule(st){
 function applyScheduleFilter(){
   const container = document.getElementById('fullSchedule');
   document.querySelectorAll('.sf-pill').forEach(p => {
-    p.classList.toggle('active', Number(p.dataset.ep) === scheduleFilterEp);
+    const active = Number(p.dataset.ep) === scheduleFilterEp;
+    p.classList.toggle('active', active);
+    p.setAttribute('aria-pressed', String(active));
   });
   if(!container) return;
   container.querySelectorAll('.tl-ep').forEach(ep => {

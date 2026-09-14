@@ -1,5 +1,6 @@
 /* APP — wiring, countdown, modals, init. Depends on render.js globals. Loaded last. */
 
+let cdElCache = null;
 function tickCountdown(){
   const now = new Date();
   const nowMs = now.getTime();
@@ -18,8 +19,8 @@ function tickCountdown(){
   const s = Math.floor((diff % 60000) / 1000);
 
   const pad = n => String(n).padStart(2, '0');
-  const cdEl = document.getElementById('countdown');
-  if(cdEl) cdEl.textContent = `${pad(h)}:${pad(m)}:${pad(s)}`;
+  if(!cdElCache) cdElCache = document.getElementById('countdown');
+  if(cdElCache) cdElCache.textContent = `${pad(h)}:${pad(m)}:${pad(s)}`;
 
   // Refresh automatically if a standard or GAC changeover just occurred
   // (compare against the most recent past changeover, not the next future one)
@@ -129,23 +130,6 @@ document.getElementById('openAboutBtnMobile')?.addEventListener('click', () => o
 document.getElementById('closeAboutBtn')?.addEventListener('click', () => closeModal(aboutModal));
 document.getElementById('closeAboutBtn2')?.addEventListener('click', () => closeModal(aboutModal));
 
-const alertsModal = document.getElementById('alertsModal');
-document.getElementById('closeAlertsBtn')?.addEventListener('click', () => closeModal(alertsModal));
-document.getElementById('closeAlertsBtn2')?.addEventListener('click', () => closeModal(alertsModal));
-alertsModal?.addEventListener('click', e => { if(e.target === alertsModal) closeModal(alertsModal); });
-document.getElementById('alertsEnabledBox')?.addEventListener('change', e => onAlertsMasterChange(e.target));
-document.getElementById('alertCatsBox')?.addEventListener('change', e => {
-  if(e.target && e.target.dataset && e.target.dataset.cat){
-    writeAlertCat(e.target.dataset.cat, e.target.checked);
-    onAlertCatsChange();
-  }
-});
-document.getElementById('exportAlertsBtn')?.addEventListener('click', exportSettings);
-document.getElementById('importAlertsFile')?.addEventListener('change', e => {
-  importSettingsFile(e.target && e.target.files && e.target.files[0]);
-  e.target.value = '';
-});
-
 scheduleModal?.addEventListener('click', e => { if(e.target === scheduleModal) closeModal(scheduleModal); });
 aboutModal?.addEventListener('click', e => { if(e.target === aboutModal) closeModal(aboutModal); });
 
@@ -158,6 +142,7 @@ function copyDiscordHandle(btnEl) {
   navigator.clipboard.writeText('granddom').then(() => {
     const originalText = btnEl.innerHTML;
     btnEl.classList.add('copied');
+    btnEl.setAttribute('aria-live', 'polite');
     btnEl.innerHTML = `<span>✓ Copied!</span>`;
     setTimeout(() => {
       btnEl.classList.remove('copied');
@@ -236,6 +221,10 @@ function applyDayHash(){
 if(typeof window !== 'undefined' && typeof window.addEventListener === 'function'){
   window.addEventListener('hashchange', () => {
     const before = (typeof explorerOffset === 'number') ? explorerOffset : 0;
+    applyDayHash();
+    if(explorerOffset !== before) renderAll();
+  });
+}
 /* Offline support: register the service worker (skipped on file:// and
    in old browsers). Failures are silent — the page works without it. */
 if(typeof navigator !== 'undefined' && 'serviceWorker' in navigator
@@ -244,290 +233,6 @@ if(typeof navigator !== 'undefined' && 'serviceWorker' in navigator
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/sw.js').catch(() => {});
   });
-}
-
-applyDayHash();
-    if(explorerOffset !== before) renderAll();
-  });
-}
-
-/* In-site event alerts — independent of the CI ntfy script (which
-   pushes to a closed phone). While this page is open, every 30s check
-   for starts inside 15 minutes and raise a local notification through
-   the service worker. Needs Notification permission (on iOS Safari the
-   site must be added to the Home Screen first). Toggle + seen keys
-   persist per device; seen keys prune after 7 days. */
-const ALERTS_KEY = 'swgoh-alerts';
-const ALERTS_SEEN_KEY = 'swgoh-alerts-seen';
-const ALERT_LOOKAHEAD_MS = 60 * 60000;
-const ALERT_CATCHUP_MS = 15 * 60000;
-function alertsEnabled(){
-  try { return localStorage.getItem(ALERTS_KEY) === '1'; } catch(e){ return false; }
-}
-function setAlertsEnabled(on){
-  try { localStorage.setItem(ALERTS_KEY, on ? '1' : '0'); } catch(e){}
-  syncAlertsButtons();
-}
-function syncAlertsButtons(){
-  const on = alertsEnabled();
-  const blocked = typeof Notification !== 'undefined' && Notification.permission === 'denied';
-  ['alertsBtn', 'alertsBtnMobile'].forEach(id => {
-    const b = document.getElementById(id);
-    if(!b) return;
-    b.setAttribute('aria-pressed', on ? 'true' : 'false');
-    b.classList.toggle('on', on);
-    const label = b.querySelector('.ab-label');
-    if(label) label.textContent = blocked ? 'Alerts blocked' : (on ? 'Alerts on' : 'Alerts');
-    b.title = 'Open event alert settings.'
-  });
-}
-/* Per-category preferences. Majors default on, "other" defaults off;
-   anything the user touches is stored explicitly. */
-const ALERT_CATS_KEY = 'swgoh-alert-cats';
-function alertCatMeta(){
-  try {
-    if(typeof ALERT_CATEGORIES !== 'undefined' && Array.isArray(ALERT_CATEGORIES)) return ALERT_CATEGORIES;
-  } catch(e){}
-  return [];
-}
-function alertDefaultOn(id){
-  try {
-    if(typeof ALERT_DEFAULT_CATS !== 'undefined') return ALERT_DEFAULT_CATS.includes(id);
-  } catch(e){}
-  return id !== 'other';
-}
-function readAlertCats(){
-  try {
-    const p = JSON.parse(localStorage.getItem(ALERT_CATS_KEY) || '{}');
-    return (p && typeof p === 'object') ? p : {};
-  } catch(e){ return {}; }
-}
-function alertCatOn(id){
-  const saved = readAlertCats();
-  if(Object.prototype.hasOwnProperty.call(saved, id)) return !!saved[id];
-  return alertDefaultOn(id);
-}
-function writeAlertCat(id, on){
-  const saved = readAlertCats();
-  saved[id] = !!on;
-  try { localStorage.setItem(ALERT_CATS_KEY, JSON.stringify(saved)); } catch(e){}
-}
-function buildAlertsCats(){
-  const box = document.getElementById('alertCatsBox');
-  if(!box) return;
-  const prefs = readAlertCats();
-  box.innerHTML = alertCatMeta().map(c => {
-    const on = Object.prototype.hasOwnProperty.call(prefs, c.id) ? !!prefs[c.id] : alertDefaultOn(c.id);
-    return `<label class="alert-row"><input type="checkbox" data-cat="${c.id}"${on ? ' checked' : ''}> <span>${c.label}</span></label>`;
-  }).join('');
-}
-function openAlertsModal(){
-  if(typeof alertsModal === 'undefined' || !alertsModal) return;
-  buildAlertsCats();
-  const master = document.getElementById('alertsEnabledBox');
-  if(master) master.checked = alertsEnabled() && typeof Notification !== 'undefined' && Notification.permission === 'granted';
-  openModal(alertsModal);
-}
-/* Deletes this device's push subscription so disabling alerts also
-   opts out of closed-phone pushes (the token doc would otherwise sit
-   in Firestore until its token naturally dies). */
-async function removePushSubscription(){
-  try {
-    const fb = await ensureFirebase();
-    if(!fb || !fb.messaging || !fb.db) return;
-    let token = null;
-    try { token = await fb.messaging.getToken({ vapidKey: fb.vapidKey }); } catch(e){ return; }
-    if(token) await fb.db.collection('push_subscriptions').doc(token).delete();
-  } catch(e){}
-}
-async function onAlertsMasterChange(box){
-  if(!box.checked){ setAlertsEnabled(false); removePushSubscription(); return; }
-  if(typeof Notification === 'undefined'){ alert('This browser does not support notifications.'); box.checked = false; return; }
-  if(Notification.permission === 'denied'){
-    alert('Notifications are blocked for this site. Allow them in the browser site settings, then enable again.');
-    box.checked = false;
-    syncAlertsButtons();
-    return;
-  }
-  try {
-    const perm = await Notification.requestPermission();
-    setAlertsEnabled(perm === 'granted');
-    box.checked = perm === 'granted';
-    if(perm !== 'granted') alert('Notifications were not allowed — Alerts stays off.');
-    else syncPushSubscription();
-  } catch(e){
-    box.checked = false;
-    syncAlertsButtons();
-  }
-}
-function onAlertCatsChange(){
-  syncAlertsButtons();
-  syncPushSubscription();
-}
-
-/* Settings backup: clearing browser/site data wipes every local pick
-   (timezone, TB choices, alert switch + categories) with no way back,
-   so the Alerts panel can export them to a file and re-import later.
-   Seen-alert history is deliberately excluded — it rebuilds itself. */
-function settingsSnapshot(){
-  const out = { app: 'swgoh-schedule-settings', version: 1, exportedAt: Date.now(), values: {} };
-  const keys = [];
-  try {
-    if(typeof TZ_STORAGE_KEY !== 'undefined') keys.push(TZ_STORAGE_KEY);
-    if(typeof TB_CHOICE_STORAGE_KEY !== 'undefined'){
-      keys.push(TB_CHOICE_STORAGE_KEY, `${TB_CHOICE_STORAGE_KEY}-light`, `${TB_CHOICE_STORAGE_KEY}-dark`);
-    }
-  } catch(e){}
-  keys.push('swgoh-alerts', 'swgoh-alert-cats');
-  for(const k of keys){
-    try {
-      const v = localStorage.getItem(k);
-      if(v != null) out.values[k] = v;
-    } catch(e){}
-  }
-  return out;
-}
-function exportSettings(){
-  try {
-    const blob = new Blob([JSON.stringify(settingsSnapshot(), null, 2)], { type: 'application/json' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'swgoh-schedule-settings.json';
-    document.body.appendChild(a);
-    a.click();
-    setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
-  } catch(e){ alert('Settings export failed in this browser.'); }
-}
-function importSettingsFile(file){
-  if(!file) return;
-  const reader = new FileReader();
-  reader.onload = () => {
-    try {
-      const data = JSON.parse(reader.result);
-      if(!data || data.app !== 'swgoh-schedule-settings' || typeof data.values !== 'object') throw new Error('bad file');
-      for(const [k, v] of Object.entries(data.values)){
-        if(typeof v !== 'string') continue;
-        try { localStorage.setItem(k, v); } catch(e){}
-      }
-      if(typeof renderAll === 'function') renderAll();
-      if(typeof syncTzSelects === 'function') syncTzSelects();
-      syncAlertsButtons();
-      buildAlertsCats();
-      syncPushSubscription();
-      alert('Settings restored.');
-    } catch(e){ alert('That file is not a valid settings backup.'); }
-  };
-  reader.onerror = () => alert('Could not read that file.');
-  reader.readAsText(file);
-}
-async function fireAlert(title, body, tag){
-  const opts = { body, tag, icon: '/assets/img/icons/favicon-32.png', data: { url: '/' } };
-  try {
-    if('serviceWorker' in navigator){
-      const reg = await navigator.serviceWorker.ready;
-      await reg.showNotification(title, opts);
-      return;
-    }
-  } catch(e){}
-  try {
-    if('Notification' in window && Notification.permission === 'granted') new Notification(title, opts);
-  } catch(e){}
-}
-function readAlertSeen(){
-  try { return JSON.parse(localStorage.getItem(ALERTS_SEEN_KEY) || '{}'); } catch(e){ return {}; }
-}
-function writeAlertSeen(seen){
-  try { localStorage.setItem(ALERTS_SEEN_KEY, JSON.stringify(seen)); } catch(e){}
-}
-setInterval(async () => {
-  try {
-    if(!alertsEnabled()) return;
-    if(typeof Notification === 'undefined' || Notification.permission !== 'granted') return;
-    if(typeof upcomingStarts !== 'function' || typeof getGameStatus !== 'function') return;
-    const st = getGameStatus();
-    const live = (typeof liveEventsCache !== 'undefined' && liveEventsCache && liveEventsCache.events) || [];
-    const cands = upcomingStarts(st, live, st.nowMs, ALERT_LOOKAHEAD_MS, ALERT_CATCHUP_MS)
-      .filter(c => alertCatOn(c.category));
-    if(!cands.length) return;
-    const seen = readAlertSeen();
-    let changed = false;
-    for(const c of cands){
-      if(seen[c.key]) continue;
-      seen[c.key] = c.startMs;
-      changed = true;
-      const until = (typeof formatGacUntil === 'function') ? formatGacUntil(st.nowMs, c.startMs) : 'soon';
-      const time = new Date(c.startMs).toISOString().slice(11, 16) + ' UTC';
-      fireAlert(c.title, `${until === 'now' ? 'Starting now' : 'Starts ' + until} (${time})`, c.key);
-    }
-    for(const k of Object.keys(seen)){
-      if(seen[k] < st.nowMs - 7 * 86400000){ delete seen[k]; changed = true; }
-    }
-    if(changed) writeAlertSeen(seen);
-  } catch(e){}
-}, 30000);
-syncAlertsButtons();
-
-/* Closed-phone pushes via the user's Firebase (FCM). Everything here
-   is guarded: placeholder config, offline CDN or unsupported browsers
-   resolve null and in-site alerts are unaffected. Device tokens +
-   chosen categories sync to Firestore (push_subscriptions/{token})
-   for the CI sender; the worker (sw.js) shows arriving pushes. */
-function firebaseConfig(){
-  try {
-    const c = (typeof FIREBASE_CONFIG !== 'undefined') ? FIREBASE_CONFIG
-      : (typeof window !== 'undefined' && window.FIREBASE_CONFIG) || null;
-    if(!c || !c.apiKey || !c.projectId || !c.messagingSenderId || !c.appId) return null;
-    if(/REPLACE|PLACEHOLDER/.test(c.apiKey)) return null;
-    if(!c.vapidKey || /REPLACE|PLACEHOLDER/.test(c.vapidKey)) return null;
-    return c;
-  } catch(e){ return null; }
-}
-let firebasePromise = null;
-function ensureFirebase(){
-  const cfg = firebaseConfig();
-  if(!cfg) return Promise.resolve(null);
-  if(firebasePromise) return firebasePromise;
-  firebasePromise = (async () => {
-    try {
-      if(typeof document === 'undefined') return null;
-      const load = src => new Promise((res, rej) => {
-        const s = document.createElement('script');
-        s.src = src; s.async = true;
-        s.onload = res; s.onerror = () => rej(new Error('load failed'));
-        document.head.appendChild(s);
-        setTimeout(() => rej(new Error('timeout')), 15000);
-      });
-      const base = 'https://www.gstatic.com/firebasejs/10.12.2/';
-      await load(base + 'firebase-app-compat.js');
-      await load(base + 'firebase-messaging-compat.js');
-      await load(base + 'firebase-firestore-compat.js');
-      if(typeof firebase === 'undefined') return null;
-      const app = firebase.initializeApp({
-        apiKey: cfg.apiKey, authDomain: cfg.authDomain, projectId: cfg.projectId,
-        storageBucket: cfg.storageBucket, messagingSenderId: cfg.messagingSenderId, appId: cfg.appId,
-      });
-      let messaging = null, db = null;
-      try { if(firebase.messaging.isSupported()) messaging = firebase.messaging(app); } catch(e){}
-      try { db = firebase.firestore(app); } catch(e){}
-      return { messaging, db, vapidKey: cfg.vapidKey };
-    } catch(e){ return null; }
-  })();
-  return firebasePromise;
-}
-async function syncPushSubscription(){
-  try {
-    const fb = await ensureFirebase();
-    if(!fb || !fb.messaging || !fb.db) return;
-    if(typeof Notification === 'undefined' || Notification.permission !== 'granted') return;
-    const reg = ('serviceWorker' in navigator) ? await navigator.serviceWorker.ready : undefined;
-    let token = null;
-    try { token = await fb.messaging.getToken({ vapidKey: fb.vapidKey, serviceWorkerRegistration: reg }); }
-    catch(e){ return; }
-    if(!token) return;
-    const cats = alertCatMeta().filter(c => alertCatOn(c.id)).map(c => c.id);
-    await fb.db.collection('push_subscriptions').doc(token).set(
-      { categories: cats, updatedAt: Date.now() }, { merge: true });
-  } catch(e){ /* in-site alerts unaffected */ }
 }
 
 /* Display timezone picker (header + mobile panel). Defaults to the

@@ -114,6 +114,14 @@ body.modal-open .starfield span.tw {
   .starfield span.tw { animation: none; }
   .xcard, .xcard:hover { transform: none; }
   .mh-progress-fill, .day-pill, .tab-btn, .xcard, .jump-toggle .jt-chev { transition: none; }
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+/* Visible keyboard focus on every interactive element (hover alone
+   leaves keyboard users with no indicator). */
+a:focus-visible, button:focus-visible, select:focus-visible,
+input:focus-visible, summary:focus-visible, [tabindex]:focus-visible {
+  outline: 2px solid var(--amber); outline-offset: 2px;
 }
 
 .top-header {
@@ -779,20 +787,6 @@ body.modal-open .starfield span.tw {
 .about-discord-label { font-weight: 600; font-size: 13px; color: var(--text); }
 .about-discord .discord-copy-btn { width: auto; }
 .about-actions { display: flex; justify-content: flex-end; }
-/* Alerts settings: master switch + per-category checkboxes. */
-.alert-row {
-  display: flex; align-items: center; gap: 10px;
-  font-size: 13px; font-weight: 600; color: var(--text);
-  padding: 10px 12px; margin-bottom: 10px; cursor: pointer;
-  background: var(--void2); border: 1px solid var(--border2); border-radius: var(--radius);
-}
-.alert-row input { width: 16px; height: 16px; accent-color: var(--amber); flex: 0 0 auto; cursor: pointer; }
-.alert-cats { display: grid; gap: 6px; margin-bottom: 16px; }
-.alert-cats .alert-row { margin-bottom: 0; font-weight: 500; color: var(--text2); }
-.alert-cats .alert-row span small { display: block; font-weight: 400; font-size: 11px; color: var(--text3); }
-.alert-backup { display: flex; gap: 8px; margin-bottom: 8px; }
-.alert-backup .btn { flex: 1; text-align: center; justify-content: center; cursor: pointer; }
-.alert-backup-note { font-size: 11px; color: var(--text3); line-height: 1.5; margin-bottom: 16px; }
 .about-modal .btn.primary { background: var(--amber); border-color: var(--amber); color: #1a1104; font-weight: 700; }
 .about-modal .btn.primary:hover { background: #ecbc72; }
 @media (max-width: 600px) {
@@ -935,4 +929,11 @@ body.modal-open .starfield span.tw {
   .mh-right .cb-timer { font-size: 26px; }
   .mh-right .cb-label, .mh-right .cb-sub { white-space: normal; }
   .tl-day { flex-wrap: wrap; gap: 6px; }
+  /* Minimum touch targets on mobile + clearance under the sticky
+     explorer nav so focused pills are never hidden behind it. */
+  .day-today, .jump-toggle, .sf-pill, .modal-close-x { min-height: 44px; }
+  .modal-close-x { min-width: 44px; }
+  .gear-btn.mp-btn, .nav-toggle { min-height: 44px; }
+  .nav-toggle { width: 44px; }
+  .day-pill, .day-detail-head h3, .tl-day { scroll-margin-top: 130px; }
 }
