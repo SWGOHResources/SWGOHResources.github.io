@@ -983,15 +983,18 @@ function formatHoursMinutes(ms){
   return m > 0 ? `${h}h ${m}m` : `${h}h`;
 }
 
-/* Near-instant precision for day-count labels ("Important Dates"
+/* Day-count labels that own their rounding ("Important Dates"
    cards): under 24h out, "In 1 day" reads wrong 3h out — count hours
-   ("In 2h 45m") or minutes ("In 20m") instead. At 24h+ the existing
-   day wording passes through untouched. */
+   ("In 2h 45m") or minutes ("In 20m") instead. At 24h+ the duration
+   reads "In under/over N days" rather than silently rounding.
+   dayLabel is the fallback without a usable clock. */
 function subDayCount(nowMs, targetMs, dayLabel){
   if(!Number.isFinite(nowMs) || !Number.isFinite(targetMs)) return dayLabel;
   const left = targetMs - nowMs;
-  if(left <= 0 || left >= 86400000) return dayLabel;
-  return `In ${formatHoursMinutes(left)}`;
+  if(left <= 0) return dayLabel;
+  if(left < 86400000) return `In ${formatHoursMinutes(left)}`;
+  const until = formatDayCount(left);
+  return until.charAt(0).toUpperCase() + until.slice(1);
 }
 
 /* Absolute era day (1-based) encoded in the shareable URL hash

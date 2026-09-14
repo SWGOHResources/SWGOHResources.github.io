@@ -310,6 +310,20 @@ test('live conquest badges keep the conquest purple, others use boss orange', ()
   assert.match(els.dayDetail.innerHTML, /day-boss day-live" title="Live Marquee/);
 });
 
+test('events that ended before the changeover read Expired, not Now', () => {
+  const { ctx, els } = loadRenderEngine();
+  const run = src => vm.runInContext(src, ctx);
+  const dayStart = run('getGameStatus().currentDayStartMs');
+  // Short event that started and ended earlier in the current game day.
+  run(`liveEventsCache = { pulledAt: ${NOW}, gameDataVersion: 'v', events: [
+    { id: 'x', name: 'Over Thing', kind: 'assault',
+      startMs: ${dayStart} + 3600000, endMs: ${dayStart} + 7200000 }
+  ] }`);
+  run('renderExplorer(getGameStatus())');
+  assert.match(els.dayDetail.innerHTML, /<h4>Over Thing<\/h4>/);
+  assert.match(els.dayDetail.innerHTML, /xcard-rel is-expired">Expired</);
+});
+
 test('short mid-span events show nothing that day', () => {
   const { ctx, els } = loadRenderEngine();
   const run = src => vm.runInContext(src, ctx);

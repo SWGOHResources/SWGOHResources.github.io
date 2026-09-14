@@ -420,7 +420,8 @@ body.modal-open .starfield span.tw {
 /* Big countdown line on the Important Dates cards. Hero-style display
    type (like .mh-main-val): large accent value with a smaller muted
    date suffix. Every accent clears large-text contrast (5.3:1+). */
-.big-count { font-family: var(--disp); font-size: 28px; font-weight: 700; color: var(--accent, var(--text)); line-height: 1.15; letter-spacing: -0.01em; margin-top: 2px; }
+.big-count { font-family: var(--disp); font-size: 28px; font-weight: 700; color: var(--accent, var(--text)); line-height: 1.15; letter-spacing: -0.01em; margin-top: 2px; display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 8px; }
+.big-count .bc-main, .big-count .bc-date { min-width: 0; }
 .big-count .bc-date { font-size: 14px; font-weight: 600; color: var(--text3); letter-spacing: 0; white-space: nowrap; }
 
 /* ─── Important Dates Grid ───
@@ -591,6 +592,7 @@ body.modal-open .starfield span.tw {
   color: var(--text2); border: 1px solid var(--border2); flex: 0 1 auto; margin-left: auto;
 }
 .xcard-rel.is-today { color: var(--amber); border-color: var(--amber-border); }
+.xcard-rel.is-expired { color: var(--red); border-color: var(--red-border); }
 .xcard-body { padding: 10px 12px 12px; display: flex; flex-direction: column; flex: 1; }
 .xcard-body h4 {
   font-size: 12.5px; font-weight: 600; color: var(--text); line-height: 1.4;

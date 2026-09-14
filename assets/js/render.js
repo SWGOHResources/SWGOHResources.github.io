@@ -90,7 +90,7 @@ function renderUnlockWindows(st){
       <div class="uw-body" style="--accent:var(--purple);--accent-dim:var(--purple-dim);--accent-border:var(--purple-border)">
         <div class="uw-img"><div class="art-badge">CQ</div><img src="${IMG_BASE}${CONQUEST_UNIT_IMAGE}" alt="" loading="lazy" decoding="async" onerror="this.remove()"></div>
         <div class="uw-text">
-          <div class="sc-main"><div class="big-count">${cqCountLabel} <span class="bc-date">(${cqDateLabel})</span></div><div class="sc-sub">${cqSubLabel}</div></div>
+          <div class="sc-main"><div class="big-count"><span class="bc-main">${cqCountLabel}</span> <span class="bc-date">(${cqDateLabel})</span></div><div class="sc-sub">${cqSubLabel}</div></div>
           <div class="sc-footer" style="flex-direction:column;align-items:flex-start;gap:2px;">
             <span>Usable in GAC: <span class="highlight">Week ${cqGacWeek} (${cqGac.format})</span></span>
             <span>Roster locks: ${fmtDayMonthUTC(gameDayDisplayMs(cqNextSignupDate))} (Defense Starts)</span>
@@ -103,7 +103,7 @@ function renderUnlockWindows(st){
       <div class="uw-body" style="--accent:var(--orange);--accent-dim:var(--orange-dim);--accent-border:var(--orange-border)">
         <div class="uw-img"><div class="art-badge">ERA</div><img src="${IMG_BASE}${ERA_UNIT_IMAGE}" alt="" loading="lazy" decoding="async" onerror="this.remove()"></div>
         <div class="uw-text">
-          <div class="sc-main"><div class="big-count">${eraCountLabel} <span class="bc-date">(${eraDateLabel})</span></div><div class="sc-sub">${eraSubLabel}</div></div>
+          <div class="sc-main"><div class="big-count"><span class="bc-main">${eraCountLabel}</span> <span class="bc-date">(${eraDateLabel})</span></div><div class="sc-sub">${eraSubLabel}</div></div>
           <div class="sc-footer" style="flex-direction:column;align-items:flex-start;gap:2px;">
              <span>Usable in GAC: <span class="highlight">Week ${eraGacWeek} (${eraGac.format})</span></span>
              <span>Roster locks: ${fmtDayMonthUTC(gameDayDisplayMs(eraNextSignupDate))} (Defense Starts)</span>
@@ -117,7 +117,7 @@ function renderUnlockWindows(st){
         <div class="uw-img"><div class="art-badge">${cronMeta.label.slice(0,3).toUpperCase()}</div><img src="${IMG_BASE}${cronMeta.asset}" alt="" loading="lazy" decoding="async" onerror="this.remove()"></div>
         <div class="uw-text">
           <div class="sc-main">
-            <div class="big-count">${cron ? `${cronCountLabel} <span class="bc-date">(${cronExpiresLabel})</span>` : 'No set configured'}</div>
+            <div class="big-count">${cron ? `<span class="bc-main">${cronCountLabel}</span> <span class="bc-date">(${cronExpiresLabel})</span>` : 'No set configured'}</div>
             <div class="sc-sub">${cronSubLabel}</div>
           </div>
           <div class="sc-footer" style="flex-direction:column;align-items:flex-start;gap:2px;">
@@ -385,7 +385,8 @@ function liveCardHTML(e, relLabel){
   const catMeta = (typeof CATEGORY_META !== 'undefined' && CATEGORY_META[meta.cat]) || {};
   const style = `--accent:${catMeta.accent || 'var(--text3)'};--accent-dim:${catMeta.dim || 'transparent'};--accent-border:${catMeta.border || 'var(--border)'}`;
   const art = e.art || meta.art;
-  const relCls = relLabel === 'Now' ? 'xcard-rel is-today' : 'xcard-rel';
+  const relCls = relLabel === 'Now' ? 'xcard-rel is-today'
+    : relLabel === 'Expired' ? 'xcard-rel is-expired' : 'xcard-rel';
   return `<article class="xcard" style="${style}">
     <div class="xcard-art">
       <div class="art-badge">${escHTML(meta.glyph)}</div>
@@ -751,7 +752,11 @@ function renderExplorer(st){
   // GAC at 21:00 UTC, TB transition moments) — not the day's generic
   // changeover. Today and past days keep the shared day wording.
   const cardRel = startMs => cur.offset > 0 ? relForEventStart(startMs, st.nowMs, rel) : rel;
-  const liveCards = starting.map(e => liveCardHTML(e, cardRel(e.startMs))).join('');
+  // An event whose end passed but whose changeover day is still showing
+  // is over — "Expired", never "Now".
+  const liveRel = e => (Number.isFinite(e.endMs) && Number.isFinite(st.nowMs) && e.endMs <= st.nowMs)
+    ? 'Expired' : cardRel(e.startMs);
+  const liveCards = starting.map(e => liveCardHTML(e, liveRel(e))).join('');
   const liveBadges = liveBadgesHTML(ongoing, cur.dMs);
   // Live conquest data replaces the rotation estimate — never show both
   // conquest badges side by side.
