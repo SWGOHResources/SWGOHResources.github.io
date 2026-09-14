@@ -25,12 +25,18 @@ jobs:
         with:
           node-version: 24
       - name: Install FCM sender
-        if: ${{ secrets.FIREBASE_SERVICE_ACCOUNT != '' }}
-        run: npm install --no-save firebase-admin
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE }}
+        run: |
+          if [ -n "$FIREBASE_SERVICE_ACCOUNT" ]; then
+            npm install --no-save firebase-admin
+          else
+            echo "FCM not configured, skipping sender install"
+          fi
       - name: Send upcoming-event notifications
         env:
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
-          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE }}
         run: node scripts/notify-upcoming.mjs
       - name: Commit notification state
         run: |

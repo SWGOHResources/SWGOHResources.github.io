@@ -115,7 +115,7 @@ Two channels, both optional and configured via repo secrets:
      `allow create, update: if true;` on
      `match /push_subscriptions/{token}` (scoped writes; tighten later).
   3. Project settings → Service accounts → Generate new private key →
-     repo secret `FIREBASE_SERVICE_ACCOUNT` = the whole JSON.
+     repo secret `FIREBASE_SERVICE` = the whole JSON.
   4. On your phone open the site, Alerts → enable + pick categories —
      the device registers itself. iOS Safari needs the site added to
      the Home Screen first.
