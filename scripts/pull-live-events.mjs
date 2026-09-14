@@ -204,8 +204,17 @@ const ART_OVERRIDES = {
 // nothing is ever auto-deleted — a flaky download can never wipe good
 // art or lock in a generic fallback the way re-downloading could.
 // opts override the directory + extractor URL (tests).
+// opts override the directory + extractor URL (tests). artDir accepts
+// a file: URL object, a file: URL string, or a plain path — a URL
+// *string* must never reach mkdir/readFile directly, or the fs treats
+// "file:///tmp/…" as a literal relative path and litters the repo.
 export async function pullEventArt(events, assetVersion, opts = {}) {
-  const dir = opts.artDir ?? LIVE_ART_DIR;
+  const { pathToFileURL } = await import('node:url');
+  const rawDir = opts.artDir ?? LIVE_ART_DIR;
+  const dirUrl = rawDir instanceof URL ? rawDir
+    : String(rawDir).startsWith('file:') ? new URL(String(rawDir))
+    : pathToFileURL(String(rawDir));
+  const dir = dirUrl;
   const aeUrl = opts.aeUrl ?? AE_URL;
   const { mkdir, writeFile, readFile } = await import('node:fs/promises');
   await mkdir(dir, { recursive: true });

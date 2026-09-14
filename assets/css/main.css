@@ -339,7 +339,6 @@ body.modal-open .starfield span.tw {
 .status-card.purple-card { border-color: var(--purple-border); }
 .status-card.amber-card { border-color: var(--amber-border); }
 .status-card.orange-card { border-color: var(--orange-border); }
-.status-card.steel-card { border-color: var(--steel-border); }
 
 .sc-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
 .sc-title { font-family: var(--body); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text3); }

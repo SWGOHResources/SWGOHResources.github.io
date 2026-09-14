@@ -400,6 +400,24 @@ function liveCardHTML(e, relLabel){
   </article>`;
 }
 
+/* Warm the pulled live art into the browser cache right after the
+   snapshot lands, so live cards don't flash fallback badges on first
+   paint. Mirrors preloadCardAssets for rotation art. */
+function preloadLiveArt(){
+  try {
+    if(typeof Image !== 'function') return;
+    if(!liveEventsCache || !Array.isArray(liveEventsCache.events)) return;
+    const base = (typeof IMG_BASE !== 'undefined' && IMG_BASE) || 'assets/img/';
+    liveEventsCache.events.forEach(e => {
+      const art = e.art || (liveCardMeta(e) || {}).art;
+      if(typeof art !== 'string' || !art) return;
+      const im = new Image();
+      im.decoding = 'async';
+      im.src = base + art;
+    });
+  } catch(e){}
+}
+
 async function loadLiveEvents(){
   // Fills the cache the day-by-day explorer overlays. No section of its
   // own — without a snapshot the explorer simply shows the rotation.
@@ -408,6 +426,7 @@ async function loadLiveEvents(){
     const res = await fetch('assets/data/live-events.json', { cache: 'no-store' });
     if(!res.ok) throw new Error('HTTP ' + res.status);
     liveEventsCache = await res.json();
+    preloadLiveArt();
     if(typeof renderAll === 'function') renderAll({ preserveFocus: true });
   } catch(e){
     if(typeof console !== 'undefined' && console.warn) console.warn('[swgoh-schedule] live events unavailable:', e.message);
