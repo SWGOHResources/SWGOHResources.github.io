@@ -96,35 +96,6 @@ npm run events:pull
 `tests/live-events.test.js` fails if the committed snapshot is older
 than 48h, so a broken refresh shows up in CI.
 
-## Phone notifications
-
-`.github/workflows/notify.yml` checks rotation + live starts every 30
-minutes and pushes anything starting within ~45 minutes to your phone.
-Two channels, both optional and configured via repo secrets:
-
-- **ntfy** ([ntfy.sh](https://ntfy.sh), free, no account): one shared
-  topic. majors only by default (`NOTIFY_CATEGORIES` env overrides).
-  Setup: install the ntfy app (Android / iOS), subscribe to a long
-  random topic, add repo secret `NTFY_TOPIC` (+ optional `NTFY_URL`).
-- **Firebase (FCM)**: per-device, per-category pushes to a closed phone.
-  Setup:
-  1. Console → Project settings → Cloud Messaging → Web configuration
-     → Generate key pair → paste the VAPID key into
-     `firebase-config.js` (`vapidKey`).
-  2. Build → Firestore Database → Create database, then Rules:
-     `allow create, update: if true;` on
-     `match /push_subscriptions/{token}` (scoped writes; tighten later).
-  3. Project settings → Service accounts → Generate new private key →
-     repo secret `FIREBASE_SERVICE` = the whole JSON.
-  4. On your phone open the site, Alerts → enable + pick categories —
-     the device registers itself. iOS Safari needs the site added to
-     the Home Screen first.
-
-Test locally first: `NTFY_TOPIC=... DRY_RUN=1 node
-scripts/notify-upcoming.mjs`. Sent keys persist in
-`assets/data/notify-state.json` (auto-committed), so delayed/retried
-runs never double-send.
-
 ## In-site alerts (no setup, page must be open)
 
 The header **Alerts** button opens notification settings: master switch
