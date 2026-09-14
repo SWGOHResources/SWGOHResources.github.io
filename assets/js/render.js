@@ -21,12 +21,16 @@ function renderUnlockWindows(st){
   const cqUnlocked = cqAbs <= st.rawDayIndex || cqDays <= 0;
   const cqDateLabel = fmtDayMonthUTC(gameDayDisplayMs(cqDateMs));
   const cqUnlockMs = cqDateMs + (stdHour() * 3600000);
-  const cqCountLabel = cqUnlocked
-    ? 'Unlocked'
+  // The unit itself is never in the data feed — once its conquest ends
+  // the name is still unannounced, so never claim it is playable.
+  const cqBadge = cqUnlocked ? 'TBA' : 'UPCOMING';
+  const cqBadgeClass = cqUnlocked ? 'off' : 'purple';
+  const cqMain = cqUnlocked
+    ? 'Unit yet to be announced'
     : subDayCount(st.nowMs, cqUnlockMs, `In ${cqDays} day${cqDays === 1 ? '' : 's'}`);
-  const cqSubLabel = cqUnlocked
-    ? 'The new conquest unit is playable'
-    : 'The new conquest unit becomes playable';
+  const cqSub = cqUnlocked
+    ? `Ended ${cqDateLabel} — new conquest unit yet to be announced`
+    : `${cqDateLabel} — the new conquest unit becomes playable`;
 
   // Roster locks at the configured defense-phase offset.
   const cqNextSignupDate = cqDateMs + (86400000 * conquestLockOffsetDays());
@@ -49,7 +53,9 @@ function renderUnlockWindows(st){
   const eraCountLabel = st.preEra
     ? (st.daysUntilEra <= 0 ? 'Today' : `In ${st.daysUntilEra} day${st.daysUntilEra === 1 ? '' : 's'}`)
     : (eraAbs <= st.rawDayIndex || eraDays <= 0 ? 'Live now' : subDayCount(st.nowMs, eraUnlockMs, `In ${eraDays} day${eraDays === 1 ? '' : 's'}`));
-  const eraSubLabel = st.preEra ? 'The new era begins' : 'Current era ends and units enter legacy modes';
+  const eraBadge = st.preEra ? 'UPCOMING' : 'ENDING';
+  const eraMain = eraCountLabel;
+  const eraSub = st.preEra ? `${eraDateLabel} — the new era begins` : `${eraDateLabel} — current era ends, units enter legacy modes`;
 
   // Roster locks at the configured defense-phase offset.
   const eraNextSignupDate = eraDateMs + (86400000 * eraLockOffsetDays());
@@ -61,16 +67,18 @@ function renderUnlockWindows(st){
   const cron = getCurrentDatacronSet(st.nowMs);
   const cronMeta = (cron && CRON_COLOR_META[cron.color]) || CRON_COLOR_META.orange;
   // Truncated like the other dashboard counts: 28d 23h out reads
-  // "Expires in 28 days". Kept in the default text color at a larger
-  // size for emphasis — coloring it hurt readability.
+  // "Expires in 28 days".
   const daysLeft = cron ? Math.floor((cron.expiresMs - st.nowMs) / 86400000) : 0;
   const cronExpiresLabel = cron ? fmtDayMonthUTC(cron.expiresMs) : '';
   const cronCountLabel = !cron ? ''
     : cron.allExpired ? 'Expired'
     : subDayCount(st.nowMs, cron.expiresMs, daysLeft <= 0 ? 'Expires today' : `In ${daysLeft} day${daysLeft === 1 ? '' : 's'}`);
-  const cronSubLabel = !cron ? 'Add the next set to DATACRON_SETS in config.js'
-    : cron.allExpired ? `${cron.name} has expired. Add the next set to DATACRON_SETS`
-    : `${cron.name}${cron.hasFDC ? ' + FDC' : ''} expires to inbox`;
+  const cronBadge = !cron ? 'NONE' : cron.allExpired ? 'EXPIRED' : 'ACTIVE';
+  const cronBadgeClass = (!cron || cron.allExpired) ? 'off' : 'orange';
+  const cronMain = cron ? cronCountLabel : 'No set configured';
+  const cronSub = !cron ? 'Add the next set to DATACRON_SETS in config.js'
+    : cron.allExpired ? `${cronExpiresLabel} — ${cron.name} has expired, add the next set to DATACRON_SETS`
+    : `${cronExpiresLabel} — ${cron.name}${cron.hasFDC ? ' + FDC' : ''} expires to inbox`;
   const lastUsable = cron ? getLastUsableGuildEvent(cron.expiresMs, st.eraBaseStartMs) : null;
   let lastUsableLabel = '—';
   if(lastUsable){
@@ -86,11 +94,11 @@ function renderUnlockWindows(st){
 
   el.innerHTML = `
     <div class="status-card purple-card">
-      <div class="sc-header"><span class="sc-title">Conquest Unit (${conquestOrdinal(cqChapter.cNum)} of Volume)</span></div>
+      <div class="sc-header"><span class="sc-title">Conquest Unit (${conquestOrdinal(cqChapter.cNum)} of Volume)</span><span class="sc-badge ${cqBadgeClass}">${cqBadge}</span></div>
       <div class="uw-body" style="--accent:var(--purple);--accent-dim:var(--purple-dim);--accent-border:var(--purple-border)">
         <div class="uw-img"><div class="art-badge">CQ</div><img src="${IMG_BASE}${CONQUEST_UNIT_IMAGE}" alt="" loading="lazy" decoding="async" onerror="this.remove()"></div>
         <div class="uw-text">
-          <div class="sc-main"><div class="big-count"><span class="bc-main">${cqCountLabel}</span> <span class="bc-date">(${cqDateLabel})</span></div><div class="sc-sub">${cqSubLabel}</div></div>
+          <div class="sc-main"><div class="sc-val">${cqMain}</div><div class="sc-sub">${cqSub}</div></div>
           <div class="sc-footer" style="flex-direction:column;align-items:flex-start;gap:2px;">
             <span>Usable in GAC: <span class="highlight">Week ${cqGacWeek} (${cqGac.format})</span></span>
             <span>Roster locks: ${fmtDayMonthUTC(gameDayDisplayMs(cqNextSignupDate))} (Defense Starts)</span>
@@ -99,26 +107,26 @@ function renderUnlockWindows(st){
       </div>
     </div>
     <div class="status-card orange-card">
-      <div class="sc-header"><span class="sc-title">End of Current Era</span></div>
+      <div class="sc-header"><span class="sc-title">End of Current Era</span><span class="sc-badge orange">${eraBadge}</span></div>
       <div class="uw-body" style="--accent:var(--orange);--accent-dim:var(--orange-dim);--accent-border:var(--orange-border)">
         <div class="uw-img"><div class="art-badge">ERA</div><img src="${IMG_BASE}${ERA_UNIT_IMAGE}" alt="" loading="lazy" decoding="async" onerror="this.remove()"></div>
         <div class="uw-text">
-          <div class="sc-main"><div class="big-count"><span class="bc-main">${eraCountLabel}</span> <span class="bc-date">(${eraDateLabel})</span></div><div class="sc-sub">${eraSubLabel}</div></div>
+          <div class="sc-main"><div class="sc-val">${eraMain}</div><div class="sc-sub">${eraSub}</div></div>
           <div class="sc-footer" style="flex-direction:column;align-items:flex-start;gap:2px;">
-             <span>Usable in GAC: <span class="highlight">Week ${eraGacWeek} (${eraGac.format})</span></span>
-             <span>Roster locks: ${fmtDayMonthUTC(gameDayDisplayMs(eraNextSignupDate))} (Defense Starts)</span>
+            <span>Usable in GAC: <span class="highlight">Week ${eraGacWeek} (${eraGac.format})</span></span>
+            <span>Roster locks: ${fmtDayMonthUTC(gameDayDisplayMs(eraNextSignupDate))} (Defense Starts)</span>
           </div>
         </div>
       </div>
     </div>
     <div class="status-card" style="border-color:${cronMeta.border}">
-      <div class="sc-header"><span class="sc-title">Datacron Expirations</span></div>
+      <div class="sc-header"><span class="sc-title">Datacron Expirations</span><span class="sc-badge ${cronBadgeClass}">${cronBadge}</span></div>
       <div class="uw-body" style="--accent:${cronMeta.accent};--accent-dim:${cronMeta.dim};--accent-border:${cronMeta.border}">
         <div class="uw-img"><div class="art-badge">${cronMeta.label.slice(0,3).toUpperCase()}</div><img src="${IMG_BASE}${cronMeta.asset}" alt="" loading="lazy" decoding="async" onerror="this.remove()"></div>
         <div class="uw-text">
           <div class="sc-main">
-            <div class="big-count">${cron ? `<span class="bc-main">${cronCountLabel}</span> <span class="bc-date">(${cronExpiresLabel})</span>` : 'No set configured'}</div>
-            <div class="sc-sub">${cronSubLabel}</div>
+            <div class="sc-val">${cronMain}</div>
+            <div class="sc-sub">${cronSub}</div>
           </div>
           <div class="sc-footer" style="flex-direction:column;align-items:flex-start;gap:2px;">
             <span>Last usable: <span class="highlight">${lastUsableLabel}</span></span>
