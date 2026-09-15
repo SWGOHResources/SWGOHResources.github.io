@@ -14,39 +14,43 @@ const status = {
   eventCount: 0,
 };
 
-test('status embed reads like the client-version alerts', () => {
+const EMOJI_RE = /[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}]/u;
+
+test('status embed uses neat labeled rows with no emojis', () => {
   const d = formatStatusPayload(status);
   const e = d.embeds[0];
   assert.match(e.title, /Era Day 50\/84/);
-  assert.equal(e.fields.length, 4);
+  assert.deepEqual(e.fields.map(f => f.name), ['Era', 'GAC', 'Territory Battle', 'Territory War']);
   for (const f of e.fields) assert.equal(f.inline, true);
-  assert.match(e.fields[0].value, /Myths & Legends/);
+  assert.doesNotMatch(JSON.stringify(d), EMOJI_RE);
   assert.match(e.description, /Quiet day/);
 });
 
-test('status embed adds conquest and event follow-up note', () => {
+test('status embed adds conquest full-width and event follow-up note', () => {
   const d = formatStatusPayload({ ...status, conquest: 'C3 — Day 5 of 14', eventCount: 3 });
   assert.equal(d.embeds[0].fields.length, 5);
   assert.equal(d.embeds[0].fields[4].inline, false);
-  assert.match(d.embeds[0].description, /3 live events/);
+  assert.match(d.embeds[0].description, /3 events start today/);
 });
 
-test('event embeds wear their own artwork with timestamps', () => {
+test('event embeds show type/start/end rows plus full artwork', () => {
   const d = formatEventPayload({
     name: 'Blade and Bastion', kind: 'marquee',
     startMs: 1789495200000, endMs: 1789581600000, art: 'live/events-x.png',
   });
   const e = d.embeds[0];
   assert.equal(e.title, 'Blade and Bastion');
-  assert.match(e.description, /Marquee/);
-  assert.match(e.description, /<t:1789495200:F>/);
-  assert.equal(e.thumbnail.url, 'https://swoghresources.github.io/assets/img/live/events-x.png');
+  assert.deepEqual(e.fields.map(f => f.name), ['Type', 'Starts', 'Ends']);
+  for (const f of e.fields) assert.equal(f.inline, true);
+  assert.match(e.fields[1].value, /<t:1789495200:F>/);
+  assert.equal(e.image.url, 'https://swoghresources.github.io/assets/img/live/events-x.png');
+  assert.doesNotMatch(JSON.stringify(d), EMOJI_RE);
 });
 
 test('event embeds degrade without artwork', () => {
   const d = formatEventPayload({
     name: 'Mystery', kind: 'whatever', startMs: 1, endMs: 2, art: null,
   });
-  assert.ok(!('thumbnail' in d.embeds[0]));
-  assert.match(d.embeds[0].description, /Event/);
+  assert.ok(!('image' in d.embeds[0]) && !('thumbnail' in d.embeds[0]));
+  assert.equal(d.embeds[0].fields[0].value, 'Event');
 });

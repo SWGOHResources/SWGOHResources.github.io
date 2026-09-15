@@ -29,13 +29,13 @@ const MAX_EVENT_POSTS = 10;
 const KIND_LABEL = {
   marquee: 'Marquee',
   'era-challenge': 'Era Challenge',
-  journey: 'Journey',
+  journey: 'Journey Guide',
   conquest: 'Conquest',
   gac: 'GAC',
   fleet: 'Fleet Mastery',
   assault: 'Assault Battles',
   omega: 'Omega Battles',
-  'smugglers-run': "Smugglers Run",
+  'smugglers-run': 'Smugglers Run',
   'credit-heist': 'Credit Heist',
   'daily-challenge': 'Daily Challenge',
   'proving-grounds': 'Proving Grounds',
@@ -58,22 +58,22 @@ const KIND_COLOR = {
 const ts = ms => `<t:${Math.floor(ms / 1000)}:F>`;
 const artUrl = art => (art ? `${SITE_URL}/assets/img/${art}` : null);
 
-// Status embed — compact labeled fields, mirroring the client-version
-// alert layout. Pure and unit-tested.
+// Status embed — short labeled rows in related pairs, mirroring the
+// client-version alert layout. Pure and unit-tested.
 export function formatStatusPayload({ eraDay, eraLength, dateLabel, era, gac, tb, tw, conquest, eventCount }) {
   const fields = [
-    { name: '🌍 Era', value: era, inline: true },
-    { name: '⚔️ GAC', value: gac, inline: true },
-    { name: '🛡️ Territory Battle', value: tb, inline: true },
-    { name: '⚔️ Territory War', value: tw, inline: true },
+    { name: 'Era', value: era, inline: true },
+    { name: 'GAC', value: gac, inline: true },
+    { name: 'Territory Battle', value: tb, inline: true },
+    { name: 'Territory War', value: tw, inline: true },
   ];
-  if (conquest) fields.push({ name: '🟣 Conquest', value: conquest, inline: false });
+  if (conquest) fields.push({ name: 'Conquest', value: conquest, inline: false });
   return {
     embeds: [{
       title: `SWGOH Status — Era Day ${eraDay}/${eraLength} (${dateLabel})`,
       description: eventCount
-        ? `${eventCount} live event${eventCount === 1 ? '' : 's'} start${eventCount === 1 ? 's' : ''} or end${eventCount === 1 ? 's' : ''} today — details follow.`
-        : 'Quiet day — no live events start or end today.',
+        ? `${eventCount} event${eventCount === 1 ? '' : 's'} start${eventCount === 1 ? 's' : ''} today — details follow.`
+        : 'Quiet day — no events start today.',
       color: 0x5865F2,
       fields,
       footer: { text: 'SWGOH Resources daily status' },
@@ -82,16 +82,21 @@ export function formatStatusPayload({ eraDay, eraLength, dateLabel, era, gac, tb
   };
 }
 
-// One embed per event, wearing its own artwork. Pure and unit-tested.
+// One message per event that starts today: related facts in a neat row
+// (type / start / end) plus the event's full artwork. Pure and tested.
 export function formatEventPayload(e) {
   const kind = KIND_LABEL[e.kind] ?? 'Event';
-  const thumb = artUrl(e.art);
+  const img = artUrl(e.art);
   return {
     embeds: [{
       title: e.name,
-      description: `${kind} — starts ${ts(e.startMs)} · ends ${ts(e.endMs)}`,
       color: KIND_COLOR[e.kind] ?? 0x56B8AD,
-      ...(thumb ? { thumbnail: { url: thumb } } : {}),
+      fields: [
+        { name: 'Type', value: kind, inline: true },
+        { name: 'Starts', value: ts(e.startMs), inline: true },
+        { name: 'Ends', value: ts(e.endMs), inline: true },
+      ],
+      ...(img ? { image: { url: img } } : {}),
       footer: { text: 'SWGOH Resources' },
       timestamp: new Date().toISOString(),
     }],
@@ -163,11 +168,10 @@ async function main() {
   const dateLabel = run(`fmtDateLongUTC(${dayStart})`);
 
   const snap = JSON.parse(await fs.readFile(LIVE_PATH, 'utf8'));
+  // Starts only: ending-soon events are yesterday's news, not today's.
   const todays = [];
   for (const e of snap.events ?? []) {
-    const starts = e.startMs >= dayStart && e.startMs < dayEnd;
-    const ends = e.endMs > dayStart && e.endMs <= dayEnd;
-    if (starts || ends) todays.push(e);
+    if (e.startMs >= dayStart && e.startMs < dayEnd) todays.push(e);
   }
   todays.sort((a, b) => a.startMs - b.startMs);
   const listed = todays.slice(0, MAX_EVENT_POSTS);

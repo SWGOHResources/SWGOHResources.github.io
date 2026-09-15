@@ -127,9 +127,9 @@ npm run content:diff
 
 `scripts/post-schedule-digest.mjs` posts the homepage's daily schedule to
 `DISCORD_EVENT_WEBHOOK_URL`: first a status embed (era, GAC, TB, TW,
-conquest — short labeled fields like the version alerts), then one
-message per live event starting/ending that day, each wearing the event's
-own artwork. `.github/workflows/digest.yml` runs it daily at 18:10 UTC,
+conquest — short labeled rows like the version alerts), then one message
+per live event starting that day, each with Type/Starts/Ends rows and the
+event's full artwork image. `.github/workflows/digest.yml` runs it daily at 18:10 UTC,
 just after the changeover. It needs no Comlink — rotation state comes from
 the site's own `config.js` + `time.js` and events from the committed
 `live-events.json` snapshot, so posts always match the page. One post set
