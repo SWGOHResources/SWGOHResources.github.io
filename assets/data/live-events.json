@@ -1,5 +1,5 @@
 {
- "pulledAt": 1789422824643,
+ "pulledAt": 1789458618282,
  "gameDataVersion": "0.40.5:MoxBSQUYRjuplwCT1HagpQ",
  "events": [
   {
@@ -36,7 +36,7 @@
    "kind": "omega",
    "startMs": 1789369200000,
    "endMs": 1789455600000,
-   "live": true,
+   "live": false,
    "art": "live/events-galactic-challenges-coruscant.png"
   },
   {
@@ -54,7 +54,7 @@
    "kind": "fleet",
    "startMs": 1789455600000,
    "endMs": 1789542000000,
-   "live": false,
+   "live": true,
    "art": "live/events-executor.png"
   },
   {
@@ -63,7 +63,7 @@
    "kind": "assault",
    "startMs": 1789455600000,
    "endMs": 1789542000000,
-   "live": false,
+   "live": true,
    "art": "live/events-empirehorde.png"
   },
   {
