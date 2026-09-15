@@ -1,0 +1,377 @@
+{
+ "gamedata": "0.40.5:MoxBSQUYRjuplwCT1HagpQ",
+ "items": {
+  "hyperdrive-bundle": [
+   "6c246cf06004"
+  ],
+  "bb_8_lightspeed_bundle": [
+   "c7db5f9b589b"
+  ],
+  "resistance_lightspeed_bundle": [
+   "0ada22af78f5"
+  ],
+  "jedi_training_rey_lightspeed_bundle": [
+   "d293751c0a8b"
+  ],
+  "raddus_lightspeed_bundle": [
+   "353dd47a9b43"
+  ],
+  "starkiller_lightspeed_bundle": [
+   "fede3d790c7b"
+  ],
+  "shadows_of_the_empire_lightspeed_bundle": [
+   "0e3c7f6b0f91"
+  ],
+  "supreme_leader_kylo_ren_lightspeed_bundle": [
+   "6cf7ab10c19d"
+  ],
+  "finalizer_lightspeed_bundle": [
+   "544cde2d06a4"
+  ],
+  "mandalorian_beskar_lightspeed_bundle": [
+   "498ef2973cc8"
+  ],
+  "geonosian_lightspeed_bundle": [
+   "4fbfd52425aa"
+  ],
+  "nightsister_lightspeed_bundle": [
+   "8932b86839ec"
+  ],
+  "c3po_lightspeed_bundle": [
+   "5a070a6d1826"
+  ],
+  "padme_amidala_lightspeed_bundle": [
+   "7df30caa515b"
+  ],
+  "general_skywalker_lightspeed_bundle": [
+   "f1248951cfc4"
+  ],
+  "jedi_allies_lightspeed_bundle": [
+   "efe45134032f"
+  ],
+  "ki_adi_mundi_lightspeed": [
+   "20dcbd20009b"
+  ],
+  "battle_of_hoth_lightspeed": [
+   "203bfb3834b5"
+  ],
+  "chewbacca_lightspeed": [
+   "f3309508e264"
+  ],
+  "all_hans_on_deck_lightspeed": [
+   "e70c3f5f5f58"
+  ],
+  "lukes_allies_lightspeed_bundle": [
+   "480027b604a2"
+  ],
+  "r2d2_lightspeed_bundle": [
+   "c4ff798482c6"
+  ],
+  "darth_maul_lightspeed": [
+   "280d4bef0ab8"
+  ],
+  "galatic_ahsoka_rush_i": [
+   "e6716674d955"
+  ],
+  "galatic_ahsoka_rush_ii": [
+   "fbe0218289f4"
+  ],
+  "doctor_aphra_lightspeed_bundle": [
+   "366aa675f065"
+  ],
+  "jabbas_entourage_lightspeed_bundle": [
+   "742a080b1c4b"
+  ],
+  "smugglers_lightspeed_bundle": [
+   "9e22f05e850b"
+  ],
+  "tusken_lightspeed_bundle": [
+   "63099d589fd8"
+  ],
+  "jawa_lightspeed_bundle": [
+   "167a8195cae8"
+  ],
+  "the_princesses_lightspeed_bundle": [
+   "6589c7cbf4af"
+  ],
+  "commander_ahsoka_lightspeed": [
+   "0446952a29be"
+  ],
+  "galatic_ahsoka_rush_iii": [
+   "561fd70493d0"
+  ],
+  "galatic_ahsoka_rush_iv": [
+   "bfe51c411f53"
+  ],
+  "galatic_ahsoka_rush_v": [
+   "13dfdc565a13"
+  ],
+  "wat_tambor_lightspeed_bundle": [
+   "a4fc12dfeb2b"
+  ],
+  "sith_etneral_emperor_lightspeed_i": [
+   "eec7039d6505"
+  ],
+  "sith_etneral_emperor_lightspeed_ii": [
+   "92cb1b08a7f1"
+  ],
+  "darth_revan_lightspeed_bundle": [
+   "7071ff4c4fa1"
+  ],
+  "jedi_knight_revan_lightspeed_bundle": [
+   "5b2a592cc781"
+  ],
+  "sith_triumvirate_lightspeed_bundle": [
+   "c11869624c59"
+  ],
+  "boba_fett_scion_of_jango_lightspeed": [
+   "0e4b16f55deb"
+  ],
+  "grand_inquisitor_lightspeed": [
+   "d99742b07bcb"
+  ],
+  "savageopress_welcome_lightspeed_bundle": [
+   "51cd96f4ba9b"
+  ],
+  "bad_batch_lightspeed_bundle": [
+   "8aebbfad06e7"
+  ],
+  "rogue_one_lightspeed_bundle_i": [
+   "7f491ffdd512"
+  ],
+  "rogue_one_lightspeed_bundle_ii": [
+   "af3cb414bc62"
+  ],
+  "tiein_interceptor_lightspeed_bundle": [
+   "c3c9c93627a9"
+  ],
+  "cup_lightspeed_bundle": [
+   "d8b25d844b8e"
+  ],
+  "finalizer_lightspeed_ii": [
+   "64db8598af1d"
+  ],
+  "raddus_lightspeed_ii": [
+   "ebcf1ef47238"
+  ],
+  "resistance_rising_lightspeed": [
+   "556c5d285761"
+  ],
+  "supreme_leader_lightspeed_ii": [
+   "b014f0125a25"
+  ],
+  "mandalorian_outcasts_lightspeed": [
+   "4c6c1b10d59d"
+  ],
+  "versios_command_lightspeed": [
+   "2474c399aec3"
+  ],
+  "jedi_vanguard_lightspeed": [
+   "73580db34f96"
+  ],
+  "maul_lightspeed_bundle": [
+   "529738467539"
+  ],
+  "separatist_commander_lightspeed": [
+   "e3eed6d2dacf"
+  ],
+  "razor_crest_lightspeed": [
+   "e7eef771abdd"
+  ],
+  "lord_of_the_sith_lightspeed": [
+   "35621ae900fb"
+  ],
+  "jedi_knight_anakin_lightspeed": [
+   "d424ec3ee52a"
+  ],
+  "darth_vader_lightspeed": [
+   "717a920dd630"
+  ],
+  "darth_malgus_lightspeed_bundle": [
+   "faafa6be1a1f"
+  ],
+  "ben_solo_lightspeed_bundle": [
+   "e2e61ac8dfde"
+  ],
+  "c_3po_lightspeed_bundle_ii": [
+   "30a1603d4176"
+  ],
+  "shadows_of_the_empire_lightspeed_ii": [
+   "b3b9cead6620"
+  ],
+  "r2d2_lightspeed_bundle_ii": [
+   "e631ba4e1eca"
+  ],
+  "leias_rebel_renegade_lightspeed": [
+   "b22b544a828b"
+  ],
+  "10th_anniv_char_welcome_lightspeed": [
+   "f8e5624cc8a7"
+  ],
+  "profundity_lightspeed_i": [
+   "8f6e3a3c4bd2"
+  ],
+  "profundity_lightspeed_ii": [
+   "03f40372f664"
+  ],
+  "cw_chewie_lightspeed": [
+   "4660703b48f4"
+  ],
+  "scythe_lightspeed": [
+   "7f437fae8a12"
+  ],
+  "fury_class_interceptor_lightspeed": [
+   "f177b9d61c70"
+  ],
+  "master_kenobi_lightspeed_i": [
+   "ee7e2f8a9591"
+  ],
+  "master_kenobi_lightspeed_ii": [
+   "962a6f131caf"
+  ],
+  "bo_katan_mandalor_lightspeed": [
+   "be747a34c9f9"
+  ],
+  "admiral_trench_lightspeed_bundle": [
+   "e18c63372077"
+  ],
+  "taron_malicos_lightspeed_bundle": [
+   "3d985401ec06"
+  ],
+  "darth_revan_lightspeed_bundle_ii": [
+   "c96a49ef0f79"
+  ],
+  "dark_moff_gideon_lightspeed": [
+   "3dd8ce48c0b8"
+  ],
+  "darth_bane_lightspeed": [
+   "036466bf51c7"
+  ],
+  "leviathan_lightspeed_i": [
+   "9b9821a5f2f0"
+  ],
+  "leviathan_lightspeed_ii": [
+   "3bd4887ead76"
+  ],
+  "lukes_allies_lightspeed_bundle_ii": [
+   "7c9a8d5b7f43"
+  ],
+  "bad_batch_lightspeed_bundle_ii": [
+   "bb89616ed319"
+  ],
+  "queen_amidala_lightspeed": [
+   "8ab035b6ab63"
+  ],
+  "sith_eternal_emperor_lightspeed_iii": [
+   "62463c8109e3"
+  ],
+  "jedi_knight_cal_kestis_lsb": [
+   "698cd3f3cd55"
+  ],
+  "cup_lightspeed_bundle_ii": [
+   "cbd1a8c3c89f"
+  ],
+  "ugnaught_lightspeed": [
+   "72e3e64f0f05"
+  ],
+  "ewok_scout_lightspeed": [
+   "1766e4e7ac97"
+  ],
+  "red_wlsb_oldben": [
+   "56eb06ddef5a"
+  ],
+  "red_wlsb_maul": [
+   "334bcbb99381"
+  ],
+  "red_wlsb_mando": [
+   "5481aace1c30"
+  ],
+  "red_wlsb_darthsidious": [
+   "7829642ac1b5"
+  ],
+  "red_wlsb_darthvader": [
+   "e53839308c9b"
+  ],
+  "tusken_lightspeed_bundle_ii": [
+   "5e80c49f39f5"
+  ],
+  "lord_of_the_sith_lightspeed_ii": [
+   "e3feb3171622"
+  ],
+  "starkiller_lightspeed_bundle_ii": [
+   "a84382f1ef37"
+  ],
+  "imperial_security_bureau_lsb": [
+   "acdb484f2406"
+  ],
+  "padme_amidala_lightspeed_bundle_ii": [
+   "66711822e2df"
+  ],
+  "din_djarin_lightspeed_bundle_ii": [
+   "c871e5c8bb27"
+  ],
+  "maul_lightspeed_bundle_ii": [
+   "83ee921a2270"
+  ],
+  "all_hans_on_deck_lightspeed_ii": [
+   "70cad3d61495"
+  ],
+  "jedi_knight_revan_lightspeed_bundle_ii": [
+   "e24383492e38"
+  ],
+  "queens_men_lightspeed": [
+   "d408e9828fb5"
+  ],
+  "vaders_command_lightspeed": [
+   "393c77528412"
+  ],
+  "general_skywalker_lightspeed_bundle_ii": [
+   "56411456441e"
+  ],
+  "doctor_aphra_lightspeed_bundle_ii": [
+   "f5e1a0f4d7fc"
+  ],
+  "jawa_lightspeed_bundle_ii": [
+   "e8f6c406072b"
+  ],
+  "versios_command_lightspeed_ii": [
+   "d52e3b00d410"
+  ],
+  "rogue_one_lightspeed_bundle_iii": [
+   "5a27efc140ee"
+  ],
+  "rogue_one_lightspeed_bundle_iv": [
+   "594107b96e11"
+  ],
+  "mandalorian_outcasts_lightspeed_ii": [
+   "f751230c9d4e"
+  ],
+  "jar_jar_binks_lightspeed": [
+   "50413a14160c"
+  ],
+  "bo_katan_mandalor_lightspeed_ii": [
+   "9ff016117252"
+  ],
+  "commander_ahsoka_lightspeed_ii": [
+   "4144886ca9eb"
+  ],
+  "501st_legion_lightspeed": [
+   "f93a4bb8c36d"
+  ],
+  "resistance_vanguard_lightspeed": [
+   "f726175c4f72"
+  ],
+  "luthen_rael_lightspeed": [
+   "68c3cda8c3ba"
+  ],
+  "ezra_bridger_exile_lightspeed_bundle": [
+   "591a063172d3"
+  ],
+  "mothers_of_peridea_lightspeed": [
+   "5f844d671631"
+  ],
+  "force_survivors_lightspeed": [
+   "54416b28d50d"
+  ]
+ }
+}

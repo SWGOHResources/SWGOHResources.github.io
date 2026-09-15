@@ -1,0 +1,230 @@
+{
+ "gamedata": "0.40.5:MoxBSQUYRjuplwCT1HagpQ",
+ "items": {
+  "rewardtable_4zone_5v5_ga_c4s0_005_season_end": [
+   "6194c5c14777"
+  ],
+  "rewardtable_4zone_3v3_ga_c3s1_005_season_end": [
+   "113c239b7f78"
+  ],
+  "rewardtable_2zone_5v5_ga_c2s0_002_season_end": [
+   "756de6dae167"
+  ],
+  "rewardtable_4zone_3v3_ga_c4s0_001_season_end": [
+   "86bf87bf396c"
+  ],
+  "rewardtable_2zone_5v5_ga_c1s1_006_season_end": [
+   "6904db9d50e2"
+  ],
+  "grandarena_rewardtable_4zone_3v3_ga2_c3s1_roundend": [
+   "a617248d5b72"
+  ],
+  "rewardtable_4zone_5v5_ga_c4s0_002_season_end": [
+   "7c3b81a36ae4"
+  ],
+  "rewardtable_4zone_5v5_ga_c4s0_008_season_end": [
+   "fe66f928deb5"
+  ],
+  "rewardtable_2zone_5v5_ga_c1s1_003_season_end": [
+   "4686f0451f3c"
+  ],
+  "rewardtable_4zone_3v3_ga_c3s1_002_season_end": [
+   "67df01b6f1b5"
+  ],
+  "rewardtable_4zone_5v5_ga_c3s1_003_season_end": [
+   "82a57a70811d"
+  ],
+  "rewardtable_4zone_3v3_ga_c4s0_001_season_end_rerun": [
+   "41d2c7dbd2c6"
+  ],
+  "grandarena_rewardtable_4zone_5v5_ga2_c3s1_roundend": [
+   "8773a0fdfc38"
+  ],
+  "rewardtable_4zone_3v3_ga_c4s0_006_season_end": [
+   "fe4e7ae67261"
+  ],
+  "rewardtable_4zone_5v5_ga_c3s1_007_season_end": [
+   "bdf2a6867f49"
+  ],
+  "rewardtable_2zone_5v5_ga_c2s0_007_season_end": [
+   "cecfe11a6477"
+  ],
+  "rewardtable_4zone_3v3_ga_c3s1_003_season_end": [
+   "d3e6934d6b1b"
+  ],
+  "rewardtable_4zone_5v5_ga_c3s1_010_season_end": [
+   "175e1aa77fb5"
+  ],
+  "rewardtable_2zone_5v5_ga_c2s0_004_season_end": [
+   "9c61b51db0e8"
+  ],
+  "rewardtable_4zone_5v5_ga_c3s1_001_season_end_rerun": [
+   "daafcdf5aef6"
+  ],
+  "rewardtable_4zone_5v5_ga2_c3s1_season_end": [
+   "9590af0a7d08"
+  ],
+  "rewardtable_2zone_5v5_ga_c1s1_010_season_end": [
+   "524d9d5d9d39"
+  ],
+  "rewardtable_4zone_5v5_ga_c4s0_004_season_end": [
+   "dc4fe4bfb002"
+  ],
+  "rewardtable_4zone_3v3_ga_c4s0_007_season_end": [
+   "5b804d080f0e"
+  ],
+  "rewardtable_2zone_5v5_ga_c1s1_008_season_end": [
+   "474d01dfc439"
+  ],
+  "rewardtable_2zone_5v5_ga_c1s1_001_season_end_rerun": [
+   "fa46c92f10bd"
+  ],
+  "rewardtable_4zone_5v5_ga_c4s0_006_season_end": [
+   "605e0a6604e0"
+  ],
+  "rewardtable_4zone_3v3_ga_c3s1_004_season_end": [
+   "06517e4061ca"
+  ],
+  "gac_blank_rewardstable": [
+   "11ada8b416f3"
+  ],
+  "rewardtable_4zone_5v5_ga_c3s1_001_season_end": [
+   "413f83083599"
+  ],
+  "rewardtable_2zone_5v5_ga_c1s1_001_season_end": [
+   "910438230f9c"
+  ],
+  "rewardtable_2zone_5v5_ga_c2s0_005_season_end": [
+   "281b72d00ea8"
+  ],
+  "rewardtable_4zone_3v3_ga_c4s0_010_season_end": [
+   "a54447f46d45"
+  ],
+  "rewardtable_4zone_3v3_ga_c4s0_008_season_end": [
+   "fd7531adfb48"
+  ],
+  "rewardtable_4zone_3v3_ga2_c3s1_season_end": [
+   "5a8baa0e6108"
+  ],
+  "grandarena_rewardtable_4zone_5v5_ga_c3s1_001_roundend": [
+   "5bdf969e4c95"
+  ],
+  "grandarena_rewardtable_2zone_5v5_ga_c1s1_001_roundend": [
+   "be8f0b9df563"
+  ],
+  "rewardtable_4zone_5v5_ga_c3s1_005_season_end": [
+   "d6c10171f90d"
+  ],
+  "rewardtable_4zone_3v3_ga_c4s0_005_season_end": [
+   "f0e7a6cd0f49"
+  ],
+  "rewardtable_2zone_5v5_ga_c1s1_002_season_end": [
+   "8ef95c5dcd94"
+  ],
+  "rewardtable_4zone_3v3_ga_c3s1_001_season_end": [
+   "86be0b25e818"
+  ],
+  "rewardtable_2zone_5v5_ga_c2s0_006_season_end": [
+   "b868b8ee632c"
+  ],
+  "rewardtable_4zone_5v5_ga_c3s1_002_season_end": [
+   "f1147f74e585"
+  ],
+  "rewardtable_4zone_5v5_ga_c3s1_008_season_end": [
+   "63a54eef3359"
+  ],
+  "rewardtable_2zone_5v5_ga_c2s0_003_season_end": [
+   "13e076c15215"
+  ],
+  "rewardtable_4zone_3v3_ga_c4s0_002_season_end": [
+   "2c51e65a7d2d"
+  ],
+  "grandarena_rewardtable_2zone_5v5_ga_c2s0_001_roundend": [
+   "c3765a93f5c6"
+  ],
+  "gac_blank_rewardstable_roundend": [
+   "d2998ef7f1ae"
+  ],
+  "rewardtable_4zone_5v5_ga_c4s0_003_season_end": [
+   "96676ec02d8e"
+  ],
+  "rewardtable_4zone_3v3_ga_c3s1_006_season_end": [
+   "638b0110ff39"
+  ],
+  "grandarena_rewardtable_4zone_5v5_ga_c4s0_001_roundend": [
+   "80d4534a2be2"
+  ],
+  "rewardtable_4zone_5v5_ga_c4s0_007_season_end": [
+   "51aa45104579"
+  ],
+  "rewardtable_2zone_5v5_ga_c1s1_007_season_end": [
+   "548051d19545"
+  ],
+  "rewardtable_4zone_3v3_ga_c3s1_001_season_end_rerun": [
+   "6ae3a1a874c1"
+  ],
+  "grandarena_rewardtable_4zone_3v3_ga_c3s1_001_roundend": [
+   "5370c853aba3"
+  ],
+  "rewardtable_4zone_3v3_ga_c4s0_003_season_end": [
+   "fa3385c7a419"
+  ],
+  "rewardtable_4zone_5v5_ga_c4s0_010_season_end": [
+   "e005b32ef144"
+  ],
+  "grandarena_rewardtable_4zone_3v3_ga_c4s0_001_roundend": [
+   "ec4129f56a9c"
+  ],
+  "rewardtable_2zone_5v5_ga_c1s1_004_season_end": [
+   "57d2b9c68568"
+  ],
+  "rewardtable_4zone_5v5_ga_c4s0_EXHIBITION_A_canceled_end": [
+   "092da06c4bed"
+  ],
+  "rewardtable_4zone_5v5_ga_c4s0_001_season_end_rerun": [
+   "8ce38d0da366"
+  ],
+  "rewardtable_2zone_5v5_ga_c2s0_010_season_end": [
+   "fb81862cda05"
+  ],
+  "rewardtable_2zone_5v5_ga_c2s0_001_season_end_rerun": [
+   "a0d022cb5ee9"
+  ],
+  "rewardtable_4zone_5v5_ga_c3s1_004_season_end": [
+   "a4a4c1d472fb"
+  ],
+  "rewardtable_4zone_3v3_ga_c3s1_007_season_end": [
+   "5f48f56fdd3c"
+  ],
+  "rewardtable_2zone_5v5_ga_c2s0_008_season_end": [
+   "50de9cde9af0"
+  ],
+  "rewardtable_4zone_5v5_ga_c3s1_006_season_end": [
+   "b32c128b4554"
+  ],
+  "rewardtable_4zone_3v3_ga_c4s0_004_season_end": [
+   "ef1c00bfdd38"
+  ],
+  "grandarena_rewardtable_4zone_5v5_ga_c4s0_001_roundend_event_cancel": [
+   "a467f6b60072"
+  ],
+  "rewardtable_4zone_5v5_ga_c4s0_001_season_end": [
+   "436eb6d28e68"
+  ],
+  "rewardtable_2zone_5v5_ga_c2s0_001_season_end": [
+   "6140de081441"
+  ],
+  "rewardtable_2zone_5v5_ga_c1s1_005_season_end": [
+   "319acfc739ab"
+  ],
+  "rewardtable_4zone_3v3_ga_c3s1_010_season_end": [
+   "19ef834e1a4d"
+  ],
+  "rewardtable_4zone_3v3_ga_c3s1_008_season_end": [
+   "92271e30cb29"
+  ],
+  "rewardtable_4zone_5v5_ga_c4s0_EXHIBITION_A_season_end": [
+   "c085046954b5"
+  ]
+ }
+}

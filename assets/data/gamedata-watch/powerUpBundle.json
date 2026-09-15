@@ -1,0 +1,98 @@
+{
+ "gamedata": "0.40.5:MoxBSQUYRjuplwCT1HagpQ",
+ "items": {
+  "power-up-02-TIER_02": [
+   "11bfa845d628"
+  ],
+  "power-up-10-TIER_03": [
+   "f27223ab6c81"
+  ],
+  "power-up-11-TIER_03": [
+   "82921c8fde0e"
+  ],
+  "power-up-12-TIER_03": [
+   "aea479c89a2d"
+  ],
+  "power-up-13-TIER_03": [
+   "31cbc8eb9368"
+  ],
+  "power-up-19-TIER_04": [
+   "24b04d7c8699"
+  ],
+  "power-up-20-TIER_04": [
+   "6bc259b9d904"
+  ],
+  "power-up-21-TIER_04": [
+   "882c3d0a66f8"
+  ],
+  "power-up-24-TIER_04": [
+   "ce888f184b98"
+  ],
+  "power-up-25-TIER_04": [
+   "d4d4c2b15a33"
+  ],
+  "power-up-26-TIER_04": [
+   "084c0d47f06c"
+  ],
+  "power-up-33-TIER_05": [
+   "bc1b795f4282"
+  ],
+  "power-up-34-TIER_05": [
+   "5d77f20d5811"
+  ],
+  "power-up-35-TIER_05": [
+   "ad0c528a0237"
+  ],
+  "power-up-36-TIER_05": [
+   "4a115de83655"
+  ],
+  "power-up-37-TIER_05": [
+   "fb5864bc5723"
+  ],
+  "power-up-42-TIER_06": [
+   "7d2ae2e549f4"
+  ],
+  "power-up-43-TIER_06": [
+   "109b8ca7f478"
+  ],
+  "power-up-44-TIER_06": [
+   "c08b77d5f7be"
+  ],
+  "power-up-45-TIER_06": [
+   "5e0d73950f8f"
+  ],
+  "power-up-50-TIER_07": [
+   "26ee82cacad9"
+  ],
+  "power-up-51-TIER_07": [
+   "2a35cd79263d"
+  ],
+  "power-up-52-TIER_07": [
+   "491abe7247f4"
+  ],
+  "power-up-53-TIER_07": [
+   "e5d291e2fcc4"
+  ],
+  "power-up-61-TIER_08": [
+   "8291127a01d1"
+  ],
+  "power-up-62-TIER_08": [
+   "e79f34e4a48f"
+  ],
+  "power-up-63-TIER_08": [
+   "773b8a6cdf2f"
+  ],
+  "power-up-64-TIER_08": [
+   "fefae5e09f62"
+  ],
+  "power-up-65-TIER_08": [
+   "58fe51976189"
+  ],
+  "power-up-66-TIER_08": [
+   "ff08176b2b2f"
+  ],
+  "power-up-999-TIER_08": [
+   "eedbd5c56974"
+  ]
+ }
+}

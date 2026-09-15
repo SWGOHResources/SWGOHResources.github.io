@@ -25,18 +25,21 @@ jobs:
         uses: actions/setup-node@v5
         with:
           node-version: 24
-      - name: Start swgoh-comlink
+      - name: Start swgoh-comlink and asset extractor
         run: |
           docker run -d --name swgoh-comlink \
             --env APP_NAME=swgohresources-client-watch \
             -p 3500:3000 ghcr.io/swgoh-utils/swgoh-comlink:latest
+          docker run -d --name swgoh-ae \
+            -p 3123:8080 ghcr.io/swgoh-utils/swgoh-ae2:latest
           for i in $(seq 1 24); do
-            if curl -sf --max-time 5 http://localhost:3500/enums -o /dev/null; then
-              echo "comlink ready"; exit 0
+            if curl -sf --max-time 5 http://localhost:3500/enums -o /dev/null \
+              && curl -sf --max-time 5 http://localhost:3123/swagger/v1/swagger.json -o /dev/null; then
+              echo "services ready"; exit 0
             fi
             sleep 5
           done
-          echo "comlink did not become ready"; docker logs swgoh-comlink; exit 1
+          echo "services did not become ready"; docker logs swgoh-comlink; docker logs swgoh-ae; exit 1
       - name: Check client versions
         run: COMLINK_URL=http://localhost:3500 npm run versions:check
       - name: Commit snapshot and detect transition
@@ -76,6 +79,68 @@ jobs:
             git commit -m "Client version snapshot $(date -u +%F_%H%M)"
             git push
           fi
+      - name: Diff game data on forced flip
+        id: content
+        if: steps.verdict.outputs.verdict == 'forced_flip' || steps.verdict.outputs.verdict == 'both'
+        run: |
+          COMLINK_URL=http://localhost:3500 AE_URL=http://localhost:3123 npm run content:diff | tee /tmp/content-diff.log
+          echo "result=$(grep -oP '^CONTENT=\K\w+' /tmp/content-diff.log | tail -n 1)" >> "$GITHUB_OUTPUT"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add assets/data/gamedata-watch assets/data/content-report.json assets/img/new 2>/dev/null || true
+          if git diff --staged --quiet; then
+            echo "content snapshots unchanged"
+          else
+            git commit -m "Content snapshots $(date -u +%F_%H%M)"
+            git push
+          fi
+      - name: Notify content channel on new content
+        env:
+          DISCORD_CONTENT_WEBHOOK_URL: ${{ secrets.DISCORD_CONTENT_WEBHOOK_URL }}
+          CONTENT: ${{ steps.content.outputs.result }}
+        run: |
+          if [ "$CONTENT" != "diff" ]; then
+            echo "no content diff (CONTENT=$CONTENT) — nothing to announce"
+            exit 0
+          fi
+          if [ -z "$DISCORD_CONTENT_WEBHOOK_URL" ]; then
+            echo "CONTENT=diff but DISCORD_CONTENT_WEBHOOK_URL is not set — skipping notify (content still tracked)"
+            exit 0
+          fi
+          node --input-type=module -e "
+            const report = (await import('node:fs/promises').then(fs => fs.readFile('assets/data/content-report.json', 'utf8'))).then(JSON.parse);
+            const r = await report;
+            const tag = t => (t === '+' ? '＋' : t === '~' ? '～' : t === '-' ? '－' : '');
+            const fields = [];
+            for (const [kind, label] of [['packs','📦 Packs'],['journeys','🗺️ Journeys'],['units','👤 Units'],['rewards','🎁 Rewards']]) {
+              const list = (r.sections[kind] ?? []).filter(i => i.tag).slice(0, 10);
+              if (!list.length) continue;
+              fields.push({
+                name: label + ' (' + r.sections[kind].filter(i => i.tag).length + ')',
+                value: list.map(i => tag(i.tag) + ' ' + (i.name ?? i.key)).join('\n').slice(0, 1000),
+                inline: false,
+              });
+            }
+            const thumb = Object.values(r.sections).flat().find(i => i.artUrl)?.artUrl;
+            const body = {
+              embeds: [{
+                title: '🆕 SWGOH ' + (r.storeVersion ?? '') + ' content: ' + r.total + ' new/changed',
+                description: ('Gamedata ' + r.gamedata).slice(0, 500),
+                color: 0x3BA55C,
+                fields: fields.slice(0, 10),
+                ...(thumb ? { thumbnail: { url: thumb } } : {}),
+                footer: { text: 'SWGOH Resources content watch' },
+                timestamp: new Date(r.checkedAt).toISOString(),
+              }],
+            };
+            const res = await fetch(process.env.DISCORD_CONTENT_WEBHOOK_URL, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(body),
+            });
+            if (!res.ok) throw new Error('Discord -> HTTP ' + res.status);
+            console.log('discord content notified');
+          "
       - name: Notify Discord on version change
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}

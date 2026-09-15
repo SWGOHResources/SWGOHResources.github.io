@@ -1,0 +1,3695 @@
+{
+ "gamedata": "0.40.5:MoxBSQUYRjuplwCT1HagpQ",
+ "items": {
+  "BADBATCHECHO": [
+   "0a7bee37a869",
+   "5953618e8caa",
+   "8f2112d55412",
+   "9bc6b68ec326",
+   "c38f167dd146",
+   "d3cb2a985212",
+   "f97b7491728a"
+  ],
+  "GREEDO": [
+   "06efc4c4d26c",
+   "4e08c090800d",
+   "7a55f4ec4dfb",
+   "ae4b5e4949ee",
+   "e98bcd3f52f0",
+   "f0d84f29db6e",
+   "f5b343c330c9"
+  ],
+  "GRANDINQUISITOR": [
+   "19544849a106",
+   "27eab705be21",
+   "335b51483006",
+   "37d28987cbe9",
+   "4e61ed07ac78",
+   "8c757db2330f",
+   "a3cb11b7d8a4"
+  ],
+  "BB8": [
+   "19bdc2ad3c9b",
+   "2826aa7cac5f",
+   "764fb540070a",
+   "7f5d59b8234f",
+   "b4bade028677",
+   "ba698f0364b0",
+   "fae30bf31fc8"
+  ],
+  "GEONOSIANSTARFIGHTER2": [
+   "3e89faa9ebf0",
+   "4483d2fda2ba",
+   "63a059df0eb1",
+   "9601e3fd6c48",
+   "a5a6ad4b3316",
+   "ae373ac8b93e",
+   "fec7e2ff36ed"
+  ],
+  "YWINGREBEL": [
+   "191aec4e1864",
+   "233e8df925a4",
+   "3a357071e666",
+   "8c4bf9390a9f",
+   "9c09ecc9ecaf",
+   "dc984e54e83f",
+   "e179743c6c17"
+  ],
+  "BRUTUS": [
+   "2c7732e442c2",
+   "30ea70943b92",
+   "45cd9983741f",
+   "5cd784d0a5bb",
+   "5fbc99a05d3d",
+   "790880645278",
+   "fe38e9de320a"
+  ],
+  "FIRSTORDERTIEPILOT": [
+   "214e47c2314c",
+   "55f580de626a",
+   "8ae2410fdc51",
+   "a2cb27b3998c",
+   "b84053430c32",
+   "bed791f7896e",
+   "d152f65d51ab"
+  ],
+  "UGNAUGHT": [
+   "636a1f10f3f3",
+   "6fb1c0454d3e",
+   "81adf4915966",
+   "a181b7cb6e75",
+   "d2a09924286a",
+   "e04716868800",
+   "eb537c615d9b"
+  ],
+  "HOTHREBELSOLDIER": [
+   "1a222a344961",
+   "27ab491befd9",
+   "56ac3a5a76ac",
+   "6d4b0cfa10b1",
+   "75a2b71221b0",
+   "89104bca5af0",
+   "fc4340165a32"
+  ],
+  "EMPERORSSHUTTLE": [
+   "0357282273b1",
+   "4acea1e7c60a",
+   "4b420c2a487e",
+   "78cdb2cb4b92",
+   "863bf0b8e4c7",
+   "9633cffa9cbe",
+   "ac710d1c0c02"
+  ],
+  "QUIGONJINN": [
+   "0884b636db5e",
+   "49f36baff2bc",
+   "5e28a89b5a38",
+   "65ea0475ae9c",
+   "814749f05094",
+   "edcc113ea43a",
+   "ff54a25b7509"
+  ],
+  "GEONOSIANSTARFIGHTER3": [
+   "2efa7fee3166",
+   "32f4616ce5cd",
+   "75207ef34580",
+   "85c04af8a0fa",
+   "c411559d512f",
+   "c4bdf1d496b7",
+   "d1886936954a"
+  ],
+  "JYNERSO": [
+   "06c60f09d9b0",
+   "223ddbd4450e",
+   "3412118d580d",
+   "c7b7f4e35533",
+   "df627d39fadc",
+   "eff517472682",
+   "f21361912ffe"
+  ],
+  "BARRISSOFFEE": [
+   "2b44062301f2",
+   "5d45e5454ca9",
+   "61cee0d5662c",
+   "6c17dd4ccdb4",
+   "7b216eca772c",
+   "829c77b09116",
+   "c325b11de2f9"
+  ],
+  "BWINGREBEL": [
+   "07849b97b722",
+   "6c023c5a6e32",
+   "9918d6a15845",
+   "ae0808884a1a",
+   "bdb3bb286222",
+   "e06f0b5eeb2f",
+   "fd0bb780ab7d"
+  ],
+  "ADMIRALACKBAR": [
+   "28bccac59b6e",
+   "533709178f54",
+   "9434af9f8e7b",
+   "aef364737273",
+   "ca6ec965b1f3",
+   "e61fff364559",
+   "ea1352cc2ae8"
+  ],
+  "HONDO": [
+   "16a47792b46c",
+   "620402244670",
+   "6ac6c6d389c7",
+   "71e4223ea928",
+   "72c0e8d1b4ad",
+   "99b1dc7d900a",
+   "be9acdd55989"
+  ],
+  "DIRECTORKRENNIC": [
+   "0e32357c061c",
+   "34e2e9a37bdc",
+   "4f614797bd55",
+   "588ed6780f18",
+   "6dda5c149e6c",
+   "9304dec80eac",
+   "b4834afef6a4"
+  ],
+  "CAPITALEXECUTOR": [
+   "14db5802843e",
+   "1c3b84671152",
+   "4180179e72b6",
+   "4e7ed125240b",
+   "62f049ffa3e7",
+   "da37548f15ad",
+   "eccdca54e0f6"
+  ],
+  "EPIXPOE": [
+   "1161d4340e15",
+   "3561325f4d1a",
+   "a75629b66599",
+   "c14d106bb7ee",
+   "e08d1f8e79cf",
+   "f59e275392b9",
+   "fa52df764fb1"
+  ],
+  "MACEWINDU": [
+   "17b6db67b58e",
+   "27269a5ed2ba",
+   "68c653bad401",
+   "76118930cfb4",
+   "96fb4b4dc1a2",
+   "aaf5a06bbdbe",
+   "d72fdd36fad5"
+  ],
+  "ROSETICO": [
+   "0f0e7ba4c9f9",
+   "20e2260cf6ce",
+   "50ed6f126367",
+   "b0697209fa70",
+   "c0d1f6880d77",
+   "f7b128a28c86",
+   "f9a188c9945f"
+  ],
+  "DARTHJARJAR": [
+   "00b1d4b7430a",
+   "377fee8d320e",
+   "58c607cb67c0",
+   "9212b7c3f250",
+   "a6173eba1811",
+   "d27954923430",
+   "fec154a5185b"
+  ],
+  "EWOKELDER": [
+   "2d413a6e96a7",
+   "621721d96f3f",
+   "85c3ec896132",
+   "8968c2b7f165",
+   "bf75f6f71077",
+   "bfb87d48ca23",
+   "da6d46b8c46a"
+  ],
+  "GEONOSIANSTARFIGHTER1": [
+   "2fced8e2bfe7",
+   "40701518a8dc",
+   "6ede88f258ee",
+   "75168543f69d",
+   "8dde713f5823",
+   "b3b09561fed8",
+   "ded02ec3722e"
+  ],
+  "DEPABILLABA": [
+   "0be246f5d3f1",
+   "2590f921625f",
+   "40493f64ce63",
+   "4de16f0ccb99",
+   "72fb864e0d6c",
+   "9bc7fdee7567",
+   "aa14066ac248"
+  ],
+  "AMILYNHOLDO": [
+   "17070be158a8",
+   "1cf288f2fb90",
+   "7e3994ded11c",
+   "ac83555ed9ca",
+   "b3bf5efff04d",
+   "e66a4af8e2a5",
+   "e6a13044a3e9"
+  ],
+  "CAPITALCHIMAERA": [
+   "13623c4b863c",
+   "3433e58c68ea",
+   "4a1ecc7dbf39",
+   "731801c0fd4c",
+   "a626a16909a7",
+   "bd337944a58d",
+   "de3eff72d25e"
+  ],
+  "QUEENAMIDALA": [
+   "0d6a8231e7e3",
+   "271327e487a6",
+   "4a79b8218d1d",
+   "7a861e45579c",
+   "8ec6378b6624",
+   "dd3a0e462684",
+   "f9eac445543b"
+  ],
+  "CARSONTEVA": [
+   "2db89e6dea22",
+   "47baf46ee457",
+   "6c8b4b448884",
+   "bfd7bff7e516",
+   "d1186788a23b",
+   "fcd495c5f1d4",
+   "fd2131784b38"
+  ],
+  "PADAWANSABINE": [
+   "0b4d9ffa03fb",
+   "257e5d6a07ae",
+   "389dc099a782",
+   "b64a4e9f3a13",
+   "c46c5f06d9f0",
+   "d66afe901745",
+   "fb05adcfd5b5"
+  ],
+  "JABBATHEHUTT": [
+   "335f20b3206c",
+   "699314fc4fe0",
+   "70ad0fff000f",
+   "7e4089d75063",
+   "bc0272021147",
+   "e1fd94c1b83c",
+   "fef8769e4d3f"
+  ],
+  "ARCTROOPER501ST": [
+   "0df0354e8a6a",
+   "0e92117650a7",
+   "1ddc2a69befc",
+   "3c77250e6428",
+   "65c8e396231c",
+   "caaf151fd01f",
+   "f627e59394fe"
+  ],
+  "OUTRIDER": [
+   "268ef1bacf2c",
+   "32f2955b3168",
+   "3311c0964865",
+   "4b4672ff391e",
+   "4dc94ebfeb5e",
+   "6f657f31a8c4",
+   "75062842e705"
+  ],
+  "EBONHAWK": [
+   "5654fc36522e",
+   "7072ef2b4788",
+   "7432bdfb5ccb",
+   "c3c91328af2c",
+   "d62030d7ea7f",
+   "f0efe086a1a5",
+   "fc925a6045ea"
+  ],
+  "CORUSCANTUNDERWORLDPOLICE": [
+   "271ed623970a",
+   "2cc4f62ff48d",
+   "822a1356391b",
+   "996de3775c7a",
+   "b15200b138f6",
+   "d11cf95da1bd",
+   "fdbe20474676"
+  ],
+  "BIGGSDARKLIGHTER": [
+   "0d94826265e2",
+   "277d83ce1229",
+   "32c886eb194c",
+   "9196309c8a38",
+   "dc4126f94712",
+   "e0b5d4ac9376",
+   "e84a66c46176"
+  ],
+  "MERRIN": [
+   "13f1c70d52af",
+   "4643ba7758d7",
+   "804af4eeba08",
+   "87bfad90dbff",
+   "ada5b47d8010",
+   "c642ed84bb56",
+   "de71bc7edaad"
+  ],
+  "IG90": [
+   "412791692be9",
+   "4e095da85f7e",
+   "690365dd5693",
+   "6a0d4cf8f9a7",
+   "8db640e8fb7b",
+   "aba9edf3205b",
+   "d742e2d3e152"
+  ],
+  "EPIXFINN": [
+   "400fa2c73b3b",
+   "47dcf8b290c1",
+   "4976cb5b6405",
+   "5d7c43115670",
+   "6424fc707329",
+   "66df1f0aa1a1",
+   "fc0263a59d8f"
+  ],
+  "GEONOSIANSPY": [
+   "1ce9abeb174a",
+   "235ea5a147a1",
+   "294938d84f97",
+   "52200546c7e9",
+   "5449eab3423e",
+   "df40bf66aae9",
+   "eaaa34d18c91"
+  ],
+  "LUMINARAUNDULI": [
+   "641a39b3f3a9",
+   "6db4055e49fc",
+   "72845bd6a700",
+   "b8ef3183dfeb",
+   "dc156a8cf33c",
+   "e02080fe5063",
+   "fdd5201dde7a"
+  ],
+  "UNDERCOVERLANDO": [
+   "6194c67d4bda",
+   "7c48de06aab2",
+   "8faafc043e61",
+   "9a071e8607e4",
+   "ce42cc58ccbf",
+   "e794301d2e77",
+   "f77476d3fec9"
+  ],
+  "OMEGAS3": [
+   "03d2d08ae525",
+   "23c201a981e3",
+   "b25271f81f5a",
+   "b47870dff379",
+   "c221f02881a7",
+   "cb646adbb6b8",
+   "fe8683ffa5d5"
+  ],
+  "LOBOT": [
+   "1adf47ce8032",
+   "2618c9fe80df",
+   "514defccf672",
+   "56010f304153",
+   "ba56380e144c",
+   "cd7963031e29",
+   "e94da7c4ba54"
+  ],
+  "STARKILLER": [
+   "215f32bd791f",
+   "5def4742e502",
+   "76da8f768a96",
+   "83e5e9996e38",
+   "955acea30e69",
+   "c9f8d2a82eed",
+   "fb159e35a6f9"
+  ],
+  "XWINGRESISTANCE": [
+   "195cb436fe7e",
+   "34a607fb6097",
+   "7dc601929877",
+   "9e02b14ad400",
+   "b7754f60b6c8",
+   "bf22df4c3867",
+   "d47543f8b280"
+  ],
+  "MAJORPARTAGAZ": [
+   "164d121b2110",
+   "2a9439b2c9b8",
+   "40049be36eaf",
+   "75d17a547d1c",
+   "909b7f885414",
+   "9695284d0265",
+   "b93fe4b2b38f"
+  ],
+  "BLADEOFDORIN": [
+   "039ab23d3b23",
+   "39973c5ef2d1",
+   "823596586ded",
+   "c9b18728c10e",
+   "de976cdab859",
+   "e7983e6342c2",
+   "ee14e90af162"
+  ],
+  "GRIEVOUS": [
+   "03b0b371c05e",
+   "38206f30330c",
+   "53aac2f571d2",
+   "8647c0a2d85a",
+   "8a65ee8edc5f",
+   "c93ece1b2fd2",
+   "cd78035b8839"
+  ],
+  "BAYLANSKOLL": [
+   "0d0bae34860e",
+   "5e34d2e21e4c",
+   "b303b4a6e362",
+   "bcc7a6803b77",
+   "c93a51974ad7",
+   "cb52aa1e51ea",
+   "eb2633b28bbe"
+  ],
+  "INQUISITORBARRISS": [
+   "25dc3430e0b0",
+   "2d8098f1613f",
+   "904797ba3982",
+   "a23b3de36634",
+   "da35e8c661a2",
+   "e77db133ebb9",
+   "f7fc8c21ac90"
+  ],
+  "EMBO": [
+   "09eff5690453",
+   "12bbc7c388b3",
+   "93361a20dd70",
+   "b5e30f5807a8",
+   "c59b430d791f",
+   "e031b19f1707",
+   "e66af33a2efe"
+  ],
+  "CAPITALNEGOTIATOR": [
+   "02ca2626fdd7",
+   "1192fe53a81d",
+   "6c04389285c3",
+   "710710491161",
+   "79943856a862",
+   "837048890562",
+   "ca5d901f3e42"
+  ],
+  "BADBATCHWRECKER": [
+   "1e489925aff3",
+   "2179f173df3c",
+   "4e37bff3b682",
+   "a4f80199aab9",
+   "ecd7267ab315",
+   "f396bbab8ecc",
+   "f3a0fbddd259"
+  ],
+  "GLLEIA": [
+   "021cd0712103",
+   "2227f7bd651e",
+   "2a1605ada820",
+   "93be31ccc06c",
+   "beddce743951",
+   "d0e84b1f0222",
+   "ef8a5051aa66"
+  ],
+  "GRANDMASTERYODA": [
+   "09aedef89f77",
+   "321ff8f80acb",
+   "44e48b037a9e",
+   "4a2dbcdd6d1a",
+   "a59d091cd0c0",
+   "c4322bbcdda3",
+   "d04677503009"
+  ],
+  "DEATHTROOPERPERIDEA": [
+   "349e96dc8fb9",
+   "66dd12b45d09",
+   "9850a93f5444",
+   "9ca6a41f37dc",
+   "c4d8c4a6d2a6",
+   "c74387e00b62",
+   "d1105ba002a8"
+  ],
+  "PLOKOON": [
+   "3d32db2a50bd",
+   "3dcf59609532",
+   "4b9bff9c71cb",
+   "6bfad714ba36",
+   "7162b3f806f5",
+   "8a0cf116b5c9",
+   "c898864c704a"
+  ],
+  "FIRSTORDERSPECIALFORCESPILOT": [
+   "0304d20bfe94",
+   "0f213cbb3bac",
+   "17218e95ac59",
+   "1ba120354eaa",
+   "4649a2c9e0e5",
+   "d365c919f230",
+   "fe31ff57f2cd"
+  ],
+  "COLONELSTARCK": [
+   "3e26883ffe5d",
+   "829c1e4d9d0a",
+   "a94750f37bb6",
+   "ab696e3399af",
+   "e10e5b1e429a",
+   "eb8a88e0b38c",
+   "f930ed50ac8c"
+  ],
+  "MILLENNIUMFALCONPRISTINE": [
+   "037b339dea8f",
+   "364fc6683065",
+   "3e010c9bcac0",
+   "4d13ddfe99a6",
+   "7fbf56f88e80",
+   "ad9f322140ac",
+   "e87278c5e384"
+  ],
+  "DARKREY": [
+   "18cde4bff20e",
+   "3607a50718ed",
+   "93992822ca9f",
+   "c2ea7872f8d6",
+   "ccbb16e1caaa",
+   "d97c8c5243ed",
+   "fe123a082acc"
+  ],
+  "JOLEEBINDO": [
+   "341a2d9f81df",
+   "52b9a7b1e768",
+   "5b88df9badf7",
+   "9073398193e0",
+   "bd89a04cedc3",
+   "ca07c2858fd9",
+   "d518465f4e7b"
+  ],
+  "RAVENSCLAW": [
+   "0881835747d1",
+   "0bc6befbf192",
+   "3de7650a1161",
+   "827f1b398eaa",
+   "b57ba1dd36f0",
+   "cf608f3c3fd0",
+   "d87a90f81250"
+  ],
+  "FIRSTORDERTIEECHELON": [
+   "10e51d66b8ce",
+   "2a7fdc5b656d",
+   "388868476985",
+   "4e8426b8670e",
+   "590857e352c3",
+   "d0c03d96cf3f",
+   "d9d96bf6360c"
+  ],
+  "NIGHTSISTERSPIRIT": [
+   "05bc831af54a",
+   "26f88b1ba919",
+   "39c295a08c76",
+   "50d38a270b4a",
+   "71fe3fbb0c6b",
+   "8b4c3d45d403",
+   "fdef226f022a"
+  ],
+  "JAWA": [
+   "6f8e80255d5a",
+   "9316854dcf41",
+   "b6248a07ab72",
+   "b88366926b23",
+   "db1365d46898",
+   "e163fb93ad78",
+   "f8b6cb3d0932"
+  ],
+  "SCARIFREBEL": [
+   "29c9890e232b",
+   "59e0eaaf1ad9",
+   "7572959443cf",
+   "9cd04ec0e160",
+   "a283d73f9928",
+   "ba51b8c14931",
+   "dfbb6b8ee06b"
+  ],
+  "MORGANELSBETH": [
+   "0e55d3ce118f",
+   "3480a1505715",
+   "a0f624c10df4",
+   "bae1f81028cc",
+   "d57aaca2f6de",
+   "ded4195234e6",
+   "e80c0dc827d0"
+  ],
+  "KELLERANBEQ": [
+   "02f518b576d6",
+   "32235ec915af",
+   "74c26343ea84",
+   "92bda5eb25c4",
+   "9ff11efc1a0f",
+   "acfe05822be7",
+   "f65ae6543105"
+  ],
+  "ZAALBAR": [
+   "236a92564e5e",
+   "42106206f6cb",
+   "431644b00dc5",
+   "511140837c80",
+   "653267b26f1c",
+   "a7f005290880",
+   "abbbc03c6ca8"
+  ],
+  "SCYTHE": [
+   "1241b7b61993",
+   "1c771a27a460",
+   "5da1f60c5b30",
+   "74ba4a9106ce",
+   "75fe5825220d",
+   "b3ee9777ab1a",
+   "c10cdd500618"
+  ],
+  "COMMANDERLUKESKYWALKER": [
+   "217115366fce",
+   "2bcdfb81c8af",
+   "3a66e558f6b8",
+   "6e2109c173c4",
+   "a74f9e7fe10c",
+   "a7c188569395",
+   "ac833fbd4476"
+  ],
+  "PUNISHINGONE": [
+   "71a6f7894ba0",
+   "79373a479bbe",
+   "89f109b00a3b",
+   "9bb3f9219804",
+   "a778ecd56098",
+   "bea2a897035f",
+   "e55311ea91fe"
+  ],
+  "NIGHTSISTERINITIATE": [
+   "0a7e2e931535",
+   "2b0f4f8248ee",
+   "354bc98cd013",
+   "9437f9883193",
+   "c2dad7996797",
+   "c358ac2dbb37",
+   "e99399098f4b"
+  ],
+  "HANSOLO": [
+   "3bc4de1f0def",
+   "3dcf9430df90",
+   "4956c994fa62",
+   "5a6255c4cf8a",
+   "97b5b146fb0c",
+   "b170aff20649",
+   "e74d557db58d"
+  ],
+  "TIEFIGHTERFIRSTORDER": [
+   "16352f41e94b",
+   "19def960c261",
+   "356d5d25f193",
+   "39f3b62fd9ec",
+   "4518de41bd83",
+   "9066ee126261",
+   "daebeba227b0"
+  ],
+  "YWINGCLONEWARS": [
+   "0088e62a2462",
+   "38c92bfbc01d",
+   "3b756a9b43c3",
+   "83b976445a52",
+   "ade341ce1363",
+   "b606ddad6e33",
+   "d37fc2d9aeb5"
+  ],
+  "HK47": [
+   "03de1d17a551",
+   "17def1fabc5f",
+   "2df8968d1638",
+   "67ab1c180501",
+   "896644f9e828",
+   "91be88ddf640",
+   "cfdc067161ba"
+  ],
+  "CT7567": [
+   "048239eec34b",
+   "3f86c36d5b50",
+   "b3ca7fd926a0",
+   "b954d7d9d53c",
+   "bedc704ffdff",
+   "bfeb551af820",
+   "d1409d9f414d"
+  ],
+  "DARKTROOPER": [
+   "088277e8792a",
+   "0c975b15d59c",
+   "5d8f4ab54ad9",
+   "a0ac40300f1f",
+   "c57b08bce353",
+   "dd91768768c5",
+   "fbea5fe83ec7"
+  ],
+  "ARC170REX": [
+   "189f015d9f06",
+   "2b6ffbd6b0a1",
+   "76ac54c7f0cd",
+   "88c7830b699e",
+   "a74acd98c309",
+   "ef5427caa473",
+   "f6f111332c0c"
+  ],
+  "DOCTORAPHRA": [
+   "0945d55c50d1",
+   "213fc2e34c4d",
+   "40eca46b300a",
+   "60cf10fe6e7e",
+   "6f13e1b3d0f9",
+   "981e7fd10862",
+   "f9bad538223b"
+  ],
+  "TRIPLEZERO": [
+   "19fa64de8136",
+   "4df2e2206832",
+   "7395514001e4",
+   "78ef5160f55c",
+   "7c90425dcbcd",
+   "954f1186a035",
+   "ead3bf86eea9"
+  ],
+  "OPERATIVE": [
+   "0b08094bb30e",
+   "3d28c7ddaf05",
+   "7071b1e8b61a",
+   "8ffb59181b90",
+   "abadb9480a1f",
+   "c455033c3867",
+   "f02f72b1f0a9"
+  ],
+  "GLREY": [
+   "106de07884a3",
+   "336442ee2067",
+   "33a81397aec7",
+   "3f30e12b7f90",
+   "570e7bfd3d8c",
+   "591fdf0eb6d9",
+   "da25267d039b"
+  ],
+  "MISSIONVAO": [
+   "4a619ae0c6ab",
+   "7af13851472e",
+   "a89784533f3e",
+   "acdc9b04ebef",
+   "b116347a9eb4",
+   "ba7d7c704ccf",
+   "f6318be57156"
+  ],
+  "COMMANDERAHSOKA": [
+   "3d2c5cfec8b7",
+   "4a19caec2ee9",
+   "91d118807e10",
+   "a461b7e05a13",
+   "c9201990895f",
+   "deb25aef2de9",
+   "ea91f99e34ab"
+  ],
+  "JEDISTARFIGHTERCONSULAR": [
+   "0368ed62bbe8",
+   "35bd214a52bd",
+   "3f44bb99216c",
+   "538c3613a10d",
+   "64e3eda1b4bc",
+   "8cef4afba816",
+   "b2c4807e06be"
+  ],
+  "BADBATCHHUNTER": [
+   "2b0ab9b12aa9",
+   "3802e10d4582",
+   "4b82d5ab619f",
+   "53596b897e9d",
+   "6ea914903d31",
+   "a551243b7ee7",
+   "c802f816a969"
+  ],
+  "AHSOKATANO": [
+   "34d8d8af0ebd",
+   "5791f2ff4aab",
+   "5c92dc590596",
+   "cb10c75b3119",
+   "cfbd0c7820db",
+   "dbe71c7f3611",
+   "e370712b13e7"
+  ],
+  "DARTHMALGUS": [
+   "025c7f57e72e",
+   "0bdc6a06b082",
+   "42574b660c10",
+   "bead51500740",
+   "e1b89fb84918",
+   "e7457658e3f8",
+   "eed8fec0af38"
+  ],
+  "50RT": [
+   "037ea5a81914",
+   "12bbe615b6e8",
+   "1d900f2d5653",
+   "71725e50793d",
+   "7ae66ce357f4",
+   "ad09b4848341",
+   "d228f86f8118"
+  ],
+  "WATTAMBOR": [
+   "071d299522f8",
+   "22a01e345a35",
+   "4a630d277b22",
+   "7012599275b5",
+   "9cac68709210",
+   "a36fe674768f",
+   "ba2de94c2372"
+  ],
+  "CARADUNE": [
+   "48c0b809c31a",
+   "4ba1ceab686a",
+   "63586cc76620",
+   "728a0ffc6c3e",
+   "cfb1001b66d8",
+   "e50be6917738",
+   "e905ace1de58"
+  ],
+  "4LOM": [
+   "241ad5faaccd",
+   "70e360a35475",
+   "79f650da2a33",
+   "7f1d0b1b1d26",
+   "85970dca4059",
+   "f2c685a86b8f",
+   "fe4c242a811b"
+  ],
+  "JAXXON": [
+   "7155a40f2944",
+   "78290e79f734",
+   "ab4c477829b4",
+   "d234dc94d2bb",
+   "f12af0739f17",
+   "fdd6f2c0eda8",
+   "fe015c2fe038"
+  ],
+  "JAWAENGINEER": [
+   "38161f5d402f",
+   "4da0287c1365",
+   "91db104bb6d1",
+   "b65e30614f70",
+   "e62207104315",
+   "eb24b65c6cb9",
+   "ed630c18e70d"
+  ],
+  "ARMORER": [
+   "16f7d15a0d1c",
+   "38796322bd59",
+   "4f03cee455ab",
+   "62ccc7176ebf",
+   "6d42824e710c",
+   "eb6d3fd5fa9a",
+   "fb4550919cbe"
+  ],
+  "LOGRAY": [
+   "104a94e7c9eb",
+   "1c0ae0a92d36",
+   "40d5545aafb5",
+   "693efea7bc22",
+   "6c5edf5d492b",
+   "d4ef0662711f",
+   "e98921b18e3e"
+  ],
+  "ZAMWESELL": [
+   "11c036a7c807",
+   "24bcb79c715e",
+   "9d9b5e268e84",
+   "b427c107c3aa",
+   "d11611343e0f",
+   "df0f036b4f23",
+   "fcc893269026"
+  ],
+  "SMUGGLERHAN": [
+   "18e402f7ce15",
+   "2a3a5c00530d",
+   "37a2a746d84c",
+   "3fb28bcee892",
+   "8988459ad970",
+   "cb86753e3d5d",
+   "de04984199ce"
+  ],
+  "MAZKANATA": [
+   "01895a11f21a",
+   "22ab550cae20",
+   "28a893f0ec52",
+   "5dfd51084eec",
+   "843002c1a769",
+   "874618ad43b0",
+   "e21e5d159c07"
+  ],
+  "URORRURRR": [
+   "5006da1f2483",
+   "8d7fd31d7292",
+   "aa440d7bc93f",
+   "cce7b804d34a",
+   "d1377e093293",
+   "d93231b57b92",
+   "e17f02ad9e62"
+  ],
+  "DISGUISEDCLONETROOPER": [
+   "20d66f1f01b5",
+   "344582d67a9e",
+   "4c8976480fca",
+   "6c4d9f25c58a",
+   "ab48d94eb8a4",
+   "db03e18cd770",
+   "f55179c0530f"
+  ],
+  "BOBAFETTSCION": [
+   "134328377991",
+   "32f260167472",
+   "3835d6dea32d",
+   "495b45b99340",
+   "575e66c9e494",
+   "5aa8c624c6cd",
+   "909ceb8ad448"
+  ],
+  "ZUCKUSS": [
+   "1c872e4b1dcb",
+   "3eec79f4a5d6",
+   "83f0fcb12887",
+   "8620c3092f6a",
+   "951cd8e1ebc0",
+   "990b86295369",
+   "9bf1e9817b3a"
+  ],
+  "EZRAEXILE": [
+   "238d27b46c3d",
+   "4bdfd323fd1f",
+   "792daaf41a61",
+   "c40b4d02a7e3",
+   "cb14a24652b6",
+   "d52c013bc113",
+   "ff2192bfbbd8"
+  ],
+  "DARTHMALAK": [
+   "7ca2ec81ccc0",
+   "900fe5666246",
+   "913c8f00c37e",
+   "a4e714d124ff",
+   "c4ef2c16376b",
+   "e841094f9959",
+   "fa511bc3580f"
+  ],
+  "ANAKINKNIGHT": [
+   "063a79628361",
+   "0b3f7897a050",
+   "32bd4583a9b5",
+   "970bbd8dde16",
+   "97e5bb7e6eb1",
+   "a03e3bc200e9",
+   "cc2a75bf0ee0"
+  ],
+  "DARTHNIHILUS": [
+   "0f31c2e2ea8e",
+   "2e4efe6e8a84",
+   "4edbb50fcb12",
+   "6332aeeda81b",
+   "c1ae7b8f31f1",
+   "ed04526ab327",
+   "f39f789ad56c"
+  ],
+  "MARAJADESKYWALKER": [
+   "028d13d8a95c",
+   "31b0642e18e7",
+   "3be6ce077cc2",
+   "54bd59421d21",
+   "b4f0644036d2",
+   "df18c7648c48",
+   "e2037a621c0d"
+  ],
+  "GAUNTLETSTARFIGHTER": [
+   "02cdae9514b6",
+   "6aaf09c4d13c",
+   "95189c9b758b",
+   "9bd72649394a",
+   "9cd8b6bc5f55",
+   "d71ea9b5ed5a",
+   "f7cf7030f2dc"
+  ],
+  "L3_37": [
+   "2607599f969b",
+   "48d974bc3d2f",
+   "6557e3d95e02",
+   "7070af0bff55",
+   "7e8b4d0a1129",
+   "e0cfb96bc7e9",
+   "f4a574ce1863"
+  ],
+  "BOOMADIER": [
+   "086eb42b6d7a",
+   "0c6996381562",
+   "118017b74032",
+   "130003969054",
+   "1ef762a57411",
+   "ad4060c0943d",
+   "c832e855e94a"
+  ],
+  "SCORCH": [
+   "1d8a84cdb96b",
+   "2e24220e9293",
+   "5eddbc189c3f",
+   "722cc62ad0de",
+   "928d693a7218",
+   "d4fe20155970",
+   "f051c8ae815a"
+  ],
+  "ZORIIBLISS_V2": [
+   "6300af32e89e",
+   "6a63335efac8",
+   "920a0e7a90e5",
+   "ad3111d36e61",
+   "c75ea78449fb",
+   "d3cc537ecefc",
+   "d6f56dffce05"
+  ],
+  "YOUNGLANDO": [
+   "389490051fd6",
+   "54e5e91bb9e6",
+   "6ef046b21884",
+   "82f6b04560a4",
+   "c017f01b1b92",
+   "d51c64113860",
+   "f7b566f8b396"
+  ],
+  "GREEFKARGA": [
+   "03cce660cf84",
+   "3620f0814489",
+   "4faf99047851",
+   "b0e5585ec9cb",
+   "d855f23f6b6c",
+   "f68ef4702734",
+   "fd68d3374d7d"
+  ],
+  "DEATHTROOPER": [
+   "0d9ec94a6feb",
+   "24e698f57ec6",
+   "72340c8fda9b",
+   "7f91994504c1",
+   "986dd71d767f",
+   "a2c5feca0943",
+   "ac447b10cc05"
+  ],
+  "MOTHERTALZIN": [
+   "47833165e587",
+   "572104aaca66",
+   "70bbfd0cb44b",
+   "73f3fa8562fd",
+   "c4d79add4a15",
+   "cd9acf82add1",
+   "faaa3438a6cd"
+  ],
+  "HOUNDSTOOTH": [
+   "1493e65e7051",
+   "1c246f42904f",
+   "2f8284035c88",
+   "97f47395b35b",
+   "ada788fa13cb",
+   "c1ae2868fe2f",
+   "ebf631d773ad"
+  ],
+  "UWINGROGUEONE": [
+   "0a0577c4e75a",
+   "0ce04ff5149a",
+   "254fdf7de555",
+   "26b1595bb1f5",
+   "3142c4fef9a4",
+   "b654313cffbd",
+   "e3dee13c59f0"
+  ],
+  "MONMOTHMA": [
+   "1a54a8c887d8",
+   "2f266101002e",
+   "512849a06c70",
+   "6514e25f33eb",
+   "b46c155ce7b8",
+   "bd62fdc0445f",
+   "f06c241463b2"
+  ],
+  "MILLENNIUMFALCONEP7": [
+   "021e66e2b368",
+   "630689f5946e",
+   "64254b1e66c0",
+   "9673f746dbf3",
+   "98dcefb5094f",
+   "cf89de7501ef",
+   "ee12fbe38be8"
+  ],
+  "POE": [
+   "46c1bd27b8ff",
+   "6491de2ef4f4",
+   "832130dfe21d",
+   "90efec2a6754",
+   "b3c41894d72d",
+   "d0120c19e178",
+   "fc96f131ec8b"
+  ],
+  "GRANDADMIRALTHRAWN": [
+   "087681828cfe",
+   "3eb3326d6b67",
+   "527e49aae519",
+   "8031a4ac7260",
+   "a4fa28ac0f32",
+   "e12434383a22",
+   "e27a8cc9ffdf"
+  ],
+  "STORMTROOPER": [
+   "2e34a1c13eb6",
+   "3d7a86ca78d0",
+   "416053bd3d51",
+   "49e4659c3e9a",
+   "78e8b84b49ae",
+   "d9b1e6fb9e93",
+   "ef2280987ff3"
+  ],
+  "MG100STARFORTRESSSF17": [
+   "38b670ce2021",
+   "7dc52291ca9b",
+   "8d75ecc397a7",
+   "a03d406b1161",
+   "c3c1571c91ca",
+   "c5ac07748f5b",
+   "dba452d14d8b"
+  ],
+  "CLONEWARSCHEWBACCA": [
+   "4f72e0864e40",
+   "59ba3089c8c0",
+   "5a4c11310144",
+   "64d1bd16841e",
+   "8635ff7e89a5",
+   "c4ca509ec49b",
+   "fcb31fc31ba7"
+  ],
+  "ARC170CLONESERGEANT": [
+   "2c49d137c8d4",
+   "9a95dea290a9",
+   "b9b8b6f16a0e",
+   "bef1b21b911b",
+   "c39cf5548ee1",
+   "ee9b7e7032e2",
+   "f7cdd4fa36d3"
+  ],
+  "ITHANO": [
+   "052ed0d7d7bb",
+   "0ecefe07ac33",
+   "1be2c129e9c0",
+   "583b8e04b38e",
+   "62f6ac805b97",
+   "9dc8f9b41e01",
+   "b669bf694318"
+  ],
+  "SITHPALPATINE": [
+   "26908ffd81f7",
+   "429443e20a69",
+   "47f95ad57fe5",
+   "4f4613a6b543",
+   "a2a26dc7d883",
+   "db56348034a6",
+   "ec876c135418"
+  ],
+  "OLDBENKENOBI": [
+   "1240a96902d3",
+   "25eb06c1343a",
+   "51c343ecf87b",
+   "52320265ae50",
+   "7ca22f613f10",
+   "adb2aeb5a8d9",
+   "e7dd5e232cce"
+  ],
+  "WICKET": [
+   "2d3f8f661e61",
+   "3da10411b235",
+   "5624f200684d",
+   "6fcbf7328d70",
+   "9393d7df3000",
+   "b8093c31cc7e",
+   "cb6d15a6b5a4"
+  ],
+  "GLAHSOKATANO": [
+   "26a7166e5456",
+   "312ff4423b80",
+   "545c638ec26d",
+   "d43a5555f7b5",
+   "d4b2645efa59",
+   "e0247821269f",
+   "e653eda7b442"
+  ],
+  "HERASYNDULLAS3": [
+   "00ef411488d1",
+   "4e636917754b",
+   "63ec6e3576f6",
+   "ba49b97de33a",
+   "bed37556a8be",
+   "d20c5e2c540f",
+   "f4d32282ae0f"
+  ],
+  "BT1": [
+   "2dee34e48e5f",
+   "3b9085f76e73",
+   "5f23b95d17a2",
+   "62a5a7e98608",
+   "87030054cfc3",
+   "b97583b988d3",
+   "ccfb9a2f2361"
+  ],
+  "TUSKENCHIEFTAIN": [
+   "01370d822b4f",
+   "22f6e60d8fe4",
+   "3fbde866de96",
+   "cd0b42763c0e",
+   "dcd39e4b1376",
+   "e616545d07e9",
+   "ffcf452e164a"
+  ],
+  "TIEBOMBERIMPERIAL": [
+   "00311a96d183",
+   "2f92449b2a8e",
+   "30d000c9ffe6",
+   "43e84aa71c73",
+   "6806341ea893",
+   "801edf38f3d3",
+   "b73759210df7"
+  ],
+  "BOBAFETT": [
+   "4d6d35bfbd77",
+   "632c54919f7a",
+   "72e335c7b0bb",
+   "8493ffdcf48f",
+   "dd234f86c1d1",
+   "e84e7a2826cc",
+   "feda5429ddd4"
+  ],
+  "PADAWANOBIWAN": [
+   "038405359946",
+   "35927dcad8d2",
+   "362d7f81e074",
+   "38dcdbcec3d8",
+   "4ddc96940aaf",
+   "a6df2ededad2",
+   "c488666d47b8"
+  ],
+  "YODADSV": [
+   "1b50068d92c7",
+   "8a28a08d7f6e",
+   "8f7a6f2b94e8",
+   "aeedfc2478d1",
+   "b2f7ccc196e1",
+   "b63848d9a645",
+   "b716b37f5dc6"
+  ],
+  "R5D4": [
+   "66cfd1d7db6b",
+   "6c28239559e5",
+   "7f83b68d2c03",
+   "b421435943d2",
+   "d9b3255434f6",
+   "df8eb40488fb",
+   "fabd6ad7887b"
+  ],
+  "TUSKENSHAMAN": [
+   "419b7c2dcb84",
+   "8514d0fbc172",
+   "a52c5b1dcb7d",
+   "b6063df77626",
+   "b7d750c02e19",
+   "c8844df345d5",
+   "dca561abbb20"
+  ],
+  "CHEWBACCALEGENDARY": [
+   "3878dd2251cd",
+   "403fe19eec51",
+   "617d471ce6c0",
+   "72e98b7f926e",
+   "93d862952dab",
+   "b171cd11c53f",
+   "d5f13c17f9fd"
+  ],
+  "MOFFGIDEONS1": [
+   "02985b1dad51",
+   "55ca3c291266",
+   "65e24745f721",
+   "9f7eb59786e3",
+   "bcb17a81c596",
+   "c0d2d510d43b",
+   "fd82dfd409c8"
+  ],
+  "SUPREMELEADERKYLOREN": [
+   "005e61663289",
+   "4600dbda2838",
+   "4661a04f42d2",
+   "62804ea226bb",
+   "d37e597ad8a8",
+   "d3fa836ecc0e",
+   "f7e759120614"
+  ],
+  "COMEUPPANCE": [
+   "457d8ff65345",
+   "5b1216344113",
+   "7d8aa5db58b9",
+   "8c502b248b59",
+   "9712b5d6478d",
+   "ad3f6fbe5795",
+   "b0f34a3ad060"
+  ],
+  "CANDEROUSORDO": [
+   "128c415fd076",
+   "148248e4d6a9",
+   "28d8ca148d55",
+   "41c5955540d2",
+   "6cf2315b557a",
+   "8c85b45e2181",
+   "a07f0dace45d"
+  ],
+  "CALKESTIS": [
+   "31c2ec4b5c40",
+   "49a605d7d517",
+   "4c9cae5fb469",
+   "5bcedd2c825a",
+   "66d392f10eb3",
+   "8c0334f7726f",
+   "eea4329aef50"
+  ],
+  "KLEYA": [
+   "0d95773f27f9",
+   "11d463854678",
+   "5799c2ccae1e",
+   "8fdab01945a8",
+   "ba194ff63484",
+   "c9d8e41e651c",
+   "cdc759d0d0a4"
+  ],
+  "FIRSTORDEROFFICERMALE": [
+   "0f5d3d353c8d",
+   "2548ca577a8f",
+   "79f43781e664",
+   "824e56fed4b2",
+   "9523d5eb906c",
+   "ba2fb0b1e793",
+   "dabe00fbd102"
+  ],
+  "SNOWTROOPER": [
+   "12e9a7b0c467",
+   "164e2bf9ae26",
+   "6d1c70adbce8",
+   "b2cf8b09e4e1",
+   "bfefee7638c2",
+   "e4522b7d5fd9",
+   "efbbe2af2d7f"
+  ],
+  "MOFFGIDEONS3": [
+   "0adb2fd338cb",
+   "3516be0a1e8a",
+   "5f8e30c5b5f4",
+   "9346acf97599",
+   "a2e2cc0aa8a6",
+   "bca429810b61",
+   "cc9f0331ec2b"
+  ],
+  "SM33": [
+   "205862851032",
+   "2af8218724e2",
+   "35ced1efbd48",
+   "5a854ad03975",
+   "844792c89bd9",
+   "9dc6468f599d",
+   "a9d6ac82ef85"
+  ],
+  "CC2224": [
+   "2682839ed84b",
+   "3a6a2996bef4",
+   "3c9439615137",
+   "647ec7991421",
+   "8fdacb000b5a",
+   "93d755400f7f",
+   "e775c872d5b1"
+  ],
+  "ZEBS3": [
+   "538bef63f41d",
+   "8c115bc14d2b",
+   "904e9520120c",
+   "908ee1082de1",
+   "b98b09a56353",
+   "ca7db0476098",
+   "eeec39471155"
+  ],
+  "MAGNAGUARD": [
+   "0646a585851c",
+   "166b4d5af197",
+   "207965a7e0d8",
+   "3802bbfa8cad",
+   "70b663f446e0",
+   "d76edcdd5858",
+   "f8f840ea3be3"
+  ],
+  "CAPITALMALEVOLENCE": [
+   "0311967d41e8",
+   "13098aeb9444",
+   "34b966b97204",
+   "39a8bbee9b4d",
+   "7b6d1b20f826",
+   "8be02d3591e2",
+   "dd140fb98839"
+  ],
+  "YOUNGHAN": [
+   "0fa17cff7e74",
+   "1e9a7cb13028",
+   "34a45d4c0579",
+   "779220a353a2",
+   "ac7bde44ff17",
+   "d5f044d3708c",
+   "e57f65cdb679"
+  ],
+  "JUHANI": [
+   "068a7041cc45",
+   "0b9896a58488",
+   "11d63af47ec1",
+   "1317c434f656",
+   "c8438bd78476",
+   "d468d49f0cdb",
+   "f1811a48502e"
+  ],
+  "CARTHONASI": [
+   "219ed110bd6f",
+   "26a192ab16a6",
+   "3d404381346e",
+   "73c0de6a1797",
+   "774528f0d1d9",
+   "bb6a751e89b9",
+   "ef217e34a2c4"
+  ],
+  "KYLEKATARN": [
+   "1ac0ac5ed13e",
+   "88cc45c6eb88",
+   "988832e1450d",
+   "d95e4bd3cbcd",
+   "dab99cca0b55",
+   "e25131e0b552",
+   "fdfbd8a87266"
+  ],
+  "SITHFIGHTER": [
+   "2e99c351e917",
+   "40835fa76934",
+   "5dd39898f1c6",
+   "a1b6bb99cd1f",
+   "b515e9b943ee",
+   "e3b5900fbafa",
+   "f5d1ec685a7a"
+  ],
+  "KXSECURITYDROID": [
+   "3f5fe9db455a",
+   "5b13f09b3329",
+   "6efb4189928a",
+   "7a32ab401dc6",
+   "99aa6ecd060a",
+   "9aee96a2e880",
+   "e3283662e89e"
+  ],
+  "COBBVANTH": [
+   "015d2464ea9a",
+   "17e20c78c235",
+   "60e2a1842093",
+   "98be678fbddc",
+   "bd10b18c530e",
+   "f20556f4c241",
+   "fdd815c02ebd"
+  ],
+  "BOSSK": [
+   "0791a74fe0c6",
+   "09a8ecca1615",
+   "1024cd3a0979",
+   "13df937ee2ed",
+   "4e699b8569f6",
+   "5ada1a6923e6",
+   "a5504aadaca7"
+  ],
+  "GENERALHUX": [
+   "259853cd282c",
+   "48f1252dc116",
+   "5e229841409a",
+   "6acb5d285813",
+   "6ef74907503e",
+   "a9fe5dc07ef2",
+   "ddd21f3cdcd0"
+  ],
+  "VEERS": [
+   "0b548182e64c",
+   "8d71f8861454",
+   "9450cc9ab1f9",
+   "ac3680b1ce28",
+   "c599ec20b859",
+   "d2b2c2d2f256",
+   "daf2051db55e"
+  ],
+  "THEMANDALORIAN": [
+   "6f040c738bc2",
+   "7da035ae60af",
+   "7f65b9569ec8",
+   "86787a4a5415",
+   "ba46872fcc03",
+   "cd27c5399fd4",
+   "e71f1fa84720"
+  ],
+  "UMBARANSTARFIGHTER": [
+   "0bd1304f851f",
+   "3b9adb694148",
+   "489fcb0175dc",
+   "53785734aaa3",
+   "54f1d7723eac",
+   "9d952ed47927",
+   "d1dda93ffb83"
+  ],
+  "TRENCH": [
+   "0e75acd11b59",
+   "65710464deb1",
+   "8c34c4cb499b",
+   "ba93b45a1f59",
+   "ef19fc8a706f",
+   "f4e109b71d6b",
+   "f925dc5ff4d3"
+  ],
+  "FIRSTORDERTROOPER": [
+   "124eb7c3ccb2",
+   "37af42d6411f",
+   "46a56865d1ae",
+   "c0ef95e92efd",
+   "d59e9a04b723",
+   "ef1076faeea3",
+   "f2dccde13a2b"
+  ],
+  "JEDIKNIGHTLUKE": [
+   "1bc794ad954b",
+   "315fd9f71726",
+   "4684c75c1725",
+   "6a517939a81d",
+   "933c6dec9a6d",
+   "c04556bd599e",
+   "eb8e85d3cfe9"
+  ],
+  "CAPTAINENOCH": [
+   "09211cc4e022",
+   "15a45ed423c2",
+   "45ed11815d3f",
+   "539201fd478d",
+   "8b338ab2b122",
+   "a43bd5f94d21",
+   "f4a9c5343c9f"
+  ],
+  "TUSKENHUNTRESS": [
+   "02647a2c4711",
+   "0f3f062f38a3",
+   "209b0a0744b0",
+   "5007866dd253",
+   "68ef0b51b623",
+   "eb5bb34b5556",
+   "fef142ad3f4c"
+  ],
+  "SEVENTHSISTER": [
+   "16343e3f49c2",
+   "247bebeec9c6",
+   "758c5a0727d7",
+   "9d0f70baa166",
+   "9e3a8aece51c",
+   "ddc47cff44cc",
+   "e8ca9332054f"
+  ],
+  "DARTHTALON": [
+   "8ee362fc63f8",
+   "96bfcc6b1c4c",
+   "a0193b59fec4",
+   "affd3448dea8",
+   "c21cc2d63355",
+   "f7e6a7d3dbab",
+   "f81eb35fde36"
+  ],
+  "KRRSANTAN": [
+   "1ba0ab545f4d",
+   "6bd4172f5b76",
+   "79013b56b6bb",
+   "8da7b8c4319e",
+   "a92df9169ba6",
+   "ba69244c9bad",
+   "c6d80d0b4864"
+  ],
+  "MARAJADE": [
+   "463300dde90d",
+   "4c848da7f638",
+   "5b634dc6b954",
+   "75d7a6108614",
+   "bd942ac6d8ec",
+   "eab68995ad85",
+   "f05b67032e29"
+  ],
+  "NIGHTSISTERZOMBIE": [
+   "202f8244e472",
+   "25e0bc142e5c",
+   "4953ddf8a794",
+   "6895eae42da5",
+   "742c06c47eec",
+   "875ca6d56064",
+   "b998cf3d5b26"
+  ],
+  "BAZEMALBUS": [
+   "128ed2cd7cf6",
+   "491e399e9e15",
+   "5d84cda32bb2",
+   "62b95996d9d5",
+   "a38ab2e76bf5",
+   "b8aa95e79a50",
+   "f7657f7ec095"
+  ],
+  "MILLENNIUMFALCON": [
+   "203b06248a18",
+   "252ace15f3a7",
+   "4777b898ad67",
+   "9c07caeb8dfc",
+   "b36eeaa0f9c5",
+   "d39ae592aef0",
+   "f6b0934ee744"
+  ],
+  "GENERALKENOBI": [
+   "21ce46a9a84d",
+   "4a410dd0261f",
+   "4d98c1234158",
+   "576385195843",
+   "884d2ed61dd4",
+   "967397ff636e",
+   "f9556df2a0c5"
+  ],
+  "QIRA": [
+   "076ed5c7f027",
+   "387afee90f73",
+   "63f6dfe909b8",
+   "69ca259467d9",
+   "6f052d226dd9",
+   "81bf8bd61fd5",
+   "ccb1aed6b4f1"
+  ],
+  "TIEFIGHTERPILOT": [
+   "12cc6118b4be",
+   "2d8b9f3813ad",
+   "523d83b4d964",
+   "7e685e92cf34",
+   "b715315b2629",
+   "be6c7a2b9402",
+   "e567e552ae22"
+  ],
+  "BOUSHH": [
+   "699569e4bcc5",
+   "904c6cefdda1",
+   "9589b749a873",
+   "abce9cc0f187",
+   "c71f33526760",
+   "d64b09604a16",
+   "dd4928acc5fa"
+  ],
+  "CAPITALPROFUNDITY": [
+   "04670dca60c4",
+   "1171a3ea70b3",
+   "27a812292e38",
+   "6566a5a316b4",
+   "bcca3fe8aa10",
+   "d9709fdef261",
+   "f2f87dad4cd1"
+  ],
+  "IDENVERSIOEMPIRE": [
+   "221f5a5ed36c",
+   "51782c6c8d00",
+   "57ecb54f407e",
+   "971fe673490b",
+   "9a4704c8bdde",
+   "d30d30b23677",
+   "f28b45b57a24"
+  ],
+  "LORDVADER": [
+   "15571eaca5b9",
+   "95e269646bbf",
+   "b239f711fca8",
+   "c3021d55aa64",
+   "dac8f15e1a63",
+   "ecc53eb81d82",
+   "f17961ed1480"
+  ],
+  "JAWASCAVENGER": [
+   "11de1541f9e6",
+   "3088da83b819",
+   "b10e529c096d",
+   "bee7248ac270",
+   "c39d47894b2b",
+   "f1594d77fe3f",
+   "f61d43bae92f"
+  ],
+  "AAYLASECURA": [
+   "51462da870b2",
+   "7cd3c31ba3ca",
+   "84f91b9f6c4b",
+   "d30e81e029ff",
+   "e6b5548e5d08",
+   "f83719c6c5a3",
+   "fa9e89f72c34"
+  ],
+  "XANADUBLOOD": [
+   "2229622cf5b3",
+   "2b0afc868ebb",
+   "52c2673c7dfc",
+   "6f9a1ce7053a",
+   "cb9cfd92dfe2",
+   "ccf7db2389d9",
+   "ea6f38a3d114"
+  ],
+  "DATHCHA": [
+   "1fad3eda115d",
+   "2fc805af3167",
+   "5a1d708018e1",
+   "b6ede171a0b1",
+   "cbaf642b0db6",
+   "ed505436b21a",
+   "f7a4d137ce9c"
+  ],
+  "FURYCLASSINTERCEPTOR": [
+   "195f06aeb7a3",
+   "3e6a1cf176d3",
+   "822bffb08cf7",
+   "b245a7180725",
+   "ecac5dceaa56",
+   "f099f6ffd0d0",
+   "f0c09f4a0920"
+  ],
+  "SECONDSISTER": [
+   "20c0bc6c4d26",
+   "2e532ba93a20",
+   "4068cb93d34d",
+   "532756cbc974",
+   "56b349b2a04c",
+   "7dbef16b088c",
+   "9f3b677c49ab"
+  ],
+  "QUIGGOLD": [
+   "64a3c910211a",
+   "76c34dd115bc",
+   "8deadf603f60",
+   "9b5aa504372a",
+   "d1f909540169",
+   "def3a03be564",
+   "ea0784b82a1a"
+  ],
+  "BADBATCHTECH": [
+   "6d05477d816b",
+   "9c0a78db30ea",
+   "aec380c2b0a8",
+   "c1ecd0ee553c",
+   "df2188ab165d",
+   "e836a401ad4c",
+   "ea353340b61a"
+  ],
+  "JEDIMASTERKENOBI": [
+   "0f2c560c750e",
+   "30608fa4e0a4",
+   "5410b36749bd",
+   "581a6ef00338",
+   "5c145c8fc1e0",
+   "6531c3abb5db",
+   "f30a0bbbd71a"
+  ],
+  "TARONMALICOS": [
+   "2b9dde05e958",
+   "459a70ce1682",
+   "589e3f51d06e",
+   "60a53ca476ce",
+   "9c6c358cccdf",
+   "d46484d253dd",
+   "f6b8e21244ff"
+  ],
+  "IMPERIALSUPERCOMMANDO": [
+   "0aa6a4329bf3",
+   "20be4ab57f14",
+   "2ecf94f91b3d",
+   "6881b6d25c51",
+   "6d683cb29aaa",
+   "999e82a11a75",
+   "a75d6f5a5bdc"
+  ],
+  "BENSOLO": [
+   "022f323348e1",
+   "054e1339081b",
+   "16a8def5a376",
+   "5440c796ec23",
+   "de5cdf3f7ff8",
+   "e0f40c77d405",
+   "e943ce180b4e"
+  ],
+  "SLAVE1": [
+   "2fb7c680fb93",
+   "7274f5d6cebc",
+   "ba42b5166fa9",
+   "c1a36645310c",
+   "ce1d3f50f397",
+   "e7108d083aa1",
+   "f7306048445c"
+  ],
+  "STRANGER": [
+   "100b63675773",
+   "3179ff98f314",
+   "4824c62179dd",
+   "5b815e5bfa95",
+   "60499abca811",
+   "6c6e0a6d1b8f",
+   "a04689721a84"
+  ],
+  "EWOKSCOUT": [
+   "208a85a8a39c",
+   "25f166d7ef57",
+   "4959b3add885",
+   "6e4e5f94832b",
+   "9aa562ec3161",
+   "a6f815a41ef7",
+   "cbb821c08e2f"
+  ],
+  "TIEDEFENDER": [
+   "1e5d6395c0a5",
+   "3c4983ff47c0",
+   "4027b9c0f147",
+   "56537096d163",
+   "762112952336",
+   "c0257f7654b5",
+   "ea0d03cf89f2"
+  ],
+  "GUNGANPHALANX": [
+   "0c63111f7ac9",
+   "11b3619e504e",
+   "6eb6a08adb50",
+   "bad209ced5c3",
+   "f051f3c746eb",
+   "f6cefb7fb6df",
+   "fdaf639155e9"
+  ],
+  "MAGMATROOPER": [
+   "0f01ff4d4646",
+   "1985c1f3313e",
+   "46386516dea7",
+   "6c9ed55d3ecb",
+   "87b5bcadaafc",
+   "9727be718ba0",
+   "d195b8668eef"
+  ],
+  "MAUL": [
+   "0964f783ddd9",
+   "0c32364457e8",
+   "6c7c67283c58",
+   "93acb73d1c3e",
+   "dc37f319db67",
+   "dfee0f63e692",
+   "e7733de940c3"
+  ],
+  "HUYANG": [
+   "5719f3751628",
+   "61e0ad9caf68",
+   "8adedda9bbe7",
+   "8b5bd0fa7a4f",
+   "99ecddb98427",
+   "d4075b941c4b",
+   "e2a53351dc72"
+  ],
+  "MASTERQUIGON": [
+   "38cecacaaf50",
+   "3a9fce009ab0",
+   "9378058e88e6",
+   "cdae463e8656",
+   "d5a0c2fc0ebc",
+   "e585fe32fbd1",
+   "fb1a56ec1235"
+  ],
+  "CAPTAINTARPALS": [
+   "1f488350175e",
+   "56484cab3ba1",
+   "81a88dd32ae2",
+   "923135974bcc",
+   "d319a273daaf",
+   "d434e97eaccc",
+   "d75f9c72f526"
+  ],
+  "CAPTAINSILVO": [
+   "06eea5cc10a1",
+   "2b3185334aaf",
+   "9a27b7a4229a",
+   "a228718debb4",
+   "b1c7580b282c",
+   "bcf1d92de0a5",
+   "c98aee6e5f2f"
+  ],
+  "POGGLETHELESSER": [
+   "4a17f1565c8f",
+   "5307d1ea1ac6",
+   "5e3e3ee38213",
+   "7a13043d1bbc",
+   "bc364b7ab7d1",
+   "c5019b8a03d5",
+   "e27fae00ad06"
+  ],
+  "TIEDAGGER": [
+   "0d71a137665e",
+   "404eebd93493",
+   "760fa39533bf",
+   "a3cb63d852c2",
+   "bd4a248f7974",
+   "d9ae99c410be",
+   "ef6e4ee3ccb0"
+  ],
+  "C3POCHEWBACCA": [
+   "14c6fc1a7b91",
+   "27b694bf6aab",
+   "5fd884723056",
+   "9fedc8444c47",
+   "d86e143bbf06",
+   "eeca46d2cf17",
+   "ff5d0691c101"
+  ],
+  "BISTAN": [
+   "0cb0616f1fb4",
+   "0ea1633908c5",
+   "1fccfdb6f1c0",
+   "558f079f358e",
+   "86df6ae6e1a5",
+   "8a8ac80623ed",
+   "b7ba0dda8e7f"
+  ],
+  "XWINGRED3": [
+   "2509a6bd6467",
+   "6422aabbff48",
+   "6923fc14f9da",
+   "b9532995e32b",
+   "cbc5af7dfda1",
+   "d13f0ab2f549",
+   "d57410bed789"
+  ],
+  "XWINGRED2": [
+   "4a4d1f9c128d",
+   "4b8b973cb202",
+   "613c4759d83c",
+   "79fa301f9730",
+   "b724033a09c5",
+   "cef5845a2d9d",
+   "e710ffb08141"
+  ],
+  "GEONOSIANBROODALPHA": [
+   "0fd7d7adb66b",
+   "35a23dccfa0c",
+   "5cb3823836e7",
+   "99f67a922f6e",
+   "c044d6a1cf2a",
+   "c194d1b08264",
+   "d23fc7821bb8"
+  ],
+  "LEIAJEDITRAINING": [
+   "43c72da12dff",
+   "452327cb0fa6",
+   "790876b5f2e3",
+   "88df5723c257",
+   "8d407f461dec",
+   "b4a219ea9b9c",
+   "d3242c6caa30"
+  ],
+  "CLONESERGEANTPHASEI": [
+   "6437beab3325",
+   "927df71eee9b",
+   "9c18a71b6d39",
+   "ab929d77e57f",
+   "b8137c9520f8",
+   "d6778c0f7261",
+   "ee64fd3ce6aa"
+  ],
+  "RESISTANCEPILOT": [
+   "0f8032e54c9c",
+   "21c48d9276b2",
+   "6d4cb6288027",
+   "82763645f5e6",
+   "bd41eb0688cc",
+   "e47272494a36",
+   "e9e5ad7e7195"
+  ],
+  "HUNTERS3": [
+   "01e2863354fb",
+   "0cecf197e942",
+   "18578151c339",
+   "1a8afb4c64db",
+   "62f48a3d2293",
+   "6ade5a23f30a",
+   "c7a58fa8f832"
+  ],
+  "RAZORCREST": [
+   "38b53964486b",
+   "4198037693ef",
+   "4ef160db3817",
+   "58d8f2dc6889",
+   "8ee85e5e52c7",
+   "a3607733f19b",
+   "aae86efe1031"
+  ],
+  "NIGHTSISTERACOLYTE": [
+   "2043712dfd97",
+   "41184d48ac43",
+   "5239d378ecec",
+   "5cf538e6c4c8",
+   "9ba22ffdb44c",
+   "ceb47040851a",
+   "d18adf0d2b60"
+  ],
+  "VISASMARR": [
+   "5e2ab63e8473",
+   "7ed35d64dcb3",
+   "8559f2854bee",
+   "88b5d0d112d0",
+   "982595cb7d32",
+   "ae28ec29265f",
+   "e28b7f269f21"
+  ],
+  "TEEBO": [
+   "40b2a09fd54d",
+   "42b4e311dafb",
+   "595bcdbcf3dc",
+   "a34411fc1c22",
+   "de27b4cefbc1",
+   "f18466852213",
+   "fb3a4bf830d1"
+  ],
+  "YODACHEWBACCA": [
+   "2201b2358108",
+   "38a71540b35b",
+   "3b9435b998cf",
+   "a6811c40309e",
+   "d61538ef026d",
+   "d7b052a2a902",
+   "fd55525ac3b0"
+  ],
+  "DARTHREVAN": [
+   "01aefa3e838d",
+   "331dda8b48eb",
+   "57f2cfd9c519",
+   "e809acefb955",
+   "f391abf7d87b",
+   "f9b4346765d1",
+   "ffb5c90d4059"
+  ],
+  "SITHSUPREMACYCLASS": [
+   "34feb31ee4cd",
+   "3d9ac771e698",
+   "3deb71750a99",
+   "3f04133ef534",
+   "9effc71c1c6c",
+   "d9e1333857c2",
+   "ec99c072a558"
+  ],
+  "IG12": [
+   "18eebbb06d13",
+   "6e98a0ab8a38",
+   "ab138ffee24c",
+   "e8ad87b3cfe1",
+   "ebc4fb45da38",
+   "f27e7bd69783",
+   "f3373f2164f4"
+  ],
+  "VEL": [
+   "094da3bd1722",
+   "3fd3c3e62eb3",
+   "65ce2b8bb71c",
+   "c137693d7df9",
+   "ecda7dfe1d61",
+   "eefcbfbc515b",
+   "f781d9e5084f"
+  ],
+  "CHIEFCHIRPA": [
+   "11a962a5b2dc",
+   "2021557e1a6e",
+   "2d69b4b90da3",
+   "872d8e0ddbda",
+   "8e590c3c0cc7",
+   "9e9f1eb33898",
+   "f21c7050b695"
+  ],
+  "VANGUARDTEMPLEGUARD": [
+   "404e62a5d37f",
+   "5165946acde2",
+   "62c5192decd7",
+   "8233e17a00af",
+   "a83671c20df2",
+   "c0336735c53a",
+   "f7c139ed78b2"
+  ],
+  "DARTHSIDIOUS": [
+   "15cc41c65f23",
+   "84785e7ad83c",
+   "88363c7b803e",
+   "9a3f85796c2f",
+   "b092cdd8e852",
+   "c57e5c97c83c",
+   "fc6489b6bc5c"
+  ],
+  "MARROK": [
+   "373d1a0f0ca8",
+   "5525ff97ab8c",
+   "609ee597f97f",
+   "7bce4560fdfc",
+   "9035ee0c4ed8",
+   "a4e50900707c",
+   "e49c5e03f650"
+  ],
+  "IG11": [
+   "04d3ab79ba39",
+   "05033b56db46",
+   "7c137d1a36b9",
+   "7cc7a6d9a3fa",
+   "8889cd2311cc",
+   "ccc2c5c75c79",
+   "f8d114aba120"
+  ],
+  "DROIDEKA": [
+   "4c4a304e868b",
+   "5cc5478baccb",
+   "67d7ae8c5b7a",
+   "c0c14b5a3698",
+   "cdb90106d04b",
+   "e5d0a35b77c0",
+   "ec7d016da7fd"
+  ],
+  "ROYALGUARD": [
+   "160ccc185a3d",
+   "5855bc343349",
+   "633c8a30b771",
+   "654c99e4370e",
+   "7b3d69ae8f42",
+   "8119b6ae6297",
+   "fe5444302b41"
+  ],
+  "PADMEAMIDALA": [
+   "02265b56e92b",
+   "1c15a83e700d",
+   "2d2657c3c35b",
+   "828a62f24389",
+   "8d8b015bac3b",
+   "ca2ee9824cc9",
+   "fd03a1769cce"
+  ],
+  "SITHBOMBER": [
+   "15e7e09ce7b7",
+   "588b427c7177",
+   "827563a6db1f",
+   "a05967a38b73",
+   "ac05833a5a98",
+   "c2cb35dfbf4c",
+   "ea05a1d7a384"
+  ],
+  "DEDRAMEERO": [
+   "0a45352999b2",
+   "190b6ad2ece8",
+   "30d04b385356",
+   "3f8910d889d8",
+   "adc7b3d90bdd",
+   "eaaa5412fa06",
+   "eb26062ecd2b"
+  ],
+  "CHOPPERS3": [
+   "18c8b94eaecb",
+   "234968aef9c9",
+   "4efbc477efc5",
+   "817cd4239142",
+   "a33db7fa47da",
+   "a897154f7265",
+   "f48ad843ad75"
+  ],
+  "K2SO": [
+   "02bcb9cecf21",
+   "16639d0bae10",
+   "3627a19c9347",
+   "54557246f3f5",
+   "61816723f77e",
+   "aad0d6c83380",
+   "e14404f864cc"
+  ],
+  "SITHTROOPER": [
+   "11cfa802e07a",
+   "45cb335057e6",
+   "7d08b192d9dc",
+   "7ef4b12f970d",
+   "9c3d18d94fe2",
+   "ae69ca479f20",
+   "e81086fd58f9"
+  ],
+  "MAULHATEFUELED": [
+   "085e912f9b14",
+   "16a5a2457780",
+   "26d107447890",
+   "81856af8758b",
+   "8e3b11c89e7c",
+   "c0ea41a844e0",
+   "f0a22d992853"
+  ],
+  "DENGAR": [
+   "0771b813bc1f",
+   "4952f8cae3b7",
+   "6731af344e12",
+   "721e095b3fd4",
+   "91c2eb57d2a6",
+   "d3655bdc6591",
+   "e01e30cfe28e"
+  ],
+  "FULCRUMAHSOKA": [
+   "313bfcd85267",
+   "4795ecde9adf",
+   "5cb67a0e0b40",
+   "7084bfa5a3d2",
+   "96d978ad3408",
+   "a59ac6f4d74f",
+   "ce2cb748845e"
+  ],
+  "UWINGSCARIF": [
+   "4034c476d9bf",
+   "5c7982707edf",
+   "8f88537923cb",
+   "a1188666990e",
+   "b22461538ddc",
+   "d51285834d2a",
+   "e896f4d11e83"
+  ],
+  "FOSITHTROOPER": [
+   "2e2aeb3807d3",
+   "3f4d4a7c9d09",
+   "3f84ec6d2007",
+   "7c01f3beca4a",
+   "885cca117dc8",
+   "b5560992c9d9",
+   "baeea9311e11"
+  ],
+  "KIX": [
+   "09fe55123ba8",
+   "21abd644a674",
+   "3210db69b950",
+   "4aff31b9a18d",
+   "acc7ff2726b6",
+   "b709a0e19ba6",
+   "f0df9e93e7f0"
+  ],
+  "SHINHATI": [
+   "0f0266bb39a6",
+   "18d1fef9befd",
+   "a687aaf38eb6",
+   "ba4d74c24d80",
+   "c3efe8086bb3",
+   "d66e699109cd",
+   "e35d31dba1ea"
+  ],
+  "DARTHTRAYA": [
+   "4146d61c3200",
+   "453c8d8f61de",
+   "8d0ceac656f8",
+   "8d188a9c1c22",
+   "9ab6329c0cf2",
+   "e2b68219b123",
+   "eec332ac055e"
+  ],
+  "CADBANE": [
+   "22916258d397",
+   "2fdff535cdc2",
+   "3fb221f4d268",
+   "4693f7405f4e",
+   "83481e037993",
+   "9d93ef189c07",
+   "bd49ecb8b60d"
+  ],
+  "RESISTANCETROOPER": [
+   "147d3d287247",
+   "51ec5229dc2d",
+   "5c740fc0ccbf",
+   "65b4b78b4be1",
+   "6b7fc40da471",
+   "9f552aa19241",
+   "f31cea343cab"
+  ],
+  "BISHOP": [
+   "0c2207a6c9ac",
+   "0d8600b4e517",
+   "6ecb218fc5a3",
+   "7c9ec6b1c320",
+   "9645d4e86c88",
+   "aa8169bf6490",
+   "fe6e15c80594"
+  ],
+  "CAPITALLEVIATHAN": [
+   "57f1c6370884",
+   "778fe082b2a8",
+   "9545416d557f",
+   "a5b0843d1f8f",
+   "c487e8a75194",
+   "d337d67c534d",
+   "eabf15e926ae"
+  ],
+  "PHASMA": [
+   "0df59f1a17e0",
+   "3ac02bad8c5e",
+   "3cea43a1a6a0",
+   "4283b2472b8f",
+   "6207e909cd2c",
+   "87ef0a0421d1",
+   "e326446b9317"
+  ],
+  "LUTHENRAEL": [
+   "1f8383959250",
+   "6cf6787d8621",
+   "7e0c067ff260",
+   "9dcea3ffb01d",
+   "a24ca8dd4799",
+   "dc9403f629c7",
+   "e42917bb12fe"
+  ],
+  "CROSSHAIRS3": [
+   "2eca9c7758d0",
+   "44d4f6ff26e3",
+   "4bf1164b84c7",
+   "709f07b82e2b",
+   "97ef194f2237",
+   "d33c7dc4da04",
+   "feb35e799a1e"
+  ],
+  "TIEFIGHTERIMPERIAL": [
+   "2c83096acf8f",
+   "3f1a3a55f4d0",
+   "4fa8b258ed23",
+   "7682b04720bf",
+   "be89c212bf42",
+   "c8025ecaac54",
+   "da56a9db7fe3"
+  ],
+  "HOTHREBELSCOUT": [
+   "0b1ac9dd9338",
+   "714754bd9904",
+   "8999c36f38de",
+   "b391d7267ab1",
+   "b7cf0126d5c0",
+   "bd8ab0567707",
+   "bf9b7666aa49"
+  ],
+  "GREATMOTHERS": [
+   "231bed3aa679",
+   "33a2c334a71e",
+   "4b55132ff780",
+   "613974d27b1c",
+   "6af26529fece",
+   "7197da1d14f9",
+   "e112e45f6816"
+  ],
+  "STORMTROOPERCONCEPT": [
+   "1fc5139396b8",
+   "209c15997863",
+   "366244eb4ade",
+   "ac7935b1a389",
+   "c550eb2b0fb9",
+   "ca43e61d72f7",
+   "d9796c148b09"
+  ],
+  "ASAJVENTRESS": [
+   "0e5881f4fba9",
+   "1cddf18ab5e2",
+   "574f5f10843b",
+   "77c476b0f10d",
+   "87d21d6ddcbd",
+   "8e903b4e34df",
+   "96c8ea6538ea"
+  ],
+  "AURRA_SING": [
+   "0cf1c7a8a783",
+   "4f767f75acd1",
+   "53a4b2c763f6",
+   "5deb51adc515",
+   "8e44c1e1e91c",
+   "ecf9d46fed92",
+   "fa89b9dc5b4d"
+  ],
+  "TIESILENCER": [
+   "2ffe4d9ab219",
+   "31ff964aa3be",
+   "39d1b500f350",
+   "4475a8131443",
+   "5462a41cf2c1",
+   "5a7be370507f",
+   "b56a211c4255"
+  ],
+  "FIFTHBROTHER": [
+   "01dd5d7041c5",
+   "42afba76e52d",
+   "4380615dc2a8",
+   "6265219e6512",
+   "6b175e3c1432",
+   "a509b2754d3c",
+   "b5ff5d0f99f5"
+  ],
+  "CASSIANUNDERCOVER": [
+   "3aa6400cab40",
+   "4024e39f9a22",
+   "4c4c8e082f67",
+   "551464a5bb5f",
+   "559a7be68836",
+   "ae1b157779c9",
+   "b698d1a88caf"
+  ],
+  "VANE": [
+   "4c4f95bcad0c",
+   "7a29a6c0fd85",
+   "9497f64cdf7f",
+   "c674f12941e1",
+   "db41bd0c74c3",
+   "f3edde7000fd",
+   "f68e35471bce"
+  ],
+  "GENERALSYNDULLA": [
+   "022eb34a5537",
+   "2dd86810df3d",
+   "806d51e69767",
+   "84925277f7c7",
+   "99162a7560a9",
+   "b168fa83ea1f",
+   "f13f4b0c94c1"
+  ],
+  "SAWGERRERA": [
+   "265bded3363a",
+   "2cddc297d946",
+   "34f8af3f8ff2",
+   "a37b2e3454d9",
+   "a73058099755",
+   "c29828f67d01",
+   "e95691de1c90"
+  ],
+  "IMPERIALPROBEDROID": [
+   "0430f9015d15",
+   "3dca9e1d22c5",
+   "51611f806f00",
+   "60ef9d948f3e",
+   "7daa00ce7c3d",
+   "7fa5fcf383aa",
+   "8326a6ba07b4"
+  ],
+  "FINN": [
+   "0b14063834c1",
+   "1133fff164f0",
+   "1c19afc09046",
+   "573fec520275",
+   "69bbb08dc5c7",
+   "8a59302aeabe",
+   "e99bf0f001b3"
+  ],
+  "TARFFUL": [
+   "35bb00377883",
+   "47367f770700",
+   "d404a797729e",
+   "d8e34ca46bbd",
+   "e14ff7e01fe4",
+   "e65849a6fc7a",
+   "eb803ed7630b"
+  ],
+  "DASHRENDAR": [
+   "299f78afd7c4",
+   "5db8d7180243",
+   "98ed937ea0c6",
+   "a8d27b4b11d7",
+   "bd3370914294",
+   "ca8d37d4c65f",
+   "fe33d0e386e9"
+  ],
+  "HOTHLEIA": [
+   "2de32ab38f51",
+   "66e23f879d12",
+   "736929540878",
+   "8e3fb605face",
+   "c061053f666e",
+   "e56fbda178e3",
+   "f3dc052fe1e4"
+  ],
+  "VADER": [
+   "098cb0546dd8",
+   "507f3744c682",
+   "623c63b0edfb",
+   "712a5a1e6ac2",
+   "82f899ff0aea",
+   "b56af31c5f9a",
+   "f18772f22150"
+  ],
+  "RACCOON": [
+   "0b18d5dbbf41",
+   "11bce964e242",
+   "1d7edadea75c",
+   "4aed3889843c",
+   "500a4bc7c1b9",
+   "6d6673de553b",
+   "debfe4bf4331"
+  ],
+  "STORMTROOPERLUKE": [
+   "514d1856d3ce",
+   "66778d1c72ad",
+   "888f0505568f",
+   "8b45cf015e34",
+   "cdb20f903799",
+   "e32c4ebb7627",
+   "efc36570191b"
+  ],
+  "NUTEGUNRAY": [
+   "2279d89b2a69",
+   "2e3993fd9563",
+   "3b5721d2c905",
+   "73b4fcfbe909",
+   "9a3ff505e6dc",
+   "9d1d20ba3f86",
+   "e7510c0f276f"
+  ],
+  "TIEREAPER": [
+   "56f89b7b06ac",
+   "98790af8e179",
+   "a63e763e45f5",
+   "ab07bc2f4d76",
+   "b43f60c0dc2d",
+   "c3f3ad000ad0",
+   "dcca59ce29a8"
+  ],
+  "COMMANDSHUTTLE": [
+   "05a1fb2d2b28",
+   "6ba4ec5188e7",
+   "71223b0d646d",
+   "909635ba4845",
+   "ad121fba3bd2",
+   "d5a99f383226",
+   "e8106029167a"
+  ],
+  "EIGHTHBROTHER": [
+   "0d1c97676119",
+   "10dc6b7533bf",
+   "1f792bd0b94d",
+   "288b65fa875d",
+   "3fff6bf9c24c",
+   "50b868c1157b",
+   "b7d9b4629e6b"
+  ],
+  "APPO": [
+   "0251770af1bf",
+   "107090c74a73",
+   "1cd677af6fae",
+   "3f303d146299",
+   "48fe165b9744",
+   "bd5cdfe621a0",
+   "beb2a15ff1da"
+  ],
+  "DARTHBANE": [
+   "1836961d99b7",
+   "52660cc47f77",
+   "622d48641e27",
+   "7c7d0f4867ff",
+   "94e3375e98bf",
+   "e2f1769400b6",
+   "e39b08a585f2"
+  ],
+  "COUNTDOOKU": [
+   "077a01c0d71c",
+   "5c73618418bb",
+   "84569bee5e79",
+   "8eaa802dad74",
+   "c8a1bde787bc",
+   "d95bb2f5b630",
+   "dd58aca54968"
+  ],
+  "BODHIROOK": [
+   "0d94ae23b2a7",
+   "4f11396df025",
+   "56ea0eb51a80",
+   "a0e7a40294b7",
+   "b2a40c97311d",
+   "be6a3fd6ab2b",
+   "e08a4fea4288"
+  ],
+  "TUSKENRAIDER": [
+   "506c5c51c954",
+   "73ea49bbb567",
+   "8d61d969d324",
+   "a823df8334bc",
+   "c793d9f35322",
+   "c9fe06d61422",
+   "ec8d75c6bb91"
+  ],
+  "PHANTOM2": [
+   "0b475a7d8fa2",
+   "1a9a6caa7b55",
+   "1bb84172d51f",
+   "1f2de237d530",
+   "61fe2e07de5b",
+   "9cddb22b5fcf",
+   "efc680e8d277"
+  ],
+  "ASAJJDARKDISCIPLE": [
+   "6ef1c7a5b9da",
+   "7127ac15643a",
+   "8292266d001c",
+   "88d798f11b04",
+   "91a0a4fa1b63",
+   "d378aee1fdcb",
+   "f6431905057d"
+  ],
+  "JEDIKNIGHTGUARDIAN": [
+   "161bc8c6c668",
+   "38085317071c",
+   "3dda72ff076a",
+   "3fa29a5e6af3",
+   "7854db3a51f4",
+   "7cce51f1ec3f",
+   "f80150d2436b"
+  ],
+  "VADERDUELSEND": [
+   "369d5dc14f95",
+   "688619e8a1cf",
+   "b3c986be4069",
+   "d0336ea46936",
+   "d9764e22fba2",
+   "f65c2c94640d",
+   "f72da965917e"
+  ],
+  "PAZVIZSLA": [
+   "215a2457228e",
+   "26f7e733a820",
+   "28bcc0079fe1",
+   "5d15f790a3c9",
+   "8a6313493551",
+   "8af05ea9275a",
+   "964bc0344c79"
+  ],
+  "KYLORENUNMASKED": [
+   "52cb741e6691",
+   "5aca5156bd15",
+   "603a187772a6",
+   "7515b8971ffc",
+   "99946f8855ed",
+   "b894dc5c6e66",
+   "ddda3f064b51"
+  ],
+  "KYLOREN": [
+   "951a9db6fbc0",
+   "b7061d4b8baa",
+   "e7bc1d6cd5b7",
+   "ee36e0dff4df",
+   "f1c51696ebd8",
+   "f69f768369c1",
+   "f71783c88ba3"
+  ],
+  "JEDISTARFIGHTERAHSOKATANO": [
+   "099d9585db7e",
+   "25e57ca094dd",
+   "3e504b8d81ad",
+   "655222164ba8",
+   "830d60a6edde",
+   "dafc156c0a6c",
+   "fdf60ccb902b"
+  ],
+  "NINTHSISTER": [
+   "19803cca5bdf",
+   "53f0952fcfbf",
+   "5bf1d58c387a",
+   "986817db47e7",
+   "9cc5d86968fe",
+   "a1a5f0922339",
+   "d00d82327a87"
+  ],
+  "HUMANTHUG": [
+   "325220894486",
+   "58c1cf62144b",
+   "658d501e968d",
+   "bec8d1884e7b",
+   "cd0225fb9c5d",
+   "de892a50ff24",
+   "f27216d5b35f"
+  ],
+  "STORMTROOPERHAN": [
+   "36a726ee70f1",
+   "7ae92c2e1f55",
+   "87da84bba8fe",
+   "95eebabe99d9",
+   "aad6b835b01a",
+   "e56b714d0573",
+   "ee7ec254fbb3"
+  ],
+  "WRECKERS3": [
+   "0b06a5441e25",
+   "304c385c0324",
+   "4faae86aea53",
+   "709b49321623",
+   "73e460518dee",
+   "bb05333dfada",
+   "bbb9cd14bf78"
+  ],
+  "YOUNGCHEWBACCA": [
+   "322d0638cf4c",
+   "4822b5861dfd",
+   "88efb58521e3",
+   "a2d7dc17cdff",
+   "b6cd1917fe95",
+   "c162a0063504",
+   "c417ab5ef8c3"
+  ],
+  "CAPITALMONCALAMARICRUISER": [
+   "1bdd6daafa00",
+   "23451d5e28b1",
+   "28a17e51f71e",
+   "3fa8ab4d7b9f",
+   "9d714bef2c24",
+   "aae42260ec69",
+   "ae792de20be9"
+  ],
+  "STAP": [
+   "2a1fb01f7a65",
+   "4dd6dabedf11",
+   "599e570a68f8",
+   "6d932cbb676a",
+   "805243c31dba",
+   "b8d1df0004cf",
+   "bab963b8ade0"
+  ],
+  "ADMIRALPIETT": [
+   "131301e21c80",
+   "25c5a0cba757",
+   "3a89cfcda6fb",
+   "8c7182502470",
+   "a0145afec79d",
+   "ada2fae0390f",
+   "b35ccd7784d1"
+  ],
+  "GLHONDO": [
+   "09287b62ba33",
+   "0f444463b93e",
+   "1dc64620fc12",
+   "3962aa328106",
+   "50ba76594ca8",
+   "76700e0f093b",
+   "d2c9b868b26f"
+  ],
+  "TIEFIGHTERFOSF": [
+   "13abf406b0a1",
+   "1f6f25a21192",
+   "59345ad008f0",
+   "76effe2c2726",
+   "abae1734cd9b",
+   "b91c9fc31f37",
+   "f2b198f4750d"
+  ],
+  "RANGERZEB": [
+   "0d13814c9eb1",
+   "2e002e975e31",
+   "be3a121a575b",
+   "d817ec3738e9",
+   "f0ddb2ac936a",
+   "f3f10544a5bb",
+   "ff9df56e41fe"
+  ],
+  "KANANJARRUSS3": [
+   "198c5c53affa",
+   "27dbb1048313",
+   "450391eda538",
+   "64858b3a3d05",
+   "cca62231ec71",
+   "d6730dbb7a6c",
+   "f07b2c5a2123"
+  ],
+  "SITHASSASSIN": [
+   "017da84a2bc2",
+   "0d83edba7c19",
+   "12245906f284",
+   "4bc194b15942",
+   "6cdaace22b77",
+   "6fecd26c017f",
+   "ad3132f4b867"
+  ],
+  "JANGOFETT": [
+   "10ef90a735fe",
+   "5887419ee558",
+   "8cefbbb216ef",
+   "a7454b0d556f",
+   "bcfa52e95f6d",
+   "d18aa1946477",
+   "e4ae0bf293d7"
+  ],
+  "IMAGUNDI": [
+   "171c5edeaef0",
+   "6350d6d84300",
+   "8f637071749b",
+   "a53f9b353a9e",
+   "cedc86b19a25",
+   "d07db47be88b",
+   "efb88b51e502"
+  ],
+  "KITFISTO": [
+   "0a723174680e",
+   "2589f8f4f20c",
+   "32d389389b5c",
+   "977f2ba24480",
+   "9869b9324320",
+   "c158091e21f6",
+   "d77ab142c76a"
+  ],
+  "TALIA": [
+   "00bf45bbcd36",
+   "6675976a68f4",
+   "94809c4ad1b8",
+   "c30bdd89f105",
+   "c97f64f7dfeb",
+   "d4de98d87d68",
+   "ff93a8a021c0"
+  ],
+  "BATCHERS3": [
+   "59b389cc303a",
+   "6ff1d3246820",
+   "873d91279931",
+   "8fb2c2b6085f",
+   "99b045b8dbe7",
+   "b82c8c3e7e9e",
+   "d4ad0dbb07ba"
+  ],
+  "GRANDMASTERLUKE": [
+   "06f1c3335608",
+   "186798520b60",
+   "1a390c52e390",
+   "475086a2b0a2",
+   "c63a034a7b84",
+   "f6ba35571d52",
+   "fa80fa638f41"
+  ],
+  "THIRDSISTER": [
+   "00bc6a8c95b1",
+   "1560f1cbad15",
+   "3fa071217b6e",
+   "67362e35108d",
+   "c6ef8beea637",
+   "c85e493a2347",
+   "e056d8dbf0e4"
+  ],
+  "BOSSNASS": [
+   "054207101bd7",
+   "20ace9ec7e23",
+   "297b2324d373",
+   "3780aa80f77d",
+   "49b8c14a9add",
+   "caec2efa0e75",
+   "e966d76f8cc1"
+  ],
+  "MAULS7": [
+   "134f63a420a2",
+   "2096973b5966",
+   "4887ba17e5e4",
+   "89ca4367d0b9",
+   "98efb5a6800f",
+   "a9c5c69f7647",
+   "e7903c6a9478"
+  ],
+  "KUIIL": [
+   "1fac59d2eae5",
+   "431dc3764e74",
+   "4fe53f75cddd",
+   "583584614040",
+   "6caa2b8f5229",
+   "6e7f327415da",
+   "fbc01912db46"
+  ],
+  "JEDIMASTERMACEWINDU": [
+   "03919c086dab",
+   "189d493ba2d4",
+   "2d50edd78478",
+   "8e6a5ab456b2",
+   "b250cc788fda",
+   "bc32c7e38621",
+   "e9163533006e"
+  ],
+  "EMPERORPALPATINE": [
+   "65012c63d9eb",
+   "67d0bb385bc1",
+   "8de1440861a3",
+   "a28488409841",
+   "b2ca6f98d148",
+   "cc289e10bd00",
+   "deb25ddef20d"
+  ],
+  "VULTUREDROID": [
+   "0f8c059ac699",
+   "815e97c60e43",
+   "a61c5d402d38",
+   "abb41fd2e2b9",
+   "d3eda437295f",
+   "d566b69ce717",
+   "f1f0b6b96994"
+  ],
+  "EETHKOTH": [
+   "2856bc16afc1",
+   "7ff60c9479ca",
+   "9b00fc8f2514",
+   "a9f6c6674cd3",
+   "bc885f9a57a7",
+   "f4ea91b11f3e",
+   "fe272a33c930"
+  ],
+  "THERONIN": [
+   "01184692efc2",
+   "2331ddd6d66a",
+   "5cc1dde22cbb",
+   "5e1b3d6caa93",
+   "8bd382e14c49",
+   "c9cd8dce80d5",
+   "f96594a6e818"
+  ],
+  "NIGHTTROOPER": [
+   "037b87e4d5bb",
+   "91865ff76242",
+   "946a8a7d80bb",
+   "9710af14a3d0",
+   "b78c1a332083",
+   "c035774f9b18",
+   "f067152b27af"
+  ],
+  "KIADIMUNDI": [
+   "1dda692f85ac",
+   "2b26082ae200",
+   "8e08a6fbac6f",
+   "9ce2bfd485a6",
+   "a0c28e18d3c8",
+   "c0c899113d00",
+   "e97fb08a93ce"
+  ],
+  "CASSIANANDOR": [
+   "0a6cc51abd5a",
+   "1251ba5281e8",
+   "457cea412388",
+   "9d681bc15388",
+   "b0ccfcf5051c",
+   "b91d7a217bf1",
+   "d7dabbf986b3"
+  ],
+  "SATELESHAN": [
+   "1031a860eac8",
+   "2f26d42a5eff",
+   "7f043c008259",
+   "89f6cdf88938",
+   "b3fb6b0a6e14",
+   "baf117cd7cd4",
+   "d58cc7d273cd"
+  ],
+  "T3_M4": [
+   "10a700900a85",
+   "517d15c1a85f",
+   "868d54cc34e2",
+   "999a54f19791",
+   "b4805f2e1a81",
+   "c5e1b6aba443",
+   "e4a1057eda93"
+  ],
+  "WEDGEANTILLES": [
+   "0e63ed61dd70",
+   "186c0d3c60d7",
+   "3f9b46e6ab6f",
+   "57085479569f",
+   "753f2c68c8e3",
+   "b1e8c622277a",
+   "c6b49f78b7fd"
+  ],
+  "JEDIKNIGHTREVAN": [
+   "198b897228cc",
+   "38bd0f627209",
+   "6f61090c64f0",
+   "877b620ca3ec",
+   "b1a42921173d",
+   "e12e8ec433bf",
+   "f5d3e5e38dbf"
+  ],
+  "SHORETROOPER": [
+   "03245c48b5d2",
+   "35e476e26a51",
+   "471d55f0400e",
+   "824eb6a0450e",
+   "abd6965e8586",
+   "b79e06ffc9b7",
+   "d80c8de279e2"
+  ],
+  "PRINCESSKNEESAA": [
+   "6c224146449d",
+   "7ac6446a439e",
+   "80e276433f66",
+   "86c35bf16bf1",
+   "99b42d23eb22",
+   "c8bb992df6cb",
+   "efeda210ec3b"
+  ],
+  "CAPTAINDROGAN": [
+   "0928b6276e4c",
+   "130c127f7bb7",
+   "2087e815d777",
+   "4b7792ad6b3a",
+   "629318af2e5b",
+   "c85cee75323d",
+   "df31f1870b1c"
+  ],
+  "DARTHSION": [
+   "a227b309b2df",
+   "a6aca82a0e75",
+   "b0f2f02bbdea",
+   "bbc09013f6f5",
+   "c203ef2a52c5",
+   "e3ca321d4e26",
+   "f2a42003bb67"
+  ],
+  "ADMIRALRADDUS": [
+   "21fc1eb1d34e",
+   "36d96416c5d2",
+   "38d2f8e374f4",
+   "54f6804a807d",
+   "62b4e8daba65",
+   "814b4b1aef3e",
+   "d7a6a9ca6b79"
+  ],
+  "MARAUDER": [
+   "274c28fca825",
+   "428b321df656",
+   "47a601ae2b2c",
+   "8fa9a28d25e0",
+   "b028c3082229",
+   "e19fe7b02498",
+   "e1ba3f10ca81"
+  ],
+  "SITHINFILTRATOR": [
+   "41ff98d7b9d3",
+   "72ffd9ac6783",
+   "894b467d15e7",
+   "91ffb339385a",
+   "a8f33d2ab917",
+   "c9bb28578bea",
+   "d0e88021cfbf"
+  ],
+  "EZRABRIDGERS3": [
+   "0078baab2b1f",
+   "19bdac545d64",
+   "2044b2907046",
+   "26a9defe89b7",
+   "4b2983ccf3cf",
+   "5b9937a2ba26",
+   "d1f24dd90148"
+  ],
+  "SANASTARROS": [
+   "29e66ae9fccb",
+   "2ec40372b5d9",
+   "482950a480c3",
+   "bc851892bdc5",
+   "d4c3e270d3ac",
+   "d86594f2cf50",
+   "e570be509563"
+  ],
+  "REYJEDITRAINING": [
+   "2c39ca26934d",
+   "4df764329e56",
+   "54aa65d0faf7",
+   "650dc2dba9a3",
+   "9f90a63f7476",
+   "a0574654eecb",
+   "e27ecce1d109"
+  ],
+  "LUKESTARKILLER": [
+   "1b2a92f0881d",
+   "5f4424527437",
+   "64675977d6e9",
+   "8d31a52248b5",
+   "a81fdbfcf62b",
+   "b78c8c48a81b",
+   "e11e800a08c5"
+  ],
+  "XWINGBLACKONE": [
+   "2f48bcf2a4b3",
+   "4b1c83ad03df",
+   "5b02eb7583e1",
+   "94404db86ee2",
+   "9d62f488f75f",
+   "9dda73bb5f3d",
+   "e52ebb5f5f7c"
+  ],
+  "HERMITYODA": [
+   "36e40380f3f1",
+   "5103e082fb86",
+   "65536c3d69dd",
+   "8228012151ee",
+   "a178e89ffa6f",
+   "a34b6580cf81",
+   "c86a37c7c716"
+  ],
+  "CHIEFNEBIT": [
+   "2718b2caefc2",
+   "4d781a32e980",
+   "5ca4ac3aa9ea",
+   "73240160f33b",
+   "9449d6488f63",
+   "d4ead08c0b28",
+   "db477cb3df48"
+  ],
+  "C3POLEGENDARY": [
+   "0bf7d27fc8d0",
+   "3af72c39a796",
+   "8fd60db2396c",
+   "967a7c365716",
+   "c36a964e976e",
+   "d0f1b9a93e9f",
+   "e9683f47ea63"
+  ],
+  "PRINCESSLEIA": [
+   "16897fe02205",
+   "2458b76a85eb",
+   "3bab7f4f48d7",
+   "65839806cb6e",
+   "7b7281d57ab4",
+   "8a6a54f9b225",
+   "d01d3da7cc2f"
+  ],
+  "BASTILASHAN": [
+   "552295e073bc",
+   "6a1b0d772900",
+   "717546fdda01",
+   "85452da55766",
+   "924efe4fd6db",
+   "9e88b3badddc",
+   "c8475b777dfd"
+  ],
+  "WAMPA": [
+   "18c6ace5cbf3",
+   "2e3fadee1e45",
+   "5a95848d94ca",
+   "82a72d6db6aa",
+   "e52f08ba0ec7",
+   "ef0b0f532ccc",
+   "f2b3798f96e9"
+  ],
+  "SHAAKTI": [
+   "143028f14bf9",
+   "26bb08852e5a",
+   "32ddfc1cf9cb",
+   "39f6c586d9fb",
+   "7f016b1b609a",
+   "856bc6d7cc5b",
+   "e32f30cee4a0"
+  ],
+  "HOTHHAN": [
+   "0fb1a33356d8",
+   "404eba387562",
+   "75891703e5c1",
+   "78ea9e4b42b0",
+   "a74bbcca564a",
+   "c0b4d1919661",
+   "d1c65bcc6b43"
+  ],
+  "CT5555": [
+   "00137d387906",
+   "01a52dfaf5ad",
+   "06b2727be68a",
+   "c1b1f0aeb810",
+   "d990fa0c5d0c",
+   "e7f150a6d08b",
+   "eda1029d54f7"
+  ],
+  "FIRSTORDEREXECUTIONER": [
+   "04d58200991b",
+   "4a491ec71b08",
+   "4f8f448f7da6",
+   "5bcd54509dd6",
+   "71dd596d002c",
+   "8cbffff8d371",
+   "d2ec169e2a75"
+  ],
+  "CAPITALJEDICRUISER": [
+   "0e55dc23701b",
+   "24a92959848c",
+   "30cf319dc77e",
+   "66c5cbae7379",
+   "9cf89a0317c6",
+   "9dc3198382dc",
+   "cdd598216f53"
+  ],
+  "LUKESKYWALKER": [
+   "335525f09f59",
+   "4230694dc930",
+   "427b50e39851",
+   "6ed003ba5d9b",
+   "70a67034ff2c",
+   "847984674682",
+   "f7e9b9aecc71"
+  ],
+  "SCOUTTROOPER_V3": [
+   "30cb63721cf0",
+   "3861f9573276",
+   "99ba6f019663",
+   "9bcb86307082",
+   "c7fa50254f9d",
+   "d9846903211e",
+   "ea620295a8b1"
+  ],
+  "GOPHERANTS": [
+   "09469a18fe79",
+   "3c47dac5c5ba",
+   "3f0879b81f28",
+   "62208719a432",
+   "8bc9500ca65b",
+   "ccc4c37de565",
+   "e853bd277929"
+  ],
+  "CT210408": [
+   "26afaf0704f2",
+   "69f1eba54e85",
+   "8445e1c148e7",
+   "a458da8999b1",
+   "c4788e3b636b",
+   "c95e98c9162a",
+   "ea7fd66adad9"
+  ],
+  "BADBATCHOMEGA": [
+   "12ce7be0aa30",
+   "3387fa67ac7c",
+   "447f4c947419",
+   "535fca387b8f",
+   "54df04edfa4c",
+   "c9a8f46a1654",
+   "f7d352083515"
+  ],
+  "IG88": [
+   "08f8f18d8bd3",
+   "52987011953e",
+   "7370c79ee689",
+   "9201b0d198c6",
+   "ccc19ce062d6",
+   "d4d99e33575a",
+   "f346f7a2786f"
+  ],
+  "BASTILASHANDARK": [
+   "0788808ae962",
+   "0d72a71f64ab",
+   "2cf3cd7e7de3",
+   "58965b47be0b",
+   "9ee9f4f6db24",
+   "a7a8e0896d26",
+   "c115d74dc07f"
+  ],
+  "RANGETROOPER": [
+   "0a1c485cb0db",
+   "68ece5c66348",
+   "78ccf6573b7a",
+   "9ef991c61634",
+   "c92e35f016e7",
+   "cdf485be16de",
+   "e682da3fabea"
+  ],
+  "CHIRRUTIMWE": [
+   "07d8324ba7c1",
+   "0c0963fc7724",
+   "267f99093e76",
+   "4861667d0b0c",
+   "7651651a916c",
+   "ba2b9c22dff3",
+   "baccfbd33f9f"
+  ],
+  "ENFYSNEST": [
+   "0209eb1be499",
+   "0a594fe2e0bd",
+   "15bc6f943f21",
+   "6ed759bc3fda",
+   "ba55bcc2ce31",
+   "e593ba066c66",
+   "fbea33b7b805"
+  ],
+  "CEREJUNDA": [
+   "6c59b68ecb3b",
+   "a6f88019d8bd",
+   "d14846e0c3f5",
+   "d32dc40bef11",
+   "df4a4fedfa6b",
+   "ec01941d01da",
+   "f07fc1455dbb"
+  ],
+  "GHOST": [
+   "2bc4d8df1761",
+   "734fdf315ffd",
+   "8b332766c132",
+   "94dbb153f6b4",
+   "b3df97feebce",
+   "b9ce0bdbed8d",
+   "f8e902addb6b"
+  ],
+  "IG86SENTINELDROID": [
+   "7772b505d7bc",
+   "801c453e56fa",
+   "821c73b4b81a",
+   "97ca0505221d",
+   "9d49d421214e",
+   "a791ec2e70a5",
+   "c779ddeeb2f4"
+  ],
+  "SUNFAC": [
+   "01dbaf7f20cf",
+   "1d2ebb10aed0",
+   "2343db6cbc64",
+   "4a8ba1f2f925",
+   "b3d0de7c08e5",
+   "ccbe8f4638ce",
+   "eaa54910efd9"
+  ],
+  "CAPITALRADDUS": [
+   "000060dfeba6",
+   "1a8b00c5f043",
+   "3098909d2fd1",
+   "52e4e95375f4",
+   "5a601e7ba5eb",
+   "f0a64be9990b",
+   "fc7aa3775b0f"
+  ],
+  "SAVAGEOPRESS": [
+   "65255bc24db8",
+   "6b54463941c9",
+   "90a0bdd1b7be",
+   "a239c047e01e",
+   "adddec5d1487",
+   "d516c1fa9cfc",
+   "fb7f736addc6"
+  ],
+  "GARSAXON": [
+   "2e3e442b6f66",
+   "3ede94f78d94",
+   "6061764d96f8",
+   "6b147a9917bd",
+   "87adb4be500a",
+   "bc4b4b6055ea",
+   "d81634b304e8"
+  ],
+  "JEDISTARFIGHTERANAKIN": [
+   "1f83b9bfe3d8",
+   "3343b3a4c151",
+   "8107f3c4906f",
+   "a5ccf83c9623",
+   "af6dbd34c176",
+   "e2effe4dca46",
+   "eafa98b4a32a"
+  ],
+  "MANDALORBOKATAN": [
+   "129a6e5a3989",
+   "16691ee4c4ba",
+   "490b1268a152",
+   "78c71171cdd6",
+   "8f35cbb2ba12",
+   "c4b1ab9dc1d3",
+   "c619f9fd8f2e"
+  ],
+  "GRANDMOFFTARKIN": [
+   "166964b03899",
+   "38726f76c7d6",
+   "38eb56125381",
+   "5b9378b1e45d",
+   "66b08de948a9",
+   "7d4a172cad0c",
+   "e77a2f4ece63"
+  ],
+  "REMNANTSNOWCOMMANDER": [
+   "1604f034ba40",
+   "598520b5b5a1",
+   "5db2a3e4cf02",
+   "754bb978a4a3",
+   "9c868fac84d2",
+   "bf4acdf45c35",
+   "ed9b38ed4773"
+  ],
+  "REY": [
+   "06dcfbf89ac0",
+   "2cb484d5d7d2",
+   "4b510adcd8c6",
+   "759a4d7a5338",
+   "b206d81e1058",
+   "eeda482cd7eb",
+   "fc9c5255e482"
+  ],
+  "CINTA": [
+   "13b3ed3830f4",
+   "6b0cb565144a",
+   "816655a0ff90",
+   "8404dde67ebd",
+   "c23f29bece13",
+   "e92579e180d9",
+   "ed06b129d022"
+  ],
+  "SMUGGLERCHEWBACCA": [
+   "069ead6b0bea",
+   "1b9037d949cf",
+   "4321923e9252",
+   "51d3c0aa3be8",
+   "7e249632f8f9",
+   "bae4cdc3e79a",
+   "d7756c0a8a4c"
+  ],
+  "IG2000": [
+   "3cd20ef6d4a8",
+   "4e54b9e4aafb",
+   "4e656c071f48",
+   "57b5d43bf20a",
+   "a44a2886f959",
+   "ae4a9680c2d5",
+   "f37859c89fbf"
+  ],
+  "TIEADVANCED": [
+   "09467a5fd657",
+   "0946a13237b6",
+   "510ebcd8bd15",
+   "9a630d48cfcb",
+   "b6229816fea4",
+   "e1589877a564",
+   "f875644657aa"
+  ],
+  "FENNECSHAND": [
+   "3b8f144e523f",
+   "48e783afcca6",
+   "5b2a08ce2f3b",
+   "89900233a4d8",
+   "9ab861d3ed44",
+   "aad95ed3f678",
+   "b3b75f96e3c5"
+  ],
+  "HYENABOMBER": [
+   "0780db3367ef",
+   "0823e3bc7412",
+   "4104bec1ac78",
+   "57329f0388e9",
+   "782003127e23",
+   "9290ba09994f",
+   "bec7ddbdc51c"
+  ],
+  "CAPITALSTARDESTROYER": [
+   "0e9f9f94f8a3",
+   "265e9593288e",
+   "44f55f6faf35",
+   "62b51cdace0a",
+   "788a2359ab93",
+   "bb86764389b7",
+   "edfe47e92ee2"
+  ],
+  "GEONOSIANSOLDIER": [
+   "0e28f95487be",
+   "b3f6cb79d152",
+   "bcfd72ecb8bf",
+   "f3fb97dd1b9a",
+   "f9f81371a95a",
+   "fadd6263fbe6",
+   "fb2d45e5829d"
+  ],
+  "DAKA": [
+   "6767c650382b",
+   "7d5f50f0410f",
+   "96e3c2359b1b",
+   "be66eb6cb6f2",
+   "d345ab11e8b8",
+   "f0510c724065",
+   "f745be0b68f0"
+  ],
+  "PAO": [
+   "114e62b0be78",
+   "39d1612778e0",
+   "41f504bb4866",
+   "6229bf521174",
+   "740df0da5fe7",
+   "77823fcb90b6",
+   "ff36aac66b0c"
+  ],
+  "B1BATTLEDROIDV2": [
+   "0a2db771844a",
+   "2158be0dc5c3",
+   "5225245b6509",
+   "ae45e98046b4",
+   "b21786c23ff4",
+   "bb98f07c885a",
+   "f79d8293b4cb"
+  ],
+  "JOCASTANU": [
+   "2595596054ba",
+   "2cf0ca4ee96b",
+   "30928717f71f",
+   "3b9c6e66e5ab",
+   "4ea28e4ba2ae",
+   "5221d9361f48",
+   "f8401b25049f"
+  ],
+  "ADMINISTRATORLANDO": [
+   "17385dfc4b6c",
+   "2cc47ae46349",
+   "6f3e866db9e2",
+   "95a85bf62f06",
+   "b4c7a99175b4",
+   "d5dddc24a385",
+   "f97164f62d8d"
+  ],
+  "JARJARBINKS": [
+   "35d51510a608",
+   "5a4b75775e58",
+   "b55bbb9db90e",
+   "b7130978a187",
+   "c89b885bf16d",
+   "d595e0b7967d",
+   "fdf2dcb17862"
+  ],
+  "ROGUEONESHIP": [
+   "1c9a67a61caa",
+   "36ef311ccc7f",
+   "3eb3f6d60561",
+   "a8f2ff24881c",
+   "ab113c5010b2",
+   "c3a43c966abb",
+   "e6ab5c0df991"
+  ],
+  "PAPLOO": [
+   "219917fd3a74",
+   "3f01135f3be7",
+   "4954793f7f6d",
+   "64597907bdc9",
+   "97e44cb48087",
+   "bf0f50e67997",
+   "c722ad5ada09"
+  ],
+  "JEDIKNIGHTCAL": [
+   "3a08c3e5e3f8",
+   "3c5b388d3cc7",
+   "52734b4838ef",
+   "55794489df2d",
+   "77e8652f2d4a",
+   "95aec4664a92",
+   "f6da3bb113c1"
+  ],
+  "SITHMARAUDER": [
+   "18cec2a10479",
+   "3741b9dac220",
+   "4969343484a4",
+   "5cb80bb785af",
+   "6ee65ae14f3c",
+   "94ede1c70c61",
+   "b28976fcb569"
+  ],
+  "B2SUPERBATTLEDROID": [
+   "1ac966bd445d",
+   "1d90370399ce",
+   "3fde5e2f3980",
+   "5f2357d40200",
+   "777a875c1ca6",
+   "a07a85513fd5",
+   "cd962e020498"
+  ],
+  "SABINEWRENS3": [
+   "0dccb43c556d",
+   "25f0c27dd4df",
+   "337c894132f7",
+   "57070e6b6744",
+   "bd821a7fa31b",
+   "d81e0f846d3f",
+   "f2191fe97676"
+  ],
+  "JEDIKNIGHTCONSULAR": [
+   "06a10bd3166d",
+   "30f5c16d0511",
+   "4a52e9307e96",
+   "4f64532f5652",
+   "77663ef7fb09",
+   "933a96865de4",
+   "eb6a47cbf506"
+  ],
+  "THEMANDALORIANBESKARARMOR": [
+   "0dd5b12a3110",
+   "4eee9bb49f91",
+   "6758cb6a8949",
+   "89bc7c84f1e9",
+   "b22d6b9951f5",
+   "e20cc5f7914f",
+   "e6139a937f3e"
+  ],
+  "TIEINTERCEPTOR": [
+   "05f4d45c0b3b",
+   "1ce90dc35dfc",
+   "30bd4c00bc2a",
+   "674d1771d475",
+   "87f643e3275b",
+   "975030bda1e1",
+   "f9cf31bc7068"
+  ],
+  "GAMORREANGUARD": [
+   "239b9f6dd06f",
+   "30909305763e",
+   "371111d99f9f",
+   "a73b4e70b4cf",
+   "c78c0b28fbc0",
+   "d2d663323e03",
+   "ea0b86cb7c72"
+  ],
+  "CAPTAINREX": [
+   "371112701ae7",
+   "451d4992c70f",
+   "4d395c32352b",
+   "7111d9cca75c",
+   "b00409bbef00",
+   "b84d702bd10f",
+   "bde0e5d95d34"
+  ],
+  "GENERALSKYWALKER": [
+   "02c64c7b577b",
+   "03cf016d0bbd",
+   "241c10beb509",
+   "39e03f7ee038",
+   "3a4459ce1238",
+   "831ea72852ba",
+   "8649520d19d4"
+  ],
+  "BOKATAN": [
+   "1598c71617e2",
+   "3c5bf1d3c624",
+   "54859ab157f4",
+   "57564d2f6778",
+   "7ccfeaead37f",
+   "ba2a380e262f",
+   "f6b562ee905b"
+  ],
+  "CAPITALFINALIZER": [
+   "04d1c16ace6b",
+   "58de6acb7f60",
+   "90dfed367c4b",
+   "94dd494b1048",
+   "cc25e1b40dfa",
+   "e5bfcd37626d",
+   "fe7f9fca10c4"
+  ],
+  "R2D2_LEGENDARY": [
+   "22fb1dd27592",
+   "545cdf87eaa7",
+   "547c683b13ab",
+   "69aa0f63f049",
+   "7c04f7c383af",
+   "ad916c3f8afb",
+   "ea794780f0f3"
+  ]
+ }
+}
