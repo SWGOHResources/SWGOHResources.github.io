@@ -218,35 +218,12 @@ function tagFor(icon){
 }
 
 /* =========================================================
- TERRITORY BATTLE ROTATION + GUILD CHOICE
-  Side flips every TB run (runs start day 7 & 21 of each
-  episode, 14 days apart). Parity is anchored to a known
-  Light-side run; TB_SIDE_ANCHOR_SIDE='light' so even
-  instance indexes are Light. The guild's pick (1 of the
-  side's 2 TBs + Rise of the Empire) persists in
-  localStorage and defaults to Rise of the Empire.
+ TERRITORY BATTLE — RISE OF THE EMPIRE ONLY
+  TB runs start day 7 & 21 of each episode, 14 days apart
+  (runs span day 7-13 & 21-27). The guild always runs Rise
+  of the Empire: tbChoiceForRun() is hardcoded to RotE —
+  no selector, no stored pick, no per-side options.
   ========================================================= */
-
-function tbOptionsForSide(side){
-  const ids = side === 'dark'
-    ? ['imperial_retaliation', 'separatist_might', 'rote']
-    : ['rebel_assault', 'republic_offensive', 'rote'];
-  return ids.map(id => ({ id, ...TB_DEFS[id] }));
-}
-
-function tbSideForPhase1(phase1Ms){
-  const anchor = parseDateOnlyMs(typeof TB_SIDE_ANCHOR_DATE !== 'undefined' ? TB_SIDE_ANCHOR_DATE : null);
-  const gapDays = (typeof TB_RUN_GAP_DAYS !== 'undefined'
-    && Number.isFinite(TB_RUN_GAP_DAYS)
-    && TB_RUN_GAP_DAYS > 0) ? TB_RUN_GAP_DAYS : 14;
-  const anchorSide = (typeof TB_SIDE_ANCHOR_SIDE !== 'undefined' && TB_SIDE_ANCHOR_SIDE === 'dark')
-    ? 'dark' : 'light';
-  if(!Number.isFinite(anchor) || !Number.isFinite(phase1Ms)) return anchorSide;
-  const idx = Math.round((phase1Ms - anchor) / (gapDays * 86400000));
-  const even = (((idx % 2) + 2) % 2) === 0;
-  if(anchorSide === 'light') return even ? 'light' : 'dark';
-  return even ? 'dark' : 'light';
-}
 
 /* Phase-1 day-in-episode for the run containing dayInEp (7 or
    21), or null outside a run (runs span day 7-13 & 21-27). */
@@ -260,53 +237,13 @@ function tbRunContext(dateMs, episode, dayInEp){
   const p1 = tbPhase1DayInEp(dayInEp);
   if(p1 == null) return null;
   const phase1Ms = dateMs - ((dayInEp - p1) * 86400000);
-  const side = tbSideForPhase1(phase1Ms);
-  return { phase1Ms, side, options: tbOptionsForSide(side), offset: dayInEp - p1 };
+  return { phase1Ms, offset: dayInEp - p1 };
 }
 
-function tbChoiceKeyForSide(side){
-  return `${TB_CHOICE_STORAGE_KEY}-${side}`;
-}
-
-/* Per-side memory: each rotation side remembers its own guild pick,
-   so changing the Dark pick on a future day never disturbs the
-   active Light run (and vice versa). Falls back to the legacy
-   global key once (migrating it), then to Rise of the Empire. */
-function tbStoredChoiceId(side){
-  const ids = side ? tbOptionsForSide(side).map(o => o.id) : Object.keys(TB_DEFS);
-  const valid = v => v && TB_DEFS[v] && ids.includes(v);
-  try {
-    if(side){
-      const v = localStorage.getItem(tbChoiceKeyForSide(side));
-      if(valid(v)) return v;
-    }
-    const legacy = localStorage.getItem(TB_CHOICE_STORAGE_KEY);
-    if(valid(legacy)){
-      if(side){ try { localStorage.setItem(tbChoiceKeyForSide(side), legacy); } catch(e){} }
-      return legacy;
-    }
-  } catch(e){}
-  return null;
-}
-
-function tbChoiceForRun(runCtx){
-  if(!runCtx) return { id: 'rote', ...TB_DEFS.rote };
-  const stored = tbStoredChoiceId(runCtx.side);
-  if(stored) return { id: stored, ...TB_DEFS[stored] };
+/* The guild always runs Rise of the Empire — no selector, no
+   stored pick, no per-side options. */
+function tbChoiceForRun(){
   return { id: 'rote', ...TB_DEFS.rote };
-}
-
-function tbSetChoice(id, side){
-  if(!TB_DEFS[id]) return false;
-  try {
-    if(side === 'light' || side === 'dark'){
-      if(!tbOptionsForSide(side).some(o => o.id === id)) return false;
-      localStorage.setItem(tbChoiceKeyForSide(side), id);
-    } else {
-      localStorage.setItem(TB_CHOICE_STORAGE_KEY, id);
-    }
-  } catch(e){}
-  return true;
 }
 
 /* TW/TB phase hour (UTC): guild phases go an hour before the daily
@@ -516,16 +453,12 @@ function getCurrentDatacronSet(nowMs){
 /* Memoized: renderUnlockWindows calls this on every render (including
    the 60s background tick), and each call scans ~85 days × event
    lookups plus per-TW-hit 7-day numbering scans. Inputs only change
-   when the datacron config, TB picks, era base or changeover hours
+   when the datacron config, era base or changeover hours
    change, so cache on all of them. */
 const _lastUsableCache = { key: null, value: null };
 
 function lastUsableCacheKey(expiresMs, eraBaseStartMs){
-  let tbChoices = '';
-  try {
-    tbChoices = ['light', 'dark'].map(side => tbStoredChoiceId(side) || 'rote').join('|');
-  } catch(e){}
-  return [expiresMs, eraBaseStartMs, stdHour(), gacHour(), eraLengthDays(), tbChoices].join('|');
+  return [expiresMs, eraBaseStartMs, stdHour(), gacHour(), eraLengthDays()].join('|');
 }
 
 // A datacron set can only ever be equipped/used for Territory War and
@@ -939,7 +872,7 @@ function fmtDateUTC(ms){
 }
 
 function fmtDateLongUTC(ms){
-  return withOrdinal(__formatter('wdL|day|monL').format(new Date(dms(ms))));
+  return withOrdinal(__formatter('wdL|day|monL|yearN').format(new Date(dms(ms))));
 }
 
 function fmtDayMonthUTC(ms){
@@ -1067,8 +1000,7 @@ function eventDateRangeLabel(item, dateMs, tbCtx){
     endMs.setUTCDate(Math.min(originalDay, daysInEndMonth));
     return `${fmtDayMonthUTC(dateMs)} → ${fmtDayMonthUTC(endMs.getTime())} · 1 month`;
   }
-  // 36-hour TB phases (Separatist Might / Republic Offensive): phase
-  // boundaries fall at 18:00 and 06:00 alternating, so mid-phase
+  // 36-hour TB phase boundaries fall at 18:00 and 06:00 alternating, so mid-phase
   // markers render the phase's exact window instead of implying a
   // changeover at 18:00.
   if(item.icon === 'rote' && tbCtx && tbCtx.def.hoursPerPhase === 36 && tbCtx.phase1Ms != null){
@@ -1422,8 +1354,7 @@ function scanBackwardForGuildEvents(st, maxDays){
     if(!tbFound){
       const tbItem = items.find(i => i.icon === 'rote' || i.icon === 'tb_ends');
       if(tbItem){
-        // Resolve the actual phase for the run's guild choice (36h
-        // TBs have 4 phases, Hoth/RotE have 6).
+        // Resolve the actual phase for Rise of the Empire (6 phases).
         const cursorMs = st.eraBaseStartMs + (absDay - 1) * 86400000;
         const rc = tbRunContext(cursorMs, info.episode, info.dayInEp);
         const df = tbChoiceForRun(rc);

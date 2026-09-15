@@ -112,7 +112,7 @@ On a forced flip the same job also runs `scripts/content:diff`
 (`scripts/diff-gamedata.mjs`), which diffs watched game-data files
 (packs, units, journeys, reward tables) against slim hash snapshots in
 `assets/data/gamedata-watch/` and posts new packs/assets/journeys/reward
-changes to a second channel via `DISCORD_CONTENT_WEBHOOK_URL`. Snapshots
+changes to a second channel via `DISCORD_EVENT_WEBHOOK_URL`. Snapshots
 store sorted hash multisets per id, so per-tier duplicate rows and
 routine hash rotations can never fake a change; while the gamedata
 mirror lags the enforced version the diff reports `pending` and retries

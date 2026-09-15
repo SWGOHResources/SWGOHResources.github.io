@@ -96,15 +96,15 @@ jobs:
           fi
       - name: Notify content channel on new content
         env:
-          DISCORD_CONTENT_WEBHOOK_URL: ${{ secrets.DISCORD_CONTENT_WEBHOOK_URL }}
+          DISCORD_EVENT_WEBHOOK_URL: ${{ secrets.DISCORD_EVENT_WEBHOOK_URL }}
           CONTENT: ${{ steps.content.outputs.result }}
         run: |
           if [ "$CONTENT" != "diff" ]; then
             echo "no content diff (CONTENT=$CONTENT) — nothing to announce"
             exit 0
           fi
-          if [ -z "$DISCORD_CONTENT_WEBHOOK_URL" ]; then
-            echo "CONTENT=diff but DISCORD_CONTENT_WEBHOOK_URL is not set — skipping notify (content still tracked)"
+          if [ -z "$DISCORD_EVENT_WEBHOOK_URL" ]; then
+            echo "CONTENT=diff but DISCORD_EVENT_WEBHOOK_URL is not set — skipping notify (content still tracked)"
             exit 0
           fi
           node --input-type=module -e "
@@ -133,7 +133,7 @@ jobs:
                 timestamp: new Date(r.checkedAt).toISOString(),
               }],
             };
-            const res = await fetch(process.env.DISCORD_CONTENT_WEBHOOK_URL, {
+            const res = await fetch(process.env.DISCORD_EVENT_WEBHOOK_URL, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify(body),

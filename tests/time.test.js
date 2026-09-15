@@ -486,9 +486,11 @@ test('event-start pills count to each event start', () => {
   assert.equal(engine.relForEventStart(null, now, 'In 1 day'), 'In 1 day');
 });
 
-test('missing TB rotation anchor degrades to the default side without throwing', () => {
-  const engine = loadTimeEngine({ omit: ['TB_SIDE_ANCHOR_DATE', 'TB_RUN_GAP_DAYS', 'TB_SIDE_ANCHOR_SIDE'] });
-  assert.equal(engine.tbSideForPhase1(Date.parse('2026-08-31')), 'light');
+test('TB choice is always Rise of the Empire regardless of run side', () => {
+  const engine = loadTimeEngine();
+  assert.equal(engine.tbChoiceForRun(null).id, 'rote');
+  assert.equal(engine.tbChoiceForRun({ phase1Ms: Date.parse('2026-08-31'), offset: 0 }).id, 'rote');
+  assert.equal(engine.tbChoiceForRun({ phase1Ms: Date.parse('2026-09-14'), offset: 3 }).name, 'Rise of the Empire');
 });
 
 test('last usable guild event follows configured changeover hours', () => {

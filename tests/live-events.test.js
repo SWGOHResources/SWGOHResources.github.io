@@ -442,7 +442,7 @@ test('cards show start instant plus whole-hour duration', () => {
   assert.match(live, /xw-dur">2 hrs</);
   const moment = run(`explorerCardHTML({ icon: 'client_update', label: 'Client Update' }, ${NOW}, 'Now', null, ${NOW})`);
   assert.match(moment, /xw-start"/);
-  assert.doesNotMatch(moment, /xw-dur/);
+  assert.match(moment, /xw-dur">N\/A</);
 });
 test('live conquest surfaces wear the banner, never promo art', () => {
   const { ctx } = loadRenderEngine();
@@ -481,20 +481,20 @@ test('cards carry a family kicker above the title', () => {
   assert.match(live, /xcard-kicker">ERA</);
 });
 
-test('tb picker is a constant-height row with no collapse or wrap lines', () => {
+test('TB is always Rise of the Empire with no selector buttons', () => {
   const { ctx } = loadRenderEngine();
   const run = src => vm.runInContext(src, ctx);
-  const mk = compact => `tbPickerHTML({ def: { id: 'rote', name: 'Rise of the Empire' }, side: 'light', options: [
-    { id: 'rebel_assault', name: 'Hoth Rebel Assault', short: 'Rebel Assault', tag: 'Hoth' },
-    { id: 'republic_offensive', name: 'Geonosis Republic Offensive', short: 'Republic Offensive', tag: 'Geo' },
-    { id: 'rote', name: 'Rise of the Empire', short: 'Rise of the Empire', tag: 'ROTE' }
-  ] }, ${compact})`;
-  for (const html of [run(mk(true)), run(mk(false))]) {
-    assert.match(html, /tb-pick-btn/);
-    assert.doesNotMatch(html, /<details/);
-    assert.doesNotMatch(html, /tb-pick-selected/);
-    assert.match(html, /aria-pressed="true"/);
-  }
+  // tbChoiceForRun ignores any run context — always RotE.
+  assert.equal(run(`tbChoiceForRun(null).id`), 'rote');
+  assert.equal(run(`tbChoiceForRun({ side: 'dark', offset: 0 }).id`), 'rote');
+  assert.equal(run(`tbChoiceForRun({ side: 'light', offset: 3 }).name`), 'Rise of the Empire');
+  // RotE cards render with no picker buttons anywhere.
+  const html = run(`explorerCardHTML(
+    { icon: 'rote', label: 'Rise of the Empire Phase 1 Starts' }, ${NOW}, 'Now',
+    { def: tbChoiceForRun(), offset: 0, phase1Ms: ${NOW}, art: 'tb/rise-of-the-empire.png' }, ${NOW})`);
+  assert.match(html, /Rise of the Empire/);
+  assert.doesNotMatch(html, /tb-pick-btn/);
+  assert.doesNotMatch(html, /setTbChoice/);
 });
 test('shared fallback icons never pre-empt specific textures', async () => {
   // Regression: a shared icon file on disk (or a fast icon download)

@@ -153,23 +153,6 @@ function copyDiscordHandle(btnEl) {
   });
 }
 
-/* Guild TB picker (called from TB cards in the explorer and the
-   dashboard status card). The pick is stored per rotation side. */
-function setTbChoice(id, side){
-  const scrollX = window.scrollX;
-  const scrollY = window.scrollY;
-  const deck = document.querySelector('.xcard-deck');
-  const deckScrollLeft = deck?.scrollLeft ?? 0;
-  if(tbSetChoice(id, side)){
-    renderAll();
-    requestAnimationFrame(() => {
-      window.scrollTo(scrollX, scrollY);
-      const nextDeck = document.querySelector('.xcard-deck');
-      if(nextDeck) nextDeck.scrollLeft = deckScrollLeft;
-    });
-  }
-}
-
 /* Mobile Nav Panel (null-safe: a missing toggle must not halt init) */
 const navToggle = document.getElementById('navToggle');
 

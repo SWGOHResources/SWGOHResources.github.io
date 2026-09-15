@@ -189,8 +189,7 @@ function guildPhaseTrackerHTML(st){
     }
     return `<div class="pip-track"><div class="pip-track-bar">${segs}</div><div class="pip-track-labels">${labels}</div></div>`;
   } else {
-    // TB tracker length follows the tracked TB (6 phases for
-    // Hoth/RotE, 4 for Separatist Might / Republic Offensive).
+    // TB tracker length follows Rise of the Empire (6 phases).
     const n = gp.phases || 6;
     const capped = Math.min(gp.complete ? n : gp.phaseIndex, n - 1);
     let segs = '', labels = '';
@@ -281,15 +280,8 @@ function renderStatusDashboard(st){
   const isGuildActive = getDayEvents(st.episode, st.dayInEp)
     .some(i => (i.icon.startsWith('tw_') && i.icon !== 'tw_payout') || i.icon === 'rote' || i.icon === 'tb_ends');
 
-  // TB picker on the status card too, so the guild can set their TB
-  // without scrolling to the schedule. Only during a TB week.
-  const todayRunCtx = tbRunContext(st.currentDayStartMs, st.episode, st.dayInEp);
-  const todayTbDef = todayRunCtx ? tbChoiceForRun(todayRunCtx) : null;
-  const todayTbCtx = todayRunCtx ? {
-    def: todayTbDef, offset: todayRunCtx.offset, side: todayRunCtx.side,
-    phase1Ms: todayRunCtx.phase1Ms, options: todayRunCtx.options,
-    art: todayTbDef.art, showPicker: true
-  } : null;
+  // Guild Events card shows the RotE run via the Today/Tomorrow
+  // summary lines above — no separate TB row needed.
 
   container.innerHTML = `
     <div class="status-card red-card">
@@ -311,7 +303,6 @@ function renderStatusDashboard(st){
         <div class="sc-sub" style="font-size:12px">Tomorrow: <span style="color:var(--amber)">${tmrwGuildSummary}</span></div>
       </div>
       ${guildPhaseTrackerHTML(st)}
-      ${tbPickerHTML(todayTbCtx, true)}
     </div>
   `;
 }
@@ -331,7 +322,7 @@ let liveEventsCache = null;
    Duration omitted when the marker has no real span. */
 function cardWhenRow(startMs, durH){
   const start = escHTML(fmtEventStart(startMs));
-  const dur = Number.isFinite(durH) ? `<span class="xw-dur">${durH} hrs</span>` : '';
+  const dur = Number.isFinite(durH) ? `<span class="xw-dur">${durH} hrs</span>` : '<span class="xw-dur">N/A</span>';
   return `<div class="xcard-date"><span class="xw-start">${start}</span>${dur}</div>`;
 }
 
@@ -530,25 +521,6 @@ function onJumpSelect(select){
   select.value = '';
 }
 
-/* Guild TB picker. Always-visible 3-button row (explorer Phase-1
-   cards and the dashboard status card alike): no collapsing, no
-   wrapping sub-lines, so the row is a constant height and nothing
-   around it shifts when the pick changes. tbCtx comes from
-   tbRunContext for the relevant day; null off-TB weeks. The active
-   button carries a ✓. */
-function tbPickerHTML(tbCtx, compact){
-  if(!tbCtx) return '';
-  const guildAccent = CATEGORY_META.guild;
-  const pickerStyle = `--accent:${guildAccent.accent};--accent-dim:${guildAccent.dim};--accent-border:${guildAccent.border}`;
-  const btns = tbCtx.options.map(o => {
-    const active = o.id === tbCtx.def.id;
-    const selectedLabel = active ? ', selected' : '';
-    return `<button type="button" class="tb-pick-btn${active ? ' active' : ''}" onclick="setTbChoice('${o.id}','${tbCtx.side}')" aria-pressed="${active}" aria-label="${o.name}${selectedLabel}" title="${o.short || o.name}${active ? ' — selected' : ''}">${active ? '<span class="tb-pick-check" aria-hidden="true">✓</span>' : ''}<span>${o.tag}</span></button>`;
-  }).join('');
-  const label = compact ? `TB: <strong>${tbCtx.def.name}</strong>` : 'Select your current TB:';
-  return `<div class="tb-pick" style="${pickerStyle}" role="group" aria-label="Select your current TB"><span class="tb-pick-label">${label}</span><div class="tb-pick-btns">${btns}</div></div>`;
-}
-
 function explorerCardHTML(item, dateMs, relLabel, tbCtx, nowMs){
   const cat = categoryFor(item.icon);
   const meta = CATEGORY_META[cat];
@@ -565,11 +537,6 @@ function explorerCardHTML(item, dateMs, relLabel, tbCtx, nowMs){
   const relCls = relLabel === 'Now' ? 'xcard-rel is-today' : 'xcard-rel';
   const title = tenseByStart(getFullScheduleLabel(item), item, dateMs, nowMs);
 
-  // Guild TB picker: on Phase-1 days the guild picks which of the
-  // run's 3 TBs (side's 2 + Neutral RotE) they are running. The
-  // choice persists and drives the art + phase labels everywhere.
-  const picker = (tbCtx && tbCtx.showPicker && item.icon === 'rote') ? tbPickerHTML(tbCtx) : '';
-
   return `<article class="xcard" style="${style}">
     <div class="xcard-art${isFitArt(item.icon) ? ' fit' : ''}">
       <div class="art-badge">${tag.glyph}</div>
@@ -584,7 +551,6 @@ function explorerCardHTML(item, dateMs, relLabel, tbCtx, nowMs){
       <div class="xcard-kicker">${escHTML(tag.label)}</div>
       <h4>${title}</h4>
       ${cardWhenRow(eventStartMs(item, dateMs), (typeof eventDurationHours === 'function') ? eventDurationHours(item, dateMs, isTbCard ? tbCtx : null) : null)}
-      ${picker}
     </div>
   </article>`;
 }
@@ -811,14 +777,13 @@ function renderExplorer(st){
       + `<div class="db-text"><span class="db-label">Conquest · C${cq.cNum}</span><span class="db-name">Day ${cq.day} of ${cq.total}${cq.finalDay ? ' — Final' : ''}</span></div>`
       + `</div>`
     : '';
-  // TB context for this day: drives the card art, phase labels and
-  // the guild picker (shown on Phase-1 days). Null off-TB days.
+  // TB context for this day: drives the RotE card art and phase
+  // labels. Null off-TB days.
   const runCtx = tbRunContext(cur.dMs, cur.ep, cur.dayInEp);
-  const tbDef = runCtx ? tbChoiceForRun(runCtx) : null;
+  const tbDef = runCtx ? tbChoiceForRun() : null;
   const tbCtx = runCtx ? {
-    def: tbDef, offset: runCtx.offset, side: runCtx.side,
-    phase1Ms: runCtx.phase1Ms, options: runCtx.options, art: tbDef.art,
-    showPicker: runCtx.offset === 0
+    def: tbDef, offset: runCtx.offset,
+    phase1Ms: runCtx.phase1Ms, art: tbDef.art
   } : null;
   const dayLive = liveEventsForDay(cur.dMs);
   const { starting, ongoing } = splitLiveDay(dayLive, cur.dMs);
@@ -865,8 +830,8 @@ function renderExplorer(st){
 }
 
 function getFullScheduleLabel(item){
-  // TB labels already carry the full planet-prefixed name
-  // (e.g. "Hoth Rebel Assault Phase 1 Starts") — no extra prefix.
+  // TB labels already carry the full name
+  // (e.g. "Rise of the Empire Phase 1 Starts") — no extra prefix.
   if(item.icon === 'rote' || item.icon === 'tb_ends') return item.label;
   const catLabel = GUILD_SUBLABEL[item.icon] || CATEGORY_META[categoryFor(item.icon)]?.label;
   if(!catLabel) return item.label;
@@ -880,15 +845,11 @@ function getFullScheduleLabel(item){
    FULL ERA TIMELINE (modal)
    ========================================================= */
 
-const fullScheduleCache = { eraStartMs: null, activeDay: null, tbChoices: null, tzKey: null, cfgKey: null };
+const fullScheduleCache = { eraStartMs: null, activeDay: null, tzKey: null, cfgKey: null };
 let scheduleFilterEp = 0; // 0 = all episodes
 
 function gameDayDisplayMs(dateMs){
   return dateMs + (stdHour() * 3600000);
-}
-
-function fullScheduleTbChoiceKey(){
-  return ['light', 'dark'].map(side => tbStoredChoiceId(side) || 'rote').join('|');
 }
 
 function escAttr(s){
@@ -926,7 +887,6 @@ function refreshTimelineTense(container, nowMs){
 function renderFullSchedule(st){
   const container = document.getElementById('fullSchedule');
   if(!container) return;
-  const tbChoices = fullScheduleTbChoiceKey();
   // Timezone is part of the cache key: every date string in the
   // timeline is rendered in the display zone, so a tz change must
   // rebuild rather than reuse the cached markup. Changeover hours and
@@ -934,7 +894,6 @@ function renderFullSchedule(st){
   const tzKey = (typeof getTimeZoneSetting === 'function') ? getTimeZoneSetting() : 'local';
   const cfgKey = [stdHour(), gacHour(), eraLengthDays(), episodeLengthDays()].join('|');
   const sameEra = fullScheduleCache.eraStartMs === st.currentEraStartMs
-    && fullScheduleCache.tbChoices === tbChoices
     && fullScheduleCache.tzKey === tzKey
     && fullScheduleCache.cfgKey === cfgKey;
 
@@ -968,7 +927,6 @@ function renderFullSchedule(st){
     container.innerHTML = html;
     fullScheduleCache.eraStartMs = st.currentEraStartMs;
     fullScheduleCache.activeDay = st.eraDay;
-    fullScheduleCache.tbChoices = tbChoices;
     fullScheduleCache.tzKey = tzKey;
     fullScheduleCache.cfgKey = cfgKey;
     applyScheduleFilter();
