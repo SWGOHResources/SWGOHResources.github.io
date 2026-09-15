@@ -1,5 +1,5 @@
 {
- "pulledAt": 1789458618282,
+ "pulledAt": 1789484638293,
  "gameDataVersion": "0.40.5:MoxBSQUYRjuplwCT1HagpQ",
  "events": [
   {
@@ -22,15 +22,6 @@
    "art": "live/events-stormtrooperconcept.png"
   },
   {
-   "id": "EVENT_RESOURCE_CONTRABAND_CARGO",
-   "name": "Contraband Cargo",
-   "kind": "event",
-   "startMs": 1789293600000,
-   "endMs": 1789380000000,
-   "live": false,
-   "art": "live/events-contrabandcargo.png"
-  },
-  {
    "id": "EVENT_OMEGA_BATTLES_02_CORUSCANT",
    "name": "Coruscant Omega Battles",
    "kind": "omega",
@@ -45,7 +36,7 @@
    "kind": "smugglers-run",
    "startMs": 1789380000000,
    "endMs": 1789466400000,
-   "live": true,
+   "live": false,
    "art": "live/events-smugglersrun.png"
   },
   {
