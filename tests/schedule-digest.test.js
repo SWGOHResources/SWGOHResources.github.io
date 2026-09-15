@@ -43,7 +43,7 @@ test('event embeds show type/start/end rows plus full artwork', () => {
   assert.deepEqual(e.fields.map(f => f.name), ['Type', 'Starts', 'Ends']);
   for (const f of e.fields) assert.equal(f.inline, true);
   assert.match(e.fields[1].value, /<t:1789495200:F>/);
-  assert.equal(e.image.url, 'https://swoghresources.github.io/assets/img/live/events-x.png');
+  assert.equal(e.image.url, 'https://swgohresources.github.io/assets/img/live/events-x.png');
   assert.doesNotMatch(JSON.stringify(d), EMOJI_RE);
 });
 

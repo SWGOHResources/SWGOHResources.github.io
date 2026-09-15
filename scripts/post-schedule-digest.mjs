@@ -23,7 +23,7 @@ import vm from 'node:vm';
 const LIVE_PATH = new URL('../assets/data/live-events.json', import.meta.url);
 const STATE_PATH = new URL('../assets/data/digest-state.json', import.meta.url);
 const DAY_MS = 86400000;
-const SITE_URL = (process.env.SITE_URL ?? 'https://swoghresources.github.io').replace(/\/$/, '');
+const SITE_URL = (process.env.SITE_URL ?? 'https://swgohresources.github.io').replace(/\/$/, '');
 const MAX_EVENT_POSTS = 10;
 
 const KIND_LABEL = {

@@ -26,7 +26,7 @@ import { artSlug, prettifyCodeName } from './pull-live-events.mjs';
 
 const COMLINK_URL = process.env.COMLINK_URL ?? 'http://localhost:3500';
 const AE_URL = process.env.AE_URL ?? 'http://localhost:3123';
-const SITE_URL = (process.env.SITE_URL ?? 'https://swoghresources.github.io').replace(/\/$/, '');
+const SITE_URL = (process.env.SITE_URL ?? 'https://swgohresources.github.io').replace(/\/$/, '');
 const WATCH_URL = file =>
   `https://raw.githubusercontent.com/swgoh-utils/gamedata/main/${file}`;
 const VERSIONS_PATH = new URL('../assets/data/client-version.json', import.meta.url);
