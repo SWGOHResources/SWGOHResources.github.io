@@ -125,18 +125,19 @@ npm run content:diff
 
 ## Daily digest
 
-`scripts/post-schedule-digest.mjs` posts the homepage's daily schedule
-(GAC status, guild Today/Tomorrow, conquest position, live events
-starting/ending with Discord timestamps) to `DISCORD_EVENT_WEBHOOK_URL`.
-`.github/workflows/digest.yml` runs it daily at 18:10 UTC, just after the
-changeover. It needs no Comlink — rotation state comes from the site's own
-`config.js` + `time.js` and events from the committed `live-events.json`
-snapshot, so the post always matches the page. One post per era day is
-enforced via `assets/data/digest-state.json`:
+`scripts/post-schedule-digest.mjs` posts the homepage's daily schedule to
+`DISCORD_EVENT_WEBHOOK_URL`: first a status embed (era, GAC, TB, TW,
+conquest — short labeled fields like the version alerts), then one
+message per live event starting/ending that day, each wearing the event's
+own artwork. `.github/workflows/digest.yml` runs it daily at 18:10 UTC,
+just after the changeover. It needs no Comlink — rotation state comes from
+the site's own `config.js` + `time.js` and events from the committed
+`live-events.json` snapshot, so posts always match the page. One post set
+per era day is enforced via `assets/data/digest-state.json`:
 
 ```sh
 npm run digest:post
-DRY_RUN=1 npm run digest:post   # preview payload, change nothing
+DRY_RUN=1 npm run digest:post   # preview payloads, change nothing
 ```
 
 > Git workflow: the `live-events.yml` bot pushes to

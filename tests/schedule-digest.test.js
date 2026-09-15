@@ -1,53 +1,52 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { formatDigest } from '../scripts/post-schedule-digest.mjs';
+import { formatEventPayload, formatStatusPayload } from '../scripts/post-schedule-digest.mjs';
 
-const base = {
+const status = {
   eraDay: 50,
   eraLength: 84,
   dateLabel: 'Tuesday, 15th September 2026',
-  gac: { main: 'Round 3 of 3 — Attack Phase', sub: 'Week 1 ends soon' },
-  guildToday: 'Rise of the Empire Phase 2 Started',
-  guildTomorrow: 'Rise of the Empire Phase 3 Starts',
+  era: 'Era of Myths & Legends — Day 50/84 · ends 20th Oct',
+  gac: 'Round 3 of 3 — Attack Phase — Week 1 ends soon',
+  tb: 'Rise of the Empire — Phase 2 of 6',
+  tw: 'Intermission',
   conquest: null,
-  starting: [],
-  ending: [],
+  eventCount: 0,
 };
 
-test('digest mirrors the homepage surfaces', () => {
-  const d = formatDigest(base);
-  assert.match(d.embeds[0].title, /Era Day 50\/84/);
-  const names = d.embeds[0].fields.map(f => f.name);
-  assert.ok(names.some(n => n.includes('GAC')));
-  assert.ok(names.some(n => n.includes('Guild Today')));
-  assert.ok(names.some(n => n.includes('Guild Tomorrow')));
-  assert.match(d.embeds[0].fields[0].value, /Round 3/);
+test('status embed reads like the client-version alerts', () => {
+  const d = formatStatusPayload(status);
+  const e = d.embeds[0];
+  assert.match(e.title, /Era Day 50\/84/);
+  assert.equal(e.fields.length, 4);
+  for (const f of e.fields) assert.equal(f.inline, true);
+  assert.match(e.fields[0].value, /Myths & Legends/);
+  assert.match(e.description, /Quiet day/);
 });
 
-test('digest lists starting and ending live events with timestamps', () => {
-  const d = formatDigest({
-    ...base,
-    starting: [{ name: 'Blade and Bastion', kind: 'marquee', startMs: 1789495200000, endMs: 1789495200000 }],
-    ending: [{ name: "Smuggler's Run", kind: 'smugglers-run', startMs: 1, endMs: 1789466400000 }],
+test('status embed adds conquest and event follow-up note', () => {
+  const d = formatStatusPayload({ ...status, conquest: 'C3 — Day 5 of 14', eventCount: 3 });
+  assert.equal(d.embeds[0].fields.length, 5);
+  assert.equal(d.embeds[0].fields[4].inline, false);
+  assert.match(d.embeds[0].description, /3 live events/);
+});
+
+test('event embeds wear their own artwork with timestamps', () => {
+  const d = formatEventPayload({
+    name: 'Blade and Bastion', kind: 'marquee',
+    startMs: 1789495200000, endMs: 1789581600000, art: 'live/events-x.png',
   });
-  const names = d.embeds[0].fields.map(f => f.name);
-  assert.ok(names.some(n => n.includes('Starting today (1)')));
-  assert.ok(names.some(n => n.includes('Ending today (1)')));
-  const body = JSON.stringify(d);
-  assert.match(body, /<t:1789495200:F>/);
-  assert.match(body, /Blade and Bastion/);
+  const e = d.embeds[0];
+  assert.equal(e.title, 'Blade and Bastion');
+  assert.match(e.description, /Marquee/);
+  assert.match(e.description, /<t:1789495200:F>/);
+  assert.equal(e.thumbnail.url, 'https://swoghresources.github.io/assets/img/live/events-x.png');
 });
 
-test('digest notes conquest position and empty event days', () => {
-  const d = formatDigest({ ...base, conquest: 'Conquest C3 — Day 5 of 14 — note' });
-  assert.ok(JSON.stringify(d).includes('Day 5 of 14'));
-  const empty = formatDigest(base);
-  assert.ok(empty.embeds[0].fields.some(f => f.value.includes('No live events')));
-});
-
-test('digest stays within Discord embed limits', () => {
-  const many = Array.from({ length: 30 }, (_, i) => ({ name: `E${i}`, kind: 'event', startMs: i + 1, endMs: i + 2 }));
-  const d = formatDigest({ ...base, starting: many, ending: many });
-  assert.ok(d.embeds[0].fields.length <= 10);
-  assert.ok(JSON.stringify(d).length < 6000);
+test('event embeds degrade without artwork', () => {
+  const d = formatEventPayload({
+    name: 'Mystery', kind: 'whatever', startMs: 1, endMs: 2, art: null,
+  });
+  assert.ok(!('thumbnail' in d.embeds[0]));
+  assert.match(d.embeds[0].description, /Event/);
 });
