@@ -1,0 +1,14 @@
+{
+ "checkedAt": 1789501991000,
+ "store": {
+  "version": "0.40.3",
+  "releaseDate": null,
+  "releaseNotes": null
+ },
+ "server": {
+  "gamedata": "0.40.5:MoxBSQUYRjuplwCT1HagpQ",
+  "asset": 100048,
+  "serverVersion": "2083425",
+  "loc": "5j7RobghTkuIA1xrUHV1mw"
+ }
+}

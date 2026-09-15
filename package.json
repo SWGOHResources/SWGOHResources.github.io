@@ -6,6 +6,7 @@
     "test": "node --test",
     "sitemap": "node scripts/stamp-sitemap.mjs",
     "events:pull": "node scripts/pull-live-events.mjs",
+    "versions:check": "node scripts/check-client-version.mjs",
     "sync": "git fetch origin && git rebase origin/main"
   }
 }

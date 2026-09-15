@@ -96,6 +96,22 @@ npm run events:pull
 `tests/live-events.test.js` fails if the committed snapshot is older
 than 48h, so a broken refresh shows up in CI.
 
+## Client version watch
+
+`scripts/check-client-version.mjs` + `assets/data/client-version.json`
+track the App Store client (`0.40.6` etc.) alongside the enforced server
+versions (`latestGamedataVersion`, `assetVersion`) from Comlink. Store
+builds land hours before the server flips, so both stages alert
+separately: staged (new binary, old data) vs forced (data/asset moved).
+Routine gamedata hash rotations never alert.
+`.github/workflows/client-watch.yml` runs it hourly and posts to Discord
+via the `DISCORD_WEBHOOK_URL` repo secret (job still tracks versions
+when the secret is absent):
+
+```sh
+npm run versions:check
+```
+
 > Git workflow: the `live-events.yml` bot pushes to
 > `main` on a schedule, so `main` moves under you. Always run
 > `npm run sync` (fetch + rebase onto `origin/main`) before editing

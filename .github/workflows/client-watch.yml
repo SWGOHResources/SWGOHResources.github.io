@@ -1,0 +1,126 @@
+name: Client version watch
+
+# Detects SWGOH client (title) updates in two stages and alerts Discord:
+#   staged — new binary on the App Store (often lands hours before
+#     the server enforces anything, e.g. 0.40.6 on 2026-09-15).
+#   forced — server actually moves (gamedata base version or assetVersion).
+# Runs hourly — store drops land anytime — plus on demand via
+# workflow_dispatch. Needs a DISCORD_WEBHOOK_URL repo secret for alerts;
+# without it the job still tracks versions and skips notify gracefully.
+on:
+  schedule:
+    - cron: '7 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 24
+      - name: Start swgoh-comlink
+        run: |
+          docker run -d --name swgoh-comlink \
+            --env APP_NAME=swgohresources-client-watch \
+            -p 3500:3000 ghcr.io/swgoh-utils/swgoh-comlink:latest
+          for i in $(seq 1 24); do
+            if curl -sf --max-time 5 http://localhost:3500/enums -o /dev/null; then
+              echo "comlink ready"; exit 0
+            fi
+            sleep 5
+          done
+          echo "comlink did not become ready"; docker logs swgoh-comlink; exit 1
+      - name: Check client versions
+        run: COMLINK_URL=http://localhost:3500 npm run versions:check
+      - name: Commit snapshot and detect transition
+        id: verdict
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add assets/data/client-version.json
+          # Compare meaningful versions only (checkedAt always changes).
+          # Gamedata hash suffixes rotate on routine pushes — only a base
+          # ("0.40.5") or asset change counts as a forced flip.
+          node --input-type=module -e "
+            import { execSync } from 'node:child_process';
+            import fs from 'node:fs';
+            import { detectTransitions } from './scripts/check-client-version.mjs';
+            const cur = JSON.parse(fs.readFileSync('assets/data/client-version.json', 'utf8'));
+            let old = null;
+            try { old = JSON.parse(execSync('git show HEAD:assets/data/client-version.json', { encoding: 'utf8' })); } catch {}
+            const { verdict } = detectTransitions(old, cur);
+            fs.appendFileSync(process.env.GITHUB_OUTPUT, 'verdict=' + verdict + '\n');
+            const same = !!old
+              && old.store?.version === cur.store?.version
+              && old.server?.gamedata === cur.server?.gamedata
+              && old.server?.asset === cur.server?.asset
+              && old.server?.serverVersion === cur.server?.serverVersion
+              && old.server?.loc === cur.server?.loc;
+            if (same) {
+              execSync('git restore --staged assets/data/client-version.json && git checkout -- assets/data/client-version.json');
+              console.log('versions unchanged — skipping commit');
+            } else {
+              console.log('version change detected — verdict=' + verdict);
+            }
+          "
+          if git diff --staged --quiet; then
+            echo "client versions unchanged"
+          else
+            git commit -m "Client version snapshot $(date -u +%F_%H%M)"
+            git push
+          fi
+      - name: Notify Discord on version change
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          VERDICT: ${{ steps.verdict.outputs.verdict }}
+        run: |
+          if [ "$VERDICT" = "" ] || [ "$VERDICT" = "none" ]; then
+            echo "no transition — nothing to announce"
+            exit 0
+          fi
+          if [ -z "$DISCORD_WEBHOOK_URL" ]; then
+            echo "VERDICT=$VERDICT but DISCORD_WEBHOOK_URL is not set — skipping notify (versions still tracked)"
+            exit 0
+          fi
+          node --input-type=module -e "
+            import fs from 'node:fs';
+            const verdict = process.env.VERDICT;
+            const cur = JSON.parse(fs.readFileSync('assets/data/client-version.json', 'utf8'));
+            const forced = verdict === 'forced_flip' || verdict === 'both';
+            const title = verdict === 'both'
+              ? '🔴 SWGOH title update: new client + server flip'
+              : verdict === 'forced_flip'
+                ? '🔴 SWGOH title update now enforced'
+                : '🟡 SWGOH client update staged (not enforced yet)';
+            const notes = (cur.store?.releaseNotes ?? '').slice(0, 900);
+            const body = {
+              embeds: [{
+                title,
+                url: 'https://apps.apple.com/us/app/star-wars-galaxy-of-heroes/id921022358',
+                color: forced ? 0xE13232 : 0xF5C518,
+                fields: [
+                  { name: 'App Store client', value: String(cur.store?.version ?? '?'), inline: true },
+                  { name: 'Released', value: String(cur.store?.releaseDate ?? 'unknown'), inline: true },
+                  { name: 'Server gamedata', value: String(cur.server?.gamedata ?? '?'), inline: false },
+                  { name: 'Server asset', value: String(cur.server?.asset ?? '?'), inline: true },
+                  ...(notes ? [{ name: 'Store notes', value: notes, inline: false }] : []),
+                ],
+                footer: { text: 'SWGOH Resources version watch' },
+                timestamp: new Date(cur.checkedAt).toISOString(),
+              }],
+            };
+            const res = await fetch(process.env.DISCORD_WEBHOOK_URL, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(body),
+            });
+            if (!res.ok) throw new Error('Discord -> HTTP ' + res.status);
+            console.log('discord notified: ' + verdict);
+          "
