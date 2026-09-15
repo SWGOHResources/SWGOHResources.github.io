@@ -10,7 +10,7 @@
 //
 // Dedupe: assets/data/digest-state.json records the last posted era day.
 // Missing state (first run) posts immediately as an inaugural proof.
-// Posts to DISCORD_CONTENT_WEBHOOK_URL; without it the job tracks state
+// Posts to DISCORD_EVENT_WEBHOOK_URL; without it the job tracks state
 // and skips notify gracefully.
 //
 // Run: npm run digest:post
@@ -150,9 +150,9 @@ async function main() {
     return;
   }
 
-  const webhook = process.env.DISCORD_CONTENT_WEBHOOK_URL ?? '';
+  const webhook = process.env.DISCORD_EVENT_WEBHOOK_URL ?? '';
   if (!webhook) {
-    console.log('DIGEST=skipped (DISCORD_CONTENT_WEBHOOK_URL not set — state untouched)');
+    console.log('DIGEST=skipped (DISCORD_EVENT_WEBHOOK_URL not set — state untouched)');
     return;
   }
   const res = await fetch(webhook, {

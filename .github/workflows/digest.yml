@@ -9,7 +9,7 @@ name: Daily digest
 # live-events.json snapshot (refreshed every 4h). Dedupe via
 # assets/data/digest-state.json (one post per era day; a missing state
 # file posts immediately as an inaugural proof). Without
-# DISCORD_CONTENT_WEBHOOK_URL the job skips notify gracefully.
+# DISCORD_EVENT_WEBHOOK_URL the job skips notify gracefully.
 on:
   schedule:
     - cron: '10 18 * * *'
@@ -30,7 +30,7 @@ jobs:
           node-version: 24
       - name: Post schedule digest
         env:
-          DISCORD_CONTENT_WEBHOOK_URL: ${{ secrets.DISCORD_CONTENT_WEBHOOK_URL }}
+          DISCORD_EVENT_WEBHOOK_URL: ${{ secrets.DISCORD_EVENT_WEBHOOK_URL }}
         run: |
           npm run digest:post | tee /tmp/digest.log
           git config user.name "github-actions[bot]"

@@ -112,7 +112,7 @@ On a forced flip the same job also runs `scripts/content:diff`
 (`scripts/diff-gamedata.mjs`), which diffs watched game-data files
 (packs, units, journeys, reward tables) against slim hash snapshots in
 `assets/data/gamedata-watch/` and posts new packs/assets/journeys/reward
-changes to a second channel via `DISCORD_EVENT_WEBHOOK_URL`. Snapshots
+changes to a second channel via `DISCORD_CONTENT_WEBHOOK_URL`. Snapshots
 store sorted hash multisets per id, so per-tier duplicate rows and
 routine hash rotations can never fake a change; while the gamedata
 mirror lags the enforced version the diff reports `pending` and retries
@@ -127,7 +127,7 @@ npm run content:diff
 
 `scripts/post-schedule-digest.mjs` posts the homepage's daily schedule
 (GAC status, guild Today/Tomorrow, conquest position, live events
-starting/ending with Discord timestamps) to `DISCORD_CONTENT_WEBHOOK_URL`.
+starting/ending with Discord timestamps) to `DISCORD_EVENT_WEBHOOK_URL`.
 `.github/workflows/digest.yml` runs it daily at 18:10 UTC, just after the
 changeover. It needs no Comlink — rotation state comes from the site's own
 `config.js` + `time.js` and events from the committed `live-events.json`
