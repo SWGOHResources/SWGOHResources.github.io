@@ -1,16 +1,7 @@
 {
- "pulledAt": 1789484638293,
+ "pulledAt": 1789507609048,
  "gameDataVersion": "0.40.5:MoxBSQUYRjuplwCT1HagpQ",
  "events": [
-  {
-   "id": "CONQUEST_VOL24",
-   "name": "Conquest",
-   "kind": "conquest",
-   "startMs": 1788199200000,
-   "endMs": 1789408800000,
-   "live": false,
-   "art": "live/conquestpass-promo-basic-01.png"
-  },
   {
    "id": "EVENT_MARQUEE_STORMTROOPERCONCEPT",
    "name": "Blade and Bastion",
@@ -18,7 +9,7 @@
    "unit": "STORMTROOPERCONCEPT",
    "startMs": 1788890400000,
    "endMs": 1789495200000,
-   "live": true,
+   "live": false,
    "art": "live/events-stormtrooperconcept.png"
   },
   {
@@ -63,7 +54,7 @@
    "kind": "era-challenge",
    "startMs": 1789495200000,
    "endMs": 1790100000000,
-   "live": false,
+   "live": true,
    "art": "live/events-stormtrooperconcept.png"
   },
   {
@@ -121,6 +112,15 @@
    "art": "live/events-dathomir-battle.png"
   },
   {
+   "id": "progressionevent_MEESALESS_MASSACRE",
+   "name": "Terrible Tings Legendary Event",
+   "kind": "event",
+   "startMs": 1790100000000,
+   "endMs": 1792519200000,
+   "live": false,
+   "art": "live/events-darthjarjar.png"
+  },
+  {
    "id": "EVENT_ASSAULT_REBEL",
    "name": "Rebel Roundup Assault Battle",
    "kind": "assault",
@@ -128,6 +128,15 @@
    "endMs": 1790233200000,
    "live": false,
    "art": "live/events-rebelassult.png"
+  },
+  {
+   "id": "EVENT_HOLIDAY_GHOSTS_OF_DATHOMIR",
+   "name": "Ghosts of Dathomir",
+   "kind": "event",
+   "startMs": 1790233200000,
+   "endMs": 1790319600000,
+   "live": false,
+   "art": "live/events-nightsisters-halloween.png"
   }
  ]
 }
