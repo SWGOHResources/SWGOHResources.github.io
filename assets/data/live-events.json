@@ -1,5 +1,5 @@
 {
- "pulledAt": 1789544677187,
+ "pulledAt": 1789570884919,
  "gameDataVersion": "0.40.5:MoxBSQUYRjuplwCT1HagpQ",
  "events": [
   {
@@ -11,15 +11,6 @@
    "endMs": 1789495200000,
    "live": false,
    "art": "live/events-stormtrooperconcept.png"
-  },
-  {
-   "id": "EVENT_RESOURCE_SMUGGLERS_RUN",
-   "name": "Smuggler's Run",
-   "kind": "smugglers-run",
-   "startMs": 1789380000000,
-   "endMs": 1789466400000,
-   "live": false,
-   "art": "live/events-smugglersrun.png"
   },
   {
    "id": "EVENT_FLEET_MASTERY_EXECUTOR",
