@@ -1,5 +1,5 @@
 {
- "pulledAt": 1789507609048,
+ "pulledAt": 1789544677187,
  "gameDataVersion": "0.40.5:MoxBSQUYRjuplwCT1HagpQ",
  "events": [
   {
@@ -11,15 +11,6 @@
    "endMs": 1789495200000,
    "live": false,
    "art": "live/events-stormtrooperconcept.png"
-  },
-  {
-   "id": "EVENT_OMEGA_BATTLES_02_CORUSCANT",
-   "name": "Coruscant Omega Battles",
-   "kind": "omega",
-   "startMs": 1789369200000,
-   "endMs": 1789455600000,
-   "live": false,
-   "art": "live/events-galactic-challenges-coruscant.png"
   },
   {
    "id": "EVENT_RESOURCE_SMUGGLERS_RUN",
@@ -36,7 +27,7 @@
    "kind": "fleet",
    "startMs": 1789455600000,
    "endMs": 1789542000000,
-   "live": true,
+   "live": false,
    "art": "live/events-executor.png"
   },
   {
@@ -45,7 +36,7 @@
    "kind": "assault",
    "startMs": 1789455600000,
    "endMs": 1789542000000,
-   "live": true,
+   "live": false,
    "art": "live/events-empirehorde.png"
   },
   {
@@ -63,7 +54,7 @@
    "kind": "assault",
    "startMs": 1789542000000,
    "endMs": 1789628400000,
-   "live": false,
+   "live": true,
    "art": "live/events-nightsisters-assault.png"
   },
   {
