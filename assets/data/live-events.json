@@ -1,17 +1,7 @@
 {
- "pulledAt": 1789570884919,
- "gameDataVersion": "0.40.5:MoxBSQUYRjuplwCT1HagpQ",
+ "pulledAt": 1789593798157,
+ "gameDataVersion": "0.40.5:1yxdT9-cSDejlIJQcx3kiA",
  "events": [
-  {
-   "id": "EVENT_MARQUEE_STORMTROOPERCONCEPT",
-   "name": "Blade and Bastion",
-   "kind": "marquee",
-   "unit": "STORMTROOPERCONCEPT",
-   "startMs": 1788890400000,
-   "endMs": 1789495200000,
-   "live": false,
-   "art": "live/events-stormtrooperconcept.png"
-  },
   {
    "id": "EVENT_FLEET_MASTERY_EXECUTOR",
    "name": "Discarded Doctrine",
@@ -101,6 +91,16 @@
    "endMs": 1792519200000,
    "live": false,
    "art": "live/events-darthjarjar.png"
+  },
+  {
+   "id": "EVENT_MARQUEE_JAXXON",
+   "name": "Action Jaxxon",
+   "kind": "marquee",
+   "unit": "JAXXON",
+   "startMs": 1790100000000,
+   "endMs": 1790704800000,
+   "live": false,
+   "art": "live/events-jaxxon.png"
   },
   {
    "id": "EVENT_ASSAULT_REBEL",
