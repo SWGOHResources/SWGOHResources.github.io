@@ -1,5 +1,5 @@
 {
- "gamedata": "0.40.5:MoxBSQUYRjuplwCT1HagpQ",
+ "gamedata": "0.40.5:M0CEGz4aQh6nu2BQ_-JgOg",
  "items": {
   "KYROTECH_GEAR_OFFER": [
    "6109de6acb8b"
@@ -16,6 +16,9 @@
   "reinforcement-unlock-by-rarity": [
    "a67174b8d167"
   ],
+  "SAB_ERA_MODULES_V1_SAB": [
+   "ef7d507468c7"
+  ],
   "statmod_reroll_cost": [
    "51c6cbbf5902"
   ],
@@ -24,6 +27,9 @@
   ],
   "galactic-challenge-icon-frame-pressed-table": [
    "42015fc33d1a"
+  ],
+  "SAB_ERA_CORES_V1_SAB": [
+   "218906b8a1d1"
   ],
   "MARQUEES_CONQUESTS_SHIPS_SAB": [
    "c8681a7690b0"
@@ -191,7 +197,7 @@
    "b17e6fe61b12"
   ],
   "galactic_power_per_tagged_ability_level_table": [
-   "6b838f40846e"
+   "8b367d8903be"
   ],
   "RARE_FINDS_III_OFFER": [
    "8ce984c4cfb8"

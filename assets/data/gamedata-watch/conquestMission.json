@@ -1,5 +1,5 @@
 {
- "gamedata": "0.40.5:MoxBSQUYRjuplwCT1HagpQ",
+ "gamedata": "0.40.5:M0CEGz4aQh6nu2BQ_-JgOg",
  "items": {
   "ConquestArcadeMission_S1Roller": [
    "7b4f02cd069c"
@@ -2546,7 +2546,7 @@
    "980b1e858c45"
   ],
   "ConquestVol21TreasureRoom_Normal_S1": [
-   "f6da5382a819"
+   "263937cbee1b"
   ],
   "ConquestVol21MiniBoss_Hard_S5": [
    "0ec89f21f83e"
@@ -2567,43 +2567,43 @@
    "50ff9d6c4999"
   ],
   "ConquestVol21TreasureRoom_Normal_S2": [
-   "cb5ac00792a0"
+   "7bfc6b1b935b"
   ],
   "ConquestVol21TreasureRoom_Normal_S3": [
-   "dda832110723"
+   "364a41ca447d"
   ],
   "ConquestVol21TreasureRoom_Normal_S4": [
-   "9b6497ee57d0"
+   "49cc3f0ce6d9"
   ],
   "ConquestVol21TreasureRoom_Normal_S5": [
-   "9e1044fe6225"
+   "cfd5dd36afb9"
   ],
   "ConquestVol21TreasureRoom_Hard_S1": [
-   "5d1f499630bf"
+   "b303b5f0cd0b"
   ],
   "ConquestVol21TreasureRoom_Hard_S1_b": [
-   "f5e44f239f9d"
+   "d89301f4f738"
   ],
   "ConquestVol21TreasureRoom_Hard_S1_c": [
-   "e0511373da12"
+   "761528f9af3a"
   ],
   "ConquestVol21TreasureRoom_Hard_S2": [
-   "faf155a41b0f"
+   "992a471c82d2"
   ],
   "ConquestVol21TreasureRoom_Hard_S2_b": [
-   "85358c8330aa"
+   "3cb3243c8305"
   ],
   "ConquestVol21TreasureRoom_Hard_S3": [
-   "89cb1c90f6e0"
+   "c3bf6dca253a"
   ],
   "ConquestVol21TreasureRoom_Hard_S3_b": [
-   "1fe2c5c8d00d"
+   "124f88d29d90"
   ],
   "ConquestVol21TreasureRoom_Hard_S4": [
-   "16ff9cf7c232"
+   "eb23eab341c7"
   ],
   "ConquestVol21TreasureRoom_Hard_S5": [
-   "d0feb4d111d4"
+   "eae430972789"
   ],
   "ConquestVol22RollersHardDifficultPathDef": [
    "c27e815d9352"
@@ -3054,6 +3054,156 @@
   ],
   "ConquestVol24MiniBoss_Hard_S5": [
    "4e73d3c87eb9"
+  ],
+  "ConquestVol25RollerEasyHardPathDef": [
+   "a48a2ec8a133"
+  ],
+  "ConquestVol25Boss_Easy_S2": [
+   "97a2c8972b59"
+  ],
+  "ConquestVol25Boss_Easy_S1": [
+   "f5121907295d"
+  ],
+  "ConquestVol25MiniBoss_Easy_S2": [
+   "3fc1a4cf78e4"
+  ],
+  "ConquestVol25MiniBoss_Easy_S1": [
+   "a46f93d65c6b"
+  ],
+  "ConquestVol25RollerEasyDef": [
+   "ae57233c1317"
+  ],
+  "ConquestVol25MiniBoss_Easy_S5": [
+   "d8abf42b79b1"
+  ],
+  "ConquestVol25Boss_Easy_S4": [
+   "eafa79fcc09e"
+  ],
+  "ConquestVol25MiniBoss_Easy_S4": [
+   "463e6eb10c79"
+  ],
+  "ConquestVol25Boss_Easy_S3": [
+   "b69332412575"
+  ],
+  "ConquestVol25MiniBoss_Easy_S3": [
+   "a684b2ef5ea9"
+  ],
+  "ConquestVol25Boss_S1": [
+   "09ec1833b478"
+  ],
+  "ConquestVol25MiniBoss_S1": [
+   "1c77392ec540"
+  ],
+  "ConquestVol25RollerNormalDef": [
+   "91d0fc4226bf"
+  ],
+  "ConquestVol25RollerNormalHardPathDef": [
+   "5e24d513a8a5"
+  ],
+  "ConquestVol25Boss_Easy_S5": [
+   "9e06757d4e4a"
+  ],
+  "ConquestVol25MiniBoss_S3": [
+   "2fdb36e1a671"
+  ],
+  "ConquestVol25TreasureRoom_Normal_S2": [
+   "acc8f76523fa"
+  ],
+  "ConquestVol25Boss_S2": [
+   "9de5873da7d9"
+  ],
+  "ConquestVol25MiniBoss_S2": [
+   "c5d2e0d586b2"
+  ],
+  "ConquestVol25TreasureRoom_Normal_S1": [
+   "1fa9ae5203ab"
+  ],
+  "ConquestVol25TreasureRoom_Normal_S4": [
+   "ef2b7bbc7068"
+  ],
+  "ConquestVol25Boss_S4": [
+   "7cb4cd6c7cdf"
+  ],
+  "ConquestVol25MiniBoss_S4": [
+   "271b3f10c898"
+  ],
+  "ConquestVol25TreasureRoom_Normal_S3": [
+   "230e8b98da6c"
+  ],
+  "ConquestVol25Boss_S3": [
+   "612b62793278"
+  ],
+  "ConquestVol25RollersHardDef": [
+   "08fb80ac4c4b"
+  ],
+  "ConquestVol25RollersHardDifficultPathDef": [
+   "f6849e62bdda"
+  ],
+  "ConquestVol25TreasureRoom_Normal_S5": [
+   "c271c87fc661"
+  ],
+  "ConquestVol25Boss_S5": [
+   "567d4b2883c6"
+  ],
+  "ConquestVol25MiniBoss_S5": [
+   "52e89d8e15ad"
+  ],
+  "ConquestVol25TreasureRoom_Hard_S1_c": [
+   "3dcaa7d9cb25"
+  ],
+  "ConquestVol25TreasureRoom_Hard_S1_b": [
+   "80eaeb1cbbb8"
+  ],
+  "ConquestVol25TreasureRoom_Hard_S1_a": [
+   "55f68610050d"
+  ],
+  "ConquestVol25MiniBoss_Hard_S1": [
+   "56a3e3c9f01c"
+  ],
+  "ConquestVol25Boss_Hard_S1": [
+   "768146d8a24b"
+  ],
+  "ConquestVol25MiniBoss_Hard_S3": [
+   "2152e0b1220b"
+  ],
+  "ConquestVol25TreasureRoom_Hard_S2_b": [
+   "2812f40effc4"
+  ],
+  "ConquestVol25TreasureRoom_Hard_S2_a": [
+   "f0d04b15a09e"
+  ],
+  "ConquestVol25Boss_Hard_S2": [
+   "69f1e2c68896"
+  ],
+  "ConquestVol25MiniBoss_Hard_S2": [
+   "9b908ab7c44f"
+  ],
+  "ConquestVol25Boss_Hard_S4": [
+   "c7bee5978a98"
+  ],
+  "ConquestVol25MiniBoss_Hard_S4": [
+   "0f75ba91a075"
+  ],
+  "ConquestVol25TreasureRoom_Hard_S3_b": [
+   "4a32ab94bf89"
+  ],
+  "ConquestVol25TreasureRoom_Hard_S3": [
+   "679a3a769e74"
+  ],
+  "ConquestVol25Boss_Hard_S3": [
+   "66a068e2c2af"
+  ],
+  "ConquestVol25TreasureRoom_Hard_S5": [
+   "4b71cd541cbc"
+  ],
+  "ConquestVol25Boss_Hard_S5": [
+   "26fa2f543ade"
+  ],
+  "ConquestVol25MiniBoss_Hard_S5": [
+   "e8d4c0ff1bae"
+  ],
+  "ConquestVol25TreasureRoom_Hard_S4": [
+   "0180f2f24cf0"
   ]
  }
 }

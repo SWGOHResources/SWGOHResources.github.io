@@ -1,5 +1,5 @@
 {
- "gamedata": "0.40.5:MoxBSQUYRjuplwCT1HagpQ",
+ "gamedata": "0.40.5:M0CEGz4aQh6nu2BQ_-JgOg",
  "items": {
   "BADBATCHECHO": [
    "0a7bee37a869",
@@ -272,13 +272,13 @@
    "f9eac445543b"
   ],
   "CARSONTEVA": [
-   "2db89e6dea22",
-   "47baf46ee457",
-   "6c8b4b448884",
-   "bfd7bff7e516",
-   "d1186788a23b",
-   "fcd495c5f1d4",
-   "fd2131784b38"
+   "4ce96d316a34",
+   "5abc1b4776f8",
+   "94b0e1aeef1e",
+   "961307af1d82",
+   "acd73a3ec09a",
+   "b967bb637070",
+   "d9a700a2ef6e"
   ],
   "PADAWANSABINE": [
    "0b4d9ffa03fb",
@@ -479,13 +479,13 @@
    "f7fc8c21ac90"
   ],
   "EMBO": [
-   "09eff5690453",
-   "12bbc7c388b3",
-   "93361a20dd70",
-   "b5e30f5807a8",
-   "c59b430d791f",
-   "e031b19f1707",
-   "e66af33a2efe"
+   "1067386c2ce0",
+   "167f75f5b04e",
+   "52c4b70f8f47",
+   "92a4fe910d67",
+   "93d319658540",
+   "ab4903127d2a",
+   "e18416b4bf8c"
   ],
   "CAPITALNEGOTIATOR": [
    "02ca2626fdd7",
@@ -1550,13 +1550,13 @@
    "daf2051db55e"
   ],
   "THEMANDALORIAN": [
-   "6f040c738bc2",
-   "7da035ae60af",
-   "7f65b9569ec8",
-   "86787a4a5415",
-   "ba46872fcc03",
-   "cd27c5399fd4",
-   "e71f1fa84720"
+   "4866df03c2ef",
+   "89f56114fb7b",
+   "8e7a285db9e5",
+   "dfeb02472797",
+   "ee250191698d",
+   "ef0097f14eab",
+   "fb3351a09108"
   ],
   "UMBARANSTARFIGHTER": [
    "0bd1304f851f",
@@ -1674,6 +1674,15 @@
    "b36eeaa0f9c5",
    "d39ae592aef0",
    "f6b0934ee744"
+  ],
+  "EMBOANDKEIBU": [
+   "08e25af26252",
+   "4520d7b3e9a1",
+   "60cdf352a93f",
+   "61013a4741dc",
+   "c7f9b42a8dda",
+   "d36ad93d0559",
+   "ea83b0e18ab7"
   ],
   "GENERALKENOBI": [
    "21ce46a9a84d",

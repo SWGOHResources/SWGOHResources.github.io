@@ -1,0 +1,791 @@
+{
+ "checkedAt": 1789584690278,
+ "gamedata": "0.40.5:M0CEGz4aQh6nu2BQ_-JgOg",
+ "storeVersion": "0.40.6",
+ "total": 97,
+ "sections": {
+  "packs": [
+   {
+    "key": "mysterybox_conquest_vol25_treasureroom_hard_2_b_2",
+    "tag": "+",
+    "nameKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_TITLEKEY",
+    "tex": "tex.chest_gc_01",
+    "name": "Current End-of-Event Reward:",
+    "artUrl": null
+   },
+   {
+    "key": "mysterybox_conquest_vol25_treasureroom_hard_3_a_2",
+    "tag": "+",
+    "nameKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_TITLEKEY",
+    "tex": "tex.chest_gc_01",
+    "name": "Current End-of-Event Reward:",
+    "artUrl": null
+   },
+   {
+    "key": "mysterybox_conquest_vol25_treasureroom_hard_3_a_1",
+    "tag": "+",
+    "nameKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_TITLEKEY",
+    "tex": "tex.chest_gc_01",
+    "name": "Current End-of-Event Reward:",
+    "artUrl": null
+   },
+   {
+    "key": "mysterybox_conquest_vol25_treasureroom_hard_2_b_1",
+    "tag": "+",
+    "nameKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_TITLEKEY",
+    "tex": "tex.chest_gc_01",
+    "name": "Current End-of-Event Reward:",
+    "artUrl": null
+   },
+   {
+    "key": "mysterybox_conquest_vol25_treasureroom_hard_3_b_2",
+    "tag": "+",
+    "nameKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_TITLEKEY",
+    "tex": "tex.chest_gc_01",
+    "name": "Current End-of-Event Reward:",
+    "artUrl": null
+   },
+   {
+    "key": "mysterybox_conquest_vol25_treasureroom_hard_2_a_1",
+    "tag": "+",
+    "nameKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_TITLEKEY",
+    "tex": "tex.chest_gc_01",
+    "name": "Current End-of-Event Reward:",
+    "artUrl": null
+   },
+   {
+    "key": "mysterybox_conquest_vol25_treasureroom_hard_1_c_1",
+    "tag": "+",
+    "nameKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_TITLEKEY",
+    "tex": "tex.chest_gc_01",
+    "name": "Current End-of-Event Reward:",
+    "artUrl": null
+   },
+   {
+    "key": "mysterybox_conquest_vol25_treasureroom_hard_1_a_2",
+    "tag": "+",
+    "nameKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_TITLEKEY",
+    "tex": "tex.chest_gc_01",
+    "name": "Current End-of-Event Reward:",
+    "artUrl": null
+   },
+   {
+    "key": "mysterybox_conquest_vol25_treasureroom_hard_5_a_1",
+    "tag": "+",
+    "nameKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_TITLEKEY",
+    "tex": "tex.chest_gc_01",
+    "name": "Current End-of-Event Reward:",
+    "artUrl": null
+   },
+   {
+    "key": "mysterybox_conquest_vol25_normal_ladderreward_02",
+    "tag": "+",
+    "nameKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_TITLEKEY",
+    "tex": "tex.chest_gc_02",
+    "name": "Current End-of-Event Reward:",
+    "artUrl": null
+   },
+   {
+    "key": "mysterybox_conquest_vol25_treasureroom_hard_1_a_1",
+    "tag": "+",
+    "nameKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_TITLEKEY",
+    "tex": "tex.chest_gc_01",
+    "name": "Current End-of-Event Reward:",
+    "artUrl": null
+   },
+   {
+    "key": "mysterybox_conquest_vol25_treasureroom_hard_1_b_1",
+    "tag": "+",
+    "nameKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_TITLEKEY",
+    "tex": "tex.chest_gc_01",
+    "name": "Current End-of-Event Reward:",
+    "artUrl": null
+   },
+   {
+    "key": "mysterybox_conquest_vol25_treasureroom_hard_1_c_2",
+    "tag": "+",
+    "nameKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_TITLEKEY",
+    "tex": "tex.chest_gc_01",
+    "name": "Current End-of-Event Reward:",
+    "artUrl": null
+   },
+   {
+    "key": "mysterybox_conquest_vol25_treasureroom_hard_5_a_2",
+    "tag": "+",
+    "nameKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_TITLEKEY",
+    "tex": "tex.chest_gc_01",
+    "name": "Current End-of-Event Reward:",
+    "artUrl": null
+   },
+   {
+    "key": "mysterybox_conquest_vol25_easy_ladderreward_04",
+    "tag": "+",
+    "nameKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_TITLEKEY",
+    "tex": "tex.chest_gc_04",
+    "name": "Current End-of-Event Reward:",
+    "artUrl": null
+   },
+   {
+    "key": "mysterybox_conquest_vol25_treasureroom_hard_2_a_2",
+    "tag": "+",
+    "nameKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_TITLEKEY",
+    "tex": "tex.chest_gc_01",
+    "name": "Current End-of-Event Reward:",
+    "artUrl": null
+   },
+   {
+    "key": "mysterybox_conquest_vol25_treasureroom_hard_4_a_1",
+    "tag": "+",
+    "nameKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_TITLEKEY",
+    "tex": "tex.chest_gc_01",
+    "name": "Current End-of-Event Reward:",
+    "artUrl": null
+   },
+   {
+    "key": "mysterybox_conquest_vol25_treasureroom_hard_3_b_1",
+    "tag": "+",
+    "nameKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_TITLEKEY",
+    "tex": "tex.chest_gc_01",
+    "name": "Current End-of-Event Reward:",
+    "artUrl": null
+   },
+   {
+    "key": "mysterybox_conquest_vol25_easy_ladderreward_02",
+    "tag": "+",
+    "nameKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_TITLEKEY",
+    "tex": "tex.chest_gc_02",
+    "name": "Current End-of-Event Reward:",
+    "artUrl": null
+   },
+   {
+    "key": "mysterybox_conquest_vol25_normal_ladderreward_05",
+    "tag": "+",
+    "nameKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_TITLEKEY",
+    "tex": "tex.chest_gc_05",
+    "name": "Current End-of-Event Reward:",
+    "artUrl": null
+   },
+   {
+    "key": "…and 45 more in mysteryBox.json",
+    "tag": "",
+    "nameKey": null,
+    "tex": null,
+    "name": "…and 45 more in mysteryBox.json",
+    "artUrl": null
+   },
+   {
+    "key": "mysterybox_conquest_vol21_treasureroom_hard_1_a_1",
+    "tag": "-",
+    "nameKey": null,
+    "tex": null,
+    "name": "mysterybox_conquest_vol21_treasureroom_hard_1_a_1",
+    "artUrl": null
+   },
+   {
+    "key": "mysterybox_conquest_vol21_treasureroom_hard_1_a_2",
+    "tag": "-",
+    "nameKey": null,
+    "tex": null,
+    "name": "mysterybox_conquest_vol21_treasureroom_hard_1_a_2",
+    "artUrl": null
+   },
+   {
+    "key": "mysterybox_conquest_vol21_treasureroom_hard_1_b_1",
+    "tag": "-",
+    "nameKey": null,
+    "tex": null,
+    "name": "mysterybox_conquest_vol21_treasureroom_hard_1_b_1",
+    "artUrl": null
+   },
+   {
+    "key": "mysterybox_conquest_vol21_treasureroom_hard_1_c_1",
+    "tag": "-",
+    "nameKey": null,
+    "tex": null,
+    "name": "mysterybox_conquest_vol21_treasureroom_hard_1_c_1",
+    "artUrl": null
+   },
+   {
+    "key": "mysterybox_conquest_vol21_treasureroom_hard_1_c_2",
+    "tag": "-",
+    "nameKey": null,
+    "tex": null,
+    "name": "mysterybox_conquest_vol21_treasureroom_hard_1_c_2",
+    "artUrl": null
+   },
+   {
+    "key": "LST_ERA09_TIER01_SEPARATIST",
+    "tag": "+",
+    "nameKey": "LIGHTSPEEDTOKEN_TIER01_NAME",
+    "tex": "tex.datacronui_affix_separatists",
+    "name": "CARBONITE LIGHTSPEED TOKEN",
+    "artUrl": null
+   },
+   {
+    "key": "LST_ERA09_TIER02_SEPARATIST",
+    "tag": "+",
+    "nameKey": "LIGHTSPEEDTOKEN_TIER02_NAME",
+    "tex": "tex.datacronui_affix_separatists",
+    "name": "BRONZIUM LIGHTSPEED TOKEN",
+    "artUrl": null
+   },
+   {
+    "key": "LST_ERA09_TIER03_SEPARATIST",
+    "tag": "+",
+    "nameKey": "LIGHTSPEEDTOKEN_TIER03_NAME",
+    "tex": "tex.datacronui_affix_separatists",
+    "name": "CHROMIUM LIGHTSPEED TOKEN",
+    "artUrl": null
+   },
+   {
+    "key": "LST_ERA09_TIER04_SEPARATIST",
+    "tag": "+",
+    "nameKey": "LIGHTSPEEDTOKEN_TIER04_NAME",
+    "tex": "tex.datacronui_affix_separatists",
+    "name": "AURODIUM LIGHTSPEED TOKEN",
+    "artUrl": null
+   },
+   {
+    "key": "LST_ERA09_TIER05_SEPARATIST",
+    "tag": "+",
+    "nameKey": "LIGHTSPEEDTOKEN_TIER05_NAME",
+    "tex": "tex.datacronui_affix_separatists",
+    "name": "KYBER LIGHTSPEED TOKEN",
+    "artUrl": null
+   },
+   {
+    "key": "LST_ERA09_TIER01_SMUGGLER",
+    "tag": "+",
+    "nameKey": "LIGHTSPEEDTOKEN_TIER01_NAME",
+    "tex": "tex.datacronui_affix_smuggler",
+    "name": "CARBONITE LIGHTSPEED TOKEN",
+    "artUrl": null
+   },
+   {
+    "key": "LST_ERA09_TIER02_SMUGGLER",
+    "tag": "+",
+    "nameKey": "LIGHTSPEEDTOKEN_TIER02_NAME",
+    "tex": "tex.datacronui_affix_smuggler",
+    "name": "BRONZIUM LIGHTSPEED TOKEN",
+    "artUrl": null
+   },
+   {
+    "key": "LST_ERA09_TIER03_SMUGGLER",
+    "tag": "+",
+    "nameKey": "LIGHTSPEEDTOKEN_TIER03_NAME",
+    "tex": "tex.datacronui_affix_smuggler",
+    "name": "CHROMIUM LIGHTSPEED TOKEN",
+    "artUrl": null
+   },
+   {
+    "key": "LST_ERA09_TIER04_SMUGGLER",
+    "tag": "+",
+    "nameKey": "LIGHTSPEEDTOKEN_TIER04_NAME",
+    "tex": "tex.datacronui_affix_smuggler",
+    "name": "AURODIUM LIGHTSPEED TOKEN",
+    "artUrl": null
+   },
+   {
+    "key": "LST_ERA09_TIER05_SMUGGLER",
+    "tag": "+",
+    "nameKey": "LIGHTSPEEDTOKEN_TIER05_NAME",
+    "tex": "tex.datacronui_affix_smuggler",
+    "name": "KYBER LIGHTSPEED TOKEN",
+    "artUrl": null
+   },
+   {
+    "key": "LST_ERA09_TIER01_IMPERIALREMNANT",
+    "tag": "+",
+    "nameKey": "LIGHTSPEEDTOKEN_TIER01_NAME",
+    "tex": "tex.datacronui_affix_imperialremnant",
+    "name": "CARBONITE LIGHTSPEED TOKEN",
+    "artUrl": null
+   },
+   {
+    "key": "LST_ERA09_TIER02_IMPERIALREMNANT",
+    "tag": "+",
+    "nameKey": "LIGHTSPEEDTOKEN_TIER02_NAME",
+    "tex": "tex.datacronui_affix_imperialremnant",
+    "name": "BRONZIUM LIGHTSPEED TOKEN",
+    "artUrl": null
+   },
+   {
+    "key": "LST_ERA09_TIER03_IMPERIALREMNANT",
+    "tag": "+",
+    "nameKey": "LIGHTSPEEDTOKEN_TIER03_NAME",
+    "tex": "tex.datacronui_affix_imperialremnant",
+    "name": "CHROMIUM LIGHTSPEED TOKEN",
+    "artUrl": null
+   },
+   {
+    "key": "LST_ERA09_TIER04_IMPERIALREMNANT",
+    "tag": "+",
+    "nameKey": "LIGHTSPEEDTOKEN_TIER04_NAME",
+    "tex": "tex.datacronui_affix_imperialremnant",
+    "name": "AURODIUM LIGHTSPEED TOKEN",
+    "artUrl": null
+   },
+   {
+    "key": "LST_ERA09_TIER05_IMPERIALREMNANT",
+    "tag": "+",
+    "nameKey": "LIGHTSPEEDTOKEN_TIER05_NAME",
+    "tex": "tex.datacronui_affix_imperialremnant",
+    "name": "KYBER LIGHTSPEED TOKEN",
+    "artUrl": null
+   },
+   {
+    "key": "LST_ERA09_TIER01_EMPIRE",
+    "tag": "+",
+    "nameKey": "LIGHTSPEEDTOKEN_TIER01_NAME",
+    "tex": "tex.datacronui_affix_empire",
+    "name": "CARBONITE LIGHTSPEED TOKEN",
+    "artUrl": null
+   },
+   {
+    "key": "LST_ERA09_TIER02_EMPIRE",
+    "tag": "+",
+    "nameKey": "LIGHTSPEEDTOKEN_TIER02_NAME",
+    "tex": "tex.datacronui_affix_empire",
+    "name": "BRONZIUM LIGHTSPEED TOKEN",
+    "artUrl": null
+   },
+   {
+    "key": "LST_ERA09_TIER03_EMPIRE",
+    "tag": "+",
+    "nameKey": "LIGHTSPEEDTOKEN_TIER03_NAME",
+    "tex": "tex.datacronui_affix_empire",
+    "name": "CHROMIUM LIGHTSPEED TOKEN",
+    "artUrl": null
+   },
+   {
+    "key": "LST_ERA09_TIER04_EMPIRE",
+    "tag": "+",
+    "nameKey": "LIGHTSPEEDTOKEN_TIER04_NAME",
+    "tex": "tex.datacronui_affix_empire",
+    "name": "AURODIUM LIGHTSPEED TOKEN",
+    "artUrl": null
+   },
+   {
+    "key": "LST_ERA09_TIER05_EMPIRE",
+    "tag": "+",
+    "nameKey": "LIGHTSPEEDTOKEN_TIER05_NAME",
+    "tex": "tex.datacronui_affix_empire",
+    "name": "KYBER LIGHTSPEED TOKEN",
+    "artUrl": null
+   },
+   {
+    "key": "…and 97 more in lightspeedToken.json",
+    "tag": "",
+    "nameKey": null,
+    "tex": null,
+    "name": "…and 97 more in lightspeedToken.json",
+    "artUrl": null
+   }
+  ],
+  "journeys": [],
+  "units": [
+   {
+    "key": "EMBOANDKEIBU",
+    "tag": "+",
+    "nameKey": "UNIT_EMBOANDKEIBU_NAME",
+    "tex": "tex.charui_emboandkeibu",
+    "name": "Embo & Keibu",
+    "artUrl": null
+   },
+   {
+    "key": "CARSONTEVA",
+    "tag": "~",
+    "nameKey": "UNIT_CARSONTEVA_NAME",
+    "tex": "tex.charui_carsonteva",
+    "name": "Captain Carson Teva",
+    "artUrl": null
+   },
+   {
+    "key": "EMBO",
+    "tag": "~",
+    "nameKey": "UNIT_EMBO_NAME",
+    "tex": "tex.charui_embo",
+    "name": "Embo",
+    "artUrl": null
+   },
+   {
+    "key": "THEMANDALORIAN",
+    "tag": "~",
+    "nameKey": "UNIT_THEMANDALORIAN_NAME",
+    "tex": "tex.charui_mandalorian",
+    "name": "The Mandalorian",
+    "artUrl": null
+   }
+  ],
+  "rewards": [
+   {
+    "key": "CONQUEST_VOL25",
+    "tag": "+",
+    "nameKey": "CONQUEST_ARCADE_NAME",
+    "tex": "tex.charui_emboandkeibu",
+    "name": "Conquest",
+    "artUrl": null
+   },
+   {
+    "key": "conquest_arcade_01",
+    "tag": "~",
+    "nameKey": "CONQUEST_ARCADE_NAME",
+    "tex": "tex.cqonuest_sector_list_bg_01",
+    "name": "Conquest",
+    "artUrl": null
+   },
+   {
+    "key": "conquest_arcade_04",
+    "tag": "~",
+    "nameKey": "CONQUEST_ARCADE_NAME",
+    "tex": "tex.cqonuest_sector_list_bg_02",
+    "name": "Conquest",
+    "artUrl": null
+   },
+   {
+    "key": "conquest_arcade_07",
+    "tag": "~",
+    "nameKey": "CONQUEST_ARCADE_NAME",
+    "tex": "tex.cqonuest_sector_list_bg_02",
+    "name": "Conquest",
+    "artUrl": null
+   },
+   {
+    "key": "CONQUEST_ARCADE_07_test_premium",
+    "tag": "~",
+    "nameKey": "CONQUEST_ARCADE_NAME",
+    "tex": "tex.cqonuest_sector_list_bg_02",
+    "name": "Conquest",
+    "artUrl": null
+   },
+   {
+    "key": "CONQUEST_THEMED_10",
+    "tag": "~",
+    "nameKey": "CONQUEST_ARCADE_NAME",
+    "tex": "tex.cqonuest_sector_list_bg_02",
+    "name": "Conquest",
+    "artUrl": null
+   },
+   {
+    "key": "CONQUEST_ARCADE_13",
+    "tag": "~",
+    "nameKey": "CONQUEST_ARCADE_NAME",
+    "tex": "tex.cqonuest_sector_list_bg_03",
+    "name": "Conquest",
+    "artUrl": null
+   },
+   {
+    "key": "CONQUEST_ARCADE_16",
+    "tag": "~",
+    "nameKey": "CONQUEST_ARCADE_NAME",
+    "tex": "tex.cqonuest_sector_list_bg_02",
+    "name": "Conquest",
+    "artUrl": null
+   },
+   {
+    "key": "CONQUEST_THEMED_VOL7",
+    "tag": "~",
+    "nameKey": "CONQUEST_ARCADE_NAME",
+    "tex": "tex.cqonuest_sector_list_bg_02",
+    "name": "Conquest",
+    "artUrl": null
+   },
+   {
+    "key": "CONQUEST_THEMED_VOL8",
+    "tag": "~",
+    "nameKey": "CONQUEST_ARCADE_NAME",
+    "tex": "tex.cqonuest_sector_list_bg_01",
+    "name": "Conquest",
+    "artUrl": null
+   },
+   {
+    "key": "CONQUEST_THEMED_VOL9",
+    "tag": "~",
+    "nameKey": "CONQUEST_ARCADE_NAME",
+    "tex": "tex.cqonuest_sector_list_bg_03",
+    "name": "Conquest",
+    "artUrl": null
+   },
+   {
+    "key": "CONQUEST_ARCADE_VOL10",
+    "tag": "~",
+    "nameKey": "CONQUEST_ARCADE_NAME",
+    "tex": "tex.cqonuest_sector_list_bg_03",
+    "name": "Conquest",
+    "artUrl": null
+   },
+   {
+    "key": "CONQUEST_VOL11",
+    "tag": "~",
+    "nameKey": "CONQUEST_ARCADE_NAME",
+    "tex": "tex.cqonuest_sector_list_bg_02",
+    "name": "Conquest",
+    "artUrl": null
+   },
+   {
+    "key": "CONQUEST_VOL12",
+    "tag": "~",
+    "nameKey": "CONQUEST_ARCADE_NAME",
+    "tex": "tex.cqonuest_sector_list_bg_03",
+    "name": "Conquest",
+    "artUrl": null
+   },
+   {
+    "key": "CONQUEST_VOL13",
+    "tag": "~",
+    "nameKey": "CONQUEST_ARCADE_NAME",
+    "tex": "tex.cqonuest_sector_list_bg_01",
+    "name": "Conquest",
+    "artUrl": null
+   },
+   {
+    "key": "CONQUEST_VOL14",
+    "tag": "~",
+    "nameKey": "CONQUEST_ARCADE_NAME",
+    "tex": "tex.cqonuest_sector_list_bg_02",
+    "name": "Conquest",
+    "artUrl": null
+   },
+   {
+    "key": "CONQUEST_VOL15",
+    "tag": "~",
+    "nameKey": "CONQUEST_ARCADE_NAME",
+    "tex": "tex.cqonuest_sector_list_bg_03",
+    "name": "Conquest",
+    "artUrl": null
+   },
+   {
+    "key": "CONQUEST_VOL16",
+    "tag": "~",
+    "nameKey": "CONQUEST_ARCADE_NAME",
+    "tex": "tex.cqonuest_sector_list_bg_02",
+    "name": "Conquest",
+    "artUrl": null
+   },
+   {
+    "key": "CONQUEST_VOL17",
+    "tag": "~",
+    "nameKey": "CONQUEST_ARCADE_NAME",
+    "tex": "tex.cqonuest_sector_list_bg_01",
+    "name": "Conquest",
+    "artUrl": null
+   },
+   {
+    "key": "CONQUEST_VOL18",
+    "tag": "~",
+    "nameKey": "CONQUEST_ARCADE_NAME",
+    "tex": "tex.cqonuest_sector_list_bg_02",
+    "name": "Conquest",
+    "artUrl": null
+   },
+   {
+    "key": "…and 6 more in conquestDefinition.json",
+    "tag": "",
+    "nameKey": null,
+    "tex": null,
+    "name": "…and 6 more in conquestDefinition.json",
+    "artUrl": null
+   },
+   {
+    "key": "ConquestVol25RollerEasyHardPathDef",
+    "tag": "+",
+    "nameKey": null,
+    "tex": null,
+    "name": "ConquestVol25RollerEasyHardPathDef",
+    "artUrl": null
+   },
+   {
+    "key": "ConquestVol25Boss_Easy_S2",
+    "tag": "+",
+    "nameKey": null,
+    "tex": null,
+    "name": "ConquestVol25Boss_Easy_S2",
+    "artUrl": null
+   },
+   {
+    "key": "ConquestVol25Boss_Easy_S1",
+    "tag": "+",
+    "nameKey": null,
+    "tex": null,
+    "name": "ConquestVol25Boss_Easy_S1",
+    "artUrl": null
+   },
+   {
+    "key": "ConquestVol25MiniBoss_Easy_S2",
+    "tag": "+",
+    "nameKey": null,
+    "tex": null,
+    "name": "ConquestVol25MiniBoss_Easy_S2",
+    "artUrl": null
+   },
+   {
+    "key": "ConquestVol25MiniBoss_Easy_S1",
+    "tag": "+",
+    "nameKey": null,
+    "tex": null,
+    "name": "ConquestVol25MiniBoss_Easy_S1",
+    "artUrl": null
+   },
+   {
+    "key": "ConquestVol25RollerEasyDef",
+    "tag": "+",
+    "nameKey": null,
+    "tex": null,
+    "name": "ConquestVol25RollerEasyDef",
+    "artUrl": null
+   },
+   {
+    "key": "ConquestVol25MiniBoss_Easy_S5",
+    "tag": "+",
+    "nameKey": null,
+    "tex": null,
+    "name": "ConquestVol25MiniBoss_Easy_S5",
+    "artUrl": null
+   },
+   {
+    "key": "ConquestVol25Boss_Easy_S4",
+    "tag": "+",
+    "nameKey": null,
+    "tex": null,
+    "name": "ConquestVol25Boss_Easy_S4",
+    "artUrl": null
+   },
+   {
+    "key": "ConquestVol25MiniBoss_Easy_S4",
+    "tag": "+",
+    "nameKey": null,
+    "tex": null,
+    "name": "ConquestVol25MiniBoss_Easy_S4",
+    "artUrl": null
+   },
+   {
+    "key": "ConquestVol25Boss_Easy_S3",
+    "tag": "+",
+    "nameKey": null,
+    "tex": null,
+    "name": "ConquestVol25Boss_Easy_S3",
+    "artUrl": null
+   },
+   {
+    "key": "ConquestVol25MiniBoss_Easy_S3",
+    "tag": "+",
+    "nameKey": null,
+    "tex": null,
+    "name": "ConquestVol25MiniBoss_Easy_S3",
+    "artUrl": null
+   },
+   {
+    "key": "ConquestVol25Boss_S1",
+    "tag": "+",
+    "nameKey": null,
+    "tex": null,
+    "name": "ConquestVol25Boss_S1",
+    "artUrl": null
+   },
+   {
+    "key": "ConquestVol25MiniBoss_S1",
+    "tag": "+",
+    "nameKey": null,
+    "tex": null,
+    "name": "ConquestVol25MiniBoss_S1",
+    "artUrl": null
+   },
+   {
+    "key": "ConquestVol25RollerNormalDef",
+    "tag": "+",
+    "nameKey": null,
+    "tex": null,
+    "name": "ConquestVol25RollerNormalDef",
+    "artUrl": null
+   },
+   {
+    "key": "ConquestVol25RollerNormalHardPathDef",
+    "tag": "+",
+    "nameKey": null,
+    "tex": null,
+    "name": "ConquestVol25RollerNormalHardPathDef",
+    "artUrl": null
+   },
+   {
+    "key": "ConquestVol25Boss_Easy_S5",
+    "tag": "+",
+    "nameKey": null,
+    "tex": null,
+    "name": "ConquestVol25Boss_Easy_S5",
+    "artUrl": null
+   },
+   {
+    "key": "ConquestVol25MiniBoss_S3",
+    "tag": "+",
+    "nameKey": null,
+    "tex": null,
+    "name": "ConquestVol25MiniBoss_S3",
+    "artUrl": null
+   },
+   {
+    "key": "ConquestVol25TreasureRoom_Normal_S2",
+    "tag": "+",
+    "nameKey": null,
+    "tex": null,
+    "name": "ConquestVol25TreasureRoom_Normal_S2",
+    "artUrl": null
+   },
+   {
+    "key": "ConquestVol25Boss_S2",
+    "tag": "+",
+    "nameKey": null,
+    "tex": null,
+    "name": "ConquestVol25Boss_S2",
+    "artUrl": null
+   },
+   {
+    "key": "ConquestVol25MiniBoss_S2",
+    "tag": "+",
+    "nameKey": null,
+    "tex": null,
+    "name": "ConquestVol25MiniBoss_S2",
+    "artUrl": null
+   },
+   {
+    "key": "…and 44 more in conquestMission.json",
+    "tag": "",
+    "nameKey": null,
+    "tex": null,
+    "name": "…and 44 more in conquestMission.json",
+    "artUrl": null
+   },
+   {
+    "key": "era09_myths_ep3",
+    "tag": "~",
+    "nameKey": "ERA_09_EPISODE_3_TITLE",
+    "tex": "tex.background_episode_09",
+    "name": "Era of Myths & Legends: Episode 3",
+    "artUrl": null
+   },
+   {
+    "key": "SAB_ERA_MODULES_V1_SAB",
+    "tag": "+",
+    "nameKey": null,
+    "tex": null,
+    "name": "Sab Era Modules V1 Sab",
+    "artUrl": null
+   },
+   {
+    "key": "SAB_ERA_CORES_V1_SAB",
+    "tag": "+",
+    "nameKey": null,
+    "tex": null,
+    "name": "Sab Era Cores V1 Sab",
+    "artUrl": null
+   },
+   {
+    "key": "galactic_power_per_tagged_ability_level_table",
+    "tag": "~",
+    "nameKey": null,
+    "tex": null,
+    "name": "galactic_power_per_tagged_ability_level_table",
+    "artUrl": null
+   }
+  ]
+ }
+}

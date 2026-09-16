@@ -1,80 +1,83 @@
 {
- "gamedata": "0.40.5:MoxBSQUYRjuplwCT1HagpQ",
+ "gamedata": "0.40.5:M0CEGz4aQh6nu2BQ_-JgOg",
  "items": {
   "conquest_arcade_01": [
-   "76e6b5fd7fc2"
+   "7ce33f715393"
   ],
   "conquest_arcade_04": [
-   "9ce25c39e4a6"
+   "75323aef7a2b"
   ],
   "conquest_arcade_07": [
-   "a81d957a8fc5"
+   "2d6a2093687b"
   ],
   "CONQUEST_ARCADE_07_test_premium": [
-   "a2e5e3dc3e28"
+   "07fbd031e542"
   ],
   "CONQUEST_THEMED_10": [
-   "a51a8a170b42"
+   "37155bee915f"
   ],
   "CONQUEST_ARCADE_13": [
-   "b089567f645c"
+   "720209810090"
   ],
   "CONQUEST_ARCADE_16": [
-   "8600717848a4"
+   "256398a2120f"
   ],
   "CONQUEST_THEMED_VOL7": [
-   "d80d5691489a"
+   "e914d46f8fcf"
   ],
   "CONQUEST_THEMED_VOL8": [
-   "8341d027cc23"
+   "890428390dbb"
   ],
   "CONQUEST_THEMED_VOL9": [
-   "9f541b50aef1"
+   "f0430b0fe2fd"
   ],
   "CONQUEST_ARCADE_VOL10": [
-   "ad67c1477072"
+   "34511662688c"
   ],
   "CONQUEST_VOL11": [
-   "08b0dc64a957"
+   "47b8cb7c6855"
   ],
   "CONQUEST_VOL12": [
-   "5796501ee712"
+   "fe5a6fb329cf"
   ],
   "CONQUEST_VOL13": [
-   "16619509e7f4"
+   "6446ad89a6df"
   ],
   "CONQUEST_VOL14": [
-   "a92cb0e1399e"
+   "664c917138dc"
   ],
   "CONQUEST_VOL15": [
-   "3b4767498eaf"
+   "ce69c5f41e43"
   ],
   "CONQUEST_VOL16": [
-   "df6522c960fa"
+   "c2a90675a453"
   ],
   "CONQUEST_VOL17": [
-   "31cd2de4f02b"
+   "eaa1a0c3a8de"
   ],
   "CONQUEST_VOL18": [
-   "939616ddadde"
+   "f124eea88da1"
   ],
   "CONQUEST_VOL19": [
-   "e2c1d6742dc3"
+   "3d0fbe31a15b"
   ],
   "CONQUEST_VOL20": [
-   "7181a0373bc1"
+   "36e56af07f90"
   ],
   "CONQUEST_VOL21": [
-   "b4a67b8a5e97"
+   "b565547564d8"
   ],
   "CONQUEST_VOL22": [
-   "a5944636bd4d"
+   "1468d7d7aa52"
   ],
   "CONQUEST_VOL23": [
-   "571db891a439"
+   "eecb834c67c5"
   ],
   "CONQUEST_VOL24": [
-   "4e8caa743937"
+   "d18c52f0f1b9"
+  ],
+  "CONQUEST_VOL25": [
+   "c269a1a1ff14"
   ]
  }
 }
