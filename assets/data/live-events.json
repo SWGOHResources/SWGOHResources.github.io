@@ -1,5 +1,5 @@
 {
- "pulledAt": 1789657489196,
+ "pulledAt": 1789680448478,
  "gameDataVersion": "0.40.5:1yxdT9-cSDejlIJQcx3kiA",
  "events": [
   {
@@ -101,6 +101,15 @@
    "endMs": 1790319600000,
    "live": false,
    "art": "live/events-nightsisters-halloween.png"
+  },
+  {
+   "id": "EVENT_ASSAULT_SEPARATIST",
+   "name": "Ground War Assault Battles",
+   "kind": "assault",
+   "startMs": 1790406000000,
+   "endMs": 1790492400000,
+   "live": false,
+   "art": "live/events-groundwar.png"
   }
  ]
 }
