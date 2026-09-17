@@ -1,25 +1,7 @@
 {
- "pulledAt": 1789593798157,
+ "pulledAt": 1789631154055,
  "gameDataVersion": "0.40.5:1yxdT9-cSDejlIJQcx3kiA",
  "events": [
-  {
-   "id": "EVENT_FLEET_MASTERY_EXECUTOR",
-   "name": "Discarded Doctrine",
-   "kind": "fleet",
-   "startMs": 1789455600000,
-   "endMs": 1789542000000,
-   "live": false,
-   "art": "live/events-executor.png"
-  },
-  {
-   "id": "EVENT_ASSAULT_EMPIRE",
-   "name": "Military Might Assault Battles",
-   "kind": "assault",
-   "startMs": 1789455600000,
-   "endMs": 1789542000000,
-   "live": false,
-   "art": "live/events-empirehorde.png"
-  },
   {
    "id": "EC22_ImperialTrooperRogueOneScarif_1785717445",
    "name": "Stormtrooper (Concept) Era Challenge",
@@ -35,7 +17,7 @@
    "kind": "assault",
    "startMs": 1789542000000,
    "endMs": 1789628400000,
-   "live": true,
+   "live": false,
    "art": "live/events-nightsisters-assault.png"
   },
   {
