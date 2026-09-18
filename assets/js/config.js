@@ -131,6 +131,17 @@ const MARQUEE_NAMES = {
 // Update this when a new Era / Journey Guide unit is announced.
 const JOURNEY_GUIDE_UNIT = 'Darth Jar Jar';
 
+// Era battles, by slot: the brackets carry the actual event name, not
+// a unit. Verified against game data 2026-09-18 — Rotta/Grogu brackets
+// were era08's battles (Shattered Empire + Call Answered); the reward
+// pushes since (Ward/Snowtrooper Sep 2, Brutus/Vane/Silvo Aug-Sep)
+// point at Call Answered + Raiders of the Outer Rim for this era.
+// Correct with one line if CG rotates them.
+const ERA_BATTLE_NAMES = {
+  era_battle_1: 'Call Answered',
+  era_battle_2: 'Raiders of the Outer Rim',
+};
+
 // Image base + unit tile images (paths relative to IMG_BASE in assets/img/)
 const IMG_BASE = 'assets/img/';
 const CONQUEST_UNIT_IMAGE = 'events/conquest.png';
@@ -151,6 +162,12 @@ function ev(icon, label){
     }
   }
 
+  if(icon.startsWith('era_battle_')) {
+    const match = icon.match(/^era_battle_(\d+)$/);
+    const battleName = ERA_BATTLE_NAMES[icon];
+    if(match && battleName) label = `Era Battle ${match[1]} (${battleName}) Starts`;
+  }
+
   return {icon, label};
 }
 
@@ -160,24 +177,24 @@ const COMMON_DAYS = {
   4:  [ev('smugglersrun',"Smuggler's Run III"), ev('tw_defense','Defense Phase Starts')],
   5:  [ev('tw_offense','Offense Phase Starts')],
   6:  [ev('tw_payout','Payout')],
-  9:  [ev('rote','Phase 3 Starts'), ev('era_battle_1','Era Battle 1 (Rotta) Starts')],
+  9:  [ev('rote','Phase 3 Starts'), ev('era_battle_1')],
   10: [ev('rote','Phase 4 Starts')],
   11: [ev('rote','Phase 5 Starts')],
   12: [ev('rote','Phase 6 Starts')],
   13: [ev('tb_ends','Territory Battle Ends'), ev('tw_signup','Signup Starts')],
-  14: [ev('tw_defense','Defense Phase Starts'), ev('era_battle_2','Era Battle 2 (Grogu) Starts')],
+  14: [ev('tw_defense','Defense Phase Starts'), ev('era_battle_2')],
   16: [ev('smugglersrun',"Smuggler's Run II"), ev('tw_payout','Payout')],
   17: [ev('tw_signup','Signup Starts')],
   18: [ev('smugglersrun',"Smuggler's Run III"), ev('tw_defense','Defense Phase Starts')],
   19: [ev('tw_offense','Offense Phase Starts')],
   20: [ev('tw_payout','Payout')],
   22: [ev('rote','Phase 2 Starts')],
-  23: [ev('era_battle_1','Era Battle 1 (Rotta) Starts'), ev('rote','Phase 3 Starts')],
+  23: [ev('era_battle_1'), ev('rote','Phase 3 Starts')],
   24: [ev('rote','Phase 4 Starts')],
   25: [ev('rote','Phase 5 Starts')],
   26: [ev('rote','Phase 6 Starts')],
   27: [ev('tb_ends','Territory Battle Ends'), ev('tw_signup','Signup Starts')],
-  28: [ev('era_battle_2','Era Battle 2 (Grogu) Starts'), ev('tw_defense','Defense Phase Starts')],
+  28: [ev('era_battle_2'), ev('tw_defense','Defense Phase Starts')],
 };
 
 const EPISODE_OVERRIDES = {

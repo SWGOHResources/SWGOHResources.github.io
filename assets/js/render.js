@@ -360,6 +360,11 @@ function slotNeedleFor(icon){
   if(m && names[`marquee_${m[1]}`]) return { name: names[`marquee_${m[1]}`], kinds: ['marquee'] };
   m = /^era_challenge_(\d+)$/.exec(icon || '');
   if(m && names[`marquee_${m[1]}`]) return { name: names[`marquee_${m[1]}`], kinds: ['era-challenge'] };
+  // Era battles arrive as plain kind=event entries (Comlink exposes no
+  // era-battle family), matched by event name from ERA_BATTLE_NAMES.
+  const battles = (typeof ERA_BATTLE_NAMES !== 'undefined' && ERA_BATTLE_NAMES) || {};
+  m = /^era_battle_(\d+)$/.exec(icon || '');
+  if(m && battles[icon]) return { name: battles[icon], kinds: ['event'] };
   if(icon === 'journey_guide'){
     const unit = (typeof JOURNEY_GUIDE_UNIT !== 'undefined' && JOURNEY_GUIDE_UNIT) || '';
     if(unit) return { name: unit, kinds: ['journey', 'event'] };
@@ -373,6 +378,10 @@ function liveSlotKeys(){
   for(const key of Object.keys(names)){
     const m = /^marquee_(\d+)$/.exec(key);
     if(m){ out.push(`marquee_${m[1]}`); out.push(`era_challenge_${m[1]}`); }
+  }
+  const battles = (typeof ERA_BATTLE_NAMES !== 'undefined' && ERA_BATTLE_NAMES) || {};
+  for(const key of Object.keys(battles)){
+    if(/^era_battle_\d+$/.exec(key)) out.push(key);
   }
   if(typeof JOURNEY_GUIDE_UNIT !== 'undefined' && JOURNEY_GUIDE_UNIT) out.push('journey_guide');
   return out;

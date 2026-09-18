@@ -950,3 +950,25 @@ test('era ends with its own card wearing the era splash', () => {
   assert.match(changeover, /art-fill/);
   assert.ok(run('validateScheduleConfig()').length === 0);
 });
+
+test('era battle slots carry event names and match live events', () => {
+  const { ctx } = loadRenderEngine();
+  const run = src => vm.runInContext(src, ctx);
+  // Labels bracket the configured event name, tensing like other cards.
+  const day = Date.parse('2026-09-14T00:00:00Z');
+  const card = run(`explorerCardHTML({ icon: 'era_battle_1', label: 'Era Battle 1 (Call Answered) Starts' }, ${day}, 'Now', null, ${day})`);
+  assert.match(card, /<h4>Era Battle 1 \(Call Answered\) Starts<\/h4>/);
+  // A live era battle (plain kind=event) matches its slot by name…
+  const dayStart = run('getGameStatus().currentDayStartMs');
+  run(`liveEventsCache = { pulledAt: 1, gameDataVersion: 'v', events: [
+    { id: 'e', name: 'Call Answered Era Battle', kind: 'event', art: 'live/x.png',
+      startMs: ${dayStart} + 3600000, endMs: ${dayStart} + 86400000 }
+  ] }`);
+  assert.equal(run(`liveMatchesForSlot('era_battle_1', ${dayStart}).map(e => e.id).join(',')`), 'e');
+  assert.equal(run(`liveMatchesForSlot('era_battle_2', ${dayStart}).length`), 0);
+  // …so its rotation card is suppressed on start day and wears live art.
+  const starting = run(`liveEventsForDay(${dayStart}).filter(e => e.startMs >= ${dayStart})`);
+  assert.deepEqual(run('JSON.stringify([...liveCoveredIcons(' + JSON.stringify(starting).replace(/"/g, "'") + ')])'), '["era_battle_1"]');
+  const live = run(`explorerCardHTML({ icon: 'era_battle_1', label: 'Era Battle 1 (Call Answered) Starts' }, ${dayStart}, 'Now', null, ${dayStart})`);
+  assert.match(live, /live\/x\.png/);
+});
