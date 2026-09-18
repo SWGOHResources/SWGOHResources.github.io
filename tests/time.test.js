@@ -942,10 +942,10 @@ test('era ends with its own card wearing the era splash', () => {
   })()`);
   run(`explorerOffset = ${target.o}; renderExplorer(getGameStatus())`);
   assert.match(els.dayDetail.innerHTML, /Ends<\/h4>/);
-  assert.match(els.dayDetail.innerHTML, /events\/erasplash\.png/);
+  assert.match(els.dayDetail.innerHTML, /live\/era-pass\.png/);
   // …and the changeover shares the splash instead of the tiny icon.
   const changeover = run(`explorerCardHTML({ icon: 'era_changeover', label: 'Era Changeover' }, ${target.dMs}, 'Now', null, 0)`);
-  assert.match(changeover, /events\/erasplash\.png/);
+  assert.match(changeover, /live\/era-pass\.png/);
   assert.doesNotMatch(changeover, /xcard-art fit/);
   assert.ok(run('validateScheduleConfig()').length === 0);
 });

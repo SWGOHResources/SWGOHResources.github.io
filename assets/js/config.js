@@ -290,8 +290,11 @@ const EVENT_ICONS = {
   gac_attack: 'events/gac.png',
   conquest_start: 'events/conquest.png',
   conquest_end: 'events/conquest.png',
-  era_changeover: 'events/erasplash.png',
-  era_end: 'events/erasplash.png',
+  // Era splash frames: bot-pulled battle-pass art for the newest era
+  // (assets/img/live/era-pass.png, refreshed by the live-events bot),
+  // so new eras adopt automatically with no hand-added files.
+  era_changeover: 'live/era-pass.png',
+  era_end: 'live/era-pass.png',
   era_battle_1: 'events/erabattle1.png',
   era_battle_2: 'events/erabattle2.png',
   era_challenge_1: 'marquee/marquee1event.png',
