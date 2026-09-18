@@ -350,6 +350,51 @@ function liveCardMarqueeNum(e){
   return null;
 }
 
+/* Rotation slots that live data can speak for: marquee / era-challenge
+   slots carry their MARQUEE_NAMES unit, the journey guide its unit.
+   GAC/TW/TB stay fully hardcoded — live data never overrides them. */
+function slotNeedleFor(icon){
+  const names = (typeof MARQUEE_NAMES !== 'undefined' && MARQUEE_NAMES) || {};
+  let m = /^marquee_(\d+)$/.exec(icon || '');
+  if(m && names[`marquee_${m[1]}`]) return { name: names[`marquee_${m[1]}`], kinds: ['marquee'] };
+  m = /^era_challenge_(\d+)$/.exec(icon || '');
+  if(m && names[`marquee_${m[1]}`]) return { name: names[`marquee_${m[1]}`], kinds: ['era-challenge'] };
+  if(icon === 'journey_guide'){
+    const unit = (typeof JOURNEY_GUIDE_UNIT !== 'undefined' && JOURNEY_GUIDE_UNIT) || '';
+    if(unit) return { name: unit, kinds: ['journey', 'event'] };
+  }
+  return null;
+}
+
+function liveSlotKeys(){
+  const names = (typeof MARQUEE_NAMES !== 'undefined' && MARQUEE_NAMES) || {};
+  const out = [];
+  for(const key of Object.keys(names)){
+    const m = /^marquee_(\d+)$/.exec(key);
+    if(m){ out.push(`marquee_${m[1]}`); out.push(`era_challenge_${m[1]}`); }
+  }
+  if(typeof JOURNEY_GUIDE_UNIT !== 'undefined' && JOURNEY_GUIDE_UNIT) out.push('journey_guide');
+  return out;
+}
+
+/* Alphanumeric-only containment, the same rule as liveCardMarqueeNum:
+   a slot's unit name against a live event's unit + name. Family-gated,
+   so a live marquee never claims its unit's era-challenge slot. */
+function slotMatchesEvent(slot, e){
+  const spec = (typeof slotNeedleFor === 'function') ? slotNeedleFor(slot) : null;
+  if(!spec || !e || !spec.kinds.includes(e.kind)) return false;
+  const norm = s => String(s || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+  const needle = norm(spec.name);
+  return !!needle && norm(`${e.unit || ''} ${e.name || ''}`).includes(needle);
+}
+
+/* Live events touching the viewed day that describe a rotation slot —
+   earliest first. Powers card art/name overrides and dedupe. */
+function liveMatchesForSlot(icon, dayStartMs){
+  if(!Number.isFinite(dayStartMs) || typeof liveEventsForDay !== 'function') return [];
+  return liveEventsForDay(dayStartMs).filter(e => slotMatchesEvent(icon, e));
+}
+
 /* Closest rotation icon for a live event, so live cards reuse the exact
    art, accent, tag and badge of their hardcoded counterparts —
    assetFor / categoryFor / tagFor stay the single source of truth.
@@ -526,7 +571,12 @@ function explorerCardHTML(item, dateMs, relLabel, tbCtx, nowMs){
   const meta = CATEGORY_META[cat];
   const tag = tagFor(item.icon);
   const isTbCard = tbCtx && (item.icon === 'rote' || item.icon === 'tb_ends');
-  const asset = isTbCard ? tbCtx.art : assetFor(item.icon);
+  // A live event touching the viewed day speaks for its rotation slot:
+  // the card wears the live art (never a stale placeholder) and, for
+  // marquees, the live marquee name. Era/journey labels stay
+  // constructed — they carry tense and window wording live names lack.
+  const liveMatch = liveMatchesForSlot(item.icon, dateMs)[0] || null;
+  const asset = isTbCard ? tbCtx.art : (liveMatch && liveMatch.art) || assetFor(item.icon);
   const style = `--accent:${meta.accent};--accent-dim:${meta.dim};--accent-border:${meta.border}`;
   const imgTag = asset ? `<img src="${IMG_BASE}${asset}" alt="" loading="lazy" fetchpriority="low" decoding="async" onerror="this.remove()">` : '';
   // Contained sources (transparent subjects, square scenes) render over
@@ -535,7 +585,10 @@ function explorerCardHTML(item, dateMs, relLabel, tbCtx, nowMs){
   const fillTag = (asset && isFitArt(item.icon))
     ? `<div class="art-fill" aria-hidden="true" style="background-image:url(&quot;${IMG_BASE}${asset}&quot;)"></div>` : '';
   const relCls = relLabel === 'Now' ? 'xcard-rel is-today' : 'xcard-rel';
-  const title = tenseByStart(getFullScheduleLabel(item), item, dateMs, nowMs);
+  const baseItem = (liveMatch && liveMatch.kind === 'marquee' && liveMatch.name)
+    ? { icon: item.icon, label: liveMatch.name }
+    : item;
+  const title = tenseByStart(getFullScheduleLabel(baseItem), baseItem, dateMs, nowMs);
 
   return `<article class="xcard" style="${style}">
     <div class="xcard-art${isFitArt(item.icon) ? ' fit' : ''}">
@@ -592,10 +645,17 @@ function liveCoveredIcons(starting){
     // Credit Heist shares smuggling-run art but is a different event;
     // GAC live entries carry no round info, so the precise hardcoded
     // round cards always win. Neither suppresses rotation.
-    if(e.kind === 'credit-heist' || e.kind === 'gac') continue;
+    if(!e || e.kind === 'credit-heist' || e.kind === 'gac') continue;
     const icon = liveRotationIcon(e);
     if(icon) covered.add(icon);
     if(e.kind === 'conquest') covered.add('conquest_end');
+    // Unit/name-level: a starting live marquee covers its rotation
+    // marquee slot, an era-challenge its era slot, a journey-ish event
+    // the guide slot — even when kinds differ (Terrible Tings vs the
+    // Darth Jar Jar guide).
+    for(const slot of liveSlotKeys()){
+      if(slotMatchesEvent(slot, e)) covered.add(slot);
+    }
   }
   return covered;
 }
@@ -648,14 +708,18 @@ function rotationWindowName(icon){
   }
   return icon;
 }
-function rotationBadgesHTML(windows, dayLive){
+function rotationBadgesHTML(windows, dayLive, dayStartMs){
   const liveKinds = new Set((dayLive || []).map(e => e && e.kind).filter(Boolean));
   // A live event of the same family already badges the day (or shows
-  // its own card), so the rotation window stays out of the way.
+  // its own card), so the rotation window stays out of the way. Units
+  // beat kinds: a journey-ish live event for the guide unit suppresses
+  // the guide window even though their kinds differ.
   return (windows || [])
     .filter(w => {
       const kind = rotationWindowKind(w.icon);
-      return !!kind && !liveKinds.has(kind);
+      if(!kind || liveKinds.has(kind)) return false;
+      if(Number.isFinite(dayStartMs) && liveMatchesForSlot(w.icon, dayStartMs).length) return false;
+      return true;
     })
     .map(w => {
       const icon = w.icon;
@@ -801,10 +865,20 @@ function renderExplorer(st){
   // conquest badges side by side.
   const showCqBadge = !dayLive.some(e => e.kind === 'conquest');
   // Multi-day rotation windows (marquee, era challenges, journey
-  // guides) covering the day, unless live data already badges them.
+  // guides) covering the day, unless live data already badges them —
+  // matched by unit/name, so a journey-ish live event for the guide
+  // unit suppresses the guide window even though kinds differ.
   const windowBadges = (typeof rotationWindowsForDay === 'function')
-    ? rotationBadgesHTML(rotationWindowsForDay(cur.ep, cur.dayInEp), dayLive) : '';
+    ? rotationBadgesHTML(rotationWindowsForDay(cur.ep, cur.dayInEp), dayLive, cur.dMs) : '';
   const covered = liveCoveredIcons(starting);
+  // Same happening, longer run: an ongoing live event that matches a
+  // rotation slot suppresses that slot's card too — the live "Day X of
+  // Y" badge already represents it, so the day never shows both.
+  for(const e of ongoing){
+    for(const slot of liveSlotKeys()){
+      if(slotMatchesEvent(slot, e)) covered.add(slot);
+    }
+  }
   const rotationCards = cur.items
     .filter(it => !covered.has(it.icon))
     .map(it => explorerCardHTML(it, cur.dMs, cardRel(eventStartMs(it, cur.dMs)), tbCtx, st.nowMs)).join('');

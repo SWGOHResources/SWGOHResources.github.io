@@ -131,6 +131,19 @@ export function eventKind(id) {
   return 'event';
 }
 
+// Unit the event is for, from the texture name when Comlink doesn't
+// say (only true marquees carry marqueeUnitBaseId). Lets the page
+// match journey-ish events to their rotation slots by unit instead of
+// fragile name guessing (tex.events_darthjarjar -> DARTHJARJAR).
+// Generic leftovers too short to be a unit resolve to undefined.
+export function unitFromTexture(assetName) {
+  const s = String(assetName ?? '').replace(/^tex\./i, '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+  for (const prefix of ['EVENTSICON', 'EVENTS', 'EVENT', 'ICON']) {
+    if (s.startsWith(prefix) && s.length > prefix.length + 3) return s.slice(prefix.length);
+  }
+  return undefined;
+}
+
 // Keep one entry per event id: the instance overlapping the window,
 // preferring the instance closest to now. Permanent events (duration
 // over a year) are dropped. GAC is dropped too: Comlink only exposes
@@ -162,9 +175,11 @@ export function selectLiveEvents(gameEvents, nameMap, nowMs) {
       id: e.id,
       name: resolveName(e.nameKey, nameMap, e.id),
       kind,
-      // Unit the event is for (marquee/era-challenge portraits). Used by
-      // the page to pick the exact card art; absent for other events.
-      unit: e.marqueeUnitBaseId || undefined,
+      // Unit the event is for (marquee/era-challenge portraits, and
+      // journey-ish events via their texture name). Used by the page to
+      // pick the exact card art and to match rotation slots to live
+      // events; absent for other events.
+      unit: e.marqueeUnitBaseId || unitFromTexture(e.image) || unitFromTexture(e.icon) || undefined,
       // Game texture names ("tex.events_x" -> asset "events_x") for the
       // art pull below. Image first, icon as backup. Internal — stripped
       // before writing the JSON.

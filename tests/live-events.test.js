@@ -16,6 +16,7 @@ import {
   selectLiveEvents,
   simplifyName,
   titleCase,
+  unitFromTexture,
 } from '../scripts/pull-live-events.mjs';
 
 const NOW = Date.parse('2026-09-13T23:00:00Z');
@@ -70,6 +71,32 @@ test('simplifyName trims filler the type pill already shows', () => {
 test('prettifyCodeName reads like a title', () => {
   assert.equal(prettifyCodeName('EVENT_FOO_BAR'), 'Foo Bar');
   assert.equal(prettifyCodeName('SEASON_83_EVENT_NAME'), 'Season 83 Name');
+});
+
+test('unitFromTexture reads the unit out of game texture names', () => {
+  assert.equal(unitFromTexture('tex.events_darthjarjar'), 'DARTHJARJAR');
+  assert.equal(unitFromTexture('tex.events_icon_theronin'), 'THERONIN');
+  assert.equal(unitFromTexture('tex.events_stormtrooperconcept'), 'STORMTROOPERCONCEPT');
+  assert.equal(unitFromTexture('tex.events_x'), undefined);
+  assert.equal(unitFromTexture(null), undefined);
+});
+
+test('selectLiveEvents prefers the Comlink unit, then the texture unit', () => {
+  const events = [
+    {
+      id: 'EVENT_MARQUEE_JAXXON', nameKey: 'K1', marqueeUnitBaseId: 'JAXXON',
+      image: 'tex.events_jaxxon', icon: 'tex.events_icon_jaxxon',
+      instance: [{ startTime: String(NOW - H), endTime: String(NOW + H) }],
+    },
+    {
+      id: 'progressionevent_MEESALESS_MASSACRE', nameKey: 'K2',
+      image: 'tex.events_darthjarjar', icon: 'tex.events_icon_darthjarjar',
+      instance: [{ startTime: String(NOW - H), endTime: String(NOW + H) }],
+    },
+  ];
+  const out = selectLiveEvents(events, new Map([['K1', 'Action Jaxxon'], ['K2', 'Terrible Tings']]), NOW);
+  assert.equal(out[0].unit, 'JAXXON');
+  assert.equal(out[1].unit, 'DARTHJARJAR');
 });
 test('selectLiveEvents keeps scheduled instances, drops permanent ones', () => {
   const events = [
@@ -363,6 +390,86 @@ test('liveCoveredIcons maps live starts to rotation icons', () => {
     { id: 'EVENT_ASSAULT_EMPIRE', kind: 'assault' }
   ])].sort())`);
   assert.equal(covered, JSON.stringify(['conquest_end', 'conquest_start', 'fleet_executor', 'marquee_1', 'smugglersrun']));
+});
+
+test('slot matcher links rotation slots to live events by unit, family-gated', () => {
+  const { ctx } = loadRenderEngine();
+  const run = src => vm.runInContext(src, ctx);
+  const dayStart = run('getGameStatus().currentDayStartMs');
+  run(`liveEventsCache = { pulledAt: ${NOW}, gameDataVersion: 'v', events: [
+    { id: 'm', name: 'Action Jaxxon', kind: 'marquee', unit: 'JAXXON',
+      startMs: ${dayStart} - 86400000, endMs: ${dayStart} + 5 * 86400000 },
+    { id: 't', name: 'Terrible Tings Legendary Event', kind: 'event', unit: 'DARTHJARJAR',
+      startMs: ${dayStart} - 86400000, endMs: ${dayStart} + 20 * 86400000 }
+  ] }`);
+  // Marquee slot claims the marquee live event…
+  assert.equal(run(`liveMatchesForSlot('marquee_5', ${dayStart}).map(e => e.id).join(',')`), 'm');
+  // …but never its unit's era-challenge slot (different family, both real).
+  assert.equal(run(`liveMatchesForSlot('era_challenge_5', ${dayStart}).length`), 0);
+  // The journey slot matches by texture-derived unit despite the kind gap.
+  assert.equal(run(`liveMatchesForSlot('journey_guide', ${dayStart}).map(e => e.id).join(',')`), 't');
+  // Starting coverage follows the same rule, so the guide card is
+  // suppressed while an unrelated assault never covers anything.
+  const covered = run(`JSON.stringify([...liveCoveredIcons([
+    { id: 't', name: 'Terrible Tings Legendary Event', kind: 'event', unit: 'DARTHJARJAR' }
+  ])])`);
+  assert.equal(covered, JSON.stringify(['journey_guide']));
+});
+
+test('rotation cards wear the matched live art and marquee name', () => {
+  const { ctx } = loadRenderEngine();
+  const run = src => vm.runInContext(src, ctx);
+  const dayStart = run('getGameStatus().currentDayStartMs');
+  run(`liveEventsCache = { pulledAt: ${NOW}, gameDataVersion: 'v', events: [
+    { id: 'm', name: 'Action Jaxxon', kind: 'marquee', unit: 'JAXXON', art: 'live/events-jaxxon.png',
+      startMs: ${dayStart} - 86400000, endMs: ${dayStart} + 5 * 86400000 }
+  ] }`);
+  const card = run(`explorerCardHTML({ icon: 'marquee_5', label: 'Jaxxon Marquee' }, ${dayStart}, 'Now', null, ${NOW})`);
+  assert.match(card, /live\/events-jaxxon\.png/);
+  assert.match(card, /<h4>Action Jaxxon<\/h4>/);
+  assert.doesNotMatch(card, /marquee5event/);
+  // Without a live match the hardcoded art and name remain.
+  run('liveEventsCache = null');
+  const plain = run(`explorerCardHTML({ icon: 'marquee_5', label: 'Jaxxon Marquee' }, ${dayStart}, 'Now', null, ${NOW})`);
+  assert.match(plain, /marquee\/marquee5event\.png/);
+  assert.match(plain, /<h4>Jaxxon Marquee<\/h4>/);
+});
+
+test('ongoing live matches suppress the rotation card, badge represents', () => {
+  const { ctx, els } = loadRenderEngine();
+  const run = src => vm.runInContext(src, ctx);
+  // Era day 71 carries a journey_guide rotation card; Terrible Tings
+  // (started day 57) is ongoing there.
+  const target = run(`(() => {
+    const st = getGameStatus();
+    const dMs = st.currentEraStartMs + (71 - 1) * 86400000;
+    return { o: 71 - st.eraDay, dMs };
+  })()`);
+  run(`liveEventsCache = { pulledAt: ${NOW}, gameDataVersion: 'v', events: [
+    { id: 't', name: 'Terrible Tings Legendary Event', kind: 'event', unit: 'DARTHJARJAR', art: 'live/x.png',
+      startMs: ${target.dMs} - 14 * 86400000, endMs: ${target.dMs} + 14 * 86400000 }
+  ] };
+  explorerOffset = ${target.o};`);
+  run('renderExplorer(getGameStatus())');
+  assert.doesNotMatch(els.dayDetail.innerHTML, /Journey Guide<\/h4>/);
+  assert.match(els.dayDetail.innerHTML, /Terrible Tings Legendary Event/);
+  assert.match(els.dayDetail.innerHTML, /day-badge/);
+});
+
+test('journey rotation badge yields to the matched live event', () => {
+  const { ctx } = loadRenderEngine();
+  const run = src => vm.runInContext(src, ctx);
+  const dayStart = run('getGameStatus().currentDayStartMs');
+  const windows = [{ icon: 'journey_guide', day: 3, total: 14 }];
+  // Control: no live data, the rotation window badges the day.
+  assert.match(run(`rotationBadgesHTML(${JSON.stringify(windows)}, [], ${dayStart})`), /Darth Jar Jar Journey Guide/);
+  // Matched (same unit, different kind): the live event wins, no double.
+  run(`liveEventsCache = { pulledAt: ${NOW}, gameDataVersion: 'v', events: [
+    { id: 't', name: 'Terrible Tings Legendary Event', kind: 'event', unit: 'DARTHJARJAR',
+      startMs: ${dayStart} - 86400000, endMs: ${dayStart} + 86400000 }
+  ] }`);
+  const dayLive = run(`liveEventsForDay(${dayStart})`);
+  assert.equal(run(`rotationBadgesHTML(${JSON.stringify(windows)}, ${JSON.stringify(dayLive)}, ${dayStart})`), '');
 });
 
 test('live cards suppress the matching rotation card', () => {

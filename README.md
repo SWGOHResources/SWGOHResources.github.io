@@ -75,6 +75,12 @@ running longer than 24h also sit in the indicators row as badges shaped
 like the coliseum boss, with their art and a "Day X of Y" caption.
 Where a live card covers a rotation entry (same smuggling run, marquee,
 fleet ship…) the rotation card is suppressed so nothing shows twice.
+Rotation marquee, era-challenge and journey-guide slots are matched to
+live events by unit and name (Comlink only tags true marquees, so the
+pull script also reads the unit out of each event's texture name):
+a matched slot wears the live art and marquee name instead of its
+hardcoded placeholder, and its rotation badge/card stays out of the way
+while the live event touches the day — one representation per happening.
 GAC is excluded
 from the feed — Comlink exposes no round info, so the hardcoded
 per-round GAC cards cover it. The snapshot refreshes itself via
