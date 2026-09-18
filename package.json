@@ -7,7 +7,6 @@
     "sitemap": "node scripts/stamp-sitemap.mjs",
     "events:pull": "node scripts/pull-live-events.mjs",
     "versions:check": "node scripts/check-client-version.mjs",
-    "content:diff": "node scripts/diff-gamedata.mjs",
     "digest:post": "node scripts/post-schedule-digest.mjs",
     "sync": "git fetch origin && git rebase origin/main"
   }

@@ -108,25 +108,11 @@ Routine gamedata hash rotations never alert.
 via the `DISCORD_WEBHOOK_URL` repo secret (job still tracks versions
 when the secret is absent).
 
-On a forced flip the same job also runs `scripts/content:diff`
-(`scripts/diff-gamedata.mjs`), which diffs watched game-data files
-(packs, units, journeys, reward tables) against slim hash snapshots in
-`assets/data/gamedata-watch/` and posts new packs/assets/journeys/reward
-changes to a second channel via `DISCORD_CONTENT_WEBHOOK_URL`. Snapshots
-store sorted hash multisets per id, so per-tier duplicate rows and
-routine hash rotations can never fake a change; while the gamedata
-mirror lags the enforced version the diff reports `pending` and retries
-next run.
-
 ```sh
 npm run versions:check
-npm run content:diff
 ```
 
-If a content alert fails to post (a failed run stays red), re-send the
-committed report without waiting for the next flip: run the
-Client version watch workflow manually with the `repost_content` input
-set. Alert embeds carry no emojis.
+Alert embeds carry no emojis.
 
 ## Daily digest
 
