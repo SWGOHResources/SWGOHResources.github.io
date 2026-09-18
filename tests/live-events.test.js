@@ -427,11 +427,11 @@ test('rotation cards wear the matched live art and marquee name', () => {
   const card = run(`explorerCardHTML({ icon: 'marquee_5', label: 'Jaxxon Marquee' }, ${dayStart}, 'Now', null, ${NOW})`);
   assert.match(card, /live\/events-jaxxon\.png/);
   assert.match(card, /<h4>Action Jaxxon<\/h4>/);
-  assert.doesNotMatch(card, /marquee5event/);
-  // Without a live match the hardcoded art and name remain.
+  // Without a live match the committed live portrait remains (the old
+  // hardcoded placeholder file is gone).
   run('liveEventsCache = null');
   const plain = run(`explorerCardHTML({ icon: 'marquee_5', label: 'Jaxxon Marquee' }, ${dayStart}, 'Now', null, ${NOW})`);
-  assert.match(plain, /marquee\/marquee5event\.png/);
+  assert.match(plain, /live\/events-jaxxon\.png/);
   assert.match(plain, /<h4>Jaxxon Marquee<\/h4>/);
 });
 

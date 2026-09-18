@@ -114,10 +114,10 @@ const CRON_COLOR_META = {
  EVENT DATA MODEL (EXACT SHEET9 MAPPING)
   ========================================================= */
 
-// Marquee / era-challenge art is full portrait art in-game. The
-// marquee5 image in assets/img/marquee/ is a square placeholder —
-// swap in the real portrait when available (same filename, no code
-// changes needed).
+// Marquee / era-challenge art is full portrait art in-game. Slots use
+// the auto-pulled live portraits (assets/img/live/, refreshed by the
+// live-events bot) — never hand-added files. If a portrait is missing
+// the card falls back to the era badge art until the next pull heals it.
 const MARQUEE_NAMES = {
   marquee_1: 'Mara Jade Skywalker',
   marquee_2: 'Yoda (Dark Side Vision)',
@@ -207,6 +207,7 @@ const EPISODE_OVERRIDES = {
     20: [ev('tw_payout','Payout'), ev('proving_ground','Bonus Proving Grounds (Conquest Pass+ Holders Only)')],
     21: [ev('conquest_end','1st Conquest of New Volume Ends'), ev('proving_ground','Proving Grounds'), ev('ultimate_journey','Ultimate Journey'), ev('smugglersrun',"Smuggler's Run I"), ev('rote','Phase 1 Starts')],
     22: [ev('era_challenge_6'), ev('rote','Phase 2 Starts')],
+    28: [ev('era_end',`${ERA_NAME} Ends`)],
   }
 };
 
@@ -289,20 +290,21 @@ const EVENT_ICONS = {
   gac_attack: 'events/gac.png',
   conquest_start: 'events/conquest.png',
   conquest_end: 'events/conquest.png',
-  era_changeover: 'events/eraicon.png',
+  era_changeover: 'events/erasplash.png',
+  era_end: 'events/erasplash.png',
   era_battle_1: 'events/erabattle1.png',
   era_battle_2: 'events/erabattle2.png',
   era_challenge_1: 'marquee/marquee1event.png',
   era_challenge_2: 'marquee/marquee2event.png',
   era_challenge_3: 'marquee/marquee3event.png',
   era_challenge_4: 'marquee/marquee4event.png',
-  era_challenge_5: 'marquee/marquee5event.png',
+  era_challenge_5: 'live/events-jaxxon.png',
   era_challenge_6: 'marquee/marquee6event.png',
   marquee_1: 'marquee/marquee1event.png',
   marquee_2: 'marquee/marquee2event.png',
   marquee_3: 'marquee/marquee3event.png',
   marquee_4: 'marquee/marquee4event.png',
-  marquee_5: 'marquee/marquee5event.png',
+  marquee_5: 'live/events-jaxxon.png',
   marquee_6: 'marquee/marquee6event.png',
   proving_ground: 'events/provingground.png',
   ultimate_journey: 'events/ultimatejourney.png',
@@ -324,14 +326,12 @@ const EVENT_ICONS = {
 /* Icons whose art must not be cover-cropped into the portrait card
    frame: transparent-background subjects (GAC banners, update icons,
    …) would be decapitated. They render contained over a blurred fill
-   of themselves instead; everything else (tall portraits, square
-   scenes like TW battles and Smuggler's Run) covers normally.
-   Keep this in sync when art is swapped. */
+   of themselves instead; everything else (tall portraits, full-bleed
+   scenes like the era splash, TW battles and Smuggler's Run) covers
+   normally. Keep this in sync when art is swapped. */
 const FIT_ART_ICONS = [
   'gac_signup', 'gac_defense', 'gac_attack',
-  'era_changeover',
   'client_update', 'shipment_update',
-  'marquee_5', 'era_challenge_5',
 ];
 
 /* =========================================================

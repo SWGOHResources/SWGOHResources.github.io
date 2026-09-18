@@ -810,10 +810,10 @@ test('unknown TW icons hide the tracker but keep the label, and are reported', (
 
 test('fit-art detection follows the config allowlist', () => {
   const engine = loadTimeEngine();
-  for (const icon of ['gac_attack', 'era_changeover', 'client_update', 'shipment_update', 'marquee_5', 'era_challenge_5']) {
+  for (const icon of ['gac_attack', 'client_update', 'shipment_update']) {
     assert.equal(engine.isFitArt(icon), true, icon);
   }
-  for (const icon of ['marquee_1', 'rote', 'conquest_start', 'fleet_executor', 'tw_signup', 'tw_offense', 'tw_defense', 'tw_payout', 'smugglersrun', null, '']) {
+  for (const icon of ['marquee_1', 'marquee_5', 'era_challenge_5', 'era_changeover', 'rote', 'conquest_start', 'fleet_executor', 'tw_offense', 'smugglersrun', null, '']) {
     assert.equal(engine.isFitArt(icon), false, String(icon));
   }
 });
@@ -929,4 +929,23 @@ test('datacron skip dates are validated', () => {
   assert.ok(!engine.validateScheduleConfig().some(issue => issue.includes('SKIP')));
   engine.DATACRON_SKIP_DATES = ['2026-02-31'];
   assert.ok(engine.validateScheduleConfig().some(issue => issue.includes('DATACRON_SKIP_DATES[0]')));
+});
+
+test('era ends with its own card wearing the era splash', () => {
+  const { ctx, els } = loadRenderEngine();
+  const run = src => vm.runInContext(src, ctx);
+  // Last day of the era (Ep3 day 28) carries the end-of-era card…
+  const target = run(`(() => {
+    const st = getGameStatus();
+    const dMs = st.currentEraStartMs + (84 - 1) * 86400000;
+    return { o: 84 - st.eraDay, dMs };
+  })()`);
+  run(`explorerOffset = ${target.o}; renderExplorer(getGameStatus())`);
+  assert.match(els.dayDetail.innerHTML, /Ends<\/h4>/);
+  assert.match(els.dayDetail.innerHTML, /events\/erasplash\.png/);
+  // …and the changeover shares the splash instead of the tiny icon.
+  const changeover = run(`explorerCardHTML({ icon: 'era_changeover', label: 'Era Changeover' }, ${target.dMs}, 'Now', null, 0)`);
+  assert.match(changeover, /events\/erasplash\.png/);
+  assert.doesNotMatch(changeover, /xcard-art fit/);
+  assert.ok(run('validateScheduleConfig()').length === 0);
 });
