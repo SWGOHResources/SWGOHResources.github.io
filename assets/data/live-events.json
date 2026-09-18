@@ -1,5 +1,5 @@
 {
- "pulledAt": 1789704210641,
+ "pulledAt": 1789716477860,
  "gameDataVersion": "0.40.5:1yxdT9-cSDejlIJQcx3kiA",
  "events": [
   {
@@ -11,16 +11,6 @@
    "endMs": 1790100000000,
    "live": true,
    "art": "live/events-stormtrooperconcept.png"
-  },
-  {
-   "id": "EVENT_ASSAULT_DARKSIDE",
-   "name": "Secrets and Shadows Assault Battle",
-   "kind": "assault",
-   "unit": "NIGHTSISTERSASSAULT",
-   "startMs": 1789542000000,
-   "endMs": 1789628400000,
-   "live": false,
-   "art": "live/events-nightsisters-assault.png"
   },
   {
    "id": "EVENT_CREDIT_HEIST_GETAWAY_V2",
@@ -39,7 +29,7 @@
    "unit": "GALACTICCHALLENGESHOTH",
    "startMs": 1789714800000,
    "endMs": 1789801200000,
-   "live": false,
+   "live": true,
    "art": "live/events-galactic-challenges-hoth.png"
   },
   {
