@@ -123,6 +123,11 @@ npm run versions:check
 npm run content:diff
 ```
 
+If a content alert fails to post (a failed run stays red), re-send the
+committed report without waiting for the next flip: run the
+Client version watch workflow manually with the `repost_content` input
+set. Alert embeds carry no emojis.
+
 ## Daily digest
 
 `scripts/post-schedule-digest.mjs` posts the homepage's daily schedule to
