@@ -140,6 +140,10 @@ npm run digest:post
 DRY_RUN=1 npm run digest:post   # preview payloads, change nothing
 ```
 
+The same job also runs `npm run sitemap` so the homepage `<lastmod>`
+stays within a day (the schedule rolls daily and nothing else stamps
+it).
+
 > Git workflow: the `live-events.yml` bot pushes to
 > `main` on a schedule, so `main` moves under you. Always run
 > `npm run sync` (fetch + rebase onto `origin/main`) before editing

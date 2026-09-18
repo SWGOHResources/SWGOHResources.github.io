@@ -15,6 +15,11 @@ on:
     - cron: '10 18 * * *'
   workflow_dispatch:
 
+# Serialise overlapping runs (a slow run must never post twice).
+concurrency:
+  group: daily-digest
+  cancel-in-progress: false
+
 permissions:
   contents: write
 
@@ -32,13 +37,29 @@ jobs:
         env:
           DISCORD_EVENT_WEBHOOK_URL: ${{ secrets.DISCORD_EVENT_WEBHOOK_URL }}
         run: |
+          # pipefail: a failing digest:post must fail the step instead of
+          # hiding behind tee's exit code (which would silently skip state).
+          set -o pipefail
           npm run digest:post | tee /tmp/digest.log
+          # Nothing else stamps it and the schedule rolls daily, so the
+          # homepage <lastmod> is refreshed here to stay within a day.
+          npm run sitemap
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add assets/data/digest-state.json
+          # Tolerant adds: digest-state.json is absent when the webhook is
+          # unset (script returns before writing) — that skips notify
+          # gracefully instead of failing `git add` on a missing pathspec.
+          git add assets/data/digest-state.json 2>/dev/null || true
+          git add sitemap.xml 2>/dev/null || true
           if git diff --staged --quiet; then
-            echo "digest state unchanged (already posted today)"
+            echo "digest state + sitemap unchanged (already posted today)"
           else
-            git commit -m "Digest posted $(date -u +%F)"
-            git push
+            if git diff --staged --name-only | grep -q digest-state.json; then
+              git commit -m "Digest posted $(date -u +%F)"
+            else
+              git commit -m "Sitemap lastmod $(date -u +%F)"
+            fi
+            # Sibling bots push to main on their own cadence — rebase and
+            # retry once instead of failing on a moved remote.
+            git push || (git pull --rebase && git push)
           fi

@@ -12,6 +12,11 @@ on:
     - cron: '7 * * * *'
   workflow_dispatch:
 
+# Serialise overlapping runs (docker pulls can be slow).
+concurrency:
+  group: client-watch
+  cancel-in-progress: false
+
 permissions:
   contents: write
 
@@ -77,12 +82,17 @@ jobs:
             echo "client versions unchanged"
           else
             git commit -m "Client version snapshot $(date -u +%F_%H%M)"
-            git push
+            # Sibling bots push to main on their own cadence — rebase and
+            # retry once instead of failing on a moved remote.
+            git push || (git pull --rebase && git push)
           fi
       - name: Diff game data on forced flip
         id: content
         if: steps.verdict.outputs.verdict == 'forced_flip' || steps.verdict.outputs.verdict == 'both'
         run: |
+          # pipefail: a failing content:diff must fail the step instead of
+          # hiding behind tee's exit code (which would read as CONTENT=none).
+          set -o pipefail
           COMLINK_URL=http://localhost:3500 AE_URL=http://localhost:3123 npm run content:diff | tee /tmp/content-diff.log
           echo "result=$(grep -oP '^CONTENT=\K\w+' /tmp/content-diff.log | tail -n 1)" >> "$GITHUB_OUTPUT"
           git config user.name "github-actions[bot]"
@@ -92,7 +102,7 @@ jobs:
             echo "content snapshots unchanged"
           else
             git commit -m "Content snapshots $(date -u +%F_%H%M)"
-            git push
+            git push || (git pull --rebase && git push)
           fi
       - name: Notify content channel on new content
         env:
