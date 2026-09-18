@@ -810,10 +810,10 @@ test('unknown TW icons hide the tracker but keep the label, and are reported', (
 
 test('fit-art detection follows the config allowlist', () => {
   const engine = loadTimeEngine();
-  for (const icon of ['gac_attack', 'client_update', 'shipment_update']) {
+  for (const icon of ['gac_attack', 'client_update', 'shipment_update', 'era_changeover', 'era_end']) {
     assert.equal(engine.isFitArt(icon), true, icon);
   }
-  for (const icon of ['marquee_1', 'marquee_5', 'era_challenge_5', 'era_changeover', 'rote', 'conquest_start', 'fleet_executor', 'tw_offense', 'smugglersrun', null, '']) {
+  for (const icon of ['marquee_1', 'marquee_5', 'era_challenge_5', 'rote', 'conquest_start', 'fleet_executor', 'tw_offense', 'smugglersrun', null, '']) {
     assert.equal(engine.isFitArt(icon), false, String(icon));
   }
 });
@@ -942,10 +942,11 @@ test('era ends with its own card wearing the era splash', () => {
   })()`);
   run(`explorerOffset = ${target.o}; renderExplorer(getGameStatus())`);
   assert.match(els.dayDetail.innerHTML, /Ends<\/h4>/);
-  assert.match(els.dayDetail.innerHTML, /live\/era-pass\.png/);
+  assert.match(els.dayDetail.innerHTML, /live\/era-icon\.png/);
   // …and the changeover shares the splash instead of the tiny icon.
   const changeover = run(`explorerCardHTML({ icon: 'era_changeover', label: 'Era Changeover' }, ${target.dMs}, 'Now', null, 0)`);
-  assert.match(changeover, /live\/era-pass\.png/);
-  assert.doesNotMatch(changeover, /xcard-art fit/);
+  assert.match(changeover, /live\/era-icon\.png/);
+  assert.match(changeover, /xcard-art fit/);
+  assert.match(changeover, /art-fill/);
   assert.ok(run('validateScheduleConfig()').length === 0);
 });

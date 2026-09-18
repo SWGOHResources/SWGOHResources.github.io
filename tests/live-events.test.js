@@ -9,7 +9,7 @@ import vm from 'node:vm';
 import {
   artSlug,
   cleanName,
-  ensureEraPassArt,
+  ensureEraIconArt,
   eventKind,
   prettifyCodeName,
   pullEventArt,
@@ -678,7 +678,7 @@ test('live conquest suppresses the rotation conquest badge', () => {
   assert.match(els.dayDetail.innerHTML, /Conquest Live/);
 });
 
-test('era pass art tracks the newest battlepass era, never breaking the pull', async () => {
+test('era icon art refreshes from a fixed texture, never breaking the pull', async () => {
   const png = Buffer.from([
     137, 80, 78, 71, 13, 10, 26, 10, 0, 0, 0, 13, 73, 72, 68, 82,
     0, 0, 0, 1, 0, 0, 0, 1, 8, 6, 0, 0, 0, 31, 21, 196, 137,
@@ -686,46 +686,30 @@ test('era pass art tracks the newest battlepass era, never breaking the pull', a
     0, 5, 254, 2, 254, 167, 53, 129, 57, 0, 0, 0, 0, 73, 69,
     78, 68, 174, 66, 96, 130,
   ]);
-  let mode = 'ok';
+  let broken = false;
   const server = http.createServer((req, res) => {
     const url = new URL(req.url, 'http://x');
-    if (mode === 'list-down' && url.pathname === '/Asset/list') {
-      res.writeHead(500); res.end(); return;
+    if (url.pathname === '/Asset/single' && !broken) {
+      assert.equal(url.searchParams.get('assetName'), 'icon_seasons_currency');
+      res.writeHead(200, { 'Content-Type': 'image/png' });
+      res.end(png); return;
     }
-    if (url.pathname === '/Asset/list') {
-      res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify(['pack_battlepass_era07', 'pack_battlepass_era09', 'pack_battlepass_era08', 'ability_x']));
-      return;
-    }
-    if (url.pathname === '/Asset/single') {
-      const name = url.searchParams.get('assetName');
-      if (name === 'pack_battlepass_era09' && mode !== 'bad-bytes') {
-        res.writeHead(200, { 'Content-Type': 'image/png' });
-        res.end(png); return;
-      }
-      res.writeHead(200, { 'Content-Type': 'application/octet-stream' });
-      res.end(Buffer.from('junk')); return;
-    }
-    res.writeHead(404); res.end();
+    res.writeHead(500); res.end();
   });
   await new Promise(r => server.listen(0, '127.0.0.1', r));
   const { rm, readFile } = await import('node:fs/promises');
   const base = `http://127.0.0.1:${server.address().port}`;
   let dir = '';
   try {
-    dir = await mkdtemp('/tmp/era-pass-test-');
+    dir = await mkdtemp('/tmp/era-icon-test-');
     const dirUrl = pathToFileURL(dir + path.sep).href;
-    // Newest era wins and lands as era-pass.png.
-    assert.equal(await ensureEraPassArt(100050, { artDir: dirUrl, aeUrl: base }), true);
-    assert.ok((await readFile(path.join(dir, 'era-pass.png'))).subarray(0, 8).equals(png.subarray(0, 8)));
-    // A failed list refresh keeps the committed file and reports false.
-    mode = 'list-down';
-    assert.equal(await ensureEraPassArt(100050, { artDir: dirUrl, aeUrl: base }), false);
-    assert.ok((await readFile(path.join(dir, 'era-pass.png'))).subarray(0, 8).equals(png.subarray(0, 8)));
-    // Garbage bytes never overwrite good art either.
-    mode = 'bad-bytes';
-    assert.equal(await ensureEraPassArt(100050, { artDir: dirUrl, aeUrl: base }), false);
-    assert.ok((await readFile(path.join(dir, 'era-pass.png'))).subarray(0, 8).equals(png.subarray(0, 8)));
+    // Downloads and lands as era-icon.png.
+    assert.equal(await ensureEraIconArt(100050, { artDir: dirUrl, aeUrl: base }), true);
+    assert.ok((await readFile(path.join(dir, 'era-icon.png'))).subarray(0, 8).equals(png.subarray(0, 8)));
+    // A failed refresh keeps the committed file and reports false.
+    broken = true;
+    assert.equal(await ensureEraIconArt(100050, { artDir: dirUrl, aeUrl: base }), false);
+    assert.ok((await readFile(path.join(dir, 'era-icon.png'))).subarray(0, 8).equals(png.subarray(0, 8)));
   } finally {
     server.close();
     if (dir) await rm(dir, { recursive: true, force: true });

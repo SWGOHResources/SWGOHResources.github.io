@@ -311,14 +311,12 @@ export async function pullEventArt(events, assetVersion, opts = {}) {
   return events;
 }
 
-// Era battle-pass art for the changeover/end-of-era cards, which have
-// no live event of their own. Picks the newest pack_battlepass_eraNN
-// texture so new eras adopt automatically — no config edits, no
-// hand-added files. Unlike event art (reused on-disk, since events
-// rerun), this re-downloads every pull: one small file, and reuse
-// would pin last era's art forever. Never throws: a failed refresh
-// keeps the committed file and the pull still succeeds.
-export async function ensureEraPassArt(assetVersion, opts = {}) {
+// Seasons currency emblem for the changeover/end-of-era cards, which
+// have no live event of their own. Fixed texture name (no era number),
+// so new eras adopt it with zero work. Re-downloads every pull — one
+// tiny file — and never throws: a failed refresh keeps the committed
+// file and the pull still succeeds.
+export async function ensureEraIconArt(assetVersion, opts = {}) {
   const aeUrl = opts.aeUrl ?? AE_URL;
   const { pathToFileURL } = await import('node:url');
   const rawDir = opts.artDir ?? LIVE_ART_DIR;
@@ -326,17 +324,8 @@ export async function ensureEraPassArt(assetVersion, opts = {}) {
     : String(rawDir).startsWith('file:') ? new URL(String(rawDir))
     : pathToFileURL(String(rawDir));
   try {
-    const listRes = await fetch(`${aeUrl}/Asset/list?version=${assetVersion}`);
-    if (!listRes.ok) throw new Error(`HTTP ${listRes.status}`);
-    const names = await listRes.json();
-    let best = null;
-    for (const n of Array.isArray(names) ? names : []) {
-      const m = /^pack_battlepass_era(\d+)$/.exec(String(n || ''));
-      if (m && (!best || Number(m[1]) > Number(best[1]))) best = m;
-    }
-    if (!best) throw new Error('no pack_battlepass_eraNN texture listed');
     const res = await fetch(
-      `${aeUrl}/Asset/single?version=${assetVersion}&assetName=${encodeURIComponent(best[0])}`,
+      `${aeUrl}/Asset/single?version=${assetVersion}&assetName=${encodeURIComponent('icon_seasons_currency')}`,
     );
     const buf = Buffer.from(await res.arrayBuffer());
     if (!res.ok || !buf.subarray(0, 8).equals(PNG_MAGIC)) {
@@ -344,11 +333,11 @@ export async function ensureEraPassArt(assetVersion, opts = {}) {
     }
     const { mkdir, writeFile } = await import('node:fs/promises');
     await mkdir(dirUrl, { recursive: true });
-    await writeFile(new URL('era-pass.png', dirUrl), buf);
-    console.log(`art: era pass -> era${best[1]} (${(buf.length / 1024).toFixed(0)}kb)`);
+    await writeFile(new URL('era-icon.png', dirUrl), buf);
+    console.log(`art: era icon refreshed (${(buf.length / 1024).toFixed(0)}kb)`);
     return true;
   } catch (err) {
-    console.warn(`art: era pass refresh skipped (${err.message}) — keeping committed file`);
+    console.warn(`art: era icon refresh skipped (${err.message}) — keeping committed file`);
     return false;
   }
 }
@@ -395,7 +384,7 @@ async function main() {
   const withArt = events.filter(e => e.art).length;
   console.log(`art: ${withArt}/${events.length} pulled game textures`);
 
-  await ensureEraPassArt(metadata.assetVersion);
+  await ensureEraIconArt(metadata.assetVersion);
 
   const { writeFile, mkdir } = await import('node:fs/promises');
   await mkdir(new URL('../assets/data/', import.meta.url), { recursive: true });
