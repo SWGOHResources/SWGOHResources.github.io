@@ -395,10 +395,11 @@ function liveDisplayArt(e, meta){
   return (e && e.art) || meta.art;
 }
 
-/* Live events render exactly like rotation cards (same art frame,
-   badge and body) — only the art is the pulled game texture and the
-   title/dates come from live data. The timing pill is the viewed day's
-   relative label, identical to hardcoded cards on the same day. */
+/* Live events render exactly like rotation cards (same full-bleed art
+   with the body overlaid at the bottom) — only the art is the pulled
+   game texture and the title/dates come from live data. The timing pill
+   sits at the top; the viewed day's relative label is identical to
+   hardcoded cards on the same day. */
 function liveCardHTML(e, relLabel){
   const meta = liveCardMeta(e);
   const catMeta = (typeof CATEGORY_META !== 'undefined' && CATEGORY_META[meta.cat]) || {};
@@ -414,11 +415,11 @@ function liveCardHTML(e, relLabel){
       <div class="xcard-art-meta">
         <span class="${relCls}">${relLabel}</span>
       </div>
-    </div>
-    <div class="xcard-body">
-      <div class="xcard-kicker">${escHTML(meta.label)}</div>
-      <h4>${escHTML(e.name)}</h4>
-      ${cardWhenRow(e.startMs, liveDurationHours(e))}
+      <div class="xcard-body">
+        <div class="xcard-kicker">${escHTML(meta.label)}</div>
+        <h4>${escHTML(e.name)}</h4>
+        ${cardWhenRow(e.startMs, liveDurationHours(e))}
+      </div>
     </div>
   </article>`;
 }
@@ -529,25 +530,28 @@ function explorerCardHTML(item, dateMs, relLabel, tbCtx, nowMs){
   const asset = isTbCard ? tbCtx.art : assetFor(item.icon);
   const style = `--accent:${meta.accent};--accent-dim:${meta.dim};--accent-border:${meta.border}`;
   const imgTag = asset ? `<img src="${IMG_BASE}${asset}" alt="" loading="lazy" fetchpriority="low" decoding="async" onerror="this.remove()">` : '';
-  // Art renders at its natural aspect ratio, full-bleed (see .xcard-art):
-  // whole image visible, nothing stretched, nothing cropped — so there
-  // is no per-icon sizing logic here at all.
+  // Contained sources (transparent subjects, square scenes) render over
+  // a blurred fill of themselves: uniform card size, whole image
+  // visible, nothing stretched, nothing sliced. See FIT_ART_ICONS.
+  const fillTag = (asset && isFitArt(item.icon))
+    ? `<div class="art-fill" aria-hidden="true" style="background-image:url(&quot;${IMG_BASE}${asset}&quot;)"></div>` : '';
   const relCls = relLabel === 'Now' ? 'xcard-rel is-today' : 'xcard-rel';
   const title = tenseByStart(getFullScheduleLabel(item), item, dateMs, nowMs);
 
   return `<article class="xcard" style="${style}">
-    <div class="xcard-art">
+    <div class="xcard-art${isFitArt(item.icon) ? ' fit' : ''}">
       <div class="art-badge">${tag.glyph}</div>
+      ${fillTag}
       ${imgTag}
       <div class="xcard-shade"></div>
       <div class="xcard-art-meta">
         <span class="${relCls}">${relLabel}</span>
       </div>
-    </div>
-    <div class="xcard-body">
-      <div class="xcard-kicker">${escHTML(tag.label)}</div>
-      <h4>${title}</h4>
-      ${cardWhenRow(eventStartMs(item, dateMs), (typeof eventDurationHours === 'function') ? eventDurationHours(item, dateMs, isTbCard ? tbCtx : null) : null)}
+      <div class="xcard-body">
+        <div class="xcard-kicker">${escHTML(tag.label)}</div>
+        <h4>${title}</h4>
+        ${cardWhenRow(eventStartMs(item, dateMs), (typeof eventDurationHours === 'function') ? eventDurationHours(item, dateMs, isTbCard ? tbCtx : null) : null)}
+      </div>
     </div>
   </article>`;
 }
