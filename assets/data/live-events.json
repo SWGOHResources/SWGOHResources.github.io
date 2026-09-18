@@ -1,5 +1,5 @@
 {
- "pulledAt": 1789741994634,
+ "pulledAt": 1789765072288,
  "gameDataVersion": "0.40.5:1yxdT9-cSDejlIJQcx3kiA",
  "events": [
   {
@@ -63,6 +63,16 @@
    "art": "live/events-dathomir-battle.png"
   },
   {
+   "id": "EVENT_RESOURCE_CONTRABAND_CARGO",
+   "name": "Contraband Cargo",
+   "kind": "event",
+   "unit": "CONTRABANDCARGO",
+   "startMs": 1790071200000,
+   "endMs": 1790157600000,
+   "live": false,
+   "art": "live/events-contrabandcargo.png"
+  },
+  {
    "id": "progressionevent_MEESALESS_MASSACRE",
    "name": "Terrible Tings Legendary Event",
    "kind": "event",
@@ -111,6 +121,16 @@
    "endMs": 1790492400000,
    "live": false,
    "art": "live/events-groundwar.png"
+  },
+  {
+   "id": "EVENT_GALACTIC_BOUNTY_02",
+   "name": "Galactic Bounties II",
+   "kind": "event",
+   "unit": "GALACTICBOUNTIES",
+   "startMs": 1790492400000,
+   "endMs": 1790578800000,
+   "live": false,
+   "art": "live/events-galacticbounties.png"
   }
  ]
 }
