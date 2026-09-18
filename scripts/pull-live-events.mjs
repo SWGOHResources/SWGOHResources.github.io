@@ -311,9 +311,10 @@ export async function pullEventArt(events, assetVersion, opts = {}) {
   return events;
 }
 
-// Seasons currency emblem for the changeover/end-of-era cards, which
-// have no live event of their own. Fixed texture name (no era number),
-// so new eras adopt it with zero work. Re-downloads every pull — one
+// Episode pass premium emblem for the changeover/end-of-era cards,
+// which have no live event of their own. Picks the newest
+// icon_episode_era_premium_NN texture so new eras adopt automatically —
+// no config edits, no hand-added files. Re-downloads every pull — one
 // tiny file — and never throws: a failed refresh keeps the committed
 // file and the pull still succeeds.
 export async function ensureEraIconArt(assetVersion, opts = {}) {
@@ -324,8 +325,17 @@ export async function ensureEraIconArt(assetVersion, opts = {}) {
     : String(rawDir).startsWith('file:') ? new URL(String(rawDir))
     : pathToFileURL(String(rawDir));
   try {
+    const listRes = await fetch(`${aeUrl}/Asset/list?version=${assetVersion}`);
+    if (!listRes.ok) throw new Error(`HTTP ${listRes.status}`);
+    const names = await listRes.json();
+    let best = null;
+    for (const n of Array.isArray(names) ? names : []) {
+      const m = /^icon_episode_era_premium_(\d+)$/.exec(String(n || ''));
+      if (m && (!best || Number(m[1]) > Number(best[1]))) best = m;
+    }
+    if (!best) throw new Error('no icon_episode_era_premium_NN texture listed');
     const res = await fetch(
-      `${aeUrl}/Asset/single?version=${assetVersion}&assetName=${encodeURIComponent('icon_seasons_currency')}`,
+      `${aeUrl}/Asset/single?version=${assetVersion}&assetName=${encodeURIComponent(best[0])}`,
     );
     const buf = Buffer.from(await res.arrayBuffer());
     if (!res.ok || !buf.subarray(0, 8).equals(PNG_MAGIC)) {
@@ -334,7 +344,7 @@ export async function ensureEraIconArt(assetVersion, opts = {}) {
     const { mkdir, writeFile } = await import('node:fs/promises');
     await mkdir(dirUrl, { recursive: true });
     await writeFile(new URL('era-icon.png', dirUrl), buf);
-    console.log(`art: era icon refreshed (${(buf.length / 1024).toFixed(0)}kb)`);
+    console.log(`art: era icon -> era${best[1]} (${(buf.length / 1024).toFixed(0)}kb)`);
     return true;
   } catch (err) {
     console.warn(`art: era icon refresh skipped (${err.message}) — keeping committed file`);
