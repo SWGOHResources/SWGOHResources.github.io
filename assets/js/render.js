@@ -404,13 +404,11 @@ function liveCardHTML(e, relLabel){
   const catMeta = (typeof CATEGORY_META !== 'undefined' && CATEGORY_META[meta.cat]) || {};
   const style = `--accent:${catMeta.accent || 'var(--text3)'};--accent-dim:${catMeta.dim || 'transparent'};--accent-border:${catMeta.border || 'var(--border)'}`;
   const art = liveDisplayArt(e, meta);
-  const fillTag = `<div class="art-fill" aria-hidden="true" style="background-image:url(&quot;${IMG_BASE}${art}&quot;)"></div>`;
   const relCls = relLabel === 'Now' ? 'xcard-rel is-today'
     : relLabel === 'Expired' ? 'xcard-rel is-expired' : 'xcard-rel';
   return `<article class="xcard" style="${style}">
     <div class="xcard-art">
       <div class="art-badge">${escHTML(meta.glyph)}</div>
-      ${fillTag}
       <img src="${IMG_BASE}${art}" alt="" loading="lazy" fetchpriority="low" decoding="async" onerror="this.remove()">
       <div class="xcard-shade"></div>
       <div class="xcard-art-meta">
@@ -531,16 +529,16 @@ function explorerCardHTML(item, dateMs, relLabel, tbCtx, nowMs){
   const asset = isTbCard ? tbCtx.art : assetFor(item.icon);
   const style = `--accent:${meta.accent};--accent-dim:${meta.dim};--accent-border:${meta.border}`;
   const imgTag = asset ? `<img src="${IMG_BASE}${asset}" alt="" loading="lazy" fetchpriority="low" decoding="async" onerror="this.remove()">` : '';
-  // Contained over a blurred copy of itself (see .xcard-art/.art-fill):
-  // uniform square frame, whole image visible, nothing stretched,
-  // nothing cropped, no flat bands — for every icon, no exceptions.
-  const fillTag = asset
+  // Contained sources (transparent subjects, square scenes) render over
+  // a blurred fill of themselves: uniform card size, whole image
+  // visible, nothing stretched, nothing sliced. See FIT_ART_ICONS.
+  const fillTag = (asset && isFitArt(item.icon))
     ? `<div class="art-fill" aria-hidden="true" style="background-image:url(&quot;${IMG_BASE}${asset}&quot;)"></div>` : '';
   const relCls = relLabel === 'Now' ? 'xcard-rel is-today' : 'xcard-rel';
   const title = tenseByStart(getFullScheduleLabel(item), item, dateMs, nowMs);
 
   return `<article class="xcard" style="${style}">
-    <div class="xcard-art">
+    <div class="xcard-art${isFitArt(item.icon) ? ' fit' : ''}">
       <div class="art-badge">${tag.glyph}</div>
       ${fillTag}
       ${imgTag}
