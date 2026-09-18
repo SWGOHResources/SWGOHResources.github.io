@@ -810,10 +810,10 @@ test('unknown TW icons hide the tracker but keep the label, and are reported', (
 
 test('fit-art detection follows the config allowlist', () => {
   const engine = loadTimeEngine();
-  for (const icon of ['gac_attack', 'era_changeover', 'client_update', 'shipment_update', 'marquee_5', 'era_challenge_5', 'tw_signup', 'tw_offense', 'tw_defense', 'tw_payout', 'smugglersrun']) {
+  for (const icon of ['gac_attack', 'era_changeover', 'client_update', 'shipment_update', 'marquee_5', 'era_challenge_5']) {
     assert.equal(engine.isFitArt(icon), true, icon);
   }
-  for (const icon of ['marquee_1', 'rote', 'conquest_start', 'fleet_executor', null, '']) {
+  for (const icon of ['marquee_1', 'rote', 'conquest_start', 'fleet_executor', 'tw_signup', 'tw_offense', 'tw_defense', 'tw_payout', 'smugglersrun', null, '']) {
     assert.equal(engine.isFitArt(icon), false, String(icon));
   }
 });
@@ -868,9 +868,9 @@ test('transparent-subject cards render contained over a blurred fill', () => {
   const { ctx } = loadRenderEngine();
   const run = src => vm.runInContext(src, ctx);
   const fit = run(`explorerCardHTML({icon:"gac_attack",label:"GAC Round 1 Attack (Week 1)"}, Date.parse("2026-08-04T00:00:00Z"), "Now", null, 0)`);
-  const square = run(`explorerCardHTML({icon:"tw_offense",label:"Offense Phase Starts"}, Date.parse("2026-08-04T00:00:00Z"), "Now", null, 0)`);
+  const square = run(`explorerCardHTML({icon:"client_update",label:"Client Update"}, Date.parse("2026-08-04T00:00:00Z"), "Now", null, 0)`);
   const tall = run(`explorerCardHTML({icon:"marquee_1",label:"Marquee"}, Date.parse("2026-08-04T00:00:00Z"), "Now", null, 0)`);
-  const cover = run(`explorerCardHTML({icon:"conquest_start",label:"Conquest Starts"}, Date.parse("2026-08-04T00:00:00Z"), "Now", null, 0)`);
+  const cover = run(`explorerCardHTML({icon:"tw_offense",label:"Offense Phase Starts"}, Date.parse("2026-08-04T00:00:00Z"), "Now", null, 0)`);
   assert.ok(fit.includes('xcard-art fit'));
   assert.ok(fit.includes('art-fill'));
   assert.ok(square.includes('xcard-art fit'));
