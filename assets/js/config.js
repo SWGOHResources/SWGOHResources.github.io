@@ -312,21 +312,6 @@ const EVENT_ICONS = {
   datacron_set_blue: 'datacrons/datacron_blue.png'
 };
 
-/* Icons whose art must not be cover-cropped into the portrait card
-   frame: transparent-background subjects (GAC banners, update icons,
-   …) would be decapitated, and square full-bleed scenes (TW battles,
-   Smuggler's Run) would lose their sides. They render contained over
-   a blurred fill of themselves instead; tall portrait art covers
-   normally. Keep this in sync when art is swapped. */
-const FIT_ART_ICONS = [
-  'gac_signup', 'gac_defense', 'gac_attack',
-  'tw_signup', 'tw_defense', 'tw_offense', 'tw_payout',
-  'smugglersrun',
-  'era_changeover',
-  'client_update', 'shipment_update',
-  'marquee_5', 'era_challenge_5',
-];
-
 /* =========================================================
  TIME ENGINE
  ========================================================= */
