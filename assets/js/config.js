@@ -60,18 +60,26 @@ const GAC_CYCLE_START_DATE = '2026-08-11'; // Day 1 (Signup) of the 5v5 season
 const CLIENT_UPDATE_ANCHOR_DATE = '2026-09-02'; // a Wednesday with a client update
 
 /* =========================================================
- DATACRON DROP ROTATION — each Wednesday-before-conquest drop
-  adds the next color in this fixed order. Anchor: the 2026-08-26
-  drop added the Blue set (previous drop Green, then Pink, then
-  Orange, looping). Drops land on Episode Day 2, exactly one
-  episode apart, so time.js steps the rotation by whole episodes
-  from this anchor. If CG ever breaks the cadence, correct the
-  anchor date/color here.
+ DATACRON DROP ROTATION — each conquest-cycle drop adds the next
+  color in this fixed order. Anchor: the 2026-09-16 drop added the
+  Orange set (Duty and Defiance) — CG broke cadence and dropped a
+  week early with the title update, twelve days out from conquest,
+  so the anchor moved off the 2026-08-26 Blue drop. Drops land on
+  Episode Day 2, roughly one episode apart, so time.js steps the
+  rotation by whole episodes from this anchor. If CG ever breaks
+  the cadence, correct the anchor date/color here.
   ========================================================= */
 
 const DATACRON_COLOR_ORDER = ['orange', 'pink', 'green', 'blue'];
-const DATACRON_ANCHOR_DATE = '2026-08-26'; // a drop Wednesday that added…
-const DATACRON_ANCHOR_COLOR = 'blue'; // …this color
+const DATACRON_ANCHOR_DATE = '2026-09-16'; // a drop Wednesday that added…
+const DATACRON_ANCHOR_COLOR = 'orange'; // …this color
+
+/* Structural drop Wednesdays that never fired because CG dropped
+   early: the engine flags every Wednesday 5-11 days before a
+   conquest start, so the skipped pattern-week must be listed here
+   or it renders a phantom "New Datacron Set Added" card.
+   2026-09-23 never dropped — Duty and Defiance came out 09-16. */
+const DATACRON_SKIP_DATES = ['2026-09-23'];
 
 /* =========================================================
  DATACRON SET CONFIGURATION — EDIT WHEN A NEW SET IS ANNOUNCED
@@ -92,6 +100,7 @@ const DATACRON_SETS = [
   { name: 'Necessary Means',     color: 'pink',   added: '2026-07-01', expires: '2026-10-01', hasFDC: false },
   { name: 'Supremacy Directive', color: 'green',  added: '2026-07-29', expires: '2026-10-29', hasFDC: true  },
   { name: 'Art of Command',      color: 'blue',   added: '2026-08-26', expires: '2026-11-26', hasFDC: false },
+  { name: 'Duty and Defiance',   color: 'orange', added: '2026-09-16', expires: '2026-12-17', hasFDC: false },
 ];
 
 const CRON_COLOR_META = {

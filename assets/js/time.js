@@ -605,18 +605,45 @@ function daysUntilNextConquest(eraDay){
   return best;
 }
 
+/* Wednesdays with an announced set in DATACRON_SETS always render
+   the drop card, even when CG goes off-cadence (Duty and Defiance
+   dropped 2026-09-16, twelve days out from conquest). */
+function datacronAddedDates(){
+  const sets = (typeof DATACRON_SETS !== 'undefined' && Array.isArray(DATACRON_SETS)) ? DATACRON_SETS : [];
+  const out = [];
+  for(const s of sets){
+    const ms = (s && typeof s.added === 'string') ? parseDateOnlyMs(s.added) : NaN;
+    if(Number.isFinite(ms)) out.push(ms);
+  }
+  return out;
+}
+
+/* Structural drop Wednesdays CG skipped (DATACRON_SKIP_DATES) never
+   render, or the week after an early drop shows a phantom card. */
+function datacronSkipDates(){
+  const skip = (typeof DATACRON_SKIP_DATES !== 'undefined' && Array.isArray(DATACRON_SKIP_DATES)) ? DATACRON_SKIP_DATES : [];
+  const out = [];
+  for(const d of skip){
+    const ms = (typeof d === 'string') ? parseDateOnlyMs(d) : NaN;
+    if(Number.isFinite(ms)) out.push(ms);
+  }
+  return out;
+}
+
 function isDatacronDropDay(dateMs, eraDay){
   if(!isWednesdayUtc(dateMs)) return false;
+  if(datacronAddedDates().includes(dateMs)) return true;
+  if(datacronSkipDates().includes(dateMs)) return false;
   const d = daysUntilNextConquest(eraDay);
   return d >= 5 && d <= 11;
 }
 
-/* Color of the set added by the drop on dateMs. Drops land on
-   Episode Day 2 — exactly one episode apart — so the color steps
-   through DATACRON_COLOR_ORDER by whole episodes from the anchor
-   drop (2026-08-26 added Blue; Jul 29 Green; before that Pink,
-   Orange, then looping). Unknown/missing config degrades to the
-   rotation's last color instead of a broken icon. */
+/* Color of the set added by the drop on dateMs. Drops land roughly
+   one episode apart, so the color steps through DATACRON_COLOR_ORDER
+   by whole episodes from the anchor drop (2026-09-16 added Orange;
+   before that Blue, Green, Pink, Orange, looping). Unknown/missing
+   config degrades to the rotation's last color instead of a broken
+   icon. */
 function datacronColorOrder(){
   const fallback = ['orange', 'pink', 'green', 'blue'];
   const order = (typeof DATACRON_COLOR_ORDER !== 'undefined' && Array.isArray(DATACRON_COLOR_ORDER))
@@ -1410,6 +1437,12 @@ function validateScheduleConfig(){
   if(typeof DATACRON_ANCHOR_COLOR !== 'undefined'
     && !(typeof CRON_COLOR_META !== 'undefined' && DATACRON_ANCHOR_COLOR in CRON_COLOR_META))
     issues.push(`DATACRON_ANCHOR_COLOR "${DATACRON_ANCHOR_COLOR}" is not a known datacron color.`);
+  if(typeof DATACRON_SKIP_DATES !== 'undefined'){
+    if(!Array.isArray(DATACRON_SKIP_DATES)) issues.push('DATACRON_SKIP_DATES must be a list of YYYY-MM-DD dates.');
+    else DATACRON_SKIP_DATES.forEach((d, i) => {
+      if(!isDateStr(d)) issues.push(`DATACRON_SKIP_DATES[${i}] is not YYYY-MM-DD.`);
+    });
+  }
   if(!isDateStr(typeof TB_SIDE_ANCHOR_DATE !== 'undefined' ? TB_SIDE_ANCHOR_DATE : null))
     issues.push('TB_SIDE_ANCHOR_DATE is missing or not YYYY-MM-DD.');
   if(!(tbRunGap > 0))

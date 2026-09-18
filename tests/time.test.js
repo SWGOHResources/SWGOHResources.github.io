@@ -880,3 +880,37 @@ test('transparent-subject cards render contained over a blurred fill', () => {
     assert.ok(!plain.includes('art-fill'));
   }
 });
+
+test('off-cadence datacron drops show by announcement, skipped weeks stay quiet', () => {
+  const engine = loadTimeEngine();
+  engine.DATACRON_SETS = [
+    { name: 'Duty and Defiance', color: 'orange', added: '2026-09-16', expires: '2026-12-17', hasFDC: false },
+  ];
+  engine.DATACRON_ANCHOR_DATE = '2026-09-16';
+  engine.DATACRON_ANCHOR_COLOR = 'orange';
+  engine.DATACRON_SKIP_DATES = ['2026-09-23'];
+  engine.DATACRON_COLOR_ORDER = ['orange', 'pink', 'green', 'blue'];
+  const sep16 = Date.parse('2026-09-16T00:00:00Z');
+  const sep23 = Date.parse('2026-09-23T00:00:00Z');
+  // Sep 16 sits twelve days out from conquest (a structural miss) but
+  // the set is announced, so the drop card renders with its name…
+  assert.equal(engine.isDatacronDropDay(sep16, 50), true);
+  assert.equal(engine.datacronNameForDrop(sep16, 'orange'), 'Duty and Defiance');
+  assert.ok(engine.getClientUpdateEvents(sep16, 2, 22).some(e => e.label === 'New Datacron Set Added (Duty and Defiance)'));
+  // …while Sep 23 is structurally a drop Wednesday that never fired.
+  assert.equal(engine.isDatacronDropDay(sep23, 57), false);
+  assert.ok(!engine.getClientUpdateEvents(sep23, 3, 1).some(e => /Datacron Set Added/.test(e.label)));
+  // The color rotation restarts from the new anchor.
+  assert.equal(engine.datacronColorForDrop(sep16), 'orange');
+  assert.equal(engine.datacronColorForDrop(Date.parse('2026-10-14T00:00:00Z')), 'pink');
+});
+
+test('datacron skip dates are validated', () => {
+  const engine = loadTimeEngine({
+    datacronSets: [{ name: 'Set', color: 'orange', added: '2026-09-16', expires: '2026-12-17' }],
+  });
+  engine.DATACRON_SKIP_DATES = ['2026-09-23'];
+  assert.ok(!engine.validateScheduleConfig().some(issue => issue.includes('SKIP')));
+  engine.DATACRON_SKIP_DATES = ['2026-02-31'];
+  assert.ok(engine.validateScheduleConfig().some(issue => issue.includes('DATACRON_SKIP_DATES[0]')));
+});
