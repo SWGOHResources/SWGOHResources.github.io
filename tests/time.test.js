@@ -844,14 +844,16 @@ test('rotation windows cover marquee, era-challenge and journey spans', () => {
   assert.equal(win(3, 29), '[]');
 });
 
-test('all cards render full-bleed natural-aspect art with no fit exceptions', () => {
+test('all cards share one art treatment: contained over blurred fill', () => {
   const { ctx } = loadRenderEngine();
   const run = src => vm.runInContext(src, ctx);
-  // One rule for every family: the image spans the card width at its own
-  // aspect ratio — no cropped frames, no blurred-fill workarounds, no
-  // per-icon sizing classes.
+  // Uniform square frame for every family — the image is contained whole
+  // over a blurred copy of itself, so nothing is cropped, there are no
+  // flat bands, and transparent subjects keep their glow. No per-icon
+  // sizing classes anywhere.
   const cards = [
     run(`explorerCardHTML({icon:"gac_attack",label:"GAC Round 1 Attack (Week 1)"}, Date.parse("2026-08-04T00:00:00Z"), "Now", null, 0)`),
+    run(`explorerCardHTML({icon:"client_update",label:"Client Update"}, Date.parse("2026-08-04T00:00:00Z"), "Now", null, 0)`),
     run(`explorerCardHTML({icon:"tw_offense",label:"Offense Phase Starts"}, Date.parse("2026-08-04T00:00:00Z"), "Now", null, 0)`),
     run(`explorerCardHTML({icon:"smugglersrun",label:"Smuggler's Run I Starts"}, Date.parse("2026-08-04T00:00:00Z"), "Now", null, 0)`),
     run(`explorerCardHTML({icon:"marquee_1",label:"Marquee"}, Date.parse("2026-08-04T00:00:00Z"), "Now", null, 0)`),
@@ -860,8 +862,8 @@ test('all cards render full-bleed natural-aspect art with no fit exceptions', ()
   ];
   for (const html of cards) {
     assert.match(html, /<div class="xcard-art">/);
+    assert.match(html, /<div class="art-fill"/);
     assert.match(html, /<img src="/);
     assert.doesNotMatch(html, /xcard-art fit/);
-    assert.doesNotMatch(html, /art-fill/);
   }
 });
