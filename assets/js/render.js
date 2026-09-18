@@ -318,12 +318,13 @@ function renderStatusDashboard(st){
 let liveEventsCache = null;
 
 /* Start + span row for schedule cards: the absolute start instant
-   left ("Sat, 12th Sep, 18:00 UTC"), the duration right ("36 hrs").
-   Duration omitted when the marker has no real span. */
+   left ("Sat, 12th Sep, 18:00 UTC"), the duration right ("36 hrs",
+   "7 days", "1 day 12 hrs"). Duration omitted when the marker has
+   no real span. */
 function cardWhenRow(startMs, durH){
   const start = escHTML(fmtEventStart(startMs));
-  const dur = Number.isFinite(durH) ? `<span class="xw-dur">${durH} hrs</span>` : '<span class="xw-dur">N/A</span>';
-  return `<div class="xcard-date"><span class="xw-start">${start}</span>${dur}</div>`;
+  const dur = (typeof formatDurationHours === 'function' ? formatDurationHours(durH) : null) ?? 'N/A';
+  return `<div class="xcard-date"><span class="xw-start">${start}</span><span class="xw-dur">${dur}</span></div>`;
 }
 
 /* Whole-hour span of a live event — null when the window is missing

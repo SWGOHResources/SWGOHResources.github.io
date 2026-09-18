@@ -837,11 +837,27 @@ test('event durations read in whole hours, markers read null', () => {
   assert.equal(engine.eventDurationHours({ icon: 'tw_offense' }, day, null), 24);
   assert.equal(engine.eventDurationHours({ icon: 'smugglersrun' }, day, null), 24);
   assert.equal(engine.eventDurationHours({ icon: 'rote' }, day, null), 24);
+  // Single-day families: TW phases, fleet masteries, era battles,
+  // Proving Grounds and the Ultimate Journey all run 24 hours.
+  for (const icon of ['tw_signup', 'tw_defense', 'tw_offense', 'fleet_executor', 'fleet_leviathan', 'fleet_profundity', 'era_battle_1', 'era_battle_2', 'proving_ground', 'ultimate_journey']) {
+    assert.equal(engine.eventDurationHours({ icon }, day, null), 24, icon);
+  }
   assert.equal(engine.eventDurationHours({ icon: 'rote' }, day, { def: { hoursPerPhase: 36 } }), 36);
   assert.equal(engine.eventDurationHours({ icon: 'rote', tbEndMoment: day }, day, { def: { hoursPerPhase: 36 } }), null);
-  for (const icon of ['tw_payout', 'client_update', 'proving_ground', 'era_changeover', 'fleet_executor', null, '']) {
+  for (const icon of ['tw_payout', 'client_update', 'era_changeover', null, '']) {
     assert.equal(engine.eventDurationHours({ icon }, day, null), null, String(icon));
   }
+});
+
+test('durations read the way players say them: hours, then days and hours', () => {
+  const engine = loadTimeEngine();
+  assert.equal(engine.formatDurationHours(2), '2 hrs');
+  assert.equal(engine.formatDurationHours(24), '24 hrs');
+  assert.equal(engine.formatDurationHours(36), '1 day 12 hrs');
+  assert.equal(engine.formatDurationHours(168), '7 days');
+  assert.equal(engine.formatDurationHours(336), '14 days');
+  assert.equal(engine.formatDurationHours(25), '1 day 1 hr');
+  assert.equal(engine.formatDurationHours(null), 'N/A');
 });
 
 test('event starts render weekday, date, clock and zone', () => {

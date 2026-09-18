@@ -998,12 +998,17 @@ function dayFromHash(hash){
   return day;
 }
 
-/* How long a changeover marker lasts. GAC/TW phases and TB phases run
-  24 hours until the next 18:00 UTC changeover; Conquest runs Day 7→20
-  (14 days); Journey Rerun 1 lasts one week and Journey Rerun 2 lasts one month. */
+/* How long a changeover marker lasts. 24 hours each: GAC/TW phases,
+   TB phases, fleet masteries, era battles, Proving Grounds and the
+   Ultimate Journey — all run until the next daily changeover.
+   Conquest runs Day 7→20 (14 days); Journey Rerun 1 lasts one week
+   and Journey Rerun 2 lasts one month. */
 const DAY_LONG_EVENTS = new Set([
   'gac_signup', 'gac_defense', 'gac_attack',
   'tw_signup', 'tw_defense', 'tw_offense',
+  'fleet_executor', 'fleet_leviathan', 'fleet_profundity',
+  'era_battle_1', 'era_battle_2',
+  'proving_ground', 'ultimate_journey',
   'rote', 'smugglersrun'
 ]);
 
@@ -1043,7 +1048,8 @@ function eventDateRangeLabel(item, dateMs, tbCtx){
 /* Duration of a rotation card in whole hours — null when the marker
    has no real span (moment markers, updates, payouts…). Marquee /
    era challenges run 7 days, journey guides 14, conquest per config;
-   TB phases follow their run's hours-per-phase. Powers the card
+   everything in DAY_LONG_EVENTS runs 24 hours; TB phases follow
+   their run's hours-per-phase. Powers the card
    "starts X · N hrs" row. */
 function eventDurationHours(item, dateMs, tbCtx){
   const icon = item && item.icon;
@@ -1069,6 +1075,20 @@ function eventDurationHours(item, dateMs, tbCtx){
   if(icon === 'journey_guide') return 14 * 24;
   if(DAY_LONG_EVENTS.has(icon)) return 24;
   return null;
+}
+
+/* Whole hours rendered the way players say them: under a day in
+   hours ("24 hrs"), longer spans in days and hours ("7 days",
+   "1 day 12 hrs"). Pure — safe to test. */
+function formatDurationHours(durH){
+  if(!Number.isFinite(durH)) return 'N/A';
+  const h = Math.max(1, Math.round(durH));
+  if(h <= 24) return `${h} hrs`;
+  const d = Math.floor(h / 24);
+  const r = h % 24;
+  const days = d === 1 ? '1 day' : `${d} days`;
+  if(r === 0) return days;
+  return `${days} ${r === 1 ? '1 hr' : `${r} hrs`}`;
 }
 
 /* Per-family rotation start hour (UTC). GAC keeps its own 21:00
