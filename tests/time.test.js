@@ -16,7 +16,6 @@ vm.runInContext(configSource, _configCtx);
 // NOTE: const-declared globals aren't context properties — read it back
 // by evaluating inside the same realm.
 const realEventIcons = vm.runInContext('EVENT_ICONS', _configCtx);
-const realSquareIcons = vm.runInContext('FIT_ART_ICONS', _configCtx);
 
 function loadTimeEngine({ eraLength = 84, timeZone = 'UTC', datacronSets = [], gacStart = '2026-08-11', omit = [], hours = {}, lockOffsets = {}, commonDays = {}, episodeOverrides = {}, monthlyEvents = [] } = {}) {
   const storage = new Map([['swgoh-tz', timeZone]]);
@@ -50,7 +49,6 @@ function loadTimeEngine({ eraLength = 84, timeZone = 'UTC', datacronSets = [], g
     TB_CHOICE_STORAGE_KEY: 'tb',
     TW_PHASE_ICONS: ['tw_signup', 'tw_defense', 'tw_offense'],
     EVENT_ICONS: realEventIcons,
-    FIT_ART_ICONS: realSquareIcons,
     MONTHLY_EVENTS: monthlyEvents,
     EPISODE_OVERRIDES: episodeOverrides,
     COMMON_DAYS: commonDays,
@@ -808,24 +806,6 @@ test('unknown TW icons hide the tracker but keep the label, and are reported', (
   assert.ok(engine.validateScheduleConfig().some(issue => issue.includes('tw_bogus')));
 });
 
-test('fit-art detection follows the config allowlist', () => {
-  const engine = loadTimeEngine();
-  for (const icon of ['gac_attack', 'era_changeover', 'client_update', 'shipment_update', 'marquee_5', 'era_challenge_5', 'tw_signup', 'tw_offense', 'tw_defense', 'tw_payout', 'smugglersrun']) {
-    assert.equal(engine.isFitArt(icon), true, icon);
-  }
-  for (const icon of ['marquee_1', 'rote', 'conquest_start', 'fleet_executor', null, '']) {
-    assert.equal(engine.isFitArt(icon), false, String(icon));
-  }
-});
-
-test('fit-art icons all exist in EVENT_ICONS', () => {
-  const engine = loadTimeEngine();
-  const known = new Set(Object.keys(engine.EVENT_ICONS));
-  for (const icon of engine.FIT_ART_ICONS) {
-    assert.ok(known.has(icon), icon);
-  }
-});
-
 test('event durations read in whole hours, markers read null', () => {
   const engine = loadTimeEngine();
   const day = Date.parse('2026-08-04T00:00:00Z');
@@ -864,19 +844,24 @@ test('rotation windows cover marquee, era-challenge and journey spans', () => {
   assert.equal(win(3, 29), '[]');
 });
 
-test('transparent-subject cards render contained over a blurred fill', () => {
+test('all cards render full-bleed natural-aspect art with no fit exceptions', () => {
   const { ctx } = loadRenderEngine();
   const run = src => vm.runInContext(src, ctx);
-  const fit = run(`explorerCardHTML({icon:"gac_attack",label:"GAC Round 1 Attack (Week 1)"}, Date.parse("2026-08-04T00:00:00Z"), "Now", null, 0)`);
-  const square = run(`explorerCardHTML({icon:"tw_offense",label:"Offense Phase Starts"}, Date.parse("2026-08-04T00:00:00Z"), "Now", null, 0)`);
-  const tall = run(`explorerCardHTML({icon:"marquee_1",label:"Marquee"}, Date.parse("2026-08-04T00:00:00Z"), "Now", null, 0)`);
-  const cover = run(`explorerCardHTML({icon:"conquest_start",label:"Conquest Starts"}, Date.parse("2026-08-04T00:00:00Z"), "Now", null, 0)`);
-  assert.ok(fit.includes('xcard-art fit'));
-  assert.ok(fit.includes('art-fill'));
-  assert.ok(square.includes('xcard-art fit'));
-  assert.ok(square.includes('art-fill'));
-  for (const plain of [tall, cover]) {
-    assert.ok(!plain.includes('xcard-art fit'));
-    assert.ok(!plain.includes('art-fill'));
+  // One rule for every family: the image spans the card width at its own
+  // aspect ratio — no cropped frames, no blurred-fill workarounds, no
+  // per-icon sizing classes.
+  const cards = [
+    run(`explorerCardHTML({icon:"gac_attack",label:"GAC Round 1 Attack (Week 1)"}, Date.parse("2026-08-04T00:00:00Z"), "Now", null, 0)`),
+    run(`explorerCardHTML({icon:"tw_offense",label:"Offense Phase Starts"}, Date.parse("2026-08-04T00:00:00Z"), "Now", null, 0)`),
+    run(`explorerCardHTML({icon:"smugglersrun",label:"Smuggler's Run I Starts"}, Date.parse("2026-08-04T00:00:00Z"), "Now", null, 0)`),
+    run(`explorerCardHTML({icon:"marquee_1",label:"Marquee"}, Date.parse("2026-08-04T00:00:00Z"), "Now", null, 0)`),
+    run(`explorerCardHTML({icon:"conquest_start",label:"Conquest Starts"}, Date.parse("2026-08-04T00:00:00Z"), "Now", null, 0)`),
+    run(`liveCardHTML({ id: 'm', name: 'Blade And Bastion', kind: 'marquee', startMs: 1, endMs: 2 }, 'Now')`),
+  ];
+  for (const html of cards) {
+    assert.match(html, /<div class="xcard-art">/);
+    assert.match(html, /<img src="/);
+    assert.doesNotMatch(html, /xcard-art fit/);
+    assert.doesNotMatch(html, /art-fill/);
   }
 });
