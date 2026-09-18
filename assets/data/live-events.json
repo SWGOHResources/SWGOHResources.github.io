@@ -1,5 +1,5 @@
 {
- "pulledAt": 1789716477860,
+ "pulledAt": 1789741994634,
  "gameDataVersion": "0.40.5:1yxdT9-cSDejlIJQcx3kiA",
  "events": [
   {
@@ -19,7 +19,7 @@
    "unit": "CREDITHEIST",
    "startMs": 1789639200000,
    "endMs": 1789725600000,
-   "live": true,
+   "live": false,
    "art": "live/events-creditheist.png"
   },
   {
