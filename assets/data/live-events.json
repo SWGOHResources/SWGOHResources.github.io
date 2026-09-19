@@ -1,5 +1,5 @@
 {
- "pulledAt": 1789777479593,
+ "pulledAt": 1789802618536,
  "gameDataVersion": "0.40.5:CHG_XUnFR5uPPz6DgmcU6w",
  "events": [
   {
@@ -29,7 +29,7 @@
    "unit": "GALACTICCHALLENGESHOTH",
    "startMs": 1789714800000,
    "endMs": 1789801200000,
-   "live": true,
+   "live": false,
    "art": "live/events-galactic-challenges-hoth.png"
   },
   {
