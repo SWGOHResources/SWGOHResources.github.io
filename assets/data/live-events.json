@@ -1,5 +1,5 @@
 {
- "pulledAt": 1789802618536,
+ "pulledAt": 1789826210765,
  "gameDataVersion": "0.40.5:CHG_XUnFR5uPPz6DgmcU6w",
  "events": [
   {
@@ -11,16 +11,6 @@
    "endMs": 1790100000000,
    "live": true,
    "art": "live/events-stormtrooperconcept.png"
-  },
-  {
-   "id": "EVENT_CREDIT_HEIST_GETAWAY_V2",
-   "name": "Credit Heist",
-   "kind": "credit-heist",
-   "unit": "CREDITHEIST",
-   "startMs": 1789639200000,
-   "endMs": 1789725600000,
-   "live": false,
-   "art": "live/events-creditheist.png"
   },
   {
    "id": "EVENT_OMEGA_BATTLES_07_HOTH",
