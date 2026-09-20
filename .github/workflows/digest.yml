@@ -4,15 +4,16 @@ name: Daily digest
 # Today/Tomorrow, conquest position, live events starting/ending) —
 # the same surfaces the homepage shows, computed with the site's own
 # engine so the post can never drift from the page.
-# Runs daily just after the 18:00 UTC changeover, plus on demand via
-# workflow_dispatch. Needs no Comlink: reads the committed
-# live-events.json snapshot (refreshed every 4h). Dedupe via
+# Runs daily in the UK morning (07:30 UTC = 07:30 GMT / 08:30 BST),
+# plus on demand via workflow_dispatch. Needs no Comlink: reads the
+# committed live-events.json snapshot (refreshed every 4h, most recently
+# at 06:20 UTC, so the data is ~1h fresh). Dedupe via
 # assets/data/digest-state.json (one post per era day; a missing state
 # file posts immediately as an inaugural proof). Without
 # DISCORD_EVENT_WEBHOOK_URL the job skips notify gracefully.
 on:
   schedule:
-    - cron: '10 18 * * *'
+    - cron: '30 7 * * *'
   workflow_dispatch:
 
 # Serialise overlapping runs (a slow run must never post twice).

@@ -5,7 +5,7 @@
 // event starting/ending that game day, each carrying the event's own
 // artwork as the thumbnail (served from this repo's Pages site).
 //
-// Runs daily after the 18:00 UTC changeover (.github/workflows/digest.yml)
+// Runs daily in the UK morning (.github/workflows/digest.yml)
 // plus on demand via workflow_dispatch. Needs no Comlink: rotation state
 // comes from the site's own config.js + time.js and events from the
 // committed assets/data/live-events.json snapshot, so posts can never
