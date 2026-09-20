@@ -1,5 +1,5 @@
 {
- "pulledAt": 1789863043105,
+ "pulledAt": 1789890426443,
  "gameDataVersion": "0.40.5:CHG_XUnFR5uPPz6DgmcU6w",
  "events": [
   {
@@ -13,23 +13,13 @@
    "art": "live/events-stormtrooperconcept.png"
   },
   {
-   "id": "EVENT_OMEGA_BATTLES_07_HOTH",
-   "name": "Hoth Omega Battles",
-   "kind": "omega",
-   "unit": "GALACTICCHALLENGESHOTH",
-   "startMs": 1789714800000,
-   "endMs": 1789801200000,
-   "live": false,
-   "art": "live/events-galactic-challenges-hoth.png"
-  },
-  {
    "id": "EVENT_FLEET_MASTERY_LEVIATHAN",
    "name": "Dark Sovereign",
    "kind": "fleet",
    "unit": "LEVIATHAN",
    "startMs": 1789887600000,
    "endMs": 1789974000000,
-   "live": false,
+   "live": true,
    "art": "live/events-leviathan.png"
   },
   {
