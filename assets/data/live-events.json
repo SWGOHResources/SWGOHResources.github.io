@@ -1,5 +1,5 @@
 {
- "pulledAt": 1789826210765,
+ "pulledAt": 1789863043105,
  "gameDataVersion": "0.40.5:CHG_XUnFR5uPPz6DgmcU6w",
  "events": [
   {
@@ -93,6 +93,16 @@
    "art": "live/events-rebelassult.png"
   },
   {
+   "id": "EVENT_RESOURCE_SMUGGLERS_RUN_2",
+   "name": "Smuggler's Run II",
+   "kind": "smugglers-run",
+   "unit": "SMUGGLERSRUN",
+   "startMs": 1790157600000,
+   "endMs": 1790244000000,
+   "live": false,
+   "art": "live/events-smugglersrun.png"
+  },
+  {
    "id": "EVENT_HOLIDAY_GHOSTS_OF_DATHOMIR",
    "name": "Ghosts of Dathomir",
    "kind": "event",
@@ -121,6 +131,16 @@
    "endMs": 1790578800000,
    "live": false,
    "art": "live/events-galacticbounties.png"
+  },
+  {
+   "id": "EVENT_OMEGA_BATTLES_04_ENDOR",
+   "name": "Endor Omega Battles",
+   "kind": "omega",
+   "unit": "GALACTICCHALLENGESENDOR",
+   "startMs": 1790578800000,
+   "endMs": 1790665200000,
+   "live": false,
+   "art": "live/events-galacticchallenges-endor.png"
   }
  ]
 }
