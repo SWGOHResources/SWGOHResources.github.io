@@ -1,5 +1,5 @@
 {
- "pulledAt": 1789925476197,
+ "pulledAt": 1789937629539,
  "gameDataVersion": "0.40.5:CHG_XUnFR5uPPz6DgmcU6w",
  "events": [
   {
@@ -131,16 +131,6 @@
    "endMs": 1790665200000,
    "live": false,
    "art": "live/events-galacticchallenges-endor.png"
-  },
-  {
-   "id": "SPECIAL_EVENT_COVEN_OF_SHADOWS",
-   "name": "Coven of Shadows",
-   "kind": "event",
-   "unit": "HALLOWEEN2025",
-   "startMs": 1790665200000,
-   "endMs": 1790751600000,
-   "live": false,
-   "art": "live/events-halloween2025.png"
   }
  ]
 }
