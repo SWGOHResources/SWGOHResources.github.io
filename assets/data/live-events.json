@@ -1,5 +1,5 @@
 {
- "pulledAt": 1789949920127,
+ "pulledAt": 1789977672053,
  "gameDataVersion": "0.40.5:CHG_XUnFR5uPPz6DgmcU6w",
  "events": [
   {
@@ -19,7 +19,7 @@
    "unit": "LEVIATHAN",
    "startMs": 1789887600000,
    "endMs": 1789974000000,
-   "live": true,
+   "live": false,
    "art": "live/events-leviathan.png"
   },
   {
@@ -29,7 +29,7 @@
    "unit": "GALACTICCHALLENGESDATHOMIR",
    "startMs": 1789974000000,
    "endMs": 1790060400000,
-   "live": false,
+   "live": true,
    "art": "live/events-galacticchallenges-dathomir.png"
   },
   {
