@@ -1,5 +1,5 @@
 {
- "pulledAt": 1789977672053,
+ "pulledAt": 1790028106419,
  "gameDataVersion": "0.40.5:CHG_XUnFR5uPPz6DgmcU6w",
  "events": [
   {
@@ -103,6 +103,26 @@
    "art": "live/events-nightsisters-halloween.png"
   },
   {
+   "id": "EVENT_TRAINING_DROID_SMUGGLING",
+   "name": "Training Droid Smuggling",
+   "kind": "event",
+   "unit": "DROIDSMUGGLE",
+   "startMs": 1790330400000,
+   "endMs": 1790416800000,
+   "live": false,
+   "art": "live/events-droid-smuggle.png"
+  },
+  {
+   "id": "EVENT_RESOURCE_SMUGGLERS_RUN_3",
+   "name": "Smuggler's Run III",
+   "kind": "smugglers-run",
+   "unit": "SMUGGLERSRUN",
+   "startMs": 1790330400000,
+   "endMs": 1790416800000,
+   "live": false,
+   "art": "live/events-smugglersrun.png"
+  },
+  {
    "id": "EVENT_ASSAULT_SEPARATIST",
    "name": "Ground War Assault Battles",
    "kind": "assault",
@@ -141,6 +161,16 @@
    "endMs": 1790751600000,
    "live": false,
    "art": "live/events-halloween2025.png"
+  },
+  {
+   "id": "EVENT_FLEET_MASTERY_PROFUNDITY",
+   "name": "Stardust Transmission",
+   "kind": "fleet",
+   "unit": "PROFUNDITY",
+   "startMs": 1790751600000,
+   "endMs": 1790838000000,
+   "live": false,
+   "art": "live/events-profundity.png"
   }
  ]
 }
