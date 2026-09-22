@@ -1,5 +1,5 @@
 {
- "pulledAt": 1790028106419,
+ "pulledAt": 1790038405142,
  "gameDataVersion": "0.40.5:CHG_XUnFR5uPPz6DgmcU6w",
  "events": [
   {
@@ -151,6 +151,15 @@
    "endMs": 1790665200000,
    "live": false,
    "art": "live/events-galacticchallenges-endor.png"
+  },
+  {
+   "id": "CONQUEST_VOL25",
+   "name": "Conquest",
+   "kind": "conquest",
+   "unit": "CONQUESTGENERIC",
+   "startMs": 1790618400000,
+   "endMs": 1791828000000,
+   "live": false
   },
   {
    "id": "SPECIAL_EVENT_COVEN_OF_SHADOWS",
