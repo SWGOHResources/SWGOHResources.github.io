@@ -1,5 +1,5 @@
 {
- "pulledAt": 1790089236553,
+ "pulledAt": 1790112259973,
  "gameDataVersion": "0.40.5:CHG_XUnFR5uPPz6DgmcU6w",
  "events": [
   {
@@ -9,7 +9,7 @@
    "unit": "STORMTROOPERCONCEPT",
    "startMs": 1789495200000,
    "endMs": 1790100000000,
-   "live": true,
+   "live": false,
    "art": "live/events-stormtrooperconcept.png"
   },
   {
@@ -49,7 +49,7 @@
    "unit": "DARTHJARJAR",
    "startMs": 1790100000000,
    "endMs": 1792519200000,
-   "live": false,
+   "live": true,
    "art": "live/events-darthjarjar.png"
   },
   {
@@ -59,7 +59,7 @@
    "unit": "JAXXON",
    "startMs": 1790100000000,
    "endMs": 1790704800000,
-   "live": false,
+   "live": true,
    "art": "live/events-jaxxon.png"
   },
   {
@@ -143,6 +143,15 @@
    "art": "live/events-galacticchallenges-endor.png"
   },
   {
+   "id": "CONQUEST_VOL25",
+   "name": "Conquest",
+   "kind": "conquest",
+   "unit": "CONQUESTGENERIC",
+   "startMs": 1790618400000,
+   "endMs": 1791828000000,
+   "live": false
+  },
+  {
    "id": "SPECIAL_EVENT_COVEN_OF_SHADOWS",
    "name": "Coven of Shadows",
    "kind": "event",
@@ -161,6 +170,16 @@
    "endMs": 1790838000000,
    "live": false,
    "art": "live/events-profundity.png"
+  },
+  {
+   "id": "EVENT_MARQUEE_THERONIN",
+   "name": "The Wanderer's Blade",
+   "kind": "marquee",
+   "unit": "THERONIN",
+   "startMs": 1791309600000,
+   "endMs": 1791914400000,
+   "live": false,
+   "art": "live/events-theronin.png"
   }
  ]
 }
