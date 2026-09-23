@@ -1,5 +1,5 @@
 {
- "pulledAt": 1790112259973,
+ "pulledAt": 1790149745596,
  "gameDataVersion": "0.40.5:CHG_XUnFR5uPPz6DgmcU6w",
  "events": [
   {
@@ -13,23 +13,13 @@
    "art": "live/events-stormtrooperconcept.png"
   },
   {
-   "id": "EVENT_OMEGA_BATTLES_03_DATHOMIR",
-   "name": "Dathomir Omega Battles",
-   "kind": "omega",
-   "unit": "GALACTICCHALLENGESDATHOMIR",
-   "startMs": 1789974000000,
-   "endMs": 1790060400000,
-   "live": false,
-   "art": "live/events-galacticchallenges-dathomir.png"
-  },
-  {
    "id": "EVENT_SPECIAL_DEFENSE_OF_DATHOMIR",
    "name": "Defense of Dathomir",
    "kind": "event",
    "unit": "DATHOMIRBATTLE",
    "startMs": 1790060400000,
    "endMs": 1790146800000,
-   "live": true,
+   "live": false,
    "art": "live/events-dathomir-battle.png"
   },
   {
@@ -69,7 +59,7 @@
    "unit": "REBELASSULT",
    "startMs": 1790146800000,
    "endMs": 1790233200000,
-   "live": false,
+   "live": true,
    "art": "live/events-rebelassult.png"
   },
   {
