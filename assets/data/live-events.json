@@ -1,5 +1,5 @@
 {
- "pulledAt": 1790149745596,
+ "pulledAt": 1790175893582,
  "gameDataVersion": "0.40.5:CHG_XUnFR5uPPz6DgmcU6w",
  "events": [
   {
@@ -29,7 +29,7 @@
    "unit": "CONTRABANDCARGO",
    "startMs": 1790071200000,
    "endMs": 1790157600000,
-   "live": true,
+   "live": false,
    "art": "live/events-contrabandcargo.png"
   },
   {
@@ -69,7 +69,7 @@
    "unit": "SMUGGLERSRUN",
    "startMs": 1790157600000,
    "endMs": 1790244000000,
-   "live": false,
+   "live": true,
    "art": "live/events-smugglersrun.png"
   },
   {
