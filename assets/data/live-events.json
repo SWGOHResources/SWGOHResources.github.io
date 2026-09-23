@@ -1,17 +1,7 @@
 {
- "pulledAt": 1790175893582,
- "gameDataVersion": "0.40.5:CHG_XUnFR5uPPz6DgmcU6w",
+ "pulledAt": 1790199247084,
+ "gameDataVersion": "0.40.5:lVXov90TSkStiap2_qnJUA",
  "events": [
-  {
-   "id": "EC22_ImperialTrooperRogueOneScarif_1785717445",
-   "name": "Stormtrooper (Concept) Era Challenge",
-   "kind": "era-challenge",
-   "unit": "STORMTROOPERCONCEPT",
-   "startMs": 1789495200000,
-   "endMs": 1790100000000,
-   "live": false,
-   "art": "live/events-stormtrooperconcept.png"
-  },
   {
    "id": "EVENT_SPECIAL_DEFENSE_OF_DATHOMIR",
    "name": "Defense of Dathomir",
@@ -152,6 +142,16 @@
    "art": "live/events-halloween2025.png"
   },
   {
+   "id": "EC23_ScoundrelEmpireCoruscant_1786272482",
+   "name": "Jaxxon Era Challenge",
+   "kind": "era-challenge",
+   "unit": "JAXXON",
+   "startMs": 1790704800000,
+   "endMs": 1791309600000,
+   "live": false,
+   "art": "live/events-jaxxon.png"
+  },
+  {
    "id": "EVENT_FLEET_MASTERY_PROFUNDITY",
    "name": "Stardust Transmission",
    "kind": "fleet",
@@ -160,6 +160,16 @@
    "endMs": 1790838000000,
    "live": false,
    "art": "live/events-profundity.png"
+  },
+  {
+   "id": "EVENT_OMEGA_BATTLES_05_JAKKU",
+   "name": "Jakku Omega Battles",
+   "kind": "omega",
+   "unit": "GALACTICCHALLENGESJAKKU",
+   "startMs": 1790924400000,
+   "endMs": 1791010800000,
+   "live": false,
+   "art": "live/events-galactic-challenges-jakku.png"
   },
   {
    "id": "EVENT_MARQUEE_THERONIN",
