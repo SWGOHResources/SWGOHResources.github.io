@@ -1,17 +1,7 @@
 {
- "pulledAt": 1790199247084,
+ "pulledAt": 1790235558611,
  "gameDataVersion": "0.40.5:lVXov90TSkStiap2_qnJUA",
  "events": [
-  {
-   "id": "EVENT_SPECIAL_DEFENSE_OF_DATHOMIR",
-   "name": "Defense of Dathomir",
-   "kind": "event",
-   "unit": "DATHOMIRBATTLE",
-   "startMs": 1790060400000,
-   "endMs": 1790146800000,
-   "live": false,
-   "art": "live/events-dathomir-battle.png"
-  },
   {
    "id": "EVENT_RESOURCE_CONTRABAND_CARGO",
    "name": "Contraband Cargo",
@@ -49,7 +39,7 @@
    "unit": "REBELASSULT",
    "startMs": 1790146800000,
    "endMs": 1790233200000,
-   "live": true,
+   "live": false,
    "art": "live/events-rebelassult.png"
   },
   {
@@ -69,7 +59,7 @@
    "unit": "NIGHTSISTERSHALLOWEEN",
    "startMs": 1790233200000,
    "endMs": 1790319600000,
-   "live": false,
+   "live": true,
    "art": "live/events-nightsisters-halloween.png"
   },
   {
