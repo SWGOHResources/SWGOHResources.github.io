@@ -1,17 +1,7 @@
 {
- "pulledAt": 1790235558611,
+ "pulledAt": 1790262746196,
  "gameDataVersion": "0.40.5:lVXov90TSkStiap2_qnJUA",
  "events": [
-  {
-   "id": "EVENT_RESOURCE_CONTRABAND_CARGO",
-   "name": "Contraband Cargo",
-   "kind": "event",
-   "unit": "CONTRABANDCARGO",
-   "startMs": 1790071200000,
-   "endMs": 1790157600000,
-   "live": false,
-   "art": "live/events-contrabandcargo.png"
-  },
   {
    "id": "progressionevent_MEESALESS_MASSACRE",
    "name": "Terrible Tings Legendary Event",
@@ -49,7 +39,7 @@
    "unit": "SMUGGLERSRUN",
    "startMs": 1790157600000,
    "endMs": 1790244000000,
-   "live": true,
+   "live": false,
    "art": "live/events-smugglersrun.png"
   },
   {
