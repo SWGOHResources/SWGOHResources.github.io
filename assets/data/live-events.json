@@ -1,5 +1,5 @@
 {
- "pulledAt": 1790262746196,
+ "pulledAt": 1790285710122,
  "gameDataVersion": "0.40.5:lVXov90TSkStiap2_qnJUA",
  "events": [
   {
@@ -101,6 +101,16 @@
    "endMs": 1790665200000,
    "live": false,
    "art": "live/events-galacticchallenges-endor.png"
+  },
+  {
+   "id": "EVENT_RESOURCE_SMUGGLERS_RUN",
+   "name": "Smuggler's Run",
+   "kind": "smugglers-run",
+   "unit": "SMUGGLERSRUN",
+   "startMs": 1790589600000,
+   "endMs": 1790676000000,
+   "live": false,
+   "art": "live/events-smugglersrun.png"
   },
   {
    "id": "CONQUEST_VOL25",
