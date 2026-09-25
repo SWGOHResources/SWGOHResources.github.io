@@ -1,5 +1,5 @@
 {
- "pulledAt": 1790322929184,
+ "pulledAt": 1790349554662,
  "gameDataVersion": "0.40.5:lVXov90TSkStiap2_qnJUA",
  "events": [
   {
@@ -23,16 +23,6 @@
    "art": "live/events-jaxxon.png"
   },
   {
-   "id": "EVENT_RESOURCE_SMUGGLERS_RUN_2",
-   "name": "Smuggler's Run II",
-   "kind": "smugglers-run",
-   "unit": "SMUGGLERSRUN",
-   "startMs": 1790157600000,
-   "endMs": 1790244000000,
-   "live": false,
-   "art": "live/events-smugglersrun.png"
-  },
-  {
    "id": "EVENT_HOLIDAY_GHOSTS_OF_DATHOMIR",
    "name": "Ghosts of Dathomir",
    "kind": "event",
@@ -49,7 +39,7 @@
    "unit": "DROIDSMUGGLE",
    "startMs": 1790330400000,
    "endMs": 1790416800000,
-   "live": false,
+   "live": true,
    "art": "live/events-droid-smuggle.png"
   },
   {
@@ -59,7 +49,7 @@
    "unit": "SMUGGLERSRUN",
    "startMs": 1790330400000,
    "endMs": 1790416800000,
-   "live": false,
+   "live": true,
    "art": "live/events-smugglersrun.png"
   },
   {
