@@ -1,5 +1,5 @@
 {
- "pulledAt": 1790285710122,
+ "pulledAt": 1790322929184,
  "gameDataVersion": "0.40.5:lVXov90TSkStiap2_qnJUA",
  "events": [
   {
@@ -23,16 +23,6 @@
    "art": "live/events-jaxxon.png"
   },
   {
-   "id": "EVENT_ASSAULT_REBEL",
-   "name": "Rebel Roundup Assault Battle",
-   "kind": "assault",
-   "unit": "REBELASSULT",
-   "startMs": 1790146800000,
-   "endMs": 1790233200000,
-   "live": false,
-   "art": "live/events-rebelassult.png"
-  },
-  {
    "id": "EVENT_RESOURCE_SMUGGLERS_RUN_2",
    "name": "Smuggler's Run II",
    "kind": "smugglers-run",
@@ -49,7 +39,7 @@
    "unit": "NIGHTSISTERSHALLOWEEN",
    "startMs": 1790233200000,
    "endMs": 1790319600000,
-   "live": true,
+   "live": false,
    "art": "live/events-nightsisters-halloween.png"
   },
   {
