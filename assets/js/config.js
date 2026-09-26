@@ -11,12 +11,12 @@ const ERA_START_DATE = '2026-07-28'; // Day 1 baseline (Tuesday, July 28, 2026 -
    change them here — every countdown, cycle and label follows. */
 const STD_CHANGEOVER_HOUR_UTC = 18; // era-day / TB / conquest changeover
 const GAC_CHANGEOVER_HOUR_UTC = 21; // GAC resets 3h after the daily changeover
-/* Explorer default near changeover: when the next 18:00 UTC changeover
-   is this many hours away (or less), the schedule opens on the incoming
-   ("active") day instead of the current in-game day — its events are
-   the ones about to start. The Today button still jumps to the
+/* Explorer default at load: the latest day (never before the in-game
+   day) with an event that has started. After the morning starts
+   (07:00 fleet, 10:00 smuggling) the next calendar day already has
+   something live, so the schedule opens there even though its 18:00
+   changeover is hours away. The Today button still jumps to the
    in-game day. */
-const ACTIVE_DAY_PREVIEW_HOURS = 3;
 
 /* Real daily start times (UTC) per rotation family. Everything used to
    assume the 18:00 TW/TB changeover — live Comlink data proves

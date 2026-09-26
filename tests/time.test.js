@@ -452,18 +452,36 @@ test('day counts own their rounding', () => {
   assert.equal(engine.subDayCount(Date.now(), Date.now() + 3 * day, 'In 3 days'), 'In 3 days');
 });
 
-test('explorer opens on the incoming day shortly before changeover', () => {
-  const engine = loadTimeEngine();
-  const dayStart = Date.parse('2026-09-13T00:00:00Z');
-  const changeover = dayStart + dayMs + 18 * 3600000; // next 18:00 UTC
-  assert.equal(engine.activeDayPreviewHours(), 3);
-  // 2h out previews the incoming day; 5h out stays on the in-game day.
-  assert.equal(engine.defaultExplorerOffset(changeover - 2 * 3600000, dayStart), 1);
-  assert.equal(engine.defaultExplorerOffset(changeover - 5 * 3600000, dayStart), 0);
-  // Exactly at/past the changeover there is nothing to preview.
-  assert.equal(engine.defaultExplorerOffset(changeover, dayStart), 0);
-  assert.equal(engine.defaultExplorerOffset(changeover + 1000, dayStart), 0);
-  assert.equal(engine.defaultExplorerOffset(null, dayStart), 0);
+test('explorer opens on the latest day with an event that started', () => {
+  const engine = loadTimeEngine({
+    commonDays: {
+      // Era day 38 (Thu Sep 3) and 39 (Fri Sep 4); GAC off-week there.
+      10: [{ icon: 'tw_signup', label: 'Signup Starts' }], // 17:00 UTC
+      11: [{ icon: 'smugglersrun', label: "Smuggler's Run II" }], // 10:00 UTC
+    },
+  });
+  // At Sep 4 10:30 UTC the in-game day is era day 38 (Sep 3).
+  const st = engine.getGameStatus(Date.parse('2026-09-04T10:30:00Z'));
+  assert.equal(st.eraDay, 38);
+  // 09:00: Sep 4's 10:00 smuggling run hasn't started -> in-game day.
+  assert.equal(engine.defaultExplorerOffset(Date.parse('2026-09-04T09:00:00Z'), st.currentDayStartMs), 0);
+  // 10:30: it has -> next day.
+  assert.equal(engine.defaultExplorerOffset(Date.parse('2026-09-04T10:30:00Z'), st.currentDayStartMs), 1);
+  // A live event starting that morning pulls the default forward too.
+  const live = [{ startMs: Date.parse('2026-09-04T08:00:00Z'), endMs: Date.parse('2026-09-05T08:00:00Z') }];
+  assert.equal(engine.defaultExplorerOffset(Date.parse('2026-09-04T09:00:00Z'), st.currentDayStartMs, live), 1);
+  // Unusable clocks degrade to the in-game day.
+  assert.equal(engine.defaultExplorerOffset(null, st.currentDayStartMs), 0);
+  assert.equal(engine.defaultExplorerOffset(Date.parse('2026-09-04T10:30:00Z'), null), 0);
+});
+
+test('explorer default never falls before the in-game day', () => {
+  const engine = loadTimeEngine({ commonDays: {} });
+  const st = engine.getGameStatus(Date.parse('2026-09-03T10:00:00Z'));
+  // The in-game day (Sep 2) has no rotation events and nothing live:
+  // stays put instead of reaching into the past.
+  assert.equal(engine.defaultExplorerOffset(st.nowMs, st.currentDayStartMs), 0);
+  assert.equal(engine.defaultExplorerOffset(st.nowMs, st.currentDayStartMs, []), 0);
 });
 
 test('event-start pills count to each event start', () => {

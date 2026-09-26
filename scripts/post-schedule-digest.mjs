@@ -5,7 +5,8 @@
 // event starting/ending that game day, each carrying the event's own
 // artwork as the thumbnail (served from this repo's Pages site).
 //
-// Runs daily in the UK morning (.github/workflows/digest.yml)
+// Runs daily just after the 18:00 UTC game-day changeover
+// (.github/workflows/digest.yml)
 // plus on demand via workflow_dispatch. Needs no Comlink: rotation state
 // comes from the site's own config.js + time.js and events from the
 // committed assets/data/live-events.json snapshot, so posts can never
@@ -127,8 +128,22 @@ async function main() {
   const run = loadEngine();
   const nowMs = Date.now();
   const st = run(`getGameStatus(${nowMs})`);
-  const dayStart = st.currentDayStartMs;
+
+  const snap = JSON.parse(await fs.readFile(LIVE_PATH, 'utf8'));
+  const liveStarts = (snap.events ?? []).map(e => ({ startMs: e.startMs, endMs: e.endMs }));
+  // The posted day is the latest day (never before the in-game day)
+  // with an event that has started — the same default the homepage
+  // explorer opens on. Just after the 18:00 UTC changeover that is the
+  // new game day; its morning starts are still ahead, so the offset is
+  // 0 and the post covers the fresh day.
+  const postedOffset = run(`defaultExplorerOffset(${nowMs}, ${st.currentDayStartMs}, ${JSON.stringify(liveStarts)})`);
+  const off = Number.isFinite(postedOffset) ? Math.max(0, postedOffset) : 0;
+  const dayStart = st.currentDayStartMs + (off * DAY_MS);
   const dayEnd = dayStart + DAY_MS;
+  const eraLen = run('eraLengthDays()');
+  const postedEraDay = ((st.eraDay - 1 + off) % eraLen + eraLen) % eraLen + 1;
+  const postedEp = Math.floor((postedEraDay - 1) / run('episodeLengthDays()')) + 1;
+  const postedDayInEp = ((postedEraDay - 1) % run('episodeLengthDays()')) + 1;
 
   let state = null;
   try {
@@ -136,17 +151,17 @@ async function main() {
   } catch {
     state = null;
   }
-  const dayKey = `${st.eraDay}/${st.currentEraStartMs}`;
+  const dayKey = `${postedEraDay}/${st.currentEraStartMs}`;
   if (state?.lastPostedDay === dayKey) {
     console.log(`DIGEST=none (already posted for ${dayKey})`);
     return;
   }
 
-  const eraLength = run('eraLengthDays()');
+  const eraLength = eraLen;
   const eraName = run(`typeof ERA_NAME !== 'undefined' ? ERA_NAME : 'Current Era'`);
   // Rollover day, matching the Important Dates "End of Current Era" card.
   const eraEndMs = st.currentEraStartMs + eraLength * DAY_MS;
-  const era = `${eraName} — Day ${st.eraDay}/${eraLength} · ends ${run(`fmtDayMonthUTC(${eraEndMs})`)}`;
+  const era = `${eraName} — Day ${postedEraDay}/${eraLength} · ends ${run(`fmtDayMonthUTC(${eraEndMs})`)}`;
 
   const gac = run(`getGacStatus(getGameStatus(${nowMs}))`);
   const gacLine = `${gac.main} — ${gac.sub}`;
@@ -163,11 +178,10 @@ async function main() {
     tw = phase.complete ? 'Complete' : `TW ${labels[phase.phaseIndex] ?? ''} phase`.trim();
   }
 
-  const cq = run(`conquestInfoForDay(${st.episode}, ${st.dayInEp})`);
+  const cq = run(`conquestInfoForDay(${postedEp}, ${postedDayInEp})`);
   const conquest = cq ? `C${cq.cNum} — Day ${cq.day} of ${cq.total}${cq.finalDay ? ' (final day)' : ''} — ${cq.note}` : null;
   const dateLabel = run(`fmtDateLongUTC(${dayStart})`);
 
-  const snap = JSON.parse(await fs.readFile(LIVE_PATH, 'utf8'));
   // Starts only: ending-soon events are yesterday's news, not today's.
   const todays = [];
   for (const e of snap.events ?? []) {
@@ -177,7 +191,7 @@ async function main() {
   const listed = todays.slice(0, MAX_EVENT_POSTS);
 
   const status = formatStatusPayload({
-    eraDay: st.eraDay, eraLength, dateLabel, era,
+    eraDay: postedEraDay, eraLength, dateLabel, era,
     gac: gacLine, tb, tw, conquest, eventCount: todays.length,
   });
   const posts = [status, ...listed.map(formatEventPayload)];

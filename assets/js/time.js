@@ -924,25 +924,65 @@ function relativeDayLabel(diffDays, nowMs, dayStartMs){
   return `${Math.abs(diffDays)} days ago`;
 }
 
-/* Hours before the changeover when the explorer opens on the incoming
-   day. Configurable via ACTIVE_DAY_PREVIEW_HOURS; 0 disables the
-   preview (always open on the in-game day). */
-function activeDayPreviewHours(){
-  return (typeof ACTIVE_DAY_PREVIEW_HOURS !== 'undefined'
-    && Number.isFinite(ACTIVE_DAY_PREVIEW_HOURS)
-    && ACTIVE_DAY_PREVIEW_HOURS >= 0)
-    ? ACTIVE_DAY_PREVIEW_HOURS : 3;
+/* A day counts as "started" when any of its events has started: a
+   rotation card whose start instant (per-family hour, GAC 21:00, TB
+   transition moments) is past, or a live snapshot event starting
+   inside that calendar day whose start is past. */
+function dayHasStartedEvent(dateMs, episode, dayInEp, nowMs, liveEvents){
+  if(!Number.isFinite(dateMs) || !Number.isFinite(nowMs)) return false;
+  try {
+    const items = getEventsForDay(dateMs, episode, dayInEp);
+    for(const it of items){
+      if(eventStartMs(it, dateMs) <= nowMs) return true;
+    }
+  } catch(e){}
+  const dayEndMs = dateMs + 86400000;
+  for(const e of liveEvents ?? []){
+    const s = Number(e && e.startMs);
+    if(!Number.isFinite(s)) continue;
+    if(s >= dateMs && s < dayEndMs && s <= nowMs) return true;
+  }
+  return false;
 }
 
-/* Default explorer offset at load: the incoming ("active") day when its
-   changeover is within the preview window, else the current in-game
-   day (0). A shared day link (#day-N) always wins over this. */
-function defaultExplorerOffset(nowMs, dayStartMs){
+/* Latest offset (never before the in-game day) whose day has a started
+   event. In practice this is 0 or 1: after the morning starts (07:00
+   fleet, 10:00 smuggling) the next calendar day already has something
+   live, so the explorer opens there even though its 18:00 changeover
+   is hours away; before those starts it stays on the in-game day.
+   liveEvents is the live-events.json event list (or undefined for
+   rotation only). */
+function latestStartedDayOffset(nowMs, dayStartMs, liveEvents){
   if(!Number.isFinite(nowMs) || !Number.isFinite(dayStartMs)) return 0;
-  const nextStartMs = dayStartMs + 86400000 + (stdHour() * 3600000);
-  const msLeft = nextStartMs - nowMs;
-  if(msLeft > 0 && msLeft <= activeDayPreviewHours() * 3600000) return 1;
-  return 0;
+  let eraStartMs = null;
+  try {
+    const parsed = parseDateOnlyMs(typeof ERA_START_DATE !== 'undefined' ? ERA_START_DATE : null);
+    eraStartMs = Number.isFinite(parsed) ? parsed : null;
+  } catch(e){ eraStartMs = null; }
+  if(eraStartMs == null) return 0;
+  const eraLen = eraLengthDays();
+  const epLen = episodeLengthDays();
+  const rawDayIndex = Math.round((dayStartMs - eraStartMs) / 86400000) + 1;
+  if(!Number.isFinite(rawDayIndex) || rawDayIndex < 1) return 0;
+  const eraDay = posMod(rawDayIndex - 1, eraLen) + 1;
+  const maxOffset = eraLen - eraDay;
+  let best = 0;
+  for(let off = 0; off <= maxOffset; off++){
+    const dMs = dayStartMs + (off * 86400000);
+    const dIdx = posMod(eraDay - 1 + off, eraLen) + 1;
+    const ep = Math.floor((dIdx - 1) / epLen) + 1;
+    const dep = posMod(dIdx - 1, epLen) + 1;
+    if(dayHasStartedEvent(dMs, ep, dep, nowMs, liveEvents)) best = off;
+  }
+  return best;
+}
+
+/* Default explorer offset at load: the latest day (never before the
+   in-game day) with an event that has started. A shared day link
+   (#day-N) always wins over this. liveEvents is optional (rotation
+   only when omitted). */
+function defaultExplorerOffset(nowMs, dayStartMs, liveEvents){
+  return latestStartedDayOffset(nowMs, dayStartMs, liveEvents);
 }
 
 /* Card pill for one event's own start instant (pass eventStartMs for
@@ -1483,9 +1523,6 @@ function validateScheduleConfig(){
   if(typeof GAC_CHANGEOVER_HOUR_UTC !== 'undefined'
     && (gacHour() === 21 && GAC_CHANGEOVER_HOUR_UTC !== 21))
     issues.push('GAC_CHANGEOVER_HOUR_UTC must be an integer from 0 to 23.');
-  if(typeof ACTIVE_DAY_PREVIEW_HOURS !== 'undefined'
-    && !(Number.isFinite(ACTIVE_DAY_PREVIEW_HOURS) && ACTIVE_DAY_PREVIEW_HOURS >= 0))
-    issues.push('ACTIVE_DAY_PREVIEW_HOURS must be a non-negative number.');
   if(typeof TW_TB_HOUR_UTC !== 'undefined'
     && (!Number.isInteger(TW_TB_HOUR_UTC) || TW_TB_HOUR_UTC < 0 || TW_TB_HOUR_UTC > 23))
     issues.push('TW_TB_HOUR_UTC must be an integer from 0 to 23.');

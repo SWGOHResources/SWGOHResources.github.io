@@ -319,25 +319,48 @@ if(typeof validateScheduleConfig === 'function'){
 }
 
 applyDayHash();
-// No shared day link: open on the "active" day — the incoming day when
-// its changeover is hours away, else the current in-game day. The
-// Today button still jumps back to the in-game day.
-try {
+// No shared day link: open on the latest day (never before the
+// in-game day) with an event that has started. The Today button still
+// jumps back to the in-game day.
+function applyDefaultExplorerOffset(liveEvents){
   if(typeof dayFromHash === 'function'
-    && dayFromHash(typeof location !== 'undefined' ? location.hash : '') == null
-    && typeof defaultExplorerOffset === 'function'
-    && typeof getGameStatus === 'function'
-    && typeof explorerBoundsFor === 'function'){
-    const st0 = getGameStatus();
-    if(!st0.preEra){
-      const bounds0 = explorerBoundsFor(st0);
-      const defOff = defaultExplorerOffset(st0.nowMs, st0.currentDayStartMs);
-      explorerOffset = Math.min(bounds0.maxOffset, Math.max(bounds0.minOffset, defOff));
-    }
-  }
-} catch(e){}
+    && dayFromHash(typeof location !== 'undefined' ? location.hash : '') != null)
+    return false;
+  if(typeof defaultExplorerOffset !== 'function'
+    || typeof getGameStatus !== 'function'
+    || typeof explorerBoundsFor !== 'function')
+    return false;
+  const st = getGameStatus();
+  if(st.preEra) return false;
+  const bounds = explorerBoundsFor(st);
+  const defOff = defaultExplorerOffset(st.nowMs, st.currentDayStartMs, liveEvents);
+  const clamped = Math.min(bounds.maxOffset, Math.max(bounds.minOffset, defOff));
+  if(clamped === explorerOffset) return false;
+  explorerOffset = clamped;
+  return true;
+}
+try { applyDefaultExplorerOffset(); } catch(e){}
+const initExplorerOffset = (typeof explorerOffset === 'number') ? explorerOffset : 0;
 renderAll();
-if(typeof loadLiveEvents === 'function') loadLiveEvents();
+if(typeof loadLiveEvents === 'function'){
+  try {
+    const pending = loadLiveEvents();
+    // The live snapshot lands after first paint: re-apply the default
+    // with live starts included, unless the user already navigated
+    // (or opened a shared day link) in the meantime.
+    if(pending && typeof pending.then === 'function') pending.then(() => {
+      try {
+        if(typeof dayFromHash === 'function'
+          && dayFromHash(typeof location !== 'undefined' ? location.hash : '') != null)
+          return;
+        if(explorerOffset !== initExplorerOffset) return;
+        const live = (typeof liveEventsCache !== 'undefined' && liveEventsCache
+          && Array.isArray(liveEventsCache.events)) ? liveEventsCache.events : undefined;
+        if(applyDefaultExplorerOffset(live)) renderAll();
+      } catch(e){}
+    });
+  } catch(e){ /* first paint already rendered without live data */ }
+}
 function schedulePreload(){
   if(typeof preloadCardAssets !== 'function') return;
   try {
