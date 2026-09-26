@@ -1,5 +1,5 @@
 {
- "pulledAt": 1790349554662,
+ "pulledAt": 1790408912910,
  "gameDataVersion": "0.40.5:lVXov90TSkStiap2_qnJUA",
  "events": [
   {
@@ -21,16 +21,6 @@
    "endMs": 1790704800000,
    "live": true,
    "art": "live/events-jaxxon.png"
-  },
-  {
-   "id": "EVENT_HOLIDAY_GHOSTS_OF_DATHOMIR",
-   "name": "Ghosts of Dathomir",
-   "kind": "event",
-   "unit": "NIGHTSISTERSHALLOWEEN",
-   "startMs": 1790233200000,
-   "endMs": 1790319600000,
-   "live": false,
-   "art": "live/events-nightsisters-halloween.png"
   },
   {
    "id": "EVENT_TRAINING_DROID_SMUGGLING",
@@ -59,7 +49,7 @@
    "unit": "GROUNDWAR",
    "startMs": 1790406000000,
    "endMs": 1790492400000,
-   "live": false,
+   "live": true,
    "art": "live/events-groundwar.png"
   },
   {
