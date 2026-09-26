@@ -125,6 +125,17 @@ document.getElementById('openFullScheduleBtnMobile')?.addEventListener('click', 
 document.getElementById('footerFullScheduleBtn')?.addEventListener('click', openScheduleModal);
 document.getElementById('closeFullScheduleBtn')?.addEventListener('click', () => closeModal(scheduleModal));
 
+// Full-schedule episode filter + Today live here (not inline onclick)
+// so every control in the modal is hooked up in one place.
+document.querySelectorAll('.sf-pill').forEach(pill => {
+  pill.addEventListener('click', () => {
+    if(typeof setScheduleFilter === 'function') setScheduleFilter(Number(pill.dataset.ep) || 0);
+  });
+});
+document.getElementById('scheduleTodayBtn')?.addEventListener('click', () => {
+  if(typeof scrollScheduleToToday === 'function') scrollScheduleToToday();
+});
+
 document.getElementById('openAboutBtnHeader')?.addEventListener('click', () => openModal(aboutModal));
 document.getElementById('openAboutBtnMobile')?.addEventListener('click', () => openModal(aboutModal));
 document.getElementById('closeAboutBtn')?.addEventListener('click', () => closeModal(aboutModal));

@@ -68,8 +68,8 @@
     </nav>
     <div class="topbar-actions" id="topbarActions">
       <select class="tz-select" id="tzSelect" aria-label="Display timezone" title="Changeovers happen at the same moment worldwide (18:00 UTC) — this only changes how times are shown"></select>
-      <button class="gear-btn" id="openAboutBtnHeader">Report Issue</button>
-      <button class="gear-btn" id="openFullScheduleBtn">Full Schedule</button>
+      <button type="button" class="gear-btn" id="openAboutBtnHeader">Report Issue</button>
+      <button type="button" class="gear-btn" id="openFullScheduleBtn">Full Schedule</button>
     </div>
     <button class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false" aria-controls="mobilePanel"><span></span><span></span><span></span></button>
   </div>
@@ -77,8 +77,8 @@
     <a class="mp-link active" href="/">Home</a>
     <div class="mp-divider"></div>
     <select class="tz-select mp-btn" id="tzSelectMobile" aria-label="Display timezone" title="Changeovers happen at the same moment worldwide (18:00 UTC) — this only changes how times are shown"></select>
-    <button class="gear-btn mp-btn" id="openAboutBtnMobile">Report Issue</button>
-    <button class="gear-btn mp-btn" id="openFullScheduleBtnMobile">Full Schedule</button>
+    <button type="button" class="gear-btn mp-btn" id="openAboutBtnMobile">Report Issue</button>
+    <button type="button" class="gear-btn mp-btn" id="openFullScheduleBtnMobile">Full Schedule</button>
   </div>
 </header>
 
@@ -226,11 +226,11 @@
       <button class="modal-close-x" id="closeFullScheduleBtn" aria-label="Close full era schedule"><span></span><span></span></button>
     </div>
     <div class="sched-filters" role="group" aria-label="Filter by episode">
-      <button type="button" class="sf-pill active" data-ep="0" aria-pressed="true" onclick="setScheduleFilter(0)">All</button>
-      <button type="button" class="sf-pill" data-ep="1" aria-pressed="false" onclick="setScheduleFilter(1)">Ep 1</button>
-      <button type="button" class="sf-pill" data-ep="2" aria-pressed="false" onclick="setScheduleFilter(2)">Ep 2</button>
-      <button type="button" class="sf-pill" data-ep="3" aria-pressed="false" onclick="setScheduleFilter(3)">Ep 3</button>
-      <button type="button" class="sf-today" onclick="scrollScheduleToToday()">Today</button>
+      <button type="button" class="sf-pill active" data-ep="0" aria-pressed="true">All</button>
+      <button type="button" class="sf-pill" data-ep="1" aria-pressed="false">Ep 1</button>
+      <button type="button" class="sf-pill" data-ep="2" aria-pressed="false">Ep 2</button>
+      <button type="button" class="sf-pill" data-ep="3" aria-pressed="false">Ep 3</button>
+      <button type="button" class="sf-today" id="scheduleTodayBtn">Today</button>
     </div>
     <div class="full-schedule-wrap" tabindex="0" role="region" aria-label="Full era schedule timeline">
       <div class="timeline" id="fullSchedule"></div>
@@ -268,9 +268,9 @@
 <!-- ASSET_VERSION: bump ?v= on the CSS/JS links below on every deploy
      so browsers fetch fresh copies instead of cached ones. -->
 <script src="firebase-config.js?v=2"></script>
-<script defer src="assets/js/config.js?v=37"></script>
-<script defer src="assets/js/time.js?v=49"></script>
-<script defer src="assets/js/render.js?v=72"></script>
-<script defer src="assets/js/app.js?v=28"></script>
+<script defer src="assets/js/config.js?v=38"></script>
+<script defer src="assets/js/time.js?v=50"></script>
+<script defer src="assets/js/render.js?v=74"></script>
+<script defer src="assets/js/app.js?v=29"></script>
 </body>
 </html>

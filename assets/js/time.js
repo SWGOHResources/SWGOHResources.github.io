@@ -969,6 +969,11 @@ function latestStartedDayOffset(nowMs, dayStartMs, liveEvents){
   let best = 0;
   for(let off = 0; off <= maxOffset; off++){
     const dMs = dayStartMs + (off * 86400000);
+    // Every start instant falls on its own calendar day at/after
+    // midnight, and live starts must already have happened — so a day
+    // fully in the future can hold nothing started, nor can any later
+    // day. Stops the scan after ~2 days instead of walking all 84.
+    if(dMs > nowMs) break;
     const dIdx = posMod(eraDay - 1 + off, eraLen) + 1;
     const ep = Math.floor((dIdx - 1) / epLen) + 1;
     const dep = posMod(dIdx - 1, epLen) + 1;

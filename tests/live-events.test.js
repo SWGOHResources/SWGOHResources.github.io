@@ -175,7 +175,8 @@ test('committed live-events.json is fresh and well-formed', () => {
       );
     }
   }
-  // Pulled recently enough to be useful (stale banner appears after 48h).
+  // Pulled recently enough to be useful (the homepage footer flags
+  // live data older than 48h as stale).
   assert.ok(Date.now() - data.pulledAt < 48 * H, 'live-events.json is stale, run npm run events:pull');
 });
 
@@ -550,7 +551,7 @@ test('cards show start instant plus whole-hour duration', () => {
   assert.match(live, /xw-dur">2 hrs</);
   const moment = run(`explorerCardHTML({ icon: 'client_update', label: 'Client Update' }, ${NOW}, 'Now', null, ${NOW})`);
   assert.match(moment, /xw-start"/);
-  assert.match(moment, /xw-dur">N\/A</);
+  assert.doesNotMatch(moment, /xw-dur|N\/A/);
 });
 test('live conquest surfaces wear the banner, never promo art', () => {
   const { ctx } = loadRenderEngine();

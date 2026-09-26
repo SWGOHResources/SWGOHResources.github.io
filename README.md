@@ -154,10 +154,10 @@ Scripts load in order at the end of `<body>` as deferred classic scripts
 (ordered, non-blocking) so `onclick="…"` handlers keep working:
 
 ```html
-<script defer src="assets/js/config.js?v=27"></script>
-<script defer src="assets/js/time.js?v=41"></script>
-<script defer src="assets/js/render.js?v=64"></script>
-<script defer src="assets/js/app.js?v=28"></script>
+<script defer src="assets/js/config.js?v=38"></script>
+<script defer src="assets/js/time.js?v=50"></script>
+<script defer src="assets/js/render.js?v=74"></script>
+<script defer src="assets/js/app.js?v=29"></script>
 ```
 
 Bump the `?v=` number on every deploy, or browsers may keep serving

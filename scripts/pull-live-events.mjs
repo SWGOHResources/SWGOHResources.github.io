@@ -218,7 +218,6 @@ const ART_OVERRIDES = {
 // reused as-is (events rerun, so yesterday's art is tomorrow's), and
 // nothing is ever auto-deleted — a flaky download can never wipe good
 // art or lock in a generic fallback the way re-downloading could.
-// opts override the directory + extractor URL (tests).
 // opts override the directory + extractor URL (tests). artDir accepts
 // a file: URL object, a file: URL string, or a plain path — a URL
 // *string* must never reach mkdir/readFile directly, or the fs treats

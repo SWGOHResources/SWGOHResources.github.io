@@ -48,6 +48,11 @@ const KIND_COLOR = {
   'era-challenge': 0xDD7B3B,
   journey: 0xDD7B3B,
   conquest: 0x9686D6,
+  // Proving Grounds + daily challenges wear the conquest family's
+  // purple on the site (see liveRotationIcon/categoryFor); GAC its red.
+  'proving-grounds': 0x9686D6,
+  'daily-challenge': 0x9686D6,
+  gac: 0xEF4444,
   fleet: 0x4F8FE0,
   assault: 0xDD7B3B,
   omega: 0xDD7B3B,
@@ -60,8 +65,11 @@ const ts = ms => `<t:${Math.floor(ms / 1000)}:F>`;
 const artUrl = art => (art ? `${SITE_URL}/assets/img/${art}` : null);
 
 // Status embed — short labeled rows in related pairs, mirroring the
-// client-version alert layout. Pure and unit-tested.
-export function formatStatusPayload({ eraDay, eraLength, dateLabel, era, gac, tb, tw, conquest, eventCount }) {
+// client-version alert layout. Pure and unit-tested. shownCount caps
+// the "details follow" line: only MAX_EVENT_POSTS embeds are posted,
+// so a busy day says how many were trimmed instead of implying all
+// eventCount follow.
+export function formatStatusPayload({ eraDay, eraLength, dateLabel, era, gac, tb, tw, conquest, eventCount, shownCount }) {
   const fields = [
     { name: 'Era', value: era, inline: true },
     { name: 'GAC', value: gac, inline: true },
@@ -69,11 +77,13 @@ export function formatStatusPayload({ eraDay, eraLength, dateLabel, era, gac, tb
     { name: 'Territory War', value: tw, inline: true },
   ];
   if (conquest) fields.push({ name: 'Conquest', value: conquest, inline: false });
+  const shown = Number.isFinite(shownCount) ? shownCount : eventCount;
+  const details = shown < eventCount ? ` — first ${shown} follow` : ' — details follow';
   return {
     embeds: [{
       title: `SWGOH Status — Era Day ${eraDay}/${eraLength} (${dateLabel})`,
       description: eventCount
-        ? `${eventCount} event${eventCount === 1 ? '' : 's'} start${eventCount === 1 ? 's' : ''} today — details follow.`
+        ? `${eventCount} event${eventCount === 1 ? '' : 's'} start${eventCount === 1 ? 's' : ''} today${details}.`
         : 'Quiet day — no events start today.',
       color: 0x5865F2,
       fields,
@@ -159,7 +169,8 @@ async function main() {
 
   const eraLength = eraLen;
   const eraName = run(`typeof ERA_NAME !== 'undefined' ? ERA_NAME : 'Current Era'`);
-  // Rollover day, matching the Important Dates "End of Current Era" card.
+  // Rollover day (the last game day closes at this changeover) — the
+  // same date the Important Dates card and the hero end label show.
   const eraEndMs = st.currentEraStartMs + eraLength * DAY_MS;
   const era = `${eraName} — Day ${postedEraDay}/${eraLength} · ends ${run(`fmtDayMonthUTC(${eraEndMs})`)}`;
 
@@ -192,7 +203,7 @@ async function main() {
 
   const status = formatStatusPayload({
     eraDay: postedEraDay, eraLength, dateLabel, era,
-    gac: gacLine, tb, tw, conquest, eventCount: todays.length,
+    gac: gacLine, tb, tw, conquest, eventCount: todays.length, shownCount: listed.length,
   });
   const posts = [status, ...listed.map(formatEventPayload)];
 

@@ -39,7 +39,7 @@ function renderUnlockWindows(st){
   const cqGacWeek = cqGac.week;
 
   // --- ERA UNIT ---
-  // Finds the NEXT era-start day (Era Changeover / Tuesday)
+  // Finds the NEXT era-start day (Start of New Era / Tuesday)
   const nextEraFromDay = st.preEra ? st.rawDayIndex : st.rawDayIndex + 1;
   const eraAbs = nextOccurrenceAbs(ERA_START_OFFSETS, nextEraFromDay, eraLengthDays());
   const eraInf = absDayToInfo(eraAbs, st.eraBaseStartMs);
@@ -237,7 +237,10 @@ function renderMergedHero(st){
   const fillPct = Math.min(100, Math.max(0, (st.bossEraDay / eraLengthDays()) * 100));
   document.getElementById('mhFill').style.width = fillPct + '%';
 
-  const eraEndMs = st.currentEraStartMs + ((eraLengthDays() - 1) * 86400000);
+  // Rollover day: the era's last game day closes at this changeover
+  // (day 84 spans the 19th 18:00 UTC to the 20th 18:00 UTC), matching
+  // the Important Dates card and the digest "ends" line.
+  const eraEndMs = st.currentEraStartMs + (eraLengthDays() * 86400000);
   document.getElementById('mhStartDate').textContent = fmtDateUTC(gameDayDisplayMs(st.currentEraStartMs));
   document.getElementById('mhEndDate').textContent = fmtDateUTC(gameDayDisplayMs(eraEndMs));
   document.getElementById('mhDaysRemaining').textContent = st.preEra
@@ -251,12 +254,14 @@ function renderMergedHero(st){
   // config is outdated. Hidden again once ERA_START_DATE is updated.
   const staleBanner = document.getElementById('staleBanner');
   if(staleBanner){
-    const baseEndMs = st.eraBaseStartMs + ((eraLengthDays() - 1) * 86400000);
-    const baseOverMs = baseEndMs + 86400000 + (stdHour() * 3600000);
+    const baseLastMs = st.eraBaseStartMs + ((eraLengthDays() - 1) * 86400000);
+    const baseOverMs = baseLastMs + 86400000 + (stdHour() * 3600000);
     const stale = !st.preEra && st.nowMs >= baseOverMs;
     staleBanner.hidden = !stale;
     if(stale){
-      const endLabel = fmtDateLongUTC(gameDayDisplayMs(baseEndMs));
+      // The rollover moment itself (baseOverMs already includes the
+      // changeover hour) — the day the era actually ended on.
+      const endLabel = fmtDateLongUTC(baseOverMs);
       const eraName = (typeof ERA_NAME !== 'undefined' && ERA_NAME) ? ERA_NAME : 'This era';
       const textEl = document.getElementById('staleBannerText');
       if(textEl) textEl.innerHTML = `<strong>${escHTML(eraName)}</strong> ended ${endLabel} — dates below are the old rotation until the schedule is updated.`;
@@ -323,6 +328,9 @@ let liveEventsCache = null;
    no real span. */
 function cardWhenRow(startMs, durH){
   const start = escHTML(fmtEventStart(startMs));
+  // Moment markers (payouts, updates, era ends…) have no real span —
+  // show just the start instead of a meaningless "N/A" duration.
+  if(durH == null) return `<div class="xcard-date"><span class="xw-start">${start}</span></div>`;
   const dur = (typeof formatDurationHours === 'function' ? formatDurationHours(durH) : null) ?? 'N/A';
   return `<div class="xcard-date"><span class="xw-start">${start}</span><span class="xw-dur">${dur}</span></div>`;
 }
@@ -1050,7 +1058,17 @@ function scrollScheduleToToday(){
     if(todayEp !== scheduleFilterEp) setScheduleFilter(0);
   }
   const row = container.querySelector(`.tl-day[data-day="${fullScheduleCache.activeDay}"]`);
-  if(row) row.scrollIntoView({ block: 'center' });
+  if(!row) return;
+  // Scroll the timeline wrap only: the modal is a fixed overlay, so
+  // row.scrollIntoView() would also yank the page behind it.
+  const wrap = container.closest('.full-schedule-wrap');
+  if(wrap){
+    const rowRect = row.getBoundingClientRect();
+    const wrapRect = wrap.getBoundingClientRect();
+    wrap.scrollTop += (rowRect.top - wrapRect.top) - (wrap.clientHeight / 2) + (rowRect.height / 2);
+    return;
+  }
+  row.scrollIntoView({ block: 'center' });
 }
 
 /* =========================================================
@@ -1096,7 +1114,15 @@ function updateFooterMeta(){
   const el = document.getElementById('footerMeta');
   if(!el || typeof tzDisplayName !== 'function') return;
   const h = (typeof stdHour === 'function') ? stdHour() : 18;
-  el.textContent = `Resets ${h}:00 UTC daily · showing ${tzDisplayName()} · loaded ${new Date(dms(Date.now())).toLocaleString('en-GB', { timeZone: tz(), hour12: false })}`;
+  // Live timings older than the freshness window (see the
+  // live-events.json test) are flagged — without this a stale
+  // snapshot silently mixes old timings into the explorer.
+  let liveNote = '';
+  try {
+    const pulledAt = liveEventsCache && Number(liveEventsCache.pulledAt);
+    if(Number.isFinite(pulledAt) && Date.now() - pulledAt > 48 * 3600000) liveNote = ' · live data stale';
+  } catch(e){}
+  el.textContent = `Resets ${h}:00 UTC daily · showing ${tzDisplayName()} · loaded ${new Date(dms(Date.now())).toLocaleString('en-GB', { timeZone: tz(), hour12: false })}${liveNote}`;
 }
 
 function renderAll(opts){

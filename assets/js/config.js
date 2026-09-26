@@ -199,11 +199,11 @@ const COMMON_DAYS = {
 
 const EPISODE_OVERRIDES = {
   1: {
-    1:  [ev('marquee_1'), ev('era_changeover','Era Changeover'), ev('tw_offense','Offense Phase Starts')],
+    1:  [ev('marquee_1'), ev('era_changeover','Start of New Era'), ev('tw_offense','Offense Phase Starts')],
     7:  [ev('rote','Phase 1 Starts'), ev('conquest_start','2nd Conquest of Volume Starts'), ev('smugglersrun',"Smuggler's Run I")],
     8:  [ev('era_challenge_1'), ev('journey_rerun_1','Journey Rerun 1: Maul Hate Fueled Starts'), ev('journey_rerun_2','Journey Rerun 2: Cassian Andor Undercover Starts'), ev('rote','Phase 2 Starts')],
     15: [ev('marquee_2'), ev('tw_offense','Offense Phase Starts')],
-    20: [ev('tw_payout','Payout'), ev('proving_ground','Bonus Proving Grounds (Conquest Pass+ Holders Only)')],
+    20: [ev('tw_payout','Payout'), ev('proving_ground','Bonus Proving Grounds (Conquest Pass+ Only)')],
     21: [ev('conquest_end','2nd Conquest of Volume Ends'), ev('proving_ground','Proving Grounds'), ev('ultimate_journey','Ultimate Journey'), ev('smugglersrun',"Smuggler's Run I"), ev('rote','Phase 1 Starts')],
     22: [ev('era_challenge_2'), ev('rote','Phase 2 Starts')],
   },
@@ -212,7 +212,7 @@ const EPISODE_OVERRIDES = {
     7:  [ev('rote','Phase 1 Starts'), ev('conquest_start','3rd Conquest of Volume Starts'), ev('smugglersrun',"Smuggler's Run I")],
     8:  [ev('era_challenge_3'), ev('rote','Phase 2 Starts')],
     15: [ev('marquee_4'), ev('tw_offense','Offense Phase Starts')],
-    20: [ev('tw_payout','Payout'), ev('proving_ground','Bonus Proving Grounds (Conquest Pass+ Holders Only)')],
+    20: [ev('tw_payout','Payout'), ev('proving_ground','Bonus Proving Grounds (Conquest Pass+ Only)')],
     21: [ev('conquest_end','Conquest Ends (Unit First Playable)'), ev('proving_ground','Proving Grounds'), ev('ultimate_journey','Ultimate Journey'), ev('smugglersrun',"Smuggler's Run I"), ev('rote','Phase 1 Starts')],
     22: [ev('era_challenge_4'), ev('rote','Phase 2 Starts')],
   },
@@ -221,7 +221,7 @@ const EPISODE_OVERRIDES = {
     7:  [ev('rote','Phase 1 Starts'), ev('conquest_start','1st Conquest of New Volume Starts'), ev('smugglersrun',"Smuggler's Run I")],
     8:  [ev('era_challenge_5'), ev('rote','Phase 2 Starts')],
     15: [ev('marquee_6'), ev('journey_guide',`${JOURNEY_GUIDE_UNIT} 6/7★ Guide Unlock`), ev('tw_offense','Offense Phase Starts')],
-    20: [ev('tw_payout','Payout'), ev('proving_ground','Bonus Proving Grounds (Conquest Pass+ Holders Only)')],
+    20: [ev('tw_payout','Payout'), ev('proving_ground','Bonus Proving Grounds (Conquest Pass+ Only)')],
     21: [ev('conquest_end','1st Conquest of New Volume Ends'), ev('proving_ground','Proving Grounds'), ev('ultimate_journey','Ultimate Journey'), ev('smugglersrun',"Smuggler's Run I"), ev('rote','Phase 1 Starts')],
     22: [ev('era_challenge_6'), ev('rote','Phase 2 Starts')],
     28: [ev('era_end',`${ERA_NAME} Ends`)],
@@ -371,7 +371,7 @@ const CONQUEST_DURATION_DAYS = 14;
 
 /* Absolute era-days (1-based) within one ERA_LENGTH_DAYS cycle that the
    unlock cards count down to. 49 = Episode 2, day 21 (conquest-end /
-   Proving Grounds day); 1 = Era Changeover day. If the conquest timing
+   Proving Grounds day); 1 = Start of New Era day. If the conquest timing
    ever moves, update these alongside EPISODE_OVERRIDES. */
 const CONQUEST_END_OFFSETS = [49];
 

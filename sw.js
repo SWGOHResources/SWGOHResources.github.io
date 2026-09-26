@@ -1,9 +1,10 @@
 /* SWGOH Resources service worker — makes the schedule installable and
    usable offline. Same-origin static assets are cached on first use
    (this automatically picks up ?v= cache-busters); page navigations
-   go network-first so the schedule stays fresh, falling back to cache
-   offline. Bump CACHE below on deploys that change the app shell. */
-const CACHE = 'swgoh-schedule-v6';
+   and live data go network-first so the schedule stays fresh, falling
+   back to cache offline. Bump CACHE below on deploys that change the
+   app shell. */
+const CACHE = 'swgoh-schedule-v7';
 
 const CORE = ['/', '/index.html', '/site.webmanifest'];
 
@@ -50,6 +51,23 @@ self.addEventListener('fetch', event => {
         caches.open(CACHE).then(cache => cache.put(req, copy));
         return res;
       }).catch(() => caches.match(req).then(hit => hit || caches.match('/index.html')))
+    );
+    return;
+  }
+
+  // Live data snapshots refresh every few hours — a cache-first rule
+  // would pin the first copy served and never pick up the 4-hourly
+  // refresh, so they go network-first (cache fallback keeps them
+  // available offline).
+  if (url.pathname.startsWith('/assets/data/')) {
+    event.respondWith(
+      fetch(req).then(res => {
+        if (res && res.ok) {
+          const copy = res.clone();
+          caches.open(CACHE).then(cache => cache.put(req, copy));
+        }
+        return res;
+      }).catch(() => caches.match(req))
     );
     return;
   }

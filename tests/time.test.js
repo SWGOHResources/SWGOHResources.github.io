@@ -962,11 +962,53 @@ test('era ends with its own card wearing the era splash', () => {
   assert.match(els.dayDetail.innerHTML, /Ends<\/h4>/);
   assert.match(els.dayDetail.innerHTML, /live\/era-icon\.png/);
   // …and the changeover shares the splash instead of the tiny icon.
-  const changeover = run(`explorerCardHTML({ icon: 'era_changeover', label: 'Era Changeover' }, ${target.dMs}, 'Now', null, 0)`);
+  const changeover = run(`explorerCardHTML({ icon: 'era_changeover', label: 'Start of New Era' }, ${target.dMs}, 'Now', null, 0)`);
   assert.match(changeover, /live\/era-icon\.png/);
   assert.match(changeover, /xcard-art fit/);
   assert.match(changeover, /art-fill/);
   assert.ok(run('validateScheduleConfig()').length === 0);
+});
+
+test('schedule renames flow to explorer and jump-to-event menu', () => {
+  const { ctx, els } = loadRenderEngine();
+  const run = src => vm.runInContext(src, ctx);
+  assert.ok(run('getDayEvents(1, 1).map(i => i.label)').includes('Start of New Era'));
+  for (const ep of [1, 2, 3]) {
+    assert.ok(run(`getDayEvents(${ep}, 20).map(i => i.label)`).includes('Bonus Proving Grounds (Conquest Pass+ Only)'));
+  }
+  run('explorerOffset = 0; renderExplorer(getGameStatus())');
+  assert.match(els.eventJump.innerHTML, /Bonus Proving Grounds \(Conquest Pass\+ Only\)/);
+});
+
+test('era end uses the rollover day everywhere', () => {
+  const { ctx, els } = loadRenderEngine();
+  const run = src => vm.runInContext(src, ctx);
+  // Mid-era: hero End label is the rollover (day 84 closes Oct 20 18:00 UTC).
+  run('renderMergedHero(getGameStatus(Date.parse("2026-09-26T12:00:00Z")))');
+  assert.equal(els.mhEndDate.textContent, 'Tue 20th Oct');
+  assert.equal(els.staleBanner.hidden, true);
+  // Post-era: the stale banner names the same rollover day.
+  run('renderMergedHero(getGameStatus(Date.parse("2026-10-21T00:00:00Z")))');
+  assert.equal(els.staleBanner.hidden, false);
+  assert.match(els.staleBannerText.innerHTML, /20th October/);
+});
+
+test('footer flags live data older than 48h', () => {
+  const { ctx, els } = loadRenderEngine();
+  const run = src => vm.runInContext(src, ctx);
+  run('updateFooterMeta()');
+  assert.doesNotMatch(els.footerMeta.textContent, /stale/);
+  run(`liveEventsCache = { pulledAt: ${Date.now() - 49 * 3600000}, events: [] }`);
+  run('updateFooterMeta()');
+  assert.match(els.footerMeta.textContent, /live data stale/);
+});
+
+test('moment-marker cards omit the duration instead of showing N/A', () => {
+  const { ctx } = loadRenderEngine();
+  const run = src => vm.runInContext(src, ctx);
+  const day = Date.parse('2026-09-26T00:00:00Z');
+  assert.doesNotMatch(run(`cardWhenRow(${day}, null)`), /xw-dur|N\/A/);
+  assert.match(run(`cardWhenRow(${day}, 24)`), /24 hrs/);
 });
 
 test('era battle slots carry event names and match live events', () => {

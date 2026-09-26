@@ -33,6 +33,18 @@ test('status embed adds conquest full-width and event follow-up note', () => {
   assert.match(d.embeds[0].description, /3 events start today/);
 });
 
+test('status embed notes when event posts are capped', () => {
+  const d = formatStatusPayload({ ...status, eventCount: 15, shownCount: 10 });
+  assert.match(d.embeds[0].description, /15 events start today — first 10 follow/);
+  const full = formatStatusPayload({ ...status, eventCount: 3, shownCount: 3 });
+  assert.match(full.embeds[0].description, /3 events start today — details follow/);
+});
+
+test('proving grounds embeds wear the conquest purple', () => {
+  const d = formatEventPayload({ name: 'X', kind: 'proving-grounds', startMs: 1, endMs: 2, art: null });
+  assert.equal(d.embeds[0].color, 0x9686D6);
+});
+
 test('event embeds show type/start/end rows plus full artwork', () => {
   const d = formatEventPayload({
     name: 'Blade and Bastion', kind: 'marquee',
