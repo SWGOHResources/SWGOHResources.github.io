@@ -1,5 +1,5 @@
 {
- "pulledAt": 1790433187604,
+ "pulledAt": 1790457341109,
  "gameDataVersion": "0.40.5:lVXov90TSkStiap2_qnJUA",
  "events": [
   {
@@ -130,6 +130,16 @@
    "endMs": 1791010800000,
    "live": false,
    "art": "live/events-galactic-challenges-jakku.png"
+  },
+  {
+   "id": "EVENT_OMEGA_BATTLES_01_BESPIN",
+   "name": "Bespin Omega Battles",
+   "kind": "omega",
+   "unit": "GALACTICCHALLENGESBESPIN",
+   "startMs": 1791183600000,
+   "endMs": 1791270000000,
+   "live": false,
+   "art": "live/events-galactic-challenges-bespin.png"
   },
   {
    "id": "EVENT_MARQUEE_THERONIN",
