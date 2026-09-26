@@ -1,5 +1,5 @@
 {
- "pulledAt": 1790408912910,
+ "pulledAt": 1790433187604,
  "gameDataVersion": "0.40.5:lVXov90TSkStiap2_qnJUA",
  "events": [
   {
@@ -29,7 +29,7 @@
    "unit": "DROIDSMUGGLE",
    "startMs": 1790330400000,
    "endMs": 1790416800000,
-   "live": true,
+   "live": false,
    "art": "live/events-droid-smuggle.png"
   },
   {
@@ -39,7 +39,7 @@
    "unit": "SMUGGLERSRUN",
    "startMs": 1790330400000,
    "endMs": 1790416800000,
-   "live": true,
+   "live": false,
    "art": "live/events-smugglersrun.png"
   },
   {
