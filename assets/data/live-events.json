@@ -1,5 +1,5 @@
 {
- "pulledAt": 1790521892187,
+ "pulledAt": 1790544301850,
  "gameDataVersion": "0.40.5:lVXov90TSkStiap2_qnJUA",
  "events": [
   {
@@ -102,6 +102,26 @@
    "art": "live/events-profundity.png"
   },
   {
+   "id": "EVENT_TRAINING_DROID_SMUGGLING",
+   "name": "Training Droid Smuggling",
+   "kind": "event",
+   "unit": "DROIDSMUGGLE",
+   "startMs": 1790848800000,
+   "endMs": 1790935200000,
+   "live": false,
+   "art": "live/events-droid-smuggle.png"
+  },
+  {
+   "id": "EVENT_RESOURCE_CONTRABAND_CARGO",
+   "name": "Contraband Cargo",
+   "kind": "event",
+   "unit": "CONTRABANDCARGO",
+   "startMs": 1790848800000,
+   "endMs": 1790935200000,
+   "live": false,
+   "art": "live/events-contrabandcargo.png"
+  },
+  {
    "id": "EVENT_OMEGA_BATTLES_05_JAKKU",
    "name": "Jakku Omega Battles",
    "kind": "omega",
@@ -120,6 +140,16 @@
    "endMs": 1791270000000,
    "live": false,
    "art": "live/events-galactic-challenges-bespin.png"
+  },
+  {
+   "id": "EVENT_HEROIC_ATST",
+   "name": "Endor Escalation Heroic Battle",
+   "kind": "event",
+   "unit": "EWOKHEROIC",
+   "startMs": 1791270000000,
+   "endMs": 1791356400000,
+   "live": false,
+   "art": "live/events-ewok-heroic.png"
   },
   {
    "id": "EVENT_MARQUEE_THERONIN",
