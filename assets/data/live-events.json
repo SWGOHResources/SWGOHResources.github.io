@@ -1,5 +1,5 @@
 {
- "pulledAt": 1790457341109,
+ "pulledAt": 1790497067698,
  "gameDataVersion": "0.40.5:lVXov90TSkStiap2_qnJUA",
  "events": [
   {
@@ -49,7 +49,7 @@
    "unit": "GROUNDWAR",
    "startMs": 1790406000000,
    "endMs": 1790492400000,
-   "live": true,
+   "live": false,
    "art": "live/events-groundwar.png"
   },
   {
@@ -59,7 +59,7 @@
    "unit": "GALACTICBOUNTIES",
    "startMs": 1790492400000,
    "endMs": 1790578800000,
-   "live": false,
+   "live": true,
    "art": "live/events-galacticbounties.png"
   },
   {
