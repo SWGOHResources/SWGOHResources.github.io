@@ -1,5 +1,5 @@
 {
- "pulledAt": 1790497067698,
+ "pulledAt": 1790521892187,
  "gameDataVersion": "0.40.5:lVXov90TSkStiap2_qnJUA",
  "events": [
   {
@@ -21,26 +21,6 @@
    "endMs": 1790704800000,
    "live": true,
    "art": "live/events-jaxxon.png"
-  },
-  {
-   "id": "EVENT_TRAINING_DROID_SMUGGLING",
-   "name": "Training Droid Smuggling",
-   "kind": "event",
-   "unit": "DROIDSMUGGLE",
-   "startMs": 1790330400000,
-   "endMs": 1790416800000,
-   "live": false,
-   "art": "live/events-droid-smuggle.png"
-  },
-  {
-   "id": "EVENT_RESOURCE_SMUGGLERS_RUN_3",
-   "name": "Smuggler's Run III",
-   "kind": "smugglers-run",
-   "unit": "SMUGGLERSRUN",
-   "startMs": 1790330400000,
-   "endMs": 1790416800000,
-   "live": false,
-   "art": "live/events-smugglersrun.png"
   },
   {
    "id": "EVENT_ASSAULT_SEPARATIST",
