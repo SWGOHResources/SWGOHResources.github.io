@@ -286,6 +286,26 @@ const CATEGORY_ICONS = {
 };
 
 // Display tags that differ from the owning category (shown on cards).
+/* Display mapping for live-only kinds with no rotation card (assault /
+   omega battles): fully treated as Resource events like smuggling
+   runs — guild-amber accent with the RES tag, not Era orange. Keyed by
+   live kind — there is no icon for TAG_OVERRIDES. */
+const LIVE_KIND_TAG = {
+  assault: { cat: 'guild', label: 'Resource', glyph: 'RES' },
+  omega:   { cat: 'guild', label: 'Resource', glyph: 'RES' },
+};
+
+/* Generic-kind live events shown as Resource anyway, matched by name
+   (lowercase substring). Curated: Training Droid Smuggling, Galactic
+   Bounties and Coven of Shadows are resource events; Terrible Tings is
+   the era journey and must stay Era, so it stays off this list. Add
+   future stragglers here as spotted. */
+const LIVE_RESOURCE_NAMES = [
+  'training droid',
+  'galactic bount',
+  'coven of shadows',
+];
+
 const TAG_OVERRIDES = {
   smugglersrun:    { label: 'Resource',      glyph: 'RES' },
   ultimate_journey:{ label: 'Resource',      glyph: 'RES' },

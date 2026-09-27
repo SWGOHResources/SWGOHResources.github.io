@@ -154,11 +154,16 @@ Scripts load in order at the end of `<body>` as deferred classic scripts
 (ordered, non-blocking) so `onclick="…"` handlers keep working:
 
 ```html
-<script defer src="assets/js/config.js?v=38"></script>
-<script defer src="assets/js/time.js?v=50"></script>
-<script defer src="assets/js/render.js?v=74"></script>
+<script defer src="assets/js/config.js?v=41"></script>
+<script defer src="assets/js/time.js?v=54"></script>
+<script defer src="assets/js/render.js?v=80"></script>
 <script defer src="assets/js/app.js?v=29"></script>
 ```
+
+`conquest.html` keeps the same header/footer shell plus
+`assets/js/site.js` (mobile nav, cookie notice, footer year,
+Discord-handle copy). Keep each feature on its own page — don't fold
+them into the homepage.
 
 Bump the `?v=` number on every deploy, or browsers may keep serving
 cached CSS/JS instead of the new schedule. Each stylesheet must be
@@ -175,3 +180,43 @@ linked exactly once (a duplicated `<link>` loads the CSS twice).
   `MONTHLY_EVENTS` in `config.js`.
 - Changed reset times: `STD_CHANGEOVER_HOUR_UTC` /
   `GAC_CHANGEOVER_HOUR_UTC`. Countdown, cycles and labels follow.
+
+## Conquest planner
+
+`conquest.html` + `assets/js/conquest.js` + `assets/data/conquest-planner.json`:
+tick the feats you'll attempt and it totals keycards against the crate
+ladder — merged into the projection as a tappable track of genuine
+crate icons (tap a crate to target it; hover shows its shard payout),
+with a battle-star stepper and a spare-keycard readout (extras beyond
+the earned crate). Only the highest crate pays out — the page says so.
+Per-crate shard payouts (new unit + previous volume unit) live on each
+crate entry; hover tooltips and the projected-payout line show them with
+unit shard icons. Picks persist per conquest in `localStorage` under
+`swgoh-cq-plan`. Chain-gated feats render an explicit requirement chip
+parsed from the official description. The page auto-selects the entry
+whose changeover-anchored window holds today and derives the
+day/countdown from the site engine. Feat rows wear real unit portraits
+(`assets/img/live/conquest-*.png`, pulled from gamedata — profile
+`charui` icons, not marquee art); feats that need no character use the
+keycard currency icon (`conquest-keycard.png`), with bundled art as
+fallback. Crate icons have no reliably identifiable bundle textures, so
+the ladder stays CSS-styled rather than guessing wrong art. Feats are
+split into tabs (Global, Sectors, Miniboss, Boss) with per-tab totals.
+
+Feat TITLES + DESCRIPTIONS sync from gamedata automatically
+(`npm run conquest:pull`, needs Comlink like `events:pull`) and are
+preserved across refreshes; sectors + keycard values come from the
+published feat sheet (Vol 25 hard transcribed exactly — 334 feat
+keycards per the sheet's own total), Normal/Easy stay preliminary until
+their sheets land. Disk/title rewards render as chips, chain gates as
+requirement chips (explicit `requires` wins over the parsed gate text).
+The page banners the entry while `status` is `preliminary`, and notes
+automatically when the feat list can't yet reach the top crate. New feat
+text that lands late (e.g. a delayed data push) is staged for triage by
+the pull script. Doing everything per difficulty is pinned by test
+(easy 408 / normal 433 / hard 544 including stars).
+Pure math (`planTotals`, `crateFor`, `findConquestEntry`, `featDesc`) is
+covered by `tests/conquest-planner.test.js`, including a data-integrity
+pass (sorted ladders, unique ids, per-difficulty text, art files exist).
+
+

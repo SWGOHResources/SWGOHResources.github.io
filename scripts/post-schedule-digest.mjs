@@ -54,8 +54,10 @@ const KIND_COLOR = {
   'daily-challenge': 0x9686D6,
   gac: 0xEF4444,
   fleet: 0x4F8FE0,
-  assault: 0xDD7B3B,
-  omega: 0xDD7B3B,
+  // Assault/omega are Resource events (guild-amber on the site, like
+  // smuggling runs), not Era orange.
+  assault: 0xE0A552,
+  omega: 0xE0A552,
   'smugglers-run': 0xE0A552,
   'credit-heist': 0xE0A552,
   event: 0x56B8AD,
@@ -95,13 +97,14 @@ export function formatStatusPayload({ eraDay, eraLength, dateLabel, era, gac, tb
 
 // One message per event that starts today: related facts in a neat row
 // (type / start / end) plus the event's full artwork. Pure and tested.
+// e.resource flags curated resource names gold like smuggling runs.
 export function formatEventPayload(e) {
   const kind = KIND_LABEL[e.kind] ?? 'Event';
   const img = artUrl(e.art);
   return {
     embeds: [{
       title: e.name,
-      color: KIND_COLOR[e.kind] ?? 0x56B8AD,
+      color: e.resource ? 0xE0A552 : (KIND_COLOR[e.kind] ?? 0x56B8AD),
       fields: [
         { name: 'Type', value: kind, inline: true },
         { name: 'Starts', value: ts(e.startMs), inline: true },
@@ -199,6 +202,13 @@ async function main() {
     if (e.startMs >= dayStart && e.startMs < dayEnd) todays.push(e);
   }
   todays.sort((a, b) => a.startMs - b.startMs);
+  // The feed calls the conquest "Conquest" — qualify it with its run
+  // and volume like the homepage cards do (same engine helpers, same
+  // wording; the run comes from the event's own start day).
+  for (const e of todays) {
+    if (e.kind === 'conquest') e.name = run(`conquestRunLabel(${JSON.stringify(e.name)}, ${JSON.stringify(e.id)}, conquestRunForDate(${Number(e.startMs)}))`);
+    if (e.kind === 'event' && run(`isResourceLiveName(${JSON.stringify(e.name)})`)) e.resource = true;
+  }
   const listed = todays.slice(0, MAX_EVENT_POSTS);
 
   const status = formatStatusPayload({

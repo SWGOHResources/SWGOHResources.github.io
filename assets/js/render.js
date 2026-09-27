@@ -443,11 +443,19 @@ function liveRotationIcon(e){
 
 function liveCardMeta(e){
   const icon = liveRotationIcon(e);
-  const cat = icon ? categoryFor(icon) : 'era';
-  const glyph = icon ? tagFor(icon).glyph : CATEGORY_META.era.glyph;
-  const label = icon ? tagFor(icon).label : CATEGORY_META.era.label;
-  const art = (icon && assetFor(icon)) || 'events/eraicon.png';
-  return { cat, glyph, label, art };
+  if(icon){
+    const cat = categoryFor(icon);
+    const tag = tagFor(icon);
+    return { cat, glyph: tag.glyph, label: tag.label, art: assetFor(icon) || 'events/eraicon.png' };
+  }
+  const kindTag = (typeof LIVE_KIND_TAG !== 'undefined' && e) ? LIVE_KIND_TAG[e.kind] : null;
+  if(kindTag) return { cat: kindTag.cat || 'era', glyph: kindTag.glyph, label: kindTag.label, art: 'events/eraicon.png' };
+  // Curated resource names (Training Droids, Bounties, Coven) wear
+  // guild-amber + RES like smuggling runs; everything else stays Era.
+  if(e && typeof isResourceLiveName === 'function' && isResourceLiveName(e.name)){
+    return { cat: 'guild', glyph: 'RES', label: 'Resource', art: 'events/eraicon.png' };
+  }
+  return { cat: 'era', glyph: CATEGORY_META.era.glyph, label: CATEGORY_META.era.label, art: 'events/eraicon.png' };
 }
 
 /* Display art for a live event. Conquest always wears the CONQUEST
@@ -462,6 +470,15 @@ function liveDisplayArt(e, meta){
    badge and body) — only the art is the pulled game texture and the
    title/dates come from live data. The timing pill is the viewed day's
    relative label, identical to hardcoded cards on the same day. */
+function liveDisplayName(e){
+  if(e && e.kind === 'conquest' && typeof conquestRunLabel === 'function'){
+    const run = (typeof conquestRunForDate === 'function')
+      ? conquestRunForDate(Number(e.startMs)) : null;
+    return conquestRunLabel(e.name, e.id, run);
+  }
+  return (e && e.name) || '';
+}
+
 function liveCardHTML(e, relLabel){
   const meta = liveCardMeta(e);
   const catMeta = (typeof CATEGORY_META !== 'undefined' && CATEGORY_META[meta.cat]) || {};
@@ -480,7 +497,7 @@ function liveCardHTML(e, relLabel){
     </div>
     <div class="xcard-body">
       <div class="xcard-kicker">${escHTML(meta.label)}</div>
-      <h4>${escHTML(e.name)}</h4>
+      <h4>${escHTML(liveDisplayName(e))}</h4>
       ${cardWhenRow(e.startMs, liveDurationHours(e))}
     </div>
   </article>`;
@@ -696,10 +713,11 @@ function liveBadgesHTML(ongoing, dayStartMs){
       const total = liveDayTotal(e);
       const day = Math.min(Math.max(liveDayNum(e, dayStartMs), 1), total);
       const kindCls = e.kind === 'conquest' ? ' day-live-cq' : '';
-      return `<div class="day-boss day-live${kindCls}" title="${escHTML(e.name)}, day ${day} of ${total}">`
+      const badgeName = liveDisplayName(e);
+      return `<div class="day-boss day-live${kindCls}" title="${escHTML(badgeName)}, day ${day} of ${total}">`
         + `<img src="${IMG_BASE}${art}" alt="" loading="lazy" decoding="async" onerror="this.remove()">`
         + `<div class="db-text"><span class="db-label">Day ${day} of ${total}</span>`
-        + `<span class="db-name">${escHTML(e.name)}</span></div></div>`;
+        + `<span class="db-name">${escHTML(badgeName)}</span></div></div>`;
     }).join('');
   return badges;
 }

@@ -6,6 +6,7 @@
     "test": "node --test",
     "sitemap": "node scripts/stamp-sitemap.mjs",
     "events:pull": "node scripts/pull-live-events.mjs",
+    "conquest:pull": "node scripts/pull-conquest-feats.mjs",
     "versions:check": "node scripts/check-client-version.mjs",
     "digest:post": "node scripts/post-schedule-digest.mjs",
     "sync": "git fetch origin && git rebase origin/main"

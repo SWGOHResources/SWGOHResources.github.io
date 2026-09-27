@@ -204,8 +204,48 @@ function categoryFor(icon){
   if(icon.startsWith('fleet')) return 'fleet';
   // Blue-tinted UPDATE category so the transparent client/shipment
   // art sits on steel-dim instead of the clashing orange ERA dim.
-  if(icon === 'client_update' || icon === 'shipment_update') return 'update';
+  // Datacron drops ride along: a new set lands with its client update.
+  if(icon === 'client_update' || icon === 'shipment_update' || icon.startsWith('datacron_set')) return 'update';
   return 'era'; 
+}
+
+/* Display name for a live conquest event: the feed only calls it
+   "Conquest", so qualify it with its run and volume —
+   "Conquest Run 1 (Volume 25)". A volume bundles 3 runs; each new
+   volume brings a new primary unit. The volume comes from the feed id
+   (CONQUEST_VOL25), the run (1-3) from the rotation position passed in
+   (conquestChapterForEpisode().cNum). Anything unparseable keeps its
+   feed name. Pure — safe to test. */
+function conquestRunLabel(eventName, eventId, runNum){
+  const m = /^CONQUEST_VOL(\d+)$/.exec(eventId || '');
+  const volume = m ? Number(m[1]) : NaN;
+  if(!Number.isInteger(volume) || volume < 1) return eventName;
+  if(!Number.isInteger(runNum) || runNum < 1 || runNum > 3) return eventName;
+  return `Conquest Run ${runNum} (Volume ${volume})`;
+}
+
+/* Run number (1-3) of the conquest active on a calendar day, or null
+   when no run covers it. Used to label live conquest data by the
+   event's own start day. */
+function conquestRunForDate(dateMs){
+  if(!Number.isFinite(dateMs)) return null;
+  try {
+    const st = getGameStatus(dateMs);
+    if(st.preEra) return null;
+    const info = dateMsToEraInfo(dateMs, st.eraBaseStartMs);
+    const cq = conquestInfoForDay(info.episode, info.dayInEp);
+    return cq ? cq.cNum : null;
+  } catch(e){ return null; }
+}
+
+/* Generic-kind live events curated as Resource events (see
+   LIVE_RESOURCE_NAMES): matched by name, case-insensitive. Pure. */
+function isResourceLiveName(name){
+  if(typeof name !== 'string' || !name) return false;
+  const matchers = (typeof LIVE_RESOURCE_NAMES !== 'undefined' && Array.isArray(LIVE_RESOURCE_NAMES))
+    ? LIVE_RESOURCE_NAMES : [];
+  const lower = name.toLowerCase();
+  return matchers.some(m => typeof m === 'string' && m.length > 0 && lower.includes(m.toLowerCase()));
 }
 
 /* Card tag: per-event override when the display name differs from the

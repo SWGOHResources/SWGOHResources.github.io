@@ -59,6 +59,19 @@ test('event embeds show type/start/end rows plus full artwork', () => {
   assert.doesNotMatch(JSON.stringify(d), EMOJI_RE);
 });
 
+test('curated resource events post gold like smuggling runs', () => {
+  const d = formatEventPayload({
+    name: 'Galactic Bounties II', kind: 'event', resource: true,
+    startMs: 1789495200000, endMs: 1789581600000, art: null,
+  });
+  assert.equal(d.embeds[0].color, 0xE0A552);
+  const plain = formatEventPayload({
+    name: 'Terrible Tings', kind: 'event',
+    startMs: 1789495200000, endMs: 1789581600000, art: null,
+  });
+  assert.equal(plain.embeds[0].color, 0x56B8AD);
+});
+
 test('event embeds degrade without artwork', () => {
   const d = formatEventPayload({
     name: 'Mystery', kind: 'whatever', startMs: 1, endMs: 2, art: null,

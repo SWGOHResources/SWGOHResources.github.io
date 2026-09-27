@@ -293,6 +293,13 @@ test('datacron lookup handles empty and fully-expired configs', () => {
   assert.equal(current.allExpired, true);
 });
 
+test('datacron drops categorize as updates, like client updates', () => {
+  const engine = loadTimeEngine();
+  assert.equal(engine.categoryFor('datacron_set_orange'), 'update');
+  assert.equal(engine.categoryFor('datacron_set'), 'update');
+  assert.equal(engine.categoryFor('client_update'), 'update');
+});
+
 test('validator passes a healthy config', () => {
   const engine = loadTimeEngine({
     datacronSets: [{ name: 'Set', color: 'orange', expires: '2026-10-01' }],
@@ -1009,6 +1016,36 @@ test('moment-marker cards omit the duration instead of showing N/A', () => {
   const day = Date.parse('2026-09-26T00:00:00Z');
   assert.doesNotMatch(run(`cardWhenRow(${day}, null)`), /xw-dur|N\/A/);
   assert.match(run(`cardWhenRow(${day}, 24)`), /24 hrs/);
+});
+
+test('resource live names match curated entries only', () => {
+  const engine = loadTimeEngine();
+  engine.LIVE_RESOURCE_NAMES = ['training droid', 'galactic bount', 'coven of shadows'];
+  assert.equal(engine.isResourceLiveName('Training Droid Smuggling'), true);
+  assert.equal(engine.isResourceLiveName('Galactic Bounties II'), true);
+  assert.equal(engine.isResourceLiveName('Coven of Shadows'), true);
+  assert.equal(engine.isResourceLiveName('Terrible Tings Legendary Event'), false);
+  assert.equal(engine.isResourceLiveName('Smuggler\u2019s Run I'), false);
+  assert.equal(engine.isResourceLiveName(null), false);
+  assert.equal(engine.isResourceLiveName(''), false);
+});
+
+test('live conquest names carry run and volume', () => {
+  const engine = loadTimeEngine();
+  assert.equal(engine.conquestRunLabel('Conquest', 'CONQUEST_VOL25', 1), 'Conquest Run 1 (Volume 25)');
+  assert.equal(engine.conquestRunLabel('Conquest', 'CONQUEST_VOL25', 3), 'Conquest Run 3 (Volume 25)');
+  assert.equal(engine.conquestRunLabel('Conquest', 'bogus', 1), 'Conquest');
+  assert.equal(engine.conquestRunLabel('Conquest', 'CONQUEST_VOL25', 0), 'Conquest');
+  assert.equal(engine.conquestRunLabel('Conquest', null, 1), 'Conquest');
+});
+
+test('conquest run follows the rotation position', () => {
+  const engine = loadTimeEngine();
+  // Day 7 of any episode opens its conquest: run = chapter number.
+  const day7 = Date.parse('2026-09-28T00:00:00Z');
+  assert.equal(engine.conquestRunForDate(day7), 1);
+  assert.equal(engine.conquestRunForDate(Date.parse('2026-07-28T00:00:00Z')), null);
+  assert.equal(engine.conquestRunForDate(NaN), null);
 });
 
 test('era battle slots carry event names and match live events', () => {

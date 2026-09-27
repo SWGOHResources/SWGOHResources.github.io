@@ -243,8 +243,8 @@ test('live card accents match the rotation families', () => {
   const cases = [
     ['marquee', 'var(--orange)'],
     ['era-challenge', 'var(--orange)'],
-    ['assault', 'var(--orange)'],
-    ['omega', 'var(--orange)'],
+    ['assault', 'var(--amber)'],
+    ['omega', 'var(--amber)'],
     ['journey', 'var(--orange)'],
     ['conquest', 'var(--purple)'],
     ['daily-challenge', 'var(--purple)'],
@@ -262,6 +262,39 @@ test('live card accents match the rotation families', () => {
   // Spot-check against the real rotation mapping.
   assert.equal(run(`categoryFor('marquee_1')`), 'era');
   assert.equal(run(`categoryFor('proving_ground')`), 'conquest');
+});
+
+test('assault and omega battles show yellow as Resource, not Era', () => {
+  const { ctx } = loadRenderEngine();
+  const run = src => vm.runInContext(src, ctx);
+  for (const kind of ['assault', 'omega']) {
+    const html = run(`liveCardHTML(
+      { id: 'm', name: 'Some Event', kind: '${kind}', startMs: ${NOW - H}, endMs: ${NOW + H} },
+      'Now')`);
+    assert.match(html, /<div class="xcard-kicker">Resource<\/div>/, kind);
+    assert.match(html, /--accent:var\(--amber\)/, kind);
+  }
+  // Unknown kinds keep the Era fallback.
+  const other = run(`liveCardHTML(
+    { id: 'm', name: 'Some Event', kind: 'event', startMs: ${NOW - H}, endMs: ${NOW + H} },
+    'Now')`);
+  assert.match(other, /<div class="xcard-kicker">ERA<\/div>/);
+});
+
+test('curated resource names show yellow, era journeys stay orange', () => {
+  const { ctx } = loadRenderEngine();
+  const run = src => vm.runInContext(src, ctx);
+  for (const name of ['Training Droid Smuggling', 'Galactic Bounties II', 'Coven of Shadows']) {
+    const html = run(`liveCardHTML(
+      { id: 'm', name: '${name}', kind: 'event', startMs: ${NOW - H}, endMs: ${NOW + H} },
+      'Now')`);
+    assert.match(html, /<div class="xcard-kicker">Resource<\/div>/, name);
+    assert.match(html, /--accent:var\(--amber\)/, name);
+  }
+  const journey = run(`liveCardHTML(
+    { id: 'm', name: 'Terrible Tings Legendary Event', kind: 'event', startMs: ${NOW - H}, endMs: ${NOW + H} },
+    'Now')`);
+  assert.match(journey, /<div class="xcard-kicker">ERA<\/div>/);
 });
 
 test('live cards fall back to generic art for unknown kinds', () => {
@@ -553,6 +586,14 @@ test('cards show start instant plus whole-hour duration', () => {
   assert.match(moment, /xw-start"/);
   assert.doesNotMatch(moment, /xw-dur|N\/A/);
 });
+
+test('datacron drop cards wear the update tag, not era', () => {
+  const { ctx } = loadRenderEngine();
+  const run = src => vm.runInContext(src, ctx);
+  const card = run(`explorerCardHTML({ icon: 'datacron_set_orange', label: 'New Datacron Set Added (Duty and Defiance)' }, ${NOW}, 'Now', null, ${NOW})`);
+  assert.match(card, /<div class="xcard-kicker">UPDATE<\/div>/);
+  assert.match(card, /--accent:var\(--steel\)/);
+});
 test('live conquest surfaces wear the banner, never promo art', () => {
   const { ctx } = loadRenderEngine();
   const run = src => vm.runInContext(src, ctx);
@@ -676,7 +717,10 @@ test('live conquest suppresses the rotation conquest badge', () => {
   ] };`);
   run('renderExplorer(getGameStatus())');
   assert.doesNotMatch(els.dayDetail.innerHTML, /day-conquest/);
-  assert.match(els.dayDetail.innerHTML, /Conquest Live/);
+  // Run label derives from the event's own start day — compute it the
+  // same way instead of pinning a date-sensitive literal.
+  const want = run(`conquestRunLabel('Conquest Live', 'CONQUEST_VOL24', conquestRunForDate(${target.dMs} - 86400000))`);
+  assert.match(els.dayDetail.innerHTML, new RegExp(want.replace(/[()]/g, m => '\\' + m)));
 });
 
 test('era icon art tracks the newest premium era, never breaking the pull', async () => {

@@ -1,0 +1,655 @@
+{
+ "_comment": "Conquest planner data. The page auto-selects the entry whose window holds today. Feat TITLES+DESCS refresh automatically via `npm run conquest:pull` (gamedata); sectors + keycard values are hand-maintained per conquest until the feat post confirms them (see status).",
+ "conquests": [
+  {
+   "id": "cq-2026-09-28-c1",
+   "title": "1st Conquest of New Volume",
+   "unit": "Embo & Keibu",
+   "unitArt": "live/conquest-embokeibu.png",
+   "starts": "2026-09-28",
+   "ends": "2026-10-11",
+   "status": "preliminary",
+   "maxStars": 330,
+   "difficulties": {
+    "hard": {
+     "crates": [
+      {
+       "name": "Carbon Crate",
+       "at": 100,
+       "shards": {
+        "primary": 25,
+        "secondary": 15
+       }
+      },
+      {
+       "name": "Bronze Crate",
+       "at": 165,
+       "shards": {
+        "primary": 30,
+        "secondary": 15
+       }
+      },
+      {
+       "name": "Black Crate",
+       "at": 230,
+       "shards": {
+        "primary": 35,
+        "secondary": 20
+       }
+      },
+      {
+       "name": "Steel Crate",
+       "at": 365,
+       "shards": {
+        "primary": 40,
+        "secondary": 20
+       }
+      },
+      {
+       "name": "Silver Crate",
+       "at": 450,
+       "shards": {
+        "primary": 50,
+        "secondary": 25
+       }
+      },
+      {
+       "name": "Gold Crate",
+       "at": 530,
+       "shards": {
+        "primary": 65,
+        "secondary": 25
+       }
+      },
+      {
+       "name": "Red Crate",
+       "at": 630,
+       "shards": {
+        "primary": 90,
+        "secondary": 30
+       }
+      }
+     ],
+     "groups": [
+      {
+       "name": "Global feats",
+       "feats": [
+        {
+         "id": "hot",
+         "title": "Heal Over Time",
+         "keycards": 15,
+         "art": "live/conquest-keycard.png",
+         "desc": {
+          "hard": "Gain Heal Over Time 350 times"
+         },
+         "kind": "global"
+        },
+        {
+         "id": "evasionup",
+         "title": "Evasion Up",
+         "keycards": 15,
+         "art": "live/conquest-keycard.png",
+         "desc": {
+          "normal": "Gain Evasion Up 35 times",
+          "hard": "Gain Evasion Up 50 times"
+         },
+         "kind": "global"
+        },
+        {
+         "id": "bombs",
+         "title": "Thermal Detonators",
+         "keycards": 15,
+         "art": "live/conquest-keycard.png",
+         "desc": {
+          "hard": "Attempt to inflict 100 Thermal Detonators"
+         },
+         "kind": "global"
+        },
+        {
+         "id": "challenge250",
+         "title": "Challenge Path",
+         "desc": {
+          "hard": "Defeat at least 250 enemies on the golden Challenge Path"
+         },
+         "keycards": 15,
+         "art": "live/conquest-keycard.png",
+         "reward": "F34T",
+         "kind": "global"
+        },
+        {
+         "id": "retribution",
+         "title": "Retribution",
+         "keycards": 1,
+         "art": "live/conquest-keycard.png",
+         "desc": {
+          "hard": "Gain Retribution 150 times"
+         },
+         "reward": "Booming Voice",
+         "kind": "global"
+        },
+        {
+         "id": "followlead",
+         "title": "Booming Voice",
+         "keycards": 15,
+         "art": "live/conquest-keycard.png",
+         "desc": {
+          "easy": "Attempt to call allies to assist with Booming Voice 15 times (Complete the \"Stand Your Ground\" feat or purchase the Conquest Pass+ to get the Booming Voice data disk)",
+          "normal": "Attempt to call allies to assist with Booming Voice 30 times (Complete the \"Stand Your Ground\" feat or purchase the Conquest Pass+ to get the Booming Voice data disk)",
+          "hard": "Attempt to call allies to assist with Booming Voice 60 times (Complete the \"Stand Your Ground\" feat or purchase the Conquest Pass+ to get the Booming Voice data disk)"
+         },
+         "requires": "Retribution (150)",
+         "kind": "global"
+        },
+        {
+         "id": "badbaby",
+         "title": "Bad Baby!",
+         "keycards": 1,
+         "art": "live/conquest-grogu.png",
+         "desc": {
+          "easy": "Win 7 battles with Grogu & Anzellans surviving",
+          "normal": "Win 10 battles with Grogu & Anzellans surviving",
+          "hard": "Win 20 battles with Grogu & Anzellans surviving"
+         },
+         "reward": "DCS",
+         "kind": "global"
+        },
+        {
+         "id": "learncontrol",
+         "title": "Deployable Cooling Systems",
+         "keycards": 15,
+         "art": "live/conquest-keycard.png",
+         "desc": {
+          "easy": "Complete a battle with Deployable Cooling Systems active (Complete the \"Bad Baby!\" feat or purchase the Conquest Pass+ to get the Deployable Cooling Systems)",
+          "normal": "Complete a battle with Deployable Cooling Systems active (Complete the \"Bad Baby!\" feat or purchase the Conquest Pass+ to get the Deployable Cooling Systems)",
+          "hard": "Complete a battle with Deployable Cooling Systems active (Complete the \"Bad Baby!\" feat or purchase the Conquest Pass+ to get the Deployable Cooling Systems)"
+         },
+         "requires": "Bad Baby!",
+         "kind": "global"
+        },
+        {
+         "id": "unlikely",
+         "title": "Unlikely Alliance",
+         "keycards": 0,
+         "art": "live/conquest-embokeibu.png",
+         "desc": {
+          "easy": "Win 3 battles with Embo, Carson Teva, and The Mandalorian in your squad",
+          "normal": "Win 3 battles with Embo, Carson Teva, and The Mandalorian in your squad",
+          "hard": "Win 3 battles with Embo, Carson Teva, and The Mandalorian in your squad"
+         },
+         "reward": "Guns for Hire title",
+         "kind": "global"
+        }
+       ]
+      },
+      {
+       "name": "Sector 1",
+       "feats": [
+        {
+         "id": "stagger-s1",
+         "title": "Stagger",
+         "desc": {
+          "hard": "Attempt to Stagger enemies 60 times"
+         },
+         "keycards": 5,
+         "art": "live/conquest-keycard.png",
+         "kind": "sector"
+        },
+        {
+         "id": "noattackers",
+         "title": "No Attackers",
+         "keycards": 5,
+         "art": "live/conquest-keycard.png",
+         "desc": {
+          "hard": "Win 15 battles with no Attackers in your squad"
+         },
+         "kind": "sector"
+        },
+        {
+         "id": "stun",
+         "title": "Stun",
+         "keycards": 5,
+         "art": "live/conquest-keycard.png",
+         "desc": {
+          "hard": "Attempt to Stun enemies 50 times"
+         },
+         "kind": "sector"
+        },
+        {
+         "id": "badmotivator",
+         "title": "Bad Motivator",
+         "keycards": 5,
+         "art": "live/conquest-r5d4.png",
+         "desc": {
+          "easy": "Win 5 battles with R5-D4 in your squad",
+          "normal": "Win 7 battles with R5-D4 in your squad",
+          "hard": "Win 10 battles with R5-D4 in your squad"
+         },
+         "kind": "sector"
+        },
+        {
+         "id": "isfinest",
+         "title": "ISB's Finest",
+         "keycards": 3,
+         "art": "live/conquest-keycard.png",
+         "desc": {
+          "hard": "Win with a full squad of ISB units"
+         },
+         "kind": "miniboss"
+        },
+        {
+         "id": "underthehelmet",
+         "title": "Under the Helmet",
+         "keycards": 3,
+         "art": "live/conquest-boushh.png",
+         "desc": {
+          "easy": "Win with Boushh (Leia Organa) surviving",
+          "normal": "Win with Boushh (Leia Organa) surviving",
+          "hard": "Win with Boushh (Leia Organa) surviving"
+         },
+         "kind": "miniboss"
+        },
+        {
+         "id": "lightside-boss",
+         "title": "Light Side Boss",
+         "desc": {
+          "hard": "Win with a full squad of Light Side units"
+         },
+         "keycards": 2,
+         "art": "live/conquest-keycard.png",
+         "kind": "boss"
+        },
+        {
+         "id": "warlords",
+         "title": "Warlord's Enforcer",
+         "keycards": 2,
+         "art": "live/conquest-snowtrooper.png",
+         "desc": {
+          "easy": "Win with Snowtrooper Commander surviving",
+          "normal": "Win with Snowtrooper Commander surviving",
+          "hard": "Win with Snowtrooper Commander surviving"
+         },
+         "kind": "boss"
+        }
+       ]
+      },
+      {
+       "name": "Sector 2",
+       "feats": [
+        {
+         "id": "defensedown",
+         "title": "Defense Down",
+         "desc": {
+          "hard": "Attempt to inflict Defense Down 60 times"
+         },
+         "keycards": 5,
+         "art": "live/conquest-keycard.png",
+         "kind": "sector"
+        },
+        {
+         "id": "crimesyndicate",
+         "title": "Crime Syndicate",
+         "keycards": 5,
+         "art": "live/conquest-keycard.png",
+         "desc": {
+          "easy": "Win 5 battles with a full squad of Hutt Cartel units",
+          "normal": "Win 7 battles with a full squad of Hutt Cartel units",
+          "hard": "Win 10 battles with a full squad of Hutt Cartel units"
+         },
+         "kind": "sector"
+        },
+        {
+         "id": "dot300",
+         "title": "Damage Over Time",
+         "desc": {
+          "hard": "Inflict at least 300 Damage Over Time effects on enemies with an ability"
+         },
+         "keycards": 5,
+         "art": "live/conquest-keycard.png",
+         "kind": "sector"
+        },
+        {
+         "id": "knockemdead",
+         "title": "Knock 'Em Dead",
+         "keycards": 5,
+         "art": "live/conquest-keycard.png",
+         "desc": {
+          "hard": "Attempt to inflict Off Balance 50 times"
+         },
+         "kind": "sector"
+        },
+        {
+         "id": "darkside-mini",
+         "title": "Dark Side Miniboss",
+         "desc": {
+          "hard": "Win with a full squad of Dark Side units"
+         },
+         "keycards": 2,
+         "art": "live/conquest-keycard.png",
+         "kind": "miniboss"
+        },
+        {
+         "id": "unchosenpath",
+         "title": "The Unchosen Path",
+         "keycards": 2,
+         "art": "live/conquest-leiajt.png",
+         "desc": {
+          "easy": "Win with Leia (Jedi Training) surviving",
+          "normal": "Win with Leia (Jedi Training) surviving",
+          "hard": "Win with Leia (Jedi Training) surviving"
+         },
+         "kind": "miniboss"
+        },
+        {
+         "id": "gamorrean",
+         "title": "Warlord's Enforcer",
+         "desc": {
+          "hard": "Win with Gamorrean Guard surviving"
+         },
+         "keycards": 3,
+         "art": "live/conquest-gamorrean.png",
+         "kind": "boss"
+        },
+        {
+         "id": "newrepublic",
+         "title": "For the New Republic",
+         "keycards": 3,
+         "art": "live/conquest-keycard.png",
+         "desc": {
+          "easy": "Win with a full squad of New Republic units",
+          "normal": "Win with a full squad of New Republic units",
+          "hard": "Win with a full squad of New Republic units"
+         },
+         "kind": "boss"
+        }
+       ]
+      },
+      {
+       "name": "Sector 3",
+       "feats": [
+        {
+         "id": "defenseup",
+         "title": "Defense Up",
+         "desc": {
+          "hard": "Gain Defense Up 80 times"
+         },
+         "keycards": 10,
+         "art": "live/conquest-keycard.png",
+         "kind": "sector"
+        },
+        {
+         "id": "devastation",
+         "title": "Devastation",
+         "keycards": 10,
+         "art": "live/conquest-zebnr.png",
+         "desc": {
+          "easy": "Win 5 battles with Zeb Orrelios (New Republic Pilot) in your squad",
+          "normal": "Win 7 battles with Zeb Orrelios (New Republic Pilot) in your squad",
+          "hard": "Win 10 battles with Zeb Orrelios (New Republic Pilot) in your squad"
+         },
+         "kind": "sector"
+        },
+        {
+         "id": "expose",
+         "title": "Expose",
+         "desc": {
+          "hard": "Attempt to Expose enemies 20 times"
+         },
+         "keycards": 10,
+         "art": "live/conquest-keycard.png",
+         "kind": "sector"
+        },
+        {
+         "id": "onthemove",
+         "title": "On the Move",
+         "keycards": 10,
+         "art": "live/conquest-keycard.png",
+         "desc": {
+          "easy": "Attempt to inflict On the Run 10 times",
+          "normal": "Attempt to inflict On the Run 20 times",
+          "hard": "Attempt to inflict On the Run 30 times"
+         },
+         "kind": "sector"
+        },
+        {
+         "id": "empire-mini",
+         "title": "Empire Miniboss",
+         "desc": {
+          "hard": "Win with a full squad of Empire units"
+         },
+         "keycards": 2,
+         "art": "live/conquest-keycard.png",
+         "kind": "miniboss"
+        },
+        {
+         "id": "cobb",
+         "title": "Cobb Vanth",
+         "desc": {
+          "hard": "Win with Cobb Vanth in your squad"
+         },
+         "keycards": 2,
+         "art": "live/conquest-cobb.png",
+         "kind": "miniboss"
+        },
+        {
+         "id": "nosupport",
+         "title": "No Support Boss",
+         "desc": {
+          "hard": "Win without using any Support units in your squad"
+         },
+         "keycards": 4,
+         "art": "live/conquest-keycard.png",
+         "kind": "boss"
+        },
+        {
+         "id": "cassian",
+         "title": "Cassian Andor",
+         "desc": {
+          "hard": "Win with Cassian Andor (Undercover) in your squad"
+         },
+         "keycards": 4,
+         "art": "live/conquest-cassian.png",
+         "kind": "boss"
+        }
+       ]
+      },
+      {
+       "name": "Sector 4",
+       "feats": [
+        {
+         "id": "potencydown",
+         "title": "Potency Down",
+         "desc": {
+          "hard": "Attempt to inflict Potency Down 50 times"
+         },
+         "keycards": 10,
+         "art": "live/conquest-keycard.png",
+         "kind": "sector"
+        },
+        {
+         "id": "keepingthepeace",
+         "title": "Keeping the Peace",
+         "keycards": 10,
+         "art": "live/conquest-carsonteva.png",
+         "desc": {
+          "easy": "Win 5 battles with Carson Teva in your squad",
+          "normal": "Win 7 battles with Carson Teva surviving",
+          "hard": "Win 10 battles with Carson Teva surviving"
+         },
+         "kind": "sector"
+        },
+        {
+         "id": "buffs100",
+         "title": "Buffs",
+         "desc": {
+          "hard": "Grant at least 100 buffs"
+         },
+         "keycards": 10,
+         "art": "live/conquest-keycard.png",
+         "kind": "sector"
+        },
+        {
+         "id": "bonusturns",
+         "title": "Bonus Turns",
+         "desc": {
+          "hard": "Gain bonus turn 50 times"
+         },
+         "keycards": 10,
+         "art": "live/conquest-keycard.png",
+         "kind": "sector"
+        },
+        {
+         "id": "thechild",
+         "title": "The Child",
+         "keycards": 4,
+         "art": "live/conquest-grogu.png",
+         "desc": {
+          "easy": "Win with Grogu & Anzellans surviving",
+          "normal": "Win with Grogu & Anzellans surviving",
+          "hard": "Win with Grogu & Anzellans surviving"
+         },
+         "kind": "miniboss"
+        },
+        {
+         "id": "imprem",
+         "title": "Imperial Remnants Miniboss",
+         "desc": {
+          "hard": "Win with a full squad of Imperial Remnants"
+         },
+         "keycards": 3,
+         "art": "live/conquest-keycard.png",
+         "kind": "miniboss"
+        },
+        {
+         "id": "ghost",
+         "title": "Ghost of the Republic",
+         "keycards": 3,
+         "art": "live/conquest-generalsyndulla.png",
+         "desc": {
+          "easy": "Win with General Syndulla surviving",
+          "normal": "Win with General Syndulla surviving",
+          "hard": "Win with General Syndulla surviving"
+         },
+         "kind": "boss"
+        },
+        {
+         "id": "finalwatch",
+         "title": "Final Watch",
+         "keycards": 4,
+         "art": "live/conquest-keycard.png",
+         "desc": {
+          "easy": "Win with a full squad of Constable units",
+          "normal": "Win with a full squad of Constable units",
+          "hard": "Win with a full squad of Constable units"
+         },
+         "kind": "boss"
+        }
+       ]
+      },
+      {
+       "name": "Sector 5",
+       "feats": [
+        {
+         "id": "evasiondown",
+         "title": "Evasion Down",
+         "keycards": 15,
+         "art": "live/conquest-keycard.png",
+         "desc": {
+          "hard": "Attempt to inflict Evasion Down 40 times"
+         },
+         "kind": "sector"
+        },
+        {
+         "id": "colonelsorders",
+         "title": "Colonel's Orders",
+         "keycards": 15,
+         "art": "live/conquest-ward.png",
+         "desc": {
+          "easy": "Win 5 battles with Colonel Ward in your squad",
+          "normal": "Win 7 battles with Colonel Ward surviving",
+          "hard": "Win 10 battles with Colonel Ward surviving"
+         },
+         "kind": "sector"
+        },
+        {
+         "id": "flawless-5",
+         "title": "Flawless",
+         "desc": {
+          "hard": "Win 20 battles without losing any units"
+         },
+         "keycards": 15,
+         "art": "live/conquest-keycard.png",
+         "kind": "sector"
+        },
+        {
+         "id": "lsds",
+         "title": "Light and Dark",
+         "desc": {
+          "hard": "Win 20 battles with at least 1 Light Side and 1 Dark Side character surviving"
+         },
+         "keycards": 15,
+         "art": "live/conquest-keycard.png",
+         "kind": "sector"
+        },
+        {
+         "id": "mercenary",
+         "title": "Mercenary Miniboss",
+         "desc": {
+          "hard": "Win with a full squad of Mercenary units"
+         },
+         "keycards": 3,
+         "art": "live/conquest-keycard.png",
+         "kind": "miniboss"
+        },
+        {
+         "id": "bountypaid",
+         "title": "Bounty Paid",
+         "keycards": 3,
+         "art": "live/conquest-rotta.png",
+         "desc": {
+          "easy": "Win with Rotta the Hutt surviving",
+          "normal": "Win with Rotta the Hutt surviving",
+          "hard": "Win with Rotta the Hutt surviving"
+         },
+         "kind": "miniboss"
+        },
+        {
+         "id": "honorguard",
+         "title": "Honor Guard",
+         "keycards": 5,
+         "art": "live/conquest-zebnr.png",
+         "desc": {
+          "easy": "Win with Zeb Orrelios (New Republic Pilot) surviving",
+          "normal": "Win with Zeb Orrelios (New Republic Pilot) surviving",
+          "hard": "Win with Zeb Orrelios (New Republic Pilot) surviving"
+         },
+         "kind": "boss"
+        },
+        {
+         "id": "notanks",
+         "title": "No Tanks Boss",
+         "desc": {
+          "hard": "Win the battle with no Tanks in your squad"
+         },
+         "keycards": 5,
+         "art": "live/conquest-keycard.png",
+         "kind": "boss"
+        }
+       ]
+      }
+     ]
+    }
+   },
+   "shardUnits": {
+    "primary": {
+     "name": "Embo & Keibu",
+     "art": "live/conquest-embokeibu.png"
+    },
+    "secondary": {
+     "name": "Leia (Jedi Training)",
+     "art": "live/conquest-leiajt.png"
+    }
+   },
+   "volume": 25
+  }
+ ]
+}
