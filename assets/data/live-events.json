@@ -1,5 +1,5 @@
 {
- "pulledAt": 1790544301850,
+ "pulledAt": 1790585135500,
  "gameDataVersion": "0.40.5:lVXov90TSkStiap2_qnJUA",
  "events": [
   {
@@ -23,23 +23,13 @@
    "art": "live/events-jaxxon.png"
   },
   {
-   "id": "EVENT_ASSAULT_SEPARATIST",
-   "name": "Ground War Assault Battles",
-   "kind": "assault",
-   "unit": "GROUNDWAR",
-   "startMs": 1790406000000,
-   "endMs": 1790492400000,
-   "live": false,
-   "art": "live/events-groundwar.png"
-  },
-  {
    "id": "EVENT_GALACTIC_BOUNTY_02",
    "name": "Galactic Bounties II",
    "kind": "event",
    "unit": "GALACTICBOUNTIES",
    "startMs": 1790492400000,
    "endMs": 1790578800000,
-   "live": true,
+   "live": false,
    "art": "live/events-galacticbounties.png"
   },
   {
@@ -49,7 +39,7 @@
    "unit": "GALACTICCHALLENGESENDOR",
    "startMs": 1790578800000,
    "endMs": 1790665200000,
-   "live": false,
+   "live": true,
    "art": "live/events-galacticchallenges-endor.png"
   },
   {
