@@ -1,5 +1,5 @@
 {
- "pulledAt": 1790585135500,
+ "pulledAt": 1790619099060,
  "gameDataVersion": "0.40.5:lVXov90TSkStiap2_qnJUA",
  "events": [
   {
@@ -49,7 +49,7 @@
    "unit": "SMUGGLERSRUN",
    "startMs": 1790589600000,
    "endMs": 1790676000000,
-   "live": false,
+   "live": true,
    "art": "live/events-smugglersrun.png"
   },
   {
@@ -59,7 +59,7 @@
    "unit": "CONQUESTGENERIC",
    "startMs": 1790618400000,
    "endMs": 1791828000000,
-   "live": false
+   "live": true
   },
   {
    "id": "SPECIAL_EVENT_COVEN_OF_SHADOWS",
@@ -150,6 +150,16 @@
    "endMs": 1791914400000,
    "live": false,
    "art": "live/events-theronin.png"
+  },
+  {
+   "id": "EVENT_ASSAULT_INQUISITOR",
+   "name": "Fanatical Devotion Assault Battles",
+   "kind": "assault",
+   "unit": "INQUISITORASSAULTBATTLE",
+   "startMs": 1791356400000,
+   "endMs": 1791442800000,
+   "live": false,
+   "art": "live/events-inquisitor-assault-battle.png"
   }
  ]
 }
