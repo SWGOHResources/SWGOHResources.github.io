@@ -1,5 +1,5 @@
 {
- "pulledAt": 1790619099060,
+ "pulledAt": 1790671149753,
  "gameDataVersion": "0.40.5:lVXov90TSkStiap2_qnJUA",
  "events": [
   {
@@ -23,23 +23,13 @@
    "art": "live/events-jaxxon.png"
   },
   {
-   "id": "EVENT_GALACTIC_BOUNTY_02",
-   "name": "Galactic Bounties II",
-   "kind": "event",
-   "unit": "GALACTICBOUNTIES",
-   "startMs": 1790492400000,
-   "endMs": 1790578800000,
-   "live": false,
-   "art": "live/events-galacticbounties.png"
-  },
-  {
    "id": "EVENT_OMEGA_BATTLES_04_ENDOR",
    "name": "Endor Omega Battles",
    "kind": "omega",
    "unit": "GALACTICCHALLENGESENDOR",
    "startMs": 1790578800000,
    "endMs": 1790665200000,
-   "live": true,
+   "live": false,
    "art": "live/events-galacticchallenges-endor.png"
   },
   {
@@ -68,7 +58,7 @@
    "unit": "HALLOWEEN2025",
    "startMs": 1790665200000,
    "endMs": 1790751600000,
-   "live": false,
+   "live": true,
    "art": "live/events-halloween2025.png"
   },
   {
