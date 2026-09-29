@@ -1,5 +1,5 @@
 {
- "pulledAt": 1790699578412,
+ "pulledAt": 1790720472237,
  "gameDataVersion": "0.40.5:lVXov90TSkStiap2_qnJUA",
  "events": [
   {
@@ -19,7 +19,7 @@
    "unit": "JAXXON",
    "startMs": 1790100000000,
    "endMs": 1790704800000,
-   "live": true,
+   "live": false,
    "art": "live/events-jaxxon.png"
   },
   {
@@ -68,7 +68,7 @@
    "unit": "JAXXON",
    "startMs": 1790704800000,
    "endMs": 1791309600000,
-   "live": false,
+   "live": true,
    "art": "live/events-jaxxon.png"
   },
   {
