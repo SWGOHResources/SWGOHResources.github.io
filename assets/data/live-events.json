@@ -1,5 +1,5 @@
 {
- "pulledAt": 1790720472237,
+ "pulledAt": 1790757581514,
  "gameDataVersion": "0.40.5:lVXov90TSkStiap2_qnJUA",
  "events": [
   {
@@ -21,16 +21,6 @@
    "endMs": 1790704800000,
    "live": false,
    "art": "live/events-jaxxon.png"
-  },
-  {
-   "id": "EVENT_OMEGA_BATTLES_04_ENDOR",
-   "name": "Endor Omega Battles",
-   "kind": "omega",
-   "unit": "GALACTICCHALLENGESENDOR",
-   "startMs": 1790578800000,
-   "endMs": 1790665200000,
-   "live": false,
-   "art": "live/events-galacticchallenges-endor.png"
   },
   {
    "id": "EVENT_RESOURCE_SMUGGLERS_RUN",
@@ -58,7 +48,7 @@
    "unit": "HALLOWEEN2025",
    "startMs": 1790665200000,
    "endMs": 1790751600000,
-   "live": true,
+   "live": false,
    "art": "live/events-halloween2025.png"
   },
   {
@@ -78,7 +68,7 @@
    "unit": "PROFUNDITY",
    "startMs": 1790751600000,
    "endMs": 1790838000000,
-   "live": false,
+   "live": true,
    "art": "live/events-profundity.png"
   },
   {
