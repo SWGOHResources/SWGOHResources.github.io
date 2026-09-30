@@ -1,5 +1,5 @@
 {
- "pulledAt": 1790757581514,
+ "pulledAt": 1790785583130,
  "gameDataVersion": "0.40.5:lVXov90TSkStiap2_qnJUA",
  "events": [
   {
@@ -21,16 +21,6 @@
    "endMs": 1790704800000,
    "live": false,
    "art": "live/events-jaxxon.png"
-  },
-  {
-   "id": "EVENT_RESOURCE_SMUGGLERS_RUN",
-   "name": "Smuggler's Run",
-   "kind": "smugglers-run",
-   "unit": "SMUGGLERSRUN",
-   "startMs": 1790589600000,
-   "endMs": 1790676000000,
-   "live": false,
-   "art": "live/events-smugglersrun.png"
   },
   {
    "id": "CONQUEST_VOL25",
