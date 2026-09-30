@@ -1,6 +1,6 @@
 {
- "pulledAt": 1790785583130,
- "gameDataVersion": "0.40.5:lVXov90TSkStiap2_qnJUA",
+ "pulledAt": 1790806883097,
+ "gameDataVersion": "0.40.6:Oq-TxiewST69Ow5E1gLW3g",
  "events": [
   {
    "id": "progressionevent_MEESALESS_MASSACRE",
@@ -11,16 +11,6 @@
    "endMs": 1792519200000,
    "live": true,
    "art": "live/events-darthjarjar.png"
-  },
-  {
-   "id": "EVENT_MARQUEE_JAXXON",
-   "name": "Action Jaxxon",
-   "kind": "marquee",
-   "unit": "JAXXON",
-   "startMs": 1790100000000,
-   "endMs": 1790704800000,
-   "live": false,
-   "art": "live/events-jaxxon.png"
   },
   {
    "id": "CONQUEST_VOL25",
@@ -92,6 +82,16 @@
    "art": "live/events-galactic-challenges-jakku.png"
   },
   {
+   "id": "EVENT_CREDIT_HEIST_GETAWAY_V2",
+   "name": "Credit Heist",
+   "kind": "credit-heist",
+   "unit": "CREDITHEIST",
+   "startMs": 1791108000000,
+   "endMs": 1791194400000,
+   "live": false,
+   "art": "live/events-creditheist.png"
+  },
+  {
    "id": "EVENT_OMEGA_BATTLES_01_BESPIN",
    "name": "Bespin Omega Battles",
    "kind": "omega",
@@ -130,6 +130,16 @@
    "endMs": 1791442800000,
    "live": false,
    "art": "live/events-inquisitor-assault-battle.png"
+  },
+  {
+   "id": "EVENT_OMEGA_BATTLES_06_EMPIRESHIPS",
+   "name": "Imperial Fleet Omega Battles",
+   "kind": "omega",
+   "unit": "GALACTICCHALLENGESDEATHSTAR",
+   "startMs": 1791529200000,
+   "endMs": 1791615600000,
+   "live": false,
+   "art": "live/events-galactic-challenges-deathstar.png"
   }
  ]
 }
