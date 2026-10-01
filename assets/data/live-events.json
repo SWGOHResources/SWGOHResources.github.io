@@ -1,5 +1,5 @@
 {
- "pulledAt": 1790874211287,
+ "pulledAt": 1790894713321,
  "gameDataVersion": "0.40.6:Oq-TxiewST69Ow5E1gLW3g",
  "events": [
   {
@@ -130,6 +130,16 @@
    "endMs": 1791615600000,
    "live": false,
    "art": "live/events-galactic-challenges-deathstar.png"
+  },
+  {
+   "id": "EVENT_ASSAULT_EWOK",
+   "name": "Forest Moon Assault Battles",
+   "kind": "assault",
+   "unit": "FORESTMOON",
+   "startMs": 1791615600000,
+   "endMs": 1791702000000,
+   "live": false,
+   "art": "live/events-forestmoon.png"
   }
  ]
 }
