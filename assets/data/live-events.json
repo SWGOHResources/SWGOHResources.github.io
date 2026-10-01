@@ -1,5 +1,5 @@
 {
- "pulledAt": 1790806883097,
+ "pulledAt": 1790845333422,
  "gameDataVersion": "0.40.6:Oq-TxiewST69Ow5E1gLW3g",
  "events": [
   {
@@ -22,16 +22,6 @@
    "live": true
   },
   {
-   "id": "SPECIAL_EVENT_COVEN_OF_SHADOWS",
-   "name": "Coven of Shadows",
-   "kind": "event",
-   "unit": "HALLOWEEN2025",
-   "startMs": 1790665200000,
-   "endMs": 1790751600000,
-   "live": false,
-   "art": "live/events-halloween2025.png"
-  },
-  {
    "id": "EC23_ScoundrelEmpireCoruscant_1786272482",
    "name": "Jaxxon Era Challenge",
    "kind": "era-challenge",
@@ -48,7 +38,7 @@
    "unit": "PROFUNDITY",
    "startMs": 1790751600000,
    "endMs": 1790838000000,
-   "live": true,
+   "live": false,
    "art": "live/events-profundity.png"
   },
   {
