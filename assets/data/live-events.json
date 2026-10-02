@@ -1,5 +1,5 @@
 {
- "pulledAt": 1790894713321,
+ "pulledAt": 1790930247123,
  "gameDataVersion": "0.40.6:Oq-TxiewST69Ow5E1gLW3g",
  "events": [
   {
@@ -32,16 +32,6 @@
    "art": "live/events-jaxxon.png"
   },
   {
-   "id": "EVENT_FLEET_MASTERY_PROFUNDITY",
-   "name": "Stardust Transmission",
-   "kind": "fleet",
-   "unit": "PROFUNDITY",
-   "startMs": 1790751600000,
-   "endMs": 1790838000000,
-   "live": false,
-   "art": "live/events-profundity.png"
-  },
-  {
    "id": "EVENT_TRAINING_DROID_SMUGGLING",
    "name": "Training Droid Smuggling",
    "kind": "event",
@@ -68,7 +58,7 @@
    "unit": "GALACTICCHALLENGESJAKKU",
    "startMs": 1790924400000,
    "endMs": 1791010800000,
-   "live": false,
+   "live": true,
    "art": "live/events-galactic-challenges-jakku.png"
   },
   {
