@@ -1,5 +1,5 @@
 {
- "pulledAt": 1790930247123,
+ "pulledAt": 1790957879990,
  "gameDataVersion": "0.40.6:Oq-TxiewST69Ow5E1gLW3g",
  "events": [
   {
@@ -38,7 +38,7 @@
    "unit": "DROIDSMUGGLE",
    "startMs": 1790848800000,
    "endMs": 1790935200000,
-   "live": true,
+   "live": false,
    "art": "live/events-droid-smuggle.png"
   },
   {
@@ -48,7 +48,7 @@
    "unit": "CONTRABANDCARGO",
    "startMs": 1790848800000,
    "endMs": 1790935200000,
-   "live": true,
+   "live": false,
    "art": "live/events-contrabandcargo.png"
   },
   {
