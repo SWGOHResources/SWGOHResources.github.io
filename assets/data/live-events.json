@@ -1,5 +1,5 @@
 {
- "pulledAt": 1790957879990,
+ "pulledAt": 1791015227012,
  "gameDataVersion": "0.40.6:Oq-TxiewST69Ow5E1gLW3g",
  "events": [
   {
@@ -58,7 +58,7 @@
    "unit": "GALACTICCHALLENGESJAKKU",
    "startMs": 1790924400000,
    "endMs": 1791010800000,
-   "live": true,
+   "live": false,
    "art": "live/events-galactic-challenges-jakku.png"
   },
   {
