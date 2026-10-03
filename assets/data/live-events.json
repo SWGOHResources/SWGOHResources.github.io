@@ -1,5 +1,5 @@
 {
- "pulledAt": 1791038746443,
+ "pulledAt": 1791062624362,
  "gameDataVersion": "0.40.6:Oq-TxiewST69Ow5E1gLW3g",
  "events": [
   {
@@ -92,6 +92,16 @@
    "art": "live/events-inquisitor-assault-battle.png"
   },
   {
+   "id": "EVENT_RESOURCE_SMUGGLERS_RUN_2",
+   "name": "Smuggler's Run II",
+   "kind": "smugglers-run",
+   "unit": "SMUGGLERSRUN",
+   "startMs": 1791367200000,
+   "endMs": 1791453600000,
+   "live": false,
+   "art": "live/events-smugglersrun.png"
+  },
+  {
    "id": "EVENT_OMEGA_BATTLES_06_EMPIRESHIPS",
    "name": "Imperial Fleet Omega Battles",
    "kind": "omega",
@@ -110,6 +120,16 @@
    "endMs": 1791702000000,
    "live": false,
    "art": "live/events-forestmoon.png"
+  },
+  {
+   "id": "EVENT_OMEGA_BATTLES_02_CORUSCANT",
+   "name": "Coruscant Omega Battles",
+   "kind": "omega",
+   "unit": "GALACTICCHALLENGESCORUSCANT",
+   "startMs": 1791788400000,
+   "endMs": 1791874800000,
+   "live": false,
+   "art": "live/events-galactic-challenges-coruscant.png"
   }
  ]
 }
