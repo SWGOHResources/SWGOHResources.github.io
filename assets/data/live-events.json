@@ -1,5 +1,5 @@
 {
- "pulledAt": 1791015227012,
+ "pulledAt": 1791038746443,
  "gameDataVersion": "0.40.6:Oq-TxiewST69Ow5E1gLW3g",
  "events": [
   {
@@ -30,26 +30,6 @@
    "endMs": 1791309600000,
    "live": true,
    "art": "live/events-jaxxon.png"
-  },
-  {
-   "id": "EVENT_TRAINING_DROID_SMUGGLING",
-   "name": "Training Droid Smuggling",
-   "kind": "event",
-   "unit": "DROIDSMUGGLE",
-   "startMs": 1790848800000,
-   "endMs": 1790935200000,
-   "live": false,
-   "art": "live/events-droid-smuggle.png"
-  },
-  {
-   "id": "EVENT_RESOURCE_CONTRABAND_CARGO",
-   "name": "Contraband Cargo",
-   "kind": "event",
-   "unit": "CONTRABANDCARGO",
-   "startMs": 1790848800000,
-   "endMs": 1790935200000,
-   "live": false,
-   "art": "live/events-contrabandcargo.png"
   },
   {
    "id": "EVENT_OMEGA_BATTLES_05_JAKKU",
