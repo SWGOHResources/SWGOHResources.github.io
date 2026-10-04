@@ -1,5 +1,5 @@
 {
- "pulledAt": 1791062624362,
+ "pulledAt": 1791102648896,
  "gameDataVersion": "0.40.6:Oq-TxiewST69Ow5E1gLW3g",
  "events": [
   {
@@ -30,16 +30,6 @@
    "endMs": 1791309600000,
    "live": true,
    "art": "live/events-jaxxon.png"
-  },
-  {
-   "id": "EVENT_OMEGA_BATTLES_05_JAKKU",
-   "name": "Jakku Omega Battles",
-   "kind": "omega",
-   "unit": "GALACTICCHALLENGESJAKKU",
-   "startMs": 1790924400000,
-   "endMs": 1791010800000,
-   "live": false,
-   "art": "live/events-galactic-challenges-jakku.png"
   },
   {
    "id": "EVENT_CREDIT_HEIST_GETAWAY_V2",
