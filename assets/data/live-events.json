@@ -1,5 +1,5 @@
 {
- "pulledAt": 1791127513456,
+ "pulledAt": 1791149699522,
  "gameDataVersion": "0.40.6:Oq-TxiewST69Ow5E1gLW3g",
  "events": [
   {
@@ -92,6 +92,16 @@
    "art": "live/events-smugglersrun.png"
   },
   {
+   "id": "EVENT_TRAINING_DROID_SMUGGLING",
+   "name": "Training Droid Smuggling",
+   "kind": "event",
+   "unit": "DROIDSMUGGLE",
+   "startMs": 1791453600000,
+   "endMs": 1791540000000,
+   "live": false,
+   "art": "live/events-droid-smuggle.png"
+  },
+  {
    "id": "EVENT_OMEGA_BATTLES_06_EMPIRESHIPS",
    "name": "Imperial Fleet Omega Battles",
    "kind": "omega",
@@ -120,6 +130,16 @@
    "endMs": 1791874800000,
    "live": false,
    "art": "live/events-galactic-challenges-coruscant.png"
+  },
+  {
+   "id": "EVENT_SPECIAL_DEFENSE_OF_DATHOMIR",
+   "name": "Defense of Dathomir",
+   "kind": "event",
+   "unit": "DATHOMIRBATTLE",
+   "startMs": 1791874800000,
+   "endMs": 1791961200000,
+   "live": false,
+   "art": "live/events-dathomir-battle.png"
   }
  ]
 }
