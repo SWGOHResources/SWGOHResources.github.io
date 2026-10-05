@@ -1,5 +1,5 @@
 {
- "pulledAt": 1791149699522,
+ "pulledAt": 1791191473242,
  "gameDataVersion": "0.40.6:Oq-TxiewST69Ow5E1gLW3g",
  "events": [
   {
@@ -48,7 +48,7 @@
    "unit": "GALACTICCHALLENGESBESPIN",
    "startMs": 1791183600000,
    "endMs": 1791270000000,
-   "live": false,
+   "live": true,
    "art": "live/events-galactic-challenges-bespin.png"
   },
   {
