@@ -1,5 +1,5 @@
 {
- "pulledAt": 1791293052476,
+ "pulledAt": 1791315358659,
  "gameDataVersion": "0.40.6:Oq-TxiewST69Ow5E1gLW3g",
  "events": [
   {
@@ -28,7 +28,7 @@
    "unit": "JAXXON",
    "startMs": 1790704800000,
    "endMs": 1791309600000,
-   "live": true,
+   "live": false,
    "art": "live/events-jaxxon.png"
   },
   {
@@ -58,7 +58,7 @@
    "unit": "THERONIN",
    "startMs": 1791309600000,
    "endMs": 1791914400000,
-   "live": false,
+   "live": true,
    "art": "live/events-theronin.png"
   },
   {
@@ -150,6 +150,16 @@
    "endMs": 1792047600000,
    "live": false,
    "art": "live/events-nightsisters-assault.png"
+  },
+  {
+   "id": "EVENT_FLEET_MASTERY_EXECUTOR",
+   "name": "Discarded Doctrine",
+   "kind": "fleet",
+   "unit": "EXECUTOR",
+   "startMs": 1792047600000,
+   "endMs": 1792134000000,
+   "live": false,
+   "art": "live/events-executor.png"
   }
  ]
 }
