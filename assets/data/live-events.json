@@ -1,5 +1,5 @@
 {
- "pulledAt": 1791228014274,
+ "pulledAt": 1791293052476,
  "gameDataVersion": "0.40.6:Oq-TxiewST69Ow5E1gLW3g",
  "events": [
   {
@@ -32,23 +32,13 @@
    "art": "live/events-jaxxon.png"
   },
   {
-   "id": "EVENT_CREDIT_HEIST_GETAWAY_V2",
-   "name": "Credit Heist",
-   "kind": "credit-heist",
-   "unit": "CREDITHEIST",
-   "startMs": 1791108000000,
-   "endMs": 1791194400000,
-   "live": false,
-   "art": "live/events-creditheist.png"
-  },
-  {
    "id": "EVENT_OMEGA_BATTLES_01_BESPIN",
    "name": "Bespin Omega Battles",
    "kind": "omega",
    "unit": "GALACTICCHALLENGESBESPIN",
    "startMs": 1791183600000,
    "endMs": 1791270000000,
-   "live": true,
+   "live": false,
    "art": "live/events-galactic-challenges-bespin.png"
   },
   {
@@ -58,7 +48,7 @@
    "unit": "EWOKHEROIC",
    "startMs": 1791270000000,
    "endMs": 1791356400000,
-   "live": false,
+   "live": true,
    "art": "live/events-ewok-heroic.png"
   },
   {
