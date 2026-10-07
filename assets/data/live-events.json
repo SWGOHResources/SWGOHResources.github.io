@@ -1,5 +1,5 @@
 {
- "pulledAt": 1791394037370,
+ "pulledAt": 1791414582143,
  "gameDataVersion": "0.40.6:Oq-TxiewST69Ow5E1gLW3g",
  "events": [
   {
@@ -20,16 +20,6 @@
    "startMs": 1790618400000,
    "endMs": 1791828000000,
    "live": true
-  },
-  {
-   "id": "EC23_ScoundrelEmpireCoruscant_1786272482",
-   "name": "Jaxxon Era Challenge",
-   "kind": "era-challenge",
-   "unit": "JAXXON",
-   "startMs": 1790704800000,
-   "endMs": 1791309600000,
-   "live": false,
-   "art": "live/events-jaxxon.png"
   },
   {
    "id": "EVENT_HEROIC_ATST",
@@ -132,6 +122,16 @@
    "art": "live/events-dathomir-battle.png"
   },
   {
+   "id": "EC24_SithSithManaan_1778480386",
+   "name": "The Ronin Era Challenge",
+   "kind": "era-challenge",
+   "unit": "THERONIN",
+   "startMs": 1791914400000,
+   "endMs": 1792519200000,
+   "live": false,
+   "art": "live/events-theronin.png"
+  },
+  {
    "id": "EVENT_ASSAULT_DARKSIDE",
    "name": "Secrets and Shadows Assault Battle",
    "kind": "assault",
@@ -150,6 +150,16 @@
    "endMs": 1792134000000,
    "live": false,
    "art": "live/events-executor.png"
+  },
+  {
+   "id": "EVENT_OMEGA_BATTLES_07_HOTH",
+   "name": "Hoth Omega Battles",
+   "kind": "omega",
+   "unit": "GALACTICCHALLENGESHOTH",
+   "startMs": 1792134000000,
+   "endMs": 1792220400000,
+   "live": false,
+   "art": "live/events-galactic-challenges-hoth.png"
   }
  ]
 }
