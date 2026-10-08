@@ -1,5 +1,5 @@
 {
- "pulledAt": 1791480352630,
+ "pulledAt": 1791501921495,
  "gameDataVersion": "0.40.6:Oq-TxiewST69Ow5E1gLW3g",
  "events": [
   {
@@ -102,6 +102,16 @@
    "art": "live/events-galactic-challenges-coruscant.png"
   },
   {
+   "id": "EVENT_RESOURCE_SMUGGLERS_RUN",
+   "name": "Smuggler's Run",
+   "kind": "smugglers-run",
+   "unit": "SMUGGLERSRUN",
+   "startMs": 1791799200000,
+   "endMs": 1791885600000,
+   "live": false,
+   "art": "live/events-smugglersrun.png"
+  },
+  {
    "id": "EVENT_SPECIAL_DEFENSE_OF_DATHOMIR",
    "name": "Defense of Dathomir",
    "kind": "event",
@@ -150,6 +160,16 @@
    "endMs": 1792220400000,
    "live": false,
    "art": "live/events-galactic-challenges-hoth.png"
+  },
+  {
+   "id": "EVENT_ASSAULT_EMPIRE",
+   "name": "Military Might Assault Battles",
+   "kind": "assault",
+   "unit": "EMPIREHORDE",
+   "startMs": 1792220400000,
+   "endMs": 1792306800000,
+   "live": false,
+   "art": "live/events-empirehorde.png"
   }
  ]
 }
