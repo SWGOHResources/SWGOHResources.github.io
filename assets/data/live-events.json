@@ -1,5 +1,5 @@
 {
- "pulledAt": 1791414582143,
+ "pulledAt": 1791450332126,
  "gameDataVersion": "0.40.6:Oq-TxiewST69Ow5E1gLW3g",
  "events": [
   {
@@ -22,16 +22,6 @@
    "live": true
   },
   {
-   "id": "EVENT_HEROIC_ATST",
-   "name": "Endor Escalation Heroic Battle",
-   "kind": "event",
-   "unit": "EWOKHEROIC",
-   "startMs": 1791270000000,
-   "endMs": 1791356400000,
-   "live": false,
-   "art": "live/events-ewok-heroic.png"
-  },
-  {
    "id": "EVENT_MARQUEE_THERONIN",
    "name": "The Wanderer's Blade",
    "kind": "marquee",
@@ -48,7 +38,7 @@
    "unit": "INQUISITORASSAULTBATTLE",
    "startMs": 1791356400000,
    "endMs": 1791442800000,
-   "live": true,
+   "live": false,
    "art": "live/events-inquisitor-assault-battle.png"
   },
   {
