@@ -86,7 +86,17 @@ from the feed — Comlink exposes no round info, so the hardcoded
 per-round GAC cards cover it. The snapshot refreshes itself via
 `.github/workflows/live-events.yml` (every 4 hours, including
 18:20 UTC just after the 18:00 UTC changeover, so late client updates
-are caught overnight). Manual refresh works the same way:
+are caught overnight).
+
+Open browser tabs check for newer snapshots every 15 minutes, and when
+returning to a tab once that interval has elapsed. Failed requests retry
+after a minute and keep the last good snapshot; simultaneous requests
+share one fetch. Countdown text updates in place each minute, while
+standard, GAC and guild phase transitions trigger a full refresh even
+if a timer was delayed. Automatically replaced era artwork is
+revalidated online and remains cached for offline use.
+
+Manual refresh works the same way:
 
 ```sh
 # Terminal 1 — Comlink + asset extractor (needs Docker)
@@ -114,8 +124,18 @@ Routine gamedata hash rotations never alert.
 via the `DISCORD_WEBHOOK_URL` repo secret (job still tracks versions
 when the secret is absent).
 
+Meaningful transitions are saved in `pendingNotifications` in the
+version snapshot before any delivery attempt. `scripts/notify-client-version.mjs`
+posts the queued alerts with their original version details and records
+each successful delivery. The workflow saves those checkpoints even
+when a later request fails, so the next hourly run retries the remaining
+alerts. A missing webhook keeps the queue. If the process stops after
+Discord accepts a post but before its checkpoint is persisted, that
+post may repeat on retry.
+
 ```sh
 npm run versions:check
+npm run versions:notify
 ```
 
 Alert embeds carry no emojis.

@@ -4,7 +4,7 @@
    and live data go network-first so the schedule stays fresh, falling
    back to cache offline. Bump CACHE below on deploys that change the
    app shell. */
-const CACHE = 'swgoh-schedule-v7';
+const CACHE = 'swgoh-schedule-v8';
 
 const CORE = ['/', '/index.html', '/site.webmanifest'];
 
@@ -59,12 +59,14 @@ self.addEventListener('fetch', event => {
   // would pin the first copy served and never pick up the 4-hourly
   // refresh, so they go network-first (cache fallback keeps them
   // available offline).
-  if (url.pathname.startsWith('/assets/data/')) {
+  // The era emblem is overwritten in-place by the live-event pull.
+  // Revalidate it as well so an installed browser sees the next era.
+  if (url.pathname.startsWith('/assets/data/') || url.pathname === '/assets/img/live/era-icon.png') {
     event.respondWith(
-      fetch(req).then(res => {
+      fetch(req, { cache: 'no-cache' }).then(res => {
         if (res && res.ok) {
           const copy = res.clone();
-          caches.open(CACHE).then(cache => cache.put(req, copy));
+          event.waitUntil(caches.open(CACHE).then(cache => cache.put(req, copy)).catch(() => {}));
         }
         return res;
       }).catch(() => caches.match(req))

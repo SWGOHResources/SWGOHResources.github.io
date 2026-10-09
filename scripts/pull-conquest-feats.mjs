@@ -12,6 +12,7 @@
 // Needs a reachable Comlink instance (same one as npm run events:pull).
 
 import { readFile, writeFile } from 'node:fs/promises';
+import { isMain } from './is-main.mjs';
 
 const COMLINK_URL = process.env.COMLINK_URL ?? 'http://localhost:3500';
 const VOL = process.env.VOL ?? '25';
@@ -150,7 +151,7 @@ async function main() {
   console.log(`conquest:pull vol ${VOL}: ${updated} refreshed, ${added} staged for triage`);
 }
 
-if (process.argv[1] === new URL(import.meta.url).pathname) {
+if (isMain(import.meta.url)) {
   main().catch(err => {
     console.error(`conquest:pull failed: ${err.message}`);
     process.exit(1);
