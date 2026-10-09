@@ -1,5 +1,5 @@
 {
- "pulledAt": 1791501921495,
+ "pulledAt": 1791537137854,
  "gameDataVersion": "0.40.6:Oq-TxiewST69Ow5E1gLW3g",
  "events": [
   {
@@ -32,16 +32,6 @@
    "art": "live/events-theronin.png"
   },
   {
-   "id": "EVENT_ASSAULT_INQUISITOR",
-   "name": "Fanatical Devotion Assault Battles",
-   "kind": "assault",
-   "unit": "INQUISITORASSAULTBATTLE",
-   "startMs": 1791356400000,
-   "endMs": 1791442800000,
-   "live": false,
-   "art": "live/events-inquisitor-assault-battle.png"
-  },
-  {
    "id": "EVENT_RESOURCE_SMUGGLERS_RUN_2",
    "name": "Smuggler's Run II",
    "kind": "smugglers-run",
@@ -68,7 +58,7 @@
    "unit": "GALACTICCHALLENGESDEATHSTAR",
    "startMs": 1791529200000,
    "endMs": 1791615600000,
-   "live": false,
+   "live": true,
    "art": "live/events-galactic-challenges-deathstar.png"
   },
   {
