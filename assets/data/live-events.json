@@ -1,5 +1,5 @@
 {
- "pulledAt": 1791537137854,
+ "pulledAt": 1791565316559,
  "gameDataVersion": "0.40.6:Oq-TxiewST69Ow5E1gLW3g",
  "events": [
   {
@@ -32,23 +32,13 @@
    "art": "live/events-theronin.png"
   },
   {
-   "id": "EVENT_RESOURCE_SMUGGLERS_RUN_2",
-   "name": "Smuggler's Run II",
-   "kind": "smugglers-run",
-   "unit": "SMUGGLERSRUN",
-   "startMs": 1791367200000,
-   "endMs": 1791453600000,
-   "live": false,
-   "art": "live/events-smugglersrun.png"
-  },
-  {
    "id": "EVENT_TRAINING_DROID_SMUGGLING",
    "name": "Training Droid Smuggling",
    "kind": "event",
    "unit": "DROIDSMUGGLE",
    "startMs": 1791453600000,
    "endMs": 1791540000000,
-   "live": true,
+   "live": false,
    "art": "live/events-droid-smuggle.png"
   },
   {
@@ -68,7 +58,7 @@
    "unit": "SMUGGLERSRUN",
    "startMs": 1791540000000,
    "endMs": 1791626400000,
-   "live": false,
+   "live": true,
    "art": "live/events-smugglersrun.png"
   },
   {
