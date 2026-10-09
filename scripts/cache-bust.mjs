@@ -27,8 +27,9 @@
 import { createHash } from 'node:crypto';
 import { readdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const ROOT = new URL('..', import.meta.url).pathname.replace(/\/$/, '');
+const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const ASSET_DIR = path.join(ROOT, 'assets');
 export const VERSION_META = 'swgoh-asset-v';
 // Hashed rather than skipped: a file can be deleted without its
@@ -38,6 +39,7 @@ const ASSET_EXT = new Set([
   '.gif', '.svg', '.ico', '.woff', '.woff2', '.txt', '.webmanifest',
 ]);
 const LOCAL_REF = /(\s(?:href|src)=")((?!https?:|\/\/|#|mailto:|data:|tel:|javascript:)[^"]+?)(\?v=[0-9a-z]+)?(")/gi;
+const LIVE_SNAPSHOTS = new Set(['assets/data/client-version.json', 'assets/data/digest-state.json', 'assets/data/live-events.json']);
 
 export function shortHash(text) {
   return createHash('sha256').update(text).digest('hex').slice(0, 10);
@@ -66,13 +68,20 @@ export async function assetHashes(root = ROOT) {
   const files = (await walk(path.join(root, 'assets'), root, [])).sort();
   const versions = {};
   for (const rel of files) {
+    // These feeds already bypass the cache. Routine bot updates must
+    // not invalidate every static asset URL and committed HTML page.
+    if (LIVE_SNAPSHOTS.has(rel)) continue;
     let buf;
     try {
       buf = await readFile(path.join(root, rel));
     } catch {
       buf = Buffer.alloc(0); // vanished mid-walk; still gets a token
     }
-    versions[rel] = shortHash(buf);
+    // Git can check out text with CRLF on Windows. Version the same
+    // logical source consistently on every platform.
+    const content = /\.(css|js|mjs|json|txt|webmanifest|svg)$/i.test(rel)
+      ? buf.toString('utf8').replace(/\r\n/g, '\n') : buf;
+    versions[rel] = shortHash(content);
   }
   return versions;
 }
@@ -139,7 +148,7 @@ async function main() {
   );
 }
 
-if (process.argv[1] === new URL(import.meta.url).pathname) {
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   main().catch(err => {
     console.error(`cache:bust failed: ${err.message}`);
     process.exit(1);
