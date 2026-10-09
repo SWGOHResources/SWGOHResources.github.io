@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
 import fs from 'node:fs';
 import test from 'node:test';
 import vm from 'node:vm';
@@ -15,9 +16,9 @@ const js = (src) => JSON.parse(run(`JSON.stringify(${src})`));
 
 const diff = {
   crates: [
-    { name: 'Carbon Crate', at: 100 },
-    { name: 'Gold Crate', at: 530 },
-    { name: 'Red Crate', at: 630 },
+    { name: 'Reward Crate Tier 1', at: 100 },
+    { name: 'Reward Crate Tier 6', at: 530 },
+    { name: 'Reward Crate Tier 7', at: 630 },
   ],
   groups: [
     { name: 'Global feats', feats: [{ id: 'g1', title: 'Win 40 battles', desc: { hard: 'Win 40 battles' }, keycards: 15 }, { id: 'g2', title: 'Easy one', desc: { hard: 'Easy one' }, keycards: 1 }] },
@@ -42,13 +43,13 @@ test('stars clamp to zero and maxStars', () => {
 test('crate lookup finds earned crate and distance to next', () => {
   const crates = JSON.stringify(diff.crates);
   assert.deepEqual(js(`crateFor(${crates}, 50)`), {
-    earned: null, next: { name: 'Carbon Crate', at: 100 }, remaining: 50,
+    earned: null, next: { name: 'Reward Crate Tier 1', at: 100 }, remaining: 50,
   });
   assert.deepEqual(js(`crateFor(${crates}, 600)`), {
-    earned: { name: 'Gold Crate', at: 530 }, next: { name: 'Red Crate', at: 630 }, remaining: 30,
+    earned: { name: 'Reward Crate Tier 6', at: 530 }, next: { name: 'Reward Crate Tier 7', at: 630 }, remaining: 30,
   });
   assert.deepEqual(js(`crateFor(${crates}, 700)`), {
-    earned: { name: 'Red Crate', at: 630 }, next: null, remaining: 0,
+    earned: { name: 'Reward Crate Tier 7', at: 630 }, next: null, remaining: 0,
   });
 });
 
@@ -73,14 +74,49 @@ test('hard groups follow the feat sheet 4/2/2 split', () => {
 });
 
 test('every crate tier has genuine chest art on disk', () => {
-  const art = run('CRATE_ART');
-  for (const tier of ['Carbon', 'Bronze', 'Black', 'Steel', 'Silver', 'Gold', 'Red']) {
-    assert.ok(art[tier], `${tier} mapped`);
-    assert.ok(
-      fs.existsSync(new URL(`../assets/img/${art[tier]}`, import.meta.url)),
-      `missing crate art: ${art[tier]}`,
-    );
+  const data = JSON.parse(fs.readFileSync(new URL('../assets/data/conquest-planner.json', import.meta.url), 'utf8'));
+  const names = new Set();
+  for (const c of data.conquests) {
+    for (const dd of Object.values(c.difficulties)) {
+      for (const k of dd.crates) {
+        const art = run(`crateArt(${JSON.stringify(k.name)})`);
+        assert.ok(art, `no chest art mapped for ${k.name}`);
+        assert.ok(fs.existsSync(new URL(`../${art}`, import.meta.url)), `missing crate art: ${art}`);
+        names.add(k.name);
+      }
+    }
   }
+  // Official naming: the ladder is the reward-crate tiers, 1-7.
+  assert.deepEqual([...names].sort(), [
+    'Reward Crate Tier 1', 'Reward Crate Tier 2', 'Reward Crate Tier 3', 'Reward Crate Tier 4',
+    'Reward Crate Tier 5', 'Reward Crate Tier 6', 'Reward Crate Tier 7',
+  ]);
+});
+
+test('ladder labels shorten to the tier, art lookup tolerates old names', () => {
+  assert.equal(run(`shortName('Reward Crate Tier 4')`), 'Tier 4');
+  assert.equal(run(`shortName('Gold Crate')`), 'Gold');
+  assert.equal(run(`shortName(null)`), '');
+  assert.equal(run(`crateKey('Reward Crate Tier 7')`), 'tier 7');
+  // Older snapshots named the crates by colour — same chest art.
+  assert.equal(run(`crateArt('Gold Crate')`), run(`crateArt('Reward Crate Tier 6')`));
+  assert.equal(run(`crateArt('Mystery Box')`), null);
+});
+
+test('feat art is the related unit, not the keycard placeholder', () => {
+  assert.equal(run(`featArt({ art: 'live/conquest-grogu.png' })`), 'assets/img/live/conquest-grogu.png');
+  // The keycard entry in the data is a currency placeholder, so those feats
+  // render the CSS disc instead of an <img>.
+  assert.equal(run(`featArt({ art: 'live/conquest-keycard.png' })`), null);
+  assert.equal(run(`featArt({})`), null);
+  assert.equal(run(`featArt(null)`), null);
+});
+
+test('datadisk rewards get the disk icon, titles stay a text chip', () => {
+  assert.equal(run(`featRewardDisk('F34T')`), 'F34T');
+  assert.equal(run(`featRewardDisk('Booming Voice')`), 'Booming Voice');
+  assert.equal(run(`featRewardDisk('Guns for Hire title')`), null);
+  assert.equal(run(`featRewardDisk(undefined)`), null);
 });
 
 test('doing everything hits the expected max total per difficulty', () => {
@@ -167,6 +203,20 @@ test('shipped planner data is sound on every difficulty', () => {
       }
       for (const f of dd.groups.flatMap(g => g.feats)) {
         assert.ok(['global', 'sector', 'miniboss', 'boss'].includes(f.kind), `${f.id} has a kind`);
+      }
+      // Two different feat files must never be byte-identical: that's how
+      // Defense Up/Down, Evasion Up/Down, Expose/Potency Down and
+      // Final Watch/Light Side Boss all shipped the same status pip.
+      // (Two feats may still share one file on purpose, e.g. Grogu.)
+      const seen = new Map();
+      for (const f of dd.groups.flatMap(g => g.feats)) {
+        if (!f.art) continue;
+        const buf = fs.readFileSync(new URL(`../assets/img/${f.art}`, import.meta.url));
+        const hash = createHash('sha256').update(buf).digest('hex');
+        if (seen.has(hash) && seen.get(hash).art !== f.art) {
+          assert.fail(`${f.id} art is byte-identical to ${seen.get(hash).id} (${f.art})`);
+        }
+        seen.set(hash, { id: f.id, art: f.art });
       }
     }
   }
