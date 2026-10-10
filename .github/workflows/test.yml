@@ -17,6 +17,8 @@ jobs:
         uses: actions/setup-node@v5
         with:
           node-version: 24
+      - name: Install test dependencies
+        run: npm ci
       - name: Run tests
         run: npm test
       - name: Set up Python for atlas crop tests

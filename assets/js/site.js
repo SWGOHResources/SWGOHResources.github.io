@@ -65,22 +65,6 @@
   const footerYearEl = document.getElementById('footerYear');
   if(footerYearEl){ footerYearEl.textContent = `© ${new Date().getFullYear()} SWGOH::RESOURCES`; }
 
-  /* Header scroll rail — how far down the planner you are. The planner is
-     a long page, so the sticky header otherwise gives no sense of
-     progress. One rAF write per frame, no layout reads. */
-  const scrollFill = document.getElementById('scrollFill');
-  if(scrollFill){
-    let queued = false;
-    const update = () => {
-      queued = false;
-      const max = document.documentElement.scrollHeight - window.innerHeight;
-      scrollFill.style.width = (max > 8 ? Math.min(100, (window.scrollY / max) * 100) : 0) + '%';
-    };
-    const onScroll = () => { if(!queued){ queued = true; requestAnimationFrame(update); } };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll, { passive: true });
-    update();
-  }
 })();
 
 /* Discord handle copy (footer buttons use inline onclick). Global so
