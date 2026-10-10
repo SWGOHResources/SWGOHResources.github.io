@@ -1,0 +1,70 @@
+[
+    {
+        "atlasName": "standard_rgba_atlas",
+        "container": "shared_uicontainer"
+    },
+    {
+        "atlasName": "charactermods_datacard_atlas",
+        "container": "shared_uicontainer"
+    },
+    {
+        "atlasName": "standard_atlas",
+        "container": "shared_uicontainer"
+    },
+    {
+        "atlasName": "misc_atlas",
+        "container": "shared_uicontainer"
+    },
+    {
+        "atlasName": "battleui_view_rgba_atlas",
+        "container": "shared_uicontainer"
+    },
+    {
+        "atlasName": "unit_atlas",
+        "container": "shared_uicontainer"
+    },
+    {
+        "atlasName": "resourcesshared_atlas",
+        "container": "shared_uicontainer"
+    },
+    {
+        "atlasName": "championship_atlas",
+        "container": "championship_atlas"
+    },
+    {
+        "atlasName": "conquestui_atlas",
+        "container": "conquestui_atlas"
+    },
+    {
+        "atlasName": "contextual_atlas",
+        "container": "contextual_atlas"
+    },
+    {
+        "atlasName": "unit_details_atlas",
+        "container": "unit_details_atlas"
+    },
+    {
+        "atlasName": "territoryui_view_standard_atlas",
+        "container": "territoryui_view_standard_atlas"
+    },
+    {
+        "atlasName": "territoryui_view_rgba_atlas",
+        "container": "territoryui_view_rgba_atlas"
+    },
+    {
+        "atlasName": "homebase_ui_standard_atlas",
+        "container": "homebaseui_view"
+    },
+    {
+        "atlasName": "scavenger_atlas",
+        "container": "scavenger_view"
+    },
+    {
+        "atlasName": "relic_atlas",
+        "container": "relic_detailsview"
+    },
+    {
+        "atlasName": "coliseum_atlas",
+        "container": "battleui_coliseum_results_view"
+    }
+]
