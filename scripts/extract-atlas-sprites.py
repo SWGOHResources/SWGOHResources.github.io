@@ -32,7 +32,7 @@ def crop_sprite(image, sprite):
     return image.crop((x, y, x + width, y + height))
 
 
-def export_bundle(bundle, output):
+def export_bundle(bundle, output, allowed_atlases=None):
     import UnityPy
 
     env = UnityPy.load(str(bundle))
@@ -43,6 +43,8 @@ def export_bundle(bundle, output):
         if obj.type.name != 'MonoBehaviour':
             continue
         atlas = obj.read_typetree()
+        if allowed_atlases is not None and atlas.get('m_Name') not in allowed_atlases:
+            continue
         sprites = atlas.get('mSprites')
         if not sprites:
             continue
@@ -86,6 +88,10 @@ def export_bundle(bundle, output):
             })
     if not result:
         raise ValueError(f'No named NGUI sprites in {bundle.name}')
+    if allowed_atlases is not None:
+        missing = allowed_atlases - {sprite['atlas'] for sprite in result}
+        if missing:
+            raise ValueError(f'Missing atlas definitions in {bundle.name}: {sorted(missing)}')
     return {'bundle': bundle.name, 'sha256': hashlib.sha256(bundle.read_bytes()).hexdigest(), 'sprites': result}
 
 
@@ -93,9 +99,17 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('bundles', nargs='+', type=Path)
     parser.add_argument('--output', type=Path, default=Path('assets/img/atlases'))
+    parser.add_argument('--atlas-map', type=Path,
+                        help='Extractor atlas/container mapping; excludes foreign atlas references')
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=True)
-    sources = [export_bundle(bundle, args.output) for bundle in args.bundles]
+    mapping = json.loads(args.atlas_map.read_text(encoding='utf-8')) if args.atlas_map else None
+    sources = []
+    for bundle in args.bundles:
+        allowed = {a['atlasName'] for a in mapping if a['container'] == bundle.stem} if mapping else None
+        if mapping is not None and not allowed:
+            raise ValueError(f'No atlas mapping for {bundle.name}')
+        sources.append(export_bundle(bundle, args.output, allowed))
     paths = [s['path'].casefold() for source in sources for s in source['sprites']]
     if len(paths) != len(set(paths)):
         raise ValueError('Different bundles produced the same sprite path')
@@ -106,3 +120,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
