@@ -111,7 +111,8 @@
                     "hard": "Defeat at least 250 enemies on the golden Challenge Path"
                   },
                   "keycards": 15,
-                  "reward": "F34T",
+         "reward": "F34T",
+         "rewardTexture": "icon_conquest_artifact_01",
                   "kind": "global"
                 },
                 {
@@ -121,7 +122,8 @@
                   "desc": {
                     "hard": "Gain Retribution 150 times"
                   },
-                  "reward": "Booming Voice",
+         "reward": "Booming Voice",
+         "rewardTexture": "icon_conquest_artifact_03",
                   "kind": "global"
                 },
                 {
@@ -146,7 +148,8 @@
                     "normal": "Win 10 battles with Grogu & Anzellans surviving",
                     "hard": "Win 20 battles with Grogu & Anzellans surviving"
                   },
-                  "reward": "DCS",
+         "reward": "DCS",
+         "rewardTexture": "icon_conquest_artifact_02",
                   "kind": "global"
                 },
                 {

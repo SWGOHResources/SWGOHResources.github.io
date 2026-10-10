@@ -12,5 +12,8 @@
     "versions:notify": "node scripts/notify-client-version.mjs",
     "digest:post": "node scripts/post-schedule-digest.mjs",
     "sync": "git fetch origin && git rebase origin/main"
+  },
+  "devDependencies": {
+    "jsdom": "^30.1.2"
   }
 }
