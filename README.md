@@ -1,5 +1,30 @@
 # SWGOH::RESOURCES — Event Schedule
 
+Named atlas sprites live in `assets/img/atlases/`. They are cropped from the
+original Unity bundles using each NGUI atlas's `mSprites` rectangles and its
+material texture, with original names, borders, padding, mirror flags and
+checksums recorded in `index.json`. This preserves disconnected parts of an
+icon and excludes neighbouring sprites. Case-sensitive Unity names that
+collide on Windows receive a deterministic filename suffix; the manifest
+keeps both original names. The failed inferred crops have been deleted and
+replaced by this library of 2,019 sprites from the 11 original containers.
+
+To reproduce the export with UnityPy and Pillow installed, download the
+original bundles through the asset extractor and run:
+
+```sh
+python scripts/extract-atlas-sprites.py BUNDLE ... --atlas-map scripts/atlas-containers.json --output assets/img/atlases
+python tests/atlas-sprites.test.py
+npm run cache:bust
+npm test
+```
+
+The [SWGoH Asset Extractor](https://github.com/swgoh-utils/swgoh-ae2) provides
+a prebuilt Docker image. Obtain the asset version from Comlink `/metadata`,
+download the containers listed in `scripts/atlas-containers.json`, and pass
+their original `.bundle` files to the command above. The map selects each
+container's own atlas definitions and excludes references to foreign atlases.
+
 Day-by-day Star Wars: Galaxy of Heroes event schedule (GAC, Territory War,
 Territory Battle, Conquest, Marquee, fleet ships). Static site, hosted on
 GitHub Pages.
@@ -86,7 +111,17 @@ from the feed — Comlink exposes no round info, so the hardcoded
 per-round GAC cards cover it. The snapshot refreshes itself via
 `.github/workflows/live-events.yml` (every 4 hours, including
 18:20 UTC just after the 18:00 UTC changeover, so late client updates
-are caught overnight). Manual refresh works the same way:
+are caught overnight).
+
+Open browser tabs check for newer snapshots every 15 minutes, and when
+returning to a tab once that interval has elapsed. Failed requests retry
+after a minute and keep the last good snapshot; simultaneous requests
+share one fetch. Countdown text updates in place each minute, while
+standard, GAC and guild phase transitions trigger a full refresh even
+if a timer was delayed. Automatically replaced era artwork is
+revalidated online and remains cached for offline use.
+
+Manual refresh works the same way:
 
 ```sh
 # Terminal 1 — Comlink + asset extractor (needs Docker)
@@ -114,8 +149,18 @@ Routine gamedata hash rotations never alert.
 via the `DISCORD_WEBHOOK_URL` repo secret (job still tracks versions
 when the secret is absent).
 
+Meaningful transitions are saved in `pendingNotifications` in the
+version snapshot before any delivery attempt. `scripts/notify-client-version.mjs`
+posts the queued alerts with their original version details and records
+each successful delivery. The workflow saves those checkpoints even
+when a later request fails, so the next hourly run retries the remaining
+alerts. A missing webhook keeps the queue. If the process stops after
+Discord accepts a post but before its checkpoint is persisted, that
+post may repeat on retry.
+
 ```sh
 npm run versions:check
+npm run versions:notify
 ```
 
 Alert embeds carry no emojis.
@@ -304,18 +349,11 @@ the Conquest **keycard** is the standalone texture
 `icon_points_pathofconquest` (`CONQUEST_POINTS_DETAIL_TITLE` reads "Conquest
 Keycards"; shipped as `assets/img/live/conquest-points.png`), while
 `assets/img/live/conquest-keycard.png` is the Conquest *Credits* icon and
-must not stand in for it. The **battle star** has no standalone texture —
-it only exists as a sprite inside the game's UI atlases, which swgoh-ae2
-downloads as bundles but does not export per-sprite (atlas names 500 on
-`/Asset/single`, and no star-named standalone texture exists in the
-11,400-asset manifest), so `assets/img/live/conquest-battle-star.png` is a
-user-supplied export of that sprite — cross-checked against the white base
-sprite in `battleui_view_rgba_atlas` at ~(1391,654,34x33), inside the
-`shared_uicontainer` bundle, which the game tints gold at runtime — with a
-gold-star inline SVG as fallback.
-`UI_SPRITES` at the top of `conquest.js` takes the PNG filenames; the row
-and the button render them only once set, so nothing incorrect ships in the
-meantime.
+must not stand in for it. The **battle star** control uses the game's gold
+`standard_rgba_atlas/icon_rendered_star` sprite from the named atlas library,
+with its original 64×64 rectangle recorded in `index.json`. The previous
+manually cropped star has been deleted. `UI_SPRITES` in `conquest.js` takes
+complete asset paths; the gold-star inline SVG remains a fallback.
 
 Feat TITLES + DESCRIPTIONS sync from gamedata automatically
 (`npm run conquest:pull`, needs Comlink like `events:pull`) and are

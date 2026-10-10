@@ -9,6 +9,7 @@
     "conquest:pull": "node scripts/pull-conquest-feats.mjs && node scripts/cache-bust.mjs",
     "cache:bust": "node scripts/cache-bust.mjs",
     "versions:check": "node scripts/check-client-version.mjs",
+    "versions:notify": "node scripts/notify-client-version.mjs",
     "digest:post": "node scripts/post-schedule-digest.mjs",
     "sync": "git fetch origin && git rebase origin/main"
   }

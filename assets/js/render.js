@@ -13,7 +13,12 @@ const imgPath = f => withAssetV(((typeof IMG_BASE !== 'undefined' && IMG_BASE) |
 // event, so we can tell players the last event they'll actually get to
 // use the set in before it's removed.
 
-function renderUnlockWindows(st){
+function setClockText(container, key, value){
+  const node = container && container.querySelector(`[data-clock="${key}"]`);
+  if(node && node.textContent !== value) node.textContent = value;
+}
+
+function renderUnlockWindows(st, opts){
   const el = document.getElementById('unlockWindows');
   if(!el) return;
 
@@ -99,13 +104,20 @@ function renderUnlockWindows(st){
     lastUsableLabel = labels.join(' + ');
   }
 
+  if(opts && opts.clockOnly){
+    setClockText(el, 'cq-unlock', cqMain);
+    setClockText(el, 'era-end', eraMain);
+    setClockText(el, 'cron-expiry', cronMain);
+    return;
+  }
+
   el.innerHTML = `
     <div class="status-card purple-card">
       <div class="sc-header"><span class="sc-title">Conquest Unit (${conquestOrdinal(cqChapter.cNum)} of Volume)</span><span class="sc-badge ${cqBadgeClass}">${cqBadge}</span></div>
       <div class="uw-body" style="--accent:var(--purple);--accent-dim:var(--purple-dim);--accent-border:var(--purple-border)">
         <div class="uw-img"><div class="art-badge">CQ</div><img src="${imgPath(CONQUEST_UNIT_IMAGE)}" alt="" loading="lazy" decoding="async" onerror="this.remove()"></div>
         <div class="uw-text">
-          <div class="sc-main"><div class="sc-val">${cqMain}</div><div class="uw-date">${cqDateLine}</div><div class="sc-sub">${cqSub}</div></div>
+          <div class="sc-main"><div class="sc-val" data-clock="cq-unlock">${cqMain}</div><div class="uw-date">${cqDateLine}</div><div class="sc-sub">${cqSub}</div></div>
           <div class="sc-footer" style="flex-direction:column;align-items:flex-start;gap:2px;">
             <span>Usable in GAC: <span class="highlight">Week ${cqGacWeek} (${cqGac.format})</span></span>
             <span>Roster locks: ${fmtDayMonthUTC(gameDayDisplayMs(cqNextSignupDate))} (Defense Starts)</span>
@@ -118,7 +130,7 @@ function renderUnlockWindows(st){
       <div class="uw-body" style="--accent:var(--orange);--accent-dim:var(--orange-dim);--accent-border:var(--orange-border)">
         <div class="uw-img"><div class="art-badge">ERA</div><img src="${imgPath(ERA_UNIT_IMAGE)}" alt="" loading="lazy" decoding="async" onerror="this.remove()"></div>
         <div class="uw-text">
-          <div class="sc-main"><div class="sc-val">${eraMain}</div><div class="uw-date">${eraDateLine}</div><div class="sc-sub">${eraSub}</div></div>
+          <div class="sc-main"><div class="sc-val" data-clock="era-end">${eraMain}</div><div class="uw-date">${eraDateLine}</div><div class="sc-sub">${eraSub}</div></div>
           <div class="sc-footer" style="flex-direction:column;align-items:flex-start;gap:2px;">
             <span>Usable in GAC: <span class="highlight">Week ${eraGacWeek} (${eraGac.format})</span></span>
             <span>Roster locks: ${fmtDayMonthUTC(gameDayDisplayMs(eraNextSignupDate))} (Defense Starts)</span>
@@ -132,7 +144,7 @@ function renderUnlockWindows(st){
         <div class="uw-img"><div class="art-badge">${cronMeta.label.slice(0,3).toUpperCase()}</div><img src="${imgPath(cronMeta.asset)}" alt="" loading="lazy" decoding="async" onerror="this.remove()"></div>
         <div class="uw-text">
           <div class="sc-main">
-            <div class="sc-val">${cronMain}</div>
+            <div class="sc-val" data-clock="cron-expiry">${cronMain}</div>
             ${cron ? `<div class="uw-date">${cronDateLine}</div>` : ''}
             <div class="sc-sub">${cronSub}</div>
           </div>
@@ -276,7 +288,7 @@ function renderMergedHero(st){
   }
 }
 
-function renderStatusDashboard(st){
+function renderStatusDashboard(st, opts){
   const container = document.getElementById('statusDashboard');
   if(!container) return;
 
@@ -295,24 +307,33 @@ function renderStatusDashboard(st){
   // Guild Events card shows the RotE run via the Today/Tomorrow
   // summary lines above — no separate TB row needed.
 
+  if(opts && opts.clockOnly){
+    setClockText(container, 'gac-sub', gac.sub);
+    setClockText(container, 'conquest-main', conq.main);
+    setClockText(container, 'conquest-sub', conq.sub);
+    setClockText(container, 'guild-today', todayGuildSummary);
+    setClockText(container, 'guild-tomorrow', tmrwGuildSummary);
+    return;
+  }
+
   container.innerHTML = `
     <div class="status-card red-card">
       <div class="sc-header"><span class="sc-title">${gac.title}</span><span class="sc-badge ${gac.badgeClass}">${gac.status}</span></div>
-      <div class="sc-main" style="margin-bottom:0"><div class="sc-val">${gac.main}</div><div class="sc-sub">${gac.sub}</div></div>
+      <div class="sc-main" style="margin-bottom:0"><div class="sc-val">${gac.main}</div><div class="sc-sub" data-clock="gac-sub">${gac.sub}</div></div>
       ${gacRoundTrackerHTML(gac)}
     </div>
 
     <div class="status-card purple-card">
       <div class="sc-header"><span class="sc-title">${conq.title}</span><span class="sc-badge ${conq.badgeClass}">${conq.status}</span></div>
-      <div class="sc-main" style="margin-bottom:0"><div class="sc-val">${conq.main}</div><div class="sc-sub">${conq.sub}</div></div>
+      <div class="sc-main" style="margin-bottom:0"><div class="sc-val" data-clock="conquest-main">${conq.main}</div><div class="sc-sub" data-clock="conquest-sub">${conq.sub}</div></div>
       ${conquestVolumeTrackerHTML(conq.cNum)}
     </div>
 
     <div class="status-card amber-card">
       <div class="sc-header"><span class="sc-title">Guild Events</span><span class="sc-badge ${isGuildActive ? 'amber' : 'off'}">${isGuildActive ? 'ACTIVE' : 'IDLE'}</span></div>
       <div class="sc-main" style="margin-bottom:0">
-        <div class="sc-val" style="font-size:15px;margin-bottom:2px">Today: <span style="color:var(--text);font-weight:600">${todayGuildSummary}</span></div>
-        <div class="sc-sub" style="font-size:12px">Tomorrow: <span style="color:var(--amber)">${tmrwGuildSummary}</span></div>
+        <div class="sc-val" style="font-size:15px;margin-bottom:2px">Today: <span data-clock="guild-today" style="color:var(--text);font-weight:600">${todayGuildSummary}</span></div>
+        <div class="sc-sub" style="font-size:12px">Tomorrow: <span data-clock="guild-tomorrow" style="color:var(--amber)">${tmrwGuildSummary}</span></div>
       </div>
       ${guildPhaseTrackerHTML(st)}
     </div>
@@ -323,11 +344,12 @@ function renderStatusDashboard(st){
    LIVE IN-GAME EVENTS (Comlink game data)
    assets/data/live-events.json is written by
    scripts/pull-live-events.mjs (`npm run events:pull`). Loaded once on
-   startup so a missing/slow file never blocks renderAll(); re-rendered
-   from cache on later renderAll() calls (e.g. timezone changes).
+   startup and periodically refreshed without blocking renderAll().
    ========================================================= */
 
 let liveEventsCache = null;
+let liveEventsPending = null;
+let liveEventsNextAttemptMs = 0;
 
 /* Start + span row for schedule cards: the absolute start instant
    left ("Sat, 12th Sep, 18:00 UTC"), the duration right ("36 hrs",
@@ -499,7 +521,7 @@ function liveCardHTML(e, relLabel){
       <img src="${imgPath(art)}" alt="" loading="lazy" fetchpriority="low" decoding="async" onerror="this.remove()">
       <div class="xcard-shade"></div>
       <div class="xcard-art-meta">
-        <span class="${relCls}">${relLabel}</span>
+        <span data-clock-start="${e.startMs}" data-clock-end="${e.endMs}" class="${relCls}">${relLabel}</span>
       </div>
     </div>
     <div class="xcard-body">
@@ -528,19 +550,36 @@ function preloadLiveArt(){
   } catch(e){}
 }
 
-async function loadLiveEvents(){
+function loadLiveEvents(){
   // Fills the cache the day-by-day explorer overlays. No section of its
   // own — without a snapshot the explorer simply shows the rotation.
-  if(typeof fetch !== 'function') return;
-  try {
-    const res = await fetch('assets/data/live-events.json', { cache: 'no-store' });
-    if(!res.ok) throw new Error('HTTP ' + res.status);
-    liveEventsCache = await res.json();
-    preloadLiveArt();
-    if(typeof renderAll === 'function') renderAll({ preserveFocus: true });
-  } catch(e){
-    if(typeof console !== 'undefined' && console.warn) console.warn('[swgoh-schedule] live events unavailable:', e.message);
-  }
+  if(typeof fetch !== 'function') return Promise.resolve(false);
+  if(liveEventsPending) return liveEventsPending;
+  if(Date.now() < liveEventsNextAttemptMs) return Promise.resolve(false);
+  liveEventsPending = (async () => {
+    try {
+      const opts = { cache: 'no-store' };
+      if(typeof AbortSignal !== 'undefined' && typeof AbortSignal.timeout === 'function') opts.signal = AbortSignal.timeout(15000);
+      const res = await fetch('assets/data/live-events.json', opts);
+      if(!res.ok) throw new Error('HTTP ' + res.status);
+      const next = await res.json();
+      if(!next || !Array.isArray(next.events) || !Number.isFinite(next.pulledAt)) throw new Error('Invalid live snapshot');
+      const changed = !liveEventsCache || next.gameDataVersion !== liveEventsCache.gameDataVersion
+        || JSON.stringify(next.events) !== JSON.stringify(liveEventsCache.events);
+      liveEventsCache = next;
+      liveEventsNextAttemptMs = Date.now() + 15 * 60000;
+      if(changed){
+        preloadLiveArt();
+        if(typeof renderAll === 'function') renderAll({ preserveFocus: true });
+      } else updateFooterMeta();
+      return changed;
+    } catch(e){
+      liveEventsNextAttemptMs = Date.now() + 60000;
+      if(typeof console !== 'undefined' && console.warn) console.warn('[swgoh-schedule] live events unavailable:', e.message);
+      return false;
+    }
+  })().finally(() => { liveEventsPending = null; });
+  return liveEventsPending;
 }
 
 /* =========================================================
@@ -639,7 +678,7 @@ function explorerCardHTML(item, dateMs, relLabel, tbCtx, nowMs){
       ${imgTag}
       <div class="xcard-shade"></div>
       <div class="xcard-art-meta">
-        <span class="${relCls}">${relLabel}</span>
+        <span data-clock-start="${eventStartMs(item, dateMs)}" class="${relCls}">${relLabel}</span>
       </div>
     </div>
     <div class="xcard-body">
@@ -1150,6 +1189,30 @@ function updateFooterMeta(){
   el.textContent = `Resets ${h}:00 UTC daily · showing ${tzDisplayName()} · loaded ${new Date(dms(Date.now())).toLocaleString('en-GB', { timeZone: tz(), hour12: false })}${liveNote}`;
 }
 
+let renderDeferredForFocus = null;
+
+// Update clocks without replacing cards, images or focused controls.
+// Changes to the schedule state still use renderAll().
+function refreshClockDisplays(st){
+  renderStatusDashboard(st, { clockOnly: true });
+  renderUnlockWindows(st, { clockOnly: true });
+  const detail = document.getElementById('dayDetail');
+  if(detail){
+    const rel = relativeDayLabel(explorerOffset, st.nowMs, st.currentDayStartMs);
+    detail.querySelectorAll('[data-clock-start]').forEach(node => {
+      const endMs = Number(node.dataset.clockEnd);
+      const label = Number.isFinite(endMs) && endMs <= st.nowMs ? 'Expired'
+        : explorerOffset > 0 ? relForEventStart(Number(node.dataset.clockStart), st.nowMs, rel) : rel;
+      if(node.textContent !== label) node.textContent = label;
+      node.classList.toggle('is-today', label === 'Now');
+      node.classList.toggle('is-expired', label === 'Expired');
+    });
+  }
+  const tl = document.getElementById('fullSchedule');
+  if(tl) refreshTimelineTense(tl, st.nowMs);
+  updateFooterMeta();
+}
+
 function renderAll(opts){
   // Background ticks (clock/visibility) must not yank keyboard focus:
   // regions rebuilt via innerHTML are skipped while focused inside
@@ -1157,7 +1220,12 @@ function renderAll(opts){
   // actions (day jump, TB pick, tz change, changeovers) rebuild fully.
   const preserveFocus = !!(opts && opts.preserveFocus);
   const active = (typeof document !== 'undefined' && document.activeElement) || null;
-  const focused = el => !!(preserveFocus && active && el && el.contains(active));
+  let deferred = false;
+  const focused = el => {
+    const skip = !!(preserveFocus && active && el && el.contains(active));
+    if(skip) deferred = true;
+    return skip;
+  };
   const st = getGameStatus();
   renderStaticMeta();
   renderMergedHero(st);
@@ -1167,4 +1235,5 @@ function renderAll(opts){
   if(!focused(document.getElementById('fullSchedule'))) renderFullSchedule(st);
   updateFooterMeta();
   if(typeof syncTzSelects === 'function') syncTzSelects();
+  renderDeferredForFocus = deferred ? active : null;
 }

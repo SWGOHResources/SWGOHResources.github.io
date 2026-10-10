@@ -19,6 +19,7 @@
 // the text still refreshes and the committed icons stay put).
 
 import { readFile, writeFile } from 'node:fs/promises';
+import { isMain } from './is-main.mjs';
 
 const COMLINK_URL = process.env.COMLINK_URL ?? 'http://localhost:3500';
 // swgoh-ae2 asset extractor (optional — the text sync doesn't need it, the
@@ -249,7 +250,7 @@ async function main() {
   );
 }
 
-if (process.argv[1] === new URL(import.meta.url).pathname) {
+if (isMain(import.meta.url)) {
   main().catch(err => {
     console.error(`conquest:pull failed: ${err.message}`);
     process.exit(1);

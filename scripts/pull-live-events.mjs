@@ -16,6 +16,8 @@
 // endTime far in the future) are excluded; they never change and would
 // drown the live list.
 
+import { isMain } from './is-main.mjs';
+
 const COMLINK_URL = process.env.COMLINK_URL ?? 'http://localhost:3500';
 // swgoh-ae2 asset extractor (optional — without it events keep the
 // bundled fallback art). Same host layout as comlink:
@@ -404,7 +406,7 @@ async function main() {
   console.log(`wrote ${new URL(OUT_PATH).pathname}`);
 }
 
-if (process.argv[1] === new URL(import.meta.url).pathname) {
+if (isMain(import.meta.url)) {
   main().catch(err => {
     console.error(`events:pull failed: ${err.message}`);
     console.error(`Is comlink running? COMLINK_URL=${COMLINK_URL}`);

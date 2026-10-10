@@ -20,6 +20,7 @@
 import fs from 'node:fs/promises';
 import { readFileSync as fsSyncRead } from 'node:fs';
 import vm from 'node:vm';
+import { isMain } from './is-main.mjs';
 
 const LIVE_PATH = new URL('../assets/data/live-events.json', import.meta.url);
 const STATE_PATH = new URL('../assets/data/digest-state.json', import.meta.url);
@@ -242,7 +243,7 @@ async function main() {
   console.log(`DIGEST=posted (dayKey=${dayKey}, posts=${posts.length})`);
 }
 
-if (process.argv[1] === new URL(import.meta.url).pathname) {
+if (isMain(import.meta.url)) {
   main().catch(err => {
     console.error(`digest:post failed: ${err.message}`);
     process.exit(1);

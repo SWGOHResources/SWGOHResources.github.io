@@ -5,7 +5,6 @@ function tickCountdown(){
   const now = new Date();
   const nowMs = now.getTime();
   const stdH = (typeof stdHour === 'function') ? stdHour() : 18;
-  const gacH = (typeof gacHour === 'function') ? gacHour() : 21;
 
   // Standard daily changeover (STD_CHANGEOVER_HOUR_UTC)
   let nextChangeoverMs = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), stdH, 0, 0, 0);
@@ -22,15 +21,7 @@ function tickCountdown(){
   if(!cdElCache) cdElCache = document.getElementById('countdown');
   if(cdElCache) cdElCache.textContent = `${pad(h)}:${pad(m)}:${pad(s)}`;
 
-  // Refresh automatically if a standard or GAC changeover just occurred
-  // (compare against the most recent past changeover, not the next future one)
-  let prevStdChangeoverMs = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), stdH, 0, 0, 0);
-  if (nowMs < prevStdChangeoverMs) prevStdChangeoverMs -= 86400000;
-  let prevGacChangeoverMs = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), gacH, 0, 0, 0);
-  if (nowMs < prevGacChangeoverMs) prevGacChangeoverMs -= 86400000;
-  if (nowMs - prevStdChangeoverMs < 2000 || nowMs - prevGacChangeoverMs < 2000) {
-    renderAll({ preserveFocus: true });
-  }
+  refreshScheduleState();
 }
 
 const scheduleModal = document.getElementById('fullScheduleModal');
@@ -385,35 +376,45 @@ function schedulePreload(){
 }
 if(typeof requestIdleCallback === 'function') requestIdleCallback(schedulePreload, { timeout: 4000 });
 else setTimeout(schedulePreload, 3000);
-tickCountdown();
-setInterval(tickCountdown, 1000);
-// Background refresh used to rebuild the whole DOM (dashboards, explorer,
-// 84-day timeline) every 60s — visible scroll jank on low-end phones.
-// Most minutes nothing schedule-relevant changed, so only re-render when
-// the era day / timezone actually moved; otherwise just flip chip tenses
-// and the footer timestamp in place (no layout rebuild).
+// Compare observed state rather than a two-second window around reset:
+// delayed timers and suspended tabs must catch crossed boundaries.
 let lastBgKey = null;
+let lastClockMinute = null;
 function bgRefreshKey(st){
   try {
     const tzKey = (typeof getTimeZoneSetting === 'function') ? getTimeZoneSetting() : 'local';
-    return `${st.currentEraStartMs}|${st.eraDay}|${tzKey}`;
+    const guild = typeof getGuildPhaseInfo === 'function' ? getGuildPhaseInfo(st) : null;
+    return `${st.currentEraStartMs}|${st.eraDay}|${tzKey}|${st.gacCycleDay}|${st.gacFormat}|${JSON.stringify(guild)}`;
   } catch(e){ return null; }
 }
-try { lastBgKey = bgRefreshKey(getGameStatus()); } catch(e){}
-setInterval(() => {
+function refreshScheduleState(){
   if(document.hidden) return;
   let st = null;
   try { st = getGameStatus(); } catch(e){ return; }
   const key = bgRefreshKey(st);
-  if(key !== lastBgKey){
+  const focusReleased = typeof renderDeferredForFocus !== 'undefined' && renderDeferredForFocus
+    && renderDeferredForFocus !== document.activeElement;
+  if(key !== lastBgKey || focusReleased){
     lastBgKey = key;
     renderAll({ preserveFocus: true });
-    return;
   }
+  const minute = Math.floor(st.nowMs / 60000);
+  if(minute === lastClockMinute) return;
+  lastClockMinute = minute;
   try {
-    const tl = document.getElementById('fullSchedule');
-    if(tl && typeof refreshTimelineTense === 'function') refreshTimelineTense(tl, st.nowMs);
-    if(typeof updateFooterMeta === 'function') updateFooterMeta();
+    if(typeof refreshClockDisplays === 'function') refreshClockDisplays(st);
   } catch(e){}
+}
+try { lastBgKey = bgRefreshKey(getGameStatus()); } catch(e){}
+tickCountdown();
+setInterval(tickCountdown, 1000);
+setInterval(() => {
+  refreshScheduleState();
+  if(!document.hidden && typeof loadLiveEvents === 'function') loadLiveEvents();
 }, 60000);
-document.addEventListener('visibilitychange', () => { if(!document.hidden) renderAll({ preserveFocus: true }); });
+document.addEventListener('visibilitychange', () => {
+  if(document.hidden) return;
+  renderAll({ preserveFocus: true });
+  refreshScheduleState();
+  if(typeof loadLiveEvents === 'function') loadLiveEvents();
+});

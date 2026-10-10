@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import http from 'node:http';
 import path from 'node:path';
+import { tmpdir } from 'node:os';
 import test from 'node:test';
 import { mkdtemp, writeFile } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
@@ -668,13 +669,12 @@ test('shared fallback icons never pre-empt specific textures', async () => {
     }
   });
   await new Promise(r => server.listen(0, '127.0.0.1', r));
-  // NOTE: os.tmpdir() is not used — this sandbox reports a relative
-  // TMPDIR that would litter the repo. Plain /tmp works everywhere CI
-  // runs, and the dir is removed afterwards.
+  // Resolve a relative TMPDIR too; use the platform's writable temp
+  // location instead of assuming /tmp exists on Windows.
   const { rm } = await import('node:fs/promises');
   let dir = '';
   try {
-    dir = await mkdtemp('/tmp/live-art-test-');
+    dir = await mkdtemp(path.join(path.resolve(tmpdir()), 'live-art-test-'));
     const dirUrl = pathToFileURL(dir + path.sep).href;
     await writeFile(path.join(dir, 'img-a.png'), png);
     await writeFile(path.join(dir, 'shared.png'), png);
@@ -751,7 +751,7 @@ test('era icon art tracks the newest premium era, never breaking the pull', asyn
   const base = `http://127.0.0.1:${server.address().port}`;
   let dir = '';
   try {
-    dir = await mkdtemp('/tmp/era-icon-test-');
+    dir = await mkdtemp(path.join(path.resolve(tmpdir()), 'era-icon-test-'));
     const dirUrl = pathToFileURL(dir + path.sep).href;
     // Newest premium era wins and lands as era-icon.png.
     assert.equal(await ensureEraIconArt(100050, { artDir: dirUrl, aeUrl: base }), true);

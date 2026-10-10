@@ -16,6 +16,9 @@
 // snapshot on meaningful change, and posts to Discord when
 // detectTransitions() reports a bump/flip.
 
+import { isMain } from './is-main.mjs';
+import { createHash } from 'node:crypto';
+
 const COMLINK_URL = process.env.COMLINK_URL ?? 'http://localhost:3500';
 const OUT_PATH = new URL('../assets/data/client-version.json', import.meta.url);
 
@@ -59,6 +62,30 @@ export function detectTransitions(oldSnap, newSnap) {
     : forcedFlip ? 'forced_flip'
     : 'none';
   return { storeBump, forcedFlip, verdict };
+}
+
+// Observation and delivery are separate: a committed version must not
+// consume an alert until Discord has accepted it. Keep the original
+// snapshot so delayed alerts describe the transition that queued them.
+export function queueVersionNotifications(oldSnap, newSnap) {
+  const pending = [...(oldSnap?.pendingNotifications ?? [])];
+  const { verdict } = detectTransitions(oldSnap, newSnap);
+  if (verdict === 'none') return pending;
+  const identity = JSON.stringify({
+    verdict,
+    store: newSnap.store?.version,
+    gamedata: gamedataBase(newSnap.server?.gamedata),
+    asset: newSnap.server?.asset,
+  });
+  const id = createHash('sha256').update(identity).digest('hex');
+  if (!pending.some(n => n.id === id)) {
+    pending.push({ id, verdict, snapshot: {
+      checkedAt: newSnap.checkedAt,
+      store: newSnap.store,
+      server: newSnap.server,
+    } });
+  }
+  return pending;
 }
 
 async function fetchJson(url, opts = {}) {
@@ -130,6 +157,7 @@ async function main() {
   }
 
   const { verdict } = detectTransitions(oldSnap, next);
+  next.pendingNotifications = queueVersionNotifications(oldSnap, next);
   await mkdir(new URL('../assets/data/', import.meta.url), { recursive: true });
   await writeFile(OUT_PATH, JSON.stringify(next, null, 1) + '\n');
   console.log(
@@ -140,7 +168,7 @@ async function main() {
   console.log(`VERDICT=${verdict}`);
 }
 
-if (process.argv[1] === new URL(import.meta.url).pathname) {
+if (isMain(import.meta.url)) {
   main().catch(err => {
     console.error(`versions:check failed: ${err.message}`);
     process.exit(1);

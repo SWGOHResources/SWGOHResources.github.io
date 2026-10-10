@@ -1258,7 +1258,7 @@ function getGacStatus(st){
   }
 
   if(info.phase === 'signup'){
-    const defenseDate = fmtDayMonthUTC(cycleStartMs + 86400000);
+    const defenseDate = fmtDayMonthUTC(nextTransitionMs);
     return {
       status: `Week ${info.week}`,
       badgeClass: 'red',
@@ -1472,16 +1472,25 @@ function getGuildEventSummary(episode, dayInEp, dateMs, nowMs){
 
 function scanBackwardForGuildEvents(st, maxDays){
   maxDays = maxDays || 28;
+  // Guild phases start at their own hour, before the standard era-day
+  // changeover. Scan calendar days and admit only transitions already
+  // reached, including today's 17:00 transition while eraDay is still
+  // yesterday's. This also handles a guild hour later than the reset.
+  const nowMs = Number.isFinite(st.nowMs) ? st.nowMs
+    : st.currentDayStartMs + stdHour() * 3600000;
+  const calendarDay = Math.floor((nowMs - st.eraBaseStartMs) / 86400000) + 1;
   let twFound = null, tbFound = null;
   for(let back = 0; back <= maxDays; back++){
-    const absDay = st.rawDayIndex - back;
+    const absDay = calendarDay - back;
     if(absDay < 1) break;
     const info = absDayToInfo(absDay, st.eraBaseStartMs);
-    const items = getDayEvents(info.episode, info.dayInEp);
+    const items = getEventsForDay(info.dateMs, info.episode, info.dayInEp)
+      .filter(it => eventStartMs(it, info.dateMs) <= nowMs)
+      .sort((a, b) => eventStartMs(b, info.dateMs) - eventStartMs(a, info.dateMs));
 
     if(!twFound){
       const twItem = items.find(i => i.icon.startsWith('tw_'));
-      if(twItem) twFound = { daysAgo: back, icon: twItem.icon };
+      if(twItem) twFound = { daysAgo: back, icon: twItem.icon, startMs: eventStartMs(twItem, info.dateMs) };
     }
     if(!tbFound){
       const tbItem = items.find(i => i.icon === 'rote' || i.icon === 'tb_ends');
@@ -1492,12 +1501,13 @@ function scanBackwardForGuildEvents(st, maxDays){
         const df = tbChoiceForRun(rc);
         let phaseNum = null;
         if(tbItem.icon === 'rote' && rc){
-          phaseNum = tbPhaseAtOffset(df, rc.offset).phase;
+          const runStartMs = rc.phase1Ms + twTbHour() * 3600000;
+          phaseNum = Math.min(df.phases, Math.floor((nowMs - runStartMs) / (df.hoursPerPhase * 3600000)) + 1);
         } else {
           const m = tbItem.label.match(/Phase (\d+)/);
           phaseNum = m ? parseInt(m[1], 10) : null;
         }
-        tbFound = { daysAgo: back, icon: tbItem.icon, phaseNum, phases: df.phases };
+        tbFound = { daysAgo: back, icon: tbItem.icon, phaseNum, phases: df.phases, startMs: eventStartMs(tbItem, info.dateMs) };
       }
     }
     if(twFound && tbFound) break;
@@ -1702,7 +1712,7 @@ function getGuildPhaseInfo(st){
   const tw = scan.tw, tb = scan.tb;
 
   let active = null;
-  if(tw && (!tb || tw.daysAgo <= tb.daysAgo)) active = { type: 'tw', info: tw };
+  if(tw && (!tb || tw.startMs >= tb.startMs)) active = { type: 'tw', info: tw };
   else if(tb) active = { type: 'tb', info: tb };
   if(!active) return null;
 
