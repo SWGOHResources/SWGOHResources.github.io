@@ -447,7 +447,7 @@ function renderPlanner(app, sel, nowMs, shared){
         <div class="cq-analysis">
           <section class="cq-coverage" aria-labelledby="cqCoverageTitle">
             <div class="section-head"><h2 id="cqCoverageTitle">Conquest coverage</h2><span class="rule"></span></div>
-            <div class="cq-diagram-totals" data-cq="diagram-totals" aria-live="polite"></div><div class="cq-map-visual"><div class="cq-wheel" data-cq="wheel"></div><div class="cq-map-key"><span class="planned">Planned</span><span class="skipped">Skipped</span><span class="reward"><img src="${withAssetV('assets/img/atlases/standard_rgba_atlas/icon_conquest_artifact_rarity_04.png')}" alt="">Data disk</span><span class="reward"><img src="${withAssetV('assets/img/atlases/standard_rgba_atlas/icon_conquest_consumable_tech.png')}" alt="">Consumable</span><div class="cq-sector-key"><span>GL: Global feats</span><span>S1–S5: Sectors</span></div></div></div>
+            <div class="cq-diagram-totals" data-cq="diagram-totals" aria-live="polite"></div><div class="cq-map-visual"><div class="cq-wheel" data-cq="wheel"></div><div class="cq-map-key"><span class="planned">Planned</span><span class="skipped">Skipped</span><span class="reward"><img src="${withAssetV('assets/img/atlases/standard_rgba_atlas/icon_conquest_artifact_rarity_04.png')}" alt="">Data disk</span><span class="reward"><img src="${withAssetV('assets/img/atlases/standard_rgba_atlas/icon_conquest_consumable_tech.png')}" alt="">Consumable</span><div class="cq-sector-key"><span><b>GL</b>Global feats</span><span><b>S1–S5</b>Sectors</span></div></div></div>
 
             <section class="cq-diagram-projection" aria-label="Projected crate"><div class="cq-report-rewards" data-cq="report-rewards"></div>
             <div class="cq-missed"><label for="cqMissed">Battle keycards missed</label><input id="cqMissed" type="number" inputmode="numeric" min="0" max="${cap}" step="1" value="${cap-stars}" data-missed-input><span data-cq="battle-keycards"></span></div></section>
@@ -519,7 +519,7 @@ function renderPlanner(app, sel, nowMs, shared){
     app.querySelector('[data-cq="fill"]').style.width = (top ? Math.min(100,t.total/top*100) : 0)+'%';
     app.querySelector('.cq-track').setAttribute('aria-valuenow',Math.min(top,t.total));
     const targetCrate = crates.find(c => c.name === target);
-    set('target',targetCrate ? (t.total >= targetCrate.at ? `Your plan reaches ${label(target)}.` : `${targetCrate.at-t.total} more keycards needed for ${label(target)}.`) : 'Tap a crate to set your target and see its shard rewards.');
+    set('target',targetCrate ? (t.total >= targetCrate.at ? `Your plan reaches ${label(target)}.` : `${targetCrate.at-t.total} more keycards needed for ${label(target)}.`) : 'Open a crate for details or right-click to set your target.');
     app.querySelector('[data-cq="target"]').hidden = !targetCrate;
     app.querySelectorAll('[data-crate]').forEach(button => {
       const on = button.dataset.crate === target;
@@ -574,11 +574,27 @@ function renderPlanner(app, sel, nowMs, shared){
     else if(input.matches('[data-missed-input]')){ stars = cap-clampStars(input.value); changed(); }
   };
   app.onmousedown = event=>{ if(event.target.closest('[data-map-feat],[data-map-category]')) event.preventDefault(); };
+  app.oncontextmenu = event => {
+    const feat = event.target.closest('[data-map-feat]');
+    const crate = event.target.closest('[data-report-crate],[data-crate]');
+    if(!feat && !crate) return;
+    event.preventDefault();
+    const position = {top:window.scrollY,left:window.scrollX,behavior:'instant'};
+    if(feat){
+      const id = feat.dataset.mapFeat; if(!validIds.has(id)) return;
+      picked.has(id) ? picked.delete(id) : picked.add(id);
+    } else {
+      target = crate.dataset.reportCrate || crate.dataset.crate;
+    }
+    app.querySelector('[data-cq="chart-tooltip"]').hidden = true;
+    changed(Boolean(feat));
+    window.scrollTo?.(position);
+  };
   app.onclick = async event => {
     const mapFeat = event.target.closest('[data-map-feat]'), mapCategory = event.target.closest('[data-map-category]');
     if(mapFeat){
       const position = {top:window.scrollY,left:window.scrollX,behavior:'instant'};
-      const id = mapFeat.dataset.mapFeat; picked.has(id) ? picked.delete(id) : picked.add(id); changed(true);
+      const id = mapFeat.dataset.mapFeat;
       previewChart('feat',id,position); return;
     }
     if(mapCategory){ coverageActive = coverageActive === mapCategory.dataset.mapCategory ? 'all' : mapCategory.dataset.mapCategory; paintReview(planTotals(diff,[...picked],stars,cap)); app.querySelector('[data-map-category="'+mapCategory.dataset.mapCategory+'"]').focus({preventScroll:true}); return; }
@@ -595,7 +611,7 @@ function renderPlanner(app, sel, nowMs, shared){
     else if(button.matches('[data-view]')){ showView(button.dataset.view); }
     else if(button.matches('[data-tab]')){ tab = button.dataset.tab; renderFeats(); changed(); }
     else if(button.matches('[data-preview-feat]')){ previewChart('feat',button.dataset.previewFeat); }
-    else if(button.matches('[data-report-crate]')){ previewChart('crate',button.dataset.reportCrate); }
+    else if(button.matches('[data-report-crate],[data-crate]')){ previewChart('crate',button.dataset.reportCrate || button.dataset.crate); }
     else if(button.matches('[data-preview-target]')){ target = target === button.dataset.previewTarget ? null : button.dataset.previewTarget; changed(); previewChart('crate',button.dataset.previewTarget); }
     else if(button.matches('[data-jump-feat]')){ jumpToFeat(button.dataset.jumpFeat); }
     else if(button.matches('[data-review-feat]')){
@@ -609,7 +625,6 @@ function renderPlanner(app, sel, nowMs, shared){
       button.setAttribute('aria-expanded',String(!panel.hidden));
     }
     else if(button.matches('[data-stars-step]')){ stars = clampStars(stars + Number(button.dataset.starsStep)); changed(); }
-    else if(button.matches('[data-crate]')){ target = target === button.dataset.crate ? null : button.dataset.crate; changed(); }
     else if(button.matches('[data-stars-max]')){ stars = cap; changed(); }
     else if(button.matches('[data-toggle-all]')){
       const ids = activeGroup().feats.map(f => f.id), all = ids.every(id => picked.has(id));
@@ -647,7 +662,7 @@ function renderPlanner(app, sel, nowMs, shared){
   }
   function previewMarkup(detail,titleId,editable = false){
     const {title,items,crate} = detail;
-    if(crate) return `<div class="cq-preview-heading"><img class="cq-crate" src="${crateArt(crate.name)}" alt=""><h2 id="${titleId}">${esc(title)}</h2></div><div class="cq-crate-preview-status"><strong>${crate.at} keycards</strong><span>${planTotals(diff,[...picked],stars,cap).total >= crate.at ? 'Reached by your plan' : (crate.at-planTotals(diff,[...picked],stars,cap).total)+' keycards away'}</span></div>${crate.shards ? '<div class="cq-report-payout">'+['primary','secondary'].filter(k=>units[k]).map(k=>`<span>${shardArt(units[k])}<b>${crate.shards[k] ?? 0}</b> ${esc(units[k].name)} shards</span>`).join('')+'</div>' : ''}${editable ? '<button class="cq-plan-toggle" type="button" data-preview-target="'+esc(crate.name)+'">'+(target === crate.name ? 'Clear target' : 'Set target crate')+'</button>' : ''}`;
+    if(crate) return `<div class="cq-preview-heading"><img class="cq-crate" src="${crateArt(crate.name)}" alt=""><h2 id="${titleId}">${esc(title)}</h2></div>${editable ? `<div class="cq-crate-preview-status"><strong>${crate.at} keycards</strong><span>${planTotals(diff,[...picked],stars,cap).total >= crate.at ? 'Reached by your plan' : (crate.at-planTotals(diff,[...picked],stars,cap).total)+' keycards away'}</span></div>` : ''}${crate.shards ? '<div class="cq-report-payout">'+['primary','secondary'].filter(k=>units[k]).map(k=>`<span>${shardArt(units[k])}<b>${crate.shards[k] ?? 0}</b> ${esc(units[k].name)} shards</span>`).join('')+'</div>' : ''}${editable ? '<button class="cq-plan-toggle" type="button" data-preview-target="'+esc(crate.name)+'">'+(target === crate.name ? 'Clear target' : 'Set target crate')+'</button>' : ''}`;
 
     const icon = items.length === 1 ? `<span class="cq-fi ${featStatusTone(items[0].feat)} portrait" aria-hidden="true"><img src="${esc(featArt(items[0].feat))}" alt=""></span>` : '';
     return `<div class="cq-preview-heading">${icon}<h2 id="${titleId}">${esc(title)}</h2></div>${items.map(item=>`<article class="cq-preview-feat"><div class="cq-preview-meta"><span><b class="cq-sector-badge">${esc(item.group)}</b><span>${item.keycards ? item.keycards+' keycards' : 'Bonus reward'}</span></span><strong class="${item.picked ? 'planned' : 'skipped'}">${item.picked ? 'Planned' : 'Skipped'}</strong></div>${items.length > 1 ? '<h3>'+esc(item.feat.title)+'</h3>' : ''}<p>${esc(featDesc(item.feat,difficulty))}</p>${item.feat.reward ? '<div class="cq-preview-reward"><img class="cq-'+featReward(item.feat.reward).type+'-icon" src="'+withAssetV(featReward(item.feat.reward).art)+'" alt=""><span>'+esc(featReward(item.feat.reward).label)+'</span></div>' : ''}${editable ? '<button type="button" class="cq-plan-toggle" data-review-feat="'+esc(item.feat.id)+'" aria-pressed="'+item.picked+'">'+(item.picked ? 'Skip feat' : 'Plan feat')+'</button>' : ''}</article>`).join('')}`;
@@ -677,15 +692,15 @@ function renderPlanner(app, sel, nowMs, shared){
   app.querySelector('.cq-chart-dialog').onclose = unlockChart;
   app.onpointerover = event=>{
     if(event.pointerType === 'touch' || app.querySelector('.cq-chart-dialog').open) return;
-    const segment = event.target.closest('[data-map-feat],[data-map-category],[data-report-crate]'); if(!segment) return;
-    const detail = chartPreview(segment.dataset.reportCrate ? 'crate' : segment.dataset.mapFeat ? 'feat' : 'category',segment.dataset.reportCrate || segment.dataset.mapFeat || segment.dataset.mapCategory); if(!detail) return;
+    const segment = event.target.closest('[data-map-feat],[data-map-category],[data-report-crate],[data-crate]'); if(!segment) return;
+    const detail = chartPreview((segment.dataset.reportCrate || segment.dataset.crate) ? 'crate' : segment.dataset.mapFeat ? 'feat' : 'category',segment.dataset.reportCrate || segment.dataset.crate || segment.dataset.mapFeat || segment.dataset.mapCategory); if(!detail) return;
     const tooltip = app.querySelector('[data-cq="chart-tooltip"]');
     tooltip.innerHTML = (detail.crate || detail.items.length === 1) ? previewMarkup(detail,'cqChartHoverTitle') : `<h2>${esc(detail.title)}</h2><p>${detail.items.filter(item=>!item.picked).length} / ${detail.items.length} feats skipped · ${detail.items.filter(item=>!item.picked).reduce((n,item)=>n+item.keycards,0)} keycards</p>`;
     tooltip.hidden = false; positionTooltip(event);
   };
   app.onpointermove = event=>{ if(!app.querySelector('[data-cq="chart-tooltip"]').hidden) positionTooltip(event); };
   app.onpointerout = event=>{
-    if(event.target.closest('[data-map-feat],[data-map-category],[data-report-crate]')) app.querySelector('[data-cq="chart-tooltip"]').hidden = true;
+    if(event.target.closest('[data-map-feat],[data-map-category],[data-report-crate],[data-crate]')) app.querySelector('[data-cq="chart-tooltip"]').hidden = true;
   };
   function positionTooltip(event){
     const tooltip = app.querySelector('[data-cq="chart-tooltip"]'), rect = tooltip.getBoundingClientRect();
