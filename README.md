@@ -275,100 +275,66 @@ action now lands inside one or two frames.
 
 ## Conquest planner
 
-`conquest.html` + `assets/js/conquest.js` + `assets/data/conquest-planner.json`:
-tick the feats you'll attempt and it totals keycards against the crate
-ladder. The page is a two-column grid above 1000px — conquest status card
-and feat list on the left, a sticky projection panel on the right that
-keeps the running total, the crate ladder and the battle-star stepper in
-view while a long feat list scrolls. The ladder is split in two: ticks
-mark each threshold on the progress rail, and the chips below it are the
-tappable ladder (tap to target, hover or focus for the shard payout);
-purple chips are earned, amber is your target. A group progress bar, a
-picked/total counter on every tab, contextual `All`/`None`, `Reset whole plan` and
-`Copy plan link` round out the feat sheet. A **Not doing** box in the
-right column, under the crate panel, lists every feat left unticked in the
-difficulty — grouped by tab, biggest keycard value first, each row with the
-feat's icon, name, description, kind and value. It is deliberately
-**read-only**: it exists so you can see, and show someone else, exactly what
-a plan skips. Only the highest crate pays out — the page
-says so. Crates are the official reward-crate tiers (`Reward Crate
-Tier 1`…`Tier 7`, ascending `at`); the UI shortens them to `Tier N` and
-maps each tier to the bundled chest art, which is still filed under the
-old colour names (`crate-carbon.png` is tier 1). Per-crate shard payouts
-(new unit + previous volume unit) live on each crate entry and show in the
-ladder chip tooltips — there is no always-on payout line, which told you
-nothing you couldn't already read off the chip. Instead the panel carries
-a **next step**: the fewest unpicked feats that would close the gap to your
-target tier (naming them when it's two or three, otherwise how many of your
-remaining feats it would take). Picks persist per conquest in
-`localStorage` under `swgoh-cq-plan`. Chain-gated feats render an explicit
-requirement chip parsed from the official description. The page
-auto-selects the entry whose changeover-anchored window holds today and
-derives the day/countdown from the site engine.
+`conquest.html`, `assets/js/conquest.js` and
+`assets/data/conquest-planner.json` implement a responsive feat planner.
+The header shares the home page's status-card styling. Upcoming preliminary
+conquests show a provisional-feat notice; it disappears at the launch time
+without requiring a reload.
 
-Battle stars step **one star at a time** (1 star = 1 keycard) rather than
-in threes, because you 3★ nearly everything and drop a star or two on a
-few battles; "All 3★", "None" and the running `N of M` readout cover the
-rest.
+Select feats in Global or sector tabs to update the projected crate,
+keycard totals and target rewards. Tabs turn green once all positive-keycard
+feats in that group are selected; optional bonus-only feats do not prevent
+completion. The projected-crate heading collapses the entire panel to its
+running keycard total. The battle-star input accepts one-star increments,
+with a complete focus outline around the stepper. Text selection is disabled
+on the page except in editable fields and the copy-link fallback.
 
-Reward chips (title, datadisk icon) and the keycard value chip are **grey
-until the feat is ticked, amber once it is** — the sheet always shows what
-you're actually getting rather than what you could get.
+The Conquest coverage view uses a three-ring SVG: objective types,
+requirements, then individual feats. Buffs, debuffs, survival, squad,
+faction and other objectives have separate colours. Repeated requirements
+share a branch. Every feat belongs to exactly one objective, so keycards
+are never counted twice. Choose a category to inspect its requirements,
+plan feats directly, or jump to the corresponding checkbox. An equivalent
+button/list interface provides keyboard access to every chart action.
+Coverage metadata lives on each feat as `coverage.category` and
+`coverage.requirement`; newly staged feats default to Other.
 
-Plans are shareable as a link: the whole plan (difficulty, stars, target and
-picked feat ids) is base64url-encoded into the `#p=` hash and rewritten with
-`history.replaceState` on every change, so the address bar is always a
-reproducible plan. `Copy plan link` copies it. A hash is read **once**, on
-first render, and never written back to `localStorage` — opening someone
-else's plan doesn't overwrite your own, and your later edits aren't undone
-by the hash still sitting in the URL.
+Skipped feats list every unselected feat by group, their total keycards,
+and the skip allowance for the target crate at the expected battle stars.
+Selecting a feat here updates the main list and coverage map. Group
+accordions remain open when the plan changes.
 
-Feat-row anatomy, left to right: custom-drawn checkbox · the feat's own
-game icon · title + requirement chip + description · keycard value ·
-reward. Every feat has a real icon pulled from the game:
-unit portraits (`charui_*`), faction/role badges (`datacronui_affix_*` — ISB,
-Hutt Cartel, the banned Support/Tank/Attacker roles) and signature
-**unit ability icons** (`ability_*` — Luminara's heal for Heal Over Time,
-Old Ben's basic for Evasion Down, Boba Fett's Thermal Detonator, Batcher's
-basic for Off Balance, Carson Teva's special for On the Run, and so on;
-each chosen because that ability grants or inflicts the feat's effect per
-gamedata). Generic buff/debuff pips (`abilityui_passive_*`) are never used —
-two feats must never share an icon, which is also pinned by test. Each feat
-records the extractor's asset name in `artAsset`, and
-`npm run conquest:pull` re-downloads any missing art from swgoh-ae2 (same
-"persistent library, never re-download" behaviour as `events:pull` art), so
-new conquests only need the mapping added once. A feat with no art simply
-gets no icon box — there is no placeholder asset. `reward` is free text: a
-datadisk reward renders as an inline-SVG disc icon (no datadisk art exists)
-with a hover/focus tooltip naming it, while anything matching
-`/title|holo/i` stays a text chip. Feats are split into tabs (Global,
-Sectors) with per-tab totals.
+Artwork comes from the game's named textures and metadata-based atlas
+extractions. Buff/debuff icons have green/red frames; neutral status
+effects have blue frames. Faction feats use `datacronui_affix_*` textures,
+including ISB, New Republic, Imperial Remnant, Hutt Cartel and Mercenary.
+Those five standalone textures were obtained unmodified through swgoh-ae2
+`/Asset/single`, asset version 100052, and are stored in
+`assets/img/live/`. No Constable faction texture exists in that manifest;
+Final Watch uses the game's squad symbol alongside its explicit requirement.
+Challenge Path uses `conquestui_atlas/combat_gl_selectable.png`.
 
-UI-sprite sourcing, verified against the live extractor and localization:
-the Conquest **keycard** is the standalone texture
-`icon_points_pathofconquest` (`CONQUEST_POINTS_DETAIL_TITLE` reads "Conquest
-Keycards"; shipped as `assets/img/live/conquest-points.png`), while
-`assets/img/live/conquest-keycard.png` is the Conquest *Credits* icon and
-must not stand in for it. The **battle star** control uses the game's gold
-`standard_rgba_atlas/icon_rendered_star` sprite from the named atlas library,
-with its original 64×64 rectangle recorded in `index.json`. The previous
-manually cropped star has been deleted. `UI_SPRITES` in `conquest.js` takes
-complete asset paths; the gold-star inline SVG remains a fallback.
+Disk rewards combine the original purple rarity-04 frame, artifact emblem
+and capacity sprite. Deployable Cooling Systems is a consumable and uses
+its consumable artwork. Title rewards use the game title icon. Unit shard
+rewards layer a portrait over the game's ShardIcon background, coloured
+blue for light side and red for dark side. The keycard texture is
+`icon_points_pathofconquest` (Conquest Credits are a different asset), and
+the battle star uses `standard_rgba_atlas/icon_rendered_star.png`.
 
-Feat TITLES + DESCRIPTIONS sync from gamedata automatically
-(`npm run conquest:pull`, needs Comlink like `events:pull`) and are
-preserved across refreshes; sectors + keycard values come from the
-published feat sheet (Vol 25 hard transcribed exactly — 334 feat
-keycards per the sheet's own total), Normal/Easy stay preliminary until
-their sheets land. Disk/title rewards render as chips, chain gates as
-requirement chips (explicit `requires` wins over the parsed gate text).
-The page banners the entry while `status` is `preliminary`, and notes
-automatically when the feat list can't yet reach the top crate. New feat
-text that lands late (e.g. a delayed data push) is staged for triage by
-the pull script. Doing everything per difficulty is pinned by test
-(easy 408 / normal 433 / hard 544 including stars).
-Pure math (`planTotals`, `crateFor`, `findConquestEntry`, `featDesc`) is
-covered by `tests/conquest-planner.test.js`, including a data-integrity
-pass (sorted ladders, unique ids, per-difficulty text, art files exist).
+Plans persist per conquest in localStorage under `swgoh-cq-plan` and are
+shareable through the base64url `#p=` hash. Opening a shared plan does not
+overwrite a saved plan until the visitor edits it. Delegated event handlers
+remain attached when reset or tab changes replace feat rows.
 
+`npm run conquest:pull` refreshes titles and descriptions from Comlink,
+keeps coverage/art metadata, downloads missing `artAsset` textures through
+swgoh-ae2, and stages unknown feats for triage. Sector placement, keycards
+and reward thresholds are transcribed from the published feat sheet.
+The current Volume 25 hard sheet contains 49 feats worth 334 keycards;
+Normal and Easy remain preliminary until their sheets arrive.
 
+Planner math and data integrity are checked in
+`tests/conquest-planner.test.js`. DOM interaction tests cover reset,
+selection, collapsed projection, coverage navigation, skipped totals,
+completion states, warning timing and share-link persistence.

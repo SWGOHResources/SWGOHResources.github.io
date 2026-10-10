@@ -5,15 +5,15 @@ import { JSDOM } from 'jsdom';
 
 const source = fs.readFileSync(new URL('../assets/js/conquest.js',import.meta.url),'utf8');
 const data = JSON.parse(fs.readFileSync(new URL('../assets/data/conquest-planner.json',import.meta.url),'utf8'));
-function setup({ shared = null, stored = null, blocked = false, entry = data.conquests[0] } = {}){
+function setup({ shared = null, stored = null, blocked = false, entry = data.conquests[0], now = Date.now() } = {}){
   const dom = new JSDOM('<div id="fixture"></div>',{url:'https://example.test/conquest.html',runScripts:'outside-only'});
   const w = dom.window;
   if(stored) w.localStorage.setItem('swgoh-cq-plan',JSON.stringify({plans:{[entry.id]:stored}}));
   if(blocked) Object.defineProperty(w,'localStorage',{get(){throw new Error('blocked');}});
   w.eval(source);
   const app = w.document.getElementById('fixture');
-  w.renderPlanner(app,{entry,state:'active'},Date.now(),shared);
-  const click = selector => { const el = app.querySelector(selector); assert.ok(el,selector); el.click(); };
+  w.renderPlanner(app,{entry,state:'active'},now,shared);
+  const click = selector => { const el = app.querySelector(selector); assert.ok(el,selector); if(el.click) el.click(); else el.dispatchEvent(new w.MouseEvent('click',{bubbles:true})); };
   const change = (selector,value) => {
     const el = app.querySelector(selector); assert.ok(el,selector);
     if(el.type === 'checkbox') el.checked = value; else el.value = value;
@@ -57,21 +57,29 @@ test('select group and clear group keep other groups and rebuilt rows working', 
   h.click('[data-toggle-all]'); assert.equal(h.total(),15);
   h.change('[data-feat="stun"]',true); assert.equal(h.total(),20);
 });
-test('target gap stays visible with mobile settings collapsed and a second tap clears it', t => {
+test('projected crate collapses from its heading and selections update its compact total', t => {
   const h = setup(); t.after(()=>h.dom.window.close());
   h.click('[data-crate="Reward Crate Tier 7"]');
-  h.click('[data-settings-toggle]');
-  assert.equal(h.app.querySelector('#cqSettings').hidden,true);
-  const target = h.app.querySelector('[data-cq="target"]');
-  assert.equal(target.closest('#cqSettings'),null); assert.equal(target.hidden,false);
-  assert.match(target.textContent,/630 more/);
-  h.click('[data-crate="Reward Crate Tier 7"]'); assert.equal(h.plan().t,null); assert.equal(target.hidden,true);
+  h.click('[data-projection-toggle]');
+  assert.equal(h.app.querySelector('#cqProjectionBody').hidden,true);
+  assert.equal(h.app.querySelector('[data-projection-toggle]').getAttribute('aria-expanded'),'false');
+  h.change('[data-feat="hot"]',true);
+  assert.equal(h.app.querySelector('[data-cq="collapsed-total"]').textContent,'15 keycards');
+  h.click('[data-projection-toggle]');
+  assert.equal(h.app.querySelector('#cqProjectionBody').hidden,false);
+  assert.match(h.app.querySelector('[data-cq="target"]').textContent,/615 more/);
+  assert.equal(h.app.querySelector('[data-settings-toggle]'),null);
+  h.click('[data-crate="Reward Crate Tier 7"]'); assert.equal(h.plan().t,null);
 });
-test('filtered replacement rows remain selectable and reset restores the list', t => {
+test('skipped feats and keycard totals track edits, group selection, and reset', t => {
   const h = setup(); t.after(()=>h.dom.window.close());
-  h.click('[data-filter="unselected"]'); h.change('[data-feat="hot"]',true);
-  assert.equal(h.total(),15); assert.equal(h.app.querySelector('[data-feat="hot"]'),null);
-  h.click('[data-filter="selected"]'); h.change('[data-feat="hot"]',false); assert.equal(h.total(),0);
+  const skipped = () => Number(h.app.querySelector('[data-cq="skipped-total"]').textContent);
+  const skipRow = id => h.app.querySelector('[data-cq="skipped-groups"] [data-jump-feat="'+id+'"]');
+  assert.equal(skipped(),334); assert.ok(skipRow('hot'));
+  assert.equal(h.app.querySelector('[data-filter]'),null);
+  h.change('[data-feat="hot"]',true); assert.equal(skipped(),319); assert.equal(skipRow('hot'),null);
+  h.click('[data-toggle-all]'); assert.equal(skipped(),242);
+  h.click('[data-reset-plan]'); assert.equal(skipped(),334); assert.ok(skipRow('hot'));
   h.click('[data-reset-plan]'); assert.equal(h.app.querySelectorAll('[data-feat]').length,9);
   h.change('[data-feat="hot"]',true); assert.equal(h.total(),15);
 });
@@ -118,7 +126,7 @@ test('re-rendering does not accumulate handlers and title and disk rewards use a
     const row = h.app.querySelector(`[data-feat="${id}"]`)?.closest('.cq-feat');
     assert.ok(row?.querySelector(`.cq-reward img[src*="icon_conquest_artifact_${texture}"]`),id);
   }
-  assert.equal(h.app.querySelectorAll('svg').length,0);
+  assert.equal(h.app.querySelectorAll('.cq-wheel svg').length,1);
   for(const disk of h.app.querySelectorAll('.cq-disk')){
     assert.ok(disk.querySelector('.cq-disk-frame'));
     assert.ok(disk.querySelector('.cq-disk-emblem'));
@@ -147,14 +155,55 @@ test('every feat retains an icon column and bonus rewards align within the descr
   }
 });
 
-test('custom star stepper respects limits and reset restores filter state', t => {
+test('custom star stepper respects limits and reset restores feat selections', t => {
   const h = setup(); t.after(()=>h.dom.window.close());
   assert.equal(h.app.querySelector('[data-stars-step="-1"]').disabled,true);
   h.click('[data-stars-step="1"]'); assert.equal(h.total(),1); assert.equal(h.plan().s,1);
   h.click('[data-stars-max]'); assert.equal(h.total(),330);
   assert.equal(h.app.querySelector('[data-stars-step="1"]').disabled,true);
   h.click('[data-stars-step="-1"]'); assert.equal(h.total(),329);
-  h.click('[data-filter="selected"]'); h.click('[data-reset-plan]');
-  assert.equal(h.app.querySelector('[data-filter="all"]').getAttribute('aria-pressed'),'true');
+  h.click('[data-reset-plan]');
   assert.equal(h.app.querySelectorAll('[data-feat]').length,9);
+});
+
+test('coverage groups repeated requirements and lets players plan and find exact feats', t => {
+  const h = setup(); t.after(()=>h.dom.window.close());
+  assert.equal(h.app.querySelectorAll('[data-map-feat]').length,49);
+  assert.equal(h.app.querySelector('[data-category="survival"]').getAttribute('aria-pressed'),'true');
+  const grogu = [...h.app.querySelectorAll('.cq-requirement')].find(r=>r.querySelector('strong').textContent === 'Grogu & Anzellans');
+  assert.equal(grogu.querySelectorAll('[data-review-feat]').length,2);
+  h.click('[data-cq="coverage-detail"] [data-review-feat="thechild"]');
+  assert.equal(h.total(),4); assert.deepEqual(h.plan().f,['thechild']);
+  assert.equal(h.app.querySelector('[data-map-feat="thechild"]').classList.contains('planned'),true);
+  h.click('[data-cq="coverage-detail"] [data-jump-feat="thechild"]');
+  assert.equal(h.plan().g,'Sector 4');
+  assert.equal(h.w.document.activeElement.dataset.feat,'thechild');
+  assert.equal(h.app.querySelector('[data-feat="thechild"]').checked,true);
+  h.click('[data-cq="coverage-detail"] [data-review-feat="thechild"]'); assert.equal(h.total(),0);
+  h.click('[data-category="debuff"]');
+  assert.match(h.app.querySelector('[data-cq="coverage-detail"]').textContent,/Stun/);
+  h.click('[data-map-feat="stun"]'); assert.equal(h.plan().g,'Sector 1');
+  assert.equal(h.w.document.activeElement.dataset.feat,'stun');
+});
+
+test('keycard completion lights a sector even with an optional bonus feat unselected', t => {
+  const h = setup(); t.after(()=>h.dom.window.close());
+  for(const f of data.conquests[0].difficulties.hard.groups[0].feats.filter(f=>f.keycards > 0)) h.change('[data-feat="'+f.id+'"]',true);
+  const tab = h.app.querySelector('[data-tab="Global feats"]');
+  assert.equal(tab.classList.contains('complete'),true);
+  assert.equal(h.app.querySelector('[data-feat="unlikely"]').checked,false);
+  assert.equal(tab.querySelector('.cq-tab-num').textContent,'✓ 8/8');
+  h.change('[data-feat="hot"]',false); assert.equal(tab.classList.contains('complete'),false);
+  h.click('[data-reset-plan]'); assert.equal(tab.classList.contains('complete'),false);
+});
+
+test('warning is clear before launch and disappears at the exact opening time', t => {
+  const entry = {...data.conquests[0],status:'preliminary'};
+  const h = setup({entry,now:Date.parse(entry.starts+'T17:59:00Z')}); t.after(()=>h.dom.window.close());
+  const notice = h.app.querySelector('[data-cq="notice"]');
+  assert.equal(notice.hidden,false); assert.match(notice.textContent,/may change before/);
+  h.w.paintConquestTiming(h.app,entry,Date.parse(entry.starts+'T18:00:00Z'));
+  assert.equal(notice.hidden,true);
+  assert.doesNotMatch(h.app.textContent,/One keycard per battle star/);
+  assert.match(h.app.querySelector('.cq-requires').textContent,/Conquest Pass\+$/);
 });
