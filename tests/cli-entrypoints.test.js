@@ -21,6 +21,7 @@ test('all maintenance CLI entry points execute from a path with spaces', () => {
     for (const folder of ['scripts', 'assets/js', 'assets/data']) {
       fs.mkdirSync(path.join(dir, folder), { recursive: true });
       for(const file of fs.readdirSync(path.join(root, folder))) {
+        if (!fs.statSync(path.join(root, folder, file)).isFile()) continue;
         fs.copyFileSync(path.join(root, folder, file), path.join(dir, folder, file));
       }
     }

@@ -187,21 +187,15 @@ function featKind(feat){
    (the crate-ladder currency) is `icon_points_pathofconquest` — verified
    against live localization, where CONQUEST_POINTS_DETAIL_TITLE reads
    "Conquest Keycards" (the credits icon, `icon_currency_pathofconquest`,
-   is a different currency). The battle STAR has no standalone texture in
-   the extractor — it only exists as a sprite inside the game's UI atlases
-   (`conquestui_atlas`, the battle/TB atlas), which swgoh-ae2 downloads as
-   bundles but does not export per-sprite (verified: atlas names 500 on
-   /Asset/single in every assetOS bucket, and no star-named standalone
-   texture exists in the 11,400-asset manifest). The star below is a
-   user-supplied export of that sprite (cross-checked against the white
-   base sprite at battleui_view_rgba_atlas ~(1391,654,34x33), which the
-   game tints gold at runtime); the SVG stand-in remains as the
-   fallback. Drop PNGs in assets/img/live/ and name them in
-   UI_SPRITES; the row/button render them only once set, so nothing wrong
-   can ship in the meantime.
+   is a different currency). The gold star is the original
+   standard_rgba_atlas/icon_rendered_star sprite, exported using its named
+   Unity rectangle. See assets/img/atlases/index.json for source metadata.
    (assets/img/live/conquest-keycard.png is the Conquest CREDITS icon, not
    a keycard — don't use it for crate progress.) */
-const UI_SPRITES = { keycard: 'conquest-points.png', star: 'conquest-battle-star.png' };
+const UI_SPRITES = {
+  keycard: 'assets/img/live/conquest-points.png',
+  star: 'assets/img/atlases/standard_rgba_atlas/icon_rendered_star.png',
+};
 /* Stand-in for the battle star until a real sprite lands in UI_SPRITES:
    a gold 5-point star with a dark outline, drawn to match the in-game
    battle star. Used via `||` so a real PNG takes over automatically. */
@@ -212,7 +206,7 @@ const STAR_SVG = '<svg class="cq-star-svg" viewBox="0 0 24 24" aria-hidden="true
   + '<polygon points="12,1 14.7,8.3 22.5,8.6 16.4,13.4 18.5,20.9 12,16.6 5.5,20.9 7.6,13.4 1.5,8.6 9.3,8.3"'
   + ' fill="url(#cqStarGold)" stroke="#6b4500" stroke-width="1.2" stroke-linejoin="round"/></svg>';
 const sprite = (name, cls, title) => UI_SPRITES[name]
-  ? `<img class="${cls}" src="${withAssetV('assets/img/live/' + UI_SPRITES[name])}" alt="" title="${esc(title)}">`
+  ? `<img class="${cls}" src="${withAssetV(UI_SPRITES[name])}" alt="" title="${esc(title)}">`
   : '';
 /* Feat rewards are usually a datadisk for the featured character; titles
    (and any future holo reward) are the exception and stay a text chip. */
@@ -624,7 +618,7 @@ function renderPlanner(app, sel, nowMs, shared){
 
 
       <section class="cq-work" aria-label="Feat selection">
-        ${partial ? `<p class="cq-note" role="note">${NOTE_CLOCK_SVG}<span>This conquest <b>hasn't started yet</b> — be wary that some feats may change.</span></p>` : ''}
+        ${partial ? `<p class="cq-note" role="note">${NOTE_CLOCK_SVG}<span>Some feat details are <b>preliminary</b> — check them against the current in-game conquest.</span></p>` : ''}
         <div class="sched-filters cq-tabs" role="group" aria-label="Feat groups">${tabRow}</div>
         <div class="cq-tabhead">
           <div class="cq-gp">
