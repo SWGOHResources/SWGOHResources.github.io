@@ -1,5 +1,5 @@
 {
- "pulledAt": 1791565316559,
+ "pulledAt": 1791621338828,
  "gameDataVersion": "0.40.6:Oq-TxiewST69Ow5E1gLW3g",
  "events": [
   {
@@ -48,7 +48,7 @@
    "unit": "GALACTICCHALLENGESDEATHSTAR",
    "startMs": 1791529200000,
    "endMs": 1791615600000,
-   "live": true,
+   "live": false,
    "art": "live/events-galactic-challenges-deathstar.png"
   },
   {
@@ -68,7 +68,7 @@
    "unit": "FORESTMOON",
    "startMs": 1791615600000,
    "endMs": 1791702000000,
-   "live": false,
+   "live": true,
    "art": "live/events-forestmoon.png"
   },
   {
