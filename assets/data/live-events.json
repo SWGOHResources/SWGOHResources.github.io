@@ -1,5 +1,5 @@
 {
- "pulledAt": 1791647633505,
+ "pulledAt": 1791668994151,
  "gameDataVersion": "0.40.6:Oq-TxiewST69Ow5E1gLW3g",
  "events": [
   {
@@ -140,6 +140,16 @@
    "endMs": 1792306800000,
    "live": false,
    "art": "live/events-empirehorde.png"
+  },
+  {
+   "id": "EVENT_OMEGA_BATTLES_03_DATHOMIR",
+   "name": "Dathomir Omega Battles",
+   "kind": "omega",
+   "unit": "GALACTICCHALLENGESDATHOMIR",
+   "startMs": 1792393200000,
+   "endMs": 1792479600000,
+   "live": false,
+   "art": "live/events-galacticchallenges-dathomir.png"
   }
  ]
 }
