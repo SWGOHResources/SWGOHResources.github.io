@@ -4,6 +4,8 @@
     {
       "id": "cq-2026-09-28-c1",
       "title": "1st Conquest of New Volume",
+      "run": 1,
+      "runsPerVolume": 3,
       "unit": "Embo & Keibu",
       "unitArt": "live/conquest-embokeibu.png",
       "starts": "2026-09-28",

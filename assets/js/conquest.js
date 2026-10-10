@@ -400,6 +400,7 @@ function renderPlanner(app, sel, nowMs, shared){
   if(!diffs[difficulty]) difficulty = Object.keys(diffs)[0];
   const diff = diffs[difficulty] || { groups: [], crates: [] };
   const groups = diff.groups || [], crates = [...(diff.crates || [])].sort((a,b) => a.at-b.at);
+  const topCrate = crates.length ? crates[crates.length - 1].name : null;
   const cap = Math.max(0, Number(entry.maxStars) || 0);
   const clampStars = value => Math.min(cap, Math.max(0, Math.trunc(Number(value) || 0)));
   let stars = clampStars(incoming ? incoming.s : (saved.stars ?? cap));
@@ -408,7 +409,7 @@ function renderPlanner(app, sel, nowMs, shared){
   const rawIds = incoming ? incoming.f : saved.feats;
   let picked = new Set((Array.isArray(rawIds) ? rawIds : []).filter(id => validIds.has(id)));
   const rawTarget = incoming ? incoming.t : saved.target;
-  let target = crates.some(c => c.name === rawTarget) ? rawTarget : null;
+  let target = crates.some(c => c.name === rawTarget) ? rawTarget : (rawTarget === undefined ? topCrate : null);
   let tab = incoming?.g || saved.tab;
   if(!groups.some(g => g.name === tab)) tab = groups[0]?.name;
   let coverageActive = 'all';
@@ -423,9 +424,12 @@ function renderPlanner(app, sel, nowMs, shared){
   };
   const top = Math.max(0, ...crates.map(c => c.at));
   const units = entry.shardUnits || {};
+  const primaryUnit = units.primary?.name || entry.unit || 'Conquest rewards';
+  const secondaryUnit = units.secondary?.name || '—';
+  const runLabel = entry.run && entry.runsPerVolume ? entry.run+' of '+entry.runsPerVolume : (entry.run ? String(entry.run) : '—');
   const dateLabel = value => new Date(value+'T12:00:00Z').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
   const timing = conquestTiming(entry, nowMs);
-  const conquestHeader = () => `<header class="merged-hero cq-hero cq-status" aria-labelledby="cqTitle"><div class="cq-run-heading"><h1 id="cqTitle">Conquest Status</h1><div class="cq-run-day">Day <strong data-clock="day">${timing.day}</strong><span>/ ${timing.duration}</span></div></div><dl class="cq-run-meta"><div><dt>Volume</dt><dd>${esc(entry.volume || '—')}</dd></div><div><dt>Difficulty</dt><dd>${esc(difficulty[0].toUpperCase()+difficulty.slice(1))}</dd></div><div class="cq-run-units"><dt>Primary Reward</dt><dd>${esc(entry.unit || 'Conquest rewards')}</dd></div></dl><div class="cq-countdown"><span data-clock="label">${timing.state === 'upcoming' ? 'Starts in' : timing.state === 'active' ? 'Time remaining' : 'Conquest complete'}</span><strong data-clock="remaining">${timing.remaining}</strong><small data-clock="boundary">${timing.state === 'upcoming' ? 'Opens' : 'Closes'} ${esc(dateLabel(timing.state === 'upcoming' ? entry.starts : entry.ends))}</small></div></header>`;
+  const conquestHeader = () => `<header class="merged-hero cq-hero cq-status" aria-labelledby="cqTitle"><div class="cq-run-heading"><h1 id="cqTitle">Conquest Status</h1><div class="cq-run-day">Day <strong data-clock="day">${timing.day}</strong><span>/ ${timing.duration}</span></div></div><dl class="cq-run-meta"><div><dt>Volume</dt><dd>${esc(entry.volume || '—')}</dd></div><div><dt>Run</dt><dd>${esc(runLabel)}</dd></div><div><dt>Difficulty</dt><dd>${esc(difficulty[0].toUpperCase()+difficulty.slice(1))}</dd></div><div class="cq-run-units"><dt>Primary Unit</dt><dd>${esc(primaryUnit)}</dd></div><div class="cq-run-units"><dt>Secondary Unit</dt><dd>${esc(secondaryUnit)}</dd></div></dl><div class="cq-countdown"><span data-clock="label">${timing.state === 'upcoming' ? 'Starts in' : timing.state === 'active' ? 'Time remaining' : 'Conquest complete'}</span><strong data-clock="remaining">${timing.remaining}</strong><small data-clock="boundary">${timing.state === 'upcoming' ? 'Opens' : 'Closes'} ${esc(dateLabel(timing.state === 'upcoming' ? entry.starts : entry.ends))}</small></div></header>`;
   app.innerHTML = `
     <div class="cq-page-layout"><aside class="cq-context" aria-label="Conquest information">
     ${conquestHeader()}
@@ -593,11 +597,11 @@ function renderPlanner(app, sel, nowMs, shared){
       picked.has(id) ? picked.delete(id) : picked.add(id); changed();
       if(previewState){ previewChart(previewState.kind,previewState.id); app.querySelector('[data-review-feat="'+id+'"]').focus({preventScroll:true}); }
     }
-    else if(button.matches('[data-diff]')){ persist(); renderPlanner(app,sel,nowMs,{ c: entry.id, d: button.dataset.diff, s: cap, t: null, f: [], g: null }); }
+    else if(button.matches('[data-diff]')){ persist(); renderPlanner(app,sel,nowMs,{ c: entry.id, d: button.dataset.diff, s: cap, t: topCrate, f: [], g: null }); }
     else if(button.matches('[data-reset-plan]')){
-      picked.clear(); stars = cap; target = null;
+      picked.clear(); stars = cap; target = topCrate;
       changed();
-      app.querySelector('[data-cq="feedback"]').textContent = 'Plan reset. Feats and target cleared; battle keycards set to full.';
+      app.querySelector('[data-cq="feedback"]').textContent = 'Plan reset. Feats cleared, target set to the top crate, battle keycards set to full.';
     } else if(button.matches('[data-copy-link]')){
       // Write the current snapshot before copying, including rapid edits.
       writeHash(entry,picked,stars,target,difficulty,tab,view);

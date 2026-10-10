@@ -36,7 +36,7 @@ test('all legacy view links preserve selections in the sole diagram planner',t=>
 });
 test('reset then right click and type keeps total, storage and share link in sync',t=>{
   const h=use(t,{shared:{s:330,f:['hot'],t:'Reward Crate Tier 7'}});
-  h.click('[data-reset-plan]'); assert.equal(h.total(),330); assert.equal(h.plan().t,null);
+  h.click('[data-reset-plan]'); assert.equal(h.total(),330); assert.equal(h.plan().t,'Reward Crate Tier 7');
   h.rightClick('[data-map-feat="stun"]'); assert.equal(h.total(),335);
   h.change('10'); assert.equal(h.total(),325);
   h.rightClick('[data-map-feat="stun"]'); assert.equal(h.total(),320);
@@ -120,10 +120,18 @@ test('keyboard opens details and preserves the same planning behavior',t=>{
 });
 test('crate left click previews, right click sets target, modal can clear it',t=>{
   const h=use(t); const selector='[data-report-crate="Reward Crate Tier 7"]';
-  h.click(selector); assert.equal(h.plan().t,null); h.click('[data-chart-close]');
+  h.click(selector); assert.equal(h.plan().t,'Reward Crate Tier 7'); h.click('[data-chart-close]');
   h.rightClick(selector); assert.equal(h.plan().t,'Reward Crate Tier 7');
   assert.equal(h.get('.cq-chart-dialog').open,false);
   h.click(selector); h.click('[data-preview-target]'); assert.equal(h.plan().t,null);
+});
+test('top crate is the default target for new and reset plans',t=>{
+  const h=use(t);
+  assert.equal(h.plan().t,'Reward Crate Tier 7');
+  h.rightClick('[data-report-crate="Reward Crate Tier 1"]');
+  assert.equal(h.plan().t,'Reward Crate Tier 1');
+  h.click('[data-reset-plan]');
+  assert.equal(h.plan().t,'Reward Crate Tier 7');
 });
 test('hover gives custom details, touch uses the modal, crate hover stays concise',t=>{
   const h=use(t);
@@ -191,7 +199,9 @@ test('skipped reward cards show both keycards and a separate named reward tile',
 });
 test('header gives labelled metadata, a single day count, and a compact countdown',t=>{
   const h=use(t);
-  assert.equal(h.get('.cq-run-meta dt').textContent,'Volume');
+  assert.deepEqual([...h.app.querySelectorAll('.cq-run-meta dt')].map(e=>e.textContent),['Volume','Run','Difficulty','Primary Unit','Secondary Unit']);
+  const dds=[...h.app.querySelectorAll('.cq-run-meta dd')].map(e=>e.textContent);
+  assert.ok(dds.includes('1 of 3')); assert.ok(dds.includes('Embo & Keibu')); assert.ok(dds.includes('Leia (Jedi Training)'));
   assert.equal(h.app.querySelectorAll('[data-clock="day"]').length,1);
   assert.match(h.get('[data-clock="remaining"]').textContent,/^\d+d \d+h$/);
   assert.equal(h.app.querySelector('[data-clock="progress"]'),null);
