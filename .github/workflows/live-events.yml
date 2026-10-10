@@ -76,6 +76,10 @@ jobs:
               console.log(same ? 'heartbeat commit (snapshot age ' + ageH.toFixed(1) + 'h)' : 'data changed — committing');
             }
           "
+          # Recompute after dropping timestamp-only snapshot changes.
+          # New artwork also changes runtime image URLs in the pages.
+          npm run cache:bust
+          git add '*.html'
           if git diff --staged --quiet; then
             echo "live events unchanged"
           else

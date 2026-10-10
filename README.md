@@ -185,9 +185,56 @@ Scripts load in order at the end of `<body>` as deferred classic scripts
 Discord-handle copy). Keep each feature on its own page — don't fold
 them into the homepage.
 
-Bump the `?v=` number on every deploy, or browsers may keep serving
-cached CSS/JS instead of the new schedule. Each stylesheet must be
-linked exactly once (a duplicated `<link>` loads the CSS twice).
+Each stylesheet must be linked exactly once (a duplicated `<link>` loads
+the CSS twice).
+
+### Asset caching (`npm run cache:bust`)
+
+Don't hand-bump `?v=` numbers — a forgotten bump is exactly how a stale
+stylesheet or an old feat icon "reappears" after you changed it. Instead:
+
+```
+npm run cache:bust      # rewrites ?v= on every local href/src, per file
+```
+
+`scripts/cache-bust.mjs` hashes every file under `assets/` and stamps each
+page's local `href`/`src` with **that file's own content hash**, so a URL
+only changes when the bytes do. It also writes one site-wide token into
+`<meta name="swgoh-asset-v">` on every page, which `assets/js/asseturl.js`
+exposes as `assetUrl(path)`.
+
+Images the scripts build at runtime (feat icons, crate art, unit portraits,
+event art) go through `assetUrl()` — in `render.js` that's the `imgPath(f)`
+helper, in `conquest.js` the `withAssetV(p)` one — so a replaced PNG can't
+be served from an old cache entry either. `main.css` has no `url()`
+references, which is the only reason the CSS side needs no runtime help.
+
+`npm test` fails if the committed pages have drifted from what the script
+would stamp, and if a page references an asset that isn't on disk, so run
+`cache:bust` before committing. It's chained onto `events:pull` and
+`conquest:pull`, since those are what add or replace images.
+
+## Performance notes
+
+Measured in-page (median of repeated interactions, 1280x900): every planner
+action now lands inside one or two frames.
+
+- **No `backdrop-filter` on the planner's sticky header.** It sat over a live
+  animated starfield, so every twinkle frame and every scroll re-blurred it.
+  A solid gradient bar looks the same over this background and costs nothing
+  per frame. This alone took the page from 40fps idle to 60fps.
+- **The starfield twinkles on `transform`, not `opacity`** (compositor-only,
+  no repaint), and only the 1px stars twinkle: 46 stars, 10 animated. Animated
+  nodes cost the whole page a frame each; decoration needs a handful.
+- **Switching feat tabs is an in-place swap** of the feat list, not a
+  re-render of the planner. It went from a 63ms frame to ~15ms. `activeGroup`
+  is a lookup for the same reason.
+- **The not-doing list is only rebuilt when the set of unpicked feats
+  changes**, so star and crate clicks don't re-lay 49 rows.
+- **`?v=`/hash writes are coalesced to one per frame** — `replaceState` isn't
+  free and two in a frame is pointless.
+- `contain: content` on the feat list, skip list and panel cards keeps a
+  repaint inside one card from invalidating the page.
 
 ## Editing rotation
 
@@ -205,23 +252,90 @@ linked exactly once (a duplicated `<link>` loads the CSS twice).
 
 `conquest.html` + `assets/js/conquest.js` + `assets/data/conquest-planner.json`:
 tick the feats you'll attempt and it totals keycards against the crate
-ladder — merged into the projection as a tappable track of genuine
-crate icons (tap a crate to target it; hover shows its shard payout),
-with a battle-star stepper and a spare-keycard readout (extras beyond
-the earned crate). Only the highest crate pays out — the page says so.
-Per-crate shard payouts (new unit + previous volume unit) live on each
-crate entry; hover tooltips and the projected-payout line show them with
-unit shard icons. Picks persist per conquest in `localStorage` under
-`swgoh-cq-plan`. Chain-gated feats render an explicit requirement chip
-parsed from the official description. The page auto-selects the entry
-whose changeover-anchored window holds today and derives the
-day/countdown from the site engine. Feat rows wear real unit portraits
-(`assets/img/live/conquest-*.png`, pulled from gamedata — profile
-`charui` icons, not marquee art); feats that need no character use the
-keycard currency icon (`conquest-keycard.png`), with bundled art as
-fallback. Crate icons have no reliably identifiable bundle textures, so
-the ladder stays CSS-styled rather than guessing wrong art. Feats are
-split into tabs (Global, Sectors, Miniboss, Boss) with per-tab totals.
+ladder. The page is a two-column grid above 1000px — conquest status card
+and feat list on the left, a sticky projection panel on the right that
+keeps the running total, the crate ladder and the battle-star stepper in
+view while a long feat list scrolls. The ladder is split in two: ticks
+mark each threshold on the progress rail, and the chips below it are the
+tappable ladder (tap to target, hover or focus for the shard payout);
+purple chips are earned, amber is your target. A group progress bar, a
+picked/total counter on every tab, contextual `All`/`None`, `Reset whole plan` and
+`Copy plan link` round out the feat sheet. A **Not doing** box in the
+right column, under the crate panel, lists every feat left unticked in the
+difficulty — grouped by tab, biggest keycard value first, each row with the
+feat's icon, name, description, kind and value. It is deliberately
+**read-only**: it exists so you can see, and show someone else, exactly what
+a plan skips. Only the highest crate pays out — the page
+says so. Crates are the official reward-crate tiers (`Reward Crate
+Tier 1`…`Tier 7`, ascending `at`); the UI shortens them to `Tier N` and
+maps each tier to the bundled chest art, which is still filed under the
+old colour names (`crate-carbon.png` is tier 1). Per-crate shard payouts
+(new unit + previous volume unit) live on each crate entry and show in the
+ladder chip tooltips — there is no always-on payout line, which told you
+nothing you couldn't already read off the chip. Instead the panel carries
+a **next step**: the fewest unpicked feats that would close the gap to your
+target tier (naming them when it's two or three, otherwise how many of your
+remaining feats it would take). Picks persist per conquest in
+`localStorage` under `swgoh-cq-plan`. Chain-gated feats render an explicit
+requirement chip parsed from the official description. The page
+auto-selects the entry whose changeover-anchored window holds today and
+derives the day/countdown from the site engine.
+
+Battle stars step **one star at a time** (1 star = 1 keycard) rather than
+in threes, because you 3★ nearly everything and drop a star or two on a
+few battles; "All 3★", "None" and the running `N of M` readout cover the
+rest.
+
+Reward chips (title, datadisk icon) and the keycard value chip are **grey
+until the feat is ticked, amber once it is** — the sheet always shows what
+you're actually getting rather than what you could get.
+
+Plans are shareable as a link: the whole plan (difficulty, stars, target and
+picked feat ids) is base64url-encoded into the `#p=` hash and rewritten with
+`history.replaceState` on every change, so the address bar is always a
+reproducible plan. `Copy plan link` copies it. A hash is read **once**, on
+first render, and never written back to `localStorage` — opening someone
+else's plan doesn't overwrite your own, and your later edits aren't undone
+by the hash still sitting in the URL.
+
+Feat-row anatomy, left to right: custom-drawn checkbox · the feat's own
+game icon · title + requirement chip + description · keycard value ·
+reward. Every feat has a real icon pulled from the game:
+unit portraits (`charui_*`), faction/role badges (`datacronui_affix_*` — ISB,
+Hutt Cartel, the banned Support/Tank/Attacker roles) and signature
+**unit ability icons** (`ability_*` — Luminara's heal for Heal Over Time,
+Old Ben's basic for Evasion Down, Boba Fett's Thermal Detonator, Batcher's
+basic for Off Balance, Carson Teva's special for On the Run, and so on;
+each chosen because that ability grants or inflicts the feat's effect per
+gamedata). Generic buff/debuff pips (`abilityui_passive_*`) are never used —
+two feats must never share an icon, which is also pinned by test. Each feat
+records the extractor's asset name in `artAsset`, and
+`npm run conquest:pull` re-downloads any missing art from swgoh-ae2 (same
+"persistent library, never re-download" behaviour as `events:pull` art), so
+new conquests only need the mapping added once. A feat with no art simply
+gets no icon box — there is no placeholder asset. `reward` is free text: a
+datadisk reward renders as an inline-SVG disc icon (no datadisk art exists)
+with a hover/focus tooltip naming it, while anything matching
+`/title|holo/i` stays a text chip. Feats are split into tabs (Global,
+Sectors) with per-tab totals.
+
+UI-sprite sourcing, verified against the live extractor and localization:
+the Conquest **keycard** is the standalone texture
+`icon_points_pathofconquest` (`CONQUEST_POINTS_DETAIL_TITLE` reads "Conquest
+Keycards"; shipped as `assets/img/live/conquest-points.png`), while
+`assets/img/live/conquest-keycard.png` is the Conquest *Credits* icon and
+must not stand in for it. The **battle star** has no standalone texture —
+it only exists as a sprite inside the game's UI atlases, which swgoh-ae2
+downloads as bundles but does not export per-sprite (atlas names 500 on
+`/Asset/single`, and no star-named standalone texture exists in the
+11,400-asset manifest), so `assets/img/live/conquest-battle-star.png` is a
+user-supplied export of that sprite — cross-checked against the white base
+sprite in `battleui_view_rgba_atlas` at ~(1391,654,34x33), inside the
+`shared_uicontainer` bundle, which the game tints gold at runtime — with a
+gold-star inline SVG as fallback.
+`UI_SPRITES` at the top of `conquest.js` takes the PNG filenames; the row
+and the button render them only once set, so nothing incorrect ships in the
+meantime.
 
 Feat TITLES + DESCRIPTIONS sync from gamedata automatically
 (`npm run conquest:pull`, needs Comlink like `events:pull`) and are
