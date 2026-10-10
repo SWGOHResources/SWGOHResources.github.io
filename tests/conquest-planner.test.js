@@ -168,7 +168,7 @@ test('coverage partitions all feats without duplicating or dropping keycards', (
   const diff = data.conquests[0].difficulties.hard;
   const categories = js(`conquestCoverage(${JSON.stringify(diff)},['hot','thechild','unlikely'])`);
   const items = categories.flatMap(c=>c.feats);
-  assert.equal(items.length,49); assert.equal(new Set(items.map(i=>i.feat.id)).size,49);
+  assert.equal(items.length,48); assert.equal(new Set(items.map(i=>i.feat.id)).size,48);
   assert.equal(categories.reduce((n,c)=>n+c.keycards,0),334);
   assert.equal(categories.reduce((n,c)=>n+c.planned,0),19);
   const grogu = categories.find(c=>c.id === 'survival').requirements.find(r=>r.name === 'Grogu & Anzellans');
@@ -267,4 +267,13 @@ test('shipped planner data is sound on every difficulty', () => {
       }
     }
   }
+});
+
+test('crate rail interpolates real keycard thresholds between evenly spaced markers', () => {
+ const crates = [{at:100},{at:200},{at:400}];
+ assert.equal(run('crateTrackProgress([],100)'),0);
+ assert.equal(run('crateTrackProgress('+JSON.stringify(crates)+',0)'),0);
+ assert.ok(Math.abs(run('crateTrackProgress('+JSON.stringify(crates)+',50)')-100/6)<1e-9);
+ assert.ok(Math.abs(run('crateTrackProgress('+JSON.stringify(crates)+',300)')-250/3)<1e-9);
+ assert.equal(run('crateTrackProgress('+JSON.stringify(crates)+',999)'),100);
 });

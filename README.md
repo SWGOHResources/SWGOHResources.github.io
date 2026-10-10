@@ -289,20 +289,30 @@ running keycard total. The battle-star input accepts one-star increments,
 with a complete focus outline around the stepper. Text selection is disabled
 on the page except in editable fields and the copy-link fallback.
 
-The Conquest coverage view uses a three-ring SVG: objective types,
-requirements, then individual feats. Buffs, debuffs, survival, squad,
-faction and other objectives have separate colours. Repeated requirements
-share a branch. Every feat belongs to exactly one objective, so keycards
-are never counted twice. Choose a category to inspect its requirements,
-plan feats directly, or jump to the corresponding checkbox. An equivalent
-button/list interface provides keyboard access to every chart action.
+A separate Coverage & skips tab contains an editable, screenshot-ready report
+with its own compact header (the Planner hero is hidden), feat keycard totals, skipped counts and a crate progress
+rail below the diagram. Crate details and shard rewards appear in a custom
+hover card or tap popup. Battle keycards missed subtract from the same
+saved battle-star total used by the Planner tab; shared links remain compatible.
+Every skipped feat is visible by sector with its requirement and keycard value.
+Title-only feats remain available in the Planner but are omitted from coverage.
+Shared links preserve the chosen view. Copy and Reset sit beside the view tabs.
+
+The two-ring SVG shows objective categories and individual feats, each once.
+Bright wedges are planned, dark wedges are skipped. Sector labels and original
+bonus-reward artwork identify feat locations and extra rewards. Clicking a
+feat toggles its plan selection and opens its details; the popup also has an
+explicit Plan/Skip control. Click an inner category segment to filter the diagram; click it again to show all.
+Each feat segment also supports keyboard activation. Desktop hover uses a custom card. Sector labels and
+original bonus-reward artwork are shown in feat previews. No chart action
+navigates away. The page is locked while a popup is open; tapping its backdrop closes it.
 Coverage metadata lives on each feat as `coverage.category` and
 `coverage.requirement`; newly staged feats default to Other.
 
 Skipped feats list every unselected feat by group, their total keycards,
 and the skip allowance for the target crate at the expected battle stars.
-Selecting a feat here updates the main list and coverage map. Group
-accordions remain open when the plan changes.
+The skipped list stays expanded for screenshots. Selecting a feat in
+this list opens its details and Plan/Skip control without leaving the report.
 
 Artwork comes from the game's named textures and metadata-based atlas
 extractions. Buff/debuff icons have green/red frames; neutral status
@@ -314,8 +324,9 @@ Those five standalone textures were obtained unmodified through swgoh-ae2
 Final Watch uses the game's squad symbol alongside its explicit requirement.
 Challenge Path uses `conquestui_atlas/combat_gl_selectable.png`.
 
-Disk rewards combine the original purple rarity-04 frame, artifact emblem
-and capacity sprite. Deployable Cooling Systems is a consumable and uses
+Disk rewards show only the original purple rarity-04 texture, without
+emblem or capacity overlays. Disk emblems used as feat icons retain
+their original gold colour. Deployable Cooling Systems is a consumable and uses
 its consumable artwork. Title rewards use the game title icon. Unit shard
 rewards layer a portrait over the game's ShardIcon background, coloured
 blue for light side and red for dark side. The keycard texture is
