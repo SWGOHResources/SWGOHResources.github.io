@@ -66,7 +66,13 @@ def export_bundle(bundle, output):
         for sprite in sprites:
             relative = Path(filename(atlas_name)) / (filename(sprite['name']) + '.png')
             if str(relative).casefold() in destinations:
-                raise ValueError(f'Duplicate sprite destination: {relative}')
+                # Unity names are case-sensitive; Windows paths are not.
+                # Keep both definitions with a deterministic suffix and
+                # preserve the original name unchanged in the manifest.
+                suffix = hashlib.sha256(json.dumps(sprite, sort_keys=True).encode()).hexdigest()[:12]
+                relative = relative.with_name(relative.stem + '__' + suffix + '.png')
+                if str(relative).casefold() in destinations:
+                    continue  # repeated identical definition
             destinations.add(str(relative).casefold())
             cropped = crop_sprite(image, sprite)
             target = output / relative
