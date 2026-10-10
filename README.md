@@ -351,3 +351,10 @@ Planner math and data integrity are checked in
 `tests/conquest-planner.test.js`. DOM interaction tests cover reset,
 selection, collapsed projection, coverage navigation, skipped totals,
 completion states, warning timing and share-link persistence.
+
+Clean page URLs are `/conquest/`, `/privacy/`, `/cookie-policy/` and `/terms/`.
+Edit the root `.html` sources, then run `npm run cache:bust`; it refreshes
+the published directory copies automatically. The root `<base>` keeps assets
+and data requests consistent on both routes. Old `.html` URLs retain their
+query string and plan hash while the address bar switches to the clean path.
+Navigation, canonical URLs and the sitemap use the clean routes.
