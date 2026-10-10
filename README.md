@@ -317,8 +317,8 @@ The skipped list stays expanded for screenshots. Selecting a feat in
 this list opens its details and Plan/Skip control without leaving the report.
 
 Artwork comes from the game's named textures and metadata-based atlas
-extractions. Buff/debuff icons have green/red frames; neutral status
-effects have blue frames. Faction feats use `datacronui_affix_*` textures,
+extractions. Buff/debuff icons have green/red frames; every other feat
+icon has a blue frame. Faction feats use `datacronui_affix_*` textures,
 including ISB, New Republic, Imperial Remnant, Hutt Cartel and Mercenary.
 Those five standalone textures were obtained unmodified through swgoh-ae2
 `/Asset/single`, asset version 100052, and are stored in

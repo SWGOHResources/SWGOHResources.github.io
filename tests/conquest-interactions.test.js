@@ -36,8 +36,8 @@ test('all legacy view links preserve selections in the sole diagram planner',t=>
 });
 test('reset then right click and type keeps total, storage and share link in sync',t=>{
   const h=use(t,{shared:{s:330,f:['hot'],t:'Reward Crate Tier 7'}});
-  h.click('[data-reset-plan]'); assert.equal(h.total(),0); assert.equal(h.plan().t,null);
-  h.rightClick('[data-map-feat="stun"]'); assert.equal(h.total(),5);
+  h.click('[data-reset-plan]'); assert.equal(h.total(),330); assert.equal(h.plan().t,null);
+  h.rightClick('[data-map-feat="stun"]'); assert.equal(h.total(),335);
   h.change('10'); assert.equal(h.total(),325);
   h.rightClick('[data-map-feat="stun"]'); assert.equal(h.total(),320);
   assert.deepEqual(h.plan().f,[]);
@@ -76,23 +76,23 @@ test('typing preserves the input node and typed value until normalization',t=>{
 });
 test('left click opens details only; modal action plans and skips',t=>{
   const h=use(t); h.click('[data-map-feat="hot"]');
-  assert.equal(h.total(),0); assert.equal(h.get('.cq-chart-dialog').open,true);
-  h.click('[data-review-feat="hot"]'); assert.equal(h.total(),15);
+  assert.equal(h.total(),330); assert.equal(h.get('.cq-chart-dialog').open,true);
+  h.click('[data-review-feat="hot"]'); assert.equal(h.total(),345);
   assert.match(h.get('[data-cq="chart-preview"]').textContent,/Planned/);
-  h.click('[data-review-feat="hot"]'); assert.equal(h.total(),0);
+  h.click('[data-review-feat="hot"]'); assert.equal(h.total(),330);
 });
 test('right click toggles once without opening details or scrolling',t=>{
   const h=use(t); let position;
   h.w.scrollTo=value=>{position=value;}; Object.defineProperty(h.w,'scrollY',{value:240});
   assert.equal(h.rightClick('[data-map-feat="hot"]').defaultPrevented,true);
-  assert.equal(h.total(),15); assert.equal(h.get('.cq-chart-dialog').open,false);
-  assert.equal(position.top,240); h.rightClick('[data-map-feat="hot"]'); assert.equal(h.total(),0);
+  assert.equal(h.total(),345); assert.equal(h.get('.cq-chart-dialog').open,false);
+  assert.equal(position.top,240); h.rightClick('[data-map-feat="hot"]'); assert.equal(h.total(),330);
 });
 test('keyboard opens details and preserves the same planning behavior',t=>{
   const h=use(t);
   h.get('[data-map-feat="stun"]').dispatchEvent(new h.w.KeyboardEvent('keydown',{key:'Enter',bubbles:true,cancelable:true}));
-  assert.equal(h.get('.cq-chart-dialog').open,true); assert.equal(h.total(),0);
-  h.click('[data-review-feat="stun"]'); assert.equal(h.total(),5);
+  assert.equal(h.get('.cq-chart-dialog').open,true); assert.equal(h.total(),330);
+  h.click('[data-review-feat="stun"]'); assert.equal(h.total(),335);
 });
 test('crate left click previews, right click sets target, modal can clear it',t=>{
   const h=use(t); const selector='[data-report-crate="Reward Crate Tier 7"]';
@@ -125,7 +125,7 @@ test('modal locks background scrolling and backdrop closes it without inside cli
 });
 test('category filters neither edit the plan nor open a popup',t=>{
   const h=use(t); h.click('[data-map-category="buff"]');
-  assert.equal(h.total(),0); assert.equal(h.get('.cq-chart-dialog').open,false);
+  assert.equal(h.total(),330); assert.equal(h.get('.cq-chart-dialog').open,false);
   assert.ok(h.app.querySelector('.cq-map-branch.dim'));
   h.click('[data-map-category="buff"]'); assert.equal(h.app.querySelector('.cq-map-branch.dim'),null);
 });
@@ -146,15 +146,15 @@ test('curated reward gates connect the correct source and consumer',t=>{
   assert.equal(h.w.featLinks(diff,feats.find(f=>f.id==='retribution')).unlocks[0].id,'followlead');
   assert.ok(h.get('[data-map-feat="retribution"]').classList.contains('grants-reward'));
   assert.ok(h.get('[data-map-feat="followlead"]').classList.contains('uses-reward'));
-  assert.equal(h.get('.cq-map-reward').getAttribute('width'),'18');
+  assert.equal(h.get('.cq-map-reward').getAttribute('width'),'14');
 });
 test('reward detail tiles navigate between related feats without changing selections',t=>{
   const h=use(t); h.click('[data-map-feat="followlead"]');
   const detail=h.get('[data-cq="chart-preview"]'); assert.match(detail.textContent,/Requires.*Booming Voice.*From Retribution/s);
   assert.doesNotMatch(detail.textContent,/Stand Your Ground/);
   h.click('.cq-chart-dialog [data-preview-feat="retribution"]');
-  assert.match(h.get('[data-cq="chart-preview"]').textContent,/Also earns.*Booming Voice.*Unlocks/s);
-  assert.equal(h.total(),0);
+  assert.match(h.get('[data-cq="chart-preview"]').textContent,/Also earns.*Booming Voice.*Makes completable/s);
+  assert.equal(h.total(),330);
   h.click('.cq-chart-dialog [data-preview-feat="followlead"]'); h.click('[data-review-feat="followlead"]');
   assert.deepEqual(h.plan().f,['followlead']); // A pass can unlock the reward; don't silently select the source.
   h.click('[data-chart-close]'); h.click('[data-map-feat="learncontrol"]');
@@ -181,5 +181,5 @@ test('preliminary warning only appears before the event starts',t=>{
 });
 test('old conquest links cannot import another event plan',t=>{
   const h=use(t,{shared:{c:'old-event',s:330,f:['hot']}});
-  assert.equal(h.total(),0); assert.deepEqual(h.plan().f,[]);
+  assert.equal(h.total(),330); assert.deepEqual(h.plan().f,[]);
 });
