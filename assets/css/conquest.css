@@ -375,3 +375,8 @@ html.cq-modal-open, body.cq-modal-open { overflow:hidden; overscroll-behavior:no
 .cq-skipped-value { display:flex; align-items:center; justify-content:center; min-width:26px; min-height:32px; padding:5px; }
 .cq-skipped-feat:last-child { margin-bottom:0; }
 @media (max-width:520px) { .cq-skipped-grid { columns:1; } }
+
+.cq-diagram-projection .cq-missed { display:grid; grid-template-columns:minmax(0,1fr) 56px auto; align-items:center; gap:6px; }
+.cq-diagram-projection .cq-missed > span { white-space:nowrap; }
+.cq-crate-preview-status { display:grid; gap:6px; padding:10px 12px; border:1px solid var(--border2); border-radius:6px; background:var(--void3); font-size:13px; }
+.cq-crate-preview-status span { color:var(--text2); }
