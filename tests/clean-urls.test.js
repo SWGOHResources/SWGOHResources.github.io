@@ -8,7 +8,7 @@ const root = new URL('../', import.meta.url);
 const script = fs.readFileSync(new URL('assets/js/clean-urls.js', root), 'utf8');
 const read = path => fs.readFileSync(new URL(path, root), 'utf8').replace(/\r\n/g, '\n');
 
-test('plan edits and view changes retain the clean path and query with a root asset base', () => {
+test('plan edits retain the clean path and query with a root asset base', () => {
   const dom = new JSDOM('<head><base href="/"></head><body><div id="fixture"></div></body>', {
     url: 'https://example.test/conquest/?mode=hard', runScripts: 'outside-only',
   });
@@ -30,8 +30,8 @@ test('plan edits and view changes retain the clean path and query with a root as
     assert.equal(check().s, 318);
     app.querySelector('[data-map-feat="hot"]').dispatchEvent(new w.MouseEvent('contextmenu', { bubbles: true, cancelable: true, button: 2 }));
     assert.deepEqual(check().f, ['hot']);
-    app.querySelector('[data-view="planner"]').click();
-    assert.equal(check().v, undefined);
+    assert.equal(check().v, 'coverage');
+    assert.equal(app.querySelector('[data-view]'), null);
   } finally { dom.window.close(); }
 });
 
