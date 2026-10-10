@@ -8,6 +8,33 @@ const root = new URL('../', import.meta.url);
 const script = fs.readFileSync(new URL('assets/js/clean-urls.js', root), 'utf8');
 const read = path => fs.readFileSync(new URL(path, root), 'utf8').replace(/\r\n/g, '\n');
 
+test('plan edits and view changes retain the clean path and query with a root asset base', () => {
+  const dom = new JSDOM('<head><base href="/"></head><body><div id="fixture"></div></body>', {
+    url: 'https://example.test/conquest/?mode=hard', runScripts: 'outside-only',
+  });
+  try {
+    const w = dom.window;
+    w.scrollTo = () => {};
+    w.eval(read('assets/js/conquest.js'));
+    const entry = JSON.parse(read('assets/data/conquest-planner.json')).conquests[0];
+    const app = w.document.getElementById('fixture');
+    w.renderPlanner(app, { entry, state: 'active' }, Date.now(), { v: 'coverage', s: 330, f: [] });
+    const check = () => {
+      assert.equal(w.location.pathname, '/conquest/');
+      assert.equal(w.location.search, '?mode=hard');
+      return JSON.parse(w.atob(w.location.hash.slice(3).replace(/-/g, '+').replace(/_/g, '/')));
+    };
+    assert.equal(check().s, 330);
+    const input = app.querySelector('[data-missed-input]');
+    input.value = '12'; input.dispatchEvent(new w.Event('input', { bubbles: true }));
+    assert.equal(check().s, 318);
+    app.querySelector('[data-map-feat="hot"]').dispatchEvent(new w.MouseEvent('contextmenu', { bubbles: true, cancelable: true, button: 2 }));
+    assert.deepEqual(check().f, ['hot']);
+    app.querySelector('[data-view="planner"]').click();
+    assert.equal(check().v, undefined);
+  } finally { dom.window.close(); }
+});
+
 test('legacy URLs preserve query, exact plan hash, history state and back-navigation length', () => {
   for (const route of ['index', ...CLEAN_ROUTES]) {
     const clean = route === 'index' ? '/' : '/' + route + '/';
