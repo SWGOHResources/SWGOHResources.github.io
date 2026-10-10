@@ -341,8 +341,32 @@ test('missed battle keycards update the same stars, saved plan and shared link w
   h.click('[data-reset-plan]'); assert.equal(input.value,'330');
   h.click('[data-map-feat="hot"]'); assert.equal(h.total(),0);
   h.click('[data-review-feat="hot"]'); assert.equal(h.total(),15); h.click('[data-chart-close]');
-  assert.equal(h.app.querySelector('.cq-hero').hidden,true);
+  assert.equal(h.app.querySelector('.cq-hero').hidden,false);
   h.click('[data-view="planner"]'); assert.equal(h.app.querySelector('.cq-hero').hidden,false);
+});
+
+test('views share a persistent timer and guide panel with desktop and touch instructions', t => {
+  const h = setup(); t.after(()=>h.dom.window.close());
+  const context = h.app.querySelector('.cq-context'), header = h.app.querySelector('.cq-hero');
+  assert.equal(h.app.querySelector('[data-view="planner"]').textContent,'Basic Planner');
+  assert.equal(h.app.querySelector('[data-view="coverage"]').textContent,'Advanced View');
+  assert.equal(h.app.querySelectorAll('[data-clock="remaining"]').length,1);
+  assert.match(context.textContent,/Left click.*Right click.*Mobile.*Tap for details/s);
+  assert.equal(context.querySelector('a').href,'https://swgoh4.life/conquest/');
+  h.click('[data-view="coverage"]');
+  assert.equal(h.app.querySelector('.cq-context'),context);
+  assert.equal(header.hidden,false);
+  const shortcut = new h.w.KeyboardEvent('keydown',{key:'Home',ctrlKey:true,bubbles:true,cancelable:true});
+  h.app.querySelector('[data-view="coverage"]').dispatchEvent(shortcut);
+  assert.equal(shortcut.defaultPrevented,false);
+  assert.equal(h.plan().v,'coverage');
+  assert.equal(h.app.querySelector('#cqCoverageView .merged-hero'),null);
+  assert.equal(h.app.querySelector('[data-missed-input]').getAttribute('aria-describedby'),'cqMissedHint');
+  h.change('[data-missed-input]','12');
+  h.click('[data-view="planner"]');
+  assert.equal(h.app.querySelector('.cq-context'),context);
+  assert.equal(h.app.querySelector('[data-stars-input]').value,'318');
+  assert.equal(h.app.querySelector('.cq-view-toolbar').parentElement.className,'cq-page-content');
 });
 
 test('diagram labels sectors and bonus rewards, popups show original reward art, and title feats stay in the main planner', t => {
@@ -379,7 +403,7 @@ test('popup locks background scrolling, ignores inside clicks and closes on back
   h.click('[data-map-category="faction"]'); assert.equal(h.app.querySelectorAll('.cq-map-branch.dim').length,0);
 });
 
-test('segment activation preserves the page scroll position and uses one header per view', t => {
+test('segment activation preserves the page scroll position and the shared header', t => {
   const h = setup({shared:{v:'coverage',s:330,f:[]}}); t.after(()=>h.dom.window.close());
   Object.defineProperty(h.w,'scrollY',{value:240}); let lastScroll;
   h.w.scrollTo = position=>{ lastScroll=position; };
@@ -389,6 +413,6 @@ test('segment activation preserves the page scroll position and uses one header 
   h.click('[data-map-feat="stun"]'); assert.deepEqual(JSON.parse(JSON.stringify(lastScroll)),{top:240,left:0,behavior:'instant'});
   h.click('[data-chart-close]'); assert.deepEqual(JSON.parse(JSON.stringify(lastScroll)),{top:240,left:0,behavior:'instant'});
   h.rightClick('[data-map-feat="stun"]'); assert.deepEqual(JSON.parse(JSON.stringify(lastScroll)),{top:240,left:0,behavior:'instant'});
-  assert.equal(h.app.querySelector('.cq-hero').hidden,true);
+  assert.equal(h.app.querySelector('.cq-hero').hidden,false);
   h.click('[data-view="planner"]'); assert.equal(h.app.querySelector('.cq-hero').hidden,false);
 });
