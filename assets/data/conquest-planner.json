@@ -83,7 +83,11 @@
                   "desc": {
                     "hard": "Gain Heal Over Time 350 times"
                   },
-                  "kind": "global"
+                  "kind": "global",
+                  "coverage": {
+                    "category": "buff",
+                    "requirement": "Heal Over Time"
+                  }
                 },
                 {
                   "id": "evasionup",
@@ -93,7 +97,11 @@
                     "normal": "Gain Evasion Up 35 times",
                     "hard": "Gain Evasion Up 50 times"
                   },
-                  "kind": "global"
+                  "kind": "global",
+                  "coverage": {
+                    "category": "buff",
+                    "requirement": "Evasion Up"
+                  }
                 },
                 {
                   "id": "bombs",
@@ -102,7 +110,11 @@
                   "desc": {
                     "hard": "Attempt to inflict 100 Thermal Detonators"
                   },
-                  "kind": "global"
+                  "kind": "global",
+                  "coverage": {
+                    "category": "debuff",
+                    "requirement": "Thermal Detonators"
+                  }
                 },
                 {
                   "id": "challenge250",
@@ -113,7 +125,11 @@
                   "keycards": 15,
                   "reward": "F34T",
                   "rewardTexture": "icon_conquest_artifact_01",
-                  "kind": "global"
+                  "kind": "global",
+                  "coverage": {
+                    "category": "other",
+                    "requirement": "Golden Challenge Path"
+                  }
                 },
                 {
                   "id": "retribution",
@@ -124,7 +140,11 @@
                   },
                   "reward": "Booming Voice",
                   "rewardTexture": "icon_conquest_artifact_03",
-                  "kind": "global"
+                  "kind": "global",
+                  "coverage": {
+                    "category": "buff",
+                    "requirement": "Retribution"
+                  }
                 },
                 {
                   "id": "followlead",
@@ -136,7 +156,11 @@
                     "hard": "Attempt to call allies to assist with Booming Voice 60 times (Complete the \"Stand Your Ground\" feat or purchase the Conquest Pass+ to get the Booming Voice data disk)"
                   },
                   "requires": "Retribution (150)",
-                  "kind": "global"
+                  "kind": "global",
+                  "coverage": {
+                    "category": "other",
+                    "requirement": "Booming Voice assists"
+                  }
                 },
                 {
                   "id": "badbaby",
@@ -150,7 +174,11 @@
                   },
                   "reward": "Deployable Cooling Systems",
                   "rewardTexture": "icon_conquest_consumable_tech",
-                  "kind": "global"
+                  "kind": "global",
+                  "coverage": {
+                    "category": "survival",
+                    "requirement": "Grogu & Anzellans"
+                  }
                 },
                 {
                   "id": "learncontrol",
@@ -162,7 +190,11 @@
                     "hard": "Complete a battle with Deployable Cooling Systems active (Complete the \"Bad Baby!\" feat or purchase the Conquest Pass+ to get the Deployable Cooling Systems)"
                   },
                   "requires": "Bad Baby!",
-                  "kind": "global"
+                  "kind": "global",
+                  "coverage": {
+                    "category": "other",
+                    "requirement": "Deployable Cooling Systems"
+                  }
                 },
                 {
                   "id": "unlikely",
@@ -175,7 +207,11 @@
                     "hard": "Win 3 battles with Embo, Carson Teva, and The Mandalorian in your squad"
                   },
                   "reward": "Guns for Hire title",
-                  "kind": "global"
+                  "kind": "global",
+                  "coverage": {
+                    "category": "squad",
+                    "requirement": "Embo, Carson Teva & The Mandalorian"
+                  }
                 }
               ]
             },
@@ -189,7 +225,11 @@
                     "hard": "Attempt to Stagger enemies 60 times"
                   },
                   "keycards": 5,
-                  "kind": "sector"
+                  "kind": "sector",
+                  "coverage": {
+                    "category": "debuff",
+                    "requirement": "Stagger"
+                  }
                 },
                 {
                   "id": "noattackers",
@@ -198,7 +238,11 @@
                   "desc": {
                     "hard": "Win 15 battles with no Attackers in your squad"
                   },
-                  "kind": "sector"
+                  "kind": "sector",
+                  "coverage": {
+                    "category": "squad",
+                    "requirement": "No Attackers"
+                  }
                 },
                 {
                   "id": "stun",
@@ -207,7 +251,11 @@
                   "desc": {
                     "hard": "Attempt to Stun enemies 50 times"
                   },
-                  "kind": "sector"
+                  "kind": "sector",
+                  "coverage": {
+                    "category": "debuff",
+                    "requirement": "Stun"
+                  }
                 },
                 {
                   "id": "badmotivator",
@@ -219,17 +267,26 @@
                     "normal": "Win 7 battles with R5-D4 in your squad",
                     "hard": "Win 10 battles with R5-D4 in your squad"
                   },
-                  "kind": "sector"
+                  "kind": "sector",
+                  "coverage": {
+                    "category": "squad",
+                    "requirement": "R5-D4"
+                  }
                 },
                 {
                   "id": "isfinest",
                   "title": "ISB's Finest",
                   "keycards": 3,
-                  "art": "live/conquest-feat-isfinest.png",
+                  "art": "live/datacronui_affix_isb.png",
                   "desc": {
                     "hard": "Win with a full squad of ISB units"
                   },
-                  "kind": "miniboss"
+                  "kind": "miniboss",
+                  "coverage": {
+                    "category": "faction",
+                    "requirement": "ISB"
+                  },
+                  "artAsset": "datacronui_affix_isb"
                 },
                 {
                   "id": "underthehelmet",
@@ -241,7 +298,11 @@
                     "normal": "Win with Boushh (Leia Organa) surviving",
                     "hard": "Win with Boushh (Leia Organa) surviving"
                   },
-                  "kind": "miniboss"
+                  "kind": "miniboss",
+                  "coverage": {
+                    "category": "survival",
+                    "requirement": "Boushh (Leia Organa)"
+                  }
                 },
                 {
                   "id": "lightside-boss",
@@ -250,7 +311,11 @@
                     "hard": "Win with a full squad of Light Side units"
                   },
                   "keycards": 2,
-                  "kind": "boss"
+                  "kind": "boss",
+                  "coverage": {
+                    "category": "faction",
+                    "requirement": "Light Side"
+                  }
                 },
                 {
                   "id": "warlords",
@@ -262,7 +327,11 @@
                     "normal": "Win with Snowtrooper Commander surviving",
                     "hard": "Win with Snowtrooper Commander surviving"
                   },
-                  "kind": "boss"
+                  "kind": "boss",
+                  "coverage": {
+                    "category": "survival",
+                    "requirement": "Snowtrooper Commander"
+                  }
                 }
               ]
             },
@@ -276,19 +345,28 @@
                     "hard": "Attempt to inflict Defense Down 60 times"
                   },
                   "keycards": 5,
-                  "kind": "sector"
+                  "kind": "sector",
+                  "coverage": {
+                    "category": "debuff",
+                    "requirement": "Defense Down"
+                  }
                 },
                 {
                   "id": "crimesyndicate",
                   "title": "Crime Syndicate",
                   "keycards": 5,
-                  "art": "live/conquest-feat-crimesyndicate.png",
+                  "art": "live/datacronui_affix_huttcartel.png",
                   "desc": {
                     "easy": "Win 5 battles with a full squad of Hutt Cartel units",
                     "normal": "Win 7 battles with a full squad of Hutt Cartel units",
                     "hard": "Win 10 battles with a full squad of Hutt Cartel units"
                   },
-                  "kind": "sector"
+                  "kind": "sector",
+                  "coverage": {
+                    "category": "faction",
+                    "requirement": "Hutt Cartel"
+                  },
+                  "artAsset": "datacronui_affix_huttcartel"
                 },
                 {
                   "id": "dot300",
@@ -297,7 +375,11 @@
                     "hard": "Inflict at least 300 Damage Over Time effects on enemies with an ability"
                   },
                   "keycards": 5,
-                  "kind": "sector"
+                  "kind": "sector",
+                  "coverage": {
+                    "category": "debuff",
+                    "requirement": "Damage Over Time"
+                  }
                 },
                 {
                   "id": "knockemdead",
@@ -306,7 +388,11 @@
                   "desc": {
                     "hard": "Attempt to inflict Off Balance 50 times"
                   },
-                  "kind": "sector"
+                  "kind": "sector",
+                  "coverage": {
+                    "category": "debuff",
+                    "requirement": "Off Balance"
+                  }
                 },
                 {
                   "id": "darkside-mini",
@@ -315,7 +401,11 @@
                     "hard": "Win with a full squad of Dark Side units"
                   },
                   "keycards": 2,
-                  "kind": "miniboss"
+                  "kind": "miniboss",
+                  "coverage": {
+                    "category": "faction",
+                    "requirement": "Dark Side"
+                  }
                 },
                 {
                   "id": "unchosenpath",
@@ -327,7 +417,11 @@
                     "normal": "Win with Leia (Jedi Training) surviving",
                     "hard": "Win with Leia (Jedi Training) surviving"
                   },
-                  "kind": "miniboss"
+                  "kind": "miniboss",
+                  "coverage": {
+                    "category": "survival",
+                    "requirement": "Leia (Jedi Training)"
+                  }
                 },
                 {
                   "id": "gamorrean",
@@ -337,19 +431,28 @@
                   },
                   "keycards": 3,
                   "art": "live/conquest-gamorrean.png",
-                  "kind": "boss"
+                  "kind": "boss",
+                  "coverage": {
+                    "category": "survival",
+                    "requirement": "Gamorrean Guard"
+                  }
                 },
                 {
                   "id": "newrepublic",
                   "title": "For the New Republic",
                   "keycards": 3,
-                  "art": "live/conquest-feat-newrepublic.png",
+                  "art": "live/datacronui_affix_newrepublic.png",
                   "desc": {
                     "easy": "Win with a full squad of New Republic units",
                     "normal": "Win with a full squad of New Republic units",
                     "hard": "Win with a full squad of New Republic units"
                   },
-                  "kind": "boss"
+                  "kind": "boss",
+                  "coverage": {
+                    "category": "faction",
+                    "requirement": "New Republic"
+                  },
+                  "artAsset": "datacronui_affix_newrepublic"
                 }
               ]
             },
@@ -363,7 +466,11 @@
                     "hard": "Gain Defense Up 80 times"
                   },
                   "keycards": 10,
-                  "kind": "sector"
+                  "kind": "sector",
+                  "coverage": {
+                    "category": "buff",
+                    "requirement": "Defense Up"
+                  }
                 },
                 {
                   "id": "devastation",
@@ -375,7 +482,11 @@
                     "normal": "Win 7 battles with Zeb Orrelios (New Republic Pilot) in your squad",
                     "hard": "Win 10 battles with Zeb Orrelios (New Republic Pilot) in your squad"
                   },
-                  "kind": "sector"
+                  "kind": "sector",
+                  "coverage": {
+                    "category": "squad",
+                    "requirement": "Zeb Orrelios (New Republic Pilot)"
+                  }
                 },
                 {
                   "id": "expose",
@@ -384,7 +495,11 @@
                     "hard": "Attempt to Expose enemies 20 times"
                   },
                   "keycards": 10,
-                  "kind": "sector"
+                  "kind": "sector",
+                  "coverage": {
+                    "category": "debuff",
+                    "requirement": "Expose"
+                  }
                 },
                 {
                   "id": "onthemove",
@@ -395,7 +510,11 @@
                     "normal": "Attempt to inflict On the Run 20 times",
                     "hard": "Attempt to inflict On the Run 30 times"
                   },
-                  "kind": "sector"
+                  "kind": "sector",
+                  "coverage": {
+                    "category": "debuff",
+                    "requirement": "On the Run"
+                  }
                 },
                 {
                   "id": "empire-mini",
@@ -405,7 +524,11 @@
                   },
                   "keycards": 2,
                   "art": "live/conquest-feat-empire-mini.png",
-                  "kind": "miniboss"
+                  "kind": "miniboss",
+                  "coverage": {
+                    "category": "faction",
+                    "requirement": "Empire"
+                  }
                 },
                 {
                   "id": "cobb",
@@ -415,7 +538,11 @@
                   },
                   "keycards": 2,
                   "art": "live/conquest-cobb.png",
-                  "kind": "miniboss"
+                  "kind": "miniboss",
+                  "coverage": {
+                    "category": "squad",
+                    "requirement": "Cobb Vanth"
+                  }
                 },
                 {
                   "id": "nosupport",
@@ -424,7 +551,11 @@
                     "hard": "Win without using any Support units in your squad"
                   },
                   "keycards": 4,
-                  "kind": "boss"
+                  "kind": "boss",
+                  "coverage": {
+                    "category": "squad",
+                    "requirement": "No Support"
+                  }
                 },
                 {
                   "id": "cassian",
@@ -434,7 +565,11 @@
                   },
                   "keycards": 4,
                   "art": "live/conquest-cassian.png",
-                  "kind": "boss"
+                  "kind": "boss",
+                  "coverage": {
+                    "category": "squad",
+                    "requirement": "Cassian Andor (Undercover)"
+                  }
                 }
               ]
             },
@@ -448,7 +583,11 @@
                     "hard": "Attempt to inflict Potency Down 50 times"
                   },
                   "keycards": 10,
-                  "kind": "sector"
+                  "kind": "sector",
+                  "coverage": {
+                    "category": "debuff",
+                    "requirement": "Potency Down"
+                  }
                 },
                 {
                   "id": "keepingthepeace",
@@ -460,7 +599,11 @@
                     "normal": "Win 7 battles with Carson Teva surviving",
                     "hard": "Win 10 battles with Carson Teva surviving"
                   },
-                  "kind": "sector"
+                  "kind": "sector",
+                  "coverage": {
+                    "category": "survival",
+                    "requirement": "Carson Teva"
+                  }
                 },
                 {
                   "id": "buffs100",
@@ -469,7 +612,11 @@
                     "hard": "Grant at least 100 buffs"
                   },
                   "keycards": 10,
-                  "kind": "sector"
+                  "kind": "sector",
+                  "coverage": {
+                    "category": "buff",
+                    "requirement": "Any buff"
+                  }
                 },
                 {
                   "id": "bonusturns",
@@ -478,7 +625,11 @@
                     "hard": "Gain bonus turn 50 times"
                   },
                   "keycards": 10,
-                  "kind": "sector"
+                  "kind": "sector",
+                  "coverage": {
+                    "category": "other",
+                    "requirement": "Bonus turns"
+                  }
                 },
                 {
                   "id": "thechild",
@@ -490,7 +641,11 @@
                     "normal": "Win with Grogu & Anzellans surviving",
                     "hard": "Win with Grogu & Anzellans surviving"
                   },
-                  "kind": "miniboss"
+                  "kind": "miniboss",
+                  "coverage": {
+                    "category": "survival",
+                    "requirement": "Grogu & Anzellans"
+                  }
                 },
                 {
                   "id": "imprem",
@@ -499,7 +654,13 @@
                     "hard": "Win with a full squad of Imperial Remnants"
                   },
                   "keycards": 3,
-                  "kind": "miniboss"
+                  "kind": "miniboss",
+                  "coverage": {
+                    "category": "faction",
+                    "requirement": "Imperial Remnant"
+                  },
+                  "art": "live/datacronui_affix_imperialremnant.png",
+                  "artAsset": "datacronui_affix_imperialremnant"
                 },
                 {
                   "id": "ghost",
@@ -511,7 +672,11 @@
                     "normal": "Win with General Syndulla surviving",
                     "hard": "Win with General Syndulla surviving"
                   },
-                  "kind": "boss"
+                  "kind": "boss",
+                  "coverage": {
+                    "category": "survival",
+                    "requirement": "General Syndulla"
+                  }
                 },
                 {
                   "id": "finalwatch",
@@ -522,7 +687,11 @@
                     "normal": "Win with a full squad of Constable units",
                     "hard": "Win with a full squad of Constable units"
                   },
-                  "kind": "boss"
+                  "kind": "boss",
+                  "coverage": {
+                    "category": "faction",
+                    "requirement": "Constable"
+                  }
                 }
               ]
             },
@@ -536,7 +705,11 @@
                   "desc": {
                     "hard": "Attempt to inflict Evasion Down 40 times"
                   },
-                  "kind": "sector"
+                  "kind": "sector",
+                  "coverage": {
+                    "category": "debuff",
+                    "requirement": "Evasion Down"
+                  }
                 },
                 {
                   "id": "colonelsorders",
@@ -548,7 +721,11 @@
                     "normal": "Win 7 battles with Colonel Ward surviving",
                     "hard": "Win 10 battles with Colonel Ward surviving"
                   },
-                  "kind": "sector"
+                  "kind": "sector",
+                  "coverage": {
+                    "category": "survival",
+                    "requirement": "Colonel Ward"
+                  }
                 },
                 {
                   "id": "flawless-5",
@@ -557,7 +734,11 @@
                     "hard": "Win 20 battles without losing any units"
                   },
                   "keycards": 15,
-                  "kind": "sector"
+                  "kind": "sector",
+                  "coverage": {
+                    "category": "survival",
+                    "requirement": "Full squad survives"
+                  }
                 },
                 {
                   "id": "lsds",
@@ -566,7 +747,11 @@
                     "hard": "Win 20 battles with at least 1 Light Side and 1 Dark Side character surviving"
                   },
                   "keycards": 15,
-                  "kind": "sector"
+                  "kind": "sector",
+                  "coverage": {
+                    "category": "survival",
+                    "requirement": "Light Side & Dark Side"
+                  }
                 },
                 {
                   "id": "mercenary",
@@ -575,8 +760,13 @@
                     "hard": "Win with a full squad of Mercenary units"
                   },
                   "keycards": 3,
-                  "art": "live/conquest-feat-mercenary.png",
-                  "kind": "miniboss"
+                  "art": "live/datacronui_affix_mercenary.png",
+                  "kind": "miniboss",
+                  "coverage": {
+                    "category": "faction",
+                    "requirement": "Mercenary"
+                  },
+                  "artAsset": "datacronui_affix_mercenary"
                 },
                 {
                   "id": "bountypaid",
@@ -588,7 +778,11 @@
                     "normal": "Win with Rotta the Hutt surviving",
                     "hard": "Win with Rotta the Hutt surviving"
                   },
-                  "kind": "miniboss"
+                  "kind": "miniboss",
+                  "coverage": {
+                    "category": "survival",
+                    "requirement": "Rotta the Hutt"
+                  }
                 },
                 {
                   "id": "honorguard",
@@ -600,7 +794,11 @@
                     "normal": "Win with Zeb Orrelios (New Republic Pilot) surviving",
                     "hard": "Win with Zeb Orrelios (New Republic Pilot) surviving"
                   },
-                  "kind": "boss"
+                  "kind": "boss",
+                  "coverage": {
+                    "category": "survival",
+                    "requirement": "Zeb Orrelios (New Republic Pilot)"
+                  }
                 },
                 {
                   "id": "notanks",
@@ -609,7 +807,11 @@
                     "hard": "Win the battle with no Tanks in your squad"
                   },
                   "keycards": 5,
-                  "kind": "boss"
+                  "kind": "boss",
+                  "coverage": {
+                    "category": "squad",
+                    "requirement": "No Tanks"
+                  }
                 }
               ]
             }

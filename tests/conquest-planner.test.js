@@ -106,8 +106,8 @@ test('ladder labels shorten to the tier, art lookup tolerates old names', () => 
 test('feat art is the related unit, not the keycard placeholder', () => {
   assert.equal(run(`featArt({ art: 'live/conquest-grogu.png' })`), 'assets/img/live/conquest-grogu.png');
   // Currency placeholders and objectives without bespoke artwork use the
-  // game's general achievement icon, keeping the icon column consistent.
-  const fallback = 'assets/img/atlases/standard_atlas/quest_icon_dailyactivities.png';
+  // game's squad icon, keeping the icon column consistent.
+  const fallback = 'assets/img/atlases/homebase_ui_standard_atlas/icon_squad.png';
   assert.equal(run(`featArt({ art: 'live/conquest-keycard.png' })`), fallback);
   assert.equal(run(`featArt({})`), fallback);
   assert.equal(run(`featArt(null)`), fallback);
@@ -161,6 +161,26 @@ test('doing everything hits the expected max total per difficulty', () => {
     assert.equal(t.total, want, `${name} max total`);
     assert.equal(t.total, t.maxTotal, `${name} total is the max`);
   }
+});
+
+test('coverage partitions all feats without duplicating or dropping keycards', () => {
+  const data = JSON.parse(fs.readFileSync(new URL('../assets/data/conquest-planner.json',import.meta.url),'utf8'));
+  const diff = data.conquests[0].difficulties.hard;
+  const categories = js(`conquestCoverage(${JSON.stringify(diff)},['hot','thechild','unlikely'])`);
+  const items = categories.flatMap(c=>c.feats);
+  assert.equal(items.length,49); assert.equal(new Set(items.map(i=>i.feat.id)).size,49);
+  assert.equal(categories.reduce((n,c)=>n+c.keycards,0),334);
+  assert.equal(categories.reduce((n,c)=>n+c.planned,0),19);
+  const grogu = categories.find(c=>c.id === 'survival').requirements.find(r=>r.name === 'Grogu & Anzellans');
+  assert.equal(grogu.feats.length,2); assert.equal(grogu.planned,4); assert.equal(grogu.keycards,5);
+  for(const item of items) assert.ok(item.feat.coverage?.requirement && item.feat.coverage?.category,item.feat.id);
+  assert.equal(js(`conquestCoverage({groups:[]},[])`).length,0);
+});
+
+test('completion requires every keycard feat and does not treat bonus-only groups as complete', () => {
+  assert.equal(run(`sectorComplete({feats:[{id:'a',keycards:1},{id:'bonus',keycards:0}]},['a'])`),true);
+  assert.equal(run(`sectorComplete({feats:[{id:'a',keycards:1},{id:'bonus',keycards:0}]},['bonus'])`),false);
+  assert.equal(run(`sectorComplete({feats:[{id:'bonus',keycards:0}]},['bonus'])`),false);
 });
 
 test('chain gates parse out of feat descriptions', () => {
