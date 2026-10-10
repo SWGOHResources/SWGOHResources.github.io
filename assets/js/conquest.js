@@ -749,7 +749,7 @@ function writeHash(entry, picked, stars, target, difficulty, tab, view = 'planne
   if(view === 'coverage') payload.v = view;
   const next = '#p=' + b64urlEncode(JSON.stringify(payload));
   if(location.hash === next) return;
-  try { history.replaceState(null, '', next); } catch(e) { /* file:// */ }
+  try { history.replaceState(null, '', location.pathname + location.search + next); } catch(e) { /* file:// */ }
 }
 
 function b64urlEncode(str){

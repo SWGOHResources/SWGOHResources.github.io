@@ -25,13 +25,32 @@
 //    add or replace images)
 
 import { createHash } from 'node:crypto';
-import { readdir, readFile, writeFile } from 'node:fs/promises';
+import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const ASSET_DIR = path.join(ROOT, 'assets');
 export const VERSION_META = 'swgoh-asset-v';
+// Source pages stay at the root; these published copies give Pages real
+// directory routes without a custom server or a second editable page.
+export const CLEAN_ROUTES = ['conquest', 'privacy', 'cookie-policy', 'terms'];
+
+export async function syncCleanRoutes(root = ROOT) {
+  let dirty = 0;
+  for (const route of CLEAN_ROUTES) {
+    const source = await readFile(path.join(root, route + '.html'), 'utf8');
+    const destination = path.join(root, route, 'index.html');
+    let before = '';
+    try { before = await readFile(destination, 'utf8'); }
+    catch (error) { if (error.code !== 'ENOENT') throw error; }
+    if (before === source) continue;
+    await mkdir(path.dirname(destination), { recursive: true });
+    await writeFile(destination, source);
+    dirty++;
+  }
+  return dirty;
+}
 // Hashed rather than skipped: a file can be deleted without its
 // references disappearing from the HTML, and that has to change the token.
 const ASSET_EXT = new Set([
@@ -143,6 +162,7 @@ async function main() {
     dirty += 1;
     console.log(`${name}: ${touched.join(', ') || VERSION_META}`);
   }
+  dirty += await syncCleanRoutes();
   console.log(
     `cache:bust ${siteV} — ${Object.keys(versions).length} assets, ${dirty} page${dirty === 1 ? '' : 's'} updated`,
   );
