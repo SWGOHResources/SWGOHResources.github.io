@@ -9,8 +9,6 @@
    replaced PNG from being served from an old cache entry. */
 const withAssetV = (typeof assetUrl === 'function') ? assetUrl : (p => p);
 
-const NOTE_CLOCK_SVG = '<svg class="cq-note-icon" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="8" cy="8" r="6.3"/><path d="M8 4.4V8l2.5 1.7"/></svg>';
-
 const CQ_PLAN_KEY = 'swgoh-cq-plan';
 const CQ_DIFFICULTIES = ['hard', 'normal', 'easy'];
 
@@ -146,12 +144,19 @@ function featArt(feat){
   return art && !art.includes('conquest-keycard') ? withAssetV('assets/img/'+art.replace(/^\/*/,'')) : null;
 }
 function featRewardDisk(reward){ return /title|holo/i.test(String(reward || '')) ? null : (reward || null); }
+// A shard reward needs the game's shard marker as well as the unit art.
+// Keep these separate so reward icons cannot become bare unit portraits.
+function shardArt(unit){
+  return `<span class="cq-shard" aria-hidden="true"><img class="cq-shard-unit" src="${withAssetV('assets/img/'+unit.art)}" alt=""><img class="cq-shard-marker" src="${withAssetV('assets/img/atlases/standard_rgba_atlas/ShardIcon.png')}" alt=""></span>`;
+}
 // rewardTexture is the artifactDefinition.texture value from Comlink. The
 // generic misc_atlas disk glyph is a WIP asset and must not be displayed.
 function featReward(reward, texture){
   if(!reward) return null;
   const title = /title/i.test(reward);
   return {
+    frame: title ? null : 'assets/img/atlases/standard_rgba_atlas/icon_conquest_artifact_rarity_0'+(reward === 'DCS' ? '1' : '5')+'.png',
+    power: title ? null : 'assets/img/atlases/standard_rgba_atlas/icon_conquest_artifact_power_0'+(reward === 'Booming Voice' ? '4' : '1')+'.png',
     art: title ? 'assets/img/atlases/standard_rgba_atlas/icon_questreward_title.png' : 'assets/img/atlases/standard_rgba_atlas/'+(/^icon_conquest_artifact_0[1-5]$/.test(texture) ? texture : 'icon_conquest_artifact_01')+'.png',
     label: title ? String(reward).replace(/\s*title$/i,'')+' · Title' : (reward === 'DCS' ? 'Deployable Cooling Systems' : reward)+' · Data disk',
   };
@@ -277,30 +282,40 @@ function renderPlanner(app, sel, nowMs, shared){
   const units = entry.shardUnits || {};
   const ladder = crates.map(c => `<button type="button" class="cq-chip" data-crate="${esc(c.name)}" data-at="${c.at}" aria-pressed="false" aria-label="Target ${esc(c.name)}, ${c.at} keycards"><img class="cq-crate" src="${crateArt(c.name)}" alt=""><span>${shortName(c.name)}</span><b>${c.at}</b></button>`).join('');
   const partial = entry.status === 'preliminary';
+  const settingsOpen = typeof window === 'undefined' || window.innerWidth >= 900;
+  const dateLabel = value => new Date(value+'T12:00:00Z').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
   app.innerHTML = `
-    <div class="cq-heading"><div><h1>Conquest planner</h1><p>${esc(entry.volume ? 'Volume '+entry.volume : entry.title)} · ${esc(difficulty)} difficulty</p></div><div class="cq-actions"><button type="button" data-copy-link>Copy plan link</button><button type="button" data-reset-plan>Reset plan</button></div></div>
-    <div class="cq-context">${portrait}<div><strong>${esc(entry.unit || 'Conquest')}</strong><span>${esc(entry.starts)} – ${esc(entry.ends)} · ${esc(sel.state === 'active' ? 'Active now' : sel.state === 'upcoming' ? 'Upcoming' : 'Ended')}</span></div></div>
-    ${partial ? '<p class="cq-note">Some feat details are preliminary. Check them against the current in-game Conquest.</p>' : ''}
-    ${Object.keys(diffs).length > 1 ? `<label class="cq-difficulty">Difficulty <select data-diff>${Object.keys(diffs).map(d => `<option${d === difficulty ? ' selected' : ''}>${esc(d)}</option>`).join('')}</select></label>` : ''}
+    <section class="merged-hero cq-hero" aria-labelledby="cqTitle">
+      <div class="mh-left"><h1 class="mh-tag" id="cqTitle">Conquest planner</h1>
+        <div class="cq-hero-unit">${portrait}<div><div class="mh-main-val">${esc(entry.unit || 'Conquest')}</div><p class="mh-sub">${esc(entry.volume ? 'Volume '+entry.volume : entry.title)} · ${esc(difficulty)} difficulty</p></div></div>
+        <p class="mh-sub">${esc(dateLabel(entry.starts))} – ${esc(dateLabel(entry.ends))}</p>
+      </div>
+      <div class="mh-right"><div class="cb-text"><span class="cb-label">Conquest status</span><span class="sc-badge ${sel.state === 'active' ? 'running' : 'off'}">${esc(sel.state === 'active' ? 'Active now' : sel.state === 'upcoming' ? 'Upcoming' : 'Ended')}</span></div>
+        <div class="cq-actions"><button class="gear-btn" type="button" data-copy-link>Copy plan link</button><button class="gear-btn" type="button" data-reset-plan>Reset plan</button></div>
+      </div>
+    </section>
+    ${partial ? '<div class="explorer-note cq-note"><span class="en-dot" aria-hidden="true">!</span><p><strong>Preliminary feat details.</strong> Confirm requirements in the current in-game Conquest.</p></div>' : ''}
+    ${Object.keys(diffs).length > 1 ? `<div class="cq-difficulty" role="group" aria-label="Difficulty">${Object.keys(diffs).map(d => `<button type="button" class="sf-pill" data-diff="${esc(d)}" aria-pressed="${d === difficulty}">${esc(d)}</button>`).join('')}</div>` : ''}
     <div class="cq-layout">
-      <section class="cq-work" aria-labelledby="cqChoose"><div class="cq-work-head"><h2 id="cqChoose">Choose your feats</h2><p>Select the feats you expect to complete.</p></div>
-        <div class="cq-tabs" role="group" aria-label="Feat groups">${groups.map(g => `<button type="button" data-tab="${esc(g.name)}" aria-pressed="false">${esc(g.name)} <span class="cq-tab-num"></span></button>`).join('')}</div>
-        <div class="cq-list-tools"><span data-cq="group-total"></span><label>Show <select data-filter aria-label="Show feats"><option value="all">All feats</option><option value="selected">Selected</option><option value="unselected">Unselected</option></select></label><button type="button" data-toggle-all>Select group</button></div>
+      <section class="cq-work explorer" aria-labelledby="cqChoose"><div class="section-head cq-work-head"><h2 id="cqChoose">Feats</h2><span class="rule"></span><span class="sub">Select your planned completions</span></div>
+        <div class="cq-tabs" role="group" aria-label="Feat groups">${groups.map(g => `<button class="day-pill" type="button" data-tab="${esc(g.name)}" aria-pressed="false"><span>${esc(g.name)}</span><span class="cq-tab-num"></span></button>`).join('')}</div>
+        <div class="cq-list-tools"><span data-cq="group-total"></span><div class="cq-filters" role="group" aria-label="Show feats">${[['all','All'],['selected','Selected'],['unselected','Unselected']].map(([v,text]) => `<button class="sf-pill" type="button" data-filter="${v}" aria-pressed="false">${text}</button>`).join('')}</div><button class="gear-btn" type="button" data-toggle-all>Select group</button></div>
         <div class="cq-feats" role="group" aria-label="Feats"></div>
       </section>
-      <aside class="cq-panel" aria-labelledby="cqProjection">
-        <h2 id="cqProjection">Your projected crate</h2>
+      <aside class="cq-panel status-card purple-card" aria-labelledby="cqProjection">
+        <div class="sc-header"><h2 class="sc-title" id="cqProjection">Your projected crate</h2><span class="sc-badge purple">Your plan</span></div>
         <div aria-live="polite" aria-atomic="true"><div class="cq-headline"><strong data-cq="total">0</strong>${sprite('keycard','cq-kc','Keycards')}<span>planned keycards</span></div>
         <p class="cq-earned" data-cq="earned"></p>
         <p class="cq-breakdown" data-cq="breakdown"></p></div>
         <div class="cq-track" role="progressbar" aria-label="Planned keycards toward the top crate" aria-valuemin="0" aria-valuemax="${top}"><div data-cq="fill"></div>${crates.map(c => `<i style="left:${top ? c.at/top*100 : 0}%" aria-hidden="true"></i>`).join('')}</div>
         <p class="cq-next" data-cq="next"></p>
         <p class="cq-target" data-cq="target"></p>
-        <details class="cq-settings"${typeof window === 'undefined' || window.innerWidth >= 900 ? ' open' : ''}><summary>Battle stars and target crate</summary>
+        <button class="cq-settings-toggle gear-btn" type="button" data-settings-toggle aria-expanded="${settingsOpen}" aria-controls="cqSettings">Battle stars &amp; target crate<span class="cq-chevron" aria-hidden="true"></span></button>
+        <div class="cq-settings" id="cqSettings"${settingsOpen ? '' : ' hidden'}>
         <h3>Choose a target crate</h3>
         <div class="cq-ladder" role="group" aria-label="Target crate">${ladder}</div>
         <div class="cq-payout" data-cq="payout"></div>
-        <div class="cq-stars"><label for="cqStars">Expected battle stars</label><div class="cq-stars-control">${sprite('star','cq-star','Battle star')}<input id="cqStars" type="number" inputmode="numeric" min="0" max="${cap}" step="1" value="${stars}" data-stars-input><span>/ ${cap}</span><button type="button" data-stars-max>Use max</button></div><p>Each battle star adds one keycard.</p></div></details>
+        <div class="cq-stars"><label for="cqStars">Expected battle stars</label><div class="cq-stars-control">${sprite('star','cq-star','Battle star')}<div class="cq-stepper"><button type="button" class="day-arrow" data-stars-step="-1" aria-label="Remove one battle star">−</button><input id="cqStars" type="number" inputmode="numeric" min="0" max="${cap}" step="1" value="${stars}" data-stars-input><button type="button" class="day-arrow" data-stars-step="1" aria-label="Add one battle star">+</button></div><span>/ ${cap}</span><button class="gear-btn" type="button" data-stars-max>Max</button></div><p>One keycard per battle star.</p></div></div>
         <p class="cq-save-note" role="status" data-cq="save-note"></p>
       </aside>
     </div><p class="cq-feedback" role="status" data-cq="feedback"></p>`;
@@ -313,7 +328,7 @@ function renderPlanner(app, sel, nowMs, shared){
       ${art ? `<span class="cq-fi${featStatusTone(f) ? ' '+featStatusTone(f) : ''}"><img src="${esc(art)}" alt="" loading="lazy"></span>` : ''}
       <span class="cq-feat-text"><strong>${esc(f.title)}</strong><span class="cq-feat-desc">${esc(desc)}</span>
       ${gate ? `<span class="cq-requires">Requires the disk from ${esc(gate)}, or Conquest Pass+.</span>` : ''}
-      ${reward ? `<span class="cq-reward"><img src="${withAssetV(reward.art)}" alt="">Reward: ${esc(reward.label)}</span>` : ''}</span>
+      ${reward ? `<span class="cq-reward">${reward.frame ? `<span class="cq-disk" aria-hidden="true"><img class="cq-disk-frame" src="${withAssetV(reward.frame)}" alt=""><img class="cq-disk-emblem" src="${withAssetV(reward.art)}" alt=""><img class="cq-disk-power" src="${withAssetV(reward.power)}" alt=""></span>` : `<img class="cq-title-icon" src="${withAssetV(reward.art)}" alt="">`}<span><span class="cq-reward-label">Reward</span>${esc(reward.label)}</span></span>` : ''}</span>
       <span class="cq-feat-value">${f.keycards > 0 ? `+${f.keycards}${sprite('keycard','cq-kc','Keycards')}` : 'Bonus'}</span></label>`;
   }
   function renderFeats(){
@@ -341,7 +356,7 @@ function renderPlanner(app, sel, nowMs, shared){
       button.setAttribute('aria-pressed',String(on));
     });
     const payout = app.querySelector('[data-cq="payout"]');
-    payout.innerHTML = targetCrate?.shards ? `<strong>Target rewards · ${esc(label(target))}</strong>`+['primary','secondary'].filter(k => units[k]).map(k => `<span><img src="${withAssetV('assets/img/'+units[k].art)}" alt=""><b>${targetCrate.shards[k] ?? 0}</b> ${esc(units[k].name)} shards</span>`).join('')+'<small>Only the highest crate reached pays out.</small>' : '';
+    payout.innerHTML = targetCrate?.shards ? `<strong>Target rewards · ${esc(label(target))}</strong>`+['primary','secondary'].filter(k => units[k]).map(k => `<span>${shardArt(units[k])}<b>${targetCrate.shards[k] ?? 0}</b> ${esc(units[k].name)} shards</span>`).join('')+'<small>Only the highest crate reached pays out.</small>' : '';
     payout.hidden = !targetCrate?.shards;
     const group = activeGroup(), selected = group.feats.filter(f => picked.has(f.id));
     set('group-total',`${selected.reduce((n,f) => n+Number(f.keycards),0)} / ${group.feats.reduce((n,f) => n+Number(f.keycards),0)} keycards selected`);
@@ -351,6 +366,11 @@ function renderPlanner(app, sel, nowMs, shared){
       button.querySelector('.cq-tab-num').textContent = `${g.feats.filter(f => picked.has(f.id)).length}/${g.feats.length}`;
     });
     app.querySelector('[data-toggle-all]').textContent = selected.length === group.feats.length && group.feats.length ? 'Clear group' : 'Select group';
+    app.querySelectorAll('[data-filter]').forEach(button => {
+      const on = button.dataset.filter === filter;
+      button.setAttribute('aria-pressed',String(on)); button.classList.toggle('active',on);
+    });
+    app.querySelectorAll('[data-stars-step]').forEach(button => { button.disabled = Number(button.dataset.starsStep) < 0 ? stars === 0 : stars === cap; });
     if(!editingStars) app.querySelector('[data-stars-input]').value = stars;
     syncHash(entry,picked,stars,target,difficulty,tab);
   }
@@ -377,14 +397,17 @@ function renderPlanner(app, sel, nowMs, shared){
       changed(filter !== 'all');
       if(filter !== 'all') (app.querySelector('[data-feat]') || app.querySelector('[data-filter]')).focus();
     } else if(input.matches('[data-stars-input]')){ stars = clampStars(input.value); changed(); }
-    else if(input.matches('[data-filter]')){ filter = input.value; renderFeats(); }
-    else if(input.matches('[data-diff]')){
-      persist(); renderPlanner(app,sel,nowMs,{ c: entry.id, d: input.value, s: 0, t: null, f: [], g: null });
-    }
   };
   app.onclick = async event => {
     const button = event.target.closest('button'); if(!button || !app.contains(button)) return;
     if(button.matches('[data-tab]')){ tab = button.dataset.tab; renderFeats(); changed(); }
+    else if(button.matches('[data-filter]')){ filter = button.dataset.filter; renderFeats(); paint(); }
+    else if(button.matches('[data-diff]')){ persist(); renderPlanner(app,sel,nowMs,{ c: entry.id, d: button.dataset.diff, s: 0, t: null, f: [], g: null }); }
+    else if(button.matches('[data-settings-toggle]')){
+      const panel = app.querySelector('#cqSettings'); panel.hidden = !panel.hidden;
+      button.setAttribute('aria-expanded',String(!panel.hidden));
+    }
+    else if(button.matches('[data-stars-step]')){ stars = clampStars(stars + Number(button.dataset.starsStep)); changed(); }
     else if(button.matches('[data-crate]')){ target = target === button.dataset.crate ? null : button.dataset.crate; changed(); }
     else if(button.matches('[data-stars-max]')){ stars = cap; changed(); }
     else if(button.matches('[data-toggle-all]')){
@@ -392,7 +415,7 @@ function renderPlanner(app, sel, nowMs, shared){
       ids.forEach(id => all ? picked.delete(id) : picked.add(id)); changed(true);
     } else if(button.matches('[data-reset-plan]')){
       picked.clear(); stars = 0; target = null; filter = 'all';
-      app.querySelector('[data-filter]').value = filter; changed(true);
+      changed(true);
       app.querySelector('[data-cq="feedback"]').textContent = 'Plan reset. All feats, battle stars and the target have been cleared.';
     } else if(button.matches('[data-copy-link]')){
       // Write the current snapshot before copying, including rapid edits.
