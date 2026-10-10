@@ -15,6 +15,11 @@ function setup({ shared = null, stored = null, blocked = false, entry = data.con
   const app = w.document.getElementById('fixture');
   w.renderPlanner(app,{entry,state:'active'},now,shared);
   const click = selector => { const el = app.querySelector(selector); assert.ok(el,selector); if(el.click) el.click(); else el.dispatchEvent(new w.MouseEvent('click',{bubbles:true})); };
+  const rightClick = selector => {
+    const el = app.querySelector(selector); assert.ok(el,selector);
+    const event = new w.MouseEvent('contextmenu',{bubbles:true,cancelable:true,button:2});
+    el.dispatchEvent(event); return event;
+  };
   const change = (selector,value) => {
     const el = app.querySelector(selector); assert.ok(el,selector);
     if(el.type === 'checkbox') el.checked = value; else el.value = value;
@@ -22,7 +27,7 @@ function setup({ shared = null, stored = null, blocked = false, entry = data.con
   };
   const total = () => Number(app.querySelector('[data-cq="total"]').textContent);
   const plan = () => JSON.parse(w.atob(w.location.hash.slice(3).replace(/-/g,'+').replace(/_/g,'/')));
-  return {dom,w,app,click,change,total,plan};
+  return {dom,w,app,click,rightClick,change,total,plan};
 }
 test('reset then change tabs, select and deselect updates total, storage and link', t => {
   const h = setup(); t.after(()=>h.dom.window.close());
@@ -42,7 +47,7 @@ test('rapid edits and copy serialize the latest complete plan', async t => {
   const h = setup(); t.after(()=>h.dom.window.close()); let copied;
   Object.defineProperty(h.w.navigator,'clipboard',{value:{writeText:async value=>{copied=value;}}});
   h.click('[data-reset-plan]'); h.change('[data-feat="hot"]',true);
-  h.change('[data-stars-input]','200'); h.click('[data-crate="Reward Crate Tier 7"]');
+  h.change('[data-stars-input]','200'); h.rightClick('[data-crate="Reward Crate Tier 7"]');
   h.click('[data-tab="Sector 2"]'); h.change('[data-feat="dot300"]',true);
   h.click('[data-copy-link]'); await Promise.resolve();
   assert.equal(copied,h.w.location.href);
@@ -60,7 +65,7 @@ test('select group and clear group keep other groups and rebuilt rows working', 
 });
 test('projected crate collapses from its heading and selections update its compact total', t => {
   const h = setup(); t.after(()=>h.dom.window.close());
-  h.click('[data-crate="Reward Crate Tier 7"]');
+  h.rightClick('[data-crate="Reward Crate Tier 7"]');
   h.click('[data-projection-toggle]');
   assert.equal(h.app.querySelector('#cqProjectionBody').hidden,true);
   assert.equal(h.app.querySelector('[data-projection-toggle]').getAttribute('aria-expanded'),'false');
@@ -70,7 +75,7 @@ test('projected crate collapses from its heading and selections update its compa
   assert.equal(h.app.querySelector('#cqProjectionBody').hidden,false);
   assert.match(h.app.querySelector('[data-cq="target"]').textContent,/615 more/);
   assert.equal(h.app.querySelector('[data-settings-toggle]'),null);
-  h.click('[data-crate="Reward Crate Tier 7"]'); assert.equal(h.plan().t,null);
+  h.click('[data-crate="Reward Crate Tier 7"]'); h.click('[data-preview-target]'); h.click('[data-chart-close]'); assert.equal(h.plan().t,null);
 });
 test('skipped feats and keycard totals track edits, group selection, and reset', t => {
   const h = setup(); t.after(()=>h.dom.window.close());
@@ -131,7 +136,7 @@ test('re-rendering does not accumulate handlers and title and disk rewards use a
   assert.equal(h.app.querySelector('.cq-disk-emblem'),null);
   assert.equal(h.app.querySelector('.cq-disk-power'),null);
   assert.equal(h.app.querySelector('.cq-fi.disk-emblem'),null);
-  h.click('[data-crate="Reward Crate Tier 7"]');
+  h.rightClick('[data-crate="Reward Crate Tier 7"]');
   assert.ok(h.app.querySelector('.cq-shard.dark .cq-shard-background[src*="ShardIcon"]'));
   assert.ok(h.app.querySelector('.cq-shard.light .cq-shard-background[src*="ShardIcon"]'));
   const cooling = h.app.querySelector('[data-feat="badbaby"]').closest('.cq-feat');
@@ -165,35 +170,74 @@ test('custom star stepper respects limits and reset restores feat selections', t
   assert.equal(h.app.querySelectorAll('[data-feat]').length,9);
 });
 
-test('diagram toggles feats and keeps popup edits, planner, URL and skips in sync', t => {
+test('left-click and keyboard open feat details, right-click toggles once, and popup edits stay synchronized', t => {
   const h = setup({shared:{v:'coverage',s:330,f:[]}}); t.after(()=>h.dom.window.close());
   assert.equal(h.app.querySelectorAll('[data-map-feat]').length,48);
   assert.equal(h.app.querySelector('.cq-requirement-explorer'),null);
   assert.equal(h.app.querySelector('.mh-progress-wrap'),null);
+  const hashBefore = h.w.location.hash, storageBefore = h.w.localStorage.getItem('swgoh-cq-plan');
   h.click('[data-map-feat="thechild"]');
   const dialog = h.app.querySelector('.cq-chart-dialog');
   assert.equal(dialog.hasAttribute('open'),true);
-  assert.match(dialog.textContent,/Sector 4.*4 keycards.*Planned.*Grogu/s);
+  assert.match(dialog.textContent,/Sector 4.*4 keycards.*Skipped.*Grogu/s);
+  assert.equal(h.total(),330); assert.deepEqual(h.plan().f,[]);
+  assert.equal(h.w.location.hash,hashBefore); assert.equal(h.w.localStorage.getItem('swgoh-cq-plan'),storageBefore);
+  h.click('[data-review-feat="thechild"]'); assert.equal(h.total(),334);
+  assert.match(dialog.textContent,/Planned/); assert.equal(dialog.hasAttribute('open'),true);
+  assert.equal(h.app.querySelector('.cq-skipped-grid [data-preview-feat="thechild"]'),null);
+  h.click('[data-review-feat="thechild"]'); assert.equal(h.total(),330);
+  h.click('[data-chart-close]');
+  assert.equal(h.rightClick('[data-map-feat="thechild"]').defaultPrevented,true);
+  assert.equal(dialog.hasAttribute('open'),false);
   assert.equal(h.total(),334); assert.deepEqual(h.plan().f,['thechild']);
   assert.equal(h.plan().v,'coverage');
   assert.equal(h.app.querySelector('[data-map-feat="thechild"]').classList.contains('planned'),true);
-  assert.equal(h.app.querySelector('.cq-skipped-grid [data-preview-feat="thechild"]'),null);
-  h.click('[data-review-feat="thechild"]'); assert.equal(h.total(),330);
-  assert.match(dialog.textContent,/Skipped/); assert.equal(dialog.hasAttribute('open'),true);
-  h.click('[data-review-feat="thechild"]'); assert.equal(h.total(),334);
-  h.click('[data-chart-close]'); assert.equal(dialog.hasAttribute('open'),false);
-  h.click('[data-map-feat="thechild"]'); assert.equal(h.total(),330);
-  h.click('[data-chart-close]');
+  assert.deepEqual(JSON.parse(h.w.localStorage.getItem('swgoh-cq-plan')).plans[data.conquests[0].id].feats,['thechild']);
+  h.rightClick('[data-map-feat="thechild"]'); assert.equal(h.total(),330);
   h.click('[data-map-category="debuff"]'); assert.equal(dialog.hasAttribute('open'),false);
   const segment = h.app.querySelector('[data-map-feat="stun"]');
   segment.dispatchEvent(new h.w.KeyboardEvent('keydown',{key:'Enter',bubbles:true}));
-  assert.equal(dialog.querySelectorAll('.cq-preview-feat').length,1); assert.equal(h.total(),335);
+  assert.equal(dialog.querySelectorAll('.cq-preview-feat').length,1); assert.equal(h.total(),330);
+  h.click('[data-review-feat="stun"]'); assert.equal(h.total(),335);
   h.click('[data-chart-close]'); h.click('[data-view="planner"]'); h.click('[data-tab="Sector 1"]');
   assert.equal(h.app.querySelector('[data-feat="stun"]').checked,true);
   h.click('[data-reset-plan]'); h.click('[data-view="coverage"]');
   assert.equal(h.app.querySelectorAll('.cq-map-feat.planned').length,0);
   assert.equal(h.app.querySelectorAll('.cq-map-requirement').length,0);
   assert.equal(h.app.querySelector('.cq-ring-key'),null);
+  assert.equal(h.rightClick('.cq-sector-key b').defaultPrevented,false);
+});
+
+test('crates open details on left-click and set a target on right-click in either view', t => {
+  const h = setup({shared:{v:'coverage',s:330,f:[],t:'Reward Crate Tier 7'}}); t.after(()=>h.dom.window.close());
+  const dialog = h.app.querySelector('.cq-chart-dialog');
+  const targetBefore = h.plan().t;
+  h.click('[data-report-crate="Reward Crate Tier 3"] img');
+  assert.equal(dialog.hasAttribute('open'),true); assert.equal(h.plan().t,targetBefore);
+  assert.match(dialog.textContent,/Tier 3.*Reached by your plan/s);
+  h.click('[data-preview-target]'); assert.equal(h.plan().t,'Reward Crate Tier 3');
+  h.click('[data-chart-close]');
+  assert.equal(h.rightClick('[data-report-crate="Reward Crate Tier 4"] img').defaultPrevented,true);
+  assert.equal(dialog.hasAttribute('open'),false); assert.equal(h.plan().t,'Reward Crate Tier 4');
+  h.rightClick('[data-report-crate="Reward Crate Tier 4"]'); assert.equal(h.plan().t,'Reward Crate Tier 4');
+  h.click('[data-view="planner"]'); h.click('[data-crate="Reward Crate Tier 2"]');
+  assert.equal(dialog.hasAttribute('open'),true); assert.equal(h.plan().t,'Reward Crate Tier 4');
+  h.click('[data-chart-close]'); h.rightClick('[data-crate="Reward Crate Tier 2"] img');
+  assert.equal(dialog.hasAttribute('open'),false); assert.equal(h.plan().t,'Reward Crate Tier 2');
+  const saved = JSON.parse(h.w.localStorage.getItem('swgoh-cq-plan')).plans[data.conquests[0].id];
+  assert.equal(saved.target,'Reward Crate Tier 2'); assert.equal(h.total(),330);
+});
+
+test('crate hover shows just its name and shard rewards, without a target action or keycard status', t => {
+  const h = setup({shared:{v:'coverage',s:330,f:[]}}); t.after(()=>h.dom.window.close());
+  const img = h.app.querySelector('[data-report-crate="Reward Crate Tier 3"] img');
+  img.dispatchEvent(new h.w.MouseEvent('pointerover',{bubbles:true,clientX:50,clientY:70}));
+  const tooltip = h.app.querySelector('[data-cq="chart-tooltip"]');
+  assert.equal(tooltip.hidden,false); assert.match(tooltip.textContent,/Tier 3.*shards/s);
+  assert.equal(tooltip.querySelector('.cq-crate-preview-status'),null);
+  assert.equal(tooltip.querySelector('button'),null);
+  assert.equal(tooltip.querySelectorAll('.cq-report-payout b').length,2);
+  h.rightClick('[data-report-crate="Reward Crate Tier 3"] img'); assert.equal(tooltip.hidden,true);
 });
 
 test('coverage is a separate shareable tab with every skipped feat visible', async t => {
@@ -237,7 +281,7 @@ test('chart hover uses a custom readable preview and touch opens only the modal'
   segment.dispatchEvent(new h.w.MouseEvent('pointerout',{bubbles:true})); assert.equal(tooltip.hidden,true);
   hover('mouse'); h.click('[data-map-feat="stun"]'); assert.equal(tooltip.hidden,true);
   assert.equal(h.app.querySelector('.cq-chart-dialog').hasAttribute('open'),true);
-  assert.equal(h.plan().v,'coverage'); assert.equal(h.plan().s,0);
+  assert.equal(h.plan().v,'coverage'); assert.equal(h.plan().s,0); assert.deepEqual(h.plan().f,[]);
 });
 
 test('report projects the earned crate and its rewards rather than the target payout', t => {
@@ -295,7 +339,8 @@ test('missed battle keycards update the same stars, saved plan and shared link w
   assert.equal(h.app.querySelector('[data-missed-step]'),null);
   assert.equal(h.app.querySelector('[data-cq="battle-keycards"]').textContent,'330 / 330 keycards');
   h.click('[data-reset-plan]'); assert.equal(input.value,'330');
-  h.click('[data-map-feat="hot"]'); assert.equal(h.total(),15);
+  h.click('[data-map-feat="hot"]'); assert.equal(h.total(),0);
+  h.click('[data-review-feat="hot"]'); assert.equal(h.total(),15); h.click('[data-chart-close]');
   assert.equal(h.app.querySelector('.cq-hero').hidden,true);
   h.click('[data-view="planner"]'); assert.equal(h.app.querySelector('.cq-hero').hidden,false);
 });
@@ -343,6 +388,7 @@ test('segment activation preserves the page scroll position and uses one header 
   segment.dispatchEvent(mouse); assert.equal(mouse.defaultPrevented,true);
   h.click('[data-map-feat="stun"]'); assert.deepEqual(JSON.parse(JSON.stringify(lastScroll)),{top:240,left:0,behavior:'instant'});
   h.click('[data-chart-close]'); assert.deepEqual(JSON.parse(JSON.stringify(lastScroll)),{top:240,left:0,behavior:'instant'});
+  h.rightClick('[data-map-feat="stun"]'); assert.deepEqual(JSON.parse(JSON.stringify(lastScroll)),{top:240,left:0,behavior:'instant'});
   assert.equal(h.app.querySelector('.cq-hero').hidden,true);
   h.click('[data-view="planner"]'); assert.equal(h.app.querySelector('.cq-hero').hidden,false);
 });

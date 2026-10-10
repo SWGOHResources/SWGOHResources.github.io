@@ -301,8 +301,10 @@ Shared links preserve the chosen view. Copy and Reset sit beside the view tabs.
 The two-ring SVG shows objective categories and individual feats, each once.
 Bright wedges are planned, dark wedges are skipped. Sector labels and original
 bonus-reward artwork identify feat locations and extra rewards. Clicking a
-feat toggles its plan selection and opens its details; the popup also has an
-explicit Plan/Skip control. Click an inner category segment to filter the diagram; click it again to show all.
+feat opens its details without changing the plan; right-click toggles its
+selection. Crate hover previews show the crate name and shard rewards,
+left-click opens details, and right-click sets the target without opening a popup.
+Popups have explicit Plan/Skip and target controls for touch and keyboard users. Click an inner category segment to filter the diagram; click it again to show all.
 Each feat segment also supports keyboard activation. Desktop hover uses a custom card. Sector labels and
 original bonus-reward artwork are shown in feat previews. No chart action
 navigates away. The page is locked while a popup is open; tapping its backdrop closes it.
