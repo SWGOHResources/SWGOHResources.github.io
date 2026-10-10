@@ -121,15 +121,18 @@ function esc(s){
   return String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
-// Original named sprites exported from the game's Unity atlas rectangles.
+// Named atlas sprites matched to effect.persistentIcon in current Comlink
+// gamedata. Similar names such as icon_stun (a panel texture) and
+// icon_evasion (Foresight) are not interchangeable with the status effects.
 const FEAT_ICONS = {
-  hot: 'icon_recover_health_over_time', evasionup: 'icon_evasion',
-  bombs: 'icon_bomb', retribution: 'icon_retaliate',
-  'stagger-s1': 'icon_stagger', noattackers: 'icon_role_attacker', stun: 'icon_stun',
-  defensedown: 'icon_buff_defense', dot300: 'icon_damage_over_time', knockemdead: 'icon_offbalance',
-  defenseup: 'icon_buff_defense', expose: 'icon_expose', onthemove: 'icon_ontherun',
+  hot: 'icon_recover_health_over_time', evasionup: 'icon_buff_dodge_chance',
+  bombs: 'icon_bomb', retribution: 'icon_buff_counter',
+  'stagger-s1': 'icon_stagger', noattackers: 'icon_role_attacker', stun: 'icon_paralysis',
+  defensedown: 'icon_buff_armor', dot300: 'icon_damage_over_time', knockemdead: 'icon_offbalance',
+  defenseup: 'icon_buff_armor', expose: 'icon_expose', onthemove: 'icon_ontherun',
   nosupport: 'icon_role_support', bonusturns: 'icon_extraturn',
-  evasiondown: 'icon_evasion', notanks: 'icon_role_tank',
+  potencydown: 'icon_buff_accuracy', evasiondown: 'icon_buff_dodge_chance', notanks: 'icon_role_tank',
+  'empire-mini': 'icon_empire',
 };
 function featStatusTone(feat){
   if(['hot','evasionup','retribution','defenseup'].includes(feat?.id)) return 'buff';
@@ -137,29 +140,54 @@ function featStatusTone(feat){
   return '';
 }
 function featArt(feat){
-  if(feat?.id === 'potencydown') return withAssetV('assets/img/atlases/misc_atlas/icon_stat_potency.png');
+  if(feat?.id === 'learncontrol') return withAssetV('assets/img/atlases/standard_rgba_atlas/icon_conquest_consumable_tech.png');
+  if(feat?.id === 'lightside-boss' || feat?.id === 'darkside-mini') return withAssetV('assets/img/atlases/standard_atlas/icon_alignment_'+(feat.id === 'lightside-boss' ? 'light' : 'dark')+'.png');
   const named = FEAT_ICONS[feat?.id];
   if(named) return withAssetV('assets/img/atlases/battleui_view_rgba_atlas/'+named+'.png');
   const art = typeof feat?.art === 'string' ? feat.art.trim() : '';
-  return art && !art.includes('conquest-keycard') ? withAssetV('assets/img/'+art.replace(/^\/*/,'')) : null;
+  if(art && !art.includes('conquest-keycard') && feat?.id !== 'isfinest' && feat?.id !== 'newrepublic') return withAssetV('assets/img/'+art.replace(/^\/*/,''));
+  // Game achievement artwork gives general objectives an icon without
+  // borrowing an unrelated faction emblem or unit portrait.
+  return withAssetV('assets/img/atlases/standard_atlas/quest_icon_dailyactivities.png');
 }
-function featRewardDisk(reward){ return /title|holo/i.test(String(reward || '')) ? null : (reward || null); }
-// A shard reward needs the game's shard marker as well as the unit art.
-// Keep these separate so reward icons cannot become bare unit portraits.
+function featRewardDisk(reward){ return /title|holo|^DCS$|Deployable Cooling Systems/i.test(String(reward || '')) ? null : (reward || null); }
+// The shard sprite is the background, with the portrait over it. Its tint
+// follows the unit's alignment; it is not a badge on a portrait frame.
 function shardArt(unit){
-  return `<span class="cq-shard" aria-hidden="true"><img class="cq-shard-unit" src="${withAssetV('assets/img/'+unit.art)}" alt=""><img class="cq-shard-marker" src="${withAssetV('assets/img/atlases/standard_rgba_atlas/ShardIcon.png')}" alt=""></span>`;
+  return `<span class="cq-shard ${unit.alignment === 'dark' ? 'dark' : 'light'}" aria-hidden="true"><img class="cq-shard-background" src="${withAssetV('assets/img/atlases/standard_rgba_atlas/ShardIcon.png')}" alt=""><img class="cq-shard-unit" src="${withAssetV('assets/img/'+unit.art)}" alt=""></span>`;
 }
 // rewardTexture is the artifactDefinition.texture value from Comlink. The
 // generic misc_atlas disk glyph is a WIP asset and must not be displayed.
 function featReward(reward, texture){
   if(!reward) return null;
   const title = /title/i.test(reward);
+  const consumable = /^(DCS|Deployable Cooling Systems)$/i.test(reward);
   return {
-    frame: title ? null : 'assets/img/atlases/standard_rgba_atlas/icon_conquest_artifact_rarity_0'+(reward === 'DCS' ? '1' : '5')+'.png',
-    power: title ? null : 'assets/img/atlases/standard_rgba_atlas/icon_conquest_artifact_power_0'+(reward === 'Booming Voice' ? '4' : '1')+'.png',
-    art: title ? 'assets/img/atlases/standard_rgba_atlas/icon_questreward_title.png' : 'assets/img/atlases/standard_rgba_atlas/'+(/^icon_conquest_artifact_0[1-5]$/.test(texture) ? texture : 'icon_conquest_artifact_01')+'.png',
-    label: title ? String(reward).replace(/\s*title$/i,'')+' · Title' : (reward === 'DCS' ? 'Deployable Cooling Systems' : reward)+' · Data disk',
+    type: title ? 'title' : consumable ? 'consumable' : 'disk',
+    frame: title || consumable ? null : 'assets/img/atlases/standard_rgba_atlas/icon_conquest_artifact_rarity_04.png',
+    power: title || consumable ? null : 'assets/img/atlases/standard_rgba_atlas/icon_conquest_artifact_power_0'+(reward === 'Booming Voice' ? '4' : '1')+'.png',
+    art: title ? 'assets/img/atlases/standard_rgba_atlas/icon_questreward_title.png' : consumable ? 'assets/img/atlases/standard_rgba_atlas/icon_conquest_consumable_tech.png' : 'assets/img/atlases/standard_rgba_atlas/'+(/^icon_conquest_artifact_0[1-5]$/.test(texture) ? texture : 'icon_conquest_artifact_01')+'.png',
+    label: title ? String(reward).replace(/\s*title$/i,'')+' · Title' : consumable ? 'Deployable Cooling Systems · Consumable' : reward+' · Data disk',
   };
+}
+
+function conquestTiming(entry, nowMs){
+  const hour = typeof stdHour === 'function' ? stdHour() : 18;
+  const start = Date.parse(entry.starts+'T00:00:00Z')+hour*3600000;
+  const end = Date.parse(entry.ends+'T00:00:00Z')+hour*3600000;
+  const duration = Math.max(1, Math.round((end-start)/86400000));
+  const state = nowMs < start ? 'upcoming' : nowMs < end ? 'active' : 'past';
+  const day = state === 'upcoming' ? 0 : Math.min(duration, Math.floor((nowMs-start)/86400000)+1);
+  const hours = Math.max(0, Math.ceil(((state === 'upcoming' ? start : end)-nowMs)/3600000));
+  return {state, day, duration, progress:Math.min(100,Math.max(0,(nowMs-start)/(end-start)*100)),
+    remaining: state === 'past' ? 'Ended' : (hours >= 24 ? Math.floor(hours/24)+'d '+hours%24+'h' : hours+'h')};
+}
+function paintConquestTiming(app, entry, nowMs){
+  const timing = conquestTiming(entry, nowMs);
+  const set = (key, text) => { const el = app.querySelector('[data-clock="'+key+'"]'); if(el) el.textContent = text; };
+  set('day',timing.day); set('remaining',timing.remaining);
+  set('label',timing.state === 'upcoming' ? 'Starts in' : timing.state === 'active' ? 'Time remaining' : 'Conquest complete');
+  const bar = app.querySelector('[data-clock="progress"]'); if(bar) bar.style.width = timing.progress+'%';
 }
 
 
@@ -250,6 +278,7 @@ async function initConquestPage(){
   // any edit the player makes after the page loaded.
   const shared = decodePlanHash();
   renderPlanner(app, sel, nowMs, shared);
+  setInterval(() => paintConquestTiming(app, sel.entry, Date.now()), 60000);
 }
 
 function renderPlanner(app, sel, nowMs, shared){
@@ -278,23 +307,26 @@ function renderPlanner(app, sel, nowMs, shared){
     return shortName(name) + (c?.colloquial ? ` (${c.colloquial})` : '');
   };
   const top = Math.max(0, ...crates.map(c => c.at));
-  const portrait = entry.unitArt ? `<img class="cq-portrait" src="${withAssetV('assets/img/'+entry.unitArt)}" alt="">` : '';
   const units = entry.shardUnits || {};
   const ladder = crates.map(c => `<button type="button" class="cq-chip" data-crate="${esc(c.name)}" data-at="${c.at}" aria-pressed="false" aria-label="Target ${esc(c.name)}, ${c.at} keycards"><img class="cq-crate" src="${crateArt(c.name)}" alt=""><span>${shortName(c.name)}</span><b>${c.at}</b></button>`).join('');
   const partial = entry.status === 'preliminary';
   const settingsOpen = typeof window === 'undefined' || window.innerWidth >= 900;
   const dateLabel = value => new Date(value+'T12:00:00Z').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+  const timing = conquestTiming(entry, nowMs);
   app.innerHTML = `
     <section class="merged-hero cq-hero" aria-labelledby="cqTitle">
       <div class="mh-left"><h1 class="mh-tag" id="cqTitle">Conquest planner</h1>
-        <div class="cq-hero-unit">${portrait}<div><div class="mh-main-val">${esc(entry.unit || 'Conquest')}</div><p class="mh-sub">${esc(entry.volume ? 'Volume '+entry.volume : entry.title)} · ${esc(difficulty)} difficulty</p></div></div>
-        <p class="mh-sub">${esc(dateLabel(entry.starts))} – ${esc(dateLabel(entry.ends))}</p>
+        <div class="mh-title-row"><div class="mh-main-val">Day <span data-clock="day">${timing.day}</span><span class="mh-of">/ ${timing.duration}</span></div></div>
+        <p class="mh-sub">Volume <span>${esc(entry.volume || '—')}</span> · <span>${esc(difficulty[0].toUpperCase()+difficulty.slice(1))}</span> difficulty · ${esc(entry.unit || 'Conquest rewards')}</p>
+        <div class="mh-progress-wrap"><div class="mh-progress-bar" aria-hidden="true"><div class="mh-progress-fill" data-clock="progress" style="width:${timing.progress}%"></div></div>
+          <div class="mh-progress-labels"><time datetime="${esc(entry.starts)}">${esc(dateLabel(entry.starts))}</time><time datetime="${esc(entry.ends)}">${esc(dateLabel(entry.ends))}</time></div>
+        </div>
       </div>
-      <div class="mh-right"><div class="cb-text"><span class="cb-label">Conquest status</span><span class="sc-badge ${sel.state === 'active' ? 'running' : 'off'}">${esc(sel.state === 'active' ? 'Active now' : sel.state === 'upcoming' ? 'Upcoming' : 'Ended')}</span></div>
-        <div class="cq-actions"><button class="gear-btn" type="button" data-copy-link>Copy plan link</button><button class="gear-btn" type="button" data-reset-plan>Reset plan</button></div>
+      <div class="mh-right"><div class="cb-text"><span class="cb-label" data-clock="label">${timing.state === 'upcoming' ? 'Starts in' : timing.state === 'active' ? 'Time remaining' : 'Conquest complete'}</span><span class="cb-timer" data-clock="remaining">${timing.remaining}</span><span class="cb-sub">${timing.state === 'upcoming' ? 'Opens' : 'Closes'} ${esc(dateLabel(timing.state === 'upcoming' ? entry.starts : entry.ends))} · ${typeof stdHour === 'function' ? stdHour() : 18}:00 UTC</span></div>
       </div>
     </section>
-    ${partial ? '<div class="explorer-note cq-note"><span class="en-dot" aria-hidden="true">!</span><p><strong>Preliminary feat details.</strong> Confirm requirements in the current in-game Conquest.</p></div>' : ''}
+    <div class="cq-page-tools">${partial ? '<p class="cq-note"><strong>Preliminary feat details</strong><span>Check requirements against the current in-game Conquest.</span></p>' : '<p class="cq-note">Choose the feats you plan to complete.</p>'}
+      <div class="cq-actions"><button class="gear-btn" type="button" data-copy-link>Copy plan link</button><button class="gear-btn" type="button" data-reset-plan>Reset plan</button></div></div>
     ${Object.keys(diffs).length > 1 ? `<div class="cq-difficulty" role="group" aria-label="Difficulty">${Object.keys(diffs).map(d => `<button type="button" class="sf-pill" data-diff="${esc(d)}" aria-pressed="${d === difficulty}">${esc(d)}</button>`).join('')}</div>` : ''}
     <div class="cq-layout">
       <section class="cq-work explorer" aria-labelledby="cqChoose"><div class="section-head cq-work-head"><h2 id="cqChoose">Feats</h2><span class="rule"></span><span class="sub">Select your planned completions</span></div>
@@ -325,10 +357,10 @@ function renderPlanner(app, sel, nowMs, shared){
     const gate = f.requires || chainRequires(rawDesc);
     const desc = gate ? rawDesc.replace(/\s*\(Complete the .*?\)\s*$/i,'') : rawDesc;
     return `<label class="cq-feat${picked.has(f.id) ? ' on' : ''}"><input type="checkbox" data-feat="${esc(f.id)}"${picked.has(f.id) ? ' checked' : ''}>
-      ${art ? `<span class="cq-fi${featStatusTone(f) ? ' '+featStatusTone(f) : ''}"><img src="${esc(art)}" alt="" loading="lazy"></span>` : ''}
+      <span class="cq-fi${featStatusTone(f) ? ' '+featStatusTone(f) : ''}${art.includes('/live/conquest-') && !art.includes('/conquest-feat-') ? ' portrait' : ''}${['noattackers','nosupport','notanks'].includes(f.id) ? ' excluded' : ''}" aria-hidden="true"><img src="${esc(art)}" alt="" loading="lazy"></span>
       <span class="cq-feat-text"><strong>${esc(f.title)}</strong><span class="cq-feat-desc">${esc(desc)}</span>
-      ${gate ? `<span class="cq-requires">Requires the disk from ${esc(gate)}, or Conquest Pass+.</span>` : ''}
-      ${reward ? `<span class="cq-reward">${reward.frame ? `<span class="cq-disk" aria-hidden="true"><img class="cq-disk-frame" src="${withAssetV(reward.frame)}" alt=""><img class="cq-disk-emblem" src="${withAssetV(reward.art)}" alt=""><img class="cq-disk-power" src="${withAssetV(reward.power)}" alt=""></span>` : `<img class="cq-title-icon" src="${withAssetV(reward.art)}" alt="">`}<span><span class="cq-reward-label">Reward</span>${esc(reward.label)}</span></span>` : ''}</span>
+      ${gate ? `<span class="cq-requires">Requires the ${f.id === 'learncontrol' ? 'consumable' : 'disk'} from ${esc(gate)}, or Conquest Pass+.</span>` : ''}
+      ${reward ? `<span class="cq-reward"><span class="cq-reward-art">${reward.frame ? `<span class="cq-disk" aria-hidden="true"><img class="cq-disk-frame" src="${withAssetV(reward.frame)}" alt=""><img class="cq-disk-emblem" src="${withAssetV(reward.art)}" alt=""><img class="cq-disk-power" src="${withAssetV(reward.power)}" alt=""></span>` : `<img class="cq-${reward.type}-icon" src="${withAssetV(reward.art)}" alt="">`}</span><span><span class="cq-reward-label">Bonus reward</span>${esc(reward.label)}</span></span>` : ''}</span>
       <span class="cq-feat-value">${f.keycards > 0 ? `+${f.keycards}${sprite('keycard','cq-kc','Keycards')}` : 'Bonus'}</span></label>`;
   }
   function renderFeats(){

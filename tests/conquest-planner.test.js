@@ -105,18 +105,45 @@ test('ladder labels shorten to the tier, art lookup tolerates old names', () => 
 
 test('feat art is the related unit, not the keycard placeholder', () => {
   assert.equal(run(`featArt({ art: 'live/conquest-grogu.png' })`), 'assets/img/live/conquest-grogu.png');
-  // The keycard entry in the data is a currency placeholder, so those feats
-  // render the CSS disc instead of an <img>.
-  assert.equal(run(`featArt({ art: 'live/conquest-keycard.png' })`), null);
-  assert.equal(run(`featArt({})`), null);
-  assert.equal(run(`featArt(null)`), null);
+  // Currency placeholders and objectives without bespoke artwork use the
+  // game's general achievement icon, keeping the icon column consistent.
+  const fallback = 'assets/img/atlases/standard_atlas/quest_icon_dailyactivities.png';
+  assert.equal(run(`featArt({ art: 'live/conquest-keycard.png' })`), fallback);
+  assert.equal(run(`featArt({})`), fallback);
+  assert.equal(run(`featArt(null)`), fallback);
+});
+
+test('status feats use their effect textures and Empire uses its faction emblem', () => {
+  for(const [id,texture] of [['stun','icon_paralysis'],['defenseup','icon_buff_armor'],
+    ['defensedown','icon_buff_armor'],['evasionup','icon_buff_dodge_chance'],
+    ['potencydown','icon_buff_accuracy'],['retribution','icon_buff_counter'],['empire-mini','icon_empire']]){
+    assert.equal(run(`featArt({id:'${id}'})`),'assets/img/atlases/battleui_view_rgba_atlas/'+texture+'.png');
+  }
+  assert.equal(run(`featStatusTone({id:'defenseup'})`),'buff');
+  assert.equal(run(`featStatusTone({id:'defensedown'})`),'debuff');
 });
 
 test('datadisk rewards get the disk icon, titles stay a text chip', () => {
   assert.equal(run(`featRewardDisk('F34T')`), 'F34T');
   assert.equal(run(`featRewardDisk('Booming Voice')`), 'Booming Voice');
   assert.equal(run(`featRewardDisk('Guns for Hire title')`), null);
+  assert.equal(run(`featRewardDisk('DCS')`), null);
+  assert.equal(run(`featRewardDisk('Deployable Cooling Systems')`), null);
   assert.equal(run(`featRewardDisk(undefined)`), null);
+});
+
+test('Conquest header dates and day counts respect the opening and closing changeover', () => {
+  const e = JSON.stringify({starts:'2026-09-28',ends:'2026-10-12'});
+  const timing = time => js(`conquestTiming(${e}, Date.parse('${time}'))`);
+  assert.equal(timing('2026-09-28T17:59:00Z').state,'upcoming');
+  assert.equal(timing('2026-09-28T18:00:00Z').day,1);
+  assert.equal(timing('2026-09-29T17:59:00Z').day,1);
+  assert.equal(timing('2026-09-29T18:00:00Z').day,2);
+  assert.equal(timing('2026-10-12T17:00:00Z').day,14);
+  assert.equal(timing('2026-10-12T17:00:00Z').remaining,'1h');
+  assert.equal(timing('2026-10-12T18:00:00Z').state,'past');
+  assert.equal(timing('2026-10-12T18:00:00Z').progress,100);
+  assert.equal(timing('2026-10-13T00:00:00Z').day,14);
 });
 
 test('doing everything hits the expected max total per difficulty', () => {

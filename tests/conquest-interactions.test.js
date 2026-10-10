@@ -113,7 +113,7 @@ test('re-rendering does not accumulate handlers and title and disk rewards use a
   h.change('[data-feat="hot"]',true); assert.equal(h.total(),15);
   assert.ok(h.app.querySelector('.cq-reward img[src*="icon_questreward_title"]'));
   assert.ok(h.app.querySelector('.cq-reward img[src*="icon_conquest_artifact"]'));
-  for(const [id,texture] of [['challenge250','01'],['retribution','03'],['badbaby','02']]){
+  for(const [id,texture] of [['challenge250','01'],['retribution','03']]){
     // The game artifactDefinition texture field, not the generic WIP glyph.
     const row = h.app.querySelector(`[data-feat="${id}"]`)?.closest('.cq-feat');
     assert.ok(row?.querySelector(`.cq-reward img[src*="icon_conquest_artifact_${texture}"]`),id);
@@ -125,8 +125,26 @@ test('re-rendering does not accumulate handlers and title and disk rewards use a
     assert.ok(disk.querySelector('.cq-disk-power'));
   }
   h.click('[data-crate="Reward Crate Tier 7"]');
-  assert.equal(h.app.querySelectorAll('.cq-shard-marker[src*="ShardIcon"]').length,2);
+  assert.ok(h.app.querySelector('.cq-shard.dark .cq-shard-background[src*="ShardIcon"]'));
+  assert.ok(h.app.querySelector('.cq-shard.light .cq-shard-background[src*="ShardIcon"]'));
+  const cooling = h.app.querySelector('[data-feat="badbaby"]').closest('.cq-feat');
+  assert.match(cooling.textContent,/Deployable Cooling Systems · Consumable/);
+  assert.equal(cooling.querySelector('.cq-disk'),null);
+  assert.ok(cooling.querySelector('.cq-consumable-icon[src*="icon_conquest_consumable_tech"]'));
+  assert.match(h.app.querySelector('[data-feat="learncontrol"]').closest('.cq-feat').textContent,/Requires the consumable from Bad Baby!/);
   for(const img of h.app.querySelectorAll('img')) assert.ok(fs.existsSync(new URL('../'+img.getAttribute('src'),import.meta.url)),img.src);
+});
+
+test('every feat retains an icon column and bonus rewards align within the description column', t => {
+  const h = setup(); t.after(()=>h.dom.window.close());
+  for(const g of data.conquests[0].difficulties.hard.groups){
+    h.click('[data-tab="'+g.name+'"]');
+    for(const row of h.app.querySelectorAll('.cq-feat')){
+      assert.ok(row.querySelector('.cq-fi img'),row.textContent);
+      const reward = row.querySelector('.cq-reward');
+      if(reward) assert.equal(reward.parentElement.className,'cq-feat-text');
+    }
+  }
 });
 
 test('custom star stepper respects limits and reset restores filter state', t => {
