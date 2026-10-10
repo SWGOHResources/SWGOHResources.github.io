@@ -1,5 +1,12 @@
 /* RENDER — DOM builders. Depends on config.js + time.js globals. */
 
+/* Image paths built at runtime carry the site-wide cache token from
+   assets/js/asseturl.js: replacing a PNG at the same path must not leave a
+   stale copy in a browser or on the CDN. Falls back to the raw path when
+   the helper isn't loaded (e.g. unit-tested in isolation). */
+const withAssetV = (typeof assetUrl === 'function') ? assetUrl : (p => p);
+const imgPath = f => withAssetV(((typeof IMG_BASE !== 'undefined' && IMG_BASE) || 'assets/img/') + f);
+
 // A datacron set can only ever be equipped/used for Territory War and
 // GAC — never Territory Battle, Conquest, etc. This scans backward day
 // by day from the set's expiry date to find the most recent TW or GAC
@@ -96,7 +103,7 @@ function renderUnlockWindows(st){
     <div class="status-card purple-card">
       <div class="sc-header"><span class="sc-title">Conquest Unit (${conquestOrdinal(cqChapter.cNum)} of Volume)</span><span class="sc-badge ${cqBadgeClass}">${cqBadge}</span></div>
       <div class="uw-body" style="--accent:var(--purple);--accent-dim:var(--purple-dim);--accent-border:var(--purple-border)">
-        <div class="uw-img"><div class="art-badge">CQ</div><img src="${IMG_BASE}${CONQUEST_UNIT_IMAGE}" alt="" loading="lazy" decoding="async" onerror="this.remove()"></div>
+        <div class="uw-img"><div class="art-badge">CQ</div><img src="${imgPath(CONQUEST_UNIT_IMAGE)}" alt="" loading="lazy" decoding="async" onerror="this.remove()"></div>
         <div class="uw-text">
           <div class="sc-main"><div class="sc-val">${cqMain}</div><div class="uw-date">${cqDateLine}</div><div class="sc-sub">${cqSub}</div></div>
           <div class="sc-footer" style="flex-direction:column;align-items:flex-start;gap:2px;">
@@ -109,7 +116,7 @@ function renderUnlockWindows(st){
     <div class="status-card orange-card">
       <div class="sc-header"><span class="sc-title">End of Current Era</span><span class="sc-badge orange">${eraBadge}</span></div>
       <div class="uw-body" style="--accent:var(--orange);--accent-dim:var(--orange-dim);--accent-border:var(--orange-border)">
-        <div class="uw-img"><div class="art-badge">ERA</div><img src="${IMG_BASE}${ERA_UNIT_IMAGE}" alt="" loading="lazy" decoding="async" onerror="this.remove()"></div>
+        <div class="uw-img"><div class="art-badge">ERA</div><img src="${imgPath(ERA_UNIT_IMAGE)}" alt="" loading="lazy" decoding="async" onerror="this.remove()"></div>
         <div class="uw-text">
           <div class="sc-main"><div class="sc-val">${eraMain}</div><div class="uw-date">${eraDateLine}</div><div class="sc-sub">${eraSub}</div></div>
           <div class="sc-footer" style="flex-direction:column;align-items:flex-start;gap:2px;">
@@ -122,7 +129,7 @@ function renderUnlockWindows(st){
     <div class="status-card" style="border-color:${cronMeta.border}">
       <div class="sc-header"><span class="sc-title">Datacron Expirations</span><span class="sc-badge ${cronBadgeClass}">${cronBadge}</span></div>
       <div class="uw-body" style="--accent:${cronMeta.accent};--accent-dim:${cronMeta.dim};--accent-border:${cronMeta.border}">
-        <div class="uw-img"><div class="art-badge">${cronMeta.label.slice(0,3).toUpperCase()}</div><img src="${IMG_BASE}${cronMeta.asset}" alt="" loading="lazy" decoding="async" onerror="this.remove()"></div>
+        <div class="uw-img"><div class="art-badge">${cronMeta.label.slice(0,3).toUpperCase()}</div><img src="${imgPath(cronMeta.asset)}" alt="" loading="lazy" decoding="async" onerror="this.remove()"></div>
         <div class="uw-text">
           <div class="sc-main">
             <div class="sc-val">${cronMain}</div>
@@ -489,7 +496,7 @@ function liveCardHTML(e, relLabel){
   return `<article class="xcard" style="${style}">
     <div class="xcard-art">
       <div class="art-badge">${escHTML(meta.glyph)}</div>
-      <img src="${IMG_BASE}${art}" alt="" loading="lazy" fetchpriority="low" decoding="async" onerror="this.remove()">
+      <img src="${imgPath(art)}" alt="" loading="lazy" fetchpriority="low" decoding="async" onerror="this.remove()">
       <div class="xcard-shade"></div>
       <div class="xcard-art-meta">
         <span class="${relCls}">${relLabel}</span>
@@ -516,7 +523,7 @@ function preloadLiveArt(){
       if(typeof art !== 'string' || !art) return;
       const im = new Image();
       im.decoding = 'async';
-      im.src = base + art;
+      im.src = withAssetV(base + art);
     });
   } catch(e){}
 }
@@ -613,12 +620,12 @@ function explorerCardHTML(item, dateMs, relLabel, tbCtx, nowMs){
   const liveMatch = liveMatchesForSlot(item.icon, dateMs)[0] || null;
   const asset = isTbCard ? tbCtx.art : (liveMatch && liveMatch.art) || assetFor(item.icon);
   const style = `--accent:${meta.accent};--accent-dim:${meta.dim};--accent-border:${meta.border}`;
-  const imgTag = asset ? `<img src="${IMG_BASE}${asset}" alt="" loading="lazy" fetchpriority="low" decoding="async" onerror="this.remove()">` : '';
+  const imgTag = asset ? `<img src="${imgPath(asset)}" alt="" loading="lazy" fetchpriority="low" decoding="async" onerror="this.remove()">` : '';
   // Contained sources (transparent subjects, square scenes) render over
   // a blurred fill of themselves: uniform card size, whole image
   // visible, nothing stretched, nothing sliced. See FIT_ART_ICONS.
   const fillTag = (asset && isFitArt(item.icon))
-    ? `<div class="art-fill" aria-hidden="true" style="background-image:url(&quot;${IMG_BASE}${asset}&quot;)"></div>` : '';
+    ? `<div class="art-fill" aria-hidden="true" style="background-image:url(&quot;${imgPath(asset)}&quot;)"></div>` : '';
   const relCls = relLabel === 'Now' ? 'xcard-rel is-today' : 'xcard-rel';
   const baseItem = (liveMatch && liveMatch.kind === 'marquee' && liveMatch.name)
     ? { icon: item.icon, label: liveMatch.name }
@@ -715,7 +722,7 @@ function liveBadgesHTML(ongoing, dayStartMs){
       const kindCls = e.kind === 'conquest' ? ' day-live-cq' : '';
       const badgeName = liveDisplayName(e);
       return `<div class="day-boss day-live${kindCls}" title="${escHTML(badgeName)}, day ${day} of ${total}">`
-        + `<img src="${IMG_BASE}${art}" alt="" loading="lazy" decoding="async" onerror="this.remove()">`
+        + `<img src="${imgPath(art)}" alt="" loading="lazy" decoding="async" onerror="this.remove()">`
         + `<div class="db-text"><span class="db-label">Day ${day} of ${total}</span>`
         + `<span class="db-name">${escHTML(badgeName)}</span></div></div>`;
     }).join('');
@@ -765,7 +772,7 @@ function rotationBadgesHTML(windows, dayLive, dayStartMs){
       const name = rotationWindowName(icon);
       const style = `--accent:${meta.accent || 'var(--text3)'};--accent-dim:${meta.dim || 'transparent'};--accent-border:${meta.border || 'var(--border)'}`;
       return `<div class="day-badge" style="${style}" title="${escHTML(name)}, day ${w.day} of ${w.total}">`
-        + `<img src="${IMG_BASE}${art}" alt="" loading="lazy" decoding="async" onerror="this.remove()">`
+        + `<img src="${imgPath(art)}" alt="" loading="lazy" decoding="async" onerror="this.remove()">`
         + `<div class="db-text"><span class="db-label">Day ${w.day} of ${w.total}</span>`
         + `<span class="db-name">${escHTML(name)}</span></div></div>`;
     }).join('');
@@ -873,7 +880,7 @@ function renderExplorer(st){
   const cq = conquestInfoForDay(cur.ep, cur.dayInEp);
   const cqBadge = cq
     ? `<div class="day-conquest" title="Conquest ${cq.cNum} — ${cq.note}${cq.finalDay ? ' (final day)' : ''}">`
-      + `<img src="${IMG_BASE}${CONQUEST_UNIT_IMAGE}" alt="" loading="lazy" fetchpriority="low" decoding="async" onerror="this.remove()">`
+      + `<img src="${imgPath(CONQUEST_UNIT_IMAGE)}" alt="" loading="lazy" fetchpriority="low" decoding="async" onerror="this.remove()">`
       + `<div class="db-text"><span class="db-label">Conquest · C${cq.cNum}</span><span class="db-name">Day ${cq.day} of ${cq.total}${cq.finalDay ? ' — Final' : ''}</span></div>`
       + `</div>`
     : '';
@@ -926,7 +933,7 @@ function renderExplorer(st){
       </div>
       <div class="day-indicators">
         <div class="day-boss" title="Coliseum boss rotates daily at 18:00 UTC">
-        <img src="${IMG_BASE}${bossIcon}" alt="" loading="lazy" fetchpriority="low" decoding="async" onerror="this.remove()">
+        <img src="${imgPath(bossIcon)}" alt="" loading="lazy" fetchpriority="low" decoding="async" onerror="this.remove()">
         <div class="db-text"><span class="db-label">Coliseum boss</span><span class="db-name">${bossName}</span></div>
         </div>
         ${showCqBadge ? cqBadge : ''}
@@ -1106,7 +1113,7 @@ function preloadCardAssets(){
   try {
     const base = (typeof IMG_BASE !== 'undefined' && IMG_BASE) || 'assets/img/';
     const urls = new Set();
-    const add = v => { if(typeof v === 'string' && v) urls.add(base + v); };
+    const add = v => { if(typeof v === 'string' && v) urls.add(withAssetV(base + v)); };
     if(typeof EVENT_ICONS !== 'undefined') Object.values(EVENT_ICONS).forEach(add);
     if(typeof CATEGORY_ICONS !== 'undefined') Object.values(CATEGORY_ICONS).forEach(add);
     if(typeof TB_DEFS !== 'undefined') Object.values(TB_DEFS).forEach(d => d && add(d.art));

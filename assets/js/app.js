@@ -288,16 +288,17 @@ if(footerYearEl){ footerYearEl.textContent = `© ${new Date().getFullYear()} SWG
    brightness, a few warm/cool tinted, ~25% twinkling on independent
    cycles around their own base opacity. Negative delays start each
    twinkler mid-cycle so there is no synchronized flash on load.
-   Kept to ~70 nodes / ~18 animating: 110 nodes with 50 infinite
-   opacity animations kept the compositor busy on every frame,
-   which read as scroll jank on low-end devices. */
+   Kept to ~46 nodes / ~10 animating, and only the 1px stars twinkle: the
+   twinkle animates transform (compositor-only) rather than opacity, which
+   used to repaint — and re-blur, where anything translucent sat above —
+   on every frame. */
 (function(){
   const field = document.getElementById('starfield');
   if(!field) return;
   const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const saveData = typeof navigator !== 'undefined' && navigator.connection && navigator.connection.saveData;
-  const STAR_COUNT = 70;
-  const TWINKLE_ODDS = 0.25;
+  const STAR_COUNT = 46;
+  const TWINKLE_ODDS = 0.18;
   for(let i = 0; i < STAR_COUNT; i++){
     const s = document.createElement('span');
     const r = Math.random();
@@ -310,9 +311,9 @@ if(footerYearEl){ footerYearEl.textContent = `© ${new Date().getFullYear()} SWG
     if(tint < 0.16) s.classList.add('cool');
     else if(tint < 0.26) s.classList.add('warm');
     const base = (0.3 + Math.random() * 0.55).toFixed(2);
-    if(!reduceMotion && !saveData && Math.random() < TWINKLE_ODDS){
+    if(!reduceMotion && !saveData && size < 3 && Math.random() < TWINKLE_ODDS){
       s.classList.add('tw');
-      s.style.setProperty('--o', base);
+      s.style.opacity = base;
       s.style.animationDuration = (3 + Math.random() * 5).toFixed(2) + 's';
       s.style.animationDelay = (-Math.random() * 8).toFixed(2) + 's';
     } else {
