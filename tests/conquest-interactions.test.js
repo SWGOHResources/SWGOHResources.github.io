@@ -59,18 +59,19 @@ test('select group and clear group keep other groups and rebuilt rows working', 
 });
 test('target gap stays visible with mobile settings collapsed and a second tap clears it', t => {
   const h = setup(); t.after(()=>h.dom.window.close());
-  h.app.querySelector('.cq-settings').open = false;
   h.click('[data-crate="Reward Crate Tier 7"]');
+  h.click('[data-settings-toggle]');
+  assert.equal(h.app.querySelector('#cqSettings').hidden,true);
   const target = h.app.querySelector('[data-cq="target"]');
-  assert.equal(target.closest('details'),null); assert.equal(target.hidden,false);
+  assert.equal(target.closest('#cqSettings'),null); assert.equal(target.hidden,false);
   assert.match(target.textContent,/630 more/);
   h.click('[data-crate="Reward Crate Tier 7"]'); assert.equal(h.plan().t,null); assert.equal(target.hidden,true);
 });
 test('filtered replacement rows remain selectable and reset restores the list', t => {
   const h = setup(); t.after(()=>h.dom.window.close());
-  h.change('[data-filter]','unselected'); h.change('[data-feat="hot"]',true);
+  h.click('[data-filter="unselected"]'); h.change('[data-feat="hot"]',true);
   assert.equal(h.total(),15); assert.equal(h.app.querySelector('[data-feat="hot"]'),null);
-  h.change('[data-filter]','selected'); h.change('[data-feat="hot"]',false); assert.equal(h.total(),0);
+  h.click('[data-filter="selected"]'); h.change('[data-feat="hot"]',false); assert.equal(h.total(),0);
   h.click('[data-reset-plan]'); assert.equal(h.app.querySelectorAll('[data-feat]').length,9);
   h.change('[data-feat="hot"]',true); assert.equal(h.total(),15);
 });
@@ -118,5 +119,24 @@ test('re-rendering does not accumulate handlers and title and disk rewards use a
     assert.ok(row?.querySelector(`.cq-reward img[src*="icon_conquest_artifact_${texture}"]`),id);
   }
   assert.equal(h.app.querySelectorAll('svg').length,0);
+  for(const disk of h.app.querySelectorAll('.cq-disk')){
+    assert.ok(disk.querySelector('.cq-disk-frame'));
+    assert.ok(disk.querySelector('.cq-disk-emblem'));
+    assert.ok(disk.querySelector('.cq-disk-power'));
+  }
+  h.click('[data-crate="Reward Crate Tier 7"]');
+  assert.equal(h.app.querySelectorAll('.cq-shard-marker[src*="ShardIcon"]').length,2);
   for(const img of h.app.querySelectorAll('img')) assert.ok(fs.existsSync(new URL('../'+img.getAttribute('src'),import.meta.url)),img.src);
+});
+
+test('custom star stepper respects limits and reset restores filter state', t => {
+  const h = setup(); t.after(()=>h.dom.window.close());
+  assert.equal(h.app.querySelector('[data-stars-step="-1"]').disabled,true);
+  h.click('[data-stars-step="1"]'); assert.equal(h.total(),1); assert.equal(h.plan().s,1);
+  h.click('[data-stars-max]'); assert.equal(h.total(),330);
+  assert.equal(h.app.querySelector('[data-stars-step="1"]').disabled,true);
+  h.click('[data-stars-step="-1"]'); assert.equal(h.total(),329);
+  h.click('[data-filter="selected"]'); h.click('[data-reset-plan]');
+  assert.equal(h.app.querySelector('[data-filter="all"]').getAttribute('aria-pressed'),'true');
+  assert.equal(h.app.querySelectorAll('[data-feat]').length,9);
 });
