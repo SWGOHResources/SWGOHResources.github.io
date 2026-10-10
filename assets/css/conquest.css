@@ -84,7 +84,7 @@
 .cq-analysis .section-head { margin-bottom:18px; }
 .cq-map-layout { display:grid; grid-template-columns:minmax(0,1.3fr) minmax(140px,1fr); align-items:center; gap:18px; }
 .cq-map-visual { min-width:0; }
-.cq-wheel svg { display:block; width:100%; max-width:420px; margin:auto; overflow:visible; }
+.cq-wheel svg { display:block; width:100%; max-width:420px; margin:auto; overflow:visible; touch-action:manipulation; }
 .cq-map-category, .cq-map-requirement, .cq-map-feat { fill:var(--branch); stroke:var(--void); stroke-width:1; cursor:pointer; }
 .cq-map-feat { fill-opacity:.18; stroke:var(--void); stroke-width:1.2; }
 .cq-map-feat.planned { fill-opacity:1; stroke:var(--branch); stroke-opacity:.7; }
@@ -151,6 +151,13 @@
 .cq-skip-group h3 b { display:flex; align-items:center; gap:6px; padding:4px 7px; border:1px solid var(--amber-border); border-radius:5px; background:var(--amber-dim); color:var(--amber); font:500 11px var(--mono); flex-shrink:0; }
 .cq-skip-group h3 b .cq-kc { width:20px; height:20px; flex-shrink:0; }
 .cq-skipped-feat { display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:start; gap:10px; border-top:1px solid var(--border2); padding:10px 0; }
+.cq-skip-toggle { display:none; align-self:center; flex:0 0 auto; width:40px; min-height:40px; border:1px dashed var(--border2); border-radius:6px; background:none; color:var(--text3); font-size:20px; line-height:1; cursor:pointer; }
+@media (pointer:coarse) {
+  .cq-skipped-feat { grid-template-columns:auto minmax(0,1fr) auto; }
+  .cq-skip-toggle { display:flex; align-items:center; justify-content:center; }
+}
+.cq-skip-toggle:hover { border-style:solid; border-color:var(--amber-border); color:var(--amber); background:var(--amber-dim); }
+.cq-feedback button { padding:2px 4px; border:0; background:none; color:var(--amber); font:inherit; font-weight:600; cursor:pointer; text-decoration:underline; }
 .cq-skipped-feat .cq-feat-link { display:grid; grid-template-columns:32px minmax(0,1fr); gap:10px; align-items:start; padding:0; min-height:44px; }
 .cq-skipped-feat .cq-fi { width:32px; height:32px; padding:4px; }
 .cq-skipped-text strong { display:block; color:var(--text); font-size:12px; line-height:1.45; }

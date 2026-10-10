@@ -404,6 +404,7 @@ function renderPlanner(app, sel, nowMs, shared){
   const clampStars = value => Math.min(cap, Math.max(0, Math.trunc(Number(value) || 0)));
   let stars = clampStars(incoming ? incoming.s : (saved.stars ?? cap));
   const validIds = new Set(groups.flatMap(g => g.feats.map(f => f.id)));
+  const featById = new Map(groups.flatMap(g => g.feats.map(f => [f.id, f])));
   const rawIds = incoming ? incoming.f : saved.feats;
   let picked = new Set((Array.isArray(rawIds) ? rawIds : []).filter(id => validIds.has(id)));
   const rawTarget = incoming ? incoming.t : saved.target;
@@ -411,6 +412,7 @@ function renderPlanner(app, sel, nowMs, shared){
   let tab = incoming?.g || saved.tab;
   if(!groups.some(g => g.name === tab)) tab = groups[0]?.name;
   let coverageActive = 'all';
+  let lastTouchStart = 0;
   let previewState = null;
   let previewScroll = null;
   const view = 'coverage';
@@ -428,7 +430,7 @@ function renderPlanner(app, sel, nowMs, shared){
     <div class="cq-page-layout"><aside class="cq-context" aria-label="Conquest information">
     ${conquestHeader()}
     <section class="cq-guide"><h2>Teams &amp; video guides</h2><p>Plan your feats here. For team compositions and video guides, visit BitDynasty’s site.</p><a href="https://swgoh4.life/conquest/" target="_blank" rel="noopener">SWGOH 4 Life <span aria-hidden="true">↗</span></a></section>
-    <details class="cq-interaction-help"><summary>How to use the planner</summary><dl><dt>Desktop diagram &amp; crates</dt><dd>Left click for details. Right click a feat to plan or skip it; right click a crate to set your target. Hover to preview.</dd><dt>Mobile &amp; touch</dt><dd>Tap for details, then use Plan feat, Skip feat or Set target crate in the popup.</dd><dt>Keyboard</dt><dd>Press Enter or Space for details. Use the popup buttons to change your plan.</dd></dl></details>
+    <details class="cq-interaction-help"><summary>How to use the planner</summary><dl><dt>Desktop diagram &amp; crates</dt><dd>Left click for details. Right click a feat to plan or skip it; right click a crate to set your target. Hover to preview.</dd><dt>Mobile &amp; touch</dt><dd>Tap + on a skipped feat to plan it at once (Undo appears if you miss). Tap a feat for details, then use Plan feat, Skip feat or Set target crate in the popup.</dd><dt>Keyboard</dt><dd>Press Enter or Space for details. Use the popup buttons to change your plan.</dd></dl></details>
     </aside><div class="cq-page-content">
     <p class="cq-notice" data-cq="notice" role="status"${entry.status === 'preliminary' && timing.state === 'upcoming' ? '' : ' hidden'}><strong>Upcoming Conquest · provisional feats</strong><span>Requirements and keycard values may change before the Conquest starts.</span></p>
 
@@ -490,7 +492,7 @@ function renderPlanner(app, sel, nowMs, shared){
       const missing = g.feats.filter(isSkipped);
       if(!missing.length) return '';
       const value = missing.reduce((n,f)=>n+(Number(f.keycards)||0),0);
-      return `<section class="cq-skip-group" data-skip-group="${esc(g.name)}"><h3><span>${esc(g.name)}</span><b>${value}${sprite('keycard','cq-kc','Keycards')}</b></h3>${missing.map(f=>`<div class="cq-skipped-feat${f.reward ? ' grants-reward' : ''}${featLinks(diff,f).source ? ' uses-reward' : ''}"><button class="cq-feat-link" type="button" data-preview-feat="${esc(f.id)}"><span class="cq-fi ${featStatusTone(f)} ${featEmblem(f)} portrait" aria-hidden="true"><img src="${esc(featArt(f))}" alt="" loading="lazy"></span><span class="cq-skipped-text"><strong>${esc(f.title)}</strong><small>${esc(featDesc(f,difficulty).replace(/\s*\(Complete the .*?\)\s*$/i,''))}</small></span></button><span class="cq-skipped-value">${f.keycards ? f.keycards : 'Bonus'}</span>${(f.reward || featLinks(diff,f).source) ? '<div class="cq-feat-extras">'+relatedMarkup(f,true)+'</div>' : ''}</div>`).join('')}</section>`;
+      return `<section class="cq-skip-group" data-skip-group="${esc(g.name)}"><h3><span>${esc(g.name)}</span><b>${value}${sprite('keycard','cq-kc','Keycards')}</b></h3>${missing.map(f=>`<div class="cq-skipped-feat${f.reward ? ' grants-reward' : ''}${featLinks(diff,f).source ? ' uses-reward' : ''}"><button class="cq-skip-toggle" type="button" data-plan-feat="${esc(f.id)}" aria-label="Plan ${esc(f.title)}">+</button><button class="cq-feat-link" type="button" data-preview-feat="${esc(f.id)}"><span class="cq-fi ${featStatusTone(f)} ${featEmblem(f)} portrait" aria-hidden="true"><img src="${esc(featArt(f))}" alt="" loading="lazy"></span><span class="cq-skipped-text"><strong>${esc(f.title)}</strong><small>${esc(featDesc(f,difficulty).replace(/\s*\(Complete the .*?\)\s*$/i,''))}</small></span></button><span class="cq-skipped-value">${f.keycards ? f.keycards : 'Bonus'}</span>${(f.reward || featLinks(diff,f).source) ? '<div class="cq-feat-extras">'+relatedMarkup(f,true)+'</div>' : ''}</div>`).join('')}</section>`;
     }).join('') : '<p class="cq-empty">No feats skipped.</p>';
   }
   function paint(editingMissed = false){
@@ -528,7 +530,11 @@ function renderPlanner(app, sel, nowMs, shared){
     }
   };
   app.onmousedown = event=>{ if(event.target.closest('[data-map-feat],[data-map-category]')) event.preventDefault(); };
+  app.ontouchstart = () => { lastTouchStart = Date.now(); };
   app.oncontextmenu = event => {
+    /* Touch long-press (aiming at a small arc) must not toggle the plan —
+       on touch, planning happens only via the popup buttons. */
+    if(Date.now() - lastTouchStart < 1500){ event.preventDefault(); return; }
     const feat = event.target.closest('[data-map-feat]');
     const crate = event.target.closest('[data-report-crate]');
     if(!feat && !crate) return;
@@ -561,6 +567,23 @@ function renderPlanner(app, sel, nowMs, shared){
     const button = event.target.closest('button'); if(!button || !app.contains(button)) return;
     if(button.matches('[data-chart-close]')){
       closeChart();
+    }
+    else if(button.matches('[data-plan-feat]')){
+      const id = button.dataset.planFeat; if(!validIds.has(id)) return;
+      const toggles = [...app.querySelectorAll('[data-plan-feat]')];
+      const idx = toggles.indexOf(button);
+      picked.add(id); changed();
+      app.querySelector('[data-cq="feedback"]').innerHTML = '<span>'+esc(featById.get(id)?.title || 'Feat')+' planned.</span> <button type="button" data-undo-plan="'+esc(id)+'">Undo</button>';
+      if(event.detail === 0){
+        const next = app.querySelectorAll('[data-plan-feat]')[Math.min(idx, app.querySelectorAll('[data-plan-feat]').length - 1)];
+        if(next) next.focus({preventScroll:true});
+      }
+    }
+    else if(button.matches('[data-undo-plan]')){
+      const id = button.dataset.undoPlan;
+      if(id && validIds.has(id)) picked.delete(id);
+      changed();
+      app.querySelector('[data-cq="feedback"]').textContent = '';
     }
     else if(button.matches('[data-preview-feat]')){ previewChart('feat',button.dataset.previewFeat); }
     else if(button.matches('[data-report-crate]')){ previewChart('crate',button.dataset.reportCrate); }

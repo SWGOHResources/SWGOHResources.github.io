@@ -88,6 +88,30 @@ test('right click toggles once without opening details or scrolling',t=>{
   assert.equal(h.total(),345); assert.equal(h.get('.cq-chart-dialog').open,false);
   assert.equal(position.top,240); h.rightClick('[data-map-feat="hot"]'); assert.equal(h.total(),330);
 });
+test('touch long-press never toggles the plan; tap opens details only',t=>{
+  const h=use(t);
+  h.get('[data-map-feat="hot"]').dispatchEvent(new h.w.Event('touchstart',{bubbles:true}));
+  assert.equal(h.rightClick('[data-map-feat="hot"]').defaultPrevented,true);
+  assert.equal(h.total(),330); assert.deepEqual(h.plan().f,[]);
+  assert.equal(h.get('.cq-chart-dialog').open,false);
+  h.click('[data-map-feat="hot"]'); assert.equal(h.get('.cq-chart-dialog').open,true);
+  assert.equal(h.total(),330);
+});
+test('skipped-list toggle plans instantly with undo; title still opens details',t=>{
+  const h=use(t);
+  assert.equal(h.total(),330);
+  h.click('[data-plan-feat="hot"]');
+  assert.equal(h.total(),345); assert.deepEqual(h.plan().f,['hot']);
+  assert.equal(h.app.querySelector('[data-plan-feat="hot"]'),null);
+  assert.match(h.get('[data-cq="feedback"]').textContent,/planned/);
+  const saved=JSON.parse(h.w.localStorage.getItem('swgoh-cq-plan')).plans[data.conquests[0].id];
+  assert.deepEqual(saved.feats,['hot']);
+  h.click('[data-undo-plan]');
+  assert.equal(h.total(),330); assert.deepEqual(h.plan().f,[]);
+  assert.ok(h.get('[data-plan-feat="hot"]'));
+  h.click('.cq-skipped-feat [data-preview-feat="stun"]');
+  assert.equal(h.get('.cq-chart-dialog').open,true); assert.equal(h.total(),330);
+});
 test('keyboard opens details and preserves the same planning behavior',t=>{
   const h=use(t);
   h.get('[data-map-feat="stun"]').dispatchEvent(new h.w.KeyboardEvent('keydown',{key:'Enter',bubbles:true,cancelable:true}));
