@@ -382,3 +382,104 @@ html.cq-modal-open, body.cq-modal-open { overflow:hidden; overscroll-behavior:no
 .cq-diagram-projection .cq-missed > span { white-space:nowrap; }
 .cq-crate-preview-status { display:grid; gap:6px; padding:10px 12px; border:1px solid var(--border2); border-radius:6px; background:var(--void3); font-size:13px; }
 .cq-crate-preview-status span { color:var(--text2); }
+
+/* Both views share the same content frame and persistent Conquest context. */
+.cq-shell .wrap { max-width:1760px; }
+.cq-page-layout { display:grid; grid-template-columns:minmax(0,1fr) 250px; gap:24px; align-items:start; }
+.cq-page-content { grid-column:1; grid-row:1; min-width:0; }
+.cq-context { grid-column:2; grid-row:1; min-width:0; display:grid; gap:16px; }
+.cq-context .cq-hero { display:flex; flex-direction:column; align-items:stretch; gap:18px; margin:0; padding:20px; }
+.cq-context .mh-main-val { font-size:30px; }
+.cq-context .mh-right { width:100%; border-left:0; border-top:1px solid var(--border2); padding:16px 0 0; }
+.cq-context .cb-timer { font-size:30px; }
+.cq-guide, .cq-interaction-help { padding:16px; border:1px solid var(--border2); border-radius:8px; background:var(--void2); }
+.cq-guide h2 { margin:0; font:600 14px var(--body); }
+.cq-guide p { margin:10px 0 14px; font-size:12px; color:var(--text2); line-height:1.7; }
+.cq-guide a { display:flex; align-items:center; justify-content:space-between; min-height:44px; padding:8px 10px; border:1px solid var(--amber-border); border-radius:5px; background:var(--amber-dim); color:var(--amber); font-size:13px; font-weight:600; }
+.cq-interaction-help summary { cursor:pointer; font-size:13px; font-weight:600; color:var(--text); min-height:24px; }
+.cq-interaction-help dl { margin:16px 0 0; }
+.cq-interaction-help dt { font-size:12px; font-weight:600; color:var(--amber); }
+.cq-interaction-help dd { margin:6px 0 16px; color:var(--text2); font-size:12px; line-height:1.65; }
+.cq-interaction-help dd:last-child { margin-bottom:0; }
+.cq-layout, .cq-analysis { grid-template-columns:minmax(0,1.35fr) minmax(0,1fr); gap:24px; }
+.cq-layout { padding:24px; border:1px solid var(--border2); border-radius:var(--radius); background:var(--void2); }
+.cq-work.explorer { padding:0; border:0; background:none; }
+.cq-panel { position:static; padding:18px; }
+.cq-report { border-color:var(--border2); }
+.cq-page-content .section-head { margin:0 0 16px; }
+.cq-page-content .section-head h2 { margin:0; }
+.cq-wheel svg { max-width:720px; }
+.cq-skips { padding-left:24px; }
+.cq-tabs { grid-template-columns:repeat(3,minmax(0,1fr)); }
+.cq-tabs .day-pill { flex-direction:row; gap:8px; min-height:44px; }
+.cq-ladder { grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px; }
+.cq-chip { border-color:var(--border2); background:var(--void); padding:10px 4px; }
+.cq-chip b { font-size:13px; color:var(--text); }
+.cq-chip.earned { background:#252139; }
+.cq-chip.is-target { background:#302719; }
+
+/* Opaque, staggered milestones leave room for readable keycard thresholds. */
+.cq-diagram-projection .cq-crate-rail { padding:100px 34px 110px; }
+.cq-diagram-projection .cq-rail-track { height:8px; border:1px solid var(--border2); }
+.cq-diagram-projection .cq-report-crate { top:-87px; width:64px; min-height:68px; margin-left:-32px; padding:6px; gap:4px; border:1px solid var(--border2); border-radius:6px; background:var(--void3); color:var(--text); }
+.cq-diagram-projection .cq-report-crate img { width:42px; height:40px; opacity:1; }
+.cq-diagram-projection .cq-report-crate > span { min-width:42px; padding:3px 5px; border:1px solid var(--border2); border-radius:4px; background:var(--void); color:var(--text); font:600 14px var(--mono); }
+.cq-diagram-projection .cq-report-crate::before { content:""; position:absolute; width:1px; height:16px; top:100%; background:var(--border2); }
+.cq-diagram-projection .cq-report-crate:nth-of-type(even) { top:24px; }
+.cq-diagram-projection .cq-report-crate:nth-of-type(even)::before { top:-24px; height:23px; }
+.cq-diagram-projection .cq-report-crate.earned { border-color:var(--purple); background:#252139; }
+.cq-diagram-projection .cq-report-crate.projected { box-shadow:0 0 0 2px var(--purple-border); }
+.cq-diagram-projection .cq-report-crate.target { border-color:var(--amber); background:#302719; }
+.cq-diagram-projection .cq-report-crate.target > span { color:var(--amber); border-color:var(--amber-border); }
+.cq-diagram-projection .cq-report-crate:hover { border-color:var(--text); }
+.cq-rail-gap { font-size:13px; margin:0 0 16px; }
+.cq-diagram-projection .cq-missed { display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:start; gap:14px 18px; padding:16px; border:1px solid var(--border2); border-radius:6px; background:var(--void); }
+.cq-missed-entry label, .cq-battle-earned > span { display:block; margin-bottom:8px; font-size:12px; font-weight:600; color:var(--text2); }
+.cq-missed-field { display:flex; align-items:center; gap:10px; }
+.cq-missed-field input { width:72px; height:48px; background:var(--void3); border-color:#596878; font:600 18px var(--mono); }
+.cq-missed-field > span { font-size:12px; color:var(--text2); white-space:nowrap; }
+.cq-battle-earned strong { display:flex; align-items:center; min-height:48px; padding:8px 12px; border:1px solid var(--purple-border); border-radius:5px; background:#252139; color:var(--text); font:600 14px var(--mono); white-space:nowrap; }
+.cq-missed small { grid-column:1 / -1; color:var(--text2); font-size:11px; }
+
+@media (max-width:1199px) {
+  .cq-page-layout { grid-template-columns:minmax(0,1fr) 220px; gap:18px; }
+  .cq-layout, .cq-analysis { grid-template-columns:1fr; }
+  .cq-panel { grid-row:auto; }
+  .cq-skips { padding:24px 0 0; border-left:0; border-top:1px solid var(--border2); }
+  .cq-ladder { grid-template-columns:repeat(7,minmax(0,1fr)); }
+}
+@media (max-width:799px) {
+  .cq-page-layout { display:flex; flex-direction:column; gap:16px; }
+  .cq-context { display:contents; }
+  .cq-context .cq-hero { order:0; width:100%; display:grid; grid-template-columns:1fr auto; gap:12px; padding:16px; }
+  .cq-context .mh-main-val { font-size:24px; }
+  .cq-context .mh-right { border-top:0; border-left:1px solid var(--border2); padding:0 0 0 16px; }
+  .cq-context .cb-timer { font-size:26px; }
+  .cq-context .cq-conquest-meta time, .cq-context .cb-sub { display:none; }
+  .cq-page-content { order:1; width:100%; }
+  .cq-guide { order:2; width:100%; }
+  .cq-interaction-help { order:0; width:100%; padding:10px 14px; }
+  .cq-layout { padding:16px; }
+  .cq-view-toolbar { gap:8px; }
+  .cq-view-tabs button { padding:10px 12px; }
+  .cq-view-toolbar .cq-actions { margin-left:0; }
+}
+@media (max-width:520px) {
+  .cq-context .cq-hero { padding:12px; }
+  .cq-context .mh-main-val { font-size:22px; }
+  .cq-context .cq-conquest-meta > span { font-size:10px; padding:3px 5px; }
+  .cq-context .mh-right { padding-left:10px; }
+  .cq-context .cb-label { font-size:9px; }
+  .cq-context .cb-timer { font-size:23px; }
+  .cq-layout { padding:12px; }
+  .cq-ladder { grid-template-columns:repeat(4,minmax(0,1fr)); }
+  .cq-wheel svg { max-width:none; }
+  .cq-diagram-projection .cq-crate-rail { padding:88px 22px 100px; }
+  .cq-diagram-projection .cq-report-crate { top:-77px; width:40px; margin-left:-20px; padding:4px 2px; min-height:60px; }
+  .cq-diagram-projection .cq-report-crate img { width:32px; height:34px; }
+  .cq-diagram-projection .cq-report-crate > span { min-width:32px; padding:3px 2px; font-size:12px; }
+  .cq-diagram-projection .cq-missed { padding:12px; gap:12px; grid-template-columns:1fr; }
+  .cq-battle-earned { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+  .cq-battle-earned > span { margin-bottom:0; }
+  .cq-battle-earned strong { min-height:40px; font-size:12px; }
+}

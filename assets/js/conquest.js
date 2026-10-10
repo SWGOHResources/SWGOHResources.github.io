@@ -409,13 +409,17 @@ function renderPlanner(app, sel, nowMs, shared){
   const timing = conquestTiming(entry, nowMs);
   const conquestHeader = (title,id,cls) => `<header class="merged-hero ${cls}" aria-labelledby="${id}"><div class="mh-left"><${id === 'cqTitle' ? 'h1' : 'h2'} class="mh-tag" id="${id}">${title}</${id === 'cqTitle' ? 'h1' : 'h2'}><div class="mh-title-row"><div class="mh-main-val">Day <span data-clock="day">${timing.day}</span><span class="mh-of">/ ${timing.duration}</span></div></div><div class="cq-conquest-meta"><span>Volume ${esc(entry.volume || '—')}</span><span>${esc(difficulty[0].toUpperCase()+difficulty.slice(1))}</span><span>${esc(entry.unit || 'Conquest rewards')}</span><time datetime="${esc(entry.starts)}">${esc(dateLabel(entry.starts))} – ${esc(dateLabel(entry.ends))}</time></div></div><div class="mh-right"><div class="cb-text"><span class="cb-label" data-clock="label">${timing.state === 'upcoming' ? 'Starts in' : timing.state === 'active' ? 'Time remaining' : 'Conquest complete'}</span><span class="cb-timer" data-clock="remaining">${timing.remaining}</span><span class="cb-sub" data-clock="boundary">${timing.state === 'upcoming' ? 'Opens' : 'Closes'} ${esc(dateLabel(timing.state === 'upcoming' ? entry.starts : entry.ends))}</span></div></div></header>`;
   app.innerHTML = `
+    <div class="cq-page-layout"><aside class="cq-context" aria-label="Conquest information">
     ${conquestHeader('Conquest planner','cqTitle','cq-hero')}
+    <section class="cq-guide"><h2>Teams &amp; video guides</h2><p>Plan your feats here. For team compositions and video guides, visit BitDynasty’s site.</p><a href="https://swgoh4.life/conquest/" target="_blank" rel="noopener">SWGOH 4 Life <span aria-hidden="true">↗</span></a></section>
+    <details class="cq-interaction-help"><summary>How to use the planner</summary><dl><dt>Basic Planner</dt><dd>Tick a feat to add it to your plan.</dd><dt>Desktop diagram &amp; crates</dt><dd>Left click for details. Right click a feat to plan or skip it; right click a crate to set your target. Hover to preview.</dd><dt>Mobile &amp; touch</dt><dd>Tap for details, then use Plan feat, Skip feat or Set target crate in the popup.</dd><dt>Keyboard</dt><dd>Press Enter or Space for details. Use the popup buttons to change your plan.</dd></dl></details>
+    </aside><div class="cq-page-content">
     <p class="cq-notice" data-cq="notice" role="status"${entry.status === 'preliminary' && timing.state === 'upcoming' ? '' : ' hidden'}><strong>Upcoming Conquest · provisional feats</strong><span>Requirements and keycard values may change before the Conquest starts.</span></p>
 
     ${Object.keys(diffs).length > 1 ? `<div class="cq-difficulty" role="group" aria-label="Difficulty">${Object.keys(diffs).map(d => `<button type="button" class="sf-pill" data-diff="${esc(d)}" aria-pressed="${d === difficulty}">${esc(d)}</button>`).join('')}</div>` : ''}
     <div class="cq-view-toolbar"><div class="cq-view-tabs" role="tablist" aria-label="Conquest views">
-      <button type="button" role="tab" id="cqPlannerTab" data-view="planner" aria-controls="cqPlannerView" aria-selected="true">Planner</button>
-      <button type="button" role="tab" id="cqCoverageTab" data-view="coverage" aria-controls="cqCoverageView" aria-selected="false" tabindex="-1">Coverage &amp; skips</button>
+      <button type="button" role="tab" id="cqPlannerTab" data-view="planner" aria-controls="cqPlannerView" aria-selected="true">Basic Planner</button>
+      <button type="button" role="tab" id="cqCoverageTab" data-view="coverage" aria-controls="cqCoverageView" aria-selected="false" tabindex="-1">Advanced View</button>
     </div><div class="cq-actions"><button class="gear-btn" type="button" data-copy-link>Copy plan link</button><button class="gear-btn" type="button" data-reset-plan>Reset plan</button></div></div>
     <div class="cq-layout" id="cqPlannerView" role="tabpanel" aria-labelledby="cqPlannerTab">
       <section class="cq-work explorer" aria-labelledby="cqChoose"><div class="section-head cq-work-head"><h2 id="cqChoose">Feats</h2><span class="rule"></span></div>
@@ -442,15 +446,14 @@ function renderPlanner(app, sel, nowMs, shared){
       </aside>
     </div>
     <div id="cqCoverageView" role="tabpanel" aria-labelledby="cqCoverageTab" hidden>
-      <section class="cq-report explorer" aria-labelledby="cqReportTitle">
-        ${conquestHeader('Conquest plan','cqReportTitle','cq-report-header')}
+      <section class="cq-report explorer" aria-label="Advanced conquest plan">
         <div class="cq-analysis">
           <section class="cq-coverage" aria-labelledby="cqCoverageTitle">
             <div class="section-head"><h2 id="cqCoverageTitle">Conquest coverage</h2><span class="rule"></span></div>
             <div class="cq-diagram-totals" data-cq="diagram-totals" aria-live="polite"></div><div class="cq-map-visual"><div class="cq-wheel" data-cq="wheel"></div><div class="cq-map-key"><span class="planned">Planned</span><span class="skipped">Skipped</span><span class="reward"><img src="${withAssetV('assets/img/atlases/standard_rgba_atlas/icon_conquest_artifact_rarity_04.png')}" alt="">Data disk</span><span class="reward"><img src="${withAssetV('assets/img/atlases/standard_rgba_atlas/icon_conquest_consumable_tech.png')}" alt="">Consumable</span><div class="cq-sector-key"><span><b>GL</b>Global feats</span><span><b>S1–S5</b>Sectors</span></div></div></div>
 
             <section class="cq-diagram-projection" aria-label="Projected crate"><div class="cq-report-rewards" data-cq="report-rewards"></div>
-            <div class="cq-missed"><label for="cqMissed">Battle keycards missed</label><input id="cqMissed" type="number" inputmode="numeric" min="0" max="${cap}" step="1" value="${cap-stars}" data-missed-input><span data-cq="battle-keycards"></span></div></section>
+            <div class="cq-missed"><div class="cq-missed-entry"><label for="cqMissed">Battle keycards missed</label><div class="cq-missed-field"><input id="cqMissed" type="number" inputmode="numeric" min="0" max="${cap}" step="1" value="${cap-stars}" aria-describedby="cqMissedHint" data-missed-input><span> / ${cap} missed</span></div></div><div class="cq-battle-earned"><span>Battle keycards earned</span><strong data-cq="battle-keycards"></strong></div><small id="cqMissedHint">Enter keycards you expect to lose from battles.</small></div></section>
           </section>
           <section class="cq-skips" aria-labelledby="cqSkipTitle">
             <div class="section-head"><h2 id="cqSkipTitle">Skipped feats</h2><span class="rule"></span></div>
@@ -461,7 +464,7 @@ function renderPlanner(app, sel, nowMs, shared){
         </div>
 
       </section>
-    </div><dialog class="cq-chart-dialog" aria-labelledby="cqChartTitle"><button class="gear-btn" type="button" data-chart-close aria-label="Close">×</button><div data-cq="chart-preview"></div></dialog><div class="cq-chart-tooltip" role="tooltip" data-cq="chart-tooltip" hidden></div><p class="cq-feedback" role="status" data-cq="feedback"></p>`;
+    </div></div></div><dialog class="cq-chart-dialog" aria-labelledby="cqChartTitle"><button class="gear-btn" type="button" data-chart-close aria-label="Close">×</button><div data-cq="chart-preview"></div></dialog><div class="cq-chart-tooltip" role="tooltip" data-cq="chart-tooltip" hidden></div><p class="cq-feedback" role="status" data-cq="feedback"></p>`;
 
   function featRow(f){
     const rawDesc = featDesc(f, difficulty), art = featArt(f), reward = featReward(f.reward);
@@ -718,7 +721,6 @@ function renderPlanner(app, sel, nowMs, shared){
     view = next === 'coverage' ? 'coverage' : 'planner';
     app.querySelector('#cqPlannerView').hidden = view !== 'planner';
     app.querySelector('#cqCoverageView').hidden = view !== 'coverage';
-    app.querySelector('.cq-hero').hidden = view === 'coverage';
     app.querySelectorAll('[data-view]').forEach(button=>{
       const active = button.dataset.view === view;
       button.setAttribute('aria-selected',String(active)); button.tabIndex = active ? 0 : -1;
@@ -730,7 +732,7 @@ function renderPlanner(app, sel, nowMs, shared){
     if(segment && ['Enter',' '].includes(event.key)){
       event.preventDefault(); segment.dispatchEvent(new MouseEvent('click',{bubbles:true})); return;
     }
-    if(!event.target.matches('[data-view]') || !['ArrowLeft','ArrowRight','Home','End'].includes(event.key)) return;
+    if(event.ctrlKey || event.metaKey || event.altKey || !event.target.matches('[data-view]') || !['ArrowLeft','ArrowRight','Home','End'].includes(event.key)) return;
     event.preventDefault();
     showView(event.key === 'Home' ? 'planner' : event.key === 'End' ? 'coverage' : view === 'planner' ? 'coverage' : 'planner');
     app.querySelector('[data-view="'+view+'"]').focus();
