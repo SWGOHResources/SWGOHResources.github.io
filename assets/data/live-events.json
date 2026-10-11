@@ -1,5 +1,5 @@
 {
- "pulledAt": 1791668994151,
+ "pulledAt": 1791709210333,
  "gameDataVersion": "0.40.6:Oq-TxiewST69Ow5E1gLW3g",
  "events": [
   {
@@ -32,16 +32,6 @@
    "art": "live/events-theronin.png"
   },
   {
-   "id": "EVENT_OMEGA_BATTLES_06_EMPIRESHIPS",
-   "name": "Imperial Fleet Omega Battles",
-   "kind": "omega",
-   "unit": "GALACTICCHALLENGESDEATHSTAR",
-   "startMs": 1791529200000,
-   "endMs": 1791615600000,
-   "live": false,
-   "art": "live/events-galactic-challenges-deathstar.png"
-  },
-  {
    "id": "EVENT_RESOURCE_SMUGGLERS_RUN_3",
    "name": "Smuggler's Run III",
    "kind": "smugglers-run",
@@ -58,7 +48,7 @@
    "unit": "FORESTMOON",
    "startMs": 1791615600000,
    "endMs": 1791702000000,
-   "live": true,
+   "live": false,
    "art": "live/events-forestmoon.png"
   },
   {
