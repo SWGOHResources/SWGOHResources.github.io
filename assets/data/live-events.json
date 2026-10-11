@@ -1,5 +1,5 @@
 {
- "pulledAt": 1791709210333,
+ "pulledAt": 1791735642255,
  "gameDataVersion": "0.40.6:Oq-TxiewST69Ow5E1gLW3g",
  "events": [
   {
@@ -30,16 +30,6 @@
    "endMs": 1791914400000,
    "live": true,
    "art": "live/events-theronin.png"
-  },
-  {
-   "id": "EVENT_RESOURCE_SMUGGLERS_RUN_3",
-   "name": "Smuggler's Run III",
-   "kind": "smugglers-run",
-   "unit": "SMUGGLERSRUN",
-   "startMs": 1791540000000,
-   "endMs": 1791626400000,
-   "live": false,
-   "art": "live/events-smugglersrun.png"
   },
   {
    "id": "EVENT_ASSAULT_EWOK",
