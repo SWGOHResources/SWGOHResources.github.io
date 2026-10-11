@@ -1,5 +1,5 @@
 {
- "pulledAt": 1791735642255,
+ "pulledAt": 1791756270132,
  "gameDataVersion": "0.40.6:Oq-TxiewST69Ow5E1gLW3g",
  "events": [
   {
@@ -130,6 +130,16 @@
    "endMs": 1792479600000,
    "live": false,
    "art": "live/events-galacticchallenges-dathomir.png"
+  },
+  {
+   "id": "EVENT_FLEET_MASTERY_LEVIATHAN",
+   "name": "Dark Sovereign",
+   "kind": "fleet",
+   "unit": "LEVIATHAN",
+   "startMs": 1792479600000,
+   "endMs": 1792566000000,
+   "live": false,
+   "art": "live/events-leviathan.png"
   }
  ]
 }
