@@ -8,7 +8,8 @@ let data, units, plan = newPlan(), selected = { squad: 0, slot: 0 }, history = [
 let faction = '', search = '', hideAssigned = false, role = '', storageFailed = false;
 const squads = () => plan.banks[plan.size];
 const assigned = () => new Set(squads().flatMap(s => s.slots).filter(Boolean));
-function announce(message) { $('status').textContent = message; }
+let statusTimer;
+function announce(message) { clearTimeout(statusTimer); $('status').textContent = message; statusTimer=setTimeout(()=>{ $('status').textContent=''; },4000); }
 function persist() {
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(plan)); storageFailed = false; }
   catch { storageFailed = true; }
@@ -25,11 +26,12 @@ function portrait(unit, leader = false) {
   const opts = unitOptions(plan, unit), atlas = data.atlas;
   const x = unit.portrait % atlas.columns / (atlas.columns - 1) * 100;
   const y = Math.floor(unit.portrait / atlas.columns) / (atlas.rows - 1) * 100;
-  return `<span class="sp-portrait ${unit.alignment === 'Dark Side' ? 'dark' : unit.alignment === 'Neutral' ? 'neutral' : ''}" aria-hidden="true"><span class="sp-face" style="background-image:url('${escape(data.atlas.path)}');background-position:${x}% ${y}%;background-size:${atlas.columns * 100}% ${atlas.rows * 100}%"></span>${leader ? '<span class="sp-lead-icon">♛</span>' : ''}<span class="sp-relic">R${opts.relic}</span>${opts.omicrons.length ? `<span class="sp-omi-badge">Ω ${opts.omicrons.length}</span>` : ''}</span>`;
+  const side = unit.alignment === 'Dark Side' ? 'dark' : unit.alignment === 'Neutral' ? 'neutral' : 'light';
+  return `<span class="sp-portrait ${side} ${unit.galacticLegend ? 'galactic-legend' : ''}" aria-hidden="true"><span class="sp-face" style="background-image:url('${escape(data.atlas.path)}');background-position:${x}% ${y}%;background-size:${atlas.columns * 100}% ${atlas.rows * 100}%"></span><span class="sp-relic-frame"></span><span class="sp-relic-frame mirror"></span>${leader ? '<span class="sp-lead-icon"></span>' : ''}<span class="sp-relic"><span class="sr-only">R</span>${opts.relic}</span>${unit.zetaCount ? `<span class="sp-zeta-badge" title="Max-tier Zetas">${unit.zetaCount}</span>` : ''}${opts.omicrons.length ? `<span class="sp-omi-badge">${opts.omicrons.length}</span>` : ''}</span>`;
 }
 function stars(unit) {
   const n = unitOptions(plan, unit).stars;
-  return `<span class="sp-stars" aria-label="${n} planned stars">${'★'.repeat(n)}<span class="sp-unlit">${'☆'.repeat(7 - n)}</span></span>`;
+  return `<span class="sp-stars" aria-label="${n} planned stars">${Array.from({length:7}, (_,i) => `<i class="${i < n ? '' : 'sp-unlit'}"></i>`).join('')}</span>`;
 }
 function renderRoster() {
   const used = assigned();
@@ -44,34 +46,34 @@ function renderRoster() {
   $('unitRoster').innerHTML = matching.length ? matching.map(u => {
     const owner = squads().findIndex(s => s.slots.includes(u.id));
     const hint = used.has(u.id) ? `Assigned to ${squads()[owner].name}. Choose to swap or move.` : 'Choose to assign to the selected slot.';
-    return `<button type="button" class="sp-roster-unit ${used.has(u.id) ? 'assigned' : ''}" data-unit="${escape(u.id)}" draggable="true" aria-label="${escape(u.name + '. ' + hint)}" title="${escape(hint)}">${portrait(u)}<span class="sp-roster-unit-name">${escape(u.name)}</span><span class="sp-roster-unit-role">${u.abilities.some(a => a.type === 'Leader') ? '♛ ' : ''}${escape(u.role)}${u.abilities.some(a => a.omicron) ? ' · Ω' : ''}</span></button>`;
+    return `<button type="button" class="sp-roster-unit ${used.has(u.id) ? 'assigned' : ''}" data-unit="${escape(u.id)}" draggable="true" aria-label="${escape(u.name + '. ' + hint)}" title="${escape(hint)}">${portrait(u)}${stars(u)}<span class="sp-roster-unit-name">${escape(u.name)}</span></button>`;
   }).join('') : '<p class="sp-empty">No characters match these filters. Try another faction, role or name.</p>';
 }
 function slotMarkup(squad, si, index, interactive = true) {
   const u = units.get(squad.slots[index]);
   const active = interactive && selected.squad === si && selected.slot === index;
   const label = u ? `${u.name}, ${index === 0 ? 'leader' : 'slot ' + (index + 1)}. Select to swap.` : `Empty ${index === 0 ? 'leader' : 'slot ' + (index + 1)}. Select to add a character.`;
-  return `<div class="sp-slot ${u ? '' : 'sp-empty-slot'} ${active ? 'selected' : ''}" data-slot-container="${si}:${index}">
+  return `<div class="sp-slot ${u ? 'sp-filled-slot' : 'sp-empty-slot'} ${active ? 'selected' : ''}" data-slot-container="${si}:${index}">
     ${interactive ? `<button type="button" class="sp-slot-button" data-slot="${si}:${index}" aria-label="${escape(squad.name + ': ' + label)}" aria-pressed="${active}"></button>` : ''}
-    <span class="sp-slot-index">${index === 0 ? '♛ LEADER' : 'SLOT 0' + (index + 1)}</span>
+    <span class="sp-slot-index">${index === 0 ? 'LEADER' : '0' + (index + 1)}</span>
     ${u ? `${portrait(u, index === 0)}${stars(u)}<span class="sp-slot-name">${escape(u.name)}</span><span class="sp-slot-role">${escape(u.role)}</span>${interactive ? `<span class="sp-slot-tools"><button type="button" class="sp-icon-btn" data-detail="${escape(u.id)}" aria-label="Details and upgrades for ${escape(u.name)}" title="Details & upgrades">ⓘ</button><button type="button" class="sp-icon-btn" data-remove="${si}:${index}" aria-label="Remove ${escape(u.name)}" title="Remove character">×</button></span>` : ''}`
-      : '<span class="sp-slot-plus" aria-hidden="true">＋</span><span class="sp-slot-name">Choose a character</span><span class="sp-slot-role">' + (index === 0 ? 'Leadership goes here' : 'Click to assign') + '</span>'}
+      : '<span class="sp-slot-plus" aria-hidden="true"></span><span class="sp-slot-name">' + (index === 0 ? 'Select leader' : 'Select character') + '</span>'}
     </div>`;
 }
 function leaderMarkup(squad) {
   const u = units.get(squad.slots[0]), lead = leaderText(plan, u);
-  const summary = lead?.text.split('\n').find(Boolean) || (u ? 'This character has no leader ability. Select another character for the first slot to activate a leadership.' : 'Place a character in the first slot to see their leadership.');
-  return `<div class="sp-leader-panel"><p class="sp-eyebrow">♛ ${lead ? 'ACTIVE LEADERSHIP' : 'LEADER ABILITY'}</p><h3>${escape(lead?.ability.name || 'No leadership selected')}</h3>${lead ? `<span class="sp-ability-badge ${lead.useOmicron ? 'eligible' : ''}">${lead.useOmicron ? 'Omicron mode applies' : 'Max non-Omicron tier'}</span>` : ''}<p>${escape(summary.length > 190 ? summary.slice(0, 187) + '…' : summary)}</p>${u ? `<button class="sp-text-btn" type="button" data-detail="${escape(u.id)}">Read full leadership ↗</button>` : ''}</div>`;
+  const summary = lead?.text.split('\n').find(Boolean) || (u ? 'This character has no leader ability.' : '');
+  return `<div class="sp-leader-panel" title="${escape(summary)}"><span class="sp-lead-emblem" aria-hidden="true"></span><p class="sp-eyebrow">LEADER ABILITY</p><h3>${escape(lead?.ability.name || 'No leadership selected')}</h3>${lead ? `<span class="sp-ability-badge ${lead.useOmicron ? 'eligible' : ''}">${lead.useOmicron ? 'Omicron mode applies' : 'Max non-Omicron tier'}</span>` : ''}<p class="sr-only">${escape(summary)}</p>${u ? `<button class="sp-text-btn" type="button" data-detail="${escape(u.id)}">Ability details</button>` : ''}</div>`;
 }
 function omiMarkup(squad) {
   const chips = squad.slots.flatMap((id, slot) => {
     const u = units.get(id); if (!u) return [];
     return u.abilities.filter(a => a.omicron && unitOptions(plan, u).omicrons.includes(a.id)).map(a => {
       const s = omicronStatus(plan, u, a, slot);
-      return `<span class="sp-ability-badge ${s.kind}" title="${escape(a.name + ': ' + s.label)}">Ω ${escape(u.name)} · ${escape(a.name)} · ${escape(a.omicron.label)}${s.kind === 'eligible' ? ' · mode applies' : s.label === 'Requires leader slot' ? ' · needs leader' : ' · inactive'}</span>`;
+      return `<span class="sp-ability-badge ${s.kind}" title="${escape(a.name + ': ' + s.label)}"><i class="sp-omi-icon" aria-hidden="true"></i> ${escape(u.name)} · ${escape(a.name)} · ${escape(a.omicron.label)}${s.kind === 'eligible' ? ' · mode applies' : s.label === 'Requires leader slot' ? ' · needs leader' : ' · inactive'}</span>`;
     });
   });
-  return `<div class="sp-omicron-strip">${chips.length ? chips.join('') : 'Ω No Omicrons equipped in this squad. Open character details to plan upgrades.'}</div>`;
+  return chips.length ? `<div class="sp-omicron-strip">${chips.join('')}</div>` : '';
 }
 function renderBoard() {
   $('boardCount').textContent = `${assigned().size} / ${squads().length * plan.size} assigned`;
@@ -79,7 +81,7 @@ function renderBoard() {
     const expanded = selected.squad === si;
     return `<article class="sp-squad"><div class="sp-squad-header"><div class="sp-squad-title"><span class="sp-squad-number">${String(si + 1).padStart(2, '0')}</span><input class="sp-squad-name" maxlength="80" value="${escape(s.name)}" data-name="${si}" aria-label="Squad ${si + 1} name"></div><div class="sp-squad-actions"><span class="sp-squad-fill">${s.slots.filter(Boolean).length}/${plan.size}</span><button type="button" class="sp-icon-btn" data-expand="${si}" aria-label="Edit ${escape(s.name)}" title="Edit squad">${expanded ? '▾' : '▸'}</button>${squads().length > 1 ? `<button type="button" class="sp-icon-btn" data-delete="${si}" aria-label="Delete ${escape(s.name)}" title="Delete squad">×</button>` : ''}</div></div>
       <div class="${expanded ? 'sp-formation ' + (plan.size === 3 ? 'sp-formation-three' : '') : 'sp-compact-row'}" style="--slots:${plan.size}">${s.slots.map((_, i) => slotMarkup(s, si, i)).join('')}${expanded ? leaderMarkup(s) : ''}</div>
-      ${expanded ? '' : compactLeader(s)}${omiMarkup(s)}</article>`;
+      ${expanded ? '' : compactLeader(s)}<div class="sr-only">${omiMarkup(s)}</div></article>`;
   }).join('');
   const target = squads()[selected.squad], current = units.get(target?.slots[selected.slot]);
   $('selectionHint').textContent = `${target?.name || 'Squad'} · ${selected.slot === 0 ? 'leader slot' : 'slot ' + (selected.slot + 1)} selected${current ? ' (' + current.name + ')' : ''}. Choose a character to ${current ? 'swap' : 'assign'}, or drag one into any slot.`;
@@ -87,10 +89,10 @@ function renderBoard() {
 }
 function compactLeader(squad) {
   const lead = leaderText(plan, units.get(squad.slots[0]));
-  return `<div class="sp-compact-leader">♛ Leadership: <strong>${escape(lead?.ability.name || 'None')}</strong>${lead?.useOmicron ? ' · Ω mode applies' : ''}</div>`;
+  return `<div class="sp-compact-leader">Leadership: <strong>${escape(lead?.ability.name || 'None')}</strong>${lead?.useOmicron ? ' · Ω mode applies' : ''}</div>`;
 }
 function renderCapture() {
-  $('screenshotBoard').innerHTML = `<div class="sp-capture-head"><div><p class="sp-eyebrow">SWGOH::RESOURCES / SQUAD PLAN</p><h2>${escape(plan.title || 'My squad plan')}</h2><p>${plan.size}v${plan.size} · ${escape(MODES[plan.mode])} · ${squads().length} ${squads().length === 1 ? 'squad' : 'squads'}</p></div><span class="sp-count">${assigned().size} characters assigned</span></div>${squads().map((s, si) => `<article class="sp-squad"><div class="sp-squad-header"><span>${String(si + 1).padStart(2, '0')} / ${escape(s.name)}</span><span class="sp-squad-fill">${s.slots.filter(Boolean).length}/${plan.size}</span></div><div class="sp-compact-row" style="--slots:${plan.size}">${s.slots.map((_, i) => slotMarkup(s, si, i, false)).join('')}</div>${compactLeader(s)}${omiMarkup(s)}</article>`).join('')}<p class="sp-capture-footer">Stars, relics and Omicrons are planned upgrades. Mode eligibility does not confirm all kit conditions.<br>swgohresources.github.io/squads/ · Character data ${escape(data.generatedAt.slice(0, 10))}</p>`;
+  $('screenshotBoard').innerHTML = `<div class="sp-capture-head"><div><p class="sp-eyebrow">SWGOH::RESOURCES / SQUAD PLAN</p><h2>${escape(plan.title || 'My squad plan')}</h2><p>${plan.size}v${plan.size} · ${escape(MODES[plan.mode])} · ${squads().length} ${squads().length === 1 ? 'squad' : 'squads'}</p></div><span class="sp-count">${assigned().size} characters assigned</span></div>${squads().map((s, si) => `<article class="sp-squad"><div class="sp-squad-header"><span>${String(si + 1).padStart(2, '0')} / ${escape(s.name)}</span><span class="sp-squad-fill">${s.slots.filter(Boolean).length}/${plan.size}</span></div><div class="sp-compact-row" style="--slots:${plan.size}">${s.slots.map((_, i) => slotMarkup(s, si, i, false)).join('')}</div>${compactLeader(s)}${omiMarkup(s)}</article>`).join('')}<p class="sp-capture-footer">swgohresources.github.io/squads/ · Character data ${escape(data.generatedAt.slice(0, 10))}</p>`;
 }
 function render() {
   if (!data) return;
@@ -100,7 +102,7 @@ function render() {
   $('battleMode').value = plan.mode;
   document.querySelectorAll('[data-size]').forEach(b => b.setAttribute('aria-pressed', String(Number(b.dataset.size) === plan.size)));
   $('undoChange').disabled = history.length === 0;
-  renderRoster(); renderBoard(); renderCapture();
+  renderRoster(); renderBoard(); renderCapture(); enhanceSelects();
 }
 function setTarget(si, slot) { selected = { squad: si, slot }; renderBoard(); }
 function place(id, si = selected.squad, slot = selected.slot) {
@@ -126,8 +128,9 @@ function details(id, open = true) {
       const status = a.omicron ? omicronStatus(plan, u, a, slot) : null;
       const label = a.type === 'Leader' ? (slot === 0 ? 'Active leadership' : 'Leadership · requires first slot') : a.type;
       const base = `<p class="sp-ability-text">${escape(a.baseText)}</p>`;
-      return `<section class="sp-detail-ability"><p class="sp-eyebrow">${escape(label)}</p><h3>${escape(a.name)}${a.zeta ? ' · Zeta' : ''}</h3>${a.omicron ? `<span class="sp-ability-badge">Ω ${escape(a.omicron.label)}</span><label class="sp-omi-toggle"><input type="checkbox" data-omicron="${escape(a.id)}" ${opts.omicrons.includes(a.id) ? 'checked' : ''}>Equip this Omicron in the plan</label><span class="sp-ability-badge ${status.kind}">${escape(slot < 0 && status.kind === 'eligible' ? 'Mode applies · character unassigned' : status.label)}</span><details><summary class="sp-text-btn">Read base ability</summary>${base}</details><p class="sp-ability-text">${escape(a.omicron.text)}</p>` : base}</section>`;
-    }).join('') || '<p class="sp-detail-note">This character has no leadership or Omicron upgrades.</p>'}<p class="sp-detail-note">${plan.size}v${plan.size} · ${escape(MODES[plan.mode])}. Mode eligibility checks the battle mode and leader slot. Other squad, enemy, mission and battle conditions are described in the kit above and are not simulated.</p><div class="sp-dialog-actions"><button type="button" class="sp-btn" data-close>Done</button></div>`;
+      return `<section class="sp-detail-ability"><p class="sp-eyebrow">${escape(label)}</p><h3>${escape(a.name)}${a.zeta ? ' <img class="sp-zeta-icon" src="/assets/img/squads/zeta.svg" alt="Zeta">' : ''}</h3>${a.omicron ? `<span class="sp-ability-badge"><i class="sp-omi-icon" aria-hidden="true"></i> ${escape(a.omicron.label)}</span><label class="sp-omi-toggle"><input type="checkbox" data-omicron="${escape(a.id)}" ${opts.omicrons.includes(a.id) ? 'checked' : ''}>Equip this Omicron in the plan</label><span class="sp-ability-badge ${status.kind}">${escape(slot < 0 && status.kind === 'eligible' ? 'Mode applies · character unassigned' : status.label)}</span><details><summary class="sp-text-btn">Read base ability</summary>${base}</details><p class="sp-ability-text">${escape(a.omicron.text)}</p>` : base}</section>`;
+    }).join('') || '<p class="sp-detail-note">This character has no leadership or Omicron upgrades.</p>'}<p class="sp-detail-note">${plan.size}v${plan.size} · ${escape(MODES[plan.mode])}. Zetas are shown at maximum tier. Mode eligibility checks the battle mode and leader slot. Other squad, enemy, mission and battle conditions are described in the kit above and are not simulated.</p><div class="sp-dialog-actions"><button type="button" class="sp-btn" data-close>Done</button></div>`;
+  enhanceSelects();
   if (open) $('unitDetails').showModal(); else $('unitDetails').scrollTop = currentScroll;
 }
 function downloadFile(name, contents, type) {
@@ -139,7 +142,7 @@ function bind() {
   $('planTitle').addEventListener('change', e => mutate(() => { plan.title = e.target.value.trim() || 'My squad plan'; }));
   document.querySelectorAll('[data-size]').forEach(b => b.addEventListener('click', () => {
     if (plan.size === Number(b.dataset.size)) return;
-    mutate(() => { changeSize(plan, Number(b.dataset.size)); selected = { squad: 0, slot: 0 }; }, 'Formation changed. Both lineups are kept separately.');
+    mutate(() => { changeSize(plan, Number(b.dataset.size)); selected = { squad: 0, slot: 0 }; }, 'Formation changed.');
   }));
   $('battleMode').addEventListener('change', e => mutate(() => changeMode(plan, e.target.value), e.target.value !== 'gac' && e.target.value !== 'other' ? 'This battle mode uses 5v5 squads.' : 'Battle mode updated.'));
   $('factionFilter').addEventListener('change', e => { faction = e.target.value; renderRoster(); });
@@ -176,7 +179,7 @@ function bind() {
       plan.banks[plan.size] = [{ name: 'Doctor Aphra · example', slots: Array.from({ length: plan.size }, (_, i) => ids[i] || null) }];
       ids.forEach(id => { const u = units.get(id); plan.options[id] = { relic: 7, stars: 7, omicrons: u.abilities.filter(a => a.omicron).map(a => a.id) }; });
       selected = { squad: 0, slot: 0 }; faction = 'species_droid'; $('factionFilter').value = faction;
-    }, 'Example loaded with planned upgrades. Edit any slot to make it your own.');
+    }, 'Example loaded.');
   });
   $('detailsContent').addEventListener('click', e => { if (e.target.closest('[data-close]')) $('unitDetails').close(); });
   $('detailsContent').addEventListener('change', e => {
@@ -191,13 +194,13 @@ function bind() {
   $('unitDetails').addEventListener('close', () => { detailUnit = null; });
   $('screenshotToggle').addEventListener('click', () => {
     screenshot = !screenshot; renderCapture(); document.body.classList.toggle('sp-screenshot', screenshot);
-    $('screenshotBoard').hidden = !screenshot; $('screenshotToggle').setAttribute('aria-pressed', String(screenshot)); $('screenshotToggle').textContent = screenshot ? '← Back to builder' : '▣ Screenshot view';
+    $('screenshotBoard').hidden = !screenshot; $('screenshotToggle').setAttribute('aria-pressed', String(screenshot)); $('screenshotToggle').textContent = screenshot ? 'Back to builder' : 'Screenshot view';
   });
   $('downloadPng').addEventListener('click', async () => {
     const button = $('downloadPng'); button.disabled = true; button.textContent = 'Preparing…';
     try { await document.fonts?.ready; await downloadPlanPng(plan, data); announce('Squad board saved as a PNG.'); }
     catch { announce('Image export failed. Use Screenshot view, or export a plan file to keep your work.'); }
-    finally { button.disabled = false; button.textContent = '↓ Save PNG'; }
+    finally { button.disabled = false; button.textContent = 'Save PNG'; }
   });
   $('sharePlan').addEventListener('click', async () => {
     const url = new URL('/squads/', location.href); url.hash = 'plan=' + encodePlan(plan);
@@ -230,12 +233,58 @@ function bind() {
     } catch { announce('That share link is invalid. Your current plan has been kept.'); }
   });
 }
+// Keep native selects as the state/event interface; render their options with atlas controls.
+function enhanceSelects() {
+  document.querySelectorAll('.sp-wrap select,.sp-dialog select').forEach(select => {
+    if (select.parentElement.classList.contains('sp-custom-select')) {
+      select.parentElement.querySelector('button').textContent = select.selectedOptions[0]?.textContent || '';
+      return;
+    }
+    const wrapper = document.createElement('div'); wrapper.className = 'sp-custom-select';
+    select.before(wrapper); wrapper.append(select); select.tabIndex = -1; select.setAttribute('aria-hidden','true');
+    const trigger = document.createElement('button'); trigger.type = 'button';
+    trigger.textContent = select.selectedOptions[0]?.textContent || '';
+    trigger.setAttribute('aria-label', (select.closest('label')?.querySelector('.sp-label,.sr-only')?.textContent || select.id) + ': ' + trigger.textContent);
+    trigger.setAttribute('aria-haspopup','listbox'); trigger.setAttribute('aria-expanded','false');
+    wrapper.append(trigger);
+    let closing = false;
+    const close = () => { if(closing) return; closing=true; wrapper.querySelector('.sp-select-menu')?.remove(); trigger.setAttribute('aria-expanded','false'); closing=false; };
+    select.addEventListener('change', () => { trigger.textContent = select.selectedOptions[0]?.textContent || ''; trigger.setAttribute('aria-label', (select.closest('label')?.querySelector('.sp-label,.sr-only')?.textContent || select.id) + ': ' + trigger.textContent); });
+    trigger.addEventListener('click', () => {
+      if (wrapper.querySelector('.sp-select-menu')) { close(); return; }
+      const menu = document.createElement('div'); menu.className = 'sp-select-menu'; menu.setAttribute('role','listbox');
+      menu.setAttribute('aria-label',trigger.getAttribute('aria-label')); trigger.setAttribute('aria-expanded','true');
+      [...select.options].forEach(option => {
+        const item = document.createElement('button'); item.type='button'; item.textContent=option.textContent;
+        item.setAttribute('role','option'); item.setAttribute('aria-selected',String(option.selected));
+        item.addEventListener('click', () => { select.value=option.value; close(); select.dispatchEvent(new Event('change',{bubbles:true})); trigger.focus(); });
+        menu.append(item);
+      });
+      menu.addEventListener('keydown', event => {
+        const items=[...menu.children], index=items.indexOf(document.activeElement);
+        if (event.key==='Escape') { event.preventDefault(); close(); trigger.focus(); }
+        else if (['ArrowDown','ArrowUp','Home','End'].includes(event.key)) {
+          event.preventDefault(); items[event.key==='Home'?0:event.key==='End'?items.length-1:(index+(event.key==='ArrowDown'?1:-1)+items.length)%items.length].focus();
+        } else if(event.key.length===1 && !event.ctrlKey && !event.metaKey) {
+          const match=items.find((item,i)=>i>index && item.textContent.toLowerCase().startsWith(event.key.toLowerCase())) || items.find(item=>item.textContent.toLowerCase().startsWith(event.key.toLowerCase()));
+          match?.focus();
+        }
+      });
+      wrapper.append(menu); (menu.querySelector('[aria-selected=true]') || menu.firstElementChild)?.focus();
+    });
+    wrapper.addEventListener('focusout', event => { if(!wrapper.contains(event.relatedTarget)) close(); });
+  });
+}
 async function init() {
   try {
     const response = await fetch('/assets/data/squad-planner.json', { cache: 'no-cache' });
     if (!response.ok) throw new Error('HTTP ' + response.status);
     data = await response.json();
     if (data.schema !== 1 || !Array.isArray(data.characters) || !data.characters.length || !data.atlas) throw new Error('Invalid character snapshot');
+    const zetaResponse = await fetch('/assets/data/squad-zetas.json');
+    if (!zetaResponse.ok) throw new Error('Zeta snapshot unavailable');
+    const zetaCounts = await zetaResponse.json();
+    data.characters.forEach(u => { u.zetaCount = u.zetaCount ?? zetaCounts[u.id] ?? 0; });
     units = new Map(data.characters.map(u => [u.id, u]));
     let message = '';
     try { const saved = localStorage.getItem(STORAGE_KEY); if (saved) plan = normalizePlan(JSON.parse(saved), data.characters); }
