@@ -6,6 +6,8 @@
 .sp-shell :focus-visible { outline:2px solid var(--sp-blue); outline-offset:4px; }
 .sp-shell .top-header { background:rgba(9,16,27,.95); }
 .sp-wrap { width:min(1540px,calc(100% - 64px)); margin:40px auto 0; z-index:1; }
+.sp-wip-banner { background:#3a230a; border:1px solid #d9a441; color:#ffe6b3; border-radius:7px; padding:12px 16px; margin-bottom:20px; font-size:13px; text-align:center; }
+.sp-wip-banner strong { color:#ffd36b; }
 .sp-intro { display:flex; justify-content:space-between; align-items:flex-end; gap:24px; margin-bottom:28px; }
 .sp-eyebrow { color:var(--sp-blue); font:10px var(--mono); letter-spacing:2px; margin-bottom:10px; }
 .sp-intro h1 { font:700 clamp(24px,2.5vw,38px)/1.25 var(--disp); letter-spacing:-1.3px; }
