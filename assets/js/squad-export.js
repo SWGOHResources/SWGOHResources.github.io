@@ -9,7 +9,7 @@ function wrap(ctx, text, width) {
   if (line) lines.push(line);
   return lines;
 }
-export function drawPlan(ctx, plan, data, atlasImage) {
+export function drawPlan(ctx, plan, data, atlasImage, sprites) {
   const units = new Map(data.characters.map(u => [u.id, u]));
   const squads = plan.banks[plan.size];
   ctx.font = '14px Inter, sans-serif';
@@ -45,18 +45,22 @@ export function drawPlan(ctx, plan, data, atlasImage) {
     const step = 1080 / plan.size;
     s.slots.forEach((id, i) => {
       const u = units.get(id), cx = 60 + step * (i + .5), cy = y + 124, radius = 57;
-      const color = u?.alignment === 'Dark Side' ? '#f26777' : u?.alignment === 'Neutral' ? '#e2bf65' : '#66cfff';
-      ctx.beginPath(); ctx.arc(cx, cy, radius + 5, 0, Math.PI * 2); ctx.strokeStyle = color + '55'; ctx.lineWidth = 3; ctx.stroke();
-      ctx.beginPath(); ctx.arc(cx, cy, radius, 0, Math.PI * 2); ctx.strokeStyle = u ? color : '#365c75'; ctx.lineWidth = 2; ctx.stroke();
       if (u) {
+        if (u.galacticLegend) ctx.drawImage(sprites.gl_inventory_bg,cx-70,cy-70,140,140);
         ctx.save(); ctx.beginPath(); ctx.arc(cx, cy, radius - 3, 0, Math.PI * 2); ctx.clip();
         const sourceX = u.portrait % data.atlas.columns * data.atlas.size, sourceY = Math.floor(u.portrait / data.atlas.columns) * data.atlas.size;
         ctx.drawImage(atlasImage, sourceX, sourceY, data.atlas.size, data.atlas.size, cx - radius + 3, cy - radius + 3, (radius - 3) * 2, (radius - 3) * 2); ctx.restore();
         const opts = unitOptions(plan, u);
-        ctx.fillStyle = '#682334'; ctx.fillRect(cx - 18, cy + 42, 36, 23); ctx.strokeStyle = '#e57e89'; ctx.strokeRect(cx - 18, cy + 42, 36, 23);
-        ctx.textAlign = 'center'; ctx.fillStyle = '#ffe4df'; ctx.font = 'bold 12px IBM Plex Mono, monospace'; ctx.fillText('R' + opts.relic, cx, cy + 59);
-        if (i === 0) { ctx.fillStyle = '#aae9ff'; ctx.font = '21px sans-serif'; ctx.fillText('♛', cx - 53, cy - 37); }
-        ctx.fillStyle = '#eac86c'; ctx.font = '15px sans-serif'; ctx.fillText('★'.repeat(opts.stars) + '☆'.repeat(7 - opts.stars), cx, y + 205);
+        const side = u.alignment === 'Dark Side' ? 'dark' : u.alignment === 'Neutral' ? 'neutral' : 'light';
+        const frame = sprites['TierHighlight13_' + side], badge = sprites[u.galacticLegend ? 'icon_relic_badge_GL' : side === 'dark' ? 'icon_relic_badge_DS' : side === 'light' ? 'icon_relic_badge_LS' : 'icon_relic_badge'];
+        ctx.drawImage(frame,cx-70,cy-70,70,140);
+        ctx.save(); ctx.translate(cx,cy); ctx.scale(-1,1); ctx.drawImage(frame,-70,-70,70,140); ctx.restore();
+        ctx.drawImage(badge,cx-26,cy+27,52,52);
+        ctx.textAlign = 'center'; ctx.fillStyle = '#fff'; ctx.font = '600 28px "Barlow Condensed",sans-serif'; ctx.shadowColor='#000'; ctx.shadowBlur=3; ctx.fillText(String(opts.relic),cx,cy+62); ctx.shadowBlur=0;
+        if (u.zetaCount) { ctx.drawImage(sprites.zeta,cx-65,cy+25,36,36);ctx.font='600 19px "Barlow Condensed",sans-serif';ctx.fillText(String(u.zetaCount),cx-47,cy+51); }
+        if (opts.omicrons.length) {ctx.drawImage(sprites.icon_omicron,cx+29,cy+25,36,36);ctx.font='600 19px "Barlow Condensed",sans-serif';ctx.fillText(String(opts.omicrons.length),cx+47,cy+51);}
+        if (i === 0) ctx.drawImage(sprites.leader,cx+36,cy-63,30,30);
+        for(let star=0;star<7;star++) ctx.drawImage(sprites[star<opts.stars?'rarity_star':'rarity_star_empty'],cx-56+star*16,y+190,16,18);
         ctx.font = 'bold 13px Inter, sans-serif'; ctx.fillStyle = '#dfedf7'; wrap(ctx, u.name, step - 16).slice(0, 2).forEach((t, n) => ctx.fillText(t, cx, y + 226 + n * 17));
       } else {
         ctx.textAlign = 'center'; ctx.font = '30px sans-serif'; ctx.fillStyle = '#54758b'; ctx.fillText('+', cx, cy + 10);
@@ -68,10 +72,8 @@ export function drawPlan(ctx, plan, data, atlasImage) {
     ctx.font = '14px Inter, sans-serif'; ctx.fillStyle = '#b6dceb';
     ctx.fillText(`♛ Leadership: ${lead?.ability.name || 'None'}${lead?.useOmicron ? ' · Ω mode applies' : ''}`, 60, y + 264, 1070);
     row.omiLines.forEach((line, i) => { ctx.fillStyle = '#a4bdd1'; ctx.fillText(line, 60, y + 288 + i * 22); });
-    if (!row.omiLines.length) { ctx.fillStyle = '#7795ab'; ctx.fillText('Ω No Omicrons equipped', 60, y + 288); }
     y += row.height + 18;
   }
-  ctx.fillStyle = '#8daec4'; ctx.font = '12px Inter, sans-serif'; ctx.fillText('Stars, relics and Omicrons are planned upgrades. Mode eligibility does not confirm all kit conditions.', 48, y + 20);
   ctx.fillStyle = '#67bdd7'; ctx.font = '12px IBM Plex Mono, monospace'; ctx.fillText(`swgohresources.github.io/squads/ · Character data ${data.generatedAt.slice(0, 10)}`, 48, y + 45);
 }
 export async function downloadPlanPng(plan, data) {
@@ -80,7 +82,12 @@ export async function downloadPlanPng(plan, data) {
   await img.decode();
   const canvas = document.createElement('canvas'), ctx = canvas.getContext('2d');
   if (!ctx) throw new Error('Canvas unavailable');
-  drawPlan(ctx, plan, data, img);
+  const names=['TierHighlight13_dark','TierHighlight13_light','TierHighlight13_neutral','icon_relic_badge_DS','icon_relic_badge_LS','icon_relic_badge_GL','icon_relic_badge','icon_omicron','rarity_star','rarity_star_empty','gl_inventory_bg','leader','zeta'];
+  const sprites=Object.fromEntries(await Promise.all(names.map(async name=>{
+    const image=new Image(); image.src=name==='zeta'?'/assets/img/squads/zeta.svg':'/assets/img/atlases/'+(name==='leader'?'standard_rgba_atlas/icon_synergy_leader':'unit_atlas/'+name)+'.png'; await image.decode(); return [name,image];
+  })));
+  await document.fonts.ready;
+  drawPlan(ctx, plan, data, img, sprites);
   const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
   if (!blob) throw new Error('PNG encoding failed');
   const url = URL.createObjectURL(blob), a = document.createElement('a');
