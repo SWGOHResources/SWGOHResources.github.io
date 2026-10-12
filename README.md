@@ -1,5 +1,44 @@
 # SWGOH::RESOURCES — Event Schedule
 
+## Squad planner
+
+`/squads/` (source `squads.html`) provides a faction roster and squad board
+with separate 3v3/5v5 lineups, leader details, planned stars/relics, and
+per-ability Omicron equipment and mode indicators. Characters can be
+assigned or swapped by clicking, or dragged from the roster. Each format
+allows up to 20 squads; a character is used once per format.
+
+Plans save locally under `swgoh-squad-planner-v1`. Share links encode both
+formations and planned upgrades in the URL fragment. JSON export/import
+and Undo are available. Screenshot view removes the editor controls, and
+Save PNG generates a board with the local portrait atlas. No account or
+server is required, and the planner does not calculate GP or simulate kit
+conditions. Green Omicron badges mean the mode matches, not that every
+squad/enemy/mission condition has been satisfied.
+
+The committed `assets/data/squad-planner.json` is built from the public
+[Comlink game-data mirror](https://github.com/swgoh-utils/gamedata).
+English leadership text, faction tags and Omicron mode enums are synced,
+not transcribed. Portraits from SWGOH.GG's public game-asset CDN are packed
+into `assets/img/squads/portraits.webp` to avoid cross-origin export limits.
+The snapshot records its game version, localization version, source
+revision and refresh date. It covers collectible characters; ships,
+summons and PvE-only units are excluded.
+
+Refresh manually after a game update:
+
+```sh
+npm ci
+npm run squads:pull
+```
+
+This fetches one pinned mirror revision, rejects inconsistent collections,
+regenerates the atlas with Sharp, and updates the site's content hashes
+and clean route copies. No scheduled workflow is added. Commit the data,
+atlas and HTML cache changes together. `tests/squad-planner.test.js` and
+`tests/squad-interactions.test.js` cover swaps, format preservation,
+Omicron scope, leaders, persistence and safe sharing.
+
 Named atlas sprites live in `assets/img/atlases/`. They are cropped from the
 original Unity bundles using each NGUI atlas's `mSprites` rectangles and its
 material texture, with original names, borders, padding, mirror flags and

@@ -4,7 +4,7 @@
    and live data go network-first so the schedule stays fresh, falling
    back to cache offline. Bump CACHE below on deploys that change the
    app shell. */
-const CACHE = 'swgoh-schedule-v8';
+const CACHE = 'swgoh-schedule-v9';
 
 const CORE = ['/', '/index.html', '/site.webmanifest'];
 
@@ -61,7 +61,12 @@ self.addEventListener('fetch', event => {
   // available offline).
   // The era emblem is overwritten in-place by the live-event pull.
   // Revalidate it as well so an installed browser sees the next era.
-  if (url.pathname.startsWith('/assets/data/') || url.pathname === '/assets/img/live/era-icon.png') {
+  // ES module imports have stable relative URLs, unlike the versioned
+  // script entry in HTML. Revalidate these too so a planner update cannot
+  // combine new UI code with an old model or export implementation.
+  const plannerModule = url.pathname === '/assets/js/squad-model.js'
+    || url.pathname === '/assets/js/squad-export.js';
+  if (url.pathname.startsWith('/assets/data/') || url.pathname === '/assets/img/live/era-icon.png' || plannerModule) {
     event.respondWith(
       fetch(req, { cache: 'no-cache' }).then(res => {
         if (res && res.ok) {
