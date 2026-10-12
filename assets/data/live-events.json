@@ -1,5 +1,5 @@
 {
- "pulledAt": 1791796846418,
+ "pulledAt": 1791834669419,
  "gameDataVersion": "0.40.6:Oq-TxiewST69Ow5E1gLW3g",
  "events": [
   {
@@ -19,7 +19,7 @@
    "unit": "CONQUESTGENERIC",
    "startMs": 1790618400000,
    "endMs": 1791828000000,
-   "live": true
+   "live": false
   },
   {
    "id": "EVENT_MARQUEE_THERONIN",
@@ -48,7 +48,7 @@
    "unit": "SMUGGLERSRUN",
    "startMs": 1791799200000,
    "endMs": 1791885600000,
-   "live": false,
+   "live": true,
    "art": "live/events-smugglersrun.png"
   },
   {
@@ -130,6 +130,16 @@
    "endMs": 1792566000000,
    "live": false,
    "art": "live/events-leviathan.png"
+  },
+  {
+   "id": "EVENT_ASSAULT_REBEL",
+   "name": "Rebel Roundup Assault Battle",
+   "kind": "assault",
+   "unit": "REBELASSULT",
+   "startMs": 1792566000000,
+   "endMs": 1792652400000,
+   "live": false,
+   "art": "live/events-rebelassult.png"
   }
  ]
 }
