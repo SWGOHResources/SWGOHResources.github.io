@@ -6,6 +6,7 @@
   const routes = {
     '/index.html': '/',
     '/conquest.html': '/conquest/',
+    '/squads.html': '/squads/',
     '/privacy.html': '/privacy/',
     '/cookie-policy.html': '/cookie-policy/',
     '/terms.html': '/terms/',

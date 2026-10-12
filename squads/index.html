@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="swgoh-asset-v" content="0e5db9c79c">
+  <meta charset="UTF-8">
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Squad Planner – SWGOH Resources</title>
+  <meta name="description" content="Build faction squads for 3v3 and 5v5. Plan leaders, relics and Omicrons, then share or download your squad board.">
+  <link rel="canonical" href="https://swgohresources.github.io/squads/">
+  <meta name="theme-color" content="#09111c">
+  <meta name="color-scheme" content="dark">
+  <meta property="og:title" content="Squad Planner – SWGOH Resources">
+  <meta property="og:description" content="Your faction. Your formations. A screenshot-ready squad planner for 3v3 and 5v5.">
+  <meta property="og:url" content="https://swgohresources.github.io/squads/">
+  <link rel="icon" href="/favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/main.css?v=7aec24b044">
+  <link rel="stylesheet" href="/assets/css/squads.css?v=bc65598470">
+  <script src="/assets/js/clean-urls.js?v=22697c0fa5"></script>
+</head>
+<body class="sp-shell">
+<a class="skip-link" href="/squads/#main">Skip to squad planner</a>
+<div class="starfield" id="starfield" aria-hidden="true"></div>
+<header class="top-header">
+  <div class="topbar">
+    <a href="/" class="topbar-title"><img src="/assets/img/icons/favicon-32.png?v=514d88f067" alt="" class="topbar-logo" width="20" height="20">SWGOH<span class="divider-glyph">::</span><span>RESOURCES</span></a>
+    <nav class="topbar-tabs" id="topbarTabs" aria-label="Primary">
+      <a class="tab-btn" href="/">Home</a><a class="tab-btn" href="/conquest/">Conquest</a><a class="tab-btn active" href="/squads/" aria-current="page">Squads</a>
+    </nav>
+    <button class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false" aria-controls="mobilePanel"><span></span><span></span><span></span></button>
+  </div>
+  <div class="mobile-panel" id="mobilePanel"><a class="mp-link" href="/">Home</a><a class="mp-link" href="/conquest/">Conquest</a><a class="mp-link active" href="/squads/">Squads</a></div>
+</header>
+<main id="main" class="sp-wrap">
+  <div class="sp-intro">
+    <div><p class="sp-eyebrow">THE HOLOTABLE / SQUAD PLANNER</p><h1>Your faction. <span>Your formations.</span></h1><p class="sp-description">Find your characters, assemble your squads, and take a plan into battle.</p></div>
+    <div class="sp-intro-actions"><button id="screenshotToggle" class="sp-btn" type="button" aria-pressed="false">▣ Screenshot view</button><button id="downloadPng" class="sp-btn" type="button">↓ Save PNG</button><button id="sharePlan" class="sp-btn sp-primary" type="button">↗ Share plan</button></div>
+  </div>
+  <div class="sp-toolbar">
+    <label class="sp-title-field"><span>PLAN NAME</span><input id="planTitle" maxlength="100" value="My squad plan" aria-label="Plan name"></label>
+    <div class="sp-format"><span class="sp-label">FORMATION</span><div class="sp-segment" role="group" aria-label="Squad size"><button type="button" data-size="5" aria-pressed="true">5v5</button><button type="button" data-size="3" aria-pressed="false">3v3</button></div></div>
+    <label class="sp-mode"><span class="sp-label">BATTLE MODE</span><select id="battleMode"><option value="gac">Grand Arena</option><option value="tw">Territory Wars</option><option value="tb">Territory Battles</option><option value="conquest">Conquest</option><option value="raid">Raids</option><option value="other">Other battles</option></select></label>
+    <div class="sp-save"><span class="sp-save-dot"></span><span id="saveState">Saved on this device</span><button type="button" id="undoChange" class="sp-text-btn" disabled>Undo</button></div>
+  </div>
+  <p class="sp-format-note" id="formatNote">3v3 and 5v5 lineups are saved separately. Relics, stars and Omicrons are your planned upgrades.</p>
+  <div class="sp-workspace" id="workspace" aria-busy="true">
+    <aside class="sp-roster" aria-label="Character roster">
+      <div class="sp-panel-head"><div><p class="sp-eyebrow">CHARACTER ROSTER</p><h2 id="rosterTitle">All characters</h2></div><span id="rosterTotal" class="sp-count">—</span></div>
+      <div class="sp-roster-controls">
+        <label><span class="sp-label">FACTION</span><select id="factionFilter"><option value="">All characters</option></select></label>
+        <label class="sp-search"><span class="sr-only">Search characters</span><span aria-hidden="true">⌕</span><input id="unitSearch" type="search" placeholder="Find a character…" autocomplete="off" maxlength="100"></label>
+        <div class="sp-filter-row"><label><input id="hideAssigned" type="checkbox"> Hide assigned</label><label><span class="sr-only">Filter by role</span><select id="roleFilter"><option value="">Any role</option><option>Attacker</option><option>Tank</option><option>Support</option><option>Healer</option><option value="Leader">Leaders</option><option value="Omicron">Has Omicron</option></select></label></div>
+      </div>
+      <div class="sp-roster-summary"><span id="rosterSummary">Loading roster…</span><span class="sp-roster-legend"><i></i> Assigned</span></div>
+      <div id="unitRoster" class="sp-roster-grid"><p class="sp-empty">Connecting to the holotable…</p></div>
+      <div class="sp-roster-footer"><span id="dataStamp"></span><a href="https://github.com/swgoh-utils/gamedata" target="_blank" rel="noopener">Game data ↗</a></div>
+    </aside>
+    <section class="sp-board" aria-label="Squad board">
+      <div class="sp-board-head"><div><p class="sp-eyebrow">YOUR SQUAD BOARD</p><h2>Build a battle plan</h2></div><span id="boardCount" class="sp-count">0 / 5 assigned</span></div>
+      <p class="sp-instruction" id="selectionHint">Select a slot, then choose a character from the roster. The first slot is the leader.</p>
+      <div id="squadBoard"><p class="sp-empty">Loading squad planner…</p></div>
+      <div class="sp-board-actions"><button class="sp-btn sp-add" id="addSquad" type="button">＋ Add squad</button><button class="sp-text-btn" id="loadExample" type="button">Load Doctor Aphra example</button><button class="sp-text-btn" id="clearPlan" type="button">Clear this formation</button></div>
+      <p class="sp-conditions">Leadership is shown at its highest non-Omicron tier. Equipping an Omicron shows its mode eligibility; squad, enemy and battle conditions still apply. Open a character’s details to read the full kit requirements.</p>
+    </section>
+  </div>
+  <section id="screenshotBoard" class="sp-capture" hidden aria-label="Screenshot-ready squad plan"></section>
+  <div id="status" class="sp-status" role="status" aria-live="polite"></div>
+  <div class="sp-data-tools"><button type="button" id="exportJson" class="sp-text-btn">Export plan file</button><label class="sp-text-btn sp-import">Import plan file<input id="importJson" type="file" accept=".json,application/json"></label><span>Plans stay in your browser. Share links contain only your plan.</span></div>
+</main>
+<dialog id="unitDetails" class="sp-dialog" aria-labelledby="detailsTitle"><div id="detailsContent"></div></dialog>
+<dialog id="confirmAction" class="sp-dialog sp-confirm" aria-labelledby="confirmTitle"><form method="dialog"><h2 id="confirmTitle">Clear this formation?</h2><p id="confirmText"></p><div class="sp-dialog-actions"><button value="cancel" class="sp-btn">Keep plan</button><button value="confirm" class="sp-btn sp-primary">Clear</button></div></form></dialog>
+<footer class="sp-footer"><a href="/">SWGOH<span>::</span>RESOURCES</a><p>Fan-made planner. Game artwork and character names belong to their respective owners.</p><nav aria-label="Legal"><a href="/privacy/">Privacy</a><a href="/cookie-policy/">Cookies</a><a href="/terms/">Terms</a></nav></footer>
+<script src="/assets/js/site.js?v=66029e619c"></script>
+<script type="module" src="/assets/js/squads.js?v=9d8c8c4fd6"></script>
+</body>
+</html>

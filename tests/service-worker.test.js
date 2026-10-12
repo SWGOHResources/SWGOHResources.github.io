@@ -36,6 +36,16 @@ test('mutable era artwork revalidates online and remains available offline', asy
   offline = true;
   assert.equal(await request('/assets/img/live/era-icon.png'), 'era10');
   offline = false;
+  for (const module of ['squad-model', 'squad-export']) {
+    version = 'first';
+    assert.equal(await request('/assets/js/' + module + '.js'), 'first');
+    version = 'second';
+    assert.equal(await request('/assets/js/' + module + '.js'), 'second', 'module imports must not stay pinned after a planner update');
+    offline = true;
+    assert.equal(await request('/assets/js/' + module + '.js'), 'second', 'visited planner modules remain available offline');
+    offline = false;
+  }
+  version = 'era10';
   assert.equal(await request('/assets/img/events/conquest.png'), 'era10');
   const prior = fetches;
   version = 'new';
