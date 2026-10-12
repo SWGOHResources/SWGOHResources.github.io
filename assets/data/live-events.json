@@ -1,5 +1,5 @@
 {
- "pulledAt": 1791756270132,
+ "pulledAt": 1791796846418,
  "gameDataVersion": "0.40.6:Oq-TxiewST69Ow5E1gLW3g",
  "events": [
   {
@@ -32,23 +32,13 @@
    "art": "live/events-theronin.png"
   },
   {
-   "id": "EVENT_ASSAULT_EWOK",
-   "name": "Forest Moon Assault Battles",
-   "kind": "assault",
-   "unit": "FORESTMOON",
-   "startMs": 1791615600000,
-   "endMs": 1791702000000,
-   "live": false,
-   "art": "live/events-forestmoon.png"
-  },
-  {
    "id": "EVENT_OMEGA_BATTLES_02_CORUSCANT",
    "name": "Coruscant Omega Battles",
    "kind": "omega",
    "unit": "GALACTICCHALLENGESCORUSCANT",
    "startMs": 1791788400000,
    "endMs": 1791874800000,
-   "live": false,
+   "live": true,
    "art": "live/events-galactic-challenges-coruscant.png"
   },
   {
