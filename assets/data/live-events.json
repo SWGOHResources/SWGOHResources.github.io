@@ -1,5 +1,5 @@
 {
- "pulledAt": 1791901229831,
+ "pulledAt": 1791917988950,
  "gameDataVersion": "0.40.6:Oq-TxiewST69Ow5E1gLW3g",
  "events": [
   {
@@ -13,22 +13,13 @@
    "art": "live/events-darthjarjar.png"
   },
   {
-   "id": "CONQUEST_VOL25",
-   "name": "Conquest",
-   "kind": "conquest",
-   "unit": "CONQUESTGENERIC",
-   "startMs": 1790618400000,
-   "endMs": 1791828000000,
-   "live": false
-  },
-  {
    "id": "EVENT_MARQUEE_THERONIN",
    "name": "The Wanderer's Blade",
    "kind": "marquee",
    "unit": "THERONIN",
    "startMs": 1791309600000,
    "endMs": 1791914400000,
-   "live": true,
+   "live": false,
    "art": "live/events-theronin.png"
   },
   {
@@ -68,7 +59,7 @@
    "unit": "THERONIN",
    "startMs": 1791914400000,
    "endMs": 1792519200000,
-   "live": false,
+   "live": true,
    "art": "live/events-theronin.png"
   },
   {
