@@ -1,13 +1,17 @@
 import { MODES, STORAGE_KEY, MAX_SQUADS, newPlan, blankSquad, unitOptions, assignUnit,
-  changeSize, changeMode, normalizePlan, encodePlan, decodePlan, omicronStatus, leaderText } from './squad-model.js';
+  changeSize, changeMode, normalizePlan, encodePlan, decodePlan, omicronStatus, leaderText, plannedPower } from './squad-model.js?v=454195d7d9';
 import { downloadPlanPng } from './squad-export.js';
 
 const $ = id => document.getElementById(id);
 const escape = value => String(value ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
 let data, units, plan = newPlan(), selected = { squad: 0, slot: 0 }, history = [], screenshot = false, detailUnit = null;
 let faction = '', search = '', hideAssigned = false, role = '', storageFailed = false;
+let expandedSquad = 0;
 const squads = () => plan.banks[plan.size];
 const assigned = () => new Set(squads().flatMap(s => s.slots).filter(Boolean));
+const powerOf = unit => plannedPower(plan, unit, data.power);
+const formatPower = power => new Intl.NumberFormat('en-GB').format(power);
+const powerHint = 'Planned GP: level 85, gear XIII, six level-15 6E mods, maximum base abilities and selected upgrades.';
 let statusTimer;
 function announce(message) { clearTimeout(statusTimer); $('status').textContent = message; statusTimer=setTimeout(()=>{ $('status').textContent=''; },4000); }
 function persist() {
@@ -38,7 +42,7 @@ function renderRoster() {
   const matching = data.characters.filter(u => (!faction || u.factions.includes(faction))
     && (!search || u.name.toLowerCase().includes(search)) && (!hideAssigned || !used.has(u.id))
     && (!role || (role === 'Leader' ? u.abilities.some(a => a.type === 'Leader') : role === 'Omicron' ? u.abilities.some(a => a.omicron) : u.role === role)))
-    .sort((a, b) => a.name.localeCompare(b.name));
+    .sort((a, b) => powerOf(b) - powerOf(a) || a.name.localeCompare(b.name));
   const total = data.characters.filter(u => !faction || u.factions.includes(faction)).length;
   $('rosterTitle').textContent = data.factions.find(f => f.id === faction)?.name || 'All characters';
   $('rosterTotal').textContent = total;
@@ -46,24 +50,25 @@ function renderRoster() {
   $('unitRoster').innerHTML = matching.length ? matching.map(u => {
     const owner = squads().findIndex(s => s.slots.includes(u.id));
     const hint = used.has(u.id) ? `Assigned to ${squads()[owner].name}. Choose to swap or move.` : 'Choose to assign to the selected slot.';
-    return `<button type="button" class="sp-roster-unit ${used.has(u.id) ? 'assigned' : ''}" data-unit="${escape(u.id)}" draggable="true" aria-label="${escape(u.name + '. ' + hint)}" title="${escape(hint)}">${portrait(u)}${stars(u)}<span class="sp-roster-unit-name">${escape(u.name)}</span></button>`;
+    return `<button type="button" class="sp-roster-unit ${used.has(u.id) ? 'assigned' : ''}" data-unit="${escape(u.id)}" draggable="true" aria-label="${escape(u.name + '. ' + hint)}" title="${escape(u.name + '. ' + hint + ' ' + powerHint)}">${portrait(u)}${stars(u)}<span class="sp-unit-power" title="${powerHint}">Pwr ${formatPower(powerOf(u))}</span><span class="sp-roster-unit-name">${escape(u.name)}</span></button>`;
   }).join('') : '<p class="sp-empty">No characters match these filters. Try another faction, role or name.</p>';
 }
-function slotMarkup(squad, si, index, interactive = true) {
+function slotMarkup(squad, si, index, interactive = true, modelPreview = false) {
   const u = units.get(squad.slots[index]);
   const active = interactive && selected.squad === si && selected.slot === index;
   const label = u ? `${u.name}, ${index === 0 ? 'leader' : 'slot ' + (index + 1)}. Select to swap.` : `Empty ${index === 0 ? 'leader' : 'slot ' + (index + 1)}. Select to add a character.`;
   return `<div class="sp-slot ${u ? 'sp-filled-slot' : 'sp-empty-slot'} ${active ? 'selected' : ''}" data-slot-container="${si}:${index}">
     ${interactive ? `<button type="button" class="sp-slot-button" data-slot="${si}:${index}" aria-label="${escape(squad.name + ': ' + label)}" aria-pressed="${active}"></button>` : ''}
     <span class="sp-slot-index">${index === 0 ? 'LEADER' : '0' + (index + 1)}</span>
-    ${u ? `${portrait(u, index === 0)}${stars(u)}<span class="sp-slot-name">${escape(u.name)}</span><span class="sp-slot-role">${escape(u.role)}</span>${interactive ? `<span class="sp-slot-tools"><button type="button" class="sp-icon-btn" data-detail="${escape(u.id)}" aria-label="Details and upgrades for ${escape(u.name)}" title="Details & upgrades">ⓘ</button><button type="button" class="sp-icon-btn" data-remove="${si}:${index}" aria-label="Remove ${escape(u.name)}" title="Remove character">×</button></span>` : ''}`
+    ${u ? `${modelPreview ? `<canvas class="sp-model" data-model="${escape(u.id)}" aria-label="3D preview of ${escape(u.name)}"></canvas>` : ''}${portrait(u, index === 0)}${stars(u)}<span class="sp-slot-name">${escape(u.name)}</span><span class="sp-slot-role">${escape(u.role)}</span>${interactive ? `<span class="sp-slot-tools"><button type="button" class="sp-icon-btn" data-detail="${escape(u.id)}" aria-label="Details and upgrades for ${escape(u.name)}" title="Details & upgrades">ⓘ</button><button type="button" class="sp-icon-btn" data-remove="${si}:${index}" aria-label="Remove ${escape(u.name)}" title="Remove character">×</button></span>` : ''}`
       : '<span class="sp-slot-plus" aria-hidden="true"></span><span class="sp-slot-name">' + (index === 0 ? 'Select leader' : 'Select character') + '</span>'}
     </div>`;
 }
 function leaderMarkup(squad) {
   const u = units.get(squad.slots[0]), lead = leaderText(plan, u);
+  if (!lead) return u ? '<div class="sp-leader-panel sr-only">This character has no leader ability.</div>' : '';
   const summary = lead?.text.split('\n').find(Boolean) || (u ? 'This character has no leader ability.' : '');
-  return `<div class="sp-leader-panel" title="${escape(summary)}"><span class="sp-lead-emblem" aria-hidden="true"></span><p class="sp-eyebrow">LEADER ABILITY</p><h3>${escape(lead?.ability.name || 'No leadership selected')}</h3>${lead ? `<span class="sp-ability-badge ${lead.useOmicron ? 'eligible' : ''}">${lead.useOmicron ? 'Omicron mode applies' : 'Max non-Omicron tier'}</span>` : ''}<p class="sr-only">${escape(summary)}</p>${u ? `<button class="sp-text-btn" type="button" data-detail="${escape(u.id)}">Ability details</button>` : ''}</div>`;
+  return `<div class="sp-leader-panel" title="${escape(summary)}"><span class="sp-lead-emblem" aria-hidden="true"></span><p class="sp-eyebrow">LEADER ABILITY</p><h3>${escape(lead.ability.name)}</h3><span class="sp-ability-badge ${lead.useOmicron ? 'eligible' : ''}">${lead.useOmicron ? 'Omicron mode applies' : 'MAXED'}</span><p class="sr-only">${escape(summary)}</p><button class="sp-text-btn" type="button" data-detail="${escape(u.id)}" aria-label="${escape(lead.ability.name)} details">Ability details</button></div>`;
 }
 function omiMarkup(squad) {
   const chips = squad.slots.flatMap((id, slot) => {
@@ -77,15 +82,19 @@ function omiMarkup(squad) {
 }
 function renderBoard() {
   $('boardCount').textContent = `${assigned().size} / ${squads().length * plan.size} assigned`;
+  $('rosterLeader').innerHTML = leaderMarkup(squads()[expandedSquad ?? selected.squad]);
   $('squadBoard').innerHTML = squads().map((s, si) => {
-    const expanded = selected.squad === si;
-    return `<article class="sp-squad"><div class="sp-squad-header"><div class="sp-squad-title"><span class="sp-squad-number">${String(si + 1).padStart(2, '0')}</span><input class="sp-squad-name" maxlength="80" value="${escape(s.name)}" data-name="${si}" aria-label="Squad ${si + 1} name"></div><div class="sp-squad-actions"><span class="sp-squad-fill">${s.slots.filter(Boolean).length}/${plan.size}</span><button type="button" class="sp-icon-btn" data-expand="${si}" aria-label="Edit ${escape(s.name)}" title="Edit squad">${expanded ? '▾' : '▸'}</button>${squads().length > 1 ? `<button type="button" class="sp-icon-btn" data-delete="${si}" aria-label="Delete ${escape(s.name)}" title="Delete squad">×</button>` : ''}</div></div>
-      <div class="${expanded ? 'sp-formation ' + (plan.size === 3 ? 'sp-formation-three' : '') : 'sp-compact-row'}" style="--slots:${plan.size}">${s.slots.map((_, i) => slotMarkup(s, si, i)).join('')}${expanded ? leaderMarkup(s) : ''}</div>
-      ${expanded ? '' : compactLeader(s)}<div class="sr-only">${omiMarkup(s)}</div></article>`;
+    const expanded = expandedSquad === si;
+    return `<article class="sp-squad ${expanded ? 'is-expanded' : 'is-collapsed'}"><div class="sp-squad-header"><div class="sp-squad-title"><span class="sp-squad-number">${String(si + 1).padStart(2, '0')}</span><input class="sp-squad-name" maxlength="80" value="${escape(s.name)}" data-name="${si}" aria-label="Squad ${si + 1} name"></div><div class="sp-squad-actions"><span class="sp-squad-power" title="${powerHint}">Power: ${formatPower(s.slots.reduce((sum, id) => sum + (id ? powerOf(units.get(id)) : 0), 0))}</span><span class="sp-squad-fill">${s.slots.filter(Boolean).length}/${plan.size}</span><button type="button" class="sp-icon-btn" data-expand="${si}" aria-label="${expanded ? 'Collapse' : 'Expand'} ${escape(s.name)}" aria-expanded="${expanded}" title="${expanded ? 'Collapse squad' : 'Expand squad'}">${expanded ? '▾' : '▸'}</button>${squads().length > 1 ? `<button type="button" class="sp-icon-btn" data-delete="${si}" aria-label="Delete ${escape(s.name)}" title="Delete squad">×</button>` : ''}</div></div>
+      <div class="${expanded ? 'sp-formation ' + (plan.size === 3 ? 'sp-formation-three' : '') : 'sp-compact-row'}" style="--slots:${plan.size}">${s.slots.map((_, i) => slotMarkup(s, si, i, true, expanded)).join('')}</div>
+      <div class="sr-only">${omiMarkup(s)}</div></article>`;
   }).join('');
   const target = squads()[selected.squad], current = units.get(target?.slots[selected.slot]);
   $('selectionHint').textContent = `${target?.name || 'Squad'} · ${selected.slot === 0 ? 'leader slot' : 'slot ' + (selected.slot + 1)} selected${current ? ' (' + current.name + ')' : ''}. Choose a character to ${current ? 'swap' : 'assign'}, or drag one into any slot.`;
   $('addSquad').disabled = squads().length >= MAX_SQUADS;
+  const modelFallback = () => $('squadBoard').querySelectorAll('canvas[data-model]').forEach(canvas => canvas.closest('.sp-slot').classList.add('model-unavailable'));
+  if (typeof window.WebGLRenderingContext !== 'undefined') import('./squad-model-view.js').then(m => m.mountModelPreviews($('squadBoard'))).catch(modelFallback);
+  else modelFallback();
 }
 function compactLeader(squad) {
   const lead = leaderText(plan, units.get(squad.slots[0]));
@@ -98,15 +107,23 @@ function render() {
   if (!data) return;
   if (!squads()[selected.squad]) selected = { squad: 0, slot: 0 };
   if (selected.slot >= plan.size) selected.slot = 0;
+  if (expandedSquad !== null && !squads()[expandedSquad]) expandedSquad = selected.squad;
   $('planTitle').value = plan.title;
   $('battleMode').value = plan.mode;
   document.querySelectorAll('[data-size]').forEach(b => b.setAttribute('aria-pressed', String(Number(b.dataset.size) === plan.size)));
   $('undoChange').disabled = history.length === 0;
   renderRoster(); renderBoard(); renderCapture(); enhanceSelects();
 }
-function setTarget(si, slot) { selected = { squad: si, slot }; renderBoard(); }
+function setTarget(si, slot) {
+  selected = { squad: si, slot }; expandedSquad = si; renderBoard();
+  if (innerWidth <= 640 && innerHeight > innerWidth) {
+    document.body.classList.add('sp-roster-open');
+    $('rosterToggle').setAttribute('aria-expanded', 'true');
+  }
+}
 function place(id, si = selected.squad, slot = selected.slot) {
   if (!units.has(id)) return;
+  expandedSquad = si;
   mutate(() => {
     assignUnit(plan, id, si, slot);
     const next = squads()[si].slots.findIndex((v, i) => !v && i > slot);
@@ -139,6 +156,11 @@ function downloadFile(name, contents, type) {
 }
 function exportJson() { downloadFile('swgoh-squad-plan.json', JSON.stringify(plan, null, 2), 'application/json'); announce('Plan file downloaded. It includes both formations and your planned upgrades.'); }
 function bind() {
+  $('rosterToggle').addEventListener('click', () => {
+    const open = document.body.classList.toggle('sp-roster-open');
+    $('rosterToggle').setAttribute('aria-expanded', String(open));
+  });
+  $('rosterLeader').addEventListener('click', e => { const b = e.target.closest('[data-detail]'); if (b) details(b.dataset.detail); });
   $('planTitle').addEventListener('change', e => mutate(() => { plan.title = e.target.value.trim() || 'My squad plan'; }));
   document.querySelectorAll('[data-size]').forEach(b => b.addEventListener('click', () => {
     if (plan.size === Number(b.dataset.size)) return;
@@ -156,9 +178,16 @@ function bind() {
   $('squadBoard').addEventListener('drop', e => { const slot = e.target.closest('[data-slot-container]'); if (!slot) return; e.preventDefault(); const [si, i] = slot.dataset.slotContainer.split(':').map(Number); place(e.dataTransfer.getData('text/plain'), si, i); });
   $('squadBoard').addEventListener('change', e => { const b = e.target.closest('[data-name]'); if (b) mutate(() => { squads()[Number(b.dataset.name)].name = b.value.trim() || 'Squad'; }); });
   $('squadBoard').addEventListener('click', async e => {
-    const b = e.target.closest('button'); if (!b) return;
+    let b = e.target.closest('button');
+    if (!b && !e.target.closest('input')) b = e.target.closest('.sp-squad-header')?.querySelector('[data-expand]');
+    if (!b) return;
     if (b.dataset.slot) { const [si, i] = b.dataset.slot.split(':').map(Number); setTarget(si, i); }
-    if (b.dataset.expand !== undefined) setTarget(Number(b.dataset.expand), 0);
+    if (b.dataset.expand !== undefined) {
+      const si = Number(b.dataset.expand);
+      expandedSquad = expandedSquad === si ? null : si;
+      if (expandedSquad !== null) selected = { squad: si, slot: 0 };
+      renderBoard();
+    }
     if (b.dataset.detail) details(b.dataset.detail);
     if (b.dataset.remove) { const [si, i] = b.dataset.remove.split(':').map(Number); mutate(() => { squads()[si].slots[i] = null; selected = { squad: si, slot: i }; }, 'Character removed.'); }
     if (b.dataset.delete !== undefined) {
@@ -168,7 +197,7 @@ function bind() {
   });
   $('addSquad').addEventListener('click', () => {
     if (squads().length >= MAX_SQUADS) return;
-    mutate(() => { squads().push(blankSquad(plan.size, 'Squad ' + (squads().length + 1))); selected = { squad: squads().length - 1, slot: 0 }; }, 'Squad added. Choose a leader.');
+    mutate(() => { squads().push(blankSquad(plan.size, 'Squad ' + (squads().length + 1))); selected = { squad: squads().length - 1, slot: 0 }; expandedSquad = selected.squad; }, 'Squad added. Choose a leader.');
   });
   $('undoChange').addEventListener('click', () => { if (!history.length) return; plan = normalizePlan(JSON.parse(history.pop()), data.characters); selected = { squad: 0, slot: 0 }; persist(); render(); announce('Last change undone.'); });
   $('clearPlan').addEventListener('click', async () => { if (await confirm(`Clear your ${plan.size}v${plan.size} formation?`, 'This clears these squads. The other formation and your planned upgrades are kept. You can undo this change.')) mutate(() => { plan.banks[plan.size] = [blankSquad(plan.size, 'Squad 1')]; selected = { squad: 0, slot: 0 }; }, 'Formation cleared.'); });
@@ -196,12 +225,14 @@ function bind() {
     screenshot = !screenshot; renderCapture(); document.body.classList.toggle('sp-screenshot', screenshot);
     $('screenshotBoard').hidden = !screenshot; $('screenshotToggle').setAttribute('aria-pressed', String(screenshot)); $('screenshotToggle').textContent = screenshot ? 'Back to builder' : 'Screenshot view';
   });
-  $('downloadPng').addEventListener('click', async () => {
-    const button = $('downloadPng'); button.disabled = true; button.textContent = 'Preparing…';
+  const savePng = async e => {
+    const button = e.currentTarget; button.disabled = true; button.textContent = 'Preparing…';
     try { await document.fonts?.ready; await downloadPlanPng(plan, data); announce('Squad board saved as a PNG.'); }
     catch { announce('Image export failed. Use Screenshot view, or export a plan file to keep your work.'); }
     finally { button.disabled = false; button.textContent = 'Save PNG'; }
-  });
+  };
+  $('downloadPng').addEventListener('click', savePng);
+  $('captureDownload').addEventListener('click', savePng);
   $('sharePlan').addEventListener('click', async () => {
     const url = new URL('/squads/', location.href); url.hash = 'plan=' + encodePlan(plan);
     if (url.href.length > 8000) { exportJson(); announce('This plan is too large for a reliable share link. Share the exported plan file instead.'); return; }
@@ -285,6 +316,9 @@ async function init() {
     if (!zetaResponse.ok) throw new Error('Zeta snapshot unavailable');
     const zetaCounts = await zetaResponse.json();
     data.characters.forEach(u => { u.zetaCount = u.zetaCount ?? zetaCounts[u.id] ?? 0; });
+    const powerResponse = await fetch('/assets/data/squad-power.json');
+    if (!powerResponse.ok) throw new Error('Power snapshot unavailable');
+    data.power = await powerResponse.json();
     units = new Map(data.characters.map(u => [u.id, u]));
     let message = '';
     try { const saved = localStorage.getItem(STORAGE_KEY); if (saved) plan = normalizePlan(JSON.parse(saved), data.characters); }

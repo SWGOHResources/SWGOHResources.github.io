@@ -13,6 +13,16 @@ export function unitOptions(plan, unit) {
   const saved = plan.options[unit.id];
   return { relic: saved?.relic ?? 7, stars: saved?.stars ?? 7, omicrons: saved?.omicrons ?? [] };
 }
+// Planned GP: level 85, gear XIII, six level-15 6E mods and max base skills.
+// The game table's relic tier is displayed relic level + 2.
+export function plannedPower(plan, unit, powerData) {
+  const profile = powerData?.units?.[unit?.id];
+  if (!profile) return 0;
+  const options = unitOptions(plan, unit), tier = options.relic + 2;
+  const upgrades = options.omicrons.reduce((sum, id) => sum + (profile.omicrons[id] || 0), 0);
+  const relic = options.relic ? (powerData.relic[tier] || 0) + powerData.level * (powerData.relicLevel[tier] || 0) : 0;
+  return Math.floor(1.5 * (profile.base + (powerData.rarity[options.stars] || 0) + relic + upgrades));
+}
 export function modeMatches(omicron, mode, size) {
   const scope = omicron.mode;
   if (scope === 1) return true;
