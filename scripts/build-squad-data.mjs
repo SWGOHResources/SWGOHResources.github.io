@@ -51,6 +51,7 @@ export function buildSquadData(raw, sourceCommit, generatedAt = new Date().toISO
       role: loc(raw.category.data.find(c => c.id.startsWith('role_') && c.id !== 'role_leader' && u.categoryId.includes(c.id))?.descKey),
       factions: categories.filter(c => u.categoryId.includes(c.id)).map(c => c.id),
       zetaCount: u.skillReference.filter(r => skills.get(r.skillId)?.tier.some(t => t.isZetaTier)).length,
+      modelBundle: u.unitPrefab?.replace(/^unit\./, ''),
       galacticLegend: !!u.legend, abilities: kit };
   });
   if (characters.length < 300) throw new Error('Incomplete character collection.');

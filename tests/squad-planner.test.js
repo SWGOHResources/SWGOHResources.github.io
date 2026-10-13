@@ -85,3 +85,13 @@ test('data builder rejects mixed game versions and strips formatting without los
   assert.throws(() => buildSquadData({ units:{version:'a'}, ability:{version:'b'}, skill:{version:'a'}, category:{version:'a'} }, 'test'), /different versions/);
   assert.equal(cleanText('[c][E7E7E7]While in Grand Arenas:[-][/c]\\n\\nText'), 'While in Grand Arenas:\n\nText');
 });
+test('planned GP follows the pinned level, gear, mods, rarity and relic tables', async () => {
+  const { plannedPower, newPlan } = await import('../assets/js/squad-model.js');
+  const power = JSON.parse(await readFile(new URL('../assets/data/squad-power.json', import.meta.url), 'utf8'));
+  const unit = { id:'DOCTORAPHRA' }, plan = newPlan();
+  assert.equal(plannedPower(plan, unit, power), 34710);
+  plan.options.DOCTORAPHRA = { relic:8, stars:7, omicrons:[] };
+  assert.equal(plannedPower(plan, unit, power), 36987);
+  plan.options.DOCTORAPHRA.stars = 6;
+  assert.equal(plannedPower(plan, unit, power), 34992);
+});

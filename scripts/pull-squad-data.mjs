@@ -6,6 +6,7 @@ import { brotliDecompressSync } from 'node:zlib';
 import { createHash } from 'node:crypto';
 import sharp from 'sharp';
 import { buildSquadData } from './build-squad-data.mjs';
+import { buildSquadPower } from './build-squad-power.mjs';
 import { isMain } from './is-main.mjs';
 
 const ROOT = new URL('../', import.meta.url);
@@ -26,6 +27,11 @@ export async function pullSquadData() {
     return [key, value];
   })));
   const snapshot = buildSquadData(raw, commit);
+  const gameData=JSON.parse((await get(base+'gameData.json')).toString());
+  const power=JSON.stringify(buildSquadPower(snapshot.characters,gameData,commit))+'\n';
+  let powerChanged=true;
+  try { powerChanged=(await readFile(new URL('assets/data/squad-power.json',ROOT),'utf8'))!==power; } catch {}
+  if(powerChanged) await writeFile(new URL('assets/data/squad-power.json',ROOT),power);
   const composites = Array(snapshot.characters.length);
   let cursor = 0;
   await Promise.all(Array.from({ length: 6 }, async () => {
@@ -44,7 +50,7 @@ export async function pullSquadData() {
   // the relevant kit/faction data nor the bundled portraits.
   try {
     const prior = JSON.parse(await readFile(new URL('assets/data/squad-planner.json', ROOT), 'utf8'));
-    if (JSON.stringify({ ...prior, generatedAt: '' }) === JSON.stringify({ ...snapshot, generatedAt: '' })) return false;
+    if (JSON.stringify({ ...prior, generatedAt: '' }) === JSON.stringify({ ...snapshot, generatedAt: '' })) return powerChanged;
   } catch { /* First generation. */ }
   await mkdir(new URL('assets/img/squads/', ROOT), { recursive: true });
   await writeFile(new URL('assets/img/squads/portraits.webp', ROOT), atlas);

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta name="swgoh-asset-v" content="e64d1825f8">
+    <meta name="swgoh-asset-v" content="c778f0d8b2">
   <meta charset="UTF-8">
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,7 +18,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/assets/css/main.css?v=7aec24b044">
-  <link rel="stylesheet" href="/assets/css/squads.css?v=9c1b16c2ba">
+  <link rel="stylesheet" href="/assets/css/squads.css?v=cde2fcc764">
   <script src="/assets/js/clean-urls.js?v=22697c0fa5"></script>
 </head>
 <body class="sp-shell">
@@ -37,7 +37,7 @@
 <main id="main" class="sp-wrap">
   <div class="sp-intro">
     <div><h1>Squad Planner</h1></div>
-    <div class="sp-intro-actions"><button id="screenshotToggle" class="sp-btn" type="button" aria-pressed="false">Screenshot view</button><button id="sharePlan" class="sp-btn sp-primary" type="button">Share plan</button></div>
+    <div class="sp-intro-actions"><button id="screenshotToggle" class="sp-btn" type="button" aria-pressed="false">Screenshot view</button><button id="captureDownload" class="sp-btn sp-capture-download" type="button">Save PNG</button><button id="sharePlan" class="sp-btn sp-primary" type="button">Share plan</button></div>
   </div>
   <div class="sp-toolbar">
     <label class="sp-title-field"><span>PLAN NAME</span><input id="planTitle" maxlength="100" value="My squad plan" aria-label="Plan name"></label>
@@ -47,6 +47,8 @@
   </div>
   <div class="sp-workspace" id="workspace" aria-busy="true">
     <aside class="sp-roster" aria-label="Character roster">
+      <button id="rosterToggle" class="sp-btn sp-roster-toggle" type="button" aria-expanded="false" aria-controls="unitRoster">Characters</button>
+      <div id="rosterLeader"></div>
       <div class="sp-panel-head"><div><h2 id="rosterTitle">All characters</h2></div><span id="rosterTotal" class="sp-count">—</span></div>
       <div class="sp-roster-controls">
         <label><span class="sp-label">FACTION</span><select id="factionFilter"><option value="">All characters</option></select></label>
@@ -108,6 +110,7 @@
   </div>
 </footer>
 <script src="/assets/js/site.js?v=66029e619c"></script>
-<script type="module" src="/assets/js/squads.js?v=725358b27b"></script>
+<script type="importmap">{"imports":{"three":"/assets/vendor/three/three.module.js"}}</script>
+<script type="module" src="/assets/js/squads.js?v=b19baa0505"></script>
 </body>
 </html>

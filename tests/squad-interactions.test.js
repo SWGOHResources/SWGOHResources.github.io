@@ -44,7 +44,7 @@ test('upgrade changes persist and leader Omicrons stop matching in Territory War
     f.change('#detailRelic','8');
     assert.match(f.doc.querySelector('[data-slot-container="0:0"]').textContent,/R8/);
     f.click('[data-close]'); f.change('#battleMode','tw');
-    assert.match(f.doc.querySelector('.sp-leader-panel').textContent,/Max non-Omicron tier/);
+    assert.match(f.doc.querySelector('.sp-leader-panel').textContent,/MAXED/);
     assert.match(f.doc.querySelector('.sp-omicron-strip').textContent,/inactive/);
     f.click('[data-size="3"]'); assert.equal(f.doc.querySelectorAll('#squadBoard .sp-slot').length,3);
     f.click('[data-size="5"]'); assert.match(f.doc.querySelector('.sp-leader-panel').textContent,/Suspended Doctorate/);
@@ -85,5 +85,19 @@ test('opening a different share hash on the existing page loads it without overw
     f.w.location.hash='plan='+model.encodePlan(incoming); await settle();
     assert.equal(f.doc.querySelector('#planTitle').value,incoming.title);
     assert.equal(JSON.parse(f.w.localStorage.getItem(model.STORAGE_KEY)).title,'Local plan');
+  } finally { f.dom.window.close(); }
+});
+test('a squad can collapse independently of selection and remains collapsed through edits', async () => {
+  const f = await fixture();
+  try {
+    f.click('[data-unit="DOCTORAPHRA"]');
+    f.click('[data-expand="0"]');
+    assert.equal(f.doc.querySelector('[data-expand="0"]').getAttribute('aria-expanded'), 'false');
+    assert.ok(f.doc.querySelector('.is-collapsed .sp-compact-row'));
+    f.change('[data-name="0"]', 'Collapsed squad');
+    assert.ok(f.doc.querySelector('.is-collapsed .sp-compact-row'));
+    f.click('[data-expand="0"]');
+    assert.equal(f.doc.querySelector('[data-expand="0"]').getAttribute('aria-expanded'), 'true');
+    assert.ok(f.doc.querySelector('.is-expanded .sp-formation'));
   } finally { f.dom.window.close(); }
 });
