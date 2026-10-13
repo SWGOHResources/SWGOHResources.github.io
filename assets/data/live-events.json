@@ -1,5 +1,5 @@
 {
- "pulledAt": 1791834669419,
+ "pulledAt": 1791901229831,
  "gameDataVersion": "0.40.6:Oq-TxiewST69Ow5E1gLW3g",
  "events": [
   {
@@ -38,7 +38,7 @@
    "unit": "GALACTICCHALLENGESCORUSCANT",
    "startMs": 1791788400000,
    "endMs": 1791874800000,
-   "live": true,
+   "live": false,
    "art": "live/events-galactic-challenges-coruscant.png"
   },
   {
@@ -48,7 +48,7 @@
    "unit": "SMUGGLERSRUN",
    "startMs": 1791799200000,
    "endMs": 1791885600000,
-   "live": true,
+   "live": false,
    "art": "live/events-smugglersrun.png"
   },
   {
@@ -58,7 +58,7 @@
    "unit": "DATHOMIRBATTLE",
    "startMs": 1791874800000,
    "endMs": 1791961200000,
-   "live": false,
+   "live": true,
    "art": "live/events-dathomir-battle.png"
   },
   {
