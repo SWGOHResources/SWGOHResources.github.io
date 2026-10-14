@@ -141,9 +141,33 @@ test('Conquest header dates and day counts respect the opening and closing chang
   assert.equal(timing('2026-09-29T18:00:00Z').day,2);
   assert.equal(timing('2026-10-12T17:00:00Z').day,14);
   assert.equal(timing('2026-10-12T17:00:00Z').remaining,'1h');
-  assert.equal(timing('2026-10-12T18:00:00Z').state,'past');
-  assert.equal(timing('2026-10-12T18:00:00Z').progress,100);
-  assert.equal(timing('2026-10-13T00:00:00Z').day,14);
+  assert.equal(timing('2026-10-12T18:00:00Z').state,'upcoming');
+  assert.equal(timing('2026-10-12T18:00:00Z').progress,0);
+  assert.equal(timing('2026-10-13T00:00:00Z').day,0);
+  assert.equal(timing('2026-10-12T18:00:00Z').remaining,'14d 0h');
+  assert.equal(timing('2026-10-12T18:00:00Z').boundaryMs,Date.parse('2026-10-26T18:00:00Z'));
+});
+
+test('14-day active runs alternate with 14-day breaks over multiple volumes',()=>{
+  const e=JSON.stringify({starts:'2026-09-28',ends:'2026-10-12',volume:25,run:1,runsPerVolume:3});
+  const timing=t=>js(`conquestTiming(${e},Date.parse('${t}'))`);
+  assert.equal(timing('2026-10-26T17:59:59Z').state,'upcoming');
+  const next=timing('2026-10-26T18:00:00Z');
+  assert.equal(next.state,'active');assert.equal(next.day,1);assert.equal(next.run,2);assert.equal(next.volume,25);
+  assert.equal(next.remaining,'14d 0h');assert.equal(next.boundaryMs,Date.parse('2026-11-09T18:00:00Z'));
+  const off=timing('2026-11-09T18:00:00Z');
+  assert.equal(off.state,'upcoming');assert.equal(off.remaining,'14d 0h');assert.equal(off.run,3);
+  assert.equal(off.boundaryMs,Date.parse('2026-11-23T18:00:00Z'));
+  const newVolume=timing('2026-12-21T18:00:00Z');
+  assert.equal(newVolume.state,'active');assert.equal(newVolume.run,1);assert.equal(newVolume.volume,26);
+});
+
+test('recurring boundaries remain at the game UTC hour across daylight-saving changes',()=>{
+  const e=JSON.stringify({starts:'2026-09-28',run:1,runsPerVolume:3});
+  for(const date of ['2026-10-26','2026-11-23','2026-12-21']){
+    const a=js(`conquestTiming(${e},Date.parse('${date}T18:00:00Z'))`);
+    assert.equal(a.day,1);assert.equal(a.state,'active');assert.equal(new Date(a.startMs).getUTCHours(),18);
+  }
 });
 
 test('doing everything hits the expected max total per difficulty', () => {

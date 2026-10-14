@@ -279,25 +279,45 @@ function featReward(reward){
 
 function conquestTiming(entry, nowMs){
   const hour = typeof stdHour === 'function' ? stdHour() : 18;
-  const start = Date.parse(entry.starts+'T00:00:00Z')+hour*3600000;
-  const end = Date.parse(entry.ends+'T00:00:00Z')+hour*3600000;
-  const duration = Math.max(1, Math.round((end-start)/86400000));
-  const state = nowMs < start ? 'upcoming' : nowMs < end ? 'active' : 'past';
-  const day = state === 'upcoming' ? 0 : Math.min(duration, Math.floor((nowMs-start)/86400000)+1);
-  const hours = Math.max(0, Math.ceil(((state === 'upcoming' ? start : end)-nowMs)/3600000));
-  return {state, day, duration, progress:Math.min(100,Math.max(0,(nowMs-start)/(end-start)*100)),
-    remaining: state === 'past' ? 'Ended' : (hours >= 24 ? Math.floor(hours/24)+'d '+hours%24+'h' : hours+'h')};
+  const dayMs = 86400000, duration = 14, cycleMs = 28 * dayMs;
+  const anchor = Date.parse(entry.starts+'T00:00:00Z')+hour*3600000;
+  let cycle = Math.max(0, Math.floor((nowMs-anchor)/cycleMs));
+  let start = anchor + cycle*cycleMs;
+  if(nowMs >= start + duration*dayMs){ cycle++; start += cycleMs; }
+  const end = start + duration*dayMs;
+  const state = nowMs < start ? 'upcoming' : 'active';
+  const day = state === 'upcoming' ? 0 : Math.floor((nowMs-start)/dayMs)+1;
+  const boundaryMs = state === 'upcoming' ? start : end;
+  const hours = Math.max(0, Math.ceil((boundaryMs-nowMs)/3600000));
+  const runs = Math.max(1, Number(entry.runsPerVolume) || 3);
+  const runIndex = Math.max(0, (Number(entry.run) || 1)-1) + cycle;
+  const run = runIndex % runs + 1;
+  const volume = Number(entry.volume) ? Number(entry.volume)+Math.floor(runIndex/runs) : null;
+  return {state, day, duration, cycle, startMs:start, endMs:end, boundaryMs, run, volume,
+    progress:Math.min(100,Math.max(0,(nowMs-start)/(end-start)*100)),
+    remaining: hours >= 24 ? Math.floor(hours/24)+'d '+hours%24+'h' : hours+'h'};
 }
 function paintConquestTiming(app, entry, nowMs){
   const timing = conquestTiming(entry, nowMs);
   const set = (key, text) => { app.querySelectorAll('[data-clock="'+key+'"]').forEach(el=>{ el.textContent = text; }); };
   set('day',timing.day); set('remaining',timing.remaining);
-  set('label',timing.state === 'upcoming' ? 'Starts in' : timing.state === 'active' ? 'Time remaining' : 'Conquest complete');
-  const boundaryDate = new Date((timing.state === 'upcoming' ? entry.starts : entry.ends)+'T12:00:00Z').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+  set('label',timing.state === 'upcoming' ? 'Starts in' : 'Time remaining');
+  const boundaryDate = new Date(timing.boundaryMs).toLocaleDateString('en-GB',{timeZone:'UTC',day:'numeric',month:'short',year:'numeric'});
   set('boundary',(timing.state === 'upcoming' ? 'Opens ' : 'Closes ')+boundaryDate+' at '+(typeof stdHour === 'function' ? stdHour() : 18)+':00 UTC');
+  set('run',timing.run+' of '+(entry.runsPerVolume || 3));
+  set('volume',timing.volume || '—');
+  const outdated = timing.volume && entry.volume && timing.volume !== Number(entry.volume);
+  set('primary',outdated ? 'Awaiting updated data' : entry.shardUnits?.primary?.name || entry.unit || 'Conquest rewards');
+  set('secondary',outdated ? '—' : entry.shardUnits?.secondary?.name || '—');
   const bar = app.querySelector('[data-clock="progress"]'); if(bar) bar.style.width = timing.progress+'%';
   const notice = app.querySelector('[data-cq="notice"]');
-  if(notice) notice.hidden = entry.status !== 'preliminary' || timing.state !== 'upcoming';
+  if(notice){
+    notice.hidden = !outdated && (entry.status !== 'preliminary' || timing.state !== 'upcoming');
+    notice.querySelector('strong').textContent = outdated ? 'Planner data update needed' : 'Upcoming Conquest · provisional feats';
+    notice.querySelector('span').textContent = outdated
+      ? 'The countdown is for Volume '+timing.volume+'. The available feat sheet is from Volume '+entry.volume+'.'
+      : 'Requirements and keycard values may change before the Conquest starts.';
+  }
 }
 
 
@@ -379,7 +399,7 @@ async function initConquestPage(){
     return;
   }
   const nowMs = Date.now();
-  const sel = findConquestEntry(data, nowMs);
+  let sel = findConquestEntry(data, nowMs);
   if(!sel.entry){
     app.innerHTML = '<p class="empty-note">No conquest scheduled yet.</p>';
     return;
@@ -388,7 +408,18 @@ async function initConquestPage(){
   // any edit the player makes after the page loaded.
   const shared = decodePlanHash();
   renderPlanner(app, sel, nowMs, shared);
-  setInterval(() => paintConquestTiming(app, sel.entry, Date.now()), 60000);
+  const updateTiming = () => {
+    const now = Date.now(), next = findConquestEntry(data, now);
+    if(next.entry && next.entry.id !== sel.entry.id){
+      sel = next;
+      renderPlanner(app, sel, now, null);
+    } else paintConquestTiming(app, sel.entry, now);
+  };
+  if(app._cqClock) clearInterval(app._cqClock);
+  app._cqClock = setInterval(updateTiming, 60000);
+  if(app._cqClockVisibility) document.removeEventListener('visibilitychange', app._cqClockVisibility);
+  app._cqClockVisibility = () => { if(!document.hidden) updateTiming(); };
+  document.addEventListener('visibilitychange', app._cqClockVisibility);
 }
 
 function renderPlanner(app, sel, nowMs, shared){
@@ -427,9 +458,9 @@ function renderPlanner(app, sel, nowMs, shared){
   const primaryUnit = units.primary?.name || entry.unit || 'Conquest rewards';
   const secondaryUnit = units.secondary?.name || '—';
   const runLabel = entry.run && entry.runsPerVolume ? entry.run+' of '+entry.runsPerVolume : (entry.run ? String(entry.run) : '—');
-  const dateLabel = value => new Date(value+'T12:00:00Z').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+  const dateLabel = value => new Date(value).toLocaleDateString('en-GB',{timeZone:'UTC',day:'numeric',month:'short',year:'numeric'});
   const timing = conquestTiming(entry, nowMs);
-  const conquestHeader = () => `<header class="merged-hero cq-hero cq-status" aria-labelledby="cqTitle"><div class="cq-run-heading"><h1 id="cqTitle">Conquest Status</h1><div class="cq-run-day">Day <strong data-clock="day">${timing.day}</strong><span>/ ${timing.duration}</span></div></div><dl class="cq-run-meta"><div><dt>Volume</dt><dd>${esc(entry.volume || '—')}</dd></div><div><dt>Run</dt><dd>${esc(runLabel)}</dd></div><div><dt>Difficulty</dt><dd>${esc(difficulty[0].toUpperCase()+difficulty.slice(1))}</dd></div><div class="cq-run-units"><dt>Primary Unit</dt><dd>${esc(primaryUnit)}</dd></div><div class="cq-run-units"><dt>Secondary Unit</dt><dd>${esc(secondaryUnit)}</dd></div></dl><div class="cq-countdown"><span data-clock="label">${timing.state === 'upcoming' ? 'Starts in' : timing.state === 'active' ? 'Time remaining' : 'Conquest complete'}</span><strong data-clock="remaining">${timing.remaining}</strong><small data-clock="boundary">${timing.state === 'upcoming' ? 'Opens' : 'Closes'} ${esc(dateLabel(timing.state === 'upcoming' ? entry.starts : entry.ends))}</small></div></header>`;
+  const conquestHeader = () => `<header class="merged-hero cq-hero cq-status" aria-labelledby="cqTitle"><div class="cq-run-heading"><h1 id="cqTitle">Conquest Status</h1><div class="cq-run-day">Day <strong data-clock="day">${timing.day}</strong><span>/ ${timing.duration}</span></div></div><dl class="cq-run-meta"><div><dt>Volume</dt><dd data-clock="volume">${esc(entry.volume || '—')}</dd></div><div><dt>Run</dt><dd data-clock="run">${esc(runLabel)}</dd></div><div><dt>Difficulty</dt><dd>${esc(difficulty[0].toUpperCase()+difficulty.slice(1))}</dd></div><div class="cq-run-units"><dt>Primary Unit</dt><dd data-clock="primary">${esc(primaryUnit)}</dd></div><div class="cq-run-units"><dt>Secondary Unit</dt><dd data-clock="secondary">${esc(secondaryUnit)}</dd></div></dl><div class="cq-countdown"><span data-clock="label">${timing.state === 'upcoming' ? 'Starts in' : timing.state === 'active' ? 'Time remaining' : 'Conquest complete'}</span><strong data-clock="remaining">${timing.remaining}</strong><small data-clock="boundary">${timing.state === 'upcoming' ? 'Opens' : 'Closes'} ${esc(dateLabel(timing.boundaryMs))}</small></div></header>`;
   app.innerHTML = `
     <div class="cq-page-layout"><aside class="cq-context" aria-label="Conquest information">
     ${conquestHeader()}
@@ -597,7 +628,7 @@ function renderPlanner(app, sel, nowMs, shared){
       picked.has(id) ? picked.delete(id) : picked.add(id); changed();
       if(previewState){ previewChart(previewState.kind,previewState.id); app.querySelector('[data-review-feat="'+id+'"]').focus({preventScroll:true}); }
     }
-    else if(button.matches('[data-diff]')){ persist(); renderPlanner(app,sel,nowMs,{ c: entry.id, d: button.dataset.diff, s: cap, t: topCrate, f: [], g: null }); }
+    else if(button.matches('[data-diff]')){ persist(); renderPlanner(app,sel,Date.now(),{ c: entry.id, d: button.dataset.diff, s: cap, t: topCrate, f: [], g: null }); }
     else if(button.matches('[data-reset-plan]')){
       picked.clear(); stars = cap; target = topCrate;
       changed();
