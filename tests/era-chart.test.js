@@ -31,6 +31,27 @@ async function setup(t, { stored, legacy, blocked = false, failed = false } = {}
   return {w,doc,get,edit,click,amount,boss,state};
 }
 
+test('Material stays leftmost and Remaining is the first numeric column without changing calculations', async t => {
+  const h = await setup(t);
+  const headings = () => [...h.doc.querySelectorAll('.plan-checklist thead th')].map(th => th.textContent);
+  const order = ['Material', 'Remaining', 'Required', 'Episode track', 'Marquees', 'Coliseum'];
+  assert.deepEqual(headings(), order);
+  const firstRow = h.get('[data-material="' + ERA + '"]');
+  assert.equal(firstRow.firstElementChild.getAttribute('scope'), 'row');
+  assert.equal(firstRow.children[1].dataset.amount, 'remaining');
+  const before = h.amount(ERA, 'remaining');
+  h.click('#planEpFree');
+  assert.ok(h.amount(ERA, 'remaining') < before);
+  assert.deepEqual(headings(), order);
+  for (const row of h.doc.querySelectorAll('.plan-checklist tbody tr')) {
+    assert.equal(row.firstElementChild.getAttribute('scope'), 'row');
+    assert.equal(row.children[1].dataset.amount, 'remaining');
+  }
+  assert.equal(h.get('#planNeed').getAttribute('tabindex'), '0');
+  assert.equal(h.get('#planNeed').getAttribute('role'), 'region');
+  assert.equal(h.get('#planNeed').getAttribute('aria-describedby'), 'planScrollHint');
+});
+
 test('gear and relic targets sync both ways using the mini-era conversion bands',async t=>{
   const h=await setup(t);
   assert.equal(h.get('#planGear').value,'75');

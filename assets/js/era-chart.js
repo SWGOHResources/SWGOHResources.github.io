@@ -109,10 +109,10 @@
     return sums;
   }
   function buildChecklist() {
-    document.getElementById('planNeed').innerHTML = '<table class="era-table plan-checklist"><caption class="sr-only">Material costs to the target era level, episode, marquee and Coliseum rewards, and remaining materials</caption><thead><tr><th scope="col">Material</th><th scope="col">Required</th><th scope="col">Episode track</th><th scope="col">Marquees</th><th scope="col">Coliseum</th><th scope="col">Remaining</th></tr></thead><tbody>' + CURS.map(function (m) {
+    document.getElementById('planNeed').innerHTML = '<table class="era-table plan-checklist"><caption class="sr-only">Material costs to the target era level, episode, marquee and Coliseum rewards, and remaining materials</caption><colgroup><col data-column="material"><col data-column="remaining"><col><col><col><col></colgroup><thead><tr><th scope="col" data-column="material">Material</th><th scope="col" data-column="remaining">Remaining</th><th scope="col">Required</th><th scope="col">Episode track</th><th scope="col">Marquees</th><th scope="col">Coliseum</th></tr></thead><tbody>' + CURS.map(function (m) {
       return '<tr data-material="' + m.id + '"><th scope="row"><span class="cur-name"><img src="' + m.icon + '" alt="" width="28" height="28" loading="lazy" decoding="async">' + m.name + '</span></th>' +
-        ['Required','Episode track','Marquees','Coliseum','Remaining'].map(function (label, i) {
-          return '<td data-label="' + label + '" data-amount="' + ['need','episode','marquee','coliseum','remaining'][i] + '" class="cell-num"></td>';
+        ['Remaining','Required','Episode track','Marquees','Coliseum'].map(function (label, i) {
+          return '<td data-label="' + label + '" data-amount="' + ['remaining','need','episode','marquee','coliseum'][i] + '" class="cell-num"></td>';
         }).join('') + '</tr>';
     }).join('') + '</tbody></table>';
   }
@@ -121,7 +121,7 @@
       if (!state.bosses[b.id]) state.bosses[b.id] = { tier:1, percent:0 };
       return '<div class="boss-control"><div class="boss-name"><img src="' + b.icon + '" alt="" width="36" height="36"><span>' + b.name + '</span></div><div class="boss-fields">' +
         '<label>Tier<select class="tz-select" data-boss="' + b.id + '" data-field="tier" aria-label="' + b.name + ' tier">' + COLISEUM.tiers.map(function (tier) { return '<option value="' + tier.tier + '">' + tier.tier + '</option>'; }).join('') + '</select></label>' +
-        '<label><span data-boss-label="' + b.id + '">Reached %</span><input class="plan-num tz-select" type="number" min="0" max="100" step="1" data-boss="' + b.id + '" data-field="progress" aria-label="' + b.name + ' percentage"></label></div>' +
+        '<label><span data-boss-label="' + b.id + '">Reached %</span><input class="plan-num tz-select" type="number" inputmode="numeric" min="0" max="100" step="1" data-boss="' + b.id + '" data-field="progress" aria-label="' + b.name + ' percentage"></label></div>' +
         '<div class="boss-shipment"><img src="assets/img/atlases/standard_rgba_atlas/icon_currency_coliseum.png" alt="" width="22" height="22"><span>Era Currency</span><b data-boss-shipment="' + b.id + '">0</b></div></div>';
     }).join('');
   }
@@ -134,7 +134,7 @@
     document.getElementById('marqueeDaily').innerHTML = tiers.map(function (tier) {
       var n = +tier.tier.replace('TIER','');
       if (state.marqueeDaily[n] == null) state.marqueeDaily[n] = 1;
-      return '<label>Tier ' + n + '<input class="tz-select plan-num" type="number" min="0" max="7" step="1" data-marquee-daily="' + n + '" value="' + state.marqueeDaily[n] + '" aria-label="Adelphi Ranger tier ' + n + ' daily reward claims" title="Daily claims, including the first day; maximum 7"></label>';
+      return '<label>Tier ' + n + '<input class="tz-select plan-num" type="number" inputmode="numeric" min="0" max="7" step="1" data-marquee-daily="' + n + '" value="' + state.marqueeDaily[n] + '" aria-label="Adelphi Ranger tier ' + n + ' daily reward claims" title="Daily claims, including the first day; maximum 7"></label>';
     }).join('');
     syncMarqueeDays();
   }
