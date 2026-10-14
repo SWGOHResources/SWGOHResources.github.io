@@ -1,0 +1,1207 @@
+{
+  "gameVersion": "0.40.6:i9YYIijBSxuHHNoSmCMBoQ",
+  "source": "https://github.com/swgoh-utils/gamedata/blob/005fa193f50d93b9cb8767d5476531832ae4a3ed/mysteryBox.json",
+  "sourceBlobSha": "8cc953df5577c0c223daebcec8c22ff99ea7f893",
+  "boxes": [
+    {
+      "previewItem": [
+        {
+          "id": "era_upgrade_basic_1",
+          "type": 7,
+          "minQuantity": 125,
+          "maxQuantity": 125,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        },
+        {
+          "id": "era_upgrade_advanced_1",
+          "type": 7,
+          "minQuantity": 50,
+          "maxQuantity": 50,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        }
+      ],
+      "id": "mysterybox_era_coliseum_boss_tier_1_milestone_40_reward",
+      "texture": "tex.chest_gc_03",
+      "titleKey": "COLISEUM_REWARD_CRATE_MILESTONE",
+      "descKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSDESCKEY",
+      "detailsTitleKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSTITLEKEY",
+      "detailsDescKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSDESCKEY",
+      "iconTextKey": "",
+      "showPrimaryRewards": false
+    },
+    {
+      "previewItem": [
+        {
+          "id": "era_upgrade_basic_1",
+          "type": 7,
+          "minQuantity": 125,
+          "maxQuantity": 125,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        },
+        {
+          "id": "era_upgrade_advanced_1",
+          "type": 7,
+          "minQuantity": 15,
+          "maxQuantity": 15,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        }
+      ],
+      "id": "mysterybox_era_coliseum_boss_tier_1_milestone_90_reward",
+      "texture": "tex.chest_gc_03",
+      "titleKey": "COLISEUM_REWARD_CRATE_MILESTONE",
+      "descKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSDESCKEY",
+      "detailsTitleKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSTITLEKEY",
+      "detailsDescKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSDESCKEY",
+      "iconTextKey": "",
+      "showPrimaryRewards": false
+    },
+    {
+      "previewItem": [
+        {
+          "id": "era_upgrade_basic_1",
+          "type": 7,
+          "minQuantity": 150,
+          "maxQuantity": 150,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        },
+        {
+          "id": "era_upgrade_advanced_1",
+          "type": 7,
+          "minQuantity": 50,
+          "maxQuantity": 50,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        }
+      ],
+      "id": "mysterybox_era_coliseum_boss_tier_2_milestone_40_reward",
+      "texture": "tex.chest_gc_03",
+      "titleKey": "COLISEUM_REWARD_CRATE_MILESTONE",
+      "descKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSDESCKEY",
+      "detailsTitleKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSTITLEKEY",
+      "detailsDescKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSDESCKEY",
+      "iconTextKey": "",
+      "showPrimaryRewards": false
+    },
+    {
+      "previewItem": [
+        {
+          "id": "era_upgrade_basic_1",
+          "type": 7,
+          "minQuantity": 350,
+          "maxQuantity": 350,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        },
+        {
+          "id": "era_upgrade_advanced_1",
+          "type": 7,
+          "minQuantity": 50,
+          "maxQuantity": 50,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        }
+      ],
+      "id": "mysterybox_era_coliseum_boss_tier_2_milestone_90_reward",
+      "texture": "tex.chest_gc_03",
+      "titleKey": "COLISEUM_REWARD_CRATE_MILESTONE",
+      "descKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSDESCKEY",
+      "detailsTitleKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSTITLEKEY",
+      "detailsDescKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSDESCKEY",
+      "iconTextKey": "",
+      "showPrimaryRewards": false
+    },
+    {
+      "previewItem": [
+        {
+          "id": "era_upgrade_basic_1",
+          "type": 7,
+          "minQuantity": 300,
+          "maxQuantity": 300,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        },
+        {
+          "id": "era_upgrade_advanced_1",
+          "type": 7,
+          "minQuantity": 50,
+          "maxQuantity": 50,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        }
+      ],
+      "id": "mysterybox_era_coliseum_boss_tier_3_milestone_40_reward",
+      "texture": "tex.chest_gc_03",
+      "titleKey": "COLISEUM_REWARD_CRATE_MILESTONE",
+      "descKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSDESCKEY",
+      "detailsTitleKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSTITLEKEY",
+      "detailsDescKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSDESCKEY",
+      "iconTextKey": "",
+      "showPrimaryRewards": false
+    },
+    {
+      "previewItem": [
+        {
+          "id": "era_upgrade_basic_1",
+          "type": 7,
+          "minQuantity": 400,
+          "maxQuantity": 400,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        },
+        {
+          "id": "era_upgrade_advanced_1",
+          "type": 7,
+          "minQuantity": 100,
+          "maxQuantity": 100,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        }
+      ],
+      "id": "mysterybox_era_coliseum_boss_tier_3_milestone_90_reward",
+      "texture": "tex.chest_gc_03",
+      "titleKey": "COLISEUM_REWARD_CRATE_MILESTONE",
+      "descKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSDESCKEY",
+      "detailsTitleKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSTITLEKEY",
+      "detailsDescKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSDESCKEY",
+      "iconTextKey": "",
+      "showPrimaryRewards": false
+    },
+    {
+      "previewItem": [
+        {
+          "id": "era_upgrade_basic_2",
+          "type": 7,
+          "minQuantity": 200,
+          "maxQuantity": 200,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        },
+        {
+          "id": "era_upgrade_advanced_2",
+          "type": 7,
+          "minQuantity": 50,
+          "maxQuantity": 50,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        }
+      ],
+      "id": "mysterybox_era_coliseum_boss_tier_4_milestone_40_reward",
+      "texture": "tex.chest_gc_03",
+      "titleKey": "COLISEUM_REWARD_CRATE_MILESTONE",
+      "descKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSDESCKEY",
+      "detailsTitleKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSTITLEKEY",
+      "detailsDescKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSDESCKEY",
+      "iconTextKey": "",
+      "showPrimaryRewards": false
+    },
+    {
+      "previewItem": [
+        {
+          "id": "era_upgrade_basic_2",
+          "type": 7,
+          "minQuantity": 250,
+          "maxQuantity": 250,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        },
+        {
+          "id": "era_upgrade_advanced_2",
+          "type": 7,
+          "minQuantity": 100,
+          "maxQuantity": 100,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        }
+      ],
+      "id": "mysterybox_era_coliseum_boss_tier_4_milestone_90_reward",
+      "texture": "tex.chest_gc_03",
+      "titleKey": "COLISEUM_REWARD_CRATE_MILESTONE",
+      "descKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSDESCKEY",
+      "detailsTitleKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSTITLEKEY",
+      "detailsDescKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSDESCKEY",
+      "iconTextKey": "",
+      "showPrimaryRewards": false
+    },
+    {
+      "previewItem": [
+        {
+          "id": "era_upgrade_basic_2",
+          "type": 7,
+          "minQuantity": 350,
+          "maxQuantity": 350,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        },
+        {
+          "id": "era_upgrade_advanced_2",
+          "type": 7,
+          "minQuantity": 50,
+          "maxQuantity": 50,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        }
+      ],
+      "id": "mysterybox_era_coliseum_boss_tier_5_milestone_40_reward",
+      "texture": "tex.chest_gc_03",
+      "titleKey": "COLISEUM_REWARD_CRATE_MILESTONE",
+      "descKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSDESCKEY",
+      "detailsTitleKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSTITLEKEY",
+      "detailsDescKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSDESCKEY",
+      "iconTextKey": "",
+      "showPrimaryRewards": false
+    },
+    {
+      "previewItem": [
+        {
+          "id": "era_upgrade_basic_2",
+          "type": 7,
+          "minQuantity": 500,
+          "maxQuantity": 500,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        },
+        {
+          "id": "era_upgrade_advanced_2",
+          "type": 7,
+          "minQuantity": 100,
+          "maxQuantity": 100,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        }
+      ],
+      "id": "mysterybox_era_coliseum_boss_tier_5_milestone_90_reward",
+      "texture": "tex.chest_gc_03",
+      "titleKey": "COLISEUM_REWARD_CRATE_MILESTONE",
+      "descKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSDESCKEY",
+      "detailsTitleKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSTITLEKEY",
+      "detailsDescKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSDESCKEY",
+      "iconTextKey": "",
+      "showPrimaryRewards": false
+    },
+    {
+      "previewItem": [
+        {
+          "id": "era_upgrade_basic_3",
+          "type": 7,
+          "minQuantity": 275,
+          "maxQuantity": 275,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        },
+        {
+          "id": "era_upgrade_advanced_3",
+          "type": 7,
+          "minQuantity": 100,
+          "maxQuantity": 100,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        }
+      ],
+      "id": "mysterybox_era_coliseum_boss_tier_6_milestone_40_reward",
+      "texture": "tex.chest_gc_03",
+      "titleKey": "COLISEUM_REWARD_CRATE_MILESTONE",
+      "descKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSDESCKEY",
+      "detailsTitleKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSTITLEKEY",
+      "detailsDescKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSDESCKEY",
+      "iconTextKey": "",
+      "showPrimaryRewards": false
+    },
+    {
+      "previewItem": [
+        {
+          "id": "era_upgrade_basic_3",
+          "type": 7,
+          "minQuantity": 350,
+          "maxQuantity": 350,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        },
+        {
+          "id": "era_upgrade_advanced_3",
+          "type": 7,
+          "minQuantity": 100,
+          "maxQuantity": 100,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        }
+      ],
+      "id": "mysterybox_era_coliseum_boss_tier_6_milestone_90_reward",
+      "texture": "tex.chest_gc_03",
+      "titleKey": "COLISEUM_REWARD_CRATE_MILESTONE",
+      "descKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSDESCKEY",
+      "detailsTitleKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSTITLEKEY",
+      "detailsDescKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSDESCKEY",
+      "iconTextKey": "",
+      "showPrimaryRewards": false
+    },
+    {
+      "previewItem": [
+        {
+          "id": "era_upgrade_basic_3",
+          "type": 7,
+          "minQuantity": 425,
+          "maxQuantity": 425,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        },
+        {
+          "id": "ERA_CURRENCY",
+          "type": 3,
+          "minQuantity": 200,
+          "maxQuantity": 200,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        }
+      ],
+      "id": "mysterybox_era_coliseum_boss_tier_7_milestone_10_reward_v3",
+      "texture": "tex.chest_gc_03",
+      "titleKey": "COLISEUM_REWARD_CRATE_MILESTONE",
+      "descKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSDESCKEY",
+      "detailsTitleKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSTITLEKEY",
+      "detailsDescKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSDESCKEY",
+      "iconTextKey": "",
+      "showPrimaryRewards": false
+    },
+    {
+      "previewItem": [
+        {
+          "id": "era_upgrade_basic_3",
+          "type": 7,
+          "minQuantity": 525,
+          "maxQuantity": 525,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        },
+        {
+          "id": "ERA_CURRENCY",
+          "type": 3,
+          "minQuantity": 200,
+          "maxQuantity": 200,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        }
+      ],
+      "id": "mysterybox_era_coliseum_boss_tier_7_milestone_20_reward_v3",
+      "texture": "tex.chest_gc_03",
+      "titleKey": "COLISEUM_REWARD_CRATE_MILESTONE",
+      "descKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSDESCKEY",
+      "detailsTitleKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSTITLEKEY",
+      "detailsDescKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSDESCKEY",
+      "iconTextKey": "",
+      "showPrimaryRewards": false
+    },
+    {
+      "previewItem": [
+        {
+          "id": "era_upgrade_basic_3",
+          "type": 7,
+          "minQuantity": 525,
+          "maxQuantity": 525,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        },
+        {
+          "id": "ERA_CURRENCY",
+          "type": 3,
+          "minQuantity": 200,
+          "maxQuantity": 200,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        }
+      ],
+      "id": "mysterybox_era_coliseum_boss_tier_7_milestone_30_reward_v3",
+      "texture": "tex.chest_gc_03",
+      "titleKey": "COLISEUM_REWARD_CRATE_MILESTONE",
+      "descKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSDESCKEY",
+      "detailsTitleKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSTITLEKEY",
+      "detailsDescKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSDESCKEY",
+      "iconTextKey": "",
+      "showPrimaryRewards": false
+    },
+    {
+      "previewItem": [
+        {
+          "id": "era_upgrade_basic_3",
+          "type": 7,
+          "minQuantity": 650,
+          "maxQuantity": 650,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        },
+        {
+          "id": "era_upgrade_advanced_3",
+          "type": 7,
+          "minQuantity": 150,
+          "maxQuantity": 150,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        },
+        {
+          "id": "ERA_CURRENCY",
+          "type": 3,
+          "minQuantity": 200,
+          "maxQuantity": 200,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        }
+      ],
+      "id": "mysterybox_era_coliseum_boss_tier_7_milestone_40_reward_v3",
+      "texture": "tex.chest_gc_03",
+      "titleKey": "COLISEUM_REWARD_CRATE_MILESTONE",
+      "descKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSDESCKEY",
+      "detailsTitleKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSTITLEKEY",
+      "detailsDescKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSDESCKEY",
+      "iconTextKey": "",
+      "showPrimaryRewards": false
+    },
+    {
+      "previewItem": [
+        {
+          "id": "era_upgrade_basic_3",
+          "type": 7,
+          "minQuantity": 725,
+          "maxQuantity": 725,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        },
+        {
+          "id": "ERA_CURRENCY",
+          "type": 3,
+          "minQuantity": 400,
+          "maxQuantity": 400,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        }
+      ],
+      "id": "mysterybox_era_coliseum_boss_tier_7_milestone_50_reward_v3",
+      "texture": "tex.chest_gc_03",
+      "titleKey": "COLISEUM_REWARD_CRATE_MILESTONE",
+      "descKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSDESCKEY",
+      "detailsTitleKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSTITLEKEY",
+      "detailsDescKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSDESCKEY",
+      "iconTextKey": "",
+      "showPrimaryRewards": false
+    },
+    {
+      "previewItem": [
+        {
+          "id": "era_upgrade_basic_3",
+          "type": 7,
+          "minQuantity": 750,
+          "maxQuantity": 750,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        },
+        {
+          "id": "ERA_CURRENCY",
+          "type": 3,
+          "minQuantity": 400,
+          "maxQuantity": 400,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        }
+      ],
+      "id": "mysterybox_era_coliseum_boss_tier_7_milestone_60_reward_v3",
+      "texture": "tex.chest_gc_03",
+      "titleKey": "COLISEUM_REWARD_CRATE_MILESTONE",
+      "descKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSDESCKEY",
+      "detailsTitleKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSTITLEKEY",
+      "detailsDescKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSDESCKEY",
+      "iconTextKey": "",
+      "showPrimaryRewards": false
+    },
+    {
+      "previewItem": [
+        {
+          "id": "era_upgrade_basic_3",
+          "type": 7,
+          "minQuantity": 775,
+          "maxQuantity": 775,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        },
+        {
+          "id": "ERA_CURRENCY",
+          "type": 3,
+          "minQuantity": 400,
+          "maxQuantity": 400,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        }
+      ],
+      "id": "mysterybox_era_coliseum_boss_tier_7_milestone_70_reward_v3",
+      "texture": "tex.chest_gc_03",
+      "titleKey": "COLISEUM_REWARD_CRATE_MILESTONE",
+      "descKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSDESCKEY",
+      "detailsTitleKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSTITLEKEY",
+      "detailsDescKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSDESCKEY",
+      "iconTextKey": "",
+      "showPrimaryRewards": false
+    },
+    {
+      "previewItem": [
+        {
+          "id": "era_upgrade_basic_3",
+          "type": 7,
+          "minQuantity": 800,
+          "maxQuantity": 800,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        },
+        {
+          "id": "ERA_CURRENCY",
+          "type": 3,
+          "minQuantity": 400,
+          "maxQuantity": 400,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        }
+      ],
+      "id": "mysterybox_era_coliseum_boss_tier_7_milestone_80_reward_v3",
+      "texture": "tex.chest_gc_03",
+      "titleKey": "COLISEUM_REWARD_CRATE_MILESTONE",
+      "descKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSDESCKEY",
+      "detailsTitleKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSTITLEKEY",
+      "detailsDescKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSDESCKEY",
+      "iconTextKey": "",
+      "showPrimaryRewards": false
+    },
+    {
+      "previewItem": [
+        {
+          "id": "era_upgrade_basic_3",
+          "type": 7,
+          "minQuantity": 825,
+          "maxQuantity": 825,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        },
+        {
+          "id": "era_upgrade_advanced_3",
+          "type": 7,
+          "minQuantity": 200,
+          "maxQuantity": 200,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        },
+        {
+          "id": "ERA_CURRENCY",
+          "type": 3,
+          "minQuantity": 400,
+          "maxQuantity": 400,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        }
+      ],
+      "id": "mysterybox_era_coliseum_boss_tier_7_milestone_90_reward_v3",
+      "texture": "tex.chest_gc_03",
+      "titleKey": "COLISEUM_REWARD_CRATE_MILESTONE",
+      "descKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSDESCKEY",
+      "detailsTitleKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSTITLEKEY",
+      "detailsDescKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSDESCKEY",
+      "iconTextKey": "",
+      "showPrimaryRewards": false
+    },
+    {
+      "previewItem": [
+        {
+          "id": "era_upgrade_basic_4",
+          "type": 7,
+          "minQuantity": 100,
+          "maxQuantity": 100,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        },
+        {
+          "id": "ERA_CURRENCY",
+          "type": 3,
+          "minQuantity": 400,
+          "maxQuantity": 400,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        }
+      ],
+      "id": "mysterybox_era_coliseum_boss_tier_7_milestone_100_reward_v3",
+      "texture": "tex.chest_gc_03",
+      "titleKey": "COLISEUM_REWARD_CRATE_MILESTONE",
+      "descKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSDESCKEY",
+      "detailsTitleKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSTITLEKEY",
+      "detailsDescKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSDESCKEY",
+      "iconTextKey": "",
+      "showPrimaryRewards": false
+    },
+    {
+      "previewItem": [
+        {
+          "id": "era_upgrade_basic_4",
+          "type": 7,
+          "minQuantity": 150,
+          "maxQuantity": 150,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        },
+        {
+          "id": "ERA_CURRENCY",
+          "type": 3,
+          "minQuantity": 400,
+          "maxQuantity": 400,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        }
+      ],
+      "id": "mysterybox_era_coliseum_boss_tier_8_milestone_10_reward_v3",
+      "texture": "tex.chest_gc_03",
+      "titleKey": "COLISEUM_REWARD_CRATE_MILESTONE",
+      "descKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSDESCKEY",
+      "detailsTitleKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSTITLEKEY",
+      "detailsDescKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSDESCKEY",
+      "iconTextKey": "",
+      "showPrimaryRewards": false
+    },
+    {
+      "previewItem": [
+        {
+          "id": "era_upgrade_basic_4",
+          "type": 7,
+          "minQuantity": 200,
+          "maxQuantity": 200,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        },
+        {
+          "id": "ERA_CURRENCY",
+          "type": 3,
+          "minQuantity": 400,
+          "maxQuantity": 400,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        }
+      ],
+      "id": "mysterybox_era_coliseum_boss_tier_8_milestone_20_reward_v3",
+      "texture": "tex.chest_gc_03",
+      "titleKey": "COLISEUM_REWARD_CRATE_MILESTONE",
+      "descKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSDESCKEY",
+      "detailsTitleKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSTITLEKEY",
+      "detailsDescKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSDESCKEY",
+      "iconTextKey": "",
+      "showPrimaryRewards": false
+    },
+    {
+      "previewItem": [
+        {
+          "id": "era_upgrade_basic_4",
+          "type": 7,
+          "minQuantity": 250,
+          "maxQuantity": 250,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        },
+        {
+          "id": "ERA_CURRENCY",
+          "type": 3,
+          "minQuantity": 400,
+          "maxQuantity": 400,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        }
+      ],
+      "id": "mysterybox_era_coliseum_boss_tier_8_milestone_30_reward_v3",
+      "texture": "tex.chest_gc_03",
+      "titleKey": "COLISEUM_REWARD_CRATE_MILESTONE",
+      "descKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSDESCKEY",
+      "detailsTitleKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSTITLEKEY",
+      "detailsDescKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSDESCKEY",
+      "iconTextKey": "",
+      "showPrimaryRewards": false
+    },
+    {
+      "previewItem": [
+        {
+          "id": "era_upgrade_basic_4",
+          "type": 7,
+          "minQuantity": 250,
+          "maxQuantity": 250,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        },
+        {
+          "id": "era_upgrade_advanced_4",
+          "type": 7,
+          "minQuantity": 75,
+          "maxQuantity": 75,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        },
+        {
+          "id": "ERA_CURRENCY",
+          "type": 3,
+          "minQuantity": 400,
+          "maxQuantity": 400,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        }
+      ],
+      "id": "mysterybox_era_coliseum_boss_tier_8_milestone_40_reward_v3",
+      "texture": "tex.chest_gc_03",
+      "titleKey": "COLISEUM_REWARD_CRATE_MILESTONE",
+      "descKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSDESCKEY",
+      "detailsTitleKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSTITLEKEY",
+      "detailsDescKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSDESCKEY",
+      "iconTextKey": "",
+      "showPrimaryRewards": false
+    },
+    {
+      "previewItem": [
+        {
+          "id": "era_upgrade_basic_4",
+          "type": 7,
+          "minQuantity": 350,
+          "maxQuantity": 350,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        },
+        {
+          "id": "ERA_CURRENCY",
+          "type": 3,
+          "minQuantity": 400,
+          "maxQuantity": 400,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        }
+      ],
+      "id": "mysterybox_era_coliseum_boss_tier_8_milestone_50_reward_v3",
+      "texture": "tex.chest_gc_03",
+      "titleKey": "COLISEUM_REWARD_CRATE_MILESTONE",
+      "descKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSDESCKEY",
+      "detailsTitleKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSTITLEKEY",
+      "detailsDescKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSDESCKEY",
+      "iconTextKey": "",
+      "showPrimaryRewards": false
+    },
+    {
+      "previewItem": [
+        {
+          "id": "era_upgrade_basic_4",
+          "type": 7,
+          "minQuantity": 375,
+          "maxQuantity": 375,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        },
+        {
+          "id": "ERA_CURRENCY",
+          "type": 3,
+          "minQuantity": 600,
+          "maxQuantity": 600,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        }
+      ],
+      "id": "mysterybox_era_coliseum_boss_tier_8_milestone_60_reward_v3",
+      "texture": "tex.chest_gc_03",
+      "titleKey": "COLISEUM_REWARD_CRATE_MILESTONE",
+      "descKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSDESCKEY",
+      "detailsTitleKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSTITLEKEY",
+      "detailsDescKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSDESCKEY",
+      "iconTextKey": "",
+      "showPrimaryRewards": false
+    },
+    {
+      "previewItem": [
+        {
+          "id": "era_upgrade_basic_4",
+          "type": 7,
+          "minQuantity": 450,
+          "maxQuantity": 450,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        },
+        {
+          "id": "ERA_CURRENCY",
+          "type": 3,
+          "minQuantity": 600,
+          "maxQuantity": 600,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        }
+      ],
+      "id": "mysterybox_era_coliseum_boss_tier_8_milestone_70_reward_v3",
+      "texture": "tex.chest_gc_03",
+      "titleKey": "COLISEUM_REWARD_CRATE_MILESTONE",
+      "descKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSDESCKEY",
+      "detailsTitleKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSTITLEKEY",
+      "detailsDescKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSDESCKEY",
+      "iconTextKey": "",
+      "showPrimaryRewards": false
+    },
+    {
+      "previewItem": [
+        {
+          "id": "era_upgrade_basic_4",
+          "type": 7,
+          "minQuantity": 550,
+          "maxQuantity": 550,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        },
+        {
+          "id": "ERA_CURRENCY",
+          "type": 3,
+          "minQuantity": 600,
+          "maxQuantity": 600,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        }
+      ],
+      "id": "mysterybox_era_coliseum_boss_tier_8_milestone_80_reward_v3",
+      "texture": "tex.chest_gc_03",
+      "titleKey": "COLISEUM_REWARD_CRATE_MILESTONE",
+      "descKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSDESCKEY",
+      "detailsTitleKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSTITLEKEY",
+      "detailsDescKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSDESCKEY",
+      "iconTextKey": "",
+      "showPrimaryRewards": false
+    },
+    {
+      "previewItem": [
+        {
+          "id": "era_upgrade_basic_4",
+          "type": 7,
+          "minQuantity": 150,
+          "maxQuantity": 150,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        },
+        {
+          "id": "era_upgrade_advanced_4",
+          "type": 7,
+          "minQuantity": 100,
+          "maxQuantity": 100,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        },
+        {
+          "id": "ERA_CURRENCY",
+          "type": 3,
+          "minQuantity": 600,
+          "maxQuantity": 600,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        }
+      ],
+      "id": "mysterybox_era_coliseum_boss_tier_8_milestone_90_reward_v3",
+      "texture": "tex.chest_gc_03",
+      "titleKey": "COLISEUM_REWARD_CRATE_MILESTONE",
+      "descKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSDESCKEY",
+      "detailsTitleKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSTITLEKEY",
+      "detailsDescKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSDESCKEY",
+      "iconTextKey": "",
+      "showPrimaryRewards": false
+    },
+    {
+      "previewItem": [
+        {
+          "id": "era_upgrade_basic_5",
+          "type": 7,
+          "minQuantity": 125,
+          "maxQuantity": 125,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        },
+        {
+          "id": "ERA_CURRENCY",
+          "type": 3,
+          "minQuantity": 750,
+          "maxQuantity": 750,
+          "rarity": 8,
+          "statMod": null,
+          "previewPriority": 0,
+          "unitLevel": 0,
+          "unitTier": 0,
+          "primaryReward": false
+        }
+      ],
+      "id": "mysterybox_era_coliseum_boss_tier_8_milestone_100_reward_v3",
+      "texture": "tex.chest_gc_03",
+      "titleKey": "COLISEUM_REWARD_CRATE_MILESTONE",
+      "descKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSDESCKEY",
+      "detailsTitleKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSTITLEKEY",
+      "detailsDescKey": "MYSTERYBOX_CONQUEST_LADDER_EOE_DETAILSDESCKEY",
+      "iconTextKey": "",
+      "showPrimaryRewards": false
+    }
+  ]
+}

@@ -13,7 +13,7 @@ test('timeline uses the homepage footer and shared navigation without overriding
     assert.equal(timeline.window.document.querySelector('footer').outerHTML,home.window.document.querySelector('footer').outerHTML);
     const links=doc=>[...doc.querySelectorAll('.topbar-tabs a')].map(a=>[a.textContent.trim(),a.getAttribute('href')]);
     assert.deepEqual(links(timeline.window.document),links(conquest.window.document));
-    assert.equal(timeline.window.document.querySelector('.topbar-tabs [aria-current="page"]').getAttribute('href'),'/game-timeline/');
+    for(const page of [timeline,home,conquest])assert.equal(page.window.document.querySelector('a[href="/game-timeline/"]'),null);
     assert.equal(timeline.window.document.querySelector('a[href$=".pdf"]'),null);
     assert.ok(!read('assets/css/game-timeline.css').includes('.gt-shell *{'));
   }finally{timeline.window.close();home.window.close();conquest.window.close();}

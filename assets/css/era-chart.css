@@ -1,62 +1,70 @@
-/* Era chart — follows the site chrome (void panels, amber accents, mono numerals). */
-.era-hero { gap: 20px; padding: 20px 24px; }
-.era-hero .mh-main-val { font-size: 26px; white-space: normal; }
-.era-intro { margin-top: 8px; font-size: 14px; line-height: 1.6; color: var(--text2); max-width: 1000px; }
-.era-src { margin-top: 8px; font-family: var(--mono); font-size: 11px; color: var(--text3); }
-.era-jumps { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
-.era-jumps .gear-btn { text-decoration: none; }
-.era-section { scroll-margin-top: 90px; margin-top: 26px; }
-details.era-details { border: 1px solid var(--border2); border-radius: var(--radius-lg); background: var(--void1); margin-top: 12px; }
-details.era-details summary { cursor: pointer; padding: 12px 16px; font-weight: 600; font-size: 13px; color: var(--text); list-style: none; display: flex; align-items: center; gap: 8px; }
-details.era-details summary::-webkit-details-marker { display: none; }
-details.era-details summary::before { content: "+"; font-family: var(--mono); color: var(--amber); font-weight: 500; }
-details.era-details[open] summary::before { content: "–"; }
-details.era-details summary:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
-details.era-details .tbl-scroll { border: none; border-top: 1px solid var(--border2); border-radius: 0 0 var(--radius-lg) var(--radius-lg); margin: 0; }
-td.small, .small { font-size: 11.5px; color: var(--text2); }
-td.small b, .small b { color: var(--text); font-family: var(--mono); font-weight: 500; }
-.plan-controls { display: flex; gap: 10px 18px; flex-wrap: wrap; align-items: center; margin: 12px 0; font-size: 13px; color: var(--text2); }
-.plan-controls label { display: inline-flex; align-items: center; gap: 8px; }
-.plan-num { width: 76px; background: var(--void2); border: 1px solid var(--border2); border-radius: var(--radius); color: var(--text); font-family: var(--mono); font-size: 13px; padding: 7px 10px; }
-.plan-seg { display: inline-flex; gap: 6px; }
-.plan-seg .gear-btn.is-on { border-color: var(--amber-border); color: var(--amber); }
-.plan-h { font-family: var(--disp); font-size: 13px; letter-spacing: 0.03em; margin: 20px 0 8px; color: var(--text); }
-.plan-check { cursor: pointer; }
-.plan-check input { accent-color: var(--amber); width: 16px; height: 16px; }
-#eraPlanner input[type="text"], #eraPlanner select { background: var(--void2); border: 1px solid var(--border2); border-radius: var(--radius); color: var(--text); font-family: var(--body); font-size: 12.5px; padding: 7px 10px; max-width: 100%; }
-#eraPlanner .plan-pack-name { width: 150px; }
-td.small b, .small b { color: var(--text); font-family: var(--mono); font-weight: 500; }
-.tbl-scroll { overflow-x: auto; border: 1px solid var(--border2); border-radius: var(--radius-lg); background: var(--void1); }
-table.era-table { border-collapse: collapse; width: 100%; min-width: 760px; }
-.era-table thead th { font-family: var(--mono); font-size: 10px; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text3); text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border2); position: sticky; top: 0; background: var(--void1); }
-.era-table tbody td { border-top: 1px solid var(--border); padding: 7px 12px; font-size: 13px; vertical-align: middle; }
-.era-table tbody tr.band-start td { border-top: 1px solid var(--border2); }
-.era-table tbody tr:hover td { background: rgba(255, 255, 255, 0.02); }
-td.cell-star { font-family: var(--disp); font-weight: 700; font-size: 14px; color: var(--amber); text-align: center; }
-td.cell-tier { font-family: var(--mono); font-size: 11px; color: var(--text2); text-align: center; white-space: nowrap; }
-td.cell-num { text-align: center; white-space: nowrap; }
-td.cell-lvl { font-family: var(--mono); font-weight: 500; font-size: 12px; }
-.cost { line-height: 2.1; }
-.ecost { display: inline-flex; align-items: center; gap: 6px; margin: 1px 12px 1px 0; font-size: 12.5px; white-space: nowrap; }
-.ecost img { width: 22px; height: 22px; border-radius: 6px; display: block; }
-.ecost b { font-family: var(--mono); font-weight: 500; }
-.ecost span { color: var(--text3); font-size: 11.5px; }
-.none2 { color: var(--text3); }
-.echanged { font-family: var(--mono); font-size: 10px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--amber); border: 1px solid var(--amber-border); background: var(--amber-dim); border-radius: var(--radius); padding: 2px 8px; white-space: nowrap; }
-table.totals-table { border-collapse: collapse; width: 100%; }
-.totals-table thead th { font-family: var(--mono); font-size: 10px; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text3); text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border2); }
-.totals-table thead th.cell-n { text-align: right; }
-.totals-table tbody td, .totals-table tbody th { border-top: 1px solid var(--border); padding: 9px 12px; font-size: 13px; vertical-align: middle; }
-.totals-table tbody tr:hover td, .totals-table tbody tr:hover th { background: rgba(255, 255, 255, 0.02); }
-.totals-table th.cell-cur { text-align: left; font-weight: 600; }
+/* Reuse the homepage's panel tokens, section headings, buttons and selects. */
+.era-section { scroll-margin-top: 80px; }
+.material-planner { background: var(--void1); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+.checklist-controls { padding: 20px; }
+.checklist-heading.section-head { margin: 0 0 22px; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+.calculator-top { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 24px; align-items: end; }
+.calculator-goal { display: flex; flex-wrap: wrap; align-items: end; gap: 16px; }
+.calculator-goal > label { width: 104px; flex-shrink: 0; }
+.calculator-goal > label.plan-gear { width: 132px; }
+.checklist-controls label, .plan-unit-control, .plan-track-control { display: flex; flex-direction: column; gap: 8px; font-size: 12px; font-weight: 600; color: var(--text2); }
+.checklist-controls .tz-select { width: 100%; min-width: 0; max-width: none; height: 42px; padding: 10px 32px 10px 12px; font-size: 13px; font-weight: 400; }
+.plan-num.tz-select { background-image: none; appearance: textfield; cursor: text; padding: 10px 12px; font-family: var(--mono); }
+.plan-num::-webkit-inner-spin-button, .plan-num::-webkit-outer-spin-button { appearance: none; margin: 0; }
+.plan-seg { display: flex; gap: 6px; }
+.plan-seg .gear-btn { height: 42px; padding: 10px 16px; justify-content: center; font-size: 13px; }
+.plan-seg .gear-btn.on { background: var(--amber-dim); }
+.plan-reset { min-height: 34px; padding: 6px 12px; }
+.marquee-controls { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--border); }
+.marquee-heading { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
+.marquee-heading h2 { font-family: var(--body); font-size: 13px; font-weight: 600; color: var(--text); }
+.marquee-units { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.marquee-unit { min-width: 0; border: 0; padding: 0; margin: 0; }
+.marquee-unit legend { padding: 0; margin-bottom: 12px; color: var(--text); font-size: 13px; font-weight: 600; }
+.marquee-unit:disabled { opacity: .45; }
+.marquee-unit:disabled :is(select, button) { cursor: default; }
+.marquee-fields { display: grid; grid-template-columns: minmax(0, 2fr) minmax(130px, 1fr); gap: 16px; max-width: 560px; }
+.marquee-custom-open { margin-top: 12px; }
+.modal.wide.marquee-custom-modal { margin: auto; color: var(--text); width: calc(100% - 48px); max-width: 600px; max-height: 70vh; overflow-y: auto; }
+.marquee-custom-modal:not([open]) { display: none; }
+.marquee-custom-modal::backdrop { background: rgba(8,10,14,.92); }
+.marquee-custom-modal h3 { font: 600 16px var(--body); }
+.marquee-custom-actions { display: flex; justify-content: end; margin-top: 20px; }
+.marquee-daily { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; max-width: 560px; padding-top: 14px; }
+.boss-shipment { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 10px; font-size: 11px; color: var(--text2); }
+.boss-shipment img { width: 22px; height: 22px; object-fit: contain; }
+.boss-shipment b { font-family: var(--mono); color: var(--amber); }
+.boss-controls { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--border); }
+.boss-control { min-width: 0; }
+.boss-name { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; color: var(--text); min-height: 40px; }
+.boss-name img { width: 36px; height: 36px; object-fit: contain; }
+.boss-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+.boss-fields .tz-select { width: 100%; min-width: 0; }
+#planNeed { overflow-x: auto; border-top: 1px solid var(--border2); }
+table.era-table { border-collapse: collapse; width: 100%; }
+.era-table thead th { padding: 10px 12px; border-bottom: 1px solid var(--border2); background: var(--void1); font: 500 10px var(--mono); letter-spacing: .04em; text-transform: uppercase; color: var(--text3); text-align: left; }
+.era-table td, .era-table tbody th { border-top: 1px solid var(--border); padding: 10px 12px; font-size: 13px; vertical-align: middle; }
+.era-table tbody tr:hover { background: rgba(255,255,255,.02); }
+.era-table > caption { color: var(--text2); }
+.era-notes { padding: 16px; font-size: 12px; color: var(--text2); }
+.era-table { min-width: 680px; }
+.era-table tbody th { font-weight: 600; text-align: left; }
+.era-table .cell-num { text-align: right; white-space: nowrap; font-family: var(--mono); }
+.plan-checklist { min-width: 710px; }
+.plan-checklist thead th:not(:first-child) { text-align: right; }
+.plan-checklist td[data-amount="remaining"] { color: var(--amber); font-weight: 600; }
+.plan-checklist .is-covered td[data-amount="remaining"] { color: var(--cyan); }
 .cur-name { display: inline-flex; align-items: center; gap: 10px; }
-.cur-name img { width: 32px; height: 32px; border-radius: 7px; display: block; }
-.cur-name small { display: block; font-family: var(--mono); font-size: 10px; color: var(--text3); font-weight: 400; }
-.totals-table td.cell-n { text-align: right; font-family: var(--mono); font-size: 14px; }
-.totals-table td.cell-n small { display: block; font-weight: 400; font-size: 10px; color: var(--text3); }
-.era-notes { font-size: 13px; line-height: 1.7; margin: 18px 0; max-width: 1000px; color: var(--text2); }
-.era-notes b { color: var(--text); }
+.cur-name img { width: 28px; height: 28px; object-fit: contain; flex-shrink: 0; }
+.era-page :is(input, select, button, summary):focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+.era-page .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 @media (max-width: 760px) {
-  .era-hero { padding: 18px; }
-  .era-jumps { justify-content: flex-start; }
+  .boss-controls { grid-template-columns: 1fr 1fr; }
+  .calculator-top { grid-template-columns: 1fr; gap: 18px; }
+  .marquee-units { grid-template-columns: 1fr; gap: 20px; }
+  .checklist-controls { padding: 16px; }
+  .calculator-goal { gap: 12px; }
+  .plan-seg .gear-btn { padding: 10px 14px; }
+  .marquee-fields { grid-template-columns: minmax(0, 2fr) minmax(104px, 1fr); gap: 12px; }
+  .marquee-daily { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }

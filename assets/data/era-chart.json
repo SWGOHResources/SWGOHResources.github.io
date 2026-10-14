@@ -1201,6 +1201,16 @@
       "id": "era_upgrade_advanced_1",
       "q": 10
      }
+    ],
+    "dailyRewards": [
+     {
+      "id": "15725",
+      "q": 1
+     },
+     {
+      "id": "85725",
+      "q": 1
+     }
     ]
    },
    {
@@ -1210,6 +1220,28 @@
      {
       "id": "unitshard_ADELPHIRANGER",
       "q": 10
+     }
+    ],
+    "dailyRewards": [
+     {
+      "id": "108Salvage",
+      "q": 2
+     },
+     {
+      "id": "112Salvage",
+      "q": 2
+     },
+     {
+      "id": "117PrototypeSalvage",
+      "q": 2
+     },
+     {
+      "id": "135Salvage",
+      "q": 2
+     },
+     {
+      "id": "129Component",
+      "q": 2
      }
     ]
    },
@@ -1228,6 +1260,24 @@
      {
       "id": "era_upgrade_special_1",
       "q": 10
+     }
+    ],
+    "dailyRewards": [
+     {
+      "id": "unitshard_ADELPHIRANGER",
+      "q": 5
+     },
+     {
+      "id": "172Salvage",
+      "q": 2
+     },
+     {
+      "id": "173Salvage",
+      "q": 2
+     },
+     {
+      "id": "ERA_UPGRADE_CURRENCY",
+      "q": 1500
      }
     ]
    },
@@ -1259,6 +1309,28 @@
       "id": "era_upgrade_basic_2",
       "q": 100
      }
+    ],
+    "dailyRewards": [
+     {
+      "id": "unitshard_ADELPHIRANGER",
+      "q": 5
+     },
+     {
+      "id": "174Ingredient_Salvage",
+      "q": 2
+     },
+     {
+      "id": "175Ingredient_Salvage",
+      "q": 2
+     },
+     {
+      "id": "176Ingredient_Salvage",
+      "q": 2
+     },
+     {
+      "id": "era_upgrade_advanced_1",
+      "q": 5
+     }
     ]
    },
    {
@@ -1277,6 +1349,36 @@
       "id": "era_upgrade_advanced_2",
       "q": 50
      }
+    ],
+    "dailyRewards": [
+     {
+      "id": "unitshard_ADELPHIRANGER",
+      "q": 5
+     },
+     {
+      "id": "SCV_001",
+      "q": 2
+     },
+     {
+      "id": "SCV_002",
+      "q": 2
+     },
+     {
+      "id": "SCV_003",
+      "q": 2
+     },
+     {
+      "id": "SCV_004",
+      "q": 1
+     },
+     {
+      "id": "ERA_UPGRADE_CURRENCY",
+      "q": 450
+     },
+     {
+      "id": "era_upgrade_basic_2",
+      "q": 10
+     }
     ]
    },
    {
@@ -1294,6 +1396,32 @@
      {
       "id": "era_upgrade_advanced_2",
       "q": 50
+     }
+    ],
+    "dailyRewards": [
+     {
+      "id": "RM_001",
+      "q": 2
+     },
+     {
+      "id": "RM_002",
+      "q": 2
+     },
+     {
+      "id": "RM_003",
+      "q": 2
+     },
+     {
+      "id": "PREMIUM",
+      "q": 100
+     },
+     {
+      "id": "era_upgrade_basic_2",
+      "q": 50
+     },
+     {
+      "id": "era_upgrade_basic_7",
+      "q": 20
      }
     ]
    },
@@ -1317,129 +1445,31 @@
       "id": "era_upgrade_advanced_7",
       "q": 50
      }
-    ]
-   }
-  ],
-  "B1MERCDROID_L80": [
-   {
-    "tier": "TIER01",
-    "req": "",
-    "rewards": [
+    ],
+    "dailyRewards": [
      {
-      "id": "unitshard_R5D4",
-      "q": 5
-     },
-     {
-      "id": "ERA_UPGRADE_CURRENCY",
-      "q": 3000
-     },
-     {
-      "id": "era_upgrade_basic_1",
-      "q": 75
-     },
-     {
-      "id": "era_upgrade_advanced_1",
-      "q": 10
-     }
-    ]
-   },
-   {
-    "tier": "TIER02",
-    "req": "b1mercdroid_3star_req",
-    "rewards": [
-     {
-      "id": "unitshard_R5D4",
-      "q": 10
-     }
-    ]
-   },
-   {
-    "tier": "TIER03",
-    "req": "b1mercdroid_4star_req",
-    "rewards": [
-     {
-      "id": "unitshard_R5D4",
-      "q": 5
-     },
-     {
-      "id": "ERA_UPGRADE_CURRENCY",
-      "q": 125
-     },
-     {
-      "id": "era_upgrade_special_1",
-      "q": 10
-     }
-    ]
-   },
-   {
-    "tier": "TIER04",
-    "req": "b1mercdroid_5star_req",
-    "rewards": [
-     {
-      "id": "unitshard_R5D4",
-      "q": 5
-     },
-     {
-      "id": "PLAYERPORTRAIT_R5D4",
-      "q": 1
-     },
-     {
-      "id": "PLAYERTITLE_MARQUEE_R5D4",
-      "q": 1
-     },
-     {
-      "id": "ability_mat_F",
+      "id": "SCV_005",
       "q": 2
      },
      {
-      "id": "era_upgrade_advanced_1",
-      "q": 185
+      "id": "SCV_006",
+      "q": 2
      },
      {
-      "id": "era_upgrade_basic_2",
-      "q": 650
+      "id": "RM_003",
+      "q": 2
      },
-     {
-      "id": "era_upgrade_advanced_2",
-      "q": 50
-     }
-    ]
-   },
-   {
-    "tier": "TIER05",
-    "req": "b1mercdroid_6star_req",
-    "rewards": [
-     {
-      "id": "unitshard_R5D4",
-      "q": 5
-     },
-     {
-      "id": "ability_mat_D",
-      "q": 10
-     }
-    ]
-   },
-   {
-    "tier": "TIER06",
-    "req": "b1mercdroid_7star_req",
-    "rewards": [
      {
       "id": "ability_mat_E",
-      "q": 3
+      "q": 1
+     },
+     {
+      "id": "era_upgrade_basic_7",
+      "q": 25
      },
      {
       "id": "era_upgrade_advanced_2",
-      "q": 100
-     }
-    ]
-   },
-   {
-    "tier": "TIER07",
-    "req": "b1mercdroid_eralvl110_req",
-    "rewards": [
-     {
-      "id": "ability_mat_F",
-      "q": 2
+      "q": 10
      }
     ]
    }
@@ -1612,5 +1642,9 @@
   "era_upgrade_advanced_7",
   "era_upgrade_basic_8",
   "era_upgrade_advanced_8"
- ]
+ ],
+ "marqueeAvailability": {
+  "ADELPHIRANGER_L80": "confirmed",
+  "B1MERCDROID_L80": "unreleased"
+ }
 }
