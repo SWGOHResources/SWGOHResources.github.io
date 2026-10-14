@@ -1,0 +1,93 @@
+## C. Coliseum rotation (28 days, Krayt/Zeffo/Jotaz/Dryax cycle)
+| Day | Date UTC | Boss |
+|---|---|------|
+| 0 | 10-20 | KRAYTDRAGON |
+| 1 | 10-21 | ZEFFOTOMBGUARDIAN |
+| 2 | 10-22 | JOTAZ |
+| 3 | 10-23 | DRYAX |
+| 4 | 10-24 | KRAYTDRAGON |
+| 5 | 10-25 | ZEFFOTOMBGUARDIAN |
+| 6 | 10-26 | JOTAZ |
+| 7 | 10-27 | DRYAX |
+| 8 | 10-28 | KRAYTDRAGON |
+| 9 | 10-29 | ZEFFOTOMBGUARDIAN |
+| 10 | 10-30 | JOTAZ |
+| 11 | 10-31 | DRYAX |
+| 12 | 11-01 | KRAYTDRAGON |
+| 13 | 11-02 | ZEFFOTOMBGUARDIAN |
+| 14 | 11-03 | JOTAZ |
+| 15 | 11-04 | DRYAX |
+| 16 | 11-05 | KRAYTDRAGON |
+| 17 | 11-06 | ZEFFOTOMBGUARDIAN |
+| 18 | 11-07 | JOTAZ |
+| 19 | 11-08 | DRYAX |
+| 20 | 11-09 | KRAYTDRAGON |
+| 21 | 11-10 | ZEFFOTOMBGUARDIAN |
+| 22 | 11-11 | JOTAZ |
+| 23 | 11-12 | DRYAX |
+| 24 | 11-13 | KRAYTDRAGON |
+| 25 | 11-14 | ZEFFOTOMBGUARDIAN |
+| 26 | 11-15 | JOTAZ |
+| 27 | 11-16 | DRYAX |
+
+Per boss: 3 reward tables (DIFF10/DIFF11/DIFF12: progression + damage leaderboard). Daily ranks: 1-10:3000, 11-30:1500, 31-60:900, 61-90:600, 91-250:300, 251-500:150, 501-1000:75, 1001+:30 ERA_CURRENCY.
+
+## D. Coliseum bosses x reward tables
+- KRAYTDRAGON: DIFF01, DIFF02, DIFF03, DIFF04, DIFF05, DIFF06, DIFF07, DIFF08, DIFF09, DIFF10, DIFF11, DIFF12
+- ZEFFOTOMBGUARDIAN: DIFF01, DIFF02, DIFF03, DIFF04, DIFF05, DIFF06, DIFF07, DIFF08, DIFF09, DIFF10, DIFF11, DIFF12
+- JOTAZ: DIFF01, DIFF02, DIFF03, DIFF04, DIFF05, DIFF06, DIFF07, DIFF08, DIFF09, DIFF10, DIFF11, DIFF12
+- DRYAX: DIFF01, DIFF02, DIFF03, DIFF04, DIFF05, DIFF06, DIFF07, DIFF08, DIFF09, DIFF10, DIFF11, DIFF12
+
+## E. Episode pass rewards (rankStart-rankEnd | regular | premium)
+| Rank | Regular | Premium |
+|---|---|---------|
+| 1000-2999 | 3000x ERA_UPGRADE_CURRENCY; 3000x ERA_UPGRADE_CURRENCY | 20x Adelphi Ranger; 20x Adelphi Ranger |
+| 3000-5999 | 2500x EPISODE_CURRENCY; 2500x EPISODE_CURRENCY | 6000x EPISODE_CURRENCY; 6000x EPISODE_CURRENCY |
+| 6000-9999 | 160x Carbonite Circuit Board; 160x Carbonite Circuit Board | 1x Gyrda Keypad; 1x Gyrda Keypad |
+| 10000-14999 | 4000x ERA_UPGRADE_CURRENCY; 4000x ERA_UPGRADE_CURRENCY | 2x Aeromagnifier; 2x Aeromagnifier |
+| 15000-19999 | 10x 158PrototypeSalvage; 10x 158PrototypeSalvage | 2x Ability Material Zeta; 2x Ability Material Zeta |
+| 20000-24999 | 4500x ERA_UPGRADE_CURRENCY; 4500x ERA_UPGRADE_CURRENCY | 4x Zinbiddle Card; 4x Zinbiddle Card |
+| 25000-29999 | 160x Mk 1 Capacitor; 160x Mk 1 Capacitor | 3x Aeromagnifier; 3x Aeromagnifier |
+| 30000-34999 | 5000x ERA_UPGRADE_CURRENCY; 5000x ERA_UPGRADE_CURRENCY | 2x Impulse Detector; 2x Impulse Detector |
+| 35000-39999 | 48x Mk 1 Amplifier; 48x Mk 1 Amplifier | 6000x EPISODE_CURRENCY; 6000x EPISODE_CURRENCY |
+| 40000-44999 | 5000x ERA_UPGRADE_CURRENCY; 5000x ERA_UPGRADE_CURRENCY | 20x Mercenary Guard Droid (B1); 20x Mercenary Guard Droid (B1) |
+| 45000-49999 | 75x Fragmented Signal Data; 75x Fragmented Signal Data | 3x Aeromagnifier; 3x Aeromagnifier |
+| 50000-54999 | 5000x ERA_UPGRADE_CURRENCY; 5000x ERA_UPGRADE_CURRENCY | 1x Gyrda Keypad; 1x Gyrda Keypad |
+| 55000-59999 | 120x Mk 2 Variable Resistor; 120x Mk 2 Variable Resistor | 1x Ability Material Omicron; 1x Ability Material Omicron |
+| 60000-64999 | 3500x EPISODE_CURRENCY; 3500x EPISODE_CURRENCY | 55x Mk I Basic Performance Core; 55x Mk I Basic Performance Core |
+| 65000-69999 | 5000x ERA_UPGRADE_CURRENCY; 5000x ERA_UPGRADE_CURRENCY | 2x Ability Material Zeta; 2x Ability Material Zeta |
+| 70000-74999 | 12x 173Salvage; 12x 173Salvage | 7000x EPISODE_CURRENCY; 7000x EPISODE_CURRENCY |
+| 75000-79999 | 6000x ERA_UPGRADE_CURRENCY; 6000x ERA_UPGRADE_CURRENCY | 1x 172; 1x 172 |
+| 80000-84999 | 160x Bronzium Wiring; 160x Bronzium Wiring | 5x Zinbiddle Card; 5x Zinbiddle Card |
+| 85000-89999 | 6000x ERA_UPGRADE_CURRENCY; 6000x ERA_UPGRADE_CURRENCY | 1x Droid Brain; 1x Droid Brain |
+| 90000-94999 | 4500x EPISODE_CURRENCY; 4500x EPISODE_CURRENCY | 1x PLAYERTITLE_EPISODEPASS_ERA_10_EPISODE_1; 1x PLAYERTITLE_EPISODEPASS_ERA_10_EPISODE_1 |
+| 95000-99999 | 6000x ERA_UPGRADE_CURRENCY; 6000x ERA_UPGRADE_CURRENCY | 3x Impulse Detector; 3x Impulse Detector |
+| 100000-104999 | 256x Mk 2 Thermal Exchange Unit; 256x Mk 2 Thermal Exchange Unit | 4x Aeromagnifier; 4x Aeromagnifier |
+| 105000-109999 | 8000x ERA_UPGRADE_CURRENCY; 8000x ERA_UPGRADE_CURRENCY | 7000x EPISODE_CURRENCY; 7000x EPISODE_CURRENCY |
+| 110000-114999 | 48x Mk 2 Microprocessor; 48x Mk 2 Microprocessor | 2x Ability Material Omicron; 2x Ability Material Omicron |
+| 115000-119999 | 9000x ERA_UPGRADE_CURRENCY; 9000x ERA_UPGRADE_CURRENCY | 1x Droid Brain; 1x Droid Brain |
+| 120000-124999 | 48x Mk 1 Amplifier; 48x Mk 1 Amplifier | 3x Ability Material Zeta; 3x Ability Material Zeta |
+| 125000-129999 | 5000x ERA_UPGRADE_CURRENCY; 5000x ERA_UPGRADE_CURRENCY | 8000x EPISODE_CURRENCY; 8000x EPISODE_CURRENCY |
+| 130000-134999 | 160x Mk 2 Circuit Breaker Module; 160x Mk 2 Circuit Breaker Module | 1x 173; 1x 173 |
+| 135000-139999 | 80x Mk 2 Pulse Modulator; 80x Mk 2 Pulse Modulator | 2x Gyrda Keypad; 2x Gyrda Keypad |
+| 140000-144999 | 5500x EPISODE_CURRENCY; 5500x EPISODE_CURRENCY | 4x Aeromagnifier; 4x Aeromagnifier |
+| 145000-149999 | 6000x ERA_UPGRADE_CURRENCY; 6000x ERA_UPGRADE_CURRENCY | 1x Droid Brain; 1x Droid Brain |
+| 150000-154999 | 12x 172Salvage; 12x 172Salvage | 6x Zinbiddle Card; 6x Zinbiddle Card |
+| 155000-159999 | 14000x ERA_UPGRADE_CURRENCY; 14000x ERA_UPGRADE_CURRENCY | 8000x EPISODE_CURRENCY; 8000x EPISODE_CURRENCY |
+| 160000-164999 | 20000x ERA_UPGRADE_CURRENCY; 20000x ERA_UPGRADE_CURRENCY | 200x Mk I Basic Performance Core; 200x Mk I Basic Performance Core |
+| 165000-169999 | 65x Incomplete Signal Data; 65x Incomplete Signal Data | 50x Mk II Forn Ability Module; 50x Mk II Forn Ability Module |
+| 170000-174999 | 24000x ERA_UPGRADE_CURRENCY; 24000x ERA_UPGRADE_CURRENCY | 2x Ability Material Omicron; 2x Ability Material Omicron |
+| 175000-179999 | 6500x EPISODE_CURRENCY; 6500x EPISODE_CURRENCY | 9000x EPISODE_CURRENCY; 9000x EPISODE_CURRENCY |
+| 180000-184999 | 12000x ERA_UPGRADE_CURRENCY; 12000x ERA_UPGRADE_CURRENCY | 50x Mk II Forn Ability Module; 50x Mk II Forn Ability Module |
+| 185000-189999 | 20000x ERA_UPGRADE_CURRENCY; 20000x ERA_UPGRADE_CURRENCY | 3x Ability Material Zeta; 3x Ability Material Zeta |
+| 190000-194999 | 90x Chromium Transistor; 90x Chromium Transistor | 5x Impulse Detector; 5x Impulse Detector |
+| 195000-199999 | 24000x ERA_UPGRADE_CURRENCY; 24000x ERA_UPGRADE_CURRENCY | 250x Mk II Forn Ability Module; 250x Mk II Forn Ability Module |
+| 200000-204999 | 8000x EPISODE_CURRENCY; 8000x EPISODE_CURRENCY | 9000x EPISODE_CURRENCY; 9000x EPISODE_CURRENCY |
+| 205000-209999 | 5000x ERA_UPGRADE_CURRENCY; 5000x ERA_UPGRADE_CURRENCY | 200x Mk II Forn Ability Module; 200x Mk II Forn Ability Module |
+| 210000-214999 | 15x Flawed Signal Data; 15x Flawed Signal Data | 3x Ability Material Omicron; 3x Ability Material Omicron |
+| 215000-219999 | 20x Aurodium Heatsink; 20x Aurodium Heatsink | 10000x EPISODE_CURRENCY; 10000x EPISODE_CURRENCY |
+| 220000-224999 | 4x Ability Material Omicron; 4x Ability Material Omicron | 2x Gyrda Keypad; 2x Gyrda Keypad |
+| 225000-229999 | 6000x ERA_UPGRADE_CURRENCY; 6000x ERA_UPGRADE_CURRENCY | 2x Droid Brain; 2x Droid Brain |
+| 230000-234999 | 10500x EPISODE_CURRENCY; 10500x EPISODE_CURRENCY | 12000x EPISODE_CURRENCY; 12000x EPISODE_CURRENCY |
+| 235000-239999 | 1x LST_ERA10_TIER02_UNALIGNEDFORCEUSER; 1x LST_ERA10_TIER02_UNALIGNEDFORCEUSER | 480x Mk II Forn Ability Module; 480x Mk II Forn Ability Module |
+| 240000-0 | 22000x ERA_UPGRADE_CURRENCY; 22000x ERA_UPGRADE_CURRENCY | 1x LST_ERA10_TIER03_UNALIGNEDFORCEUSER; 1x LST_ERA10_TIER03_UNALIGNEDFORCEUSER |

@@ -1,0 +1,2649 @@
+{
+ "difficulty": 4,
+ "node": {
+  "campaignNodeMission": [
+   {
+    "enemyPreview": [],
+    "rewardPreview": [
+     {
+      "id": "75725",
+      "type": 16,
+      "minQuantity": 1,
+      "maxQuantity": 1,
+      "rarity": 8,
+      "statMod": null,
+      "previewPriority": 0,
+      "unitLevel": 0,
+      "unitTier": 0,
+      "primaryReward": false
+     },
+     {
+      "id": "15725",
+      "type": 16,
+      "minQuantity": 1,
+      "maxQuantity": 1,
+      "rarity": 8,
+      "statMod": null,
+      "previewPriority": 0,
+      "unitLevel": 0,
+      "unitTier": 0,
+      "primaryReward": false
+     }
+    ],
+    "campaignNodeEncounter": [
+     {
+      "encounterCinematics": [],
+      "environment": [
+       {
+        "prefab": "env.env_empire_hallway_pre",
+        "layout": "STANDARD",
+        "layoutPrefab": ""
+       }
+      ],
+      "encounterMessage": [
+       {
+        "message": [
+         {
+          "appearEvent": [
+           "BATTLE_START_ABILITY_SELECT_PHASE"
+          ],
+          "dismissEvent": [
+           "CONTEXTUAL_MESSAGE_DISMISSED"
+          ],
+          "hideEvent": [],
+          "id": "event_marquee_carsonteva_1-1",
+          "type": 6,
+          "titleKey": "TITLE",
+          "textKey": "MSG_EVENT_CARSONTEVA_1-1",
+          "pointAt": null,
+          "actionLink": "",
+          "nextMessageId": "event_marquee_carsonteva_1-2",
+          "clientRequirement": null,
+          "characterDialog": null,
+          "nextMessageIdDecline": "",
+          "canDismissWhileHidden": false,
+          "ftueSubStep": 0,
+          "cantinaCharacterDialog": {
+           "texture": "tex.contextualmessageui_bartender04"
+          },
+          "actionLinkDef": null,
+          "storePromoDialog": null,
+          "showExitButton": false
+         },
+         {
+          "appearEvent": [
+           "CONTEXTUAL_MESSAGE_DISMISSED"
+          ],
+          "dismissEvent": [
+           "CONTEXTUAL_MESSAGE_DISMISSED"
+          ],
+          "hideEvent": [],
+          "id": "event_marquee_carsonteva_1-2",
+          "type": 6,
+          "titleKey": "TITLE",
+          "textKey": "MSG_EVENT_CARSONTEVA_1-2",
+          "pointAt": null,
+          "actionLink": "",
+          "nextMessageId": "",
+          "clientRequirement": null,
+          "characterDialog": null,
+          "nextMessageIdDecline": "",
+          "canDismissWhileHidden": false,
+          "ftueSubStep": 0,
+          "cantinaCharacterDialog": {
+           "texture": "tex.contextualmessageui_bartender01"
+          },
+          "actionLinkDef": null,
+          "storePromoDialog": null,
+          "showExitButton": false
+         }
+        ],
+        "groupId": "tutorial_event_marquee_carsonteva_01",
+        "startMessage": "",
+        "priority": 1,
+        "canDismissWhileHidden": false,
+        "startTime": "0",
+        "endTime": "0",
+        "isFtue": false
+       }
+      ],
+      "firstTimeEncounterMessage": [],
+      "displayableEnemyId": [],
+      "displayableGrantedAbility": [],
+      "audioKey": "",
+      "allowChanceMechanics": true,
+      "encounterIcon": "",
+      "encounterDescKey": "",
+      "encounterIconPosition": 0,
+      "raidProgressColor": 1,
+      "maxDeployedSquadSize": 6,
+      "environmentCollectionId": "",
+      "encounterId": "1",
+      "encounterDurationLimit": "0",
+      "scoreToComplete": "0",
+      "detailDescKey": "",
+      "pointsToComplete": "0",
+      "audioVictoryKey": ""
+     }
+    ],
+    "entryCostRequirement": [],
+    "firstCompleteRewardPreview": [
+     {
+      "id": "unitshard_R5D4",
+      "type": 7,
+      "minQuantity": 5,
+      "maxQuantity": 5,
+      "rarity": 8,
+      "statMod": null,
+      "previewPriority": 0,
+      "unitLevel": 0,
+      "unitTier": 0,
+      "primaryReward": false
+     },
+     {
+      "id": "ERA_UPGRADE_CURRENCY",
+      "type": 3,
+      "minQuantity": 3000,
+      "maxQuantity": 3000,
+      "rarity": 8,
+      "statMod": null,
+      "previewPriority": 0,
+      "unitLevel": 0,
+      "unitTier": 0,
+      "primaryReward": false
+     },
+     {
+      "id": "era_upgrade_basic_1",
+      "type": 7,
+      "minQuantity": 75,
+      "maxQuantity": 75,
+      "rarity": 8,
+      "statMod": null,
+      "previewPriority": 0,
+      "unitLevel": 0,
+      "unitTier": 0,
+      "primaryReward": false
+     },
+     {
+      "id": "era_upgrade_advanced_1",
+      "type": 7,
+      "minQuantity": 10,
+      "maxQuantity": 10,
+      "rarity": 8,
+      "statMod": null,
+      "previewPriority": 0,
+      "unitLevel": 0,
+      "unitTier": 0,
+      "primaryReward": false
+     }
+    ],
+    "enemyUnitPreview": [
+     {
+      "baseEnemyItem": {
+       "id": "PVE_BADBATCHWRECKER",
+       "type": 2,
+       "minQuantity": 1,
+       "maxQuantity": 1,
+       "rarity": 8,
+       "statMod": null,
+       "previewPriority": 0,
+       "unitLevel": 0,
+       "unitTier": 0,
+       "primaryReward": false
+      },
+      "enemyLevel": 85,
+      "enemyTier": 9,
+      "threatLevel": 1,
+      "thumbnailName": "tex.charui_bb_wrecker",
+      "prefabName": "unit.char_wrecker_pre",
+      "displayedEnemy": false,
+      "unitClass": 6,
+      "enemyForceAlignment": 2,
+      "enemyRelicTier": 1,
+      "zetaCount": 0,
+      "isGalacticLegend": false,
+      "isUltimateUnlocked": false,
+      "omicronCount": 0,
+      "eraLevel": 135,
+      "eraThumbnailName": ""
+     },
+     {
+      "baseEnemyItem": {
+       "id": "PVE_BADBATCHHUNTER",
+       "type": 2,
+       "minQuantity": 1,
+       "maxQuantity": 1,
+       "rarity": 8,
+       "statMod": null,
+       "previewPriority": 0,
+       "unitLevel": 0,
+       "unitTier": 0,
+       "primaryReward": false
+      },
+      "enemyLevel": 85,
+      "enemyTier": 9,
+      "threatLevel": 1,
+      "thumbnailName": "tex.charui_bb_hunter",
+      "prefabName": "unit.char_hunter_pre",
+      "displayedEnemy": false,
+      "unitClass": 6,
+      "enemyForceAlignment": 2,
+      "enemyRelicTier": 1,
+      "zetaCount": 0,
+      "isGalacticLegend": false,
+      "isUltimateUnlocked": false,
+      "omicronCount": 0,
+      "eraLevel": 135,
+      "eraThumbnailName": ""
+     },
+     {
+      "baseEnemyItem": {
+       "id": "PVE_BADBATCHECHO",
+       "type": 2,
+       "minQuantity": 1,
+       "maxQuantity": 1,
+       "rarity": 8,
+       "statMod": null,
+       "previewPriority": 0,
+       "unitLevel": 0,
+       "unitTier": 0,
+       "primaryReward": false
+      },
+      "enemyLevel": 85,
+      "enemyTier": 9,
+      "threatLevel": 1,
+      "thumbnailName": "tex.charui_bb_echo",
+      "prefabName": "unit.char_bb_echo_pre",
+      "displayedEnemy": false,
+      "unitClass": 6,
+      "enemyForceAlignment": 2,
+      "enemyRelicTier": 1,
+      "zetaCount": 0,
+      "isGalacticLegend": false,
+      "isUltimateUnlocked": false,
+      "omicronCount": 0,
+      "eraLevel": 135,
+      "eraThumbnailName": ""
+     },
+     {
+      "baseEnemyItem": {
+       "id": "PVE_BADBATCHOMEGA",
+       "type": 2,
+       "minQuantity": 1,
+       "maxQuantity": 1,
+       "rarity": 8,
+       "statMod": null,
+       "previewPriority": 0,
+       "unitLevel": 0,
+       "unitTier": 0,
+       "primaryReward": false
+      },
+      "enemyLevel": 85,
+      "enemyTier": 9,
+      "threatLevel": 1,
+      "thumbnailName": "tex.charui_badbatchomega",
+      "prefabName": "unit.char_omega_pre",
+      "displayedEnemy": false,
+      "unitClass": 6,
+      "enemyForceAlignment": 2,
+      "enemyRelicTier": 1,
+      "zetaCount": 0,
+      "isGalacticLegend": false,
+      "isUltimateUnlocked": false,
+      "omicronCount": 0,
+      "eraLevel": 135,
+      "eraThumbnailName": ""
+     }
+    ],
+    "playerAbilityRef": [],
+    "activateCost": [],
+    "rankRewardPreview": [],
+    "dynamicDescription": [],
+    "grantedAbilities": [],
+    "conditionalRewardsPreview": [],
+    "instanceFirstCompleteRewardPreview": [],
+    "immediateRegularRankRewardPreview": [],
+    "unitReplacement": [],
+    "coliseumPointSource": [],
+    "id": "TIER01",
+    "nameKey": "TIER01",
+    "descKey": "EVENT_MARQUEE_CARSONTEVA_M01_DESC",
+    "combatType": 1,
+    "audioKey": "",
+    "progress": 1,
+    "entryCategoryAllowed": {
+     "categoryId": [
+      "any_obtainable"
+     ],
+     "commanderCategoryId": [],
+     "mandatoryRosterUnit": [],
+     "excludeCategoryId": [],
+     "maximumAllowedUnitQuantity": 3,
+     "matchType": 2,
+     "minimumRequiredUnitQuantity": 3,
+     "minimumUnitRarity": 8,
+     "minimumOwnedUnitQuantity": 1,
+     "minimumUnitLevel": 1,
+     "minimumUnitTier": 1,
+     "maximumReinforcement": -1,
+     "minimumReinforcement": 0,
+     "minimumGalacticPower": 0,
+     "minimumRelicTier": 1,
+     "minimumModRarity": 8,
+     "minimumAbilityLevelAvg": 0,
+     "minimumAbilityLevelAll": 0,
+     "legendLimit": 1,
+     "unitGuideMinimumRequiredUnitQuantity": 3,
+     "bigUnitLimit": 1,
+     "mandatoryDatacron": null,
+     "eraExclusive": true,
+     "minimumEraLevel": 0
+    },
+    "shortNameKey": "CAMPAIGN_SHORTNAME_GENERIC_TIER01_V2",
+    "groupNameKey": "MAP_EVENT_NAME",
+    "groupImage": "tex.planet_holotable_preview",
+    "unlockRequirementLocalizationKey": "",
+    "cooldownKey": "",
+    "dailyBattleCapKey": "EVENT_MARQUEE_SPECIAL_CAP",
+    "prefab": "",
+    "position": {
+     "x": "0",
+     "y": "0",
+     "z": "0"
+    },
+    "detailImage": "",
+    "detailDescKey": "",
+    "raidConfigId": "",
+    "nodeDisplayItem": 1,
+    "grindEnabled": true,
+    "hasForcedAlly": false,
+    "battleSupportAllowed": false,
+    "autoBattleEnabled": true,
+    "retreatEnabled": true,
+    "forcedPlayerSquad": {
+     "squadUnit": [
+      {
+       "skill": [
+        {
+         "id": "leaderskill_CARSONTEVA",
+         "tier": 5
+        },
+        {
+         "id": "specialskill_CARSONTEVA01",
+         "tier": 6
+        },
+        {
+         "id": "basicskill_CARSONTEVA",
+         "tier": 6
+        },
+        {
+         "id": "uniqueskill_CARSONTEVA01",
+         "tier": 6
+        }
+       ],
+       "equipment": [],
+       "equippedStatModOld": [],
+       "equippedStatMod": [],
+       "purchasedAbilityId": [],
+       "id": "CARSONTEVA:SEVEN_STAR:0",
+       "definitionId": "CARSONTEVA:SEVEN_STAR",
+       "currentRarity": 7,
+       "currentLevel": 85,
+       "currentXp": 883025,
+       "promotionRecipeReference": "",
+       "unitStat": null,
+       "currentTier": 13,
+       "relic": {
+        "currentTier": 10
+       }
+      },
+      {
+       "skill": [
+        {
+         "id": "specialskill_R5D401",
+         "tier": 6
+        },
+        {
+         "id": "uniqueskill_R5D401",
+         "tier": 5
+        },
+        {
+         "id": "basicskill_R5D4",
+         "tier": 6
+        },
+        {
+         "id": "specialskill_R5D402",
+         "tier": 6
+        }
+       ],
+       "equipment": [],
+       "equippedStatModOld": [],
+       "equippedStatMod": [],
+       "purchasedAbilityId": [],
+       "id": "R5D4:SEVEN_STAR:1",
+       "definitionId": "R5D4:SEVEN_STAR",
+       "currentRarity": 7,
+       "currentLevel": 85,
+       "currentXp": 883025,
+       "promotionRecipeReference": "",
+       "unitStat": null,
+       "currentTier": 13,
+       "relic": {
+        "currentTier": 10
+       }
+      }
+     ],
+     "squad": {
+      "cell": [
+       {
+        "crewBattleStat": [],
+        "unitId": "CARSONTEVA:SEVEN_STAR:0",
+        "unitDefId": "CARSONTEVA:SEVEN_STAR",
+        "cellIndex": 0,
+        "unitBattleStat": null,
+        "messageReticle": "",
+        "progressItem": true,
+        "squadUnitType": 2,
+        "unitState": null,
+        "selectable": true,
+        "overkillItem": false,
+        "inheritFromDefinitionId": "",
+        "forcedUnitEraLevel": 135
+       },
+       {
+        "crewBattleStat": [],
+        "unitId": "R5D4:SEVEN_STAR:1",
+        "unitDefId": "R5D4:SEVEN_STAR",
+        "cellIndex": 1,
+        "unitBattleStat": null,
+        "messageReticle": "",
+        "progressItem": true,
+        "squadUnitType": 1,
+        "unitState": null,
+        "selectable": true,
+        "overkillItem": false,
+        "inheritFromDefinitionId": "",
+        "forcedUnitEraLevel": 135
+       }
+      ],
+      "targetingTactic": 1,
+      "squadType": 1,
+      "targetingSetId": "",
+      "expireTime": "0",
+      "lastSaveTime": "1792001870611",
+      "supportInheritFromDefinitionId": "",
+      "datacron": null
+     }
+    },
+    "cooldownConditionalOverrideKey": "",
+    "holonodePlanetPrefabName": "",
+    "battleSpeedAdjustable": true,
+    "requirementOverrideKey": "",
+    "simmableOverrideEnabled": false,
+    "conditionalEntryCostOverride": null,
+    "recommendationKey": "",
+    "overviewLocKey": "",
+    "recommendedGp": 0,
+    "battleDurationLimit": "0",
+    "recommendedUnitGp": 0,
+    "volatileAccess": false,
+    "unlockRequirementId": "",
+    "visibilityRequirementId": "",
+    "raidPointsStructure": null,
+    "featured": false,
+    "maxPointsPerAttempt": 0,
+    "pveDatacronAllowed": false,
+    "recommendedEraLevel": 0
+   },
+   {
+    "enemyPreview": [],
+    "rewardPreview": [
+     {
+      "id": "108Salvage",
+      "type": 11,
+      "minQuantity": 2,
+      "maxQuantity": 2,
+      "rarity": 8,
+      "statMod": null,
+      "previewPriority": 0,
+      "unitLevel": 0,
+      "unitTier": 0,
+      "primaryReward": false
+     },
+     {
+      "id": "112Salvage",
+      "type": 11,
+      "minQuantity": 2,
+      "maxQuantity": 2,
+      "rarity": 8,
+      "statMod": null,
+      "previewPriority": 0,
+      "unitLevel": 0,
+      "unitTier": 0,
+      "primaryReward": false
+     },
+     {
+      "id": "117PrototypeSalvage",
+      "type": 11,
+      "minQuantity": 2,
+      "maxQuantity": 2,
+      "rarity": 8,
+      "statMod": null,
+      "previewPriority": 0,
+      "unitLevel": 0,
+      "unitTier": 0,
+      "primaryReward": false
+     },
+     {
+      "id": "135Salvage",
+      "type": 11,
+      "minQuantity": 2,
+      "maxQuantity": 2,
+      "rarity": 8,
+      "statMod": null,
+      "previewPriority": 0,
+      "unitLevel": 0,
+      "unitTier": 0,
+      "primaryReward": false
+     },
+     {
+      "id": "129Component",
+      "type": 11,
+      "minQuantity": 2,
+      "maxQuantity": 2,
+      "rarity": 8,
+      "statMod": null,
+      "previewPriority": 0,
+      "unitLevel": 0,
+      "unitTier": 0,
+      "primaryReward": false
+     }
+    ],
+    "campaignNodeEncounter": [
+     {
+      "encounterCinematics": [],
+      "environment": [
+       {
+        "prefab": "env.env_empire_hallway_pre",
+        "layout": "STANDARD",
+        "layoutPrefab": ""
+       }
+      ],
+      "encounterMessage": [],
+      "firstTimeEncounterMessage": [],
+      "displayableEnemyId": [],
+      "displayableGrantedAbility": [],
+      "audioKey": "",
+      "allowChanceMechanics": true,
+      "encounterIcon": "",
+      "encounterDescKey": "",
+      "encounterIconPosition": 0,
+      "raidProgressColor": 1,
+      "maxDeployedSquadSize": 6,
+      "environmentCollectionId": "",
+      "encounterId": "1",
+      "encounterDurationLimit": "0",
+      "scoreToComplete": "0",
+      "detailDescKey": "",
+      "pointsToComplete": "0",
+      "audioVictoryKey": ""
+     }
+    ],
+    "entryCostRequirement": [],
+    "firstCompleteRewardPreview": [
+     {
+      "id": "unitshard_R5D4",
+      "type": 7,
+      "minQuantity": 10,
+      "maxQuantity": 10,
+      "rarity": 8,
+      "statMod": null,
+      "previewPriority": 0,
+      "unitLevel": 0,
+      "unitTier": 0,
+      "primaryReward": false
+     }
+    ],
+    "enemyUnitPreview": [
+     {
+      "baseEnemyItem": {
+       "id": "PVE_FOSITHTROOPER",
+       "type": 2,
+       "minQuantity": 1,
+       "maxQuantity": 1,
+       "rarity": 8,
+       "statMod": null,
+       "previewPriority": 0,
+       "unitLevel": 0,
+       "unitTier": 0,
+       "primaryReward": false
+      },
+      "enemyLevel": 85,
+      "enemyTier": 9,
+      "threatLevel": 1,
+      "thumbnailName": "tex.charui_firstorder_sithtrooper",
+      "prefabName": "unit.char_firstorder_sithtrooper_pre",
+      "displayedEnemy": false,
+      "unitClass": 6,
+      "enemyForceAlignment": 3,
+      "enemyRelicTier": 1,
+      "zetaCount": 0,
+      "isGalacticLegend": false,
+      "isUltimateUnlocked": false,
+      "omicronCount": 0,
+      "eraLevel": 2,
+      "eraThumbnailName": ""
+     },
+     {
+      "baseEnemyItem": {
+       "id": "PVE_BASTILASHANDARK",
+       "type": 2,
+       "minQuantity": 1,
+       "maxQuantity": 1,
+       "rarity": 8,
+       "statMod": null,
+       "previewPriority": 0,
+       "unitLevel": 0,
+       "unitTier": 0,
+       "primaryReward": false
+      },
+      "enemyLevel": 85,
+      "enemyTier": 9,
+      "threatLevel": 1,
+      "thumbnailName": "tex.charui_bastilashan_dark",
+      "prefabName": "unit.char_bastilashan_dark_pre",
+      "displayedEnemy": false,
+      "unitClass": 6,
+      "enemyForceAlignment": 3,
+      "enemyRelicTier": 1,
+      "zetaCount": 0,
+      "isGalacticLegend": false,
+      "isUltimateUnlocked": false,
+      "omicronCount": 0,
+      "eraLevel": 2,
+      "eraThumbnailName": ""
+     }
+    ],
+    "playerAbilityRef": [],
+    "activateCost": [],
+    "rankRewardPreview": [],
+    "dynamicDescription": [],
+    "grantedAbilities": [],
+    "conditionalRewardsPreview": [],
+    "instanceFirstCompleteRewardPreview": [],
+    "immediateRegularRankRewardPreview": [],
+    "unitReplacement": [],
+    "coliseumPointSource": [],
+    "id": "TIER02",
+    "nameKey": "TIER02",
+    "descKey": "EVENT_MARQUEE_CARSONTEVA_M02_DESC",
+    "combatType": 1,
+    "audioKey": "",
+    "progress": 1,
+    "entryCategoryAllowed": {
+     "categoryId": [
+      "selftag_carsonteva"
+     ],
+     "commanderCategoryId": [],
+     "mandatoryRosterUnit": [
+      {
+       "id": "CARSONTEVA",
+       "slot": 0
+      }
+     ],
+     "excludeCategoryId": [],
+     "maximumAllowedUnitQuantity": 1,
+     "matchType": 2,
+     "minimumRequiredUnitQuantity": 1,
+     "minimumUnitRarity": 8,
+     "minimumOwnedUnitQuantity": 1,
+     "minimumUnitLevel": 1,
+     "minimumUnitTier": 1,
+     "maximumReinforcement": -1,
+     "minimumReinforcement": 0,
+     "minimumGalacticPower": 0,
+     "minimumRelicTier": 1,
+     "minimumModRarity": 8,
+     "minimumAbilityLevelAvg": 0,
+     "minimumAbilityLevelAll": 0,
+     "legendLimit": 1,
+     "unitGuideMinimumRequiredUnitQuantity": 1,
+     "bigUnitLimit": 1,
+     "mandatoryDatacron": null,
+     "eraExclusive": true,
+     "minimumEraLevel": 0
+    },
+    "shortNameKey": "CAMPAIGN_SHORTNAME_GENERIC_TIER02_V2",
+    "groupNameKey": "MAP_EVENT_NAME",
+    "groupImage": "tex.planet_holotable_preview",
+    "unlockRequirementLocalizationKey": "",
+    "cooldownKey": "",
+    "dailyBattleCapKey": "EVENT_MARQUEE_SPECIAL_CAP",
+    "prefab": "",
+    "position": {
+     "x": "0",
+     "y": "0",
+     "z": "0"
+    },
+    "detailImage": "",
+    "detailDescKey": "",
+    "raidConfigId": "",
+    "nodeDisplayItem": 1,
+    "grindEnabled": true,
+    "hasForcedAlly": false,
+    "battleSupportAllowed": false,
+    "autoBattleEnabled": true,
+    "retreatEnabled": true,
+    "forcedPlayerSquad": null,
+    "cooldownConditionalOverrideKey": "",
+    "holonodePlanetPrefabName": "",
+    "battleSpeedAdjustable": true,
+    "requirementOverrideKey": "",
+    "simmableOverrideEnabled": false,
+    "conditionalEntryCostOverride": null,
+    "recommendationKey": "",
+    "overviewLocKey": "",
+    "recommendedGp": 0,
+    "battleDurationLimit": "0",
+    "recommendedUnitGp": 0,
+    "volatileAccess": true,
+    "unlockRequirementId": "b1mercdroid_3star_req",
+    "visibilityRequirementId": "",
+    "raidPointsStructure": null,
+    "featured": false,
+    "maxPointsPerAttempt": 0,
+    "pveDatacronAllowed": false,
+    "recommendedEraLevel": 0
+   },
+   {
+    "enemyPreview": [],
+    "rewardPreview": [
+     {
+      "id": "unitshard_R5D4",
+      "type": 7,
+      "minQuantity": 5,
+      "maxQuantity": 5,
+      "rarity": 8,
+      "statMod": null,
+      "previewPriority": 0,
+      "unitLevel": 0,
+      "unitTier": 0,
+      "primaryReward": false
+     },
+     {
+      "id": "172Salvage",
+      "type": 11,
+      "minQuantity": 2,
+      "maxQuantity": 2,
+      "rarity": 8,
+      "statMod": null,
+      "previewPriority": 0,
+      "unitLevel": 0,
+      "unitTier": 0,
+      "primaryReward": false
+     },
+     {
+      "id": "173Salvage",
+      "type": 11,
+      "minQuantity": 2,
+      "maxQuantity": 2,
+      "rarity": 8,
+      "statMod": null,
+      "previewPriority": 0,
+      "unitLevel": 0,
+      "unitTier": 0,
+      "primaryReward": false
+     },
+     {
+      "id": "ERA_UPGRADE_CURRENCY",
+      "type": 3,
+      "minQuantity": 1500,
+      "maxQuantity": 1500,
+      "rarity": 8,
+      "statMod": null,
+      "previewPriority": 0,
+      "unitLevel": 0,
+      "unitTier": 0,
+      "primaryReward": false
+     }
+    ],
+    "campaignNodeEncounter": [
+     {
+      "encounterCinematics": [],
+      "environment": [
+       {
+        "prefab": "env.env_med_hall_01_pre",
+        "layout": "STANDARD",
+        "layoutPrefab": ""
+       }
+      ],
+      "encounterMessage": [],
+      "firstTimeEncounterMessage": [],
+      "displayableEnemyId": [],
+      "displayableGrantedAbility": [],
+      "audioKey": "",
+      "allowChanceMechanics": true,
+      "encounterIcon": "",
+      "encounterDescKey": "",
+      "encounterIconPosition": 0,
+      "raidProgressColor": 1,
+      "maxDeployedSquadSize": 6,
+      "environmentCollectionId": "",
+      "encounterId": "1",
+      "encounterDurationLimit": "0",
+      "scoreToComplete": "0",
+      "detailDescKey": "",
+      "pointsToComplete": "0",
+      "audioVictoryKey": ""
+     }
+    ],
+    "entryCostRequirement": [],
+    "firstCompleteRewardPreview": [
+     {
+      "id": "unitshard_R5D4",
+      "type": 7,
+      "minQuantity": 5,
+      "maxQuantity": 5,
+      "rarity": 8,
+      "statMod": null,
+      "previewPriority": 0,
+      "unitLevel": 0,
+      "unitTier": 0,
+      "primaryReward": false
+     },
+     {
+      "id": "ERA_UPGRADE_CURRENCY",
+      "type": 3,
+      "minQuantity": 125,
+      "maxQuantity": 125,
+      "rarity": 8,
+      "statMod": null,
+      "previewPriority": 0,
+      "unitLevel": 0,
+      "unitTier": 0,
+      "primaryReward": false
+     },
+     {
+      "id": "era_upgrade_special_1",
+      "type": 7,
+      "minQuantity": 10,
+      "maxQuantity": 10,
+      "rarity": 8,
+      "statMod": null,
+      "previewPriority": 0,
+      "unitLevel": 0,
+      "unitTier": 0,
+      "primaryReward": false
+     }
+    ],
+    "enemyUnitPreview": [
+     {
+      "baseEnemyItem": {
+       "id": "PVE_BOSSNASS",
+       "type": 2,
+       "minQuantity": 1,
+       "maxQuantity": 1,
+       "rarity": 8,
+       "statMod": null,
+       "previewPriority": 0,
+       "unitLevel": 0,
+       "unitTier": 0,
+       "primaryReward": false
+      },
+      "enemyLevel": 85,
+      "enemyTier": 9,
+      "threatLevel": 1,
+      "thumbnailName": "tex.charui_bossnass",
+      "prefabName": "unit.char_bossnass_pre",
+      "displayedEnemy": false,
+      "unitClass": 6,
+      "enemyForceAlignment": 2,
+      "enemyRelicTier": 1,
+      "zetaCount": 0,
+      "isGalacticLegend": false,
+      "isUltimateUnlocked": false,
+      "omicronCount": 0,
+      "eraLevel": 5,
+      "eraThumbnailName": ""
+     },
+     {
+      "baseEnemyItem": {
+       "id": "PVE_CAPTAINTARPALS",
+       "type": 2,
+       "minQuantity": 1,
+       "maxQuantity": 1,
+       "rarity": 8,
+       "statMod": null,
+       "previewPriority": 0,
+       "unitLevel": 0,
+       "unitTier": 0,
+       "primaryReward": false
+      },
+      "enemyLevel": 85,
+      "enemyTier": 9,
+      "threatLevel": 1,
+      "thumbnailName": "tex.charui_captaintarpals",
+      "prefabName": "unit.char_captaintarpals_pre",
+      "displayedEnemy": false,
+      "unitClass": 6,
+      "enemyForceAlignment": 2,
+      "enemyRelicTier": 1,
+      "zetaCount": 0,
+      "isGalacticLegend": false,
+      "isUltimateUnlocked": false,
+      "omicronCount": 0,
+      "eraLevel": 5,
+      "eraThumbnailName": ""
+     }
+    ],
+    "playerAbilityRef": [],
+    "activateCost": [],
+    "rankRewardPreview": [],
+    "dynamicDescription": [],
+    "grantedAbilities": [],
+    "conditionalRewardsPreview": [],
+    "instanceFirstCompleteRewardPreview": [],
+    "immediateRegularRankRewardPreview": [],
+    "unitReplacement": [],
+    "coliseumPointSource": [],
+    "id": "TIER03",
+    "nameKey": "TIER03",
+    "descKey": "EVENT_MARQUEE_CARSONTEVA_M03_DESC",
+    "combatType": 1,
+    "audioKey": "",
+    "progress": 1,
+    "entryCategoryAllowed": {
+     "categoryId": [
+      "selftag_carsonteva"
+     ],
+     "commanderCategoryId": [],
+     "mandatoryRosterUnit": [
+      {
+       "id": "CARSONTEVA",
+       "slot": 0
+      }
+     ],
+     "excludeCategoryId": [],
+     "maximumAllowedUnitQuantity": 3,
+     "matchType": 2,
+     "minimumRequiredUnitQuantity": 3,
+     "minimumUnitRarity": 8,
+     "minimumOwnedUnitQuantity": 1,
+     "minimumUnitLevel": 1,
+     "minimumUnitTier": 1,
+     "maximumReinforcement": -1,
+     "minimumReinforcement": 0,
+     "minimumGalacticPower": 0,
+     "minimumRelicTier": 1,
+     "minimumModRarity": 8,
+     "minimumAbilityLevelAvg": 0,
+     "minimumAbilityLevelAll": 0,
+     "legendLimit": 1,
+     "unitGuideMinimumRequiredUnitQuantity": 3,
+     "bigUnitLimit": 1,
+     "mandatoryDatacron": null,
+     "eraExclusive": true,
+     "minimumEraLevel": 0
+    },
+    "shortNameKey": "CAMPAIGN_SHORTNAME_GENERIC_TIER03_V2",
+    "groupNameKey": "MAP_EVENT_NAME",
+    "groupImage": "tex.planet_holotable_preview",
+    "unlockRequirementLocalizationKey": "",
+    "cooldownKey": "",
+    "dailyBattleCapKey": "EVENT_MARQUEE_SPECIAL_CAP",
+    "prefab": "",
+    "position": {
+     "x": "0",
+     "y": "0",
+     "z": "0"
+    },
+    "detailImage": "",
+    "detailDescKey": "",
+    "raidConfigId": "",
+    "nodeDisplayItem": 1,
+    "grindEnabled": true,
+    "hasForcedAlly": false,
+    "battleSupportAllowed": false,
+    "autoBattleEnabled": true,
+    "retreatEnabled": true,
+    "forcedPlayerSquad": {
+     "squadUnit": [
+      {
+       "skill": [],
+       "equipment": [],
+       "equippedStatModOld": [],
+       "equippedStatMod": [],
+       "purchasedAbilityId": [],
+       "id": "CARSONTEVA:TWO_STAR:0",
+       "definitionId": "CARSONTEVA:TWO_STAR",
+       "currentRarity": 2,
+       "currentLevel": 1,
+       "currentXp": 0,
+       "promotionRecipeReference": "",
+       "unitStat": null,
+       "currentTier": 1,
+       "relic": {
+        "currentTier": 1
+       }
+      },
+      {
+       "skill": [],
+       "equipment": [],
+       "equippedStatModOld": [],
+       "equippedStatMod": [],
+       "purchasedAbilityId": [],
+       "id": "R5D4:FOUR_STAR:1",
+       "definitionId": "R5D4:FOUR_STAR",
+       "currentRarity": 4,
+       "currentLevel": 4,
+       "currentXp": 95,
+       "promotionRecipeReference": "",
+       "unitStat": null,
+       "currentTier": 1,
+       "relic": {
+        "currentTier": 1
+       }
+      },
+      {
+       "skill": [],
+       "equipment": [],
+       "equippedStatModOld": [],
+       "equippedStatMod": [],
+       "purchasedAbilityId": [],
+       "id": "RANGERZEB:FOUR_STAR:2",
+       "definitionId": "RANGERZEB:FOUR_STAR",
+       "currentRarity": 4,
+       "currentLevel": 4,
+       "currentXp": 95,
+       "promotionRecipeReference": "",
+       "unitStat": null,
+       "currentTier": 1,
+       "relic": {
+        "currentTier": 1
+       }
+      }
+     ],
+     "squad": {
+      "cell": [
+       {
+        "crewBattleStat": [],
+        "unitId": "CARSONTEVA:TWO_STAR:0",
+        "unitDefId": "CARSONTEVA:TWO_STAR",
+        "cellIndex": 0,
+        "unitBattleStat": null,
+        "messageReticle": "",
+        "progressItem": true,
+        "squadUnitType": 2,
+        "unitState": null,
+        "selectable": true,
+        "overkillItem": false,
+        "inheritFromDefinitionId": "CARSONTEVA",
+        "forcedUnitEraLevel": 0
+       },
+       {
+        "crewBattleStat": [],
+        "unitId": "R5D4:FOUR_STAR:1",
+        "unitDefId": "R5D4:FOUR_STAR",
+        "cellIndex": 1,
+        "unitBattleStat": null,
+        "messageReticle": "",
+        "progressItem": true,
+        "squadUnitType": 1,
+        "unitState": null,
+        "selectable": true,
+        "overkillItem": false,
+        "inheritFromDefinitionId": "",
+        "forcedUnitEraLevel": 5
+       },
+       {
+        "crewBattleStat": [],
+        "unitId": "RANGERZEB:FOUR_STAR:2",
+        "unitDefId": "RANGERZEB:FOUR_STAR",
+        "cellIndex": 2,
+        "unitBattleStat": null,
+        "messageReticle": "",
+        "progressItem": true,
+        "squadUnitType": 1,
+        "unitState": null,
+        "selectable": true,
+        "overkillItem": false,
+        "inheritFromDefinitionId": "",
+        "forcedUnitEraLevel": 5
+       }
+      ],
+      "targetingTactic": 1,
+      "squadType": 1,
+      "targetingSetId": "",
+      "expireTime": "0",
+      "lastSaveTime": "1792001870611",
+      "supportInheritFromDefinitionId": "",
+      "datacron": null
+     }
+    },
+    "cooldownConditionalOverrideKey": "",
+    "holonodePlanetPrefabName": "",
+    "battleSpeedAdjustable": true,
+    "requirementOverrideKey": "",
+    "simmableOverrideEnabled": false,
+    "conditionalEntryCostOverride": null,
+    "recommendationKey": "",
+    "overviewLocKey": "",
+    "recommendedGp": 0,
+    "battleDurationLimit": "0",
+    "recommendedUnitGp": 0,
+    "volatileAccess": true,
+    "unlockRequirementId": "b1mercdroid_4star_req",
+    "visibilityRequirementId": "",
+    "raidPointsStructure": null,
+    "featured": false,
+    "maxPointsPerAttempt": 0,
+    "pveDatacronAllowed": false,
+    "recommendedEraLevel": 0
+   },
+   {
+    "enemyPreview": [],
+    "rewardPreview": [
+     {
+      "id": "unitshard_R5D4",
+      "type": 7,
+      "minQuantity": 5,
+      "maxQuantity": 5,
+      "rarity": 8,
+      "statMod": null,
+      "previewPriority": 0,
+      "unitLevel": 0,
+      "unitTier": 0,
+      "primaryReward": false
+     },
+     {
+      "id": "174Ingredient_Salvage",
+      "type": 11,
+      "minQuantity": 2,
+      "maxQuantity": 2,
+      "rarity": 8,
+      "statMod": null,
+      "previewPriority": 0,
+      "unitLevel": 0,
+      "unitTier": 0,
+      "primaryReward": false
+     },
+     {
+      "id": "175Ingredient_Salvage",
+      "type": 11,
+      "minQuantity": 2,
+      "maxQuantity": 2,
+      "rarity": 8,
+      "statMod": null,
+      "previewPriority": 0,
+      "unitLevel": 0,
+      "unitTier": 0,
+      "primaryReward": false
+     },
+     {
+      "id": "176Ingredient_Salvage",
+      "type": 11,
+      "minQuantity": 2,
+      "maxQuantity": 2,
+      "rarity": 8,
+      "statMod": null,
+      "previewPriority": 0,
+      "unitLevel": 0,
+      "unitTier": 0,
+      "primaryReward": false
+     },
+     {
+      "id": "era_upgrade_basic_2",
+      "type": 7,
+      "minQuantity": 25,
+      "maxQuantity": 25,
+      "rarity": 8,
+      "statMod": null,
+      "previewPriority": 0,
+      "unitLevel": 0,
+      "unitTier": 0,
+      "primaryReward": false
+     }
+    ],
+    "campaignNodeEncounter": [
+     {
+      "encounterCinematics": [],
+      "environment": [
+       {
+        "prefab": "env.env_empire_hangar_02_pre",
+        "layout": "STANDARD",
+        "layoutPrefab": ""
+       }
+      ],
+      "encounterMessage": [],
+      "firstTimeEncounterMessage": [],
+      "displayableEnemyId": [],
+      "displayableGrantedAbility": [],
+      "audioKey": "",
+      "allowChanceMechanics": true,
+      "encounterIcon": "",
+      "encounterDescKey": "",
+      "encounterIconPosition": 0,
+      "raidProgressColor": 1,
+      "maxDeployedSquadSize": 6,
+      "environmentCollectionId": "",
+      "encounterId": "1",
+      "encounterDurationLimit": "0",
+      "scoreToComplete": "0",
+      "detailDescKey": "",
+      "pointsToComplete": "0",
+      "audioVictoryKey": ""
+     }
+    ],
+    "entryCostRequirement": [],
+    "firstCompleteRewardPreview": [
+     {
+      "id": "unitshard_R5D4",
+      "type": 7,
+      "minQuantity": 5,
+      "maxQuantity": 5,
+      "rarity": 8,
+      "statMod": null,
+      "previewPriority": 0,
+      "unitLevel": 0,
+      "unitTier": 0,
+      "primaryReward": false
+     },
+     {
+      "id": "PLAYERPORTRAIT_R5D4",
+      "type": 19,
+      "minQuantity": 1,
+      "maxQuantity": 1,
+      "rarity": 8,
+      "statMod": null,
+      "previewPriority": 0,
+      "unitLevel": 0,
+      "unitTier": 0,
+      "primaryReward": false
+     },
+     {
+      "id": "PLAYERTITLE_MARQUEE_R5D4",
+      "type": 17,
+      "minQuantity": 1,
+      "maxQuantity": 1,
+      "rarity": 8,
+      "statMod": null,
+      "previewPriority": 0,
+      "unitLevel": 0,
+      "unitTier": 0,
+      "primaryReward": false
+     },
+     {
+      "id": "ability_mat_F",
+      "type": 7,
+      "minQuantity": 2,
+      "maxQuantity": 2,
+      "rarity": 8,
+      "statMod": null,
+      "previewPriority": 0,
+      "unitLevel": 0,
+      "unitTier": 0,
+      "primaryReward": false
+     },
+     {
+      "id": "era_upgrade_advanced_1",
+      "type": 7,
+      "minQuantity": 185,
+      "maxQuantity": 185,
+      "rarity": 8,
+      "statMod": null,
+      "previewPriority": 0,
+      "unitLevel": 0,
+      "unitTier": 0,
+      "primaryReward": false
+     },
+     {
+      "id": "era_upgrade_basic_2",
+      "type": 7,
+      "minQuantity": 650,
+      "maxQuantity": 650,
+      "rarity": 8,
+      "statMod": null,
+      "previewPriority": 0,
+      "unitLevel": 0,
+      "unitTier": 0,
+      "primaryReward": false
+     },
+     {
+      "id": "era_upgrade_advanced_2",
+      "type": 7,
+      "minQuantity": 50,
+      "maxQuantity": 50,
+      "rarity": 8,
+      "statMod": null,
+      "previewPriority": 0,
+      "unitLevel": 0,
+      "unitTier": 0,
+      "primaryReward": false
+     }
+    ],
+    "enemyUnitPreview": [
+     {
+      "baseEnemyItem": {
+       "id": "PVE_BASTILASHAN",
+       "type": 2,
+       "minQuantity": 1,
+       "maxQuantity": 1,
+       "rarity": 8,
+       "statMod": null,
+       "previewPriority": 0,
+       "unitLevel": 0,
+       "unitTier": 0,
+       "primaryReward": false
+      },
+      "enemyLevel": 85,
+      "enemyTier": 9,
+      "threatLevel": 1,
+      "thumbnailName": "tex.charui_bastilashan",
+      "prefabName": "unit.char_bastilashan_pre",
+      "displayedEnemy": false,
+      "unitClass": 6,
+      "enemyForceAlignment": 2,
+      "enemyRelicTier": 1,
+      "zetaCount": 0,
+      "isGalacticLegend": false,
+      "isUltimateUnlocked": false,
+      "omicronCount": 0,
+      "eraLevel": 9,
+      "eraThumbnailName": ""
+     },
+     {
+      "baseEnemyItem": {
+       "id": "PVE_JEDIKNIGHTREVAN",
+       "type": 2,
+       "minQuantity": 1,
+       "maxQuantity": 1,
+       "rarity": 8,
+       "statMod": null,
+       "previewPriority": 0,
+       "unitLevel": 0,
+       "unitTier": 0,
+       "primaryReward": false
+      },
+      "enemyLevel": 85,
+      "enemyTier": 9,
+      "threatLevel": 1,
+      "thumbnailName": "tex.charui_jedirevan",
+      "prefabName": "unit.char_revan_pre",
+      "displayedEnemy": false,
+      "unitClass": 6,
+      "enemyForceAlignment": 2,
+      "enemyRelicTier": 1,
+      "zetaCount": 0,
+      "isGalacticLegend": false,
+      "isUltimateUnlocked": false,
+      "omicronCount": 0,
+      "eraLevel": 9,
+      "eraThumbnailName": ""
+     }
+    ],
+    "playerAbilityRef": [],
+    "activateCost": [],
+    "rankRewardPreview": [],
+    "dynamicDescription": [],
+    "grantedAbilities": [],
+    "conditionalRewardsPreview": [],
+    "instanceFirstCompleteRewardPreview": [],
+    "immediateRegularRankRewardPreview": [],
+    "unitReplacement": [],
+    "coliseumPointSource": [],
+    "id": "TIER04",
+    "nameKey": "TIER04",
+    "descKey": "EVENT_MARQUEE_CARSONTEVA_M04_DESC",
+    "combatType": 1,
+    "audioKey": "",
+    "progress": 1,
+    "entryCategoryAllowed": {
+     "categoryId": [
+      "selftag_carsonteva"
+     ],
+     "commanderCategoryId": [],
+     "mandatoryRosterUnit": [
+      {
+       "id": "CARSONTEVA",
+       "slot": 0
+      }
+     ],
+     "excludeCategoryId": [],
+     "maximumAllowedUnitQuantity": 3,
+     "matchType": 2,
+     "minimumRequiredUnitQuantity": 3,
+     "minimumUnitRarity": 8,
+     "minimumOwnedUnitQuantity": 1,
+     "minimumUnitLevel": 1,
+     "minimumUnitTier": 1,
+     "maximumReinforcement": -1,
+     "minimumReinforcement": 0,
+     "minimumGalacticPower": 0,
+     "minimumRelicTier": 1,
+     "minimumModRarity": 8,
+     "minimumAbilityLevelAvg": 0,
+     "minimumAbilityLevelAll": 0,
+     "legendLimit": 1,
+     "unitGuideMinimumRequiredUnitQuantity": 3,
+     "bigUnitLimit": 1,
+     "mandatoryDatacron": null,
+     "eraExclusive": true,
+     "minimumEraLevel": 0
+    },
+    "shortNameKey": "CAMPAIGN_SHORTNAME_GENERIC_TIER04_V2",
+    "groupNameKey": "MAP_EVENT_NAME",
+    "groupImage": "tex.planet_holotable_preview",
+    "unlockRequirementLocalizationKey": "",
+    "cooldownKey": "",
+    "dailyBattleCapKey": "EVENT_MARQUEE_SPECIAL_CAP",
+    "prefab": "",
+    "position": {
+     "x": "0",
+     "y": "0",
+     "z": "0"
+    },
+    "detailImage": "",
+    "detailDescKey": "",
+    "raidConfigId": "",
+    "nodeDisplayItem": 1,
+    "grindEnabled": true,
+    "hasForcedAlly": false,
+    "battleSupportAllowed": false,
+    "autoBattleEnabled": true,
+    "retreatEnabled": true,
+    "forcedPlayerSquad": {
+     "squadUnit": [
+      {
+       "skill": [],
+       "equipment": [],
+       "equippedStatModOld": [],
+       "equippedStatMod": [],
+       "purchasedAbilityId": [],
+       "id": "CARSONTEVA:TWO_STAR:0",
+       "definitionId": "CARSONTEVA:TWO_STAR",
+       "currentRarity": 2,
+       "currentLevel": 1,
+       "currentXp": 0,
+       "promotionRecipeReference": "",
+       "unitStat": null,
+       "currentTier": 1,
+       "relic": {
+        "currentTier": 1
+       }
+      },
+      {
+       "skill": [],
+       "equipment": [],
+       "equippedStatModOld": [],
+       "equippedStatMod": [],
+       "purchasedAbilityId": [],
+       "id": "R5D4:FIVE_STAR:1",
+       "definitionId": "R5D4:FIVE_STAR",
+       "currentRarity": 5,
+       "currentLevel": 7,
+       "currentXp": 285,
+       "promotionRecipeReference": "",
+       "unitStat": null,
+       "currentTier": 2,
+       "relic": {
+        "currentTier": 1
+       }
+      },
+      {
+       "skill": [],
+       "equipment": [],
+       "equippedStatModOld": [],
+       "equippedStatMod": [],
+       "purchasedAbilityId": [],
+       "id": "RANGERZEB:FIVE_STAR:2",
+       "definitionId": "RANGERZEB:FIVE_STAR",
+       "currentRarity": 5,
+       "currentLevel": 7,
+       "currentXp": 285,
+       "promotionRecipeReference": "",
+       "unitStat": null,
+       "currentTier": 2,
+       "relic": {
+        "currentTier": 1
+       }
+      }
+     ],
+     "squad": {
+      "cell": [
+       {
+        "crewBattleStat": [],
+        "unitId": "CARSONTEVA:TWO_STAR:0",
+        "unitDefId": "CARSONTEVA:TWO_STAR",
+        "cellIndex": 0,
+        "unitBattleStat": null,
+        "messageReticle": "",
+        "progressItem": true,
+        "squadUnitType": 2,
+        "unitState": null,
+        "selectable": true,
+        "overkillItem": false,
+        "inheritFromDefinitionId": "CARSONTEVA",
+        "forcedUnitEraLevel": 0
+       },
+       {
+        "crewBattleStat": [],
+        "unitId": "R5D4:FIVE_STAR:1",
+        "unitDefId": "R5D4:FIVE_STAR",
+        "cellIndex": 1,
+        "unitBattleStat": null,
+        "messageReticle": "",
+        "progressItem": true,
+        "squadUnitType": 1,
+        "unitState": null,
+        "selectable": true,
+        "overkillItem": false,
+        "inheritFromDefinitionId": "",
+        "forcedUnitEraLevel": 9
+       },
+       {
+        "crewBattleStat": [],
+        "unitId": "RANGERZEB:FIVE_STAR:2",
+        "unitDefId": "RANGERZEB:FIVE_STAR",
+        "cellIndex": 2,
+        "unitBattleStat": null,
+        "messageReticle": "",
+        "progressItem": true,
+        "squadUnitType": 1,
+        "unitState": null,
+        "selectable": true,
+        "overkillItem": false,
+        "inheritFromDefinitionId": "",
+        "forcedUnitEraLevel": 9
+       }
+      ],
+      "targetingTactic": 1,
+      "squadType": 1,
+      "targetingSetId": "",
+      "expireTime": "0",
+      "lastSaveTime": "1792001870611",
+      "supportInheritFromDefinitionId": "",
+      "datacron": null
+     }
+    },
+    "cooldownConditionalOverrideKey": "",
+    "holonodePlanetPrefabName": "",
+    "battleSpeedAdjustable": true,
+    "requirementOverrideKey": "",
+    "simmableOverrideEnabled": false,
+    "conditionalEntryCostOverride": null,
+    "recommendationKey": "",
+    "overviewLocKey": "",
+    "recommendedGp": 0,
+    "battleDurationLimit": "0",
+    "recommendedUnitGp": 0,
+    "volatileAccess": true,
+    "unlockRequirementId": "b1mercdroid_5star_req",
+    "visibilityRequirementId": "",
+    "raidPointsStructure": null,
+    "featured": false,
+    "maxPointsPerAttempt": 0,
+    "pveDatacronAllowed": false,
+    "recommendedEraLevel": 0
+   },
+   {
+    "enemyPreview": [],
+    "rewardPreview": [
+     {
+      "id": "unitshard_R5D4",
+      "type": 7,
+      "minQuantity": 5,
+      "maxQuantity": 5,
+      "rarity": 8,
+      "statMod": null,
+      "previewPriority": 0,
+      "unitLevel": 0,
+      "unitTier": 0,
+      "primaryReward": false
+     },
+     {
+      "id": "SCV_001",
+      "type": 7,
+      "minQuantity": 2,
+      "maxQuantity": 2,
+      "rarity": 8,
+      "statMod": null,
+      "previewPriority": 0,
+      "unitLevel": 0,
+      "unitTier": 0,
+      "primaryReward": false
+     },
+     {
+      "id": "SCV_002",
+      "type": 7,
+      "minQuantity": 2,
+      "maxQuantity": 2,
+      "rarity": 8,
+      "statMod": null,
+      "previewPriority": 0,
+      "unitLevel": 0,
+      "unitTier": 0,
+      "primaryReward": false
+     },
+     {
+      "id": "SCV_003",
+      "type": 7,
+      "minQuantity": 2,
+      "maxQuantity": 2,
+      "rarity": 8,
+      "statMod": null,
+      "previewPriority": 0,
+      "unitLevel": 0,
+      "unitTier": 0,
+      "primaryReward": false
+     },
+     {
+      "id": "SCV_004",
+      "type": 7,
+      "minQuantity": 1,
+      "maxQuantity": 1,
+      "rarity": 8,
+      "statMod": null,
+      "previewPriority": 0,
+      "unitLevel": 0,
+      "unitTier": 0,
+      "primaryReward": false
+     },
+     {
+      "id": "ERA_UPGRADE_CURRENCY",
+      "type": 3,
+      "minQuantity": 450,
+      "maxQuantity": 450,
+      "rarity": 8,
+      "statMod": null,
+      "previewPriority": 0,
+      "unitLevel": 0,
+      "unitTier": 0,
+      "primaryReward": false
+     },
+     {
+      "id": "era_upgrade_basic_2",
+      "type": 7,
+      "minQuantity": 100,
+      "maxQuantity": 100,
+      "rarity": 8,
+      "statMod": null,
+      "previewPriority": 0,
+      "unitLevel": 0,
+      "unitTier": 0,
+      "primaryReward": false
+     }
+    ],
+    "campaignNodeEncounter": [
+     {
+      "encounterCinematics": [],
+      "environment": [
+       {
+        "prefab": "env.env_man_remnantfacility_pre",
+        "layout": "STANDARD",
+        "layoutPrefab": ""
+       }
+      ],
+      "encounterMessage": [],
+      "firstTimeEncounterMessage": [],
+      "displayableEnemyId": [],
+      "displayableGrantedAbility": [],
+      "audioKey": "",
+      "allowChanceMechanics": true,
+      "encounterIcon": "",
+      "encounterDescKey": "",
+      "encounterIconPosition": 0,
+      "raidProgressColor": 1,
+      "maxDeployedSquadSize": 6,
+      "environmentCollectionId": "",
+      "encounterId": "1",
+      "encounterDurationLimit": "0",
+      "scoreToComplete": "0",
+      "detailDescKey": "",
+      "pointsToComplete": "0",
+      "audioVictoryKey": ""
+     }
+    ],
+    "entryCostRequirement": [],
+    "firstCompleteRewardPreview": [
+     {
+      "id": "unitshard_R5D4",
+      "type": 7,
+      "minQuantity": 5,
+      "maxQuantity": 5,
+      "rarity": 8,
+      "statMod": null,
+      "previewPriority": 0,
+      "unitLevel": 0,
+      "unitTier": 0,
+      "primaryReward": false
+     },
+     {
+      "id": "ability_mat_D",
+      "type": 7,
+      "minQuantity": 10,
+      "maxQuantity": 10,
+      "rarity": 8,
+      "statMod": null,
+      "previewPriority": 0,
+      "unitLevel": 0,
+      "unitTier": 0,
+      "primaryReward": false
+     }
+    ],
+    "enemyUnitPreview": [
+     {
+      "baseEnemyItem": {
+       "id": "PVE_RANGETROOPER",
+       "type": 2,
+       "minQuantity": 1,
+       "maxQuantity": 1,
+       "rarity": 8,
+       "statMod": null,
+       "previewPriority": 0,
+       "unitLevel": 0,
+       "unitTier": 0,
+       "primaryReward": false
+      },
+      "enemyLevel": 85,
+      "enemyTier": 9,
+      "threatLevel": 1,
+      "thumbnailName": "tex.charui_trooperranger",
+      "prefabName": "unit.char_trooperrange_pre",
+      "displayedEnemy": false,
+      "unitClass": 6,
+      "enemyForceAlignment": 3,
+      "enemyRelicTier": 1,
+      "zetaCount": 0,
+      "isGalacticLegend": false,
+      "isUltimateUnlocked": false,
+      "omicronCount": 0,
+      "eraLevel": 13,
+      "eraThumbnailName": ""
+     },
+     {
+      "baseEnemyItem": {
+       "id": "PVE_IDENVERSIOEMPIRE",
+       "type": 2,
+       "minQuantity": 1,
+       "maxQuantity": 1,
+       "rarity": 8,
+       "statMod": null,
+       "previewPriority": 0,
+       "unitLevel": 0,
+       "unitTier": 0,
+       "primaryReward": false
+      },
+      "enemyLevel": 85,
+      "enemyTier": 9,
+      "threatLevel": 1,
+      "thumbnailName": "tex.charui_idenversioempire",
+      "prefabName": "unit.char_idenversio_pre",
+      "displayedEnemy": false,
+      "unitClass": 6,
+      "enemyForceAlignment": 3,
+      "enemyRelicTier": 1,
+      "zetaCount": 0,
+      "isGalacticLegend": false,
+      "isUltimateUnlocked": false,
+      "omicronCount": 0,
+      "eraLevel": 13,
+      "eraThumbnailName": ""
+     }
+    ],
+    "playerAbilityRef": [],
+    "activateCost": [],
+    "rankRewardPreview": [],
+    "dynamicDescription": [],
+    "grantedAbilities": [],
+    "conditionalRewardsPreview": [],
+    "instanceFirstCompleteRewardPreview": [],
+    "immediateRegularRankRewardPreview": [],
+    "unitReplacement": [],
+    "coliseumPointSource": [],
+    "id": "TIER05",
+    "nameKey": "TIER05",
+    "descKey": "EVENT_MARQUEE_CARSONTEVA_M05_DESC",
+    "combatType": 1,
+    "audioKey": "",
+    "progress": 1,
+    "entryCategoryAllowed": {
+     "categoryId": [
+      "selftag_carsonteva"
+     ],
+     "commanderCategoryId": [],
+     "mandatoryRosterUnit": [
+      {
+       "id": "CARSONTEVA",
+       "slot": 0
+      }
+     ],
+     "excludeCategoryId": [],
+     "maximumAllowedUnitQuantity": 3,
+     "matchType": 2,
+     "minimumRequiredUnitQuantity": 3,
+     "minimumUnitRarity": 8,
+     "minimumOwnedUnitQuantity": 1,
+     "minimumUnitLevel": 1,
+     "minimumUnitTier": 1,
+     "maximumReinforcement": -1,
+     "minimumReinforcement": 0,
+     "minimumGalacticPower": 0,
+     "minimumRelicTier": 1,
+     "minimumModRarity": 8,
+     "minimumAbilityLevelAvg": 0,
+     "minimumAbilityLevelAll": 0,
+     "legendLimit": 1,
+     "unitGuideMinimumRequiredUnitQuantity": 3,
+     "bigUnitLimit": 1,
+     "mandatoryDatacron": null,
+     "eraExclusive": true,
+     "minimumEraLevel": 0
+    },
+    "shortNameKey": "CAMPAIGN_SHORTNAME_GENERIC_TIER05_V2",
+    "groupNameKey": "MAP_EVENT_NAME",
+    "groupImage": "tex.planet_holotable_preview",
+    "unlockRequirementLocalizationKey": "",
+    "cooldownKey": "",
+    "dailyBattleCapKey": "EVENT_MARQUEE_SPECIAL_CAP",
+    "prefab": "",
+    "position": {
+     "x": "0",
+     "y": "0",
+     "z": "0"
+    },
+    "detailImage": "",
+    "detailDescKey": "",
+    "raidConfigId": "",
+    "nodeDisplayItem": 1,
+    "grindEnabled": true,
+    "hasForcedAlly": false,
+    "battleSupportAllowed": false,
+    "autoBattleEnabled": true,
+    "retreatEnabled": true,
+    "forcedPlayerSquad": {
+     "squadUnit": [
+      {
+       "skill": [],
+       "equipment": [],
+       "equippedStatModOld": [],
+       "equippedStatMod": [],
+       "purchasedAbilityId": [],
+       "id": "CARSONTEVA:TWO_STAR:0",
+       "definitionId": "CARSONTEVA:TWO_STAR",
+       "currentRarity": 2,
+       "currentLevel": 1,
+       "currentXp": 0,
+       "promotionRecipeReference": "",
+       "unitStat": null,
+       "currentTier": 1,
+       "relic": {
+        "currentTier": 1
+       }
+      },
+      {
+       "skill": [
+        {
+         "id": "specialskill_R5D401",
+         "tier": 0
+        },
+        {
+         "id": "basicskill_R5D4",
+         "tier": 0
+        },
+        {
+         "id": "specialskill_R5D402",
+         "tier": 0
+        }
+       ],
+       "equipment": [],
+       "equippedStatModOld": [],
+       "equippedStatMod": [],
+       "purchasedAbilityId": [],
+       "id": "R5D4:SIX_STAR:1",
+       "definitionId": "R5D4:SIX_STAR",
+       "currentRarity": 6,
+       "currentLevel": 9,
+       "currentXp": 505,
+       "promotionRecipeReference": "",
+       "unitStat": null,
+       "currentTier": 2,
+       "relic": {
+        "currentTier": 1
+       }
+      }
+     ],
+     "squad": {
+      "cell": [
+       {
+        "crewBattleStat": [],
+        "unitId": "CARSONTEVA:TWO_STAR:0",
+        "unitDefId": "CARSONTEVA:TWO_STAR",
+        "cellIndex": 0,
+        "unitBattleStat": null,
+        "messageReticle": "",
+        "progressItem": true,
+        "squadUnitType": 2,
+        "unitState": null,
+        "selectable": true,
+        "overkillItem": false,
+        "inheritFromDefinitionId": "CARSONTEVA",
+        "forcedUnitEraLevel": 0
+       },
+       {
+        "crewBattleStat": [],
+        "unitId": "R5D4:SIX_STAR:1",
+        "unitDefId": "R5D4:SIX_STAR",
+        "cellIndex": 1,
+        "unitBattleStat": null,
+        "messageReticle": "",
+        "progressItem": true,
+        "squadUnitType": 1,
+        "unitState": null,
+        "selectable": true,
+        "overkillItem": false,
+        "inheritFromDefinitionId": "",
+        "forcedUnitEraLevel": 13
+       }
+      ],
+      "targetingTactic": 1,
+      "squadType": 1,
+      "targetingSetId": "",
+      "expireTime": "0",
+      "lastSaveTime": "1792001870611",
+      "supportInheritFromDefinitionId": "",
+      "datacron": null
+     }
+    },
+    "cooldownConditionalOverrideKey": "",
+    "holonodePlanetPrefabName": "",
+    "battleSpeedAdjustable": true,
+    "requirementOverrideKey": "",
+    "simmableOverrideEnabled": false,
+    "conditionalEntryCostOverride": null,
+    "recommendationKey": "",
+    "overviewLocKey": "",
+    "recommendedGp": 0,
+    "battleDurationLimit": "0",
+    "recommendedUnitGp": 0,
+    "volatileAccess": true,
+    "unlockRequirementId": "b1mercdroid_6star_req",
+    "visibilityRequirementId": "",
+    "raidPointsStructure": null,
+    "featured": false,
+    "maxPointsPerAttempt": 0,
+    "pveDatacronAllowed": false,
+    "recommendedEraLevel": 0
+   },
+   {
+    "enemyPreview": [],
+    "rewardPreview": [
+     {
+      "id": "PREMIUM",
+      "type": 3,
+      "minQuantity": 100,
+      "maxQuantity": 100,
+      "rarity": 8,
+      "statMod": null,
+      "previewPriority": 0,
+      "unitLevel": 0,
+      "unitTier": 0,
+      "primaryReward": false
+     },
+     {
+      "id": "RM_001",
+      "type": 7,
+      "minQuantity": 2,
+      "maxQuantity": 2,
+      "rarity": 8,
+      "statMod": null,
+      "previewPriority": 0,
+      "unitLevel": 0,
+      "unitTier": 0,
+      "primaryReward": false
+     },
+     {
+      "id": "RM_002",
+      "type": 7,
+      "minQuantity": 2,
+      "maxQuantity": 2,
+      "rarity": 8,
+      "statMod": null,
+      "previewPriority": 0,
+      "unitLevel": 0,
+      "unitTier": 0,
+      "primaryReward": false
+     },
+     {
+      "id": "RM_003",
+      "type": 7,
+      "minQuantity": 2,
+      "maxQuantity": 2,
+      "rarity": 8,
+      "statMod": null,
+      "previewPriority": 0,
+      "unitLevel": 0,
+      "unitTier": 0,
+      "primaryReward": false
+     }
+    ],
+    "campaignNodeEncounter": [
+     {
+      "encounterCinematics": [],
+      "environment": [
+       {
+        "prefab": "env.env_empire_bridge_pre",
+        "layout": "STANDARD",
+        "layoutPrefab": ""
+       }
+      ],
+      "encounterMessage": [],
+      "firstTimeEncounterMessage": [],
+      "displayableEnemyId": [],
+      "displayableGrantedAbility": [],
+      "audioKey": "",
+      "allowChanceMechanics": true,
+      "encounterIcon": "",
+      "encounterDescKey": "",
+      "encounterIconPosition": 0,
+      "raidProgressColor": 1,
+      "maxDeployedSquadSize": 6,
+      "environmentCollectionId": "",
+      "encounterId": "1",
+      "encounterDurationLimit": "0",
+      "scoreToComplete": "0",
+      "detailDescKey": "",
+      "pointsToComplete": "0",
+      "audioVictoryKey": ""
+     }
+    ],
+    "entryCostRequirement": [],
+    "firstCompleteRewardPreview": [
+     {
+      "id": "ability_mat_E",
+      "type": 7,
+      "minQuantity": 3,
+      "maxQuantity": 3,
+      "rarity": 8,
+      "statMod": null,
+      "previewPriority": 0,
+      "unitLevel": 0,
+      "unitTier": 0,
+      "primaryReward": false
+     },
+     {
+      "id": "era_upgrade_advanced_2",
+      "type": 7,
+      "minQuantity": 100,
+      "maxQuantity": 100,
+      "rarity": 8,
+      "statMod": null,
+      "previewPriority": 0,
+      "unitLevel": 0,
+      "unitTier": 0,
+      "primaryReward": false
+     }
+    ],
+    "enemyUnitPreview": [
+     {
+      "baseEnemyItem": {
+       "id": "PVE_EMPERORPALPATINE:MARQUEE_RELIC",
+       "type": 2,
+       "minQuantity": 1,
+       "maxQuantity": 1,
+       "rarity": 8,
+       "statMod": null,
+       "previewPriority": 0,
+       "unitLevel": 0,
+       "unitTier": 0,
+       "primaryReward": false
+      },
+      "enemyLevel": 85,
+      "enemyTier": 10,
+      "threatLevel": 2,
+      "thumbnailName": "tex.charui_palpatineemperor",
+      "prefabName": "unit.char_palpatineemperor_pre",
+      "displayedEnemy": false,
+      "unitClass": 6,
+      "enemyForceAlignment": 3,
+      "enemyRelicTier": 1,
+      "zetaCount": 0,
+      "isGalacticLegend": false,
+      "isUltimateUnlocked": false,
+      "omicronCount": 0,
+      "eraLevel": 18,
+      "eraThumbnailName": ""
+     },
+     {
+      "baseEnemyItem": {
+       "id": "PVE_MARAJADE",
+       "type": 2,
+       "minQuantity": 1,
+       "maxQuantity": 1,
+       "rarity": 8,
+       "statMod": null,
+       "previewPriority": 0,
+       "unitLevel": 0,
+       "unitTier": 0,
+       "primaryReward": false
+      },
+      "enemyLevel": 85,
+      "enemyTier": 9,
+      "threatLevel": 1,
+      "thumbnailName": "tex.charui_marajade",
+      "prefabName": "unit.char_marajade_pre",
+      "displayedEnemy": false,
+      "unitClass": 6,
+      "enemyForceAlignment": 3,
+      "enemyRelicTier": 1,
+      "zetaCount": 0,
+      "isGalacticLegend": false,
+      "isUltimateUnlocked": false,
+      "omicronCount": 0,
+      "eraLevel": 18,
+      "eraThumbnailName": ""
+     }
+    ],
+    "playerAbilityRef": [],
+    "activateCost": [],
+    "rankRewardPreview": [],
+    "dynamicDescription": [],
+    "grantedAbilities": [],
+    "conditionalRewardsPreview": [],
+    "instanceFirstCompleteRewardPreview": [],
+    "immediateRegularRankRewardPreview": [],
+    "unitReplacement": [],
+    "coliseumPointSource": [],
+    "id": "TIER06",
+    "nameKey": "TIER06",
+    "descKey": "EVENT_MARQUEE_CARSONTEVA_M06_DESC",
+    "combatType": 1,
+    "audioKey": "",
+    "progress": 1,
+    "entryCategoryAllowed": {
+     "categoryId": [
+      "selftag_carsonteva"
+     ],
+     "commanderCategoryId": [],
+     "mandatoryRosterUnit": [
+      {
+       "id": "CARSONTEVA",
+       "slot": 0
+      }
+     ],
+     "excludeCategoryId": [],
+     "maximumAllowedUnitQuantity": 3,
+     "matchType": 2,
+     "minimumRequiredUnitQuantity": 3,
+     "minimumUnitRarity": 8,
+     "minimumOwnedUnitQuantity": 1,
+     "minimumUnitLevel": 1,
+     "minimumUnitTier": 1,
+     "maximumReinforcement": -1,
+     "minimumReinforcement": 0,
+     "minimumGalacticPower": 0,
+     "minimumRelicTier": 1,
+     "minimumModRarity": 8,
+     "minimumAbilityLevelAvg": 0,
+     "minimumAbilityLevelAll": 0,
+     "legendLimit": 1,
+     "unitGuideMinimumRequiredUnitQuantity": 3,
+     "bigUnitLimit": 1,
+     "mandatoryDatacron": null,
+     "eraExclusive": true,
+     "minimumEraLevel": 0
+    },
+    "shortNameKey": "CAMPAIGN_SHORTNAME_GENERIC_TIER06_V2",
+    "groupNameKey": "MAP_EVENT_NAME",
+    "groupImage": "tex.planet_holotable_preview",
+    "unlockRequirementLocalizationKey": "",
+    "cooldownKey": "",
+    "dailyBattleCapKey": "EVENT_MARQUEE_SPECIAL_CAP",
+    "prefab": "",
+    "position": {
+     "x": "0",
+     "y": "0",
+     "z": "0"
+    },
+    "detailImage": "",
+    "detailDescKey": "",
+    "raidConfigId": "",
+    "nodeDisplayItem": 1,
+    "grindEnabled": true,
+    "hasForcedAlly": false,
+    "battleSupportAllowed": false,
+    "autoBattleEnabled": true,
+    "retreatEnabled": true,
+    "forcedPlayerSquad": {
+     "squadUnit": [
+      {
+       "skill": [],
+       "equipment": [],
+       "equippedStatModOld": [],
+       "equippedStatMod": [],
+       "purchasedAbilityId": [],
+       "id": "CARSONTEVA:TWO_STAR:0",
+       "definitionId": "CARSONTEVA:TWO_STAR",
+       "currentRarity": 2,
+       "currentLevel": 1,
+       "currentXp": 0,
+       "promotionRecipeReference": "",
+       "unitStat": null,
+       "currentTier": 1,
+       "relic": {
+        "currentTier": 1
+       }
+      },
+      {
+       "skill": [
+        {
+         "id": "specialskill_R5D401",
+         "tier": 0
+        },
+        {
+         "id": "uniqueskill_R5D401",
+         "tier": 0
+        },
+        {
+         "id": "basicskill_R5D4",
+         "tier": 0
+        },
+        {
+         "id": "specialskill_R5D402",
+         "tier": 0
+        }
+       ],
+       "equipment": [],
+       "equippedStatModOld": [],
+       "equippedStatMod": [],
+       "purchasedAbilityId": [],
+       "id": "R5D4:SEVEN_STAR:1",
+       "definitionId": "R5D4:SEVEN_STAR",
+       "currentRarity": 7,
+       "currentLevel": 11,
+       "currentXp": 835,
+       "promotionRecipeReference": "",
+       "unitStat": null,
+       "currentTier": 3,
+       "relic": {
+        "currentTier": 1
+       }
+      },
+      {
+       "skill": [
+        {
+         "id": "uniqueskill_RANGERZEB01",
+         "tier": 0
+        },
+        {
+         "id": "specialskill_RANGERZEB01",
+         "tier": 0
+        },
+        {
+         "id": "specialskill_RANGERZEB02",
+         "tier": 0
+        },
+        {
+         "id": "basicskill_RANGERZEB",
+         "tier": 0
+        }
+       ],
+       "equipment": [],
+       "equippedStatModOld": [],
+       "equippedStatMod": [],
+       "purchasedAbilityId": [],
+       "id": "RANGERZEB:SEVEN_STAR:2",
+       "definitionId": "RANGERZEB:SEVEN_STAR",
+       "currentRarity": 7,
+       "currentLevel": 11,
+       "currentXp": 835,
+       "promotionRecipeReference": "",
+       "unitStat": null,
+       "currentTier": 3,
+       "relic": {
+        "currentTier": 1
+       }
+      }
+     ],
+     "squad": {
+      "cell": [
+       {
+        "crewBattleStat": [],
+        "unitId": "CARSONTEVA:TWO_STAR:0",
+        "unitDefId": "CARSONTEVA:TWO_STAR",
+        "cellIndex": 0,
+        "unitBattleStat": null,
+        "messageReticle": "",
+        "progressItem": true,
+        "squadUnitType": 2,
+        "unitState": null,
+        "selectable": true,
+        "overkillItem": false,
+        "inheritFromDefinitionId": "CARSONTEVA",
+        "forcedUnitEraLevel": 0
+       },
+       {
+        "crewBattleStat": [],
+        "unitId": "R5D4:SEVEN_STAR:1",
+        "unitDefId": "R5D4:SEVEN_STAR",
+        "cellIndex": 1,
+        "unitBattleStat": null,
+        "messageReticle": "",
+        "progressItem": true,
+        "squadUnitType": 1,
+        "unitState": null,
+        "selectable": true,
+        "overkillItem": false,
+        "inheritFromDefinitionId": "",
+        "forcedUnitEraLevel": 18
+       },
+       {
+        "crewBattleStat": [],
+        "unitId": "RANGERZEB:SEVEN_STAR:2",
+        "unitDefId": "RANGERZEB:SEVEN_STAR",
+        "cellIndex": 2,
+        "unitBattleStat": null,
+        "messageReticle": "",
+        "progressItem": true,
+        "squadUnitType": 1,
+        "unitState": null,
+        "selectable": true,
+        "overkillItem": false,
+        "inheritFromDefinitionId": "",
+        "forcedUnitEraLevel": 18
+       }
+      ],
+      "targetingTactic": 1,
+      "squadType": 1,
+      "targetingSetId": "",
+      "expireTime": "0",
+      "lastSaveTime": "1792001870611",
+      "supportInheritFromDefinitionId": "",
+      "datacron": null
+     }
+    },
+    "cooldownConditionalOverrideKey": "",
+    "holonodePlanetPrefabName": "",
+    "battleSpeedAdjustable": true,
+    "requirementOverrideKey": "",
+    "simmableOverrideEnabled": false,
+    "conditionalEntryCostOverride": null,
+    "recommendationKey": "",
+    "overviewLocKey": "",
+    "recommendedGp": 0,
+    "battleDurationLimit": "0",
+    "recommendedUnitGp": 0,
+    "volatileAccess": true,
+    "unlockRequirementId": "b1mercdroid_7star_req",
+    "visibilityRequirementId": "",
+    "raidPointsStructure": null,
+    "featured": false,
+    "maxPointsPerAttempt": 0,
+    "pveDatacronAllowed": false,
+    "recommendedEraLevel": 0
+   },
+   {
+    "enemyPreview": [],
+    "rewardPreview": [
+     {
+      "id": "SCV_005",
+      "type": 7,
+      "minQuantity": 2,
+      "maxQuantity": 2,
+      "rarity": 8,
+      "statMod": null,
+      "previewPriority": 0,
+      "unitLevel": 0,
+      "unitTier": 0,
+      "primaryReward": false
+     },
+     {
+      "id": "SCV_006",
+      "type": 7,
+      "minQuantity": 2,
+      "maxQuantity": 2,
+      "rarity": 8,
+      "statMod": null,
+      "previewPriority": 0,
+      "unitLevel": 0,
+      "unitTier": 0,
+      "primaryReward": false
+     },
+     {
+      "id": "RM_003",
+      "type": 7,
+      "minQuantity": 2,
+      "maxQuantity": 2,
+      "rarity": 8,
+      "statMod": null,
+      "previewPriority": 0,
+      "unitLevel": 0,
+      "unitTier": 0,
+      "primaryReward": false
+     },
+     {
+      "id": "ability_mat_E",
+      "type": 7,
+      "minQuantity": 1,
+      "maxQuantity": 1,
+      "rarity": 8,
+      "statMod": null,
+      "previewPriority": 0,
+      "unitLevel": 0,
+      "unitTier": 0,
+      "primaryReward": false
+     }
+    ],
+    "campaignNodeEncounter": [
+     {
+      "encounterCinematics": [],
+      "environment": [
+       {
+        "prefab": "env.env_emp_thrawnoffice_pre",
+        "layout": "STANDARD",
+        "layoutPrefab": ""
+       }
+      ],
+      "encounterMessage": [],
+      "firstTimeEncounterMessage": [],
+      "displayableEnemyId": [],
+      "displayableGrantedAbility": [],
+      "audioKey": "",
+      "allowChanceMechanics": true,
+      "encounterIcon": "",
+      "encounterDescKey": "",
+      "encounterIconPosition": 0,
+      "raidProgressColor": 1,
+      "maxDeployedSquadSize": 6,
+      "environmentCollectionId": "",
+      "encounterId": "1",
+      "encounterDurationLimit": "0",
+      "scoreToComplete": "0",
+      "detailDescKey": "",
+      "pointsToComplete": "0",
+      "audioVictoryKey": ""
+     }
+    ],
+    "entryCostRequirement": [],
+    "firstCompleteRewardPreview": [
+     {
+      "id": "ability_mat_F",
+      "type": 7,
+      "minQuantity": 2,
+      "maxQuantity": 2,
+      "rarity": 8,
+      "statMod": null,
+      "previewPriority": 0,
+      "unitLevel": 0,
+      "unitTier": 0,
+      "primaryReward": false
+     }
+    ],
+    "enemyUnitPreview": [
+     {
+      "baseEnemyItem": {
+       "id": "PVE_OMEGAS3",
+       "type": 2,
+       "minQuantity": 1,
+       "maxQuantity": 1,
+       "rarity": 8,
+       "statMod": null,
+       "previewPriority": 0,
+       "unitLevel": 0,
+       "unitTier": 0,
+       "primaryReward": false
+      },
+      "enemyLevel": 85,
+      "enemyTier": 9,
+      "threatLevel": 1,
+      "thumbnailName": "tex.charui_omegas3",
+      "prefabName": "unit.char_omega_fugitive_pre",
+      "displayedEnemy": false,
+      "unitClass": 6,
+      "enemyForceAlignment": 2,
+      "enemyRelicTier": 1,
+      "zetaCount": 0,
+      "isGalacticLegend": false,
+      "isUltimateUnlocked": false,
+      "omicronCount": 0,
+      "eraLevel": 95,
+      "eraThumbnailName": ""
+     },
+     {
+      "baseEnemyItem": {
+       "id": "PVE_BATCHERS3",
+       "type": 2,
+       "minQuantity": 1,
+       "maxQuantity": 1,
+       "rarity": 8,
+       "statMod": null,
+       "previewPriority": 0,
+       "unitLevel": 0,
+       "unitTier": 0,
+       "primaryReward": false
+      },
+      "enemyLevel": 85,
+      "enemyTier": 9,
+      "threatLevel": 1,
+      "thumbnailName": "tex.charui_batcher",
+      "prefabName": "unit.char_batcher_pre",
+      "displayedEnemy": false,
+      "unitClass": 6,
+      "enemyForceAlignment": 2,
+      "enemyRelicTier": 1,
+      "zetaCount": 0,
+      "isGalacticLegend": false,
+      "isUltimateUnlocked": false,
+      "omicronCount": 0,
+      "eraLevel": 95,
+      "eraThumbnailName": ""
+     }
+    ],
+    "playerAbilityRef": [],
+    "activateCost": [],
+    "rankRewardPreview": [],
+    "dynamicDescription": [],
+    "grantedAbilities": [],
+    "conditionalRewardsPreview": [],
+    "instanceFirstCompleteRewardPreview": [],
+    "immediateRegularRankRewardPreview": [],
+    "unitReplacement": [],
+    "coliseumPointSource": [],
+    "id": "TIER07",
+    "nameKey": "TIER07",
+    "descKey": "EVENT_MARQUEE_CARSONTEVA_M07_DESC",
+    "combatType": 1,
+    "audioKey": "",
+    "progress": 1,
+    "entryCategoryAllowed": {
+     "categoryId": [
+      "selftag_carsonteva"
+     ],
+     "commanderCategoryId": [],
+     "mandatoryRosterUnit": [
+      {
+       "id": "CARSONTEVA",
+       "slot": 0
+      }
+     ],
+     "excludeCategoryId": [],
+     "maximumAllowedUnitQuantity": 1,
+     "matchType": 2,
+     "minimumRequiredUnitQuantity": 1,
+     "minimumUnitRarity": 8,
+     "minimumOwnedUnitQuantity": 1,
+     "minimumUnitLevel": 1,
+     "minimumUnitTier": 1,
+     "maximumReinforcement": -1,
+     "minimumReinforcement": 0,
+     "minimumGalacticPower": 0,
+     "minimumRelicTier": 1,
+     "minimumModRarity": 8,
+     "minimumAbilityLevelAvg": 0,
+     "minimumAbilityLevelAll": 0,
+     "legendLimit": 1,
+     "unitGuideMinimumRequiredUnitQuantity": 1,
+     "bigUnitLimit": 1,
+     "mandatoryDatacron": null,
+     "eraExclusive": true,
+     "minimumEraLevel": 0
+    },
+    "shortNameKey": "CAMPAIGN_SHORTNAME_GENERIC_TIER07_V2",
+    "groupNameKey": "MAP_EVENT_NAME",
+    "groupImage": "tex.planet_holotable_preview",
+    "unlockRequirementLocalizationKey": "",
+    "cooldownKey": "",
+    "dailyBattleCapKey": "EVENT_MARQUEE_SPECIAL_CAP",
+    "prefab": "",
+    "position": {
+     "x": "0",
+     "y": "0",
+     "z": "0"
+    },
+    "detailImage": "",
+    "detailDescKey": "",
+    "raidConfigId": "",
+    "nodeDisplayItem": 1,
+    "grindEnabled": true,
+    "hasForcedAlly": false,
+    "battleSupportAllowed": false,
+    "autoBattleEnabled": true,
+    "retreatEnabled": true,
+    "forcedPlayerSquad": null,
+    "cooldownConditionalOverrideKey": "",
+    "holonodePlanetPrefabName": "",
+    "battleSpeedAdjustable": true,
+    "requirementOverrideKey": "",
+    "simmableOverrideEnabled": false,
+    "conditionalEntryCostOverride": null,
+    "recommendationKey": "",
+    "overviewLocKey": "",
+    "recommendedGp": 0,
+    "battleDurationLimit": "0",
+    "recommendedUnitGp": 0,
+    "volatileAccess": true,
+    "unlockRequirementId": "b1mercdroid_eralvl110_req",
+    "visibilityRequirementId": "",
+    "raidPointsStructure": null,
+    "featured": false,
+    "maxPointsPerAttempt": 0,
+    "pveDatacronAllowed": false,
+    "recommendedEraLevel": 0
+   }
+  ],
+  "firstTimeFinishCost": [],
+  "id": "B1MERCDROID_L80",
+  "nameKey": "NODE_CAMPAIGN_CARSONTEVA_NAME",
+  "homePrefab": "env.env_tatooine_moseisely_pre",
+  "forceAlignment": 1,
+  "dominantClass": 6,
+  "combatType": 1,
+  "isCannon": false,
+  "progress": 1,
+  "unlockRequirementLocalizationKey": "",
+  "dailyBattleCapKey": "",
+  "entryCategoryAllowed": null,
+  "cooldownKey": "",
+  "grindEnabled": true,
+  "cooldownConditionalOverrideKey": ""
+ }
+}
