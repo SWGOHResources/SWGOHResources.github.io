@@ -41,6 +41,8 @@
 .boss-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
 .boss-fields .tz-select { width: 100%; min-width: 0; }
 #planNeed { overflow-x: auto; border-top: 1px solid var(--border2); }
+.plan-scroll-hint { display: none; }
+#planNeed:focus-visible { outline: 2px solid var(--amber); outline-offset: -2px; }
 table.era-table { border-collapse: collapse; width: 100%; }
 .era-table thead th { padding: 10px 12px; border-bottom: 1px solid var(--border2); background: var(--void1); font: 500 10px var(--mono); letter-spacing: .04em; text-transform: uppercase; color: var(--text3); text-align: left; }
 .era-table td, .era-table tbody th { border-top: 1px solid var(--border); padding: 10px 12px; font-size: 13px; vertical-align: middle; }
@@ -51,7 +53,7 @@ table.era-table { border-collapse: collapse; width: 100%; }
 .era-table tbody th { font-weight: 600; text-align: left; }
 .era-table .cell-num { text-align: right; white-space: nowrap; font-family: var(--mono); }
 .plan-checklist { min-width: 710px; }
-.plan-checklist thead th:not(:first-child) { text-align: right; }
+.plan-checklist thead th:not([data-column="material"]) { text-align: right; }
 .plan-checklist td[data-amount="remaining"] { color: var(--amber); font-weight: 600; }
 .plan-checklist .is-covered td[data-amount="remaining"] { color: var(--cyan); }
 .cur-name { display: inline-flex; align-items: center; gap: 10px; }
@@ -59,6 +61,15 @@ table.era-table { border-collapse: collapse; width: 100%; }
 .era-page :is(input, select, button, summary):focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
 .era-page .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 @media (max-width: 760px) {
+  .plan-scroll-hint { display: block; padding: 12px 16px; border-top: 1px solid var(--border); font-size: 12px; line-height: 1.6; color: var(--text2); }
+  .plan-checklist { table-layout: fixed; min-width: 760px; }
+  .plan-checklist col[data-column="remaining"] { width: 96px; }
+  .plan-checklist col[data-column="material"] { width: 176px; }
+  .plan-checklist :is(td, th) { padding: 12px 10px; }
+  .plan-checklist tbody th, .plan-checklist thead th[data-column="material"] { position: sticky; left: 0; z-index: 2; background: var(--void1); border-right: 1px solid var(--border2); }
+  .plan-checklist .cur-name { gap: 8px; line-height: 1.5; }
+  .checklist-controls .tz-select { min-height: 44px; height: auto; font-size: 16px; }
+  .plan-seg .gear-btn, .era-page .gear-btn { min-height: 44px; }
   .boss-controls { grid-template-columns: 1fr 1fr; }
   .calculator-top { grid-template-columns: 1fr; gap: 18px; }
   .marquee-units { grid-template-columns: 1fr; gap: 20px; }
@@ -67,4 +78,22 @@ table.era-table { border-collapse: collapse; width: 100%; }
   .plan-seg .gear-btn { padding: 10px 14px; }
   .marquee-fields { grid-template-columns: minmax(0, 2fr) minmax(104px, 1fr); gap: 12px; }
   .marquee-daily { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 480px) {
+  .checklist-heading .sc-val { font-size: 20px; line-height: 1.4; }
+  .calculator-goal { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .calculator-goal > label, .calculator-goal > label.plan-gear { width: auto; min-width: 0; }
+  .plan-unit-control { grid-column: 1 / -1; }
+  .plan-seg { flex-wrap: wrap; }
+  .plan-seg .gear-btn { flex: 1; height: auto; white-space: normal; }
+  .marquee-fields, .boss-controls { grid-template-columns: minmax(0, 1fr); }
+  .marquee-custom-open { width: 100%; justify-content: center; white-space: normal; }
+  .marquee-daily { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .modal.wide.marquee-custom-modal { width: calc(100% - 24px); max-height: 85vh; max-height: 85dvh; padding: 16px; }
+}
+@media (max-width: 360px) {
+  .topbar { gap: 8px; padding-inline: 12px; }
+  .topbar-title { font-size: 12px; gap: 5px; }
+  .plan-checklist col[data-column="remaining"] { width: 88px; }
+  .plan-checklist col[data-column="material"] { width: 156px; }
 }
