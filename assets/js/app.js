@@ -113,7 +113,7 @@ function openScheduleModal(){
 
 document.getElementById('openFullScheduleBtn')?.addEventListener('click', openScheduleModal);
 document.getElementById('openFullScheduleBtnMobile')?.addEventListener('click', openScheduleModal);
-document.getElementById('footerFullScheduleBtn')?.addEventListener('click', openScheduleModal);
+document.getElementById('footerFullScheduleBtn')?.addEventListener('click', event => { event.preventDefault(); openScheduleModal(); });
 document.getElementById('closeFullScheduleBtn')?.addEventListener('click', () => closeModal(scheduleModal));
 
 // Full-schedule episode filter + Today live here (not inline onclick)
@@ -345,6 +345,7 @@ function applyDefaultExplorerOffset(liveEvents){
 try { applyDefaultExplorerOffset(); } catch(e){}
 const initExplorerOffset = (typeof explorerOffset === 'number') ? explorerOffset : 0;
 renderAll();
+if (typeof location !== 'undefined' && location.hash === '#full-schedule') openScheduleModal();
 if(typeof loadLiveEvents === 'function'){
   try {
     const pending = loadLiveEvents();

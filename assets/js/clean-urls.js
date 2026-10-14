@@ -7,6 +7,7 @@
     '/index.html': '/',
     '/conquest.html': '/conquest/',
     '/squads.html': '/squads/',
+    '/game-timeline.html': '/game-timeline/',
     '/privacy.html': '/privacy/',
     '/cookie-policy.html': '/cookie-policy/',
     '/terms.html': '/terms/',

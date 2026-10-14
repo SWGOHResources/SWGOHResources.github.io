@@ -65,6 +65,9 @@
   const footerYearEl = document.getElementById('footerYear');
   if(footerYearEl){ footerYearEl.textContent = `© ${new Date().getFullYear()} SWGOH::RESOURCES`; }
 
+  document.getElementById('footerMeta')?.remove();
+  document.querySelector('.footer-bottom .dot')?.remove();
+
 })();
 
 /* Discord handle copy (footer buttons use inline onclick). Global so
