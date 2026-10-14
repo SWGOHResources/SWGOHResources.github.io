@@ -1,5 +1,5 @@
 {
- "pulledAt": 1791917988950,
+ "pulledAt": 1791963894672,
  "gameDataVersion": "0.40.6:Oq-TxiewST69Ow5E1gLW3g",
  "events": [
   {
@@ -23,16 +23,6 @@
    "art": "live/events-theronin.png"
   },
   {
-   "id": "EVENT_OMEGA_BATTLES_02_CORUSCANT",
-   "name": "Coruscant Omega Battles",
-   "kind": "omega",
-   "unit": "GALACTICCHALLENGESCORUSCANT",
-   "startMs": 1791788400000,
-   "endMs": 1791874800000,
-   "live": false,
-   "art": "live/events-galactic-challenges-coruscant.png"
-  },
-  {
    "id": "EVENT_RESOURCE_SMUGGLERS_RUN",
    "name": "Smuggler's Run",
    "kind": "smugglers-run",
@@ -49,7 +39,7 @@
    "unit": "DATHOMIRBATTLE",
    "startMs": 1791874800000,
    "endMs": 1791961200000,
-   "live": true,
+   "live": false,
    "art": "live/events-dathomir-battle.png"
   },
   {
@@ -69,7 +59,7 @@
    "unit": "NIGHTSISTERSASSAULT",
    "startMs": 1791961200000,
    "endMs": 1792047600000,
-   "live": false,
+   "live": true,
    "art": "live/events-nightsisters-assault.png"
   },
   {
