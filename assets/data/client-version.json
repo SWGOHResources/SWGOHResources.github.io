@@ -11,24 +11,5 @@
   "serverVersion": "2100274",
   "loc": "3P4tM7xJQIiKyjTJUjE-xg"
  },
- "pendingNotifications": [
-  {
-   "id": "8ce90bd54a8815de2c47dcde92d846aa3b13abdad822e547babe3d53d717b5d4",
-   "verdict": "forced_flip",
-   "snapshot": {
-    "checkedAt": 1792002741234,
-    "store": {
-     "version": "0.40.6",
-     "releaseDate": "2026-09-15T17:04:59Z",
-     "releaseNotes": "Hey, Galaxy of Heroes fans! This update includes some back-end optimizations and performance improvements. Have fun, and see you on the Holotables!"
-    },
-    "server": {
-     "gamedata": "0.40.6:i9YYIijBSxuHHNoSmCMBoQ",
-     "asset": 100054,
-     "serverVersion": "2100274",
-     "loc": "3P4tM7xJQIiKyjTJUjE-xg"
-    }
-   }
-  }
- ]
+ "pendingNotifications": []
 }
