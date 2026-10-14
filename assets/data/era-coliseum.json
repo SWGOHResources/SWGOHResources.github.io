@@ -1,0 +1,1032 @@
+{
+  "source": "era10-extract/02_era10_coliseum.json",
+  "boxSource": "era10-extract/08_coliseum_prize_boxes.json",
+  "gameVersion": "0.40.6:i9YYIijBSxuHHNoSmCMBoQ",
+  "excludedCurrencyIds": [
+    "ERA_CURRENCY"
+  ],
+  "materialTiers": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "currencyOnlyMilestones": {
+    "7": [
+      100
+    ],
+    "8": "all"
+  },
+  "bosses": [
+    {
+      "id": "KRAYTDRAGON",
+      "name": "Krayt Dragon",
+      "icon": "assets/img/bosses/krayt.png"
+    },
+    {
+      "id": "ZEFFOTOMBGUARDIAN",
+      "name": "Zeffo Tomb Guardian",
+      "icon": "assets/img/bosses/zeffo.png"
+    },
+    {
+      "id": "JOTAZ",
+      "name": "Jotaz",
+      "icon": "assets/img/bosses/jotaz.png"
+    },
+    {
+      "id": "DRYAX",
+      "name": "Dryax",
+      "icon": "assets/img/bosses/dryax.png"
+    }
+  ],
+  "tiers": [
+    {
+      "tier": 1,
+      "bands": [
+        {
+          "at": 10,
+          "boxes": [],
+          "shipmentCurrency": 0,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_1",
+              "q": 50
+            }
+          ]
+        },
+        {
+          "at": 20,
+          "boxes": [],
+          "shipmentCurrency": 0,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_1",
+              "q": 75
+            }
+          ]
+        },
+        {
+          "at": 30,
+          "boxes": [],
+          "shipmentCurrency": 0,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_1",
+              "q": 250
+            }
+          ]
+        },
+        {
+          "at": 40,
+          "boxes": [
+            "mysterybox_era_coliseum_boss_tier_1_milestone_40_reward"
+          ],
+          "shipmentCurrency": 0,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_1",
+              "q": 125
+            },
+            {
+              "id": "era_upgrade_advanced_1",
+              "q": 50
+            }
+          ]
+        },
+        {
+          "at": 50,
+          "boxes": [],
+          "shipmentCurrency": 0,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_1",
+              "q": 150
+            }
+          ]
+        },
+        {
+          "at": 60,
+          "boxes": [],
+          "shipmentCurrency": 0,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_1",
+              "q": 150
+            }
+          ]
+        },
+        {
+          "at": 70,
+          "boxes": [],
+          "shipmentCurrency": 0,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_1",
+              "q": 150
+            }
+          ]
+        },
+        {
+          "at": 80,
+          "boxes": [],
+          "shipmentCurrency": 0,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_1",
+              "q": 150
+            }
+          ]
+        },
+        {
+          "at": 90,
+          "boxes": [
+            "mysterybox_era_coliseum_boss_tier_1_milestone_90_reward"
+          ],
+          "shipmentCurrency": 0,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_1",
+              "q": 125
+            },
+            {
+              "id": "era_upgrade_advanced_1",
+              "q": 15
+            }
+          ]
+        },
+        {
+          "at": 100,
+          "boxes": [],
+          "shipmentCurrency": 0,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_1",
+              "q": 150
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "tier": 2,
+      "bands": [
+        {
+          "at": 10,
+          "boxes": [],
+          "shipmentCurrency": 0,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_1",
+              "q": 100
+            }
+          ]
+        },
+        {
+          "at": 20,
+          "boxes": [],
+          "shipmentCurrency": 0,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_1",
+              "q": 100
+            }
+          ]
+        },
+        {
+          "at": 30,
+          "boxes": [],
+          "shipmentCurrency": 0,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_1",
+              "q": 100
+            }
+          ]
+        },
+        {
+          "at": 40,
+          "boxes": [
+            "mysterybox_era_coliseum_boss_tier_2_milestone_40_reward"
+          ],
+          "shipmentCurrency": 0,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_1",
+              "q": 150
+            },
+            {
+              "id": "era_upgrade_advanced_1",
+              "q": 50
+            }
+          ]
+        },
+        {
+          "at": 50,
+          "boxes": [],
+          "shipmentCurrency": 0,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_1",
+              "q": 200
+            }
+          ]
+        },
+        {
+          "at": 60,
+          "boxes": [],
+          "shipmentCurrency": 0,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_1",
+              "q": 350
+            }
+          ]
+        },
+        {
+          "at": 70,
+          "boxes": [],
+          "shipmentCurrency": 0,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_1",
+              "q": 400
+            }
+          ]
+        },
+        {
+          "at": 80,
+          "boxes": [],
+          "shipmentCurrency": 0,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_1",
+              "q": 400
+            }
+          ]
+        },
+        {
+          "at": 90,
+          "boxes": [
+            "mysterybox_era_coliseum_boss_tier_2_milestone_90_reward"
+          ],
+          "shipmentCurrency": 0,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_1",
+              "q": 350
+            },
+            {
+              "id": "era_upgrade_advanced_1",
+              "q": 50
+            }
+          ]
+        },
+        {
+          "at": 100,
+          "boxes": [],
+          "shipmentCurrency": 0,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_1",
+              "q": 350
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "tier": 3,
+      "bands": [
+        {
+          "at": 10,
+          "boxes": [],
+          "shipmentCurrency": 0,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_1",
+              "q": 400
+            }
+          ]
+        },
+        {
+          "at": 20,
+          "boxes": [],
+          "shipmentCurrency": 0,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_1",
+              "q": 300
+            }
+          ]
+        },
+        {
+          "at": 30,
+          "boxes": [],
+          "shipmentCurrency": 0,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_1",
+              "q": 300
+            }
+          ]
+        },
+        {
+          "at": 40,
+          "boxes": [
+            "mysterybox_era_coliseum_boss_tier_3_milestone_40_reward"
+          ],
+          "shipmentCurrency": 0,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_1",
+              "q": 300
+            },
+            {
+              "id": "era_upgrade_advanced_1",
+              "q": 50
+            }
+          ]
+        },
+        {
+          "at": 50,
+          "boxes": [],
+          "shipmentCurrency": 0,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_1",
+              "q": 300
+            }
+          ]
+        },
+        {
+          "at": 60,
+          "boxes": [],
+          "shipmentCurrency": 0,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_1",
+              "q": 400
+            }
+          ]
+        },
+        {
+          "at": 70,
+          "boxes": [],
+          "shipmentCurrency": 0,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_1",
+              "q": 400
+            }
+          ]
+        },
+        {
+          "at": 80,
+          "boxes": [],
+          "shipmentCurrency": 0,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_1",
+              "q": 400
+            }
+          ]
+        },
+        {
+          "at": 90,
+          "boxes": [
+            "mysterybox_era_coliseum_boss_tier_3_milestone_90_reward"
+          ],
+          "shipmentCurrency": 0,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_1",
+              "q": 400
+            },
+            {
+              "id": "era_upgrade_advanced_1",
+              "q": 100
+            }
+          ]
+        },
+        {
+          "at": 100,
+          "boxes": [],
+          "shipmentCurrency": 0,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_2",
+              "q": 100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "tier": 4,
+      "bands": [
+        {
+          "at": 10,
+          "boxes": [],
+          "shipmentCurrency": 0,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_2",
+              "q": 100
+            }
+          ]
+        },
+        {
+          "at": 20,
+          "boxes": [],
+          "shipmentCurrency": 0,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_2",
+              "q": 150
+            }
+          ]
+        },
+        {
+          "at": 30,
+          "boxes": [],
+          "shipmentCurrency": 0,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_2",
+              "q": 200
+            }
+          ]
+        },
+        {
+          "at": 40,
+          "boxes": [
+            "mysterybox_era_coliseum_boss_tier_4_milestone_40_reward"
+          ],
+          "shipmentCurrency": 0,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_2",
+              "q": 200
+            },
+            {
+              "id": "era_upgrade_advanced_2",
+              "q": 50
+            }
+          ]
+        },
+        {
+          "at": 50,
+          "boxes": [],
+          "shipmentCurrency": 0,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_2",
+              "q": 225
+            }
+          ]
+        },
+        {
+          "at": 60,
+          "boxes": [],
+          "shipmentCurrency": 0,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_2",
+              "q": 225
+            }
+          ]
+        },
+        {
+          "at": 70,
+          "boxes": [],
+          "shipmentCurrency": 0,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_2",
+              "q": 250
+            }
+          ]
+        },
+        {
+          "at": 80,
+          "boxes": [],
+          "shipmentCurrency": 0,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_2",
+              "q": 250
+            }
+          ]
+        },
+        {
+          "at": 90,
+          "boxes": [
+            "mysterybox_era_coliseum_boss_tier_4_milestone_90_reward"
+          ],
+          "shipmentCurrency": 0,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_2",
+              "q": 250
+            },
+            {
+              "id": "era_upgrade_advanced_2",
+              "q": 100
+            }
+          ]
+        },
+        {
+          "at": 100,
+          "boxes": [],
+          "shipmentCurrency": 0,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_2",
+              "q": 250
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "tier": 5,
+      "bands": [
+        {
+          "at": 10,
+          "boxes": [],
+          "shipmentCurrency": 0,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_2",
+              "q": 250
+            }
+          ]
+        },
+        {
+          "at": 20,
+          "boxes": [],
+          "shipmentCurrency": 0,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_2",
+              "q": 250
+            }
+          ]
+        },
+        {
+          "at": 30,
+          "boxes": [],
+          "shipmentCurrency": 0,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_2",
+              "q": 275
+            }
+          ]
+        },
+        {
+          "at": 40,
+          "boxes": [
+            "mysterybox_era_coliseum_boss_tier_5_milestone_40_reward"
+          ],
+          "shipmentCurrency": 0,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_2",
+              "q": 350
+            },
+            {
+              "id": "era_upgrade_advanced_2",
+              "q": 50
+            }
+          ]
+        },
+        {
+          "at": 50,
+          "boxes": [],
+          "shipmentCurrency": 0,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_2",
+              "q": 375
+            }
+          ]
+        },
+        {
+          "at": 60,
+          "boxes": [],
+          "shipmentCurrency": 0,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_2",
+              "q": 450
+            }
+          ]
+        },
+        {
+          "at": 70,
+          "boxes": [],
+          "shipmentCurrency": 0,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_2",
+              "q": 500
+            }
+          ]
+        },
+        {
+          "at": 80,
+          "boxes": [],
+          "shipmentCurrency": 0,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_2",
+              "q": 500
+            }
+          ]
+        },
+        {
+          "at": 90,
+          "boxes": [
+            "mysterybox_era_coliseum_boss_tier_5_milestone_90_reward"
+          ],
+          "shipmentCurrency": 0,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_2",
+              "q": 500
+            },
+            {
+              "id": "era_upgrade_advanced_2",
+              "q": 100
+            }
+          ]
+        },
+        {
+          "at": 100,
+          "boxes": [],
+          "shipmentCurrency": 0,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_3",
+              "q": 150
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "tier": 6,
+      "bands": [
+        {
+          "at": 10,
+          "boxes": [],
+          "shipmentCurrency": 0,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_3",
+              "q": 200
+            }
+          ]
+        },
+        {
+          "at": 20,
+          "boxes": [],
+          "shipmentCurrency": 0,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_3",
+              "q": 225
+            }
+          ]
+        },
+        {
+          "at": 30,
+          "boxes": [],
+          "shipmentCurrency": 0,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_3",
+              "q": 250
+            }
+          ]
+        },
+        {
+          "at": 40,
+          "boxes": [
+            "mysterybox_era_coliseum_boss_tier_6_milestone_40_reward"
+          ],
+          "shipmentCurrency": 0,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_3",
+              "q": 275
+            },
+            {
+              "id": "era_upgrade_advanced_3",
+              "q": 100
+            }
+          ]
+        },
+        {
+          "at": 50,
+          "boxes": [],
+          "shipmentCurrency": 0,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_3",
+              "q": 300
+            }
+          ]
+        },
+        {
+          "at": 60,
+          "boxes": [],
+          "shipmentCurrency": 0,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_3",
+              "q": 300
+            }
+          ]
+        },
+        {
+          "at": 70,
+          "boxes": [],
+          "shipmentCurrency": 0,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_3",
+              "q": 325
+            }
+          ]
+        },
+        {
+          "at": 80,
+          "boxes": [],
+          "shipmentCurrency": 0,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_3",
+              "q": 325
+            }
+          ]
+        },
+        {
+          "at": 90,
+          "boxes": [
+            "mysterybox_era_coliseum_boss_tier_6_milestone_90_reward"
+          ],
+          "shipmentCurrency": 0,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_3",
+              "q": 350
+            },
+            {
+              "id": "era_upgrade_advanced_3",
+              "q": 100
+            }
+          ]
+        },
+        {
+          "at": 100,
+          "boxes": [],
+          "shipmentCurrency": 0,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_3",
+              "q": 400
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "tier": 7,
+      "bands": [
+        {
+          "at": 10,
+          "boxes": [
+            "mysterybox_era_coliseum_boss_tier_7_milestone_10_reward_v3"
+          ],
+          "shipmentCurrency": 200,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_3",
+              "q": 425
+            }
+          ]
+        },
+        {
+          "at": 20,
+          "boxes": [
+            "mysterybox_era_coliseum_boss_tier_7_milestone_20_reward_v3"
+          ],
+          "shipmentCurrency": 200,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_3",
+              "q": 525
+            }
+          ]
+        },
+        {
+          "at": 30,
+          "boxes": [
+            "mysterybox_era_coliseum_boss_tier_7_milestone_30_reward_v3"
+          ],
+          "shipmentCurrency": 200,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_3",
+              "q": 525
+            }
+          ]
+        },
+        {
+          "at": 40,
+          "boxes": [
+            "mysterybox_era_coliseum_boss_tier_7_milestone_40_reward_v3"
+          ],
+          "shipmentCurrency": 200,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_3",
+              "q": 650
+            },
+            {
+              "id": "era_upgrade_advanced_3",
+              "q": 150
+            }
+          ]
+        },
+        {
+          "at": 50,
+          "boxes": [
+            "mysterybox_era_coliseum_boss_tier_7_milestone_50_reward_v3"
+          ],
+          "shipmentCurrency": 400,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_3",
+              "q": 725
+            }
+          ]
+        },
+        {
+          "at": 60,
+          "boxes": [
+            "mysterybox_era_coliseum_boss_tier_7_milestone_60_reward_v3"
+          ],
+          "shipmentCurrency": 400,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_3",
+              "q": 750
+            }
+          ]
+        },
+        {
+          "at": 70,
+          "boxes": [
+            "mysterybox_era_coliseum_boss_tier_7_milestone_70_reward_v3"
+          ],
+          "shipmentCurrency": 400,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_3",
+              "q": 775
+            }
+          ]
+        },
+        {
+          "at": 80,
+          "boxes": [
+            "mysterybox_era_coliseum_boss_tier_7_milestone_80_reward_v3"
+          ],
+          "shipmentCurrency": 400,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_3",
+              "q": 800
+            }
+          ]
+        },
+        {
+          "at": 90,
+          "boxes": [
+            "mysterybox_era_coliseum_boss_tier_7_milestone_90_reward_v3"
+          ],
+          "shipmentCurrency": 400,
+          "rewards": [
+            {
+              "id": "era_upgrade_basic_3",
+              "q": 825
+            },
+            {
+              "id": "era_upgrade_advanced_3",
+              "q": 200
+            }
+          ]
+        },
+        {
+          "at": 100,
+          "boxes": [
+            "mysterybox_era_coliseum_boss_tier_7_milestone_100_reward_v3"
+          ],
+          "shipmentCurrency": 400,
+          "rewards": []
+        }
+      ]
+    },
+    {
+      "tier": 8,
+      "bands": [
+        {
+          "at": 10,
+          "boxes": [
+            "mysterybox_era_coliseum_boss_tier_8_milestone_10_reward_v3"
+          ],
+          "shipmentCurrency": 400,
+          "rewards": []
+        },
+        {
+          "at": 20,
+          "boxes": [
+            "mysterybox_era_coliseum_boss_tier_8_milestone_20_reward_v3"
+          ],
+          "shipmentCurrency": 400,
+          "rewards": []
+        },
+        {
+          "at": 30,
+          "boxes": [
+            "mysterybox_era_coliseum_boss_tier_8_milestone_30_reward_v3"
+          ],
+          "shipmentCurrency": 400,
+          "rewards": []
+        },
+        {
+          "at": 40,
+          "boxes": [
+            "mysterybox_era_coliseum_boss_tier_8_milestone_40_reward_v3"
+          ],
+          "shipmentCurrency": 400,
+          "rewards": []
+        },
+        {
+          "at": 50,
+          "boxes": [
+            "mysterybox_era_coliseum_boss_tier_8_milestone_50_reward_v3"
+          ],
+          "shipmentCurrency": 400,
+          "rewards": []
+        },
+        {
+          "at": 60,
+          "boxes": [
+            "mysterybox_era_coliseum_boss_tier_8_milestone_60_reward_v3"
+          ],
+          "shipmentCurrency": 600,
+          "rewards": []
+        },
+        {
+          "at": 70,
+          "boxes": [
+            "mysterybox_era_coliseum_boss_tier_8_milestone_70_reward_v3"
+          ],
+          "shipmentCurrency": 600,
+          "rewards": []
+        },
+        {
+          "at": 80,
+          "boxes": [
+            "mysterybox_era_coliseum_boss_tier_8_milestone_80_reward_v3"
+          ],
+          "shipmentCurrency": 600,
+          "rewards": []
+        },
+        {
+          "at": 90,
+          "boxes": [
+            "mysterybox_era_coliseum_boss_tier_8_milestone_90_reward_v3"
+          ],
+          "shipmentCurrency": 600,
+          "rewards": []
+        },
+        {
+          "at": 100,
+          "boxes": [
+            "mysterybox_era_coliseum_boss_tier_8_milestone_100_reward_v3"
+          ],
+          "shipmentCurrency": 750,
+          "rewards": []
+        }
+      ]
+    }
+  ]
+}

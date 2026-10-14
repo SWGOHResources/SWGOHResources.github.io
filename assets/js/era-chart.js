@@ -1,213 +1,228 @@
-/* ERA CHART PLANNER — target-level calculator with owned, event income and
-   whole-pack math. Data: assets/data/era-chart.json (synced from gamedata).
-   Vanilla, no dependencies. State persists on this device only. */
+/* Era material checklist: upgrade costs, full episode tracks and independent
+   marquee first-clear/daily rewards, and independent boss milestones.
+   Tier 7 at 100% and all of tier 8 count Era Currency only. */
 (function () {
   'use strict';
-  var STORE_KEY = 'swgoh-era-plan';
+  var STORE_KEY = 'swgoh-era-checklist-v2';
   var CURS = [
-    { id: 'ERA_UPGRADE_CURRENCY', name: 'Era Currency', icon: 'assets/img/era/era-currency.png' },
+    { id: 'ERA_UPGRADE_CURRENCY', name: 'Era Upgrade Currency', icon: 'assets/img/era/era-currency.png' },
     { id: 'era_upgrade_basic_1', name: 'MK I Grek', icon: 'assets/img/era/mat-a-1.png' },
-    { id: 'era_upgrade_advanced_1', name: 'MK I Basic PC', icon: 'assets/img/era/mat-b-1.png' },
+    { id: 'era_upgrade_advanced_1', name: 'MK I Basic Cores', icon: 'assets/img/era/mat-b-1.png' },
     { id: 'era_upgrade_basic_2', name: 'MK II Forn', icon: 'assets/img/era/mat-c-1.png' },
     { id: 'era_upgrade_special_1', name: 'Zerek', icon: 'assets/img/era/mat-special.png' },
-    { id: 'era_upgrade_advanced_2', name: 'MK II Improved PC', icon: 'assets/img/era/mat-d-1.png' },
+    { id: 'era_upgrade_advanced_2', name: 'MK II Improved Cores', icon: 'assets/img/era/mat-d-1.png' },
     { id: 'era_upgrade_basic_3', name: 'MK III Esk', icon: 'assets/img/era/mat-a-2.png' },
-    { id: 'era_upgrade_advanced_3', name: 'MK III Advanced PC', icon: 'assets/img/era/mat-b-2.png' },
+    { id: 'era_upgrade_advanced_3', name: 'MK III Advanced Cores', icon: 'assets/img/era/mat-b-2.png' },
     { id: 'era_upgrade_basic_7', name: 'MK VII Aurek', icon: 'assets/img/era/mat-a-4.png' },
-    { id: 'era_upgrade_advanced_7', name: 'MK VII Masterwork PC', icon: 'assets/img/era/mat-b-4.png' },
+    { id: 'era_upgrade_advanced_7', name: 'MK VII Masterwork Cores', icon: 'assets/img/era/mat-b-4.png' },
     { id: 'era_upgrade_basic_8', name: 'MK VIII Senth', icon: 'assets/img/era/mat-c-4.png' },
-    { id: 'era_upgrade_advanced_8', name: 'MK VIII Legendary PC', icon: 'assets/img/era/mat-d-4.png' }
+    { id: 'era_upgrade_advanced_8', name: 'MK VIII Legendary Cores', icon: 'assets/img/era/mat-d-4.png' }
   ];
-  function fmt(n) { return Number(n || 0).toLocaleString('en-GB'); }
-  function num(v, d) { v = parseInt(v, 10); return isFinite(v) && v >= 0 ? v : (d || 0); }
+  var DATA, COLISEUM, canSave = true;
+  function num(v) { var n = Number(v); return Number.isFinite(n) ? Math.max(0, Math.floor(n)) : 0; }
+  function clamp(v, max) { return Math.min(max, num(v)); }
+  function defaults() { return { tgt: 75, units: 1, epFree: false, epPrem: false, marqA: 0, marqueeDaily: {}, bosses: {} }; }
   function load() {
-    var s = { cur: 0, tgt: 75, units: 1, owned: {}, marqA: 0, marqB: 0, epFree: false, epPrem: false, packs: [] };
+    var s = defaults();
     try {
-      var raw = localStorage.getItem(STORE_KEY);
-      if (raw) s = Object.assign(s, JSON.parse(raw));
-    } catch (e) { /* private mode etc — run unpersisted */ }
+      var raw = JSON.parse(localStorage.getItem(STORE_KEY) || localStorage.getItem('swgoh-era-plan'));
+      if (!raw || typeof raw !== 'object') return s;
+      s.tgt = raw.tgt == null ? 75 : clamp(raw.tgt, 75); s.units = raw.units === 2 ? 2 : 1;
+      s.epFree = raw.epFree === true; s.epPrem = raw.epPrem === true;
+      s.marqA = clamp(raw.marqA, 7);
+      var daily = raw.marqueeDaily && typeof raw.marqueeDaily === 'object' ? raw.marqueeDaily : {};
+      [3,4,5,6,7].forEach(function (tier) {
+        s.marqueeDaily[tier] = daily[tier] == null ? 1 : clamp(daily[tier], 7);
+      });
+      var bosses = raw.bosses && typeof raw.bosses === 'object' ? raw.bosses : {};
+      ['KRAYTDRAGON','ZEFFOTOMBGUARDIAN','JOTAZ','DRYAX'].forEach(function (id) {
+        var b = bosses[id] || {};
+        s.bosses[id] = { tier: Math.max(1, clamp(b.tier, 8)), percent: clamp(b.percent, 100) };
+      });
+    } catch (e) { canSave = false; }
     return s;
   }
   var state = load();
-  var DATA = null;
+  function text(id, value) { var el = document.getElementById(id); if (el) el.textContent = value; }
+  function savedNote() { text('planSaveStatus', canSave ? 'Saved on this device' : 'Storage unavailable · this visit only'); }
   function save() {
-    try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (e) {}
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); canSave = true; } catch (e) { canSave = false; }
+    savedNote();
   }
-  function costBetween(from, to, units) {
-    // levels are 1-based; owning `from` means still to pay from+1..to
-    var t = {};
-    if (!DATA || to <= from) return t;
-    for (var lv = from + 1; lv <= to && lv <= 75; lv++) {
-      var row = DATA.levels[lv - 1];
-      if (!row) continue;
-      row.costs.forEach(function (c) { t[c.id] = (t[c.id] || 0) + c.q * units; });
-    }
-    return t;
+  function fmt(n) { return Number(n || 0).toLocaleString('en-GB'); }
+  function known(id) { return CURS.some(function (m) { return m.id === id; }); }
+  function add(sums, rewards) {
+    rewards.forEach(function (r) { if (known(r.id)) sums[r.id] = (sums[r.id] || 0) + r.q; });
   }
-  function marqueeSum(nodeId, tiersCleared) {
-    var t = {};
-    if (!DATA || !tiersCleared) return t;
-    DATA.marquee[nodeId].slice(0, tiersCleared).forEach(function (tier) {
-      tier.rewards.forEach(function (r) {
-        if (CURS.some(function (c) { return c.id === r.id; })) t[r.id] = (t[r.id] || 0) + r.q;
+  function costs() {
+    var sums = {};
+    DATA.levels.forEach(function (row) {
+      if (row.lvl <= state.tgt && row.lvl <= 75) row.costs.forEach(function (r) {
+        sums[r.id] = (sums[r.id] || 0) + r.q * state.units;
       });
     });
-    return t;
+    return sums;
   }
-  function trackSum(which, on) {
-    var t = {};
-    if (!DATA || !on) return t;
-    DATA.episode[which].forEach(function (r) {
-      if (CURS.some(function (c) { return c.id === r.id; })) t[r.id] = (t[r.id] || 0) + r.q;
+  function episodeRewards() {
+    var sums = {};
+    if (state.epFree) add(sums, DATA.episode.free);
+    if (state.epPrem) add(sums, DATA.episode.premium);
+    return sums;
+  }
+  function marqueeRewards() {
+    var sums = {};
+    DATA.marquee.ADELPHIRANGER_L80.slice(0, state.marqA).forEach(function (tier, index) {
+      add(sums, tier.rewards);
+      var days = state.marqueeDaily[index + 1] || 0;
+      add(sums, (tier.dailyRewards || []).map(function (r) { return {id:r.id,q:r.q * days}; }));
     });
-    return t;
+    return sums;
   }
-  function packSums() {
-    var t = {};
-    state.packs.forEach(function (p) {
-      if (!p || !p.cur || !(p.per > 0) || !(p.n > 0)) return;
-      t[p.cur] = (t[p.cur] || 0) + p.per * p.n; // whole packs only: never fractional
+  function bossRewards(boss) {
+    var sums = {};
+    COLISEUM.tiers.forEach(function (tier) {
+      if (tier.tier > boss.tier) return;
+      var reached = boss.percent;
+      tier.bands.forEach(function (band) {
+        if (tier.tier < boss.tier || band.at <= reached) add(sums, band.rewards);
+      });
     });
-    return t;
+    return sums;
   }
-  function incomeSums() {
-    var t = {};
-    [marqueeSum('ADELPHIRANGER_L80', state.marqA), marqueeSum('B1MERCDROID_L80', state.marqB),
-     trackSum('free', state.epFree), trackSum('premium', state.epPrem), packSums()].forEach(function (part) {
-      Object.keys(part).forEach(function (k) { t[k] = (t[k] || 0) + part[k]; });
+  function shipmentRewards(boss) {
+    var total = 0;
+    COLISEUM.tiers.forEach(function (tier) {
+      if (tier.tier > boss.tier) return;
+      tier.bands.forEach(function (band) {
+        if (tier.tier < boss.tier || band.at <= boss.percent) total += band.shipmentCurrency || 0;
+      });
     });
-    return t;
+    return total;
   }
-  function curMeta(id) {
-    for (var i = 0; i < CURS.length; i++) if (CURS[i].id === id) return CURS[i];
-    return { id: id, name: id, icon: '' };
+  function coliseumRewards() {
+    var sums = {};
+    COLISEUM.bosses.forEach(function (b) {
+      var part = bossRewards(state.bosses[b.id]);
+      Object.keys(part).forEach(function (id) { sums[id] = (sums[id] || 0) + part[id]; });
+      document.querySelector('[data-boss-shipment="' + b.id + '"]').textContent = fmt(shipmentRewards(state.bosses[b.id]));
+    });
+    return sums;
   }
-  function iconImg(m, size) {
-    if (!m.icon) return '';
-    return '<img src="' + m.icon + '" alt="" loading="lazy" decoding="async" width="' + size + '" height="' + size + '">';
+  function buildChecklist() {
+    document.getElementById('planNeed').innerHTML = '<table class="era-table plan-checklist"><caption class="sr-only">Material costs to the target era level, episode, marquee and Coliseum rewards, and remaining materials</caption><thead><tr><th scope="col">Material</th><th scope="col">Required</th><th scope="col">Episode track</th><th scope="col">Marquees</th><th scope="col">Coliseum</th><th scope="col">Remaining</th></tr></thead><tbody>' + CURS.map(function (m) {
+      return '<tr data-material="' + m.id + '"><th scope="row"><span class="cur-name"><img src="' + m.icon + '" alt="" width="28" height="28" loading="lazy" decoding="async">' + m.name + '</span></th>' +
+        ['Required','Episode track','Marquees','Coliseum','Remaining'].map(function (label, i) {
+          return '<td data-label="' + label + '" data-amount="' + ['need','episode','marquee','coliseum','remaining'][i] + '" class="cell-num"></td>';
+        }).join('') + '</tr>';
+    }).join('') + '</tbody></table>';
   }
-  function render() {
-    var root = document.getElementById('eraPlanner');
-    if (!root || !DATA) return;
-    var need = costBetween(state.cur, state.tgt, state.units);
-    var income = incomeSums();
-    var html = '';
-    html += '<table class="era-table"><thead><tr><th scope="col">Currency</th><th scope="col">Need (Lv ' + state.cur + ' → ' + state.tgt + (state.units > 1 ? ' × 2 units' : '') + ')</th><th scope="col">Owned</th><th scope="col">Left to farm</th></tr></thead><tbody>';
+  function buildBossControls() {
+    document.getElementById('bossControls').innerHTML = COLISEUM.bosses.map(function (b) {
+      if (!state.bosses[b.id]) state.bosses[b.id] = { tier:1, percent:0 };
+      return '<div class="boss-control"><div class="boss-name"><img src="' + b.icon + '" alt="" width="36" height="36"><span>' + b.name + '</span></div><div class="boss-fields">' +
+        '<label>Tier<select class="tz-select" data-boss="' + b.id + '" data-field="tier" aria-label="' + b.name + ' tier">' + COLISEUM.tiers.map(function (tier) { return '<option value="' + tier.tier + '">' + tier.tier + '</option>'; }).join('') + '</select></label>' +
+        '<label><span data-boss-label="' + b.id + '">Reached %</span><input class="plan-num tz-select" type="number" min="0" max="100" step="1" data-boss="' + b.id + '" data-field="progress" aria-label="' + b.name + ' percentage"></label></div>' +
+        '<div class="boss-shipment"><img src="assets/img/atlases/standard_rgba_atlas/icon_currency_coliseum.png" alt="" width="22" height="22"><span>Era Currency</span><b data-boss-shipment="' + b.id + '">0</b></div></div>';
+    }).join('');
+  }
+  function syncMarquee() {
+    document.getElementById('planMarqA').value = state.marqA;
+    var tiers = DATA.marquee.ADELPHIRANGER_L80.slice(0, state.marqA).filter(function (tier) {
+      return (tier.dailyRewards || []).some(function (r) { return known(r.id); });
+    });
+    document.getElementById('marqueeCustomize').hidden = tiers.length === 0;
+    document.getElementById('marqueeDaily').innerHTML = tiers.map(function (tier) {
+      var n = +tier.tier.replace('TIER','');
+      if (state.marqueeDaily[n] == null) state.marqueeDaily[n] = 1;
+      return '<label>Tier ' + n + '<input class="tz-select plan-num" type="number" min="0" max="7" step="1" data-marquee-daily="' + n + '" value="' + state.marqueeDaily[n] + '" aria-label="Adelphi Ranger tier ' + n + ' daily reward claims" title="Daily claims, including the first day; maximum 7"></label>';
+    }).join('');
+    syncMarqueeDays();
+  }
+  function syncMarqueeDays() {
+    var active = [3,4,5,6,7].filter(function (tier) { return tier <= state.marqA; });
+    if (!active.length) active = [3,4,5,6,7];
+    var days = active.map(function (tier) { return state.marqueeDaily[tier] == null ? 1 : state.marqueeDaily[tier]; });
+    document.getElementById('planMarqDays').value = days.every(function (n) { return n === days[0]; }) ? String(days[0]) : 'custom';
+  }
+  function syncEpisode() {
+    [['planEpFree', state.epFree], ['planEpPrem', state.epPrem]].forEach(function (entry) {
+      var button = document.getElementById(entry[0]);
+      button.setAttribute('aria-pressed', String(entry[1])); button.classList.toggle('on', entry[1]);
+    });
+  }
+  function syncBoss(id) {
+    var b = state.bosses[id], meta = COLISEUM.bosses.find(function (x) { return x.id === id; });
+    document.querySelector('[data-boss="' + id + '"][data-field="tier"]').value = b.tier;
+    var input = document.querySelector('[data-boss="' + id + '"][data-field="progress"]');
+    input.value = b.percent; input.max = 100;
+    input.setAttribute('aria-label', meta.name + ' percentage');
+  }
+  function syncControls() {
+    document.getElementById('planTgt').value = state.tgt;
+    syncEpisode();
+    syncMarquee();
+    document.querySelectorAll('[data-units]').forEach(function (b) {
+      var on = +b.getAttribute('data-units') === state.units;
+      b.setAttribute('aria-pressed', String(on)); b.classList.toggle('on', on);
+    });
+    COLISEUM.bosses.forEach(function (b) { syncBoss(b.id); }); savedNote();
+  }
+  function update() {
+    var need = costs(), episode = episodeRewards(), marquee = marqueeRewards(), coliseum = coliseumRewards();
     CURS.forEach(function (m) {
-      var nd = need[m.id] || 0;
-      var ow = num(state.owned[m.id], 0);
-      var left = Math.max(0, nd - ow);
-      html += '<tr><td><span class="cur-name">' + iconImg(m, 22) + esc(m.name) + '</span></td>' +
-        '<td class="cell-num">' + fmt(nd) + '</td>' +
-        '<td class="cell-num"><input class="plan-num" data-owned="' + m.id + '" type="number" min="0" step="1" value="' + ow + '" aria-label="Owned ' + esc(m.name) + '"></td>' +
-        '<td class="cell-num"><b>' + fmt(left) + '</b></td></tr>';
+      var nd = need[m.id] || 0, ep = episode[m.id] || 0, mq = marquee[m.id] || 0, cq = coliseum[m.id] || 0;
+      var row = document.querySelector('[data-material="' + m.id + '"]');
+      var values = { need:nd, episode:ep, marquee:mq, coliseum:cq, remaining:Math.max(0, nd - ep - mq - cq) };
+      Object.keys(values).forEach(function (key) { row.querySelector('[data-amount="' + key + '"]').textContent = fmt(values[key]); });
+      row.classList.toggle('is-covered', nd > 0 && values.remaining === 0);
     });
-    html += '</tbody></table>';
-    var iht = '<table class="era-table"><thead><tr><th scope="col">Currency</th><th scope="col">Events</th><th scope="col">Packs</th><th scope="col">Still needed</th></tr></thead><tbody>';
-    var events = {};
-    [marqueeSum('ADELPHIRANGER_L80', state.marqA), marqueeSum('B1MERCDROID_L80', state.marqB),
-     trackSum('free', state.epFree), trackSum('premium', state.epPrem)].forEach(function (part) {
-      Object.keys(part).forEach(function (k) { events[k] = (events[k] || 0) + part[k]; });
-    });
-    var packs = packSums();
-    var anyLeft = false;
-    CURS.forEach(function (m) {
-      var nd = need[m.id] || 0;
-      if (!nd) return;
-      var ow = num(state.owned[m.id], 0);
-      var still = Math.max(0, nd - ow - (events[m.id] || 0) - (packs[m.id] || 0));
-      if (still > 0) anyLeft = true;
-      iht += '<tr><td><span class="cur-name">' + iconImg(m, 22) + esc(m.name) + '</span></td>' +
-        '<td class="cell-num">' + fmt(events[m.id] || 0) + '</td>' +
-        '<td class="cell-num">' + fmt(packs[m.id] || 0) + '</td>' +
-        '<td class="cell-num"><b>' + fmt(still) + '</b></td></tr>';
-    });
-    iht += '</tbody></table>';
-    if (!anyLeft && Object.keys(need).length) iht = '<p class="era-notes"><b>Covered.</b> Owned + events + packs meet the target.</p>' + iht;
-    document.getElementById('planNeed').innerHTML = html;
-    document.getElementById('planIncome').innerHTML = iht;
-    renderPacks();
   }
-  function renderPacks() {
-    var host = document.getElementById('packRows');
-    if (!host) return;
-    host.innerHTML = state.packs.map(function (p, i) {
-      var opts = CURS.map(function (c) {
-        return '<option value="' + c.id + '"' + (p.cur === c.id ? ' selected' : '') + '>' + esc(c.name) + '</option>';
-      }).join('');
-      var rowTotal = (num(p.per) * num(p.n));
-      return '<tr><td><input class="plan-pack-name" data-pack="' + i + '" data-field="name" value="' + esc(p.name || '') + '" maxlength="60" placeholder="Pack name" aria-label="Pack name"></td>' +
-        '<td><select data-pack="' + i + '" data-field="cur" aria-label="Pack currency">' + opts + '</select></td>' +
-        '<td class="cell-num"><input class="plan-num" data-pack="' + i + '" data-field="per" type="number" min="0" step="1" value="' + num(p.per) + '" aria-label="Per pack"></td>' +
-        '<td class="cell-num"><input class="plan-num" data-pack="' + i + '" data-field="n" type="number" min="0" step="1" value="' + num(p.n) + '" aria-label="Packs (whole packs only)"></td>' +
-        '<td class="cell-num"><b>' + fmt(rowTotal) + '</b></td>' +
-        '<td class="cell-num"><button type="button" class="gear-btn" data-pack-del="' + i + '">Remove</button></td></tr>';
-    }).join('') || '<tr><td colspan="6" class="small">No packs yet — add one below. Packs are whole units only: total = per-pack × packs.</td></tr>';
+  function edit(ev) {
+    var t = ev.target;
+    if (t.type === 'number' && t.value === '') { if (ev.type === 'change') t.value = '0'; else return; }
+    if (t.id === 'planTgt') state.tgt = clamp(t.value, 75);
+    else if (t.id === 'planMarqA') { state.marqA = clamp(t.value, 7); syncMarquee(); }
+    else if (t.id === 'planMarqDays') {
+      if (t.value === 'custom') return;
+      [3,4,5,6,7].forEach(function (tier) { state.marqueeDaily[tier] = clamp(t.value, 7); }); syncMarquee();
+    }
+    else if (t.hasAttribute('data-marquee-daily')) { state.marqueeDaily[t.getAttribute('data-marquee-daily')] = clamp(t.value, 7); syncMarqueeDays(); }
+    else if (t.hasAttribute('data-boss')) {
+      var id = t.getAttribute('data-boss'), b = state.bosses[id];
+      if (t.getAttribute('data-field') === 'tier') { b.tier = Math.max(1, clamp(t.value, 8)); syncBoss(id); }
+      else b.percent = clamp(t.value, 100);
+    } else return;
+    if (ev.type === 'change' && t.type === 'number') t.value = t.id === 'planTgt' ? state.tgt : t.hasAttribute('data-marquee-daily') ? state.marqueeDaily[t.getAttribute('data-marquee-daily')] : b.percent;
+    save(); update();
   }
-  function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
   function bind() {
     var root = document.getElementById('eraPlanner');
-    if (!root) return;
-    document.getElementById('planCur').value = state.cur;
-    document.getElementById('planTgt').value = state.tgt;
-    syncUnits();
-    document.getElementById('planMarqA').value = state.marqA;
-    document.getElementById('planMarqB').value = state.marqB;
-    document.getElementById('planEpFree').checked = !!state.epFree;
-    document.getElementById('planEpPrem').checked = !!state.epPrem;
-    root.addEventListener('input', function (ev) {
-      var t = ev.target;
-      if (t.id === 'planCur') { state.cur = Math.max(0, Math.min(74, num(t.value, 0))); }
-      else if (t.id === 'planTgt') { state.tgt = Math.max(1, Math.min(75, num(t.value, 75))); }
-      else if (t.hasAttribute('data-owned')) { state.owned[t.getAttribute('data-owned')] = num(t.value, 0); }
-      else if (t.hasAttribute('data-pack')) {
-        var i = +t.getAttribute('data-pack'), f = t.getAttribute('data-field'), p = state.packs[i];
-        if (!p) return;
-        if (f === 'name') p.name = t.value.slice(0, 60);
-        else if (f === 'cur') p.cur = t.value;
-        else p[f] = num(t.value, 0);
-      }
-      save(); render();
-    });
-    root.addEventListener('change', function (ev) {
-      var t = ev.target;
-      if (t.id === 'planMarqA') state.marqA = Math.max(0, Math.min(7, num(t.value, 0)));
-      else if (t.id === 'planMarqB') state.marqB = Math.max(0, Math.min(7, num(t.value, 0)));
-      else if (t.id === 'planEpFree') state.epFree = t.checked;
-      else if (t.id === 'planEpPrem') state.epPrem = t.checked;
-      else return;
-      save(); render();
-    });
+    root.addEventListener('input', edit); root.addEventListener('change', edit);
     root.addEventListener('click', function (ev) {
-      var t = ev.target;
-      if (t.hasAttribute('data-units')) { state.units = +t.getAttribute('data-units') === 2 ? 2 : 1; syncUnits(); save(); render(); }
-      else if (t.id === 'packAdd') { state.packs.push({ name: '', cur: CURS[0].id, per: 0, n: 0 }); save(); render(); }
-      else if (t.hasAttribute('data-pack-del')) { state.packs.splice(+t.getAttribute('data-pack-del'), 1); save(); render(); }
-      else if (t.id === 'planReset') {
-        state = { cur: 0, tgt: 75, units: 1, owned: {}, marqA: 0, marqB: 0, epFree: false, epPrem: false, packs: [] };
-        save(); bind(); render();
+      var button = ev.target.closest('button'); if (!button) return;
+      if (button.hasAttribute('data-units')) state.units = +button.getAttribute('data-units') === 2 ? 2 : 1;
+      else if (button.id === 'planEpFree' || button.id === 'planEpPrem') {
+        if (button.id === 'planEpFree') state.epFree = !state.epFree; else state.epPrem = !state.epPrem;
+        syncEpisode(); save(); update(); return;
       }
-    });
-  }
-  function syncUnits() {
-    Array.prototype.forEach.call(document.querySelectorAll('[data-units]'), function (b) {
-      var on = +b.getAttribute('data-units') === state.units;
-      if (on) b.setAttribute('aria-pressed', 'true'); else b.removeAttribute('aria-pressed');
-      b.classList.toggle('is-on', on);
+      else if (button.id === 'planReset') { state = defaults(); COLISEUM.bosses.forEach(function (b) { state.bosses[b.id] = {tier:1,percent:0}; }); }
+      else return;
+      syncControls(); save(); update();
     });
   }
   function init() {
     if (!document.getElementById('eraPlanner')) return;
-    fetch('assets/data/era-chart.json', { cache: 'no-store' }).then(function (res) {
-      if (!res.ok) throw new Error('data ' + res.status);
-      return res.json();
-    }).then(function (json) {
-      DATA = json; bind(); render();
+    var controls = document.querySelectorAll('#eraPlanner input, #eraPlanner button, #eraPlanner select:not([disabled])');
+    controls.forEach(function (el) { el.disabled = true; });
+    Promise.all(['era-chart','era-coliseum'].map(function (name) {
+      return fetch('assets/data/' + name + '.json', {cache:'no-store'}).then(function (res) { if (!res.ok) throw Error('data'); return res.json(); });
+    })).then(function (files) {
+      DATA = files[0]; COLISEUM = files[1]; buildBossControls(); syncControls(); buildChecklist(); update(); bind();
+      controls.forEach(function (el) { el.disabled = false; });
     }).catch(function () {
-      var el = document.getElementById('planNeed');
-      if (el) el.innerHTML = '<p class="era-notes">Planner data failed to load. The static tables above are unaffected.</p>';
+      document.getElementById('planNeed').innerHTML = '<p class="era-notes" role="alert">Planner data could not load. Reload to try again.</p>';
+      text('planSaveStatus', 'Planner unavailable');
     });
   }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
-  else init();
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })();
