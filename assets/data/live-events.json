@@ -1,6 +1,6 @@
 {
- "pulledAt": 1791990825087,
- "gameDataVersion": "0.40.6:Oq-TxiewST69Ow5E1gLW3g",
+ "pulledAt": 1792014434652,
+ "gameDataVersion": "0.40.6:i9YYIijBSxuHHNoSmCMBoQ",
  "events": [
   {
    "id": "progressionevent_MEESALESS_MASSACRE",
@@ -11,16 +11,6 @@
    "endMs": 1792519200000,
    "live": true,
    "art": "live/events-darthjarjar.png"
-  },
-  {
-   "id": "EVENT_MARQUEE_THERONIN",
-   "name": "The Wanderer's Blade",
-   "kind": "marquee",
-   "unit": "THERONIN",
-   "startMs": 1791309600000,
-   "endMs": 1791914400000,
-   "live": false,
-   "art": "live/events-theronin.png"
   },
   {
    "id": "EVENT_SPECIAL_DEFENSE_OF_DATHOMIR",
@@ -63,6 +53,105 @@
    "art": "live/events-executor.png"
   },
   {
+   "id": "EVENT_4LOM_HARD_DARK_16_101626",
+   "name": "Bonus Drops 101626 Name",
+   "kind": "event",
+   "startMs": 1792108800000,
+   "endMs": 1792368000000,
+   "live": false,
+   "art": "live/newsletter-bartender.png"
+  },
+  {
+   "id": "EVENT_4LOM_HARD_DARK_12_101626",
+   "name": "Bonus Drops 101626 Name",
+   "kind": "event",
+   "startMs": 1792108800000,
+   "endMs": 1792368000000,
+   "live": false,
+   "art": "live/newsletter-bartender.png"
+  },
+  {
+   "id": "EVENT_4LOM_HARD_DARK_20_101626",
+   "name": "Bonus Drops 101626 Name",
+   "kind": "event",
+   "startMs": 1792108800000,
+   "endMs": 1792368000000,
+   "live": false,
+   "art": "live/newsletter-bartender.png"
+  },
+  {
+   "id": "EVENT_ZUCKUSS_CANTINA_08_101626",
+   "name": "Bonus Drops Are Available!",
+   "kind": "event",
+   "startMs": 1792108800000,
+   "endMs": 1792368000000,
+   "live": false,
+   "art": "live/newsletter-bartender.png"
+  },
+  {
+   "id": "EVENT_4LOM_HARD_LIGHT_12_101626",
+   "name": "Bonus Drops Are Available!",
+   "kind": "event",
+   "startMs": 1792108800000,
+   "endMs": 1792368000000,
+   "live": false,
+   "art": "live/newsletter-bartender.png"
+  },
+  {
+   "id": "EVENT_4LOM_HARD_LIGHT_16_101626",
+   "name": "Bonus Drops Are Available!",
+   "kind": "event",
+   "startMs": 1792108800000,
+   "endMs": 1792368000000,
+   "live": false,
+   "art": "live/newsletter-bartender.png"
+  },
+  {
+   "id": "EVENT_ZUCKUSS_CANTINA_12_101626",
+   "name": "Bonus Drops Are Available!",
+   "kind": "event",
+   "startMs": 1792108800000,
+   "endMs": 1792368000000,
+   "live": false,
+   "art": "live/newsletter-bartender.png"
+  },
+  {
+   "id": "EVENT_ZUCKUSS_CANTINA_10_101626",
+   "name": "Bonus Drops Are Available!",
+   "kind": "event",
+   "startMs": 1792108800000,
+   "endMs": 1792368000000,
+   "live": false,
+   "art": "live/newsletter-bartender.png"
+  },
+  {
+   "id": "EVENT_ZUCKUSS_CANTINA_16_101626",
+   "name": "Bonus Drops Are Available!",
+   "kind": "event",
+   "startMs": 1792108800000,
+   "endMs": 1792368000000,
+   "live": false,
+   "art": "live/newsletter-bartender.png"
+  },
+  {
+   "id": "EVENT_4LOM_HARD_LIGHT_20_101626",
+   "name": "Bonus Drops Are Available!",
+   "kind": "event",
+   "startMs": 1792108800000,
+   "endMs": 1792368000000,
+   "live": false,
+   "art": "live/newsletter-bartender.png"
+  },
+  {
+   "id": "EVENT_ZUCKUSS_CANTINA_20_101626",
+   "name": "Bonus Drops Are Available!",
+   "kind": "event",
+   "startMs": 1792108800000,
+   "endMs": 1792368000000,
+   "live": false,
+   "art": "live/newsletter-bartender.png"
+  },
+  {
    "id": "EVENT_OMEGA_BATTLES_07_HOTH",
    "name": "Hoth Omega Battles",
    "kind": "omega",
@@ -101,6 +190,16 @@
    "endMs": 1792566000000,
    "live": false,
    "art": "live/events-leviathan.png"
+  },
+  {
+   "id": "EVENT_MARQUEE_ADELPHIRANGER",
+   "name": "Green Ranger",
+   "kind": "marquee",
+   "unit": "ADELPHIRANGER",
+   "startMs": 1792519200000,
+   "endMs": 1793124000000,
+   "live": false,
+   "art": "live/events-adelphiranger.png"
   },
   {
    "id": "EVENT_ASSAULT_REBEL",
