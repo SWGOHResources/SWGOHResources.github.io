@@ -34,7 +34,7 @@ const ASSET_DIR = path.join(ROOT, 'assets');
 export const VERSION_META = 'swgoh-asset-v';
 // Source pages stay at the root; these published copies give Pages real
 // directory routes without a custom server or a second editable page.
-export const CLEAN_ROUTES = ['conquest', 'squads', 'game-timeline', 'privacy', 'cookie-policy', 'terms'];
+export const CLEAN_ROUTES = ['conquest', 'squads', 'game-timeline', 'materials', 'privacy', 'cookie-policy', 'terms'];
 
 export async function syncCleanRoutes(root = ROOT) {
   let dirty = 0;
