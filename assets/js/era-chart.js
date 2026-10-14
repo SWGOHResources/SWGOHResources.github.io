@@ -151,8 +151,9 @@
     });
   }
   function syncGear() {
-    var level = [55,65,66,68,70,71,72,73,74,75].filter(function (n) { return n <= state.tgt; }).pop();
-    document.getElementById('planGear').value = level == null ? 'below' : String(level);
+    var select = document.getElementById('planGear');
+    var level = Array.from(select.options).map(function (option) { return Number(option.value); }).filter(function (n) { return n <= state.tgt; }).pop();
+    select.value = level == null ? 'below' : String(level);
   }
   function syncBoss(id) {
     var b = state.bosses[id], meta = COLISEUM.bosses.find(function (x) { return x.id === id; });

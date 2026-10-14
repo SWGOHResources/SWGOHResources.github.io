@@ -34,17 +34,18 @@ async function setup(t, { stored, legacy, blocked = false, failed = false } = {}
 test('gear and relic targets sync both ways using the mini-era conversion bands',async t=>{
   const h=await setup(t);
   assert.equal(h.get('#planGear').value,'75');
-  const bands=[[55,64],[65,65],[66,67],[68,69],[70,70],[71,71],[72,72],[73,73],[74,74],[75,75]];
-  const chart=fs.readFileSync(new URL('../era10-extract/visual/01_era_levels_chart.html',import.meta.url),'utf8');
+  // CG's Mini-Era announcement separates G12's five equipped-piece steps.
+  const bands=[[55,55],[56,57],[58,59],[60,61],[62,63],[64,64],[65,65],[66,67],[68,69],[70,70],[71,71],[72,72],[73,73],[74,74],[75,75]];
+  const pieces=[56,58,60,62,64];
+  pieces.forEach((level,i)=>assert.equal(h.get(`#planGear option[value="${level}"]`).textContent,`G12 +${i+1}`));
   for(const [start,end] of bands){
-    assert.ok(chart.includes(`<td>${start}${end>start&&start!==55?' to '+end:''}</td>`));
-    if(start===55)assert.ok(chart.includes('<td>GT12 +1</td><td>56 to 64</td>'));
     h.edit('#planGear',String(start),'change');assert.equal(h.get('#planTgt').value,String(start));
     const expected=data.levels.filter(r=>r.lvl<=start).flatMap(r=>r.costs).filter(r=>r.id===ERA).reduce((n,r)=>n+r.q,0);
     assert.equal(h.amount(ERA,'need'),expected);
     h.edit('#planTgt',String(end));assert.equal(h.get('#planGear').value,String(start));
   }
   h.edit('#planTgt','54');assert.equal(h.get('#planGear').value,'below');
+  const savedGear=await setup(t,{stored:{tgt:63}});assert.equal(savedGear.get('#planGear').value,'62');
   h.edit('#planGear','68','change');assert.equal(h.state().tgt,68);
   const saved=await setup(t,{stored:h.state()});assert.equal(saved.get('#planGear').value,'68');
   h.click('#planReset');assert.equal(h.get('#planGear').value,'75');

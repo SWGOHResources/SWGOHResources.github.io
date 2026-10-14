@@ -28,6 +28,9 @@ The prize-box subset records its pinned mirror revision and source blob.
 first-clear rewards, persistence and input behavior. Plans stay in this
 browser under `swgoh-era-checklist-v2`.
 
+G12 +1–5 start at Era Levels 56, 58, 60, 62 and 64, respectively, per
+[CG's Mini-Era announcement](https://swgoh.gg/news/the-mandalorian-and-grogu-mini-era/).
+
 ## Squad planner
 
 `/squads/` (source `squads.html`) provides a faction roster and squad board
