@@ -1,5 +1,5 @@
 {
- "pulledAt": 1791963894672,
+ "pulledAt": 1791990825087,
  "gameDataVersion": "0.40.6:Oq-TxiewST69Ow5E1gLW3g",
  "events": [
   {
@@ -21,16 +21,6 @@
    "endMs": 1791914400000,
    "live": false,
    "art": "live/events-theronin.png"
-  },
-  {
-   "id": "EVENT_RESOURCE_SMUGGLERS_RUN",
-   "name": "Smuggler's Run",
-   "kind": "smugglers-run",
-   "unit": "SMUGGLERSRUN",
-   "startMs": 1791799200000,
-   "endMs": 1791885600000,
-   "live": false,
-   "art": "live/events-smugglersrun.png"
   },
   {
    "id": "EVENT_SPECIAL_DEFENSE_OF_DATHOMIR",
