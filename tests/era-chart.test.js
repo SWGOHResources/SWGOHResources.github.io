@@ -14,6 +14,8 @@ async function setup(t, { stored, legacy, blocked = false, failed = false } = {}
   const dom = new JSDOM(html, {url:'https://example.test/era-chart/',runScripts:'outside-only'});
   t.after(() => dom.window.close());
   const w = dom.window, doc = w.document;
+  w.HTMLDialogElement.prototype.showModal = function () { this.open = true; };
+  w.HTMLDialogElement.prototype.close = function () { this.open = false; this.dispatchEvent(new w.Event('close')); };
   if (stored !== undefined) w.localStorage.setItem('swgoh-era-checklist-v2', JSON.stringify(stored));
   if (legacy !== undefined) w.localStorage.setItem('swgoh-era-plan', JSON.stringify(legacy));
   if (blocked) Object.defineProperty(w,'localStorage',{get(){throw Error('blocked');}});
@@ -28,6 +30,26 @@ async function setup(t, { stored, legacy, blocked = false, failed = false } = {}
   const state = () => JSON.parse(w.localStorage.getItem('swgoh-era-checklist-v2'));
   return {w,doc,get,edit,click,amount,boss,state};
 }
+
+test('gear and relic targets sync both ways using the mini-era conversion bands',async t=>{
+  const h=await setup(t);
+  assert.equal(h.get('#planGear').value,'75');
+  const bands=[[55,64],[65,65],[66,67],[68,69],[70,70],[71,71],[72,72],[73,73],[74,74],[75,75]];
+  const chart=fs.readFileSync(new URL('../era10-extract/visual/01_era_levels_chart.html',import.meta.url),'utf8');
+  for(const [start,end] of bands){
+    assert.ok(chart.includes(`<td>${start}${end>start&&start!==55?' to '+end:''}</td>`));
+    if(start===55)assert.ok(chart.includes('<td>GT12 +1</td><td>56 to 64</td>'));
+    h.edit('#planGear',String(start),'change');assert.equal(h.get('#planTgt').value,String(start));
+    const expected=data.levels.filter(r=>r.lvl<=start).flatMap(r=>r.costs).filter(r=>r.id===ERA).reduce((n,r)=>n+r.q,0);
+    assert.equal(h.amount(ERA,'need'),expected);
+    h.edit('#planTgt',String(end));assert.equal(h.get('#planGear').value,String(start));
+  }
+  h.edit('#planTgt','54');assert.equal(h.get('#planGear').value,'below');
+  h.edit('#planGear','68','change');assert.equal(h.state().tgt,68);
+  const saved=await setup(t,{stored:h.state()});assert.equal(saved.get('#planGear').value,'68');
+  h.click('#planReset');assert.equal(h.get('#planGear').value,'75');
+  assert.deepEqual([...h.doc.querySelectorAll('[data-material]')].slice(0,2).map(r=>r.dataset.material),[ERA,'era_upgrade_special_1']);
+});
 
 test('full costs match source levels and units multiply only costs',async t=>{
   const h=await setup(t);
@@ -144,6 +166,7 @@ test('marquee first-clear rewards count once, and daily claims count per tier',a
   h.edit('#planMarqA','4','change');
   assert.equal(h.amount(ERA,'marquee'),4500);
   assert.equal(h.amount(core,'marquee'),65);
+  h.click('#marqueeCustomOpen');
   const input=h.edit('[data-marquee-daily="3"]','7');
   assert.equal(h.amount(ERA,'marquee'),13500);
   assert.equal(h.doc.activeElement,input);
@@ -190,9 +213,26 @@ test('all first marquee reward types match the extract and the second is unavail
   assert.equal(data.marquee.B1MERCDROID_L80,undefined);
   const h=await setup(t,{legacy:{marqA:1,marqB:7,tgt:75}});
   assert.equal(h.get('#planMarqB').disabled,true);
-  assert.match(h.get('#planMarqB').textContent,/Unreleased/);
+  assert.equal(h.get('#planMarqB').closest('fieldset').disabled,true);
   assert.equal(h.amount(ERA,'marquee'),3000);
   h.click('#planReset');assert.equal(h.get('#planMarqA').value,'0');assert.equal(h.amount(ERA,'marquee'),0);
+});
+
+test('custom view overlays the daily inputs and Finish closes it with focus restored',async t=>{
+  const h=await setup(t);
+  assert.equal(h.get('#marqueeCustomize').open,false);
+  assert.equal(h.get('#marqueeCustomOpen').disabled,true);
+  h.edit('#planMarqA','7','change');h.click('#marqueeCustomOpen');
+  assert.equal(h.get('#marqueeCustomize').open,true);
+  h.edit('[data-marquee-daily="3"]','4','change');h.click('#marqueeCustomFinish');
+  assert.equal(h.get('#marqueeCustomize').open,false);
+  assert.equal(h.doc.activeElement,h.get('#marqueeCustomOpen'));
+  assert.equal(h.get('#planMarqDays').value,'custom');
+  assert.equal(h.get('#marqueeCustomize').querySelectorAll('input').length,5);
+  assert.equal(h.get('#planMarqB').options.length,h.get('#planMarqA').options.length);
+  assert.equal(h.get('#planMarqBDays').disabled,true);
+  assert.match(h.get('#planMarqB').closest('fieldset').textContent,/B1 Mercenary Droid/);
+  assert.equal(h.doc.querySelector('.marquee-controls summary, .marquee-heading .sc-badge'),null);
 });
 
 test('the 40% and 90% boxes contribute cores once per boss',async t=>{

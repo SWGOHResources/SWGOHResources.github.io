@@ -6,10 +6,10 @@
   var STORE_KEY = 'swgoh-era-checklist-v2';
   var CURS = [
     { id: 'ERA_UPGRADE_CURRENCY', name: 'Era Upgrade Currency', icon: 'assets/img/era/era-currency.png' },
+    { id: 'era_upgrade_special_1', name: 'Zerek', icon: 'assets/img/era/mat-special.png' },
     { id: 'era_upgrade_basic_1', name: 'MK I Grek', icon: 'assets/img/era/mat-a-1.png' },
     { id: 'era_upgrade_advanced_1', name: 'MK I Basic Cores', icon: 'assets/img/era/mat-b-1.png' },
     { id: 'era_upgrade_basic_2', name: 'MK II Forn', icon: 'assets/img/era/mat-c-1.png' },
-    { id: 'era_upgrade_special_1', name: 'Zerek', icon: 'assets/img/era/mat-special.png' },
     { id: 'era_upgrade_advanced_2', name: 'MK II Improved Cores', icon: 'assets/img/era/mat-d-1.png' },
     { id: 'era_upgrade_basic_3', name: 'MK III Esk', icon: 'assets/img/era/mat-a-2.png' },
     { id: 'era_upgrade_advanced_3', name: 'MK III Advanced Cores', icon: 'assets/img/era/mat-b-2.png' },
@@ -130,7 +130,7 @@
     var tiers = DATA.marquee.ADELPHIRANGER_L80.slice(0, state.marqA).filter(function (tier) {
       return (tier.dailyRewards || []).some(function (r) { return known(r.id); });
     });
-    document.getElementById('marqueeCustomize').hidden = tiers.length === 0;
+    document.getElementById('marqueeCustomOpen').disabled = tiers.length === 0;
     document.getElementById('marqueeDaily').innerHTML = tiers.map(function (tier) {
       var n = +tier.tier.replace('TIER','');
       if (state.marqueeDaily[n] == null) state.marqueeDaily[n] = 1;
@@ -150,6 +150,10 @@
       button.setAttribute('aria-pressed', String(entry[1])); button.classList.toggle('on', entry[1]);
     });
   }
+  function syncGear() {
+    var level = [55,65,66,68,70,71,72,73,74,75].filter(function (n) { return n <= state.tgt; }).pop();
+    document.getElementById('planGear').value = level == null ? 'below' : String(level);
+  }
   function syncBoss(id) {
     var b = state.bosses[id], meta = COLISEUM.bosses.find(function (x) { return x.id === id; });
     document.querySelector('[data-boss="' + id + '"][data-field="tier"]').value = b.tier;
@@ -159,6 +163,7 @@
   }
   function syncControls() {
     document.getElementById('planTgt').value = state.tgt;
+    syncGear();
     syncEpisode();
     syncMarquee();
     document.querySelectorAll('[data-units]').forEach(function (b) {
@@ -180,7 +185,8 @@
   function edit(ev) {
     var t = ev.target;
     if (t.type === 'number' && t.value === '') { if (ev.type === 'change') t.value = '0'; else return; }
-    if (t.id === 'planTgt') state.tgt = clamp(t.value, 75);
+    if (t.id === 'planTgt') { state.tgt = clamp(t.value, 75); syncGear(); }
+    else if (t.id === 'planGear') { state.tgt = clamp(t.value, 75); document.getElementById('planTgt').value = state.tgt; }
     else if (t.id === 'planMarqA') { state.marqA = clamp(t.value, 7); syncMarquee(); }
     else if (t.id === 'planMarqDays') {
       if (t.value === 'custom') return;
@@ -200,6 +206,8 @@
     root.addEventListener('input', edit); root.addEventListener('change', edit);
     root.addEventListener('click', function (ev) {
       var button = ev.target.closest('button'); if (!button) return;
+      if (button.id === 'marqueeCustomOpen') { document.getElementById('marqueeCustomize').showModal(); return; }
+      if (button.id === 'marqueeCustomFinish') { document.getElementById('marqueeCustomize').close(); return; }
       if (button.hasAttribute('data-units')) state.units = +button.getAttribute('data-units') === 2 ? 2 : 1;
       else if (button.id === 'planEpFree' || button.id === 'planEpPrem') {
         if (button.id === 'planEpFree') state.epFree = !state.epFree; else state.epPrem = !state.epPrem;
@@ -209,16 +217,18 @@
       else return;
       syncControls(); save(); update();
     });
+    document.getElementById('marqueeCustomize').addEventListener('close', function () { document.getElementById('marqueeCustomOpen').focus(); });
   }
   function init() {
     if (!document.getElementById('eraPlanner')) return;
-    var controls = document.querySelectorAll('#eraPlanner input, #eraPlanner button, #eraPlanner select:not([disabled])');
+    var controls = document.querySelectorAll('#eraPlanner input:not([disabled]), #eraPlanner button:not([disabled]), #eraPlanner select:not([disabled])');
     controls.forEach(function (el) { el.disabled = true; });
     Promise.all(['era-chart','era-coliseum'].map(function (name) {
       return fetch('assets/data/' + name + '.json', {cache:'no-store'}).then(function (res) { if (!res.ok) throw Error('data'); return res.json(); });
     })).then(function (files) {
-      DATA = files[0]; COLISEUM = files[1]; buildBossControls(); syncControls(); buildChecklist(); update(); bind();
+      DATA = files[0]; COLISEUM = files[1]; buildBossControls();
       controls.forEach(function (el) { el.disabled = false; });
+      syncControls(); buildChecklist(); update(); bind();
     }).catch(function () {
       document.getElementById('planNeed').innerHTML = '<p class="era-notes" role="alert">Planner data could not load. Reload to try again.</p>';
       text('planSaveStatus', 'Planner unavailable');

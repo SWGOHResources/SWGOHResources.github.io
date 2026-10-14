@@ -3,9 +3,10 @@
 .material-planner { background: var(--void1); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
 .checklist-controls { padding: 20px; }
 .checklist-heading.section-head { margin: 0 0 22px; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
-.calculator-top { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: end; }
-.calculator-goal { display: flex; align-items: end; gap: 16px; }
+.calculator-top { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 24px; align-items: end; }
+.calculator-goal { display: flex; flex-wrap: wrap; align-items: end; gap: 16px; }
 .calculator-goal > label { width: 104px; flex-shrink: 0; }
+.calculator-goal > label.plan-gear { width: 132px; }
 .checklist-controls label, .plan-unit-control, .plan-track-control { display: flex; flex-direction: column; gap: 8px; font-size: 12px; font-weight: 600; color: var(--text2); }
 .checklist-controls .tz-select { width: 100%; min-width: 0; max-width: none; height: 42px; padding: 10px 32px 10px 12px; font-size: 13px; font-weight: 400; }
 .plan-num.tz-select { background-image: none; appearance: textfield; cursor: text; padding: 10px 12px; font-family: var(--mono); }
@@ -17,11 +18,18 @@
 .marquee-controls { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--border); }
 .marquee-heading { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
 .marquee-heading h2 { font-family: var(--body); font-size: 13px; font-weight: 600; color: var(--text); }
+.marquee-units { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.marquee-unit { min-width: 0; border: 0; padding: 0; margin: 0; }
+.marquee-unit legend { padding: 0; margin-bottom: 12px; color: var(--text); font-size: 13px; font-weight: 600; }
+.marquee-unit:disabled { opacity: .45; }
+.marquee-unit:disabled :is(select, button) { cursor: default; }
 .marquee-fields { display: grid; grid-template-columns: minmax(0, 2fr) minmax(130px, 1fr); gap: 16px; max-width: 560px; }
-.marquee-custom { margin-top: 12px; }
-.marquee-custom[hidden] { display: none; }
-.marquee-custom summary { cursor: pointer; width: fit-content; padding: 4px 0; color: var(--text2); font-size: 12px; }
-.marquee-custom summary:hover { color: var(--amber); }
+.marquee-custom-open { margin-top: 12px; }
+.modal.wide.marquee-custom-modal { margin: auto; color: var(--text); width: calc(100% - 48px); max-width: 600px; max-height: 70vh; overflow-y: auto; }
+.marquee-custom-modal:not([open]) { display: none; }
+.marquee-custom-modal::backdrop { background: rgba(8,10,14,.92); }
+.marquee-custom-modal h3 { font: 600 16px var(--body); }
+.marquee-custom-actions { display: flex; justify-content: end; margin-top: 20px; }
 .marquee-daily { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; max-width: 560px; padding-top: 14px; }
 .boss-shipment { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 10px; font-size: 11px; color: var(--text2); }
 .boss-shipment img { width: 22px; height: 22px; object-fit: contain; }
@@ -53,6 +61,7 @@ table.era-table { border-collapse: collapse; width: 100%; }
 @media (max-width: 760px) {
   .boss-controls { grid-template-columns: 1fr 1fr; }
   .calculator-top { grid-template-columns: 1fr; gap: 18px; }
+  .marquee-units { grid-template-columns: 1fr; gap: 20px; }
   .checklist-controls { padding: 16px; }
   .calculator-goal { gap: 12px; }
   .plan-seg .gear-btn { padding: 10px 14px; }

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta name="swgoh-asset-v" content="f5cb8b8417">
+    <meta name="swgoh-asset-v" content="da8511e17b">
   <meta charset="UTF-8">
   <base href="/">
   <script src="/assets/js/clean-urls.js?v=b3d876d73a"></script>
@@ -26,7 +26,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@700;800&family=Inter:wght@400;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/main.css?v=7aec24b044">
-  <link rel="stylesheet" href="assets/css/era-chart.css?v=a939ac73b6">
+  <link rel="stylesheet" href="assets/css/era-chart.css?v=3aea0d5a18">
 </head>
 <body class="cq-shell">
 <div class="starfield" id="starfield" aria-hidden="true"></div>
@@ -80,18 +80,24 @@
         <div class="calculator-top">
           <div class="calculator-goal">
             <label>Target level<input id="planTgt" class="plan-num tz-select" type="number" min="0" max="75" step="1" value="75"></label>
+            <label class="plan-gear">Gear / relic<select id="planGear" class="tz-select"><option value="below" disabled>Below G12</option><option value="55">G12</option><option value="65">G13</option><option value="66">Relic 1</option><option value="68">Relic 2</option><option value="70">Relic 3</option><option value="71">Relic 4</option><option value="72">Relic 5</option><option value="73">Relic 6</option><option value="74">Relic 7</option><option value="75">Relic 8</option></select></label>
             <div class="plan-unit-control"><span>Units</span><div class="plan-seg" role="group" aria-label="Units"><button type="button" class="gear-btn" data-units="1" aria-pressed="true">1 unit</button><button type="button" class="gear-btn" data-units="2" aria-pressed="false">2 units</button></div></div>
           </div>
           <div class="plan-track-control"><span>Episode rewards</span><div class="plan-seg" role="group" aria-label="Episode rewards"><button type="button" class="gear-btn" id="planEpFree" aria-pressed="false">Free track</button><button type="button" class="gear-btn" id="planEpPrem" aria-pressed="false">Premium / Pass+</button></div></div>
         </div>
         <div class="marquee-controls">
-          <div class="marquee-heading"><h2>Marquee rewards</h2><span class="sc-badge off">Second marquee unreleased</span></div>
-          <div class="marquee-fields">
-            <label>Adelphi Ranger<select class="tz-select" id="planMarqA" aria-label="Adelphi Ranger first-clear tier"><option value="0">No tiers cleared</option><option value="1">Tier 1</option><option value="2">Tier 2 · 3 stars</option><option value="3">Tier 3 · 4 stars</option><option value="4">Tier 4 · 5 stars</option><option value="5">Tier 5 · 6 stars</option><option value="6">Tier 6 · 7 stars</option><option value="7">Tier 7 · Era level 25</option></select></label>
+          <div class="marquee-heading"><h2>Marquee rewards</h2></div>
+          <div class="marquee-units">
+          <fieldset class="marquee-unit"><legend>Adelphi Ranger</legend><div class="marquee-fields">
+            <label>First-clear tier<select class="tz-select" id="planMarqA" aria-label="Adelphi Ranger first-clear tier"><option value="0">No tiers cleared</option><option value="1">Tier 1</option><option value="2">Tier 2 · 3 stars</option><option value="3">Tier 3 · 4 stars</option><option value="4">Tier 4 · 5 stars</option><option value="5">Tier 5 · 6 stars</option><option value="6">Tier 6 · 7 stars</option><option value="7">Tier 7 · Era level 25</option></select></label>
             <label>Daily claims<select class="tz-select" id="planMarqDays" aria-label="Daily reward claims for all marquee tiers"><option value="0">0 days</option><option value="1">1 day</option><option value="2">2 days</option><option value="3">3 days</option><option value="4">4 days</option><option value="5">5 days</option><option value="6">6 days</option><option value="7">7 days</option><option value="custom" disabled>Custom by tier</option></select></label>
+          </div><button type="button" class="gear-btn marquee-custom-open" id="marqueeCustomOpen">Set Custom Daily Claims</button></fieldset>
+          <fieldset class="marquee-unit" disabled><legend>B1 Mercenary Droid</legend><div class="marquee-fields">
+            <label>First-clear tier<select class="tz-select" id="planMarqB" disabled aria-label="B1 Mercenary Droid first-clear tier"><option value="0">No tiers cleared</option><option value="1">Tier 1</option><option value="2">Tier 2 · 3 stars</option><option value="3">Tier 3 · 4 stars</option><option value="4">Tier 4 · 5 stars</option><option value="5">Tier 5 · 6 stars</option><option value="6">Tier 6 · 7 stars</option><option value="7">Tier 7 · Era level 25</option></select></label>
+            <label>Daily claims<select class="tz-select" id="planMarqBDays" disabled aria-label="B1 Mercenary Droid daily claims"><option value="0">0 days</option><option value="1">1 day</option><option value="2">2 days</option><option value="3">3 days</option><option value="4">4 days</option><option value="5">5 days</option><option value="6">6 days</option><option value="7">7 days</option></select></label>
+          </div><button type="button" class="gear-btn marquee-custom-open" disabled>Set Custom Daily Claims</button></fieldset>
           </div>
-          <select id="planMarqB" disabled hidden aria-label="Second marquee"><option>Unreleased · rewards unavailable</option></select>
-          <details class="marquee-custom" id="marqueeCustomize" hidden><summary>Adjust days by tier</summary><div class="marquee-daily" id="marqueeDaily"></div></details>
+          <dialog class="modal wide marquee-custom-modal" id="marqueeCustomize" aria-labelledby="marqueeCustomTitle"><div class="modal-head"><h3 id="marqueeCustomTitle">Adelphi Ranger · Daily claims</h3></div><div class="marquee-daily" id="marqueeDaily"></div><div class="marquee-custom-actions"><button type="button" class="gear-btn on" id="marqueeCustomFinish">Finish</button></div></dialog>
         </div>
         <div class="boss-controls" id="bossControls"></div>
 
@@ -142,7 +148,7 @@
 </footer>
 
 <script defer src="assets/js/asseturl.js?v=6ac46532a1"></script>
-<script defer src="assets/js/era-chart.js?v=f44473f977"></script>
+<script defer src="assets/js/era-chart.js?v=249971d37e"></script>
 <script src="assets/js/site.js?v=03a3061ae6"></script>
 </body>
 </html>

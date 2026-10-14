@@ -3,13 +3,15 @@
 ## Era material calculator
 
 `/era-chart/` uses the homepage styling and a single material table. Target
-level and unit count determine upgrade costs; full episode tracks, Adelphi
+level and unit count determine upgrade costs; a linked G12/G13/Relic 1–8
+selector uses the mini-era's gear conversion bands. Full episode tracks, Adelphi
 Ranger first-clear rewards and per-tier daily claims reduce the remaining
 amounts. Regular marquee claims include the first day and default to one
 when a tier is selected. Claims are capped at the seven-day event duration;
-one selector sets all tiers, with optional per-tier adjustments. The
-unreleased second marquee stays disabled and
-its placeholder rewards are excluded from the runtime data.
+one selector sets all tiers. Set Custom Daily Claims edits individual tiers in a
+modal; Finish closes it and returns focus to the opener. B1 Mercenary Droid
+shows matching inactive controls while unreleased, and its placeholder
+rewards are excluded from the runtime data.
 
 Each Coliseum boss has independent tier/percentage inputs. Completed tiers
 and reached milestones count once per boss, including fixed prize-box
