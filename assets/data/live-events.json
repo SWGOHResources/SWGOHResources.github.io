@@ -1,5 +1,5 @@
 {
- "pulledAt": 1792049500318,
+ "pulledAt": 1792099771342,
  "gameDataVersion": "0.40.6:i9YYIijBSxuHHNoSmCMBoQ",
  "events": [
   {
@@ -200,6 +200,16 @@
    "endMs": 1792652400000,
    "live": false,
    "art": "live/events-rebelassult.png"
+  },
+  {
+   "id": "EVENT_ASSAULT_SEPARATIST",
+   "name": "Ground War Assault Battles",
+   "kind": "assault",
+   "unit": "GROUNDWAR",
+   "startMs": 1792825200000,
+   "endMs": 1792911600000,
+   "live": false,
+   "art": "live/events-groundwar.png"
   }
  ]
 }
