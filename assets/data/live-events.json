@@ -1,5 +1,5 @@
 {
- "pulledAt": 1792014434652,
+ "pulledAt": 1792049500318,
  "gameDataVersion": "0.40.6:i9YYIijBSxuHHNoSmCMBoQ",
  "events": [
   {
@@ -11,16 +11,6 @@
    "endMs": 1792519200000,
    "live": true,
    "art": "live/events-darthjarjar.png"
-  },
-  {
-   "id": "EVENT_SPECIAL_DEFENSE_OF_DATHOMIR",
-   "name": "Defense of Dathomir",
-   "kind": "event",
-   "unit": "DATHOMIRBATTLE",
-   "startMs": 1791874800000,
-   "endMs": 1791961200000,
-   "live": false,
-   "art": "live/events-dathomir-battle.png"
   },
   {
    "id": "EC24_SithSithManaan_1778480386",
@@ -39,7 +29,7 @@
    "unit": "NIGHTSISTERSASSAULT",
    "startMs": 1791961200000,
    "endMs": 1792047600000,
-   "live": true,
+   "live": false,
    "art": "live/events-nightsisters-assault.png"
   },
   {
@@ -49,7 +39,7 @@
    "unit": "EXECUTOR",
    "startMs": 1792047600000,
    "endMs": 1792134000000,
-   "live": false,
+   "live": true,
    "art": "live/events-executor.png"
   },
   {
