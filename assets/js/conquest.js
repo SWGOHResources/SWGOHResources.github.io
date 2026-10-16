@@ -10,7 +10,6 @@
 const withAssetV = (typeof assetUrl === 'function') ? assetUrl : (p => p);
 
 const CQ_PLAN_KEY = 'swgoh-cq-plan';
-const CQ_DIFFICULTIES = ['hard', 'normal', 'easy'];
 
 /* Sum keycards for picked feats + battle stars. diff is one difficulty
    entry {groups}; maxStars caps the star input. Returns
@@ -64,15 +63,6 @@ function crateTrackProgress(crates,total){
   return 100;
 }
 
-/* Keycards this conquest can afford to skip and still hit the top crate. */
-function skippableToTop(diff, crates, maxStars){
-  const ladder = (Array.isArray(crates) ? crates : []).map(c => Number(c && c.at)).filter(Number.isFinite);
-  if(!ladder.length) return 0;
-  const top = Math.max(...ladder);
-  const max = planTotals(diff, null, maxStars, maxStars).maxTotal;
-  return Math.max(0, max - top);
-}
-
 /* Description for the active difficulty (falls back across variants —
    some feats share one text for every difficulty). */
 function featDesc(feat, difficulty){
@@ -118,12 +108,6 @@ function featLinks(diff, feat){
   const source = gate ? all.find(f => f.id !== feat.id && clean(f.title) === clean(gate)) : null;
   const unlocks = all.filter(f => f.id !== feat.id && clean(f.requires || chainRequires(featDesc(f,'hard'))) === clean(feat.title));
   return {source:source || null, unlocks};
-}
-
-function sectorComplete(group, pickedIds){
-  const scored = (group.feats || []).filter(f => Number(f.keycards) > 0);
-  const picked = new Set(pickedIds || []);
-  return scored.length > 0 && scored.every(f => picked.has(f.id));
 }
 
 function coverageArc(inner, outer, start, end){
@@ -206,8 +190,10 @@ function loadPlans(){
 
 function savePlans(plans){
   try {
-    if(typeof localStorage !== 'undefined') localStorage.setItem(CQ_PLAN_KEY, JSON.stringify({ version: 1, plans }));
-  } catch(e){}
+    if(typeof localStorage === 'undefined') return false;
+    localStorage.setItem(CQ_PLAN_KEY, JSON.stringify({ version: 1, plans }));
+    return true;
+  } catch(e){ return false; }
 }
 
 function esc(s){
@@ -257,7 +243,6 @@ function featArt(feat){
   if(art && !art.includes('conquest-keycard')) return withAssetV('assets/img/'+art.replace(/^\/*/,''));
   return withAssetV('assets/img/atlases/homebase_ui_standard_atlas/icon_squad.png');
 }
-function featRewardDisk(reward){ return /title|holo|^DCS$|Deployable Cooling Systems/i.test(String(reward || '')) ? null : (reward || null); }
 // The shard sprite is the background, with the portrait over it. Its tint
 // follows the unit's alignment; it is not a badge on a portrait frame.
 function shardArt(unit){
@@ -320,7 +305,6 @@ function paintConquestTiming(app, entry, nowMs){
   }
 }
 
-
 /* Genuine conquest chest art (chest_gc_01..07, backgrounds keyed out).
    The ladder is numbered by tier (Reward Crate Tier 1-7) but the art is
    still filed by the old colour set, matched to the tier in bundle
@@ -363,12 +347,6 @@ function shortName(name){
   return m ? `Tier ${m[1]}` : String(name || '').replace(/\s*Crate\s*$/, '');
 }
 
-const KIND_TITLES = { sector: 'Sector feats', miniboss: 'Mini Boss', boss: 'Boss' };
-function featKind(feat){
-  const k = feat && feat.kind;
-  return KIND_TITLES[k] ? k : 'sector';
-}
-
 /* UI sprites the page can't source from gamedata. The Conquest KEYCARD
    (the crate-ladder currency) is `icon_points_pathofconquest` — verified
    against live localization, where CONQUEST_POINTS_DETAIL_TITLE reads
@@ -380,7 +358,6 @@ function featKind(feat){
    a keycard — don't use it for crate progress.) */
 const UI_SPRITES = {
   keycard: 'assets/img/atlases/standard_rgba_atlas/icon_points_pathofconquest.png',
-  star: 'assets/img/atlases/standard_rgba_atlas/icon_rendered_star.png',
 };
 const sprite = (name, cls, title) => UI_SPRITES[name]
   ? `<img class="${cls}" src="${withAssetV(UI_SPRITES[name])}" alt="" title="${esc(title)}">`
@@ -441,14 +418,11 @@ function renderPlanner(app, sel, nowMs, shared){
   let picked = new Set((Array.isArray(rawIds) ? rawIds : []).filter(id => validIds.has(id)));
   const rawTarget = incoming ? incoming.t : saved.target;
   let target = crates.some(c => c.name === rawTarget) ? rawTarget : (rawTarget === undefined ? topCrate : null);
-  let tab = incoming?.g || saved.tab;
-  if(!groups.some(g => g.name === tab)) tab = groups[0]?.name;
   let coverageActive = 'all';
   let lastTouchStart = 0;
   let previewState = null;
   let previewScroll = null;
-  const view = 'coverage';
-  const persist = () => savePlans({ ...loadPlans(), [entry.id]: { difficulty, stars, target, tab, feats: [...picked] } });
+  const persist = () => savePlans({ ...loadPlans(), [entry.id]: { difficulty, stars, target, feats: [...picked] } });
   const label = name => {
     const c = crates.find(c => c.name === name);
     return shortName(name) + (c?.colloquial ? ` (${c.colloquial})` : '');
@@ -533,7 +507,7 @@ function renderPlanner(app, sel, nowMs, shared){
   function paint(editingMissed = false){
     if(!editingMissed) app.querySelector('[data-missed-input]').value = cap-stars;
     app.querySelector('[data-cq="battle-keycards"]').textContent = stars+' / '+cap;
-    syncHash(entry,picked,stars,target,difficulty,tab,view);
+    writeHash(entry,picked,stars,target,difficulty);
     paintReview(planTotals(diff,[...picked],stars,cap));
     syncSkipsHeight();
   }
@@ -548,9 +522,9 @@ function renderPlanner(app, sel, nowMs, shared){
   }
   function changed(editingMissed = false){
     app.querySelector('[data-cq="feedback"]').textContent = '';
-    persist(); paint(editingMissed);
-    // Storage can be unavailable in private modes; the URL remains shareable.
-    try { if(localStorage.getItem(CQ_PLAN_KEY) === null) app.querySelector('[data-cq="save-note"]').textContent = 'Device storage unavailable. Copy your plan link to keep it.'; } catch(e){ app.querySelector('[data-cq="save-note"]').textContent = 'Device storage unavailable. Copy your plan link to keep it.'; }
+    const saved = persist();
+    paint(editingMissed);
+    app.querySelector('[data-cq="save-note"]').textContent = saved ? '' : 'Device storage unavailable. Copy your plan link to keep it.';
   }
   // Delegate to the stable app: replacement rows after repainted chart changes
   // use the same handlers. Assigning these replaces previous render handlers.
@@ -635,7 +609,7 @@ function renderPlanner(app, sel, nowMs, shared){
       app.querySelector('[data-cq="feedback"]').textContent = 'Plan reset. Feats cleared, target set to the top crate, battle keycards set to full.';
     } else if(button.matches('[data-copy-link]')){
       // Write the current snapshot before copying, including rapid edits.
-      writeHash(entry,picked,stars,target,difficulty,tab,view);
+      writeHash(entry,picked,stars,target,difficulty);
       try { await navigator.clipboard.writeText(location.href); app.querySelector('[data-cq="feedback"]').textContent = 'Plan link copied.'; }
       catch(e){
         const feedback = app.querySelector('[data-cq="feedback"]');
@@ -778,13 +752,9 @@ function renderPlanner(app, sel, nowMs, shared){
 
 /* URL writes are cheap for this small plan. Keep each edit synchronous so a
    reset, a second edit and Copy link can never serialize an old snapshot. */
-function syncHash(entry,picked,stars,target,difficulty,tab,view = 'planner'){
-  if(typeof location !== 'undefined' && location.href) writeHash(entry,picked,stars,target,difficulty,tab,view);
-}
-
-function writeHash(entry, picked, stars, target, difficulty, tab, view = 'planner'){
-  const payload = { c: entry.id, d: difficulty, s: stars, t: target, g: tab, f: [...picked].sort() };
-  if(view === 'coverage') payload.v = view;
+function writeHash(entry, picked, stars, target, difficulty){
+  if(typeof location === 'undefined' || !location.href) return;
+  const payload = { c: entry.id, d: difficulty, s: stars, t: target, f: [...picked].sort() };
   const next = '#p=' + b64urlEncode(JSON.stringify(payload));
   if(location.hash === next) return;
   try { history.replaceState(null, '', location.pathname + location.search + next); } catch(e) { /* file:// */ }

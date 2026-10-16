@@ -26,5 +26,5 @@ test('named atlas exports match their declared Unity rectangles and checksums', 
       count++;
     }
   }
-  assert.ok(count > 0, 'no atlas sprites exported');
+  assert.ok(count >= 2019, 'retain the complete shared atlas library for future features');
 });

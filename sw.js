@@ -4,7 +4,7 @@
    and live data go network-first so the schedule stays fresh, falling
    back to cache offline. Bump CACHE below on deploys that change the
    app shell. */
-const CACHE = 'swgoh-schedule-v9';
+const CACHE = 'swgoh-schedule-v11';
 
 const CORE = ['/', '/index.html', '/site.webmanifest'];
 
@@ -17,15 +17,34 @@ self.addEventListener('install', event => {
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys()
-      .then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k))))
+      .then(keys => Promise.all(keys.filter(k => k.startsWith('swgoh-schedule-') && k !== CACHE).map(k => caches.delete(k))))
       .then(() => self.clients.claim())
   );
 });
 
 self.addEventListener('fetch', event => {
   const req = event.request;
-  if (req.method !== 'GET') return;
+  if (req.method !== 'GET' || req.headers?.has('range')) return;
   const url = new URL(req.url);
+
+  async function networkFirst({ fallback, revalidate = false } = {}) {
+    const cached = async () => (await caches.match(req)) || (fallback && await caches.match(fallback));
+    try {
+      const res = await fetch(req, revalidate ? { cache: 'no-cache' } : undefined);
+      if (res.ok) {
+        const copy = res.clone();
+        event.waitUntil(caches.open(CACHE).then(cache => cache.put(req, copy)).catch(() => {}));
+      } else if (res.status >= 500) {
+        const hit = await cached();
+        if (hit) return hit;
+      }
+      return res;
+    } catch (error) {
+      const hit = await cached();
+      if (hit) return hit;
+      throw error;
+    }
+  }
 
   // Google Fonts: stale-while-revalidate (opaque responses are fine).
   if (url.origin !== self.location.origin) {
@@ -45,13 +64,7 @@ self.addEventListener('fetch', event => {
 
   // Navigations: network-first, cache fallback (offline still opens).
   if (req.mode === 'navigate') {
-    event.respondWith(
-      fetch(req).then(res => {
-        const copy = res.clone();
-        caches.open(CACHE).then(cache => cache.put(req, copy));
-        return res;
-      }).catch(() => caches.match(req).then(hit => hit || caches.match('/index.html')))
-    );
+    event.respondWith(networkFirst({ fallback: '/index.html' }));
     return;
   }
 
@@ -61,21 +74,10 @@ self.addEventListener('fetch', event => {
   // available offline).
   // The era emblem is overwritten in-place by the live-event pull.
   // Revalidate it as well so an installed browser sees the next era.
-  // ES module imports have stable relative URLs, unlike the versioned
-  // script entry in HTML. Revalidate these too so a planner update cannot
-  // combine new UI code with an old model or export implementation.
-  const plannerModule = url.pathname === '/assets/js/squad-model.js'
-    || url.pathname === '/assets/js/squad-export.js';
-  if (url.pathname.startsWith('/assets/data/') || url.pathname === '/assets/img/live/era-icon.png' || plannerModule) {
-    event.respondWith(
-      fetch(req, { cache: 'no-cache' }).then(res => {
-        if (res && res.ok) {
-          const copy = res.clone();
-          event.waitUntil(caches.open(CACHE).then(cache => cache.put(req, copy)).catch(() => {}));
-        }
-        return res;
-      }).catch(() => caches.match(req))
-    );
+  // Versioned scripts are immutable; revalidate any unversioned script URL.
+  const script = url.pathname.startsWith('/assets/js/') && url.pathname.endsWith('.js') && !url.searchParams.has('v');
+  if (url.pathname.startsWith('/assets/data/') || url.pathname === '/assets/img/live/era-icon.png' || script) {
+    event.respondWith(networkFirst({ revalidate: true }));
     return;
   }
 
@@ -86,7 +88,7 @@ self.addEventListener('fetch', event => {
       return fetch(req).then(res => {
         if (res && res.ok) {
           const copy = res.clone();
-          caches.open(CACHE).then(cache => cache.put(req, copy));
+          event.waitUntil(caches.open(CACHE).then(cache => cache.put(req, copy)).catch(() => {}));
         }
         return res;
       });

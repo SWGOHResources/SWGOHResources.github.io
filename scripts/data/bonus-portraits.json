@@ -1,0 +1,33 @@
+{
+  "source": "https://github.com/swgoh-utils/gamedata",
+  "sourceCommit": "8d86d7002e8cab5839f04540d93ac303db078517",
+  "portraitSource": "https://game-assets.swgoh.gg/textures/",
+  "textures": {
+    "4LOM": "tex.charui_4lom",
+    "ASAJJDARKDISCIPLE": "tex.charui_asajjdarkdisciple",
+    "BISHOP": "tex.charui_colonelward",
+    "CARSONTEVA": "tex.charui_carsonteva",
+    "CINTA": "tex.charui_cinta",
+    "DEDRAMEERO": "tex.charui_dedrameero",
+    "GOPHERANTS": "tex.charui_groguanz",
+    "IG90": "tex.charui_ig-90",
+    "INQUISITORBARRISS": "tex.charui_inquisitorbarriss",
+    "JAXXON": "tex.charui_jaxxon",
+    "KLEYA": "tex.charui_kleya",
+    "KXSECURITYDROID": "tex.charui_kxsecuritydroid",
+    "LUKESTARKILLER": "tex.charui_lukestarkiller",
+    "MAJORPARTAGAZ": "tex.charui_majorpartagaz",
+    "MARAJADESKYWALKER": "tex.charui_marajadeskywalker",
+    "R5D4": "tex.charui_r5d4",
+    "RANGERZEB": "tex.charui_rangerzeb",
+    "REMNANTSNOWCOMMANDER": "tex.charui_remnantsnowcommander",
+    "STORMTROOPERCONCEPT": "tex.charui_stormtrooperconcept",
+    "STORMTROOPERLUKE": "tex.charui_stormtrooperluke",
+    "THERONIN": "tex.charui_theronin",
+    "VADERDUELSEND": "tex.charui_vaderduelsend",
+    "VEL": "tex.charui_vel",
+    "YODACHEWBACCA": "tex.charui_yodachewbacca",
+    "YODADSV": "tex.charui_yodadsv",
+    "ZUCKUSS": "tex.charui_zuckuss"
+  }
+}

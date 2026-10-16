@@ -106,7 +106,7 @@ body {
 /* Faint halo on the largest stars only — removed box-shadow: it forces
    the compositor to repaint the whole layer on every twinkle frame.
    Brightness alone reads the same at 1-3px sizes. */
-.starfield span.bright { opacity: 0.9; }
+
 /* Twinkle on transform, not opacity: an opacity animation repaints the star
    every frame, and anything blurred behind it (the header) has to re-blur
    with it. translate/scale stays on the compositor. */
@@ -294,7 +294,6 @@ input:focus-visible, summary:focus-visible, [tabindex]:focus-visible {
 .day-live .db-name { color: var(--orange); }
 /* Inline external-link icon (replaces the ↗ text glyph, which renders
    as an emoji-style character on some mobile platforms). */
-.ext-icon { display: inline-block; vertical-align: -1px; margin-left: 2px; }
 
 /* ─── Stale-era banner (shown when the configured era has ended) ─── */
 .stale-banner {
@@ -451,9 +450,6 @@ input:focus-visible, summary:focus-visible, [tabindex]:focus-visible {
 /* Big countdown line on the Important Dates cards. Hero-style display
    type (like .mh-main-val): large accent value with a smaller muted
    date suffix. Every accent clears large-text contrast (5.3:1+). */
-.big-count { font-family: var(--disp); font-size: 28px; font-weight: 700; color: var(--accent, var(--text)); line-height: 1.15; letter-spacing: -0.01em; margin-top: 2px; display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 8px; }
-.big-count .bc-main, .big-count .bc-date { min-width: 0; }
-.big-count .bc-date { font-size: 14px; font-weight: 600; color: var(--text3); letter-spacing: 0; white-space: nowrap; }
 
 /* ─── Important Dates Grid ───
    Intentionally left to inherit .hero-grid's plain
@@ -539,7 +535,6 @@ input:focus-visible, summary:focus-visible, [tabindex]:focus-visible {
 }
 .day-today:hover:not(:disabled) { border-color: var(--amber-border); color: var(--amber); }
 .day-today:disabled { color: var(--text3); cursor: default; opacity: 0.55; }
-.day-help { color: var(--text3); font-size: 10.5px; }
 
 /* Jump toggle: hidden on desktop (jump controls always visible there),
    shown on small screens where the jump controls collapse. */
@@ -648,8 +643,6 @@ input:focus-visible, summary:focus-visible, [tabindex]:focus-visible {
 .xw-dur { flex: 0 0 auto; font-weight: 700; color: color-mix(in srgb, var(--accent, var(--text)) 86%, #000); }
 
 /* ─── Guild TB label (dashboard status card): static RotE line ─── */
-.tb-pick { margin-top: 6px; border-top: 1px solid var(--border); padding-top: 6px; }
-.tb-pick-label { display: block; font-family: var(--body); font-size: 9.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text3); margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 .empty-note { font-family: var(--body); font-size: 12px; color: var(--text3); padding: 16px 0; }
 
@@ -767,13 +760,13 @@ input:focus-visible, summary:focus-visible, [tabindex]:focus-visible {
 
 /* ─── Modal Backdrop ─── */
 .modal-backdrop {
-  position: fixed; 
-  inset: 0; 
+  position: fixed;
+  inset: 0;
   background: rgba(8, 10, 14, 0.92);
-  display: none; 
-  align-items: center; 
-  justify-content: center; 
-  z-index: 300; 
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 300;
   padding: 16px;
   will-change: opacity;
 }

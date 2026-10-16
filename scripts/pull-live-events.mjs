@@ -489,11 +489,7 @@ export async function cutoutPortrait(pngBuffer, tol = 16) {
   const out = cutoutPortraitPixels(Buffer.from(data), info.width, info.height, tol);
   return sharp(out, { raw: { width: info.width, height: info.height, channels: 4 } }).png().toBuffer();
 }
-// in the persistent live-art library and are downloaded once from the
-// same CDN source as the squad portrait atlas; the committed
-// squad-planner.json maps each unit to its texture. Units that resolve
-// to nothing lose the portrait field so the popup never renders a
-// broken image. opts override the directory + planner path (tests).
+// Bonus portraits use a small texture catalogue independent of optional pages.
 export async function ensureBonusPortraits(events, opts = {}) {
   const { pathToFileURL, fileURLToPath } = await import('node:url');
   const path = await import('node:path');
@@ -505,23 +501,22 @@ export async function ensureBonusPortraits(events, opts = {}) {
     : pathToFileURL(String(rawDir));
   const dirPath = fileURLToPath(dirUrl);
   await mkdir(dirUrl, { recursive: true });
-  let planner = opts.planner;
-  if (!planner) {
+  let portraits = opts.portraits;
+  if (!portraits) {
     try {
-      planner = JSON.parse(await readFile(new URL('../assets/data/squad-planner.json', import.meta.url), 'utf8'));
+      portraits = JSON.parse(await readFile(new URL('data/bonus-portraits.json', import.meta.url), 'utf8'));
     } catch {
-      planner = null;
+      portraits = null;
     }
   }
-  const chars = new Map((planner?.characters ?? []).map(c => [c.id, c]));
-  const source = planner?.portraitSource;
+  const source = portraits?.portraitSource;
   for (const e of events ?? []) {
     for (const u of e?.units ?? []) {
       if (!u?.portrait) continue;
       const file = String(u.portrait).replace(/^live\//, '');
       if (existsSync(path.join(dirPath, file))) continue;
-      const c = chars.get(u.unit);
-      const url = c?.texture && source ? `${source}${c.texture}.png` : null;
+      const texture = portraits?.textures?.[u.unit];
+      const url = texture && source ? `${source}${texture}.png` : null;
       let ok = false;
       if (url) {
         try {

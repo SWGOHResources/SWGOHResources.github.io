@@ -7,8 +7,8 @@ const html = fs.readFileSync(new URL('../era-chart.html', import.meta.url), 'utf
 const source = fs.readFileSync(new URL('../assets/js/era-chart.js', import.meta.url), 'utf8');
 const data = JSON.parse(fs.readFileSync(new URL('../assets/data/era-chart.json', import.meta.url), 'utf8'));
 const coliseum = JSON.parse(fs.readFileSync(new URL('../assets/data/era-coliseum.json', import.meta.url), 'utf8'));
-const raw = JSON.parse(fs.readFileSync(new URL('../era10-extract/02_era10_coliseum.json', import.meta.url), 'utf8'));
-const boxSource = JSON.parse(fs.readFileSync(new URL('../era10-extract/08_coliseum_prize_boxes.json', import.meta.url), 'utf8'));
+const raw = JSON.parse(fs.readFileSync(new URL('../scripts/data/era-coliseum.json', import.meta.url), 'utf8'));
+const boxSource = JSON.parse(fs.readFileSync(new URL('../scripts/data/era-coliseum-boxes.json', import.meta.url), 'utf8'));
 const ERA = 'ERA_UPGRADE_CURRENCY', GREK = 'era_upgrade_basic_1';
 async function setup(t, { stored, legacy, blocked = false, failed = false } = {}) {
   const dom = new JSDOM(html, {url:'https://example.test/era-chart/',runScripts:'outside-only'});
@@ -226,7 +226,7 @@ test('episode selection buttons preserve independent rewards and pressed state',
 });
 
 test('all first marquee reward types match the extract and the second is unavailable',async t=>{
-  const marqueeRaw=JSON.parse(fs.readFileSync(new URL('../era10-extract/06_marquee_adelphiranger_l80_full.json',import.meta.url),'utf8'));
+  const marqueeRaw=JSON.parse(fs.readFileSync(new URL('../scripts/data/era-marquee.json',import.meta.url),'utf8'));
   for(const [i,tier] of data.marquee.ADELPHIRANGER_L80.entries()){
     const mission=marqueeRaw.node.campaignNodeMission[i];
     assert.deepEqual(tier.rewards,mission.firstCompleteRewardPreview.map(r=>({id:r.id,q:r.minQuantity})));

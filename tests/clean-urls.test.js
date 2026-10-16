@@ -30,7 +30,7 @@ test('plan edits retain the clean path and query with a root asset base', () => 
     assert.equal(check().s, 318);
     app.querySelector('[data-map-feat="hot"]').dispatchEvent(new w.MouseEvent('contextmenu', { bubbles: true, cancelable: true, button: 2 }));
     assert.deepEqual(check().f, ['hot']);
-    assert.equal(check().v, 'coverage');
+    assert.equal(check().v, undefined);
     assert.equal(app.querySelector('[data-view]'), null);
   } finally { dom.window.close(); }
 });

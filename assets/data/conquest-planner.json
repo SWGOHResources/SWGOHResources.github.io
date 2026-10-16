@@ -202,7 +202,6 @@
                   "id": "unlikely",
                   "title": "Unlikely Alliance",
                   "keycards": 0,
-                  "art": "live/conquest-embokeibu.png",
                   "desc": {
                     "easy": "Win 3 battles with Embo, Carson Teva, and The Mandalorian in your squad",
                     "normal": "Win 3 battles with Embo, Carson Teva, and The Mandalorian in your squad",
@@ -525,7 +524,6 @@
                     "hard": "Win with a full squad of Empire units"
                   },
                   "keycards": 2,
-                  "art": "live/conquest-feat-empire-mini.png",
                   "kind": "miniboss",
                   "coverage": {
                     "category": "faction",

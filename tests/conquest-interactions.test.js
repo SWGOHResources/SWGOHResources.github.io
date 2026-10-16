@@ -27,8 +27,8 @@ function use(t,options){ const h=setup(options); t.after(()=>h.dom.window.close(
 test('all legacy view links preserve selections in the sole diagram planner',t=>{
   for(const v of [undefined,'planner','coverage']){
     const h=use(t,{shared:{v,f:['hot'],s:330,t:'Reward Crate Tier 7',g:'Sector 2'}});
-    assert.equal(h.total(),345); assert.equal(h.plan().v,'coverage');
-    assert.equal(h.plan().g,'Sector 2'); assert.equal(h.plan().t,'Reward Crate Tier 7');
+    assert.equal(h.total(),345); assert.equal(h.plan().v,undefined);
+    assert.equal(h.plan().g,undefined); assert.equal(h.plan().t,'Reward Crate Tier 7');
     assert.equal(h.app.querySelector('[data-view], [data-feat], [role="tablist"]'),null);
     assert.equal(h.get('#cqCoverageView').hidden,false);
     assert.equal(h.app.querySelectorAll('h1').length,1);
@@ -67,6 +67,25 @@ test('invalid incoming selections and battle keycards are bounded',t=>{
   h.change('-12'); assert.equal(h.plan().s,330); assert.equal(h.get('[data-missed-input]').value,'0');
   h.change('999'); assert.equal(h.plan().s,0); assert.equal(h.get('[data-missed-input]').value,'330');
   h.change('2.9'); assert.equal(h.plan().s,328); assert.equal(h.get('[data-missed-input]').value,'2');
+});
+
+test('failed writes warn even when an older plan remains readable, then recover', t => {
+  const h = use(t, { stored: { stars: 330, feats: [] } });
+  const original = h.w.localStorage.getItem('swgoh-cq-plan');
+  const storage = h.w.localStorage;
+  let full = true;
+  Object.defineProperty(h.w, 'localStorage', { value: {
+    getItem: key => storage.getItem(key),
+    setItem: (key, value) => { if (full) throw Error('QuotaExceededError'); storage.setItem(key, value); },
+  } });
+  h.change('10');
+  assert.equal(storage.getItem('swgoh-cq-plan'), original);
+  assert.match(h.get('[data-cq="save-note"]').textContent, /storage unavailable/);
+  assert.equal(h.plan().s, 320, 'the current URL remains a backup');
+  full = false;
+  h.change('12');
+  assert.equal(h.get('[data-cq="save-note"]').textContent, '');
+  assert.equal(JSON.parse(storage.getItem('swgoh-cq-plan')).plans[data.conquests[0].id].stars, 318);
 });
 test('typing preserves the input node and typed value until normalization',t=>{
   const h=use(t); const input=h.get('[data-missed-input]');

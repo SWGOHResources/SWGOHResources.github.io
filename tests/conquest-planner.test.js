@@ -53,11 +53,6 @@ test('crate lookup finds earned crate and distance to next', () => {
   });
 });
 
-test('skippable counts keycards above the top crate', () => {
-  assert.equal(run(`skippableToTop(${JSON.stringify(diff)}, ${JSON.stringify(diff.crates)}, 210)`), 0);
-  assert.equal(run(`skippableToTop(${JSON.stringify(diff)}, ${JSON.stringify(diff.crates)}, 700)`), 91);
-});
-
 test('hard groups follow the feat sheet 4/2/2 split', () => {
   const data = JSON.parse(fs.readFileSync(new URL('../assets/data/conquest-planner.json', import.meta.url), 'utf8'));
   const hard = data.conquests[0].difficulties.hard;
@@ -121,15 +116,6 @@ test('status feats use their effect textures and Empire uses its faction emblem'
   }
   assert.equal(run(`featStatusTone({id:'defenseup'})`),'buff');
   assert.equal(run(`featStatusTone({id:'defensedown'})`),'debuff');
-});
-
-test('datadisk rewards get the disk icon, titles stay a text chip', () => {
-  assert.equal(run(`featRewardDisk('F34T')`), 'F34T');
-  assert.equal(run(`featRewardDisk('Booming Voice')`), 'Booming Voice');
-  assert.equal(run(`featRewardDisk('Guns for Hire title')`), null);
-  assert.equal(run(`featRewardDisk('DCS')`), null);
-  assert.equal(run(`featRewardDisk('Deployable Cooling Systems')`), null);
-  assert.equal(run(`featRewardDisk(undefined)`), null);
 });
 
 test('Conquest header dates and day counts respect the opening and closing changeover', () => {
@@ -199,12 +185,6 @@ test('coverage partitions all feats without duplicating or dropping keycards', (
   assert.equal(grogu.feats.length,2); assert.equal(grogu.planned,4); assert.equal(grogu.keycards,5);
   for(const item of items) assert.ok(item.feat.coverage?.requirement && item.feat.coverage?.category,item.feat.id);
   assert.equal(js(`conquestCoverage({groups:[]},[])`).length,0);
-});
-
-test('completion requires every keycard feat and does not treat bonus-only groups as complete', () => {
-  assert.equal(run(`sectorComplete({feats:[{id:'a',keycards:1},{id:'bonus',keycards:0}]},['a'])`),true);
-  assert.equal(run(`sectorComplete({feats:[{id:'a',keycards:1},{id:'bonus',keycards:0}]},['bonus'])`),false);
-  assert.equal(run(`sectorComplete({feats:[{id:'bonus',keycards:0}]},['bonus'])`),false);
 });
 
 test('chain gates parse out of feat descriptions', () => {

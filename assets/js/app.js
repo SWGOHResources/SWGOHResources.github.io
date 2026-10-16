@@ -1,4 +1,4 @@
-/* APP — wiring, countdown, modals, init. Depends on render.js globals. Loaded last. */
+/* APP — schedule wiring and refresh. Depends on render.js and site.js. Loaded last. */
 
 let cdElCache = null;
 function tickCountdown(){
@@ -26,87 +26,7 @@ function tickCountdown(){
 
 const scheduleModal = document.getElementById('fullScheduleModal');
 
-const aboutModal = document.getElementById('aboutModal');
-
 const bonusWaveModal = document.getElementById('bonusWaveModal');
-
-const cookieNotice = document.getElementById('cookieNotice');
-const dismissCookieNotice = document.getElementById('dismissCookieNotice');
-const COOKIE_NOTICE_KEY = 'swgoh_cookie_notice';
-
-function hasCookie(name){
-  return document.cookie.split(';').some(cookie => cookie.trim().split('=')[0] === name);
-}
-
-function dismissCookies(){
-  document.cookie = `${COOKIE_NOTICE_KEY}=dismissed; max-age=15552000; path=/; SameSite=Lax`;
-  if(cookieNotice) cookieNotice.hidden = true;
-}
-
-if(cookieNotice && !hasCookie(COOKIE_NOTICE_KEY)) cookieNotice.hidden = false;
-if(dismissCookieNotice) dismissCookieNotice.addEventListener('click', dismissCookies);
-
-/* Opener per modal: two modals must never stack (backdrops pile up
-   and a single shared opener restores focus to the wrong place), so
-   opening one closes any other — without stealing its focus restore. */
-const modalOpeners = new Map();
-
-function openModal(modalEl) {
-  if (!modalEl) return;
-  document.querySelectorAll('.modal-backdrop.open').forEach(other => {
-    if (other !== modalEl) closeModal(other, { restoreFocus: false });
-  });
-  if (!modalOpeners.has(modalEl)) modalOpeners.set(modalEl, document.activeElement);
-  modalEl.classList.add('open');
-  modalEl.setAttribute('aria-hidden', 'false');
-  document.body.classList.add('modal-open');
-  closeMobilePanel();
-
-  const focusables = modalEl.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
-  if (focusables.length) focusables[0].focus();
-}
-
-function closeModal(modalEl, opts) {
-  if (!modalEl) return;
-  const restoreFocus = !opts || opts.restoreFocus !== false;
-  modalEl.classList.remove('open');
-  modalEl.setAttribute('aria-hidden', 'true');
-
-  if (!document.querySelector('.modal-backdrop.open')) {
-    document.body.classList.remove('modal-open');
-  }
-
-  const opener = modalOpeners.get(modalEl);
-  modalOpeners.delete(modalEl);
-  if (restoreFocus && opener && document.contains(opener)) opener.focus();
-}
-
-// Trap Focus Inside Open Modals & Close on Escape Key
-document.addEventListener('keydown', e => {
-  const openModalEl = document.querySelector('.modal-backdrop.open');
-  if (!openModalEl) return;
-
-  if (e.key === 'Escape') {
-    closeModal(openModalEl);
-    return;
-  }
-
-  if (e.key === 'Tab') {
-    const focusables = Array.from(openModalEl.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'));
-    if (!focusables.length) return;
-
-    const first = focusables[0];
-    const last = focusables[focusables.length - 1];
-
-    if (e.shiftKey && document.activeElement === first) {
-      last.focus();
-      e.preventDefault();
-    } else if (!e.shiftKey && document.activeElement === last) {
-      first.focus();
-      e.preventDefault();
-    }
-  }
-});
 
 function openScheduleModal(){
   openModal(scheduleModal);
@@ -129,54 +49,10 @@ document.getElementById('scheduleTodayBtn')?.addEventListener('click', () => {
   if(typeof scrollScheduleToToday === 'function') scrollScheduleToToday();
 });
 
-document.getElementById('openAboutBtnHeader')?.addEventListener('click', () => openModal(aboutModal));
-document.getElementById('openAboutBtnMobile')?.addEventListener('click', () => openModal(aboutModal));
-document.getElementById('closeAboutBtn')?.addEventListener('click', () => closeModal(aboutModal));
-document.getElementById('closeAboutBtn2')?.addEventListener('click', () => closeModal(aboutModal));
-
 scheduleModal?.addEventListener('click', e => { if(e.target === scheduleModal) closeModal(scheduleModal); });
 
 document.getElementById('closeBonusWaveBtn')?.addEventListener('click', () => closeModal(bonusWaveModal));
 bonusWaveModal?.addEventListener('click', e => { if(e.target === bonusWaveModal) closeModal(bonusWaveModal); });
-aboutModal?.addEventListener('click', e => { if(e.target === aboutModal) closeModal(aboutModal); });
-
-function copyDiscordHandle(btnEl) {
-  if(!btnEl) return;
-  if(!navigator.clipboard || !navigator.clipboard.writeText){
-    alert('Discord username: granddom');
-    return;
-  }
-  navigator.clipboard.writeText('granddom').then(() => {
-    const originalText = btnEl.innerHTML;
-    btnEl.classList.add('copied');
-    btnEl.setAttribute('aria-live', 'polite');
-    btnEl.innerHTML = `<span>✓ Copied!</span>`;
-    setTimeout(() => {
-      btnEl.classList.remove('copied');
-      btnEl.innerHTML = originalText;
-    }, 2000);
-  }).catch(() => {
-    alert('Discord username: granddom');
-  });
-}
-
-/* Mobile Nav Panel (null-safe: a missing toggle must not halt init) */
-const navToggle = document.getElementById('navToggle');
-
-const mobilePanel = document.getElementById('mobilePanel');
-
-function closeMobilePanel(){
-  if(!navToggle || !mobilePanel) return;
-  navToggle.classList.remove('open'); mobilePanel.classList.remove('open'); navToggle.setAttribute('aria-expanded', 'false');
-}
-if(navToggle && mobilePanel){
-  navToggle.addEventListener('click', () => {
-    const willOpen = !mobilePanel.classList.contains('open');
-    navToggle.classList.toggle('open', willOpen);
-    mobilePanel.classList.toggle('open', willOpen);
-    navToggle.setAttribute('aria-expanded', String(willOpen));
-  });
-}
 
 /* Jump-to collapse (small screens only; the toggle is hidden on
    desktop where the jump controls are always visible). The tools
@@ -276,48 +152,6 @@ function onTzChange(sel){
 
 /* footerMeta is refreshed on every renderAll() via updateFooterMeta()
    (render.js) so it never goes stale after a tz change or rollover. */
-
-const footerYearEl = document.getElementById('footerYear');
-if(footerYearEl){ footerYearEl.textContent = `© ${new Date().getFullYear()} SWGOH::RESOURCES`; }
-
-/* Backdrop starfield: mostly static stars at varied sizes and
-   brightness, a few warm/cool tinted, ~25% twinkling on independent
-   cycles around their own base opacity. Negative delays start each
-   twinkler mid-cycle so there is no synchronized flash on load.
-   Kept to ~46 nodes / ~10 animating, and only the 1px stars twinkle: the
-   twinkle animates transform (compositor-only) rather than opacity, which
-   used to repaint — and re-blur, where anything translucent sat above —
-   on every frame. */
-(function(){
-  const field = document.getElementById('starfield');
-  if(!field) return;
-  const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const saveData = typeof navigator !== 'undefined' && navigator.connection && navigator.connection.saveData;
-  const STAR_COUNT = 46;
-  const TWINKLE_ODDS = 0.18;
-  for(let i = 0; i < STAR_COUNT; i++){
-    const s = document.createElement('span');
-    const r = Math.random();
-    const size = r < 0.55 ? 1 : r < 0.88 ? 2 : 3;
-    if(size === 3) s.classList.add('bright');
-    s.style.width = s.style.height = size + 'px';
-    s.style.left = Math.random() * 100 + '%';
-    s.style.top = Math.random() * 100 + '%';
-    const tint = Math.random();
-    if(tint < 0.16) s.classList.add('cool');
-    else if(tint < 0.26) s.classList.add('warm');
-    const base = (0.3 + Math.random() * 0.55).toFixed(2);
-    if(!reduceMotion && !saveData && size < 3 && Math.random() < TWINKLE_ODDS){
-      s.classList.add('tw');
-      s.style.opacity = base;
-      s.style.animationDuration = (3 + Math.random() * 5).toFixed(2) + 's';
-      s.style.animationDelay = (-Math.random() * 8).toFixed(2) + 's';
-    } else {
-      s.style.opacity = base;
-    }
-    field.appendChild(s);
-  }
-})();
 
 /* Surface config mistakes early: the next era edit shows up here
    instead of as a silently wrong schedule. */

@@ -44,6 +44,15 @@ test('siteVersion moves when any asset changes', async () => {
   assert.match(a, /^[0-9a-f]{10}$/);
 });
 
+test('stamping preserves query options and SVG fragments, replacing only the version', () => {
+  const versions = { 'assets/icons.svg': 'abc123' };
+  const html = '<img src="/assets/icons.svg?theme=dark&amp;v=old#arrow">';
+  const first = stampHtml(html, versions, 'site99');
+  assert.match(first.html, /src="\/assets\/icons.svg\?theme=dark&amp;v=abc123#arrow"/);
+  assert.deepEqual(stampHtml(first.html, versions, 'site99').touched, []);
+  assert.match(stampHtml('<img src="assets/icons.svg#star">', versions, 'site99').html, /icons.svg\?v=abc123#star/);
+});
+
 test('a removed asset still changes the site token', async () => {
   const withFile = siteVersion({ 'a.png': '1111' });
   const without = siteVersion({});
@@ -65,13 +74,12 @@ test('every committed page matches what cache-bust.mjs would stamp', async () =>
 });
 
 test('no page references a local asset that is missing on disk', async () => {
-  const versions = await assetHashes(ROOT);
   const missing = [];
   for (const name of await rootHtmlFiles(ROOT)) {
     const html = fs.readFileSync(path.join(ROOT, name), 'utf8');
     for (const m of html.matchAll(/(?:href|src)="((?!https?:|\/\/|#|mailto:|data:)[^"?#]+)(?:\?[^"]*)?"/g)) {
       const ref = m[1];
-      if (!/^(\/)?(assets\/|firebase-config\.js)/.test(ref)) continue;
+      if (!/^(\/)?assets\//.test(ref)) continue;
       if (!fs.existsSync(path.join(ROOT, ref.replace(/^\//, '')))) missing.push(`${name} -> ${ref}`);
     }
   }

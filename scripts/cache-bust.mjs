@@ -30,11 +30,10 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
-const ASSET_DIR = path.join(ROOT, 'assets');
 export const VERSION_META = 'swgoh-asset-v';
 // Source pages stay at the root; these published copies give Pages real
 // directory routes without a custom server or a second editable page.
-export const CLEAN_ROUTES = ['conquest', 'squads', 'game-timeline', 'materials', 'era-chart', 'privacy', 'cookie-policy', 'terms'];
+export const CLEAN_ROUTES = ['conquest', 'era-chart', 'privacy', 'cookie-policy', 'terms'];
 
 export async function syncCleanRoutes(root = ROOT) {
   let dirty = 0;
@@ -123,9 +122,16 @@ export function stampHtml(html, versions, siteV) {
     const clean = ref.split('#')[0].split('?')[0];
     const v = versions[clean] || versions[clean.replace(/^\/+/, '')];
     if (!v) return m; // not a local asset we hash (page links, etc.)
-    if (oldV === `?v=${v}`) return m;
+    const original = ref + (oldV || '');
+    const hashAt = original.indexOf('#');
+    const fragment = hashAt < 0 ? '' : original.slice(hashAt);
+    const query = original.slice(clean.length, hashAt < 0 ? undefined : hashAt);
+    const params = new URLSearchParams(query.replace(/&amp;/g, '&'));
+    params.set('v', v);
+    const next = `${head}${clean}?${params.toString().replace(/&/g, '&amp;')}${fragment}${tail}`;
+    if (next === m) return m;
     touched.push(clean);
-    return `${head}${clean}?v=${v}${tail}`;
+    return next;
   });
 
   const meta = `<meta name="${VERSION_META}" content="${siteV}">`;

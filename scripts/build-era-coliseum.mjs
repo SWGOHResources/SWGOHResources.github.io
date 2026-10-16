@@ -3,8 +3,8 @@
 import { readFile, writeFile } from 'node:fs/promises';
 const root = new URL('../', import.meta.url);
 const read = async path => JSON.parse(await readFile(new URL(path, root), 'utf8'));
-const raw = await read('era10-extract/02_era10_coliseum.json');
-const sourceBoxes = await read('era10-extract/08_coliseum_prize_boxes.json');
+const raw = await read('scripts/data/era-coliseum.json');
+const sourceBoxes = await read('scripts/data/era-coliseum-boxes.json');
 const boxes = new Map(sourceBoxes.boxes.map(box => [box.id, box]));
 const names = ['Krayt Dragon', 'Zeffo Tomb Guardian', 'Jotaz', 'Dryax'];
 const icons = ['krayt.png', 'zeffo.png', 'jotaz.png', 'dryax.png'];
@@ -43,8 +43,8 @@ for (const boss of raw.bossDefinition.slice(1)) {
   if (JSON.stringify(tiersFor(boss)) !== JSON.stringify(tiers)) throw Error('Boss tables differ');
 }
 const data = {
-  source: 'era10-extract/02_era10_coliseum.json',
-  boxSource: 'era10-extract/08_coliseum_prize_boxes.json',
+  source: 'scripts/data/era-coliseum.json',
+  boxSource: 'scripts/data/era-coliseum-boxes.json',
   gameVersion: sourceBoxes.gameVersion,
   excludedCurrencyIds: ['ERA_CURRENCY'],
   materialTiers: [1,2,3,4,5,6,7],

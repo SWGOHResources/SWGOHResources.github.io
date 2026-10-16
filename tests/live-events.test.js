@@ -279,13 +279,29 @@ test('ensureBonusPortraits keeps on-disk files, drops unresolvable ones', async 
       { unit: 'NOPE', portrait: 'live/bonus-nope.png' },
     ] }];
     // Unreachable portrait source: missing files can never download.
-    const planner = { portraitSource: 'http://127.0.0.1:1/', characters: [] };
-    await ensureBonusPortraits(events, { artDir: dirUrl, planner });
+    const portraits = { portraitSource: 'http://127.0.0.1:1/', textures: {} };
+    await ensureBonusPortraits(events, { artDir: dirUrl, portraits });
     assert.equal(events[0].units[0].portrait, 'live/bonus-4lom.png');
     assert.ok(!('portrait' in events[0].units[1]));
   } finally {
     if (dir) await rm(dir, { recursive: true, force: true });
   }
+});
+
+test('bonus portraits can download from their independent catalogue', async t => {
+  const { rm, readFile } = await import('node:fs/promises');
+  const sharp = (await import('sharp')).default;
+  const png = await sharp({ create: { width: 4, height: 4, channels: 4, background: '#ffffff' } }).png().toBuffer();
+  const dir = await mkdtemp(path.join(path.resolve(tmpdir()), 'bonus-catalogue-'));
+  const originalFetch = globalThis.fetch;
+  t.after(async () => { globalThis.fetch = originalFetch; await rm(dir, { recursive: true, force: true }); });
+  const requests = [];
+  globalThis.fetch = async url => { requests.push(String(url)); return new Response(png); };
+  const events = [{ units: [{ unit: '4LOM', portrait: 'live/bonus-4lom.png' }] }];
+  await ensureBonusPortraits(events, { artDir: pathToFileURL(dir + path.sep) });
+  assert.deepEqual(requests, ['https://game-assets.swgoh.gg/textures/tex.charui_4lom.png']);
+  assert.equal(events[0].units[0].portrait, 'live/bonus-4lom.png');
+  assert.equal((await readFile(path.join(dir, 'bonus-4lom.png'))).subarray(0, 8).toString('hex'), '89504e470d0a1a0a');
 });
 
 test('selectLiveEvents merges bonus drops end to end', () => {

@@ -4,7 +4,7 @@ import { readFile, writeFile } from 'node:fs/promises';
 const root = new URL('../', import.meta.url);
 const read = async name => JSON.parse(await readFile(new URL(name, root), 'utf8'));
 const data = await read('assets/data/era-chart.json');
-const raw = await read('era10-extract/06_marquee_adelphiranger_l80_full.json');
+const raw = await read('scripts/data/era-marquee.json');
 function rewards(items) {
   return items.map(item => {
     if (item.minQuantity !== item.maxQuantity) throw Error('Variable marquee reward: ' + item.id);

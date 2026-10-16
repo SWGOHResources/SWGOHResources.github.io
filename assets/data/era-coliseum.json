@@ -1,6 +1,6 @@
 {
-  "source": "era10-extract/02_era10_coliseum.json",
-  "boxSource": "era10-extract/08_coliseum_prize_boxes.json",
+  "source": "scripts/data/era-coliseum.json",
+  "boxSource": "scripts/data/era-coliseum-boxes.json",
   "gameVersion": "0.40.6:i9YYIijBSxuHHNoSmCMBoQ",
   "excludedCurrencyIds": [
     "ERA_CURRENCY"
