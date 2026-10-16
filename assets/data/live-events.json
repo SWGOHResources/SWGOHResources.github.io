@@ -1,5 +1,5 @@
 {
- "pulledAt": 1792110464270,
+ "pulledAt": 1792135024154,
  "gameDataVersion": "0.40.6:i9YYIijBSxuHHNoSmCMBoQ",
  "events": [
   {
@@ -23,23 +23,13 @@
    "art": "live/events-theronin.png"
   },
   {
-   "id": "EVENT_ASSAULT_DARKSIDE",
-   "name": "Secrets and Shadows Assault Battle",
-   "kind": "assault",
-   "unit": "NIGHTSISTERSASSAULT",
-   "startMs": 1791961200000,
-   "endMs": 1792047600000,
-   "live": false,
-   "art": "live/events-nightsisters-assault.png"
-  },
-  {
    "id": "EVENT_FLEET_MASTERY_EXECUTOR",
    "name": "Discarded Doctrine",
    "kind": "fleet",
    "unit": "EXECUTOR",
    "startMs": 1792047600000,
    "endMs": 1792134000000,
-   "live": true,
+   "live": false,
    "art": "live/events-executor.png"
   },
   {
@@ -148,7 +138,7 @@
    "unit": "GALACTICCHALLENGESHOTH",
    "startMs": 1792134000000,
    "endMs": 1792220400000,
-   "live": false,
+   "live": true,
    "art": "live/events-galactic-challenges-hoth.png"
   },
   {
