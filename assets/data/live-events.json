@@ -1,5 +1,5 @@
 {
- "pulledAt": 1792099771342,
+ "pulledAt": 1792110464270,
  "gameDataVersion": "0.40.6:i9YYIijBSxuHHNoSmCMBoQ",
  "events": [
   {
@@ -48,7 +48,7 @@
    "kind": "event",
    "startMs": 1792108800000,
    "endMs": 1792368000000,
-   "live": false,
+   "live": true,
    "art": "live/newsletter-bartender.png"
   },
   {
@@ -57,7 +57,7 @@
    "kind": "event",
    "startMs": 1792108800000,
    "endMs": 1792368000000,
-   "live": false,
+   "live": true,
    "art": "live/newsletter-bartender.png"
   },
   {
@@ -66,7 +66,7 @@
    "kind": "event",
    "startMs": 1792108800000,
    "endMs": 1792368000000,
-   "live": false,
+   "live": true,
    "art": "live/newsletter-bartender.png"
   },
   {
@@ -75,7 +75,7 @@
    "kind": "event",
    "startMs": 1792108800000,
    "endMs": 1792368000000,
-   "live": false,
+   "live": true,
    "art": "live/newsletter-bartender.png"
   },
   {
@@ -84,7 +84,7 @@
    "kind": "event",
    "startMs": 1792108800000,
    "endMs": 1792368000000,
-   "live": false,
+   "live": true,
    "art": "live/newsletter-bartender.png"
   },
   {
@@ -93,7 +93,7 @@
    "kind": "event",
    "startMs": 1792108800000,
    "endMs": 1792368000000,
-   "live": false,
+   "live": true,
    "art": "live/newsletter-bartender.png"
   },
   {
@@ -102,7 +102,7 @@
    "kind": "event",
    "startMs": 1792108800000,
    "endMs": 1792368000000,
-   "live": false,
+   "live": true,
    "art": "live/newsletter-bartender.png"
   },
   {
@@ -111,7 +111,7 @@
    "kind": "event",
    "startMs": 1792108800000,
    "endMs": 1792368000000,
-   "live": false,
+   "live": true,
    "art": "live/newsletter-bartender.png"
   },
   {
@@ -120,7 +120,7 @@
    "kind": "event",
    "startMs": 1792108800000,
    "endMs": 1792368000000,
-   "live": false,
+   "live": true,
    "art": "live/newsletter-bartender.png"
   },
   {
@@ -129,7 +129,7 @@
    "kind": "event",
    "startMs": 1792108800000,
    "endMs": 1792368000000,
-   "live": false,
+   "live": true,
    "art": "live/newsletter-bartender.png"
   },
   {
@@ -138,7 +138,7 @@
    "kind": "event",
    "startMs": 1792108800000,
    "endMs": 1792368000000,
-   "live": false,
+   "live": true,
    "art": "live/newsletter-bartender.png"
   },
   {
