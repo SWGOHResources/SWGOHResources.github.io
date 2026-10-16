@@ -79,3 +79,32 @@ test('event embeds degrade without artwork', () => {
   assert.ok(!('image' in d.embeds[0]) && !('thumbnail' in d.embeds[0]));
   assert.equal(d.embeds[0].fields[0].value, 'Event');
 });
+
+test('bonus-drop embeds add a full-width Nodes row, others unchanged', () => {
+  const d = formatEventPayload({
+    name: 'Additive Drops', kind: 'event',
+    details: 'Hard Light · 12, 16, 20 Energy + Hard Dark · 12, 16, 20 Energy',
+    startMs: 1789495200000, endMs: 1789581600000, art: null,
+  });
+  const e = d.embeds[0];
+  assert.deepEqual(e.fields.map(f => f.name), ['Type', 'Starts', 'Ends', 'Nodes']);
+  assert.equal(e.fields[3].value, 'Hard Light · 12, 16, 20 Energy + Hard Dark · 12, 16, 20 Energy');
+  assert.equal(e.fields[3].inline, false);
+  assert.doesNotMatch(JSON.stringify(d), EMOJI_RE);
+});
+
+test('wave embeds list every unit with its node line and 7-star drop', () => {
+  const d = formatEventPayload({
+    name: 'Additive Drops: Wave 1', kind: 'event',
+    units: [
+      { unit: '4LOM', name: '4-LOM', details: 'LS/DS Hard Battles', maxed: 'Mk 7 Kyrotech' },
+      { unit: 'ZUCKUSS', name: 'Zuckuss', details: 'Cantina Battles', maxed: 'Mk 9 Kyrotech' },
+    ],
+    startMs: 1789495200000, endMs: 1789581600000, art: null,
+  });
+  const e = d.embeds[0];
+  assert.deepEqual(e.fields.map(f => f.name), ['Type', 'Starts', 'Ends', '4-LOM', 'Zuckuss']);
+  assert.equal(e.fields[3].value, 'LS/DS Hard Battles\n7-star: Mk 7 Kyrotech');
+  assert.equal(e.fields[4].inline, false);
+  assert.doesNotMatch(JSON.stringify(d), EMOJI_RE);
+});

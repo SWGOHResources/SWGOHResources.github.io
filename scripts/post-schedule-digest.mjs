@@ -99,18 +99,29 @@ export function formatStatusPayload({ eraDay, eraLength, dateLabel, era, gac, tb
 // One message per event that starts today: related facts in a neat row
 // (type / start / end) plus the event's full artwork. Pure and tested.
 // e.resource flags curated resource names gold like smuggling runs.
+// Additive-drop waves list every featured unit with its node/energy
+// line instead of a single Nodes row.
 export function formatEventPayload(e) {
   const kind = KIND_LABEL[e.kind] ?? 'Event';
   const img = artUrl(e.art);
+  const fields = [
+    { name: 'Type', value: kind, inline: true },
+    { name: 'Starts', value: ts(e.startMs), inline: true },
+    { name: 'Ends', value: ts(e.endMs), inline: true },
+  ];
+  if (Array.isArray(e.units) && e.units.length) {
+    for (const u of e.units) {
+      const value = u.maxed ? `${u.details}\n7-star: ${u.maxed}` : String(u.details);
+      fields.push({ name: u.name, value: String(value).slice(0, 1024), inline: false });
+    }
+  } else if (e.details) {
+    fields.push({ name: 'Nodes', value: String(e.details).slice(0, 1024), inline: false });
+  }
   return {
     embeds: [{
       title: e.name,
       color: e.resource ? 0xE0A552 : (KIND_COLOR[e.kind] ?? 0x56B8AD),
-      fields: [
-        { name: 'Type', value: kind, inline: true },
-        { name: 'Starts', value: ts(e.startMs), inline: true },
-        { name: 'Ends', value: ts(e.endMs), inline: true },
-      ],
+      fields,
       ...(img ? { image: { url: img } } : {}),
       footer: { text: 'SWGOH Resources' },
       timestamp: new Date().toISOString(),

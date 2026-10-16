@@ -515,9 +515,24 @@ function liveCardHTML(e, relLabel){
   const art = liveDisplayArt(e, meta);
   const relCls = relLabel === 'Now' ? 'xcard-rel is-today'
     : relLabel === 'Expired' ? 'xcard-rel is-expired' : 'xcard-rel';
-  return `<article class="xcard" style="${style}">
-    <div class="xcard-art">
+  // Additive-drop waves open a unit breakdown popup (see openBonusWave).
+  const bonus = e && Array.isArray(e.units) && e.units.length ? e : null;
+  const bonusId = bonus ? String(bonus.id).replace(/[^A-Z0-9_]/gi, '') : '';
+  const bonusAttrs = bonus
+    ? ` data-bonus-wave="${escHTML(bonusId)}" tabindex="0" role="button" aria-label="${escHTML(liveDisplayName(e))} — show units"`
+      + ` onclick="openBonusWave('${bonusId}')"`
+      + ` onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openBonusWave('${bonusId}')}"`
+    : '';
+  // Icon-style art (wave shard, like the FIT_ART_ICONS rotation icons)
+  // renders contained over a blurred fill of itself instead of
+  // cover-cropped into the portrait frame.
+  const fit = !!(e && e.fit && art);
+  const fillTag = fit
+    ? `<div class="art-fill" aria-hidden="true" style="background-image:url(&quot;${imgPath(art)}&quot;)"></div>` : '';
+  return `<article class="xcard${bonus ? ' is-clickable' : ''}"${bonusAttrs} style="${style}">
+    <div class="xcard-art${fit ? ' fit' : ''}">
       <div class="art-badge">${escHTML(meta.glyph)}</div>
+      ${fillTag}
       <img src="${imgPath(art)}" alt="" loading="lazy" fetchpriority="low" decoding="async" onerror="this.remove()">
       <div class="xcard-shade"></div>
       <div class="xcard-art-meta">
@@ -527,9 +542,52 @@ function liveCardHTML(e, relLabel){
     <div class="xcard-body">
       <div class="xcard-kicker">${escHTML(meta.label)}</div>
       <h4>${escHTML(liveDisplayName(e))}</h4>
+      ${(e && e.details) ? `<div class="xcard-sub">${escHTML(e.details)}</div>` : ''}
       ${cardWhenRow(e.startMs, liveDurationHours(e))}
     </div>
   </article>`;
+}
+
+/* Additive-drop wave popup: one row per featured unit — shard icon
+   and name, then the battles whose drop tables carry its shards with
+   the energy icon, then what the unit drops once already at 7 stars.
+   Pure and unit-tested via bonusWaveRowsHTML. */
+function bonusWaveRowsHTML(entry){
+  const units = (entry && Array.isArray(entry.units)) ? entry.units : [];
+  return units.map(u => {
+    const shard = (u && u.portrait)
+      ? `<img class="bdrop-shard-unit" src="${imgPath(u.portrait)}" alt="" loading="lazy" decoding="async" onerror="this.remove()">`
+      : '';
+    const energy = (u && u.energy)
+      ? `<img class="bdrop-energy" src="${imgPath(u.energy)}" alt="" loading="lazy" decoding="async" onerror="this.remove()">`
+      : '';
+    const tint = (u && (u.alignment === 'dark' || u.alignment === 'neutral')) ? u.alignment : 'light';
+    const maxed = (u && u.maxed)
+      ? `<div class="bdrop-maxed">7-star: ${escHTML(u.maxed)}</div>`
+      : '';
+    return `<div class="bdrop-row">`
+      + `<span class="bdrop-shard ${tint}" aria-hidden="true"><img class="bdrop-shard-background" src="${imgPath('atlases/standard_rgba_atlas/ShardIcon.png')}" alt="">${shard}</span>`
+      + `<div class="bdrop-text"><div class="bdrop-name">${escHTML((u && u.name) || '')}</div>`
+      + `<div class="bdrop-nodes">${energy}<span>${escHTML((u && u.details) || '')}</span></div>${maxed}</div>`
+      + `</div>`;
+  }).join('');
+}
+
+function openBonusWave(id){
+  const entry = (typeof liveEventsCache !== 'undefined' && liveEventsCache && Array.isArray(liveEventsCache.events))
+    ? liveEventsCache.events.find(e => e && e.id === id) : null;
+  if(!entry || typeof document === 'undefined') return;
+  const title = document.getElementById('bonusWaveTitle');
+  const body = document.getElementById('bonusWaveBody');
+  const modal = document.getElementById('bonusWaveModal');
+  if(!body || !modal) return;
+  if(title) title.textContent = liveDisplayName(entry);
+  body.innerHTML = bonusWaveRowsHTML(entry);
+  if(typeof openModal === 'function') openModal(modal);
+  else {
+    modal.classList.add('open');
+    modal.setAttribute('aria-hidden', 'false');
+  }
 }
 
 /* Warm the pulled live art into the browser cache right after the
@@ -760,7 +818,8 @@ function liveBadgesHTML(ongoing, dayStartMs){
       const day = Math.min(Math.max(liveDayNum(e, dayStartMs), 1), total);
       const kindCls = e.kind === 'conquest' ? ' day-live-cq' : '';
       const badgeName = liveDisplayName(e);
-      return `<div class="day-boss day-live${kindCls}" title="${escHTML(badgeName)}, day ${day} of ${total}">`
+      const badgeTitle = (e && e.details) ? `${badgeName} — ${e.details}` : `${badgeName}`;
+      return `<div class="day-boss day-live${kindCls}" title="${escHTML(badgeTitle)}, day ${day} of ${total}">`
         + `<img src="${imgPath(art)}" alt="" loading="lazy" decoding="async" onerror="this.remove()">`
         + `<div class="db-text"><span class="db-label">Day ${day} of ${total}</span>`
         + `<span class="db-name">${escHTML(badgeName)}</span></div></div>`;

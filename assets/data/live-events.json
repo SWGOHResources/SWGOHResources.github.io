@@ -1,5 +1,5 @@
 {
- "pulledAt": 1792135024154,
+ "pulledAt": 1792183388887,
  "gameDataVersion": "0.40.6:i9YYIijBSxuHHNoSmCMBoQ",
  "events": [
   {
@@ -33,103 +33,36 @@
    "art": "live/events-executor.png"
   },
   {
-   "id": "EVENT_4LOM_HARD_DARK_16_101626",
-   "name": "Bonus Drops 101626 Name",
+   "id": "EVENT_BONUS_WAVE_1_101626",
+   "name": "Additive Drops: Wave 1",
    "kind": "event",
+   "units": [
+    {
+     "unit": "4LOM",
+     "name": "4-LOM",
+     "alignment": "dark",
+     "portrait": "live/bonus-4lom.png",
+     "details": "LS/DS Hard Battles",
+     "energy": "live/energy-pve.png",
+     "energyLabel": "Energy",
+     "maxed": "Mk 7 Kyrotech"
+    },
+    {
+     "unit": "ZUCKUSS",
+     "name": "Zuckuss",
+     "alignment": "dark",
+     "portrait": "live/bonus-zuckuss.png",
+     "details": "Cantina Battles",
+     "energy": "live/energy-cantina.png",
+     "energyLabel": "Cantina Energy",
+     "maxed": "Mk 9 Kyrotech"
+    }
+   ],
    "startMs": 1792108800000,
    "endMs": 1792368000000,
    "live": true,
-   "art": "live/newsletter-bartender.png"
-  },
-  {
-   "id": "EVENT_4LOM_HARD_DARK_12_101626",
-   "name": "Bonus Drops 101626 Name",
-   "kind": "event",
-   "startMs": 1792108800000,
-   "endMs": 1792368000000,
-   "live": true,
-   "art": "live/newsletter-bartender.png"
-  },
-  {
-   "id": "EVENT_4LOM_HARD_DARK_20_101626",
-   "name": "Bonus Drops 101626 Name",
-   "kind": "event",
-   "startMs": 1792108800000,
-   "endMs": 1792368000000,
-   "live": true,
-   "art": "live/newsletter-bartender.png"
-  },
-  {
-   "id": "EVENT_ZUCKUSS_CANTINA_08_101626",
-   "name": "Bonus Drops Are Available!",
-   "kind": "event",
-   "startMs": 1792108800000,
-   "endMs": 1792368000000,
-   "live": true,
-   "art": "live/newsletter-bartender.png"
-  },
-  {
-   "id": "EVENT_4LOM_HARD_LIGHT_12_101626",
-   "name": "Bonus Drops Are Available!",
-   "kind": "event",
-   "startMs": 1792108800000,
-   "endMs": 1792368000000,
-   "live": true,
-   "art": "live/newsletter-bartender.png"
-  },
-  {
-   "id": "EVENT_4LOM_HARD_LIGHT_16_101626",
-   "name": "Bonus Drops Are Available!",
-   "kind": "event",
-   "startMs": 1792108800000,
-   "endMs": 1792368000000,
-   "live": true,
-   "art": "live/newsletter-bartender.png"
-  },
-  {
-   "id": "EVENT_ZUCKUSS_CANTINA_12_101626",
-   "name": "Bonus Drops Are Available!",
-   "kind": "event",
-   "startMs": 1792108800000,
-   "endMs": 1792368000000,
-   "live": true,
-   "art": "live/newsletter-bartender.png"
-  },
-  {
-   "id": "EVENT_ZUCKUSS_CANTINA_10_101626",
-   "name": "Bonus Drops Are Available!",
-   "kind": "event",
-   "startMs": 1792108800000,
-   "endMs": 1792368000000,
-   "live": true,
-   "art": "live/newsletter-bartender.png"
-  },
-  {
-   "id": "EVENT_ZUCKUSS_CANTINA_16_101626",
-   "name": "Bonus Drops Are Available!",
-   "kind": "event",
-   "startMs": 1792108800000,
-   "endMs": 1792368000000,
-   "live": true,
-   "art": "live/newsletter-bartender.png"
-  },
-  {
-   "id": "EVENT_4LOM_HARD_LIGHT_20_101626",
-   "name": "Bonus Drops Are Available!",
-   "kind": "event",
-   "startMs": 1792108800000,
-   "endMs": 1792368000000,
-   "live": true,
-   "art": "live/newsletter-bartender.png"
-  },
-  {
-   "id": "EVENT_ZUCKUSS_CANTINA_20_101626",
-   "name": "Bonus Drops Are Available!",
-   "kind": "event",
-   "startMs": 1792108800000,
-   "endMs": 1792368000000,
-   "live": true,
-   "art": "live/newsletter-bartender.png"
+   "fit": true,
+   "art": "live/bonus-drops.png"
   },
   {
    "id": "EVENT_OMEGA_BATTLES_07_HOTH",
@@ -160,6 +93,58 @@
    "endMs": 1792479600000,
    "live": false,
    "art": "live/events-galacticchallenges-dathomir.png"
+  },
+  {
+   "id": "EVENT_BONUS_WAVE_2_102026",
+   "name": "Additive Drops: Wave 2",
+   "kind": "event",
+   "units": [
+    {
+     "unit": "STORMTROOPERLUKE",
+     "name": "Stormtrooper Luke",
+     "alignment": "light",
+     "portrait": "live/bonus-stormtrooperluke.png",
+     "details": "LS/DS Hard Battles",
+     "energy": "live/energy-pve.png",
+     "energyLabel": "Energy",
+     "maxed": "Flawed Signal Data"
+    },
+    {
+     "unit": "IG90",
+     "name": "IG-90",
+     "alignment": "dark",
+     "portrait": "live/bonus-ig90.png",
+     "details": "Cantina Battles",
+     "energy": "live/energy-cantina.png",
+     "energyLabel": "Cantina Energy",
+     "maxed": "Zinbiddle"
+    },
+    {
+     "unit": "ASAJJDARKDISCIPLE",
+     "name": "Asajj Ventress (Dark Disciple)",
+     "alignment": "dark",
+     "portrait": "live/bonus-asajjdarkdisciple.png",
+     "details": "Mod Battles",
+     "energy": "live/energy-mod.png",
+     "energyLabel": "Mod Energy",
+     "maxed": "Impulse Detector"
+    },
+    {
+     "unit": "INQUISITORBARRISS",
+     "name": "Inquisitor Barriss",
+     "alignment": "dark",
+     "portrait": "live/bonus-inquisitorbarriss.png",
+     "details": "Hard Fleet Battles",
+     "energy": "live/energy-ship.png",
+     "energyLabel": "Ship Energy",
+     "maxed": "Aeromagnifier"
+    }
+   ],
+   "startMs": 1792454400000,
+   "endMs": 1792713600000,
+   "live": false,
+   "fit": true,
+   "art": "live/bonus-drops.png"
   },
   {
    "id": "EVENT_FLEET_MASTERY_LEVIATHAN",
@@ -200,6 +185,16 @@
    "endMs": 1792911600000,
    "live": false,
    "art": "live/events-groundwar.png"
+  },
+  {
+   "id": "EVENT_GALACTIC_BOUNTY_01",
+   "name": "Galactic Bounties I",
+   "kind": "event",
+   "unit": "GALACTICBOUNTIES",
+   "startMs": 1792911600000,
+   "endMs": 1792998000000,
+   "live": false,
+   "art": "live/events-galacticbounties.png"
   }
  ]
 }

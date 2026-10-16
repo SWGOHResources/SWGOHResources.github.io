@@ -28,6 +28,8 @@ const scheduleModal = document.getElementById('fullScheduleModal');
 
 const aboutModal = document.getElementById('aboutModal');
 
+const bonusWaveModal = document.getElementById('bonusWaveModal');
+
 const cookieNotice = document.getElementById('cookieNotice');
 const dismissCookieNotice = document.getElementById('dismissCookieNotice');
 const COOKIE_NOTICE_KEY = 'swgoh_cookie_notice';
@@ -133,6 +135,9 @@ document.getElementById('closeAboutBtn')?.addEventListener('click', () => closeM
 document.getElementById('closeAboutBtn2')?.addEventListener('click', () => closeModal(aboutModal));
 
 scheduleModal?.addEventListener('click', e => { if(e.target === scheduleModal) closeModal(scheduleModal); });
+
+document.getElementById('closeBonusWaveBtn')?.addEventListener('click', () => closeModal(bonusWaveModal));
+bonusWaveModal?.addEventListener('click', e => { if(e.target === bonusWaveModal) closeModal(bonusWaveModal); });
 aboutModal?.addEventListener('click', e => { if(e.target === aboutModal) closeModal(aboutModal); });
 
 function copyDiscordHandle(btnEl) {

@@ -133,7 +133,231 @@ export function eventKind(id) {
   return 'event';
 }
 
-// Unit the event is for, from the texture name when Comlink doesn't
+// Additive (bonus) drops arrive as one event per (unit, node-cost):
+// e.g. EVENT_4LOM_HARD_DARK_16_101626, EVENT_ZUCKUSS_CANTINA_08_101626.
+// The id's cost suffix is the battle's energy price; the trailing date
+// is the wave start (MMDDYY). Parsed here so a wave collapses to one
+// schedule entry per unit instead of a dozen identical cards.
+const BONUS_DROP_RE = /^EVENT_([A-Z0-9]+)_((?:HARD_LIGHT|HARD_DARK|CANTINA|MOD|HARD_FLEET))_(\d+)_(\d{6})$/;
+export function parseBonusDropId(id) {
+  const m = BONUS_DROP_RE.exec(String(id ?? ''));
+  if (!m) return null;
+  return { unit: m[1], category: m[2], cost: Number(m[3]), wave: m[4] };
+}
+
+// Display names for the Droid Destruction raid-prep bonus units
+// (Oct-Nov 2026 waves). Comlink exposes no unit for these events and
+// the loc nameKeys ("Bonus Drops Are Available!") name no unit, so the
+// schedule would otherwise show eleven identical cards per wave.
+// Unknown units fall back to a title-cased base id.
+const BONUS_UNIT_NAMES = {
+  '4LOM': '4-LOM',
+  ZUCKUSS: 'Zuckuss',
+  STORMTROOPERLUKE: 'Stormtrooper Luke',
+  YODACHEWBACCA: 'Yoda & Chewie',
+  CINTA: 'Cinta Kaz',
+  CARSONTEVA: 'Captain Carson Teva',
+  IG90: 'IG-90',
+  VADERDUELSEND: "Darth Vader (Duel's End)",
+  DEDRAMEERO: 'Dedra Meero',
+  R5D4: 'R5-D4',
+  ASAJJDARKDISCIPLE: 'Asajj Ventress (Dark Disciple)',
+  KLEYA: 'Kleya Marki',
+  MAJORPARTAGAZ: 'Major Partagaz',
+  BISHOP: 'Colonel Ward',
+  INQUISITORBARRISS: 'Inquisitor Barriss',
+  VEL: 'Vel Sartha',
+  KXSECURITYDROID: 'KX Security Droid',
+  RANGERZEB: 'Zeb Orrelios (New Republic Pilot)',
+  GOPHERANTS: 'Grogu & Anzellans',
+  REMNANTSNOWCOMMANDER: 'Snowtrooper Commander',
+  MARAJADESKYWALKER: 'Mara Jade Skywalker',
+  YODADSV: 'Yoda (Dark Side Vision)',
+  LUKESTARKILLER: 'Starkiller (Luke Concept)',
+  STORMTROOPERCONCEPT: 'Stormtrooper (Concept)',
+  JAXXON: 'Jaxxon',
+  THERONIN: 'The Ronin',
+};
+export function bonusUnitName(unit) {
+  return BONUS_UNIT_NAMES[String(unit ?? '')] || prettifyCodeName(String(unit ?? ''));
+}
+
+const BONUS_CATEGORY_META = {
+  HARD_LIGHT: { label: 'Hard Light', battles: 'Light Side Hard Battles', energy: 'Energy', icon: 'live/energy-pve.png' },
+  HARD_DARK: { label: 'Hard Dark', battles: 'Dark Side Hard Battles', energy: 'Energy', icon: 'live/energy-pve.png' },
+  CANTINA: { label: 'Cantina', battles: 'Cantina Battles', energy: 'Cantina Energy', icon: 'live/energy-cantina.png' },
+  MOD: { label: 'Mod Battles', battles: 'Mod Battles', energy: 'Mod Energy', icon: 'live/energy-mod.png' },
+  HARD_FLEET: { label: 'Hard Fleet', battles: 'Hard Fleet Battles', energy: 'Ship Energy', icon: 'live/energy-ship.png' },
+};
+const BONUS_CATEGORY_ORDER = ['HARD_LIGHT', 'HARD_DARK', 'CANTINA', 'MOD', 'HARD_FLEET'];
+
+// What each bonus unit drops once already at 7 stars (announced rewards
+// for the Droid Destruction raid-prep waves). Shown per unit in the wave
+// popup and digest embeds. Units missing here simply omit the line.
+const BONUS_MAXED_DROP = {
+  '4LOM': 'Mk 7 Kyrotech',
+  ZUCKUSS: 'Mk 9 Kyrotech',
+  STORMTROOPERLUKE: 'Flawed Signal Data',
+  YODACHEWBACCA: 'Flawed Signal Data',
+  CINTA: 'Flawed Signal Data',
+  CARSONTEVA: 'Flawed Signal Data',
+  IG90: 'Zinbiddle',
+  VADERDUELSEND: 'Zinbiddle',
+  DEDRAMEERO: 'Zinbiddle',
+  R5D4: 'Zinbiddle',
+  ASAJJDARKDISCIPLE: 'Impulse Detector',
+  KLEYA: 'Impulse Detector',
+  MAJORPARTAGAZ: 'Impulse Detector',
+  BISHOP: 'Impulse Detector',
+  INQUISITORBARRISS: 'Aeromagnifier',
+  VEL: 'Aeromagnifier',
+  KXSECURITYDROID: 'Aeromagnifier',
+  RANGERZEB: 'Aeromagnifier',
+  GOPHERANTS: 'Impulse Detector',
+  REMNANTSNOWCOMMANDER: 'Aeromagnifier',
+  MARAJADESKYWALKER: 'Zeta',
+  YODADSV: 'Omicron',
+  LUKESTARKILLER: 'Gyrda Keypad',
+  STORMTROOPERCONCEPT: 'Droid Brain',
+  JAXXON: 'Corrupted Signal',
+  THERONIN: 'Coaxial',
+};
+
+// Wave card art: the per-event newsletter portrait (bartender) says
+// nothing about shards, so waves share a shard icon built for the
+// schedule (assets/img/live/bonus-drops.png) rendered contained like
+// the other event icons (see FIT_ART_ICONS), not cover-cropped.
+const BONUS_WAVE_ART = 'bonus_drops';
+
+// Shard-frame tint per bonus unit (light = blue, dark = red), matching
+// the conquest shard tiles. Unknown units default to light.
+const BONUS_UNIT_ALIGNMENT = {
+  '4LOM': 'dark',
+  ZUCKUSS: 'dark',
+  STORMTROOPERLUKE: 'light',
+  YODACHEWBACCA: 'light',
+  CINTA: 'light',
+  CARSONTEVA: 'light',
+  IG90: 'dark',
+  VADERDUELSEND: 'dark',
+  DEDRAMEERO: 'dark',
+  R5D4: 'light',
+  ASAJJDARKDISCIPLE: 'dark',
+  KLEYA: 'light',
+  MAJORPARTAGAZ: 'dark',
+  BISHOP: 'light',
+  INQUISITORBARRISS: 'dark',
+  VEL: 'light',
+  KXSECURITYDROID: 'dark',
+  RANGERZEB: 'light',
+  GOPHERANTS: 'light',
+  REMNANTSNOWCOMMANDER: 'dark',
+  MARAJADESKYWALKER: 'light',
+  YODADSV: 'dark',
+  LUKESTARKILLER: 'light',
+  STORMTROOPERCONCEPT: 'dark',
+  JAXXON: 'light',
+  THERONIN: 'dark',
+};
+
+// Wave calendar for the Droid Destruction raid-prep additive drops
+// (announced Oct 2026): wave number by UTC start date (MM-DD).
+const BONUS_WAVE_DATES = {
+  '10-16': 1, '10-20': 2, '10-23': 3, '10-27': 4,
+  '10-30': 5, '11-03': 6, '11-06': 7,
+};
+export function bonusWaveNumber(startMs, waveSuffix) {
+  const d = new Date(Number(startMs));
+  if (Number.isFinite(d.getTime())) {
+    const key = String(d.getUTCMonth() + 1).padStart(2, '0') + '-' + String(d.getUTCDate()).padStart(2, '0');
+    if (BONUS_WAVE_DATES[key]) return BONUS_WAVE_DATES[key];
+  }
+  const m = /^(\d{2})(\d{2})\d{2}$/.exec(String(waveSuffix ?? ''));
+  if (m && BONUS_WAVE_DATES[`${m[1]}-${m[2]}`]) return BONUS_WAVE_DATES[`${m[1]}-${m[2]}`];
+  return null;
+}
+
+// Collapse one wave's per-cost bonus events to a single schedule entry:
+// id EVENT_BONUS_WAVE_<n>_<suffix>, name "Additive Drops: Wave <n>",
+// plus a units array (shard portrait, name, battle types, energy icon,
+// 7-star replacement) the card popup and digest embeds render. Energy
+// costs are intentionally omitted — every node of the type counts.
+// Non-bonus events pass through untouched; ordering stays deterministic.
+export function mergeBonusDrops(entries) {
+  const waves = new Map();
+  const rest = [];
+  for (const e of entries ?? []) {
+    const p = parseBonusDropId(e?.id);
+    if (!p || !Number.isFinite(e?.startMs) || !Number.isFinite(e?.endMs)) {
+      rest.push(e);
+      continue;
+    }
+    const key = `${e.startMs}|${e.endMs}`;
+    let w = waves.get(key);
+    if (!w) {
+      w = { startMs: e.startMs, endMs: e.endMs, live: e.live,
+        art: e.art, suffix: p.wave, units: new Map() };
+      waves.set(key, w);
+    }
+    let u = w.units.get(p.unit);
+    if (!u) {
+      u = { unit: p.unit, costs: new Map() };
+      w.units.set(p.unit, u);
+    }
+    if (!u.costs.has(p.category)) u.costs.set(p.category, new Set());
+    u.costs.get(p.category).add(p.cost);
+  }
+  const merged = [...waves.values()].map(w => {
+    const units = [...w.units.values()].map(u => {
+      const cats = BONUS_CATEGORY_ORDER.filter(cat => u.costs.has(cat));
+      // Light + Dark hard battles always pair up as one LS/DS entry.
+      const labels = [];
+      if (cats.includes('HARD_LIGHT') && cats.includes('HARD_DARK')) {
+        labels.push('LS/DS Hard Battles');
+      } else {
+        for (const cat of cats) {
+          if (cat === 'HARD_LIGHT' || cat === 'HARD_DARK') labels.push(BONUS_CATEGORY_META[cat].battles);
+        }
+      }
+      for (const cat of cats) {
+        if (cat !== 'HARD_LIGHT' && cat !== 'HARD_DARK') labels.push(BONUS_CATEGORY_META[cat].battles);
+      }
+      const firstCat = cats[0];
+      const meta = BONUS_CATEGORY_META[firstCat];
+      const unit = {
+        unit: u.unit,
+        name: bonusUnitName(u.unit),
+        alignment: BONUS_UNIT_ALIGNMENT[u.unit] || 'light',
+        portrait: `live/bonus-${u.unit.toLowerCase()}.png`,
+        details: labels.join(' + '),
+        energy: meta.icon,
+        energyLabel: meta.energy,
+        // Energy order (regular, Cantina, Mod, Ship), then name — the
+        // same order the announcements list them in.
+        _rank: BONUS_CATEGORY_ORDER.indexOf(firstCat),
+      };
+      if (BONUS_MAXED_DROP[u.unit]) unit.maxed = BONUS_MAXED_DROP[u.unit];
+      return unit;
+    });
+    units.sort((a, b) => a._rank - b._rank || a.name.localeCompare(b.name));
+    for (const u of units) delete u._rank;
+    const n = bonusWaveNumber(w.startMs, w.suffix);
+    const out = {
+      id: n ? `EVENT_BONUS_WAVE_${n}_${w.suffix}` : `EVENT_BONUS_${w.suffix}`,
+      name: n ? `Additive Drops: Wave ${n}` : 'Additive Drops',
+      kind: 'event',
+      units,
+      startMs: w.startMs,
+      endMs: w.endMs,
+      live: w.live,
+      fit: true,
+    };
+    if (w.art !== undefined) out.art = w.art;
+    out.assetName = BONUS_WAVE_ART;
+    return out;
+  });
+  return [...rest, ...merged].sort((a, b) => a.startMs - b.startMs || String(a.id).localeCompare(String(b.id)));
+}
 // say (only true marquees carry marqueeUnitBaseId). Lets the page
 // match journey-ish events to their rotation slots by unit instead of
 // fragile name guessing (tex.events_darthjarjar -> DARTHJARJAR).
@@ -193,7 +417,9 @@ export function selectLiveEvents(gameEvents, nameMap, nowMs) {
     });
   }
   out.sort((a, b) => a.startMs - b.startMs);
-  return out;
+  // Bonus drops arrive per node-cost; the schedule shows one card per
+  // unit per wave instead (see mergeBonusDrops).
+  return mergeBonusDrops(out);
 }
 
 export function artSlug(assetName) {
@@ -214,7 +440,106 @@ const ART_OVERRIDES = {
   CONQUEST_VOL24: ['conquestpass_promo_basic_01', 'conquestpass_promo_plus_01'],
 };
 
-// Downloads each event's game texture via swgoh-ae2 into
+// Portrait cleanup for the wave popup shard icons: the game portrait
+// textures ship on opaque black backdrops, which would fill the shard
+// circle. Edge-seeded flood fill through near-black clears the backdrop
+// (never touching the character — dark units like Vader stay intact),
+// then a soft dark-slate disc goes behind the bust so any residual
+// vignette melts invisibly into the shard interior. The pixel pass is
+// pure and unit-tested; tol caps how bright "background" may be
+// (higher eats dark helmets).
+export function cutoutPortraitPixels(data, w, h, tol = 16) {
+  const src = Buffer.from(data);
+  const seen = new Uint8Array(w * h);
+  const stack = [];
+  const push = (x, y) => {
+    const i = y * w + x;
+    if (!seen[i] && Math.max(src[i * 4], src[i * 4 + 1], src[i * 4 + 2]) <= tol) {
+      seen[i] = 1;
+      stack.push(i);
+    }
+  };
+  for (let x = 0; x < w; x++) { push(x, 0); push(x, h - 1); }
+  for (let y = 0; y < h; y++) { push(0, y); push(w - 1, y); }
+  while (stack.length) {
+    const i = stack.pop();
+    const x = i % w, y = Math.floor(i / w);
+    if (x + 1 < w) push(x + 1, y);
+    if (x > 0) push(x - 1, y);
+    if (y + 1 < h) push(x, y + 1);
+    if (y > 0) push(x, y - 1);
+  }
+  const out = Buffer.from(src);
+  const cx = (w - 1) / 2, cy = (h - 1) / 2, r = w / 2;
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      const i = y * w + x;
+      if (!seen[i]) continue;
+      const d = Math.hypot(x - cx, y - cy) / r;
+      const a = d <= 0.84 ? 255 : d >= 0.92 ? 0 : Math.round(255 * (0.92 - d) / 0.08);
+      out[i * 4] = 22; out[i * 4 + 1] = 28; out[i * 4 + 2] = 44; out[i * 4 + 3] = a;
+    }
+  }
+  return out;
+}
+
+export async function cutoutPortrait(pngBuffer, tol = 16) {
+  const sharp = (await import('sharp')).default;
+  const { data, info } = await sharp(pngBuffer).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+  const out = cutoutPortraitPixels(Buffer.from(data), info.width, info.height, tol);
+  return sharp(out, { raw: { width: info.width, height: info.height, channels: 4 } }).png().toBuffer();
+}
+// in the persistent live-art library and are downloaded once from the
+// same CDN source as the squad portrait atlas; the committed
+// squad-planner.json maps each unit to its texture. Units that resolve
+// to nothing lose the portrait field so the popup never renders a
+// broken image. opts override the directory + planner path (tests).
+export async function ensureBonusPortraits(events, opts = {}) {
+  const { pathToFileURL, fileURLToPath } = await import('node:url');
+  const path = await import('node:path');
+  const { mkdir, readFile, writeFile } = await import('node:fs/promises');
+  const { existsSync } = await import('node:fs');
+  const rawDir = opts.artDir ?? LIVE_ART_DIR;
+  const dirUrl = rawDir instanceof URL ? rawDir
+    : String(rawDir).startsWith('file:') ? new URL(String(rawDir))
+    : pathToFileURL(String(rawDir));
+  const dirPath = fileURLToPath(dirUrl);
+  await mkdir(dirUrl, { recursive: true });
+  let planner = opts.planner;
+  if (!planner) {
+    try {
+      planner = JSON.parse(await readFile(new URL('../assets/data/squad-planner.json', import.meta.url), 'utf8'));
+    } catch {
+      planner = null;
+    }
+  }
+  const chars = new Map((planner?.characters ?? []).map(c => [c.id, c]));
+  const source = planner?.portraitSource;
+  for (const e of events ?? []) {
+    for (const u of e?.units ?? []) {
+      if (!u?.portrait) continue;
+      const file = String(u.portrait).replace(/^live\//, '');
+      if (existsSync(path.join(dirPath, file))) continue;
+      const c = chars.get(u.unit);
+      const url = c?.texture && source ? `${source}${c.texture}.png` : null;
+      let ok = false;
+      if (url) {
+        try {
+          const res = await fetch(url);
+          const buf = Buffer.from(await res.arrayBuffer());
+          if (res.ok && buf.subarray(0, 8).equals(PNG_MAGIC)) {
+            await writeFile(new URL(file, dirUrl), await cutoutPortrait(buf));
+            ok = true;
+          }
+        } catch {
+          ok = false;
+        }
+      }
+      if (!ok) delete u.portrait;
+    }
+  }
+  return events;
+}
 // assets/img/live/ and sets e.art (path relative to IMG_BASE).
 // The directory is a persistent library: files already on disk are
 // reused as-is (events rerun, so yesterday's art is tomorrow's), and
@@ -391,6 +716,7 @@ async function main() {
   const live = events.filter(e => e.live).length;
   console.log(`events: ${gameEvent.length} total -> ${events.length} scheduled (${live} live now)`);
 
+  await ensureBonusPortraits(events);
   await pullEventArt(events, metadata.assetVersion);
   const withArt = events.filter(e => e.art).length;
   console.log(`art: ${withArt}/${events.length} pulled game textures`);

@@ -9,9 +9,15 @@ import { pathToFileURL } from 'node:url';
 import vm from 'node:vm';
 import {
   artSlug,
+  bonusUnitName,
+  bonusWaveNumber,
   cleanName,
+  cutoutPortraitPixels,
+  ensureBonusPortraits,
   ensureEraIconArt,
   eventKind,
+  mergeBonusDrops,
+  parseBonusDropId,
   prettifyCodeName,
   pullEventArt,
   resolveName,
@@ -160,6 +166,143 @@ test('selectLiveEvents marks future instances as not live', () => {
   assert.equal(out[0].live, false);
 });
 
+test('parseBonusDropId reads unit, category, cost and wave from bonus ids', () => {
+  assert.deepEqual(parseBonusDropId('EVENT_4LOM_HARD_DARK_16_101626'),
+    { unit: '4LOM', category: 'HARD_DARK', cost: 16, wave: '101626' });
+  assert.deepEqual(parseBonusDropId('EVENT_ZUCKUSS_CANTINA_08_101626'),
+    { unit: 'ZUCKUSS', category: 'CANTINA', cost: 8, wave: '101626' });
+  assert.deepEqual(parseBonusDropId('EVENT_ASAJJDARKDISCIPLE_MOD_14_102026'),
+    { unit: 'ASAJJDARKDISCIPLE', category: 'MOD', cost: 14, wave: '102026' });
+  assert.equal(parseBonusDropId('EVENT_MARQUEE_X'), null);
+  assert.equal(parseBonusDropId('EVENT_BONUS_4LOM_101626'), null);
+  assert.equal(parseBonusDropId(null), null);
+});
+
+test('bonusUnitName covers the raid-prep units, falls back to title case', () => {
+  assert.equal(bonusUnitName('4LOM'), '4-LOM');
+  assert.equal(bonusUnitName('VADERDUELSEND'), "Darth Vader (Duel's End)");
+  assert.equal(bonusUnitName('RANGERZEB'), 'Zeb Orrelios (New Republic Pilot)');
+  assert.equal(bonusUnitName('SOME_NEW_UNIT'), 'Some New Unit');
+});
+
+test('bonusWaveNumber follows the announced wave calendar', () => {
+  assert.equal(bonusWaveNumber(Date.parse('2026-10-16T00:00:00Z'), '101626'), 1);
+  assert.equal(bonusWaveNumber(Date.parse('2026-10-20T00:00:00Z'), '102026'), 2);
+  assert.equal(bonusWaveNumber(Date.parse('2026-11-06T00:00:00Z'), '110626'), 7);
+  // Unknown date falls back to the id suffix, then to null.
+  assert.equal(bonusWaveNumber(Number.NaN, '102326'), 3);
+  assert.equal(bonusWaveNumber(Number.NaN, 'bogus'), null);
+});
+
+test('mergeBonusDrops collapses one wave to a single wave entry', () => {
+  const mk = id => ({ id, name: 'Bonus Drops Are Available!', kind: 'event',
+    startMs: NOW, endMs: NOW + 3 * 24 * H, live: true, art: 'live/b.png',
+    assetName: 'newsletter_bartender', iconAsset: undefined });
+  const out = mergeBonusDrops([
+    mk('EVENT_4LOM_HARD_DARK_12_101626'),
+    mk('EVENT_4LOM_HARD_LIGHT_20_101626'),
+    mk('EVENT_4LOM_HARD_DARK_16_101626'),
+    mk('EVENT_ZUCKUSS_CANTINA_08_101626'),
+    mk('EVENT_ZUCKUSS_CANTINA_10_101626'),
+    { id: 'EVENT_ASSAULT_EMPIRE', name: 'Assault', kind: 'assault', startMs: NOW, endMs: NOW + H },
+  ]);
+  assert.deepEqual(out.map(e => e.id), ['EVENT_ASSAULT_EMPIRE', 'EVENT_BONUS_WAVE_1_101626']);
+  const wave = out[1];
+  assert.equal(wave.name, 'Additive Drops: Wave 1');
+  assert.equal(wave.kind, 'event');
+  assert.equal(wave.live, true);
+  assert.equal(wave.art, 'live/b.png');
+  assert.equal(wave.assetName, 'bonus_drops');
+  assert.equal(wave.fit, true);
+  assert.ok(!('iconAsset' in wave), 'wave art is fixed, no per-event fallback');
+  assert.ok(!('unit' in wave), 'wave entries carry units, not unit');
+  assert.ok(!('details' in wave), 'no dot-separated name line on the card');
+  // Units in energy order (regular, Cantina, Mod, Ship), with shard
+  // portrait, battle types, energy icon and 7-star drop each.
+  assert.deepEqual(wave.units.map(u => u.unit), ['4LOM', 'ZUCKUSS']);
+  assert.deepEqual(wave.units[0], {
+    unit: '4LOM',
+    name: '4-LOM',
+    alignment: 'dark',
+    portrait: 'live/bonus-4lom.png',
+    details: 'LS/DS Hard Battles',
+    energy: 'live/energy-pve.png',
+    energyLabel: 'Energy',
+    maxed: 'Mk 7 Kyrotech',
+  });
+  assert.equal(wave.units[1].details, 'Cantina Battles');
+  assert.equal(wave.units[1].energy, 'live/energy-cantina.png');
+  assert.equal(wave.units[1].maxed, 'Mk 9 Kyrotech');
+});
+
+test('mergeBonusDrops keeps separate waves apart, numbers unknown dates last', () => {
+  const mk = (id, start) => ({ id, name: 'x', kind: 'event', startMs: start, endMs: start + H });
+  const out = mergeBonusDrops([
+    mk('EVENT_4LOM_HARD_DARK_12_101626', NOW),
+    mk('EVENT_IG90_CANTINA_08_102026', NOW + 4 * 24 * H),
+  ]);
+  assert.deepEqual(out.map(e => e.id), ['EVENT_BONUS_WAVE_1_101626', 'EVENT_BONUS_WAVE_2_102026']);
+  assert.deepEqual(out.map(e => e.name), ['Additive Drops: Wave 1', 'Additive Drops: Wave 2']);
+});
+
+test('cutoutPortraitPixels clears baked black backdrops, keeps dark characters', () => {
+  // 8x8 raw RGBA: black border backdrop, red surround, isolated black
+  // 2x2 core (a "dark helmet" not touching the border).
+  const px = [];
+  for (let y = 0; y < 8; y++) {
+    for (let x = 0; x < 8; x++) {
+      const border = x === 0 || y === 0 || x === 7 || y === 7;
+      const core = x >= 3 && x <= 4 && y >= 3 && y <= 4;
+      px.push(...(border || core ? [0, 0, 0, 255] : [200, 0, 0, 255]));
+    }
+  }
+  const out = cutoutPortraitPixels(px, 8, 8);
+  const at = (x, y) => [...out.slice((y * 8 + x) * 4, (y * 8 + x) * 4 + 4)];
+  // Backdrop corner, outside the disc: fully clear.
+  assert.deepEqual(at(0, 0), [22, 28, 44, 0]);
+  // Backdrop edge inside the feather zone: slate disc, partial strength.
+  assert.deepEqual(at(4, 0), [22, 28, 44, 115]);
+  // Isolated dark core untouched.
+  assert.deepEqual(at(3, 3), [0, 0, 0, 255]);
+  // Red surround untouched.
+  assert.deepEqual(at(2, 2), [200, 0, 0, 255]);
+});
+
+test('ensureBonusPortraits keeps on-disk files, drops unresolvable ones', async () => {  const { rm } = await import('node:fs/promises');
+  let dir = '';
+  try {
+    dir = await mkdtemp(path.join(path.resolve(tmpdir()), 'bonus-portrait-test-'));
+    const dirUrl = pathToFileURL(dir + path.sep).href;
+    await writeFile(path.join(dir, 'bonus-4lom.png'), Buffer.from([137, 80, 78, 71]));
+    const events = [{ id: 'w', units: [
+      { unit: '4LOM', portrait: 'live/bonus-4lom.png' },
+      { unit: 'NOPE', portrait: 'live/bonus-nope.png' },
+    ] }];
+    // Unreachable portrait source: missing files can never download.
+    const planner = { portraitSource: 'http://127.0.0.1:1/', characters: [] };
+    await ensureBonusPortraits(events, { artDir: dirUrl, planner });
+    assert.equal(events[0].units[0].portrait, 'live/bonus-4lom.png');
+    assert.ok(!('portrait' in events[0].units[1]));
+  } finally {
+    if (dir) await rm(dir, { recursive: true, force: true });
+  }
+});
+
+test('selectLiveEvents merges bonus drops end to end', () => {
+  const events = [
+    { id: 'EVENT_4LOM_HARD_DARK_12_101626', nameKey: 'K',
+      instance: [{ startTime: String(NOW), endTime: String(NOW + 3 * 24 * H) }] },
+    { id: 'EVENT_4LOM_HARD_LIGHT_12_101626', nameKey: 'K',
+      instance: [{ startTime: String(NOW), endTime: String(NOW + 3 * 24 * H) }] },
+  ];
+  const out = selectLiveEvents(events, new Map([['K', 'Bonus Drops Are Available!']]), NOW);
+  assert.equal(out.length, 1);
+  assert.match(out[0].id, /^EVENT_BONUS_WAVE_\d_101626$/);
+  assert.match(out[0].name, /^Additive Drops: Wave \d$/);
+  assert.equal(out[0].units.length, 1);
+  assert.equal(out[0].units[0].unit, '4LOM');
+});
+
 test('committed live-events.json is fresh and well-formed', () => {
   const data = JSON.parse(fs.readFileSync(new URL('../assets/data/live-events.json', import.meta.url), 'utf8'));
   assert.ok(Number.isFinite(data.pulledAt));
@@ -234,6 +377,89 @@ test('live cards use pulled art, falling back to bundled art', () => {
   assert.match(fallback, /events\/eraicon\.png/);
   assert.match(fallback, /xcard-rel">In 2 days</);
   assert.doesNotMatch(fallback, /xcard-cat/);
+});
+
+test('wave cards stay title-only and open the unit popup; other cards stay static', () => {
+  const { ctx } = loadRenderEngine();
+  const run = src => vm.runInContext(src, ctx);
+  const wave = run(`liveCardHTML(
+    { id: 'EVENT_BONUS_WAVE_1_101626', name: 'Additive Drops: Wave 1', kind: 'event',
+      units: [{ unit: '4LOM' }],
+      startMs: ${NOW - H}, endMs: ${NOW + H} },
+    'Now')`);
+  assert.match(wave, /<h4>Additive Drops: Wave 1<\/h4>/);
+  assert.doesNotMatch(wave, /xcard-sub/);
+  assert.match(wave, /is-clickable/);
+  assert.match(wave, /openBonusWave\('EVENT_BONUS_WAVE_1_101626'\)/);
+  const plain = run(`liveCardHTML(
+    { id: 'm', name: 'Blade And Bastion', kind: 'marquee', startMs: ${NOW - H}, endMs: ${NOW + H} },
+    'Now')`);
+  assert.doesNotMatch(plain, /xcard-sub/);
+  assert.doesNotMatch(plain, /openBonusWave/);
+});
+
+test('icon-style live art renders contained over a blurred fill', () => {
+  const { ctx } = loadRenderEngine();
+  const run = src => vm.runInContext(src, ctx);
+  const icon = run(`liveCardHTML(
+    { id: 'w', name: 'Additive Drops: Wave 1', kind: 'event', fit: true,
+      art: 'live/bonus-drops.png', units: [{ unit: '4LOM' }],
+      startMs: ${NOW - H}, endMs: ${NOW + H} },
+    'Now')`);
+  assert.match(icon, /<div class="xcard-art fit">/);
+  assert.match(icon, /<div class="art-fill" aria-hidden="true" style="background-image:url\(&quot;assets\/img\/live\/bonus-drops\.png&quot;\)"><\/div>/);
+  const cover = run(`liveCardHTML(
+    { id: 'm', name: 'Blade And Bastion', kind: 'marquee', art: 'live/x.png',
+      startMs: ${NOW - H}, endMs: ${NOW + H} },
+    'Now')`);
+  assert.doesNotMatch(cover, /xcard-art fit/);
+  assert.doesNotMatch(cover, /art-fill/);
+});
+
+test('detail lines still render under other live card titles', () => {
+  const { ctx } = loadRenderEngine();
+  const run = src => vm.runInContext(src, ctx);
+  const html = run(`liveCardHTML(
+    { id: 'e', name: 'Some Event', kind: 'event', details: 'Extra context',
+      startMs: ${NOW - H}, endMs: ${NOW + H} },
+    'Now')`);
+  assert.match(html, /<div class="xcard-sub">Extra context<\/div>/);
+});
+
+test('wave popup rows show shard icon, name, energy icon, nodes and 7-star drop', () => {
+  const { ctx } = loadRenderEngine();
+  const run = src => vm.runInContext(src, ctx);
+  const html = run(`bonusWaveRowsHTML({ id: 'w', name: 'Additive Drops: Wave 1', units: [
+    { unit: '4LOM', name: '4-LOM', alignment: 'dark', portrait: 'live/bonus-4lom.png',
+      details: 'LS/DS Hard Battles',
+      energy: 'live/energy-pve.png', energyLabel: 'Energy', maxed: 'Mk 7 Kyrotech' },
+    { unit: 'ZUCKUSS', name: 'Zuckuss', alignment: 'dark', portrait: 'live/bonus-zuckuss.png',
+      details: 'Cantina Battles',
+      energy: 'live/energy-cantina.png', energyLabel: 'Cantina Energy', maxed: 'Mk 9 Kyrotech' },
+  ] })`);
+  assert.match(html, /bdrop-shard dark/);
+  assert.match(html, /live\/bonus-4lom\.png/);
+  assert.match(html, /<div class="bdrop-name">4-LOM<\/div>/);
+  assert.match(html, /live\/energy-pve\.png/);
+  assert.match(html, /<span>LS\/DS Hard Battles<\/span>/);
+  assert.match(html, /<div class="bdrop-maxed">7-star: Mk 7 Kyrotech<\/div>/);
+  assert.match(html, /live\/bonus-zuckuss\.png/);
+  assert.match(html, /<div class="bdrop-maxed">7-star: Mk 9 Kyrotech<\/div>/);
+  assert.match(html, /atlases\/standard_rgba_atlas\/ShardIcon\.png/);
+  assert.equal(run(`bonusWaveRowsHTML({ id: 'x' })`), '');
+});
+
+test('wave popup passes light/neutral alignments through to the shard', () => {
+  const { ctx } = loadRenderEngine();
+  const run = src => vm.runInContext(src, ctx);
+  const html = run(`bonusWaveRowsHTML({ id: 'w', units: [
+    { unit: 'A', name: 'Light Unit', alignment: 'light' },
+    { unit: 'B', name: 'Neutral Unit', alignment: 'neutral' },
+    { unit: 'C', name: 'No Alignment' },
+  ] })`);
+  assert.match(html, /bdrop-shard light/);
+  assert.match(html, /bdrop-shard neutral/);
+  assert.doesNotMatch(html, /bdrop-shard dark/);
 });
 
 test('live card accents match the rotation families', () => {
