@@ -1,5 +1,5 @@
 {
- "pulledAt": 1792220485963,
+ "pulledAt": 1792269686848,
  "gameDataVersion": "0.40.6:i9YYIijBSxuHHNoSmCMBoQ",
  "events": [
   {
@@ -167,6 +167,16 @@
    "art": "live/events-rebelassult.png"
   },
   {
+   "id": "EVENT_RESOURCE_SMUGGLERS_RUN_2",
+   "name": "Smuggler's Run II",
+   "kind": "smugglers-run",
+   "unit": "SMUGGLERSRUN",
+   "startMs": 1792576800000,
+   "endMs": 1792663200000,
+   "live": false,
+   "art": "live/events-smugglersrun.png"
+  },
+  {
    "id": "EVENT_ASSAULT_SEPARATIST",
    "name": "Ground War Assault Battles",
    "kind": "assault",
@@ -185,6 +195,16 @@
    "endMs": 1792998000000,
    "live": false,
    "art": "live/events-galacticbounties.png"
+  },
+  {
+   "id": "EVENT_OMEGA_BATTLES_04_ENDOR",
+   "name": "Endor Omega Battles",
+   "kind": "omega",
+   "unit": "GALACTICCHALLENGESENDOR",
+   "startMs": 1792998000000,
+   "endMs": 1793084400000,
+   "live": false,
+   "art": "live/events-galacticchallenges-endor.png"
   }
  ]
 }
