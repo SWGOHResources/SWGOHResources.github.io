@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <base href="/">
+  <title>Event card backgrounds</title>
+  <link rel="stylesheet" href="/assets/css/main.css?v=46af782570">
+  <style>
+    .preview-wrap { width:100%; max-width:1100px; margin:0 auto; padding:28px; }
+    .preview-heading { display:flex; justify-content:space-between; align-items:center; gap:16px; margin-bottom:24px; }
+    h1 { font-family:var(--disp); font-size:22px; }
+    .preview-heading a { color:var(--amber); font-size:13px; }
+    .preview-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:16px; }
+    .preview-grid .xcard { width:100%; min-width:0; }
+    @media(max-width:650px) { .preview-wrap { padding:20px 16px; } .preview-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+  </style>
+</head>
+<body>
+  <main class="preview-wrap">
+    <div class="preview-heading"><h1>Event card backgrounds</h1><a href="/#date-2026-10-20">Event schedule</a></div>
+    <div class="preview-grid" id="previewCards"></div>
+  </main>
+  <script src="/assets/js/config.js?v=614845e5b0"></script>
+  <script src="/assets/js/time.js?v=24f280be9c"></script>
+  <script src="/assets/js/render.js?v=83e5290e53"></script>
+  <script>
+    const previewNow = Date.now();
+    const previewDay = getGameStatus(previewNow).currentDayStartMs;
+    const latestPinkDrop = getClientUpdateEvents(Date.parse('2026-10-14T00:00:00Z'), 3, 23).find(event => event.icon === 'datacron_set_pink');
+    const previewCard = (icon, label, date = previewDay) => explorerCardHTML({icon,label}, date, 'Now', null, previewNow);
+    document.getElementById('previewCards').innerHTML = [
+      previewCard('shipment_update', 'Previous Era Shards Added to Shipments'),
+      liveCardHTML({id:'EVENT_BONUS_PREVIEW', name:'Additive Drops', kind:'special', fit:true, startMs:previewDay, endMs:previewDay+3*86400000}, 'Now'),
+      previewCard('client_update', 'Client Update'),
+      previewCard(latestPinkDrop.icon, latestPinkDrop.label, Date.parse('2026-10-14T00:00:00Z')),
+      previewCard('datacron_set_orange', 'New Datacron Set Added (Orange)'),
+      previewCard('datacron_set_green', 'New Datacron Set Added (Green)'),
+      previewCard('datacron_set_blue', 'New Datacron Set Added (Blue)'),
+      previewCard('proving_ground', 'Proving Grounds', Date.parse('2026-11-09T00:00:00Z')),
+    ].join('');
+  </script>
+</body>
+</html>

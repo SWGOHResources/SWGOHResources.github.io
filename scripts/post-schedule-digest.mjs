@@ -29,6 +29,7 @@ const SITE_URL = (process.env.SITE_URL ?? 'https://swgohresources.github.io').re
 const MAX_EVENT_POSTS = 10;
 
 const KIND_LABEL = {
+  special: 'Special Event',
   marquee: 'Marquee',
   'era-challenge': 'Era Challenge',
   journey: 'Journey Guide',
@@ -45,6 +46,7 @@ const KIND_LABEL = {
 };
 
 const KIND_COLOR = {
+  special: 0x56B8AD,
   marquee: 0xDD7B3B,
   'era-challenge': 0xDD7B3B,
   journey: 0xDD7B3B,
@@ -165,10 +167,11 @@ async function main() {
   const off = Number.isFinite(postedOffset) ? Math.max(0, postedOffset) : 0;
   const dayStart = st.currentDayStartMs + (off * DAY_MS);
   const dayEnd = dayStart + DAY_MS;
-  const eraLen = run('eraLengthDays()');
-  const postedEraDay = ((st.eraDay - 1 + off) % eraLen + eraLen) % eraLen + 1;
-  const postedEp = Math.floor((postedEraDay - 1) / run('episodeLengthDays()')) + 1;
-  const postedDayInEp = ((postedEraDay - 1) % run('episodeLengthDays()')) + 1;
+  const info = run(`scheduleInfoForDay(${dayStart})`);
+  const eraLen = info.era ? info.era.lengthDays : st.eraLength;
+  const postedEraDay = info.eraDay;
+  const postedEp = info.episode;
+  const postedDayInEp = info.dayInEp;
 
   let state = null;
   try {
@@ -176,18 +179,18 @@ async function main() {
   } catch {
     state = null;
   }
-  const dayKey = `${postedEraDay}/${st.currentEraStartMs}`;
+  const dayKey = `${dayStart}`;
   if (state?.lastPostedDay === dayKey) {
     console.log(`DIGEST=none (already posted for ${dayKey})`);
     return;
   }
 
   const eraLength = eraLen;
-  const eraName = run(`typeof ERA_NAME !== 'undefined' ? ERA_NAME : 'Current Era'`);
+  const eraName = info.era ? info.era.name : 'Upcoming era';
   // Rollover day (the last game day closes at this changeover) — the
   // same date the Important Dates card and the hero end label show.
-  const eraEndMs = st.currentEraStartMs + eraLength * DAY_MS;
-  const era = `${eraName} — Day ${postedEraDay}/${eraLength} · ends ${run(`fmtDayMonthUTC(${eraEndMs})`)}`;
+  const eraEndMs = info.era ? info.era.endMs : st.eraEndMs;
+  const era = info.era ? `${eraName} — Day ${postedEraDay}/${eraLength} · ends ${run(`fmtDayMonthUTC(${eraEndMs})`)}` : `${eraName} — details TBA`;
 
   const gac = run(`getGacStatus(getGameStatus(${nowMs}))`);
   const gacLine = `${gac.main} — ${gac.sub}`;
@@ -204,7 +207,7 @@ async function main() {
     tw = phase.complete ? 'Complete' : `TW ${labels[phase.phaseIndex] ?? ''} phase`.trim();
   }
 
-  const cq = run(`conquestInfoForDay(${postedEp}, ${postedDayInEp})`);
+  const cq = run(`conquestInfoForDay(${info.rotationEpisode}, ${postedDayInEp})`);
   const conquest = cq ? `C${cq.cNum} — Day ${cq.day} of ${cq.total}${cq.finalDay ? ' (final day)' : ''} — ${cq.note}` : null;
   const dateLabel = run(`fmtDateLongUTC(${dayStart})`);
 

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta name="swgoh-asset-v" content="f5d574dd2c">
+    <meta name="swgoh-asset-v" content="e92e540322">
   <meta charset="UTF-8">
   <base href="/">
   <script src="/assets/js/clean-urls.js?v=b3d876d73a"></script>
@@ -52,7 +52,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@700;800&family=Inter:wght@400;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/main.css?v=9b4f0ec787">
+  <link rel="stylesheet" href="assets/css/main.css?v=a6621baa92">
+<link rel="stylesheet" href="assets/css/game-events.cfd3fa6f29.css?v=3eec6b6a09">
 </head>
 <body>
 
@@ -137,19 +138,6 @@
     </div>
   </section>
 
-  <div class="hero-grid" id="statusDashboard">
-  </div>
-
-  <!-- Unit Unlock Windows -->
-  <section aria-label="Important dates">
-  <div class="section-head">
-    <h2>Important Dates</h2>
-    <div class="rule"></div>
-  </div>
-  <div class="hero-grid unlock-grid" id="unlockWindows">
-  </div>
-  </section>
-
   <!-- Day-by-day schedule explorer -->
   <section aria-label="Event Schedule explorer">
   <div class="section-head">
@@ -170,7 +158,7 @@
     <div class="explorer-tools" id="explorerTools">
       <div class="jump-field jump-field-day">
         <label class="day-jump-label" for="dayJump">Jump to day</label>
-        <select class="tz-select day-jump" id="dayJump" aria-label="Jump to an era day" oninput="onJumpSelect(this)" onchange="onJumpSelect(this)"></select>
+        <select class="tz-select day-jump" id="dayJump" aria-label="Jump to a schedule date" oninput="onJumpSelect(this)" onchange="onJumpSelect(this)"></select>
       </div>
       <div class="jump-field jump-field-event">
         <label class="day-jump-label" for="eventJump">Jump to event</label>
@@ -179,6 +167,18 @@
       <button type="button" class="day-today" id="dayToday" onclick="jumpExplorer(0)">Today</button>
     </div>
     <div class="day-detail" id="dayDetail"></div>
+  </div>
+  </section>
+
+  <!-- Unit Unlock Windows -->
+  <section aria-label="Important dates">
+  <div class="section-head">
+    <h2>Important Dates</h2>
+    <div class="rule"></div>
+  </div>
+  <div class="hero-grid unlock-grid" id="unlockWindows">
+  </div>
+  <div class="hero-grid" id="statusDashboard">
   </div>
   </section>
 
@@ -230,12 +230,12 @@
   <div class="modal wide" role="dialog" aria-modal="true" aria-labelledby="fullScheduleTitle">
     <div class="modal-head">
       <div>
-        <h3 id="fullScheduleTitle">Full Era Schedule</h3>
-        <p><span id="fullScheduleCount">All 84 days of the current Era baseline.</span> Territory Battle labels follow your saved Light/Dark selections. Expected dates — for live timings check <a href="https://swgoh.gg/events/" target="_blank" rel="noopener" style="color:var(--cyan);">swgoh.gg/events</a>.</p>
+        <h3 id="fullScheduleTitle">Full Schedule</h3>
+        <div id="fullScheduleCount"></div>
       </div>
       <button class="modal-close-x" id="closeFullScheduleBtn" aria-label="Close full era schedule"><span></span><span></span></button>
     </div>
-    <div class="sched-filters" role="group" aria-label="Filter by episode">
+    <div class="sched-filters" id="scheduleFilters" role="group" aria-label="Filter by episode">
       <button type="button" class="sf-pill active" data-ep="0" aria-pressed="true">All</button>
       <button type="button" class="sf-pill" data-ep="1" aria-pressed="false">Ep 1</button>
       <button type="button" class="sf-pill" data-ep="2" aria-pressed="false">Ep 2</button>
@@ -276,15 +276,16 @@
 </div>
 
 <div class="modal-backdrop" id="bonusWaveModal" aria-hidden="true">
-  <div class="modal bonus-modal" role="dialog" aria-modal="true" aria-labelledby="bonusWaveTitle">
-    <div class="modal-head">
-      <div>
-        <h3 id="bonusWaveTitle">Additive Drops</h3>
-        <p>This wave adds the following shards to the drop tables on the nodes below:</p>
-      </div>
-      <button class="modal-close-x" id="closeBonusWaveBtn" aria-label="Close additive drops detail"><span></span><span></span></button>
+  <div class="modal bonus-modal game-rewards-modal" role="dialog" aria-modal="true" aria-labelledby="bonusWaveTitle">
+    <div class="reward-header">
+      <h3>EVENT DETAILS</h3>
+      <button class="game-rewards-close" id="closeBonusWaveBtn" aria-label="Close event details"></button>
     </div>
-    <div class="bdrop-list" id="bonusWaveBody"></div>
+    <div class="reward-content">
+    <div class="reward-heading"><h3 id="bonusWaveTitle">Additive Drops</h3><div class="bdrop-heading-meta"><span id="bonusWaveType">Special Event</span><span id="bonusWaveCount"></span></div></div>
+    <div id="bonusWaveWindow"></div>
+    <ul class="bdrop-list" id="bonusWaveBody" aria-label="Featured units"></ul>
+    </div>
   </div>
 </div>
 
@@ -292,9 +293,9 @@
      so browsers fetch fresh copies instead of cached ones. -->
 <script src="firebase-config.js?v=2"></script>
 <script defer src="assets/js/asseturl.js?v=6ac46532a1"></script>
-<script defer src="assets/js/config.js?v=a27777d8cf"></script>
-<script defer src="assets/js/time.js?v=a8d73d9c53"></script>
-<script defer src="assets/js/render.js?v=02edbef51d"></script>
-<script defer src="assets/js/app.js?v=7715359d78"></script>
+<script defer src="assets/js/config.js?v=97ccc0897f"></script>
+<script defer src="assets/js/time.js?v=71d931162d"></script>
+<script defer src="assets/js/render.js?v=67d110855f"></script>
+<script defer src="assets/js/app.js?v=ccd0cbc237"></script>
 </body>
 </html>

@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <base href="/">
+  <title>Game event card test</title>
+  <link rel="stylesheet" href="/preview/game-event-comparison.8ac12300b7.css">
+  <link rel="stylesheet" href="/preview/game-reward-panel.css?v=1">
+</head>
+<body>
+  <main>
+    <header class="preview-header">
+      <h1>Game event card test</h1>
+      <a href="/preview/card-layout.html#day-83">Full image test</a>
+      <a href="/#date-2026-10-20">Event schedule</a>
+    </header>
+    <nav class="preview-controls" aria-label="Card examples">
+      <button type="button" data-view="reference" aria-pressed="true">Screenshot reference</button>
+      <button type="button" data-view="schedule" aria-pressed="false">Schedule cards</button>
+    </nav>
+    <div class="preview-controls image-sizing" role="group" aria-label="Image sizing">
+      <span>Image sizing</span>
+      <button type="button" data-sizing="game" aria-pressed="true">SWGOH.GG sizing</button>
+      <button type="button" data-sizing="original" aria-pressed="false">Original proportions</button>
+    </div>
+    <section id="reference" aria-label="Screenshot reference cards" class="event-grid" aria-busy="true"></section>
+    <section id="schedule" aria-label="Schedule cards" class="event-grid" hidden></section>
+  </main>
+  <dialog id="event-details" aria-labelledby="detail-title">
+    <header class="reward-header">
+      <h2 id="detail-title">POSSIBLE REWARDS</h2>
+      <form method="dialog"><button class="close" aria-label="Close rewards"></button></form>
+    </header>
+    <div class="reward-content">
+      <div class="reward-heading"><h3 id="detail-event"></h3><p id="detail-type"></p></div>
+      <div id="detail-window" hidden></div>
+      <ul class="bdrop-list" id="detail-rewards"></ul>
+      <p class="reward-empty" id="detail-empty" hidden></p>
+    </div>
+  </dialog>
+  <script src="/assets/js/config.js?v=97ccc0897f"></script>
+  <script src="/assets/js/time.js?v=24f280be9c"></script>
+  <script src="/assets/js/render.js?v=83e5290e53"></script>
+  <script src="/preview/game-event-cards.6c921eb1e7.js"></script>
+</body>
+</html>

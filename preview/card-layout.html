@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="swgoh-asset-v" content="45d865c62f">
+  <meta charset="UTF-8">
+  <base href="/">
+  <script src="/assets/js/clean-urls.js?v=b3d876d73a"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SWGOH Resources – Card layout preview</title>
+  <meta name="description" content="Star Wars: Galaxy of Heroes expected event schedule to track GAC, Territory War, Territory Battle, Conquest and Marquee events day-by-day.">
+  <link rel="canonical" href="https://swgohresources.github.io/">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="author" content="SWGOH Resources">
+  <meta name="theme-color" content="#0b0d11">
+  <meta name="color-scheme" content="dark">
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="/assets/img/icons/favicon-32.png?v=514d88f067" type="image/png" sizes="32x32">
+  <link rel="apple-touch-icon" href="/assets/img/icons/icon-180.png?v=61383800c3" sizes="180x180">
+  <link rel="manifest" href="/site.webmanifest">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="SWGOH::RESOURCES">
+  <meta property="og:locale" content="en_GB">
+  <meta property="og:title" content="SWGOH Resources – Expected Event Schedule">
+  <meta property="og:description" content="SWGOH expected event schedule for GAC, Territory War, Territory Battle, Conquest and Marquee events.">
+  <meta property="og:url" content="https://swgohresources.github.io/">
+  <meta property="og:image" content="https://swgohresources.github.io/assets/img/icons/icon-512.png">
+  <meta property="og:image:width" content="512">
+  <meta property="og:image:height" content="512">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:alt" content="SWGOH Resources event schedule icon">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="SWGOH Resources – Expected Event Schedule">
+  <meta name="twitter:description" content="SWGOH expected event schedule for GAC, Territory War, Territory Battle, Conquest and Marquee events.">
+  <meta name="twitter:image" content="https://swgohresources.github.io/assets/img/icons/icon-512.png">
+  <meta name="twitter:image:alt" content="SWGOH Resources icon">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "SWGOH::RESOURCES",
+    "url": "https://swgohresources.github.io/",
+    "description": "Star Wars: Galaxy of Heroes expected event schedule tracker.",
+    "inLanguage": "en-GB"
+  }
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@700;800&family=Inter:wght@400;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/main.css?v=46af782570">
+<link rel="stylesheet" href="/preview/card-layout.css?v=3">
+</head>
+<body class="full-image-preview">
+
+<a class="skip-link" href="/#main">Skip to expected schedule</a>
+
+<div class="starfield" id="starfield" aria-hidden="true"></div>
+
+<header class="top-header">
+  <div class="topbar">
+    <a href="/" class="topbar-title">
+      <img src="/assets/img/icons/favicon-32.png?v=514d88f067" alt="SWGOH Resources" class="topbar-logo" width="20" height="20">
+      SWGOH<span class="divider-glyph">::</span><span>RESOURCES</span>
+    </a>
+    <nav class="topbar-tabs" id="topbarTabs" aria-label="Primary">
+      <a class="tab-btn active" href="/" aria-current="page">Home</a>
+      <a class="tab-btn" href="/conquest/">Conquest</a>
+      <a class="tab-btn" href="/materials/">Materials</a>
+      <a class="tab-btn" href="/era-chart/">Era Chart</a>
+    </nav>
+    <div class="topbar-actions" id="topbarActions">
+      <select class="tz-select" id="tzSelect" aria-label="Display timezone" title="Changeovers happen at the same moment worldwide (18:00 UTC) — this only changes how times are shown"></select>
+      <button type="button" class="gear-btn" id="openAboutBtnHeader">Report Issue</button>
+      <button type="button" class="gear-btn" id="openFullScheduleBtn">Full Schedule</button>
+    </div>
+    <button class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false" aria-controls="mobilePanel"><span></span><span></span><span></span></button>
+  </div>
+  <div class="mobile-panel" id="mobilePanel">
+      <a class="mp-link active" href="/" aria-current="page">Home</a>
+      <a class="mp-link" href="/conquest/">Conquest</a>
+      <a class="mp-link" href="/materials/">Materials</a>
+      <a class="mp-link" href="/era-chart/">Era Chart</a>
+    <div class="mp-divider"></div>
+    <select class="tz-select mp-btn" id="tzSelectMobile" aria-label="Display timezone" title="Changeovers happen at the same moment worldwide (18:00 UTC) — this only changes how times are shown"></select>
+    <button type="button" class="gear-btn mp-btn" id="openAboutBtnMobile">Report Issue</button>
+    <button type="button" class="gear-btn mp-btn" id="openFullScheduleBtnMobile">Full Schedule</button>
+  </div>
+</header>
+
+<aside class="cookie-notice" id="cookieNotice" hidden aria-label="Cookie notice">
+  <div>
+    <strong>Cookie notice</strong>
+    <p>We use one essential cookie to remember this notice. Schedule preferences stay on your device.</p>
+  </div>
+  <div class="cookie-actions">
+    <a href="/cookie-policy/">Cookie policy</a>
+    <button class="btn primary" id="dismissCookieNotice" type="button">Got it</button>
+  </div>
+</aside>
+
+<main class="wrap" id="main">
+
+  <div class="stale-banner" id="staleBanner" hidden role="alert">
+    <span class="en-dot" aria-hidden="true">!</span>
+    <p id="staleBannerText">This era has ended — dates below may be inaccurate until the schedule is updated.</p>
+  </div>
+
+  <section class="merged-hero" id="mergedHero" aria-label="Era progress">
+    <div class="mh-left">
+      <h1 class="mh-tag" id="eraTitle">Event Schedule</h1>
+      <div class="mh-title-row">
+        <div class="mh-main-val">Day <span id="mhDayVal">--</span><span class="mh-of" id="mhOfVal">/ 84</span></div>
+      </div>
+      <p class="mh-sub">Episode <span id="mhEpVal">--</span> · Week <span id="mhWeekVal">--</span> · In-game <span id="mhWeekdayVal">--</span></p>
+      <div class="mh-progress-wrap">
+        <div class="mh-progress-bar">
+          <div class="mh-progress-fill" id="mhFill" style="width: 0%"></div>
+        </div>
+        <div class="mh-progress-labels">
+          <span id="mhStartDate">Start</span>
+          <span class="mh-remaining" id="mhDaysRemaining">-- days left in Era</span>
+          <span id="mhEndDate">End</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="mh-right">
+      <div class="cb-text">
+        <div class="cb-label" id="cbLabel">Next Changeover (18:00 UTC)</div>
+        <div class="cb-sub">Era Day & Episode Changeover</div>
+      </div>
+      <div class="cb-timer" id="countdown">--:--:--</div>
+    </div>
+  </section>
+
+  <div class="hero-grid" id="statusDashboard">
+  </div>
+
+  <!-- Unit Unlock Windows -->
+  <section aria-label="Important dates">
+  <div class="section-head">
+    <h2>Important Dates</h2>
+    <div class="rule"></div>
+  </div>
+  <div class="hero-grid unlock-grid" id="unlockWindows">
+  </div>
+  </section>
+
+  <!-- Day-by-day schedule explorer -->
+  <section aria-label="Event Schedule explorer">
+  <div class="section-head">
+    <h2>Event Schedule</h2>
+    <div class="rule"></div>
+  </div>
+  <div class="card-layout-switch" role="group" aria-label="Card layout"><button class="gear-btn" id="previewCurrentLayout" type="button" aria-pressed="false">Current layout</button><button class="gear-btn" id="previewFullImage" type="button" aria-pressed="true">Full image layout</button></div>
+  <div class="explorer">
+    <div class="explorer-note" role="note">
+      <span class="en-dot" aria-hidden="true">!</span>
+      <p>Days roll over at 18:00 UTC. Cards with a start/end time come from live game data; times below show in your selected timezone.</p>
+    </div>
+    <div class="explorer-nav">
+      <button type="button" class="day-arrow" id="dayPrev" onclick="shiftExplorer(-1)" aria-label="Previous day" title="Previous day">←</button>
+      <div class="day-strip" id="dayStrip" role="group" aria-label="Choose a day"></div>
+      <button type="button" class="day-arrow" id="dayNext" onclick="shiftExplorer(1)" aria-label="Next day" title="Next day">→</button>
+    </div>
+    <button type="button" class="jump-toggle" id="jumpToggle" aria-expanded="false" aria-controls="explorerTools"><span>Jump to day / event</span><span class="jt-chev" aria-hidden="true">▾</span></button>
+    <div class="explorer-tools" id="explorerTools">
+      <div class="jump-field jump-field-day">
+        <label class="day-jump-label" for="dayJump">Jump to day</label>
+        <select class="tz-select day-jump" id="dayJump" aria-label="Jump to a schedule date" oninput="onJumpSelect(this)" onchange="onJumpSelect(this)"></select>
+      </div>
+      <div class="jump-field jump-field-event">
+        <label class="day-jump-label" for="eventJump">Jump to event</label>
+        <select class="tz-select day-jump" id="eventJump" aria-label="Jump to a marquee, journey, fleet or Proving Grounds event" oninput="onJumpSelect(this)" onchange="onJumpSelect(this)"></select>
+      </div>
+      <button type="button" class="day-today" id="dayToday" onclick="jumpExplorer(0)">Today</button>
+    </div>
+    <div class="day-detail" id="dayDetail"></div>
+  </div>
+  </section>
+
+  <!-- Coliseum bosses rotate daily — shown per day in the explorer above. -->
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-main">
+      <div class="footer-brand-col">
+        <div class="footer-brand">SWGOH<span>::</span>RESOURCES</div>
+        <p class="footer-tagline">Day-by-day GAC, Territory War, Territory Battle, Conquest and Marquee event tracker.</p>
+      </div>
+
+      <nav class="footer-links" aria-label="Footer">
+        <span class="footer-links-label">Navigate</span>
+        <a href="/">Home</a>
+        <a href="/conquest/">Conquest</a>
+        <a href="/materials/">Materials</a>
+        <a href="/era-chart/">Era Chart</a>
+      </nav>
+
+      <div class="footer-contact">
+        <div class="creator-line">Maintained by <strong>Dom</strong> — found a schedule issue?</div>
+        <button class="discord-copy-btn" onclick="copyDiscordHandle(this)" title="Click to copy Discord handle">
+          <span>@granddom</span>
+        </button>
+        <a class="discord-copy-btn" href="https://discord.gg/uE6Estxmaw" target="_blank" rel="noopener" title="Join our Discord server">
+          <span>Join our Discord</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="footer-rule"></div>
+
+    <div class="footer-legal">
+      <p class="footer-note">Schedule mixes expected rotation dates with live game data — check live event timings at <a href="https://swgoh.gg/events/" target="_blank" rel="noopener">swgoh.gg/events</a>. Fan-made planning tool for Star Wars: Galaxy of Heroes. Not affiliated with, endorsed, sponsored, or specifically approved by Electronic Arts, Capital Games, Disney, or Lucasfilm. All game assets, trademarks, and character names are property of their respective owners.</p>
+      <nav class="legal-links" aria-label="Legal"><a href="/privacy/">Privacy</a><a href="/cookie-policy/">Cookies</a><a href="/terms/">Terms</a></nav>
+      <div class="footer-bottom">
+        <span id="footerMeta"></span>
+        <span class="dot">·</span>
+        <span id="footerYear"></span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<div class="modal-backdrop" id="fullScheduleModal" aria-hidden="true">
+  <div class="modal wide" role="dialog" aria-modal="true" aria-labelledby="fullScheduleTitle">
+    <div class="modal-head">
+      <div>
+        <h3 id="fullScheduleTitle">Full Schedule</h3>
+        <div id="fullScheduleCount"></div>
+      </div>
+      <button class="modal-close-x" id="closeFullScheduleBtn" aria-label="Close full era schedule"><span></span><span></span></button>
+    </div>
+    <div class="sched-filters" id="scheduleFilters" role="group" aria-label="Filter by episode">
+      <button type="button" class="sf-pill active" data-ep="0" aria-pressed="true">All</button>
+      <button type="button" class="sf-pill" data-ep="1" aria-pressed="false">Ep 1</button>
+      <button type="button" class="sf-pill" data-ep="2" aria-pressed="false">Ep 2</button>
+      <button type="button" class="sf-pill" data-ep="3" aria-pressed="false">Ep 3</button>
+      <button type="button" class="sf-today" id="scheduleTodayBtn">Today</button>
+    </div>
+    <div class="full-schedule-wrap" tabindex="0" role="region" aria-label="Full era schedule timeline">
+      <div class="timeline" id="fullSchedule"></div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="aboutModal" aria-hidden="true">
+  <div class="modal about-modal" role="dialog" aria-modal="true" aria-labelledby="aboutModalTitle">
+    <div class="about-head">
+      <h3 id="aboutModalTitle">Report an Issue</h3>
+      <button class="modal-close-x" id="closeAboutBtn" aria-label="Close report an issue dialog"><span></span><span></span></button>
+    </div>
+
+    <p class="about-sub">
+      Found a schedule issue? Message <strong>Dom</strong> on Discord:
+    </p>
+
+    <div class="about-discord">
+      <span class="about-discord-label">Discord</span>
+      <button class="discord-copy-btn" onclick="copyDiscordHandle(this)">
+        <span>@granddom</span>
+      </button>
+      <a class="discord-copy-btn" href="https://discord.gg/uE6Estxmaw" target="_blank" rel="noopener" title="Join our Discord server">
+        <span>Join our Discord</span>
+      </a>
+    </div>
+
+    <div class="about-actions">
+      <button class="btn primary" id="closeAboutBtn2">Close</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="bonusWaveModal" aria-hidden="true">
+  <div class="modal bonus-modal" role="dialog" aria-modal="true" aria-labelledby="bonusWaveTitle">
+    <div class="modal-head">
+      <div>
+        <div class="bdrop-heading-meta"><span>Special Event</span><span id="bonusWaveCount"></span></div>
+        <h3 id="bonusWaveTitle">Additive Drops</h3>
+      </div>
+      <button class="modal-close-x" id="closeBonusWaveBtn" aria-label="Close additive drops detail"><span></span><span></span></button>
+    </div>
+    <div id="bonusWaveWindow"></div>
+    <ul class="bdrop-list" id="bonusWaveBody" aria-label="Featured units"></ul>
+  </div>
+</div>
+
+<!-- ASSET_VERSION: bump ?v= on the CSS/JS links below on every deploy
+     so browsers fetch fresh copies instead of cached ones. -->
+<script src="firebase-config.js?v=2"></script>
+<script defer src="assets/js/asseturl.js?v=6ac46532a1"></script>
+<script defer src="assets/js/config.js?v=614845e5b0"></script>
+<script defer src="assets/js/time.js?v=24f280be9c"></script>
+<script defer src="assets/js/render.js?v=83e5290e53"></script>
+<script defer src="assets/js/app.js?v=ccd0cbc237"></script>
+<script defer src="/preview/card-layout.js?v=3"></script>
+</body>
+</html>

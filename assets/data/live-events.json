@@ -25,7 +25,7 @@
   {
    "id": "EVENT_BONUS_WAVE_1_101626",
    "name": "Additive Drops: Wave 1",
-   "kind": "event",
+   "kind": "special",
    "units": [
     {
      "unit": "4LOM",
@@ -35,7 +35,7 @@
      "details": "LS/DS Hard Battles",
      "energy": "live/energy-pve.png",
      "energyLabel": "Energy",
-     "maxed": "Mk 7 Kyrotech"
+     "maxed": "Mk 7 Kyrotech Salvage"
     },
     {
      "unit": "ZUCKUSS",
@@ -45,14 +45,14 @@
      "details": "Cantina Battles",
      "energy": "live/energy-cantina.png",
      "energyLabel": "Cantina Energy",
-     "maxed": "Mk 9 Kyrotech"
+     "maxed": "Mk 9 Kyrotech Salvage"
     }
    ],
    "startMs": 1792108800000,
    "endMs": 1792368000000,
    "live": true,
    "fit": true,
-   "art": "live/bonus-drops.png"
+   "art": "atlases/standard_rgba_atlas/icon_gift.png"
   },
   {
    "id": "EVENT_ASSAULT_EMPIRE",
@@ -77,7 +77,7 @@
   {
    "id": "EVENT_BONUS_WAVE_2_102026",
    "name": "Additive Drops: Wave 2",
-   "kind": "event",
+   "kind": "special",
    "units": [
     {
      "unit": "STORMTROOPERLUKE",
@@ -124,7 +124,7 @@
    "endMs": 1792713600000,
    "live": false,
    "fit": true,
-   "art": "live/bonus-drops.png"
+   "art": "atlases/standard_rgba_atlas/icon_gift.png"
   },
   {
    "id": "EVENT_FLEET_MASTERY_LEVIATHAN",

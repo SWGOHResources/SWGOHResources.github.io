@@ -211,7 +211,7 @@ input:focus-visible, summary:focus-visible, [tabindex]:focus-visible {
 
 .mobile-panel { display: none; }
 
-@media (max-width: 760px) {
+@media (max-width: 72rem) {
   .topbar-tabs, .topbar-actions { display: none; }
   .nav-toggle { display: flex; }
   .topbar { padding: 0 16px; }
@@ -357,6 +357,7 @@ input:focus-visible, summary:focus-visible, [tabindex]:focus-visible {
 /* Dashboard cards keep natural heights — the Guild card grows with
    the TB picker instead of stretching empty space into GAC/Conquest. */
 #statusDashboard { align-items: start; }
+section[aria-label="Important dates"] .unlock-grid { margin-bottom:14px; }
 .status-card {
   background: var(--void1);
   border: 1px solid var(--border); border-radius: var(--radius-lg);
@@ -604,6 +605,31 @@ input:focus-visible, summary:focus-visible, [tabindex]:focus-visible {
   position: absolute; inset: 0; z-index: 2; width: 100%; height: 100%;
   object-fit: cover; object-position: center 15%; display: block;
 }
+.xcard-art.icon-art {
+  background: radial-gradient(ellipse at 50% 46%, #24424c 0%, #203448 50%, #202c40 78%, #151e2a 100%);
+}
+.xcard-art.drop-art .art-fill {
+  inset: 0; z-index: 2; background-size: auto 84%; background-position: center 42%;
+  filter: blur(6px) brightness(0.7) saturate(0.85);
+}
+.game-backdrop {
+  position: absolute; inset: -8px; z-index: 1;
+  background-size: auto 100%; background-position: center; background-repeat: no-repeat;
+  opacity: 0.65; filter: blur(4px) brightness(1.15) saturate(0.5);
+}
+.xcard-art.icon-art::after {
+  content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: radial-gradient(ellipse at 50% 43%, rgba(224,165,82,0.14), transparent 53%),
+    linear-gradient(180deg, rgba(24,49,69,0.5), rgba(24,49,69,0.35) 70%, rgba(10,19,29,0.55));
+}
+.xcard-art.icon-art > img {
+  inset: 8% 0 auto; height: 76%; object-fit: contain; object-position: center;
+  filter: drop-shadow(0 0 16px rgba(224,165,82,0.25));
+}
+.xcard-art.datacron-art > img {
+  inset: 5% -5% auto; width: 110%; height: auto;
+  clip-path: polygon(50% 20%, 78% 38.5%, 71.5% 63.5%, 50% 80%, 28.5% 63.5%, 22% 38.5%);
+}
 .xcard-shade {
   position: absolute; inset: 0; z-index: 3;
   background: linear-gradient(180deg, rgba(8,10,14,0.05) 55%, rgba(8,10,14,0.72) 100%);
@@ -764,6 +790,8 @@ input:focus-visible, summary:focus-visible, [tabindex]:focus-visible {
    live badge uses the boss-orange row accent. */
 .day-boss.day-live-cq { border-color: var(--purple-border); }
 .day-live-cq .db-name { color: var(--purple); }
+.day-boss.day-live-special { border-color: var(--cyan-border); }
+.day-live-special .db-name { color: var(--cyan); }
 
 /* ─── Modal Backdrop ─── */
 .modal-backdrop {
@@ -788,14 +816,23 @@ input:focus-visible, summary:focus-visible, [tabindex]:focus-visible {
 /* Additive-drop wave popup: one row per unit — shard icon, name, then
    the required energy with its icon. Shard frames mirror the conquest
    tiles (blue light / red dark). */
-.bonus-modal { max-width: 440px; width: 100%; max-height: 84vh; overflow-y: auto; }
-.bonus-modal .modal-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 6px; }
-.bonus-modal .modal-head h3 { margin-bottom: 0; }
-.bonus-modal .modal-head p { margin: 4px 0 0; font-size: 11.5px; color: var(--text2); }
-.bdrop-list { display: flex; flex-direction: column; }
-.bdrop-row { display: flex; align-items: center; gap: 12px; padding: 10px 2px; border-bottom: 1px solid var(--border); }
-.bdrop-row:last-child { border-bottom: 0; }
-.bdrop-shard { position: relative; display: block; width: 44px; height: 44px; flex: 0 0 auto; isolation: isolate; }
+.bonus-modal { max-width: 760px; width: 100%; max-height: calc(100dvh - 40px); display: flex; flex-direction: column; overflow: hidden; }
+.bonus-modal .modal-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 20px; flex-shrink: 0; }
+.bonus-modal .modal-head h3 { margin: 0; font-family: var(--disp); font-size: 21px; line-height: 1.35; }
+.bdrop-heading-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 8px; font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--cyan); }
+.bdrop-heading-meta span + span { color: var(--text3); letter-spacing: 0; text-transform: none; padding-left: 10px; border-left: 1px solid var(--border2); }
+.bdrop-window { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 0 0 20px; padding: 0 0 18px; border-bottom: 1px solid var(--border); }
+.bdrop-window dt, .bdrop-field dt { margin-bottom: 6px; font-size: 10px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text3); }
+.bdrop-window dd { font-size: 12px; color: var(--text2); line-height: 1.5; }
+.bdrop-list { display: flex; flex-direction: column; gap: 10px; min-height: 0; overflow-y: auto; padding-right: 4px; list-style: none; }
+.bdrop-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.7fr); align-items: center; gap: 20px; padding: 16px; background: var(--void2); border: 1px solid var(--border); border-radius: 10px; }
+.bdrop-unit { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.bdrop-details { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 18px; min-width: 0; }
+.bdrop-field { min-width: 0; }
+.bdrop-field dt { display: flex; align-items: center; gap: 5px; min-height: 16px; }
+.bdrop-rarity { display: inline-flex; align-items: center; gap: 2px; }
+.bdrop-rarity .bdrop-star { width: 14px; height: 14px; object-fit: contain; }
+.bdrop-shard { position: relative; display: block; width: 52px; height: 52px; flex: 0 0 auto; isolation: isolate; }
 .bdrop-shard-background { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
 /* Dark-side shards wear the game's red tint (light and neutral keep the
    base blue frame); the portrait PNGs carry their own dark disc, so the
@@ -803,11 +840,18 @@ input:focus-visible, summary:focus-visible, [tabindex]:focus-visible {
 .bdrop-shard.dark::before { content: ""; position: absolute; inset: 0; background: #ed354a; mask: url("../img/atlases/standard_rgba_atlas/ShardIcon.png") center / contain no-repeat; }
 .bdrop-shard.dark .bdrop-shard-background { filter: grayscale(1); mix-blend-mode: multiply; }
 .bdrop-shard-unit { position: absolute; top: 8%; left: 8%; width: 84%; height: 84%; object-fit: contain; }
-.bdrop-text { min-width: 0; }
-.bdrop-name { font-size: 13px; font-weight: 600; color: var(--text); }
-.bdrop-nodes { display: flex; align-items: center; gap: 5px; margin-top: 2px; font-size: 11.5px; color: var(--text2); }
-.bdrop-nodes .bdrop-energy { width: 18px; height: 18px; object-fit: contain; flex: 0 0 auto; }
-.bdrop-maxed { margin-top: 2px; font-size: 11.5px; color: var(--text2); }
+.bdrop-name { font-size: 14px; font-weight: 600; line-height: 1.45; color: var(--text); overflow-wrap: anywhere; }
+.bdrop-nodes { display: flex; align-items: flex-start; gap: 7px; font-size: 12px; line-height: 1.5; color: var(--text2); }
+.bdrop-nodes .bdrop-energy { width: 20px; height: 20px; object-fit: contain; flex: 0 0 auto; }
+.bdrop-maxed { display: flex; align-items: center; gap: 8px; font-size: 12px; line-height: 1.5; color: var(--text2); overflow-wrap: anywhere; }
+.bdrop-maxed .bdrop-reward-icon { width: 26px; height: 26px; object-fit: contain; flex: 0 0 auto; }
+@media (max-width: 620px) {
+  .bonus-modal { padding: 20px 16px; }
+  .bonus-modal .modal-head h3 { font-size: 19px; }
+  .bdrop-window { gap: 14px; }
+  .bdrop-row { grid-template-columns: 1fr; gap: 14px; padding: 14px; }
+  .bdrop-details { padding-top: 12px; border-top: 1px solid var(--border); gap: 16px; }
+}
 .modal.wide { max-width: 920px; padding: 20px; display: flex; flex-direction: column; max-height: 84vh; }
 .modal.wide .modal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
 .modal.wide .modal-head h3 { margin-bottom: 0; }

@@ -1,0 +1,11 @@
+.card-layout-switch { display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin-bottom:14px; }
+.card-layout-switch button[aria-pressed="true"] { color:var(--amber); border-color:var(--amber-border); background:var(--amber-dim); }
+.full-image-preview .xcard-deck { align-items:stretch; }
+.full-image-preview .xcard { content-visibility:visible; }
+.full-image-preview .xcard-art { aspect-ratio:1 / 2; }
+.full-image-preview .xcard-art:not(.fit) { padding:0; }
+.full-image-preview .xcard-art:not(.fit) > img {
+  position:absolute; inset:0; width:100%; height:100%; object-fit:contain; object-position:center; display:block;
+}
+.full-image-preview .drop-art .art-fill { background-size:84% auto; background-position:center 46%; }
+.full-image-preview .datacron-art > img { top:46%; transform:translateY(-50%); }

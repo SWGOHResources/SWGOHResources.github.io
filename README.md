@@ -163,11 +163,20 @@ GitHub Pages.
 
 The day-by-day explorer overlays `assets/data/live-events.json` on top
 of the expected rotation: live events render first as standard cards
-with the same relative-day pill as hardcoded cards, then the rotation
-cards. A day shows full live cards only
-for what happens on it (events starting or ending that day); events
-running longer than 24h also sit in the indicators row as badges shaped
-like the coliseum boss, with their art and a "Day X of Y" caption.
+with the same game-style layout and relative-time label as rotation cards.
+Artwork fills the complete portrait panel, matching SWGOH.GG sizing; icon
+events share a tinted cantina backdrop with a clear foreground asset.
+Details buttons open a game-styled panel with exact event timing and the
+additive-drop unit, farming and replacement-reward rows where available.
+Each configured episode gets a start card without extending beyond its era.
+A day shows cards for events starting that day and multi-day events with
+daily activity, including marquees, era challenges, journeys, Conquest and
+bonus drops. Short events do not repeat merely because their end time falls
+on the following calendar day. Live event windows replace matching rotation
+estimates, and each card retains its original start and end dates. Only the
+Coliseum boss remains in the indicators row. The schedule sits directly below
+era progress; Important Dates contains date cards followed by Conquest, GAC
+and Guild mode status.
 Where a live card covers a rotation entry (same smuggling run, marquee,
 fleet ship…) the rotation card is suppressed so nothing shows twice.
 Rotation marquee, era-challenge and journey-guide slots are matched to
@@ -334,9 +343,15 @@ action now lands inside one or two frames.
 ## Editing rotation
 
 - New Era: `ERA_NAME`, `ERA_START_DATE` in `config.js`, plus
-  `EPISODE_OVERRIDES`, `MARQUEE_NAMES`, `DATACRON_SETS`. Hero title,
-  day counts (`/ 84`), week counts, timeline subtitle and changeover
-  labels update automatically — no HTML edits needed.
+  `EPISODE_OVERRIDES`, `MARQUEE_NAMES`, `DATACRON_SETS` define the original
+  rotation baseline. Add subsequent eras to `ERA_SCHEDULES` with their
+  own start date, length, pinned icon, Journey Guide unit (`null` when
+  absent), and day-indexed event list. Do not overwrite the previous
+  era's record or its icon. The active era changes at 18:00 UTC; end
+  markers appear on the actual rollover date. The explorer and full
+  schedule include at least `SCHEDULE_LOOKAHEAD_DAYS` ahead and use
+  stable `#date-YYYY-MM-DD` links outside the active era. Recurring
+  events continue into unannounced eras without repeating old era units.
 - New GAC season: `GAC_CYCLE_START_DATE`.
 - Fleet ships (Executor day 15, Leviathan day 20, Profundity last day):
   `MONTHLY_EVENTS` in `config.js`.

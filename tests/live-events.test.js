@@ -44,8 +44,14 @@ test('eventKind categorises known id families', () => {
   assert.equal(eventKind('EVENT_RESOURCE_SMUGGLERS_RUN'), 'smugglers-run');
   assert.equal(eventKind('CHAMPIONSHIPS_GRAND_ARENA_GA2_EVENT_SEASON_83'), 'gac');
   assert.equal(eventKind('CONQUEST_VOL24'), 'conquest');
+  assert.equal(eventKind('CONQUEST_UNIT_TRIALS'), 'proving-grounds');
+  assert.equal(eventKind('CONQUEST_UNIT_TRIALS_PASS_PLUS'), 'proving-grounds');
   assert.equal(eventKind('challenge_XP'), 'daily-challenge');
   assert.equal(eventKind('SOMETHING_ELSE'), 'event');
+  for (const id of ['EVENT_BONUS_WAVE_1_101626', 'EVENT_4LOM_HARD_DARK_12_101626',
+    'EVENT_ADDITIVE_DROPS_WEEKEND', 'EVENT_DOUBLE_DROPS_WEEKEND', 'EVENT_TRIPLE_DROPS_WEEKEND']) {
+    assert.equal(eventKind(id), 'special');
+  }
 });
 
 test('resolveName maps code names to display names', () => {
@@ -209,10 +215,10 @@ test('mergeBonusDrops collapses one wave to a single wave entry', () => {
   assert.deepEqual(out.map(e => e.id), ['EVENT_ASSAULT_EMPIRE', 'EVENT_BONUS_WAVE_1_101626']);
   const wave = out[1];
   assert.equal(wave.name, 'Additive Drops: Wave 1');
-  assert.equal(wave.kind, 'event');
+  assert.equal(wave.kind, 'special');
   assert.equal(wave.live, true);
-  assert.equal(wave.art, 'live/b.png');
-  assert.equal(wave.assetName, 'bonus_drops');
+  assert.equal(wave.art, 'atlases/standard_rgba_atlas/icon_gift.png');
+  assert.ok(!('assetName' in wave), 'wave uses the bundled game icon');
   assert.equal(wave.fit, true);
   assert.ok(!('iconAsset' in wave), 'wave art is fixed, no per-event fallback');
   assert.ok(!('unit' in wave), 'wave entries carry units, not unit');
@@ -228,11 +234,11 @@ test('mergeBonusDrops collapses one wave to a single wave entry', () => {
     details: 'LS/DS Hard Battles',
     energy: 'live/energy-pve.png',
     energyLabel: 'Energy',
-    maxed: 'Mk 7 Kyrotech',
+    maxed: 'Mk 7 Kyrotech Salvage',
   });
   assert.equal(wave.units[1].details, 'Cantina Battles');
   assert.equal(wave.units[1].energy, 'live/energy-cantina.png');
-  assert.equal(wave.units[1].maxed, 'Mk 9 Kyrotech');
+  assert.equal(wave.units[1].maxed, 'Mk 9 Kyrotech Salvage');
 });
 
 test('mergeBonusDrops keeps separate waves apart, numbers unknown dates last', () => {
@@ -301,6 +307,12 @@ test('selectLiveEvents merges bonus drops end to end', () => {
   assert.match(out[0].name, /^Additive Drops: Wave \d$/);
   assert.equal(out[0].units.length, 1);
   assert.equal(out[0].units[0].unit, '4LOM');
+  assert.equal(out[0].kind, 'special');
+  const named = selectLiveEvents([
+    { id: 'WEEKEND_PROMO', nameKey: 'D', instance: events[0].instance },
+  ], new Map([['D', 'Double Drops']]), NOW);
+  assert.equal(named[0].kind, 'special');
+  assert.equal(named[0].art, 'atlases/standard_rgba_atlas/icon_gift.png');
 });
 
 test('committed live-events.json is fresh and well-formed', () => {
@@ -398,7 +410,7 @@ test('wave cards stay title-only and open the unit popup; other cards stay stati
   assert.doesNotMatch(plain, /openBonusWave/);
 });
 
-test('icon-style live art renders contained over a blurred fill', () => {
+test('drop cards layer their gift over the shared backdrop and keep the Special Event category', () => {
   const { ctx } = loadRenderEngine();
   const run = src => vm.runInContext(src, ctx);
   const icon = run(`liveCardHTML(
@@ -406,8 +418,21 @@ test('icon-style live art renders contained over a blurred fill', () => {
       art: 'live/bonus-drops.png', units: [{ unit: '4LOM' }],
       startMs: ${NOW - H}, endMs: ${NOW + H} },
     'Now')`);
-  assert.match(icon, /<div class="xcard-art fit">/);
-  assert.match(icon, /<div class="art-fill" aria-hidden="true" style="background-image:url\(&quot;assets\/img\/live\/bonus-drops\.png&quot;\)"><\/div>/);
+  assert.match(icon, /<div class="xcard-art fit icon-art drop-art">/);
+  assert.match(icon, /game-backdrop/);
+  assert.doesNotMatch(icon, /art-fill/);
+  assert.match(icon, /<img src="[^" ]*atlases\/standard_rgba_atlas\/icon_gift\.png/);
+  assert.match(icon, /Special Event/);
+  assert.match(icon, /--accent:var\(--cyan\)/);
+  for (const name of ['Additive Drops', 'Bonus Drops', 'Double Drops', 'Triple Drops']) {
+    const html = run(`liveCardHTML({ id: 'drop', name: ${JSON.stringify(name)}, kind: 'event',
+      art: 'live/old-promo.png', startMs: ${NOW - H}, endMs: ${NOW + H} }, 'Now')`);
+    assert.match(html, /xcard-art fit/);
+    assert.match(html, /atlases\/standard_rgba_atlas\/icon_gift\.png/);
+    assert.match(html, /Special Event/);
+    assert.doesNotMatch(html, /old-promo/);
+  }
+  assert.equal(run(`isDropEvent({ name: 'Bonus Proving Grounds' })`), false);
   const cover = run(`liveCardHTML(
     { id: 'm', name: 'Blade And Bastion', kind: 'marquee', art: 'live/x.png',
       startMs: ${NOW - H}, endMs: ${NOW + H} },
@@ -432,19 +457,25 @@ test('wave popup rows show shard icon, name, energy icon, nodes and 7-star drop'
   const html = run(`bonusWaveRowsHTML({ id: 'w', name: 'Additive Drops: Wave 1', units: [
     { unit: '4LOM', name: '4-LOM', alignment: 'dark', portrait: 'live/bonus-4lom.png',
       details: 'LS/DS Hard Battles',
-      energy: 'live/energy-pve.png', energyLabel: 'Energy', maxed: 'Mk 7 Kyrotech' },
+      energy: 'live/energy-pve.png', energyLabel: 'Energy', maxed: 'Mk 7 Kyrotech Salvage' },
     { unit: 'ZUCKUSS', name: 'Zuckuss', alignment: 'dark', portrait: 'live/bonus-zuckuss.png',
       details: 'Cantina Battles',
-      energy: 'live/energy-cantina.png', energyLabel: 'Cantina Energy', maxed: 'Mk 9 Kyrotech' },
+      energy: 'live/energy-cantina.png', energyLabel: 'Cantina Energy', maxed: 'Mk 9 Kyrotech Salvage' },
   ] })`);
   assert.match(html, /bdrop-shard dark/);
   assert.match(html, /live\/bonus-4lom\.png/);
-  assert.match(html, /<div class="bdrop-name">4-LOM<\/div>/);
+  assert.match(html, /<h4 class="bdrop-name">4-LOM<\/h4>/);
   assert.match(html, /live\/energy-pve\.png/);
   assert.match(html, /<span>LS\/DS Hard Battles<\/span>/);
-  assert.match(html, /<div class="bdrop-maxed">7-star: Mk 7 Kyrotech<\/div>/);
+  assert.match(html, /<dt>Farm in<\/dt>/);
+  assert.match(html, /aria-label="7 stars"/);
+  assert.match(html, /atlases\/standard_rgba_atlas\/icon_rendered_star\.png/);
+  assert.doesNotMatch(html, /★/);
+  assert.match(html, /class="bdrop-reward-icon" src="assets\/img\/live\/reward-shockprod-salvage\.png"/);
+  assert.match(html, /<span>Mk 7 Kyrotech Salvage<\/span>/);
   assert.match(html, /live\/bonus-zuckuss\.png/);
-  assert.match(html, /<div class="bdrop-maxed">7-star: Mk 9 Kyrotech<\/div>/);
+  assert.match(html, /class="bdrop-reward-icon" src="assets\/img\/live\/reward-battlecomputer-salvage\.png"/);
+  assert.match(html, /<span>Mk 9 Kyrotech Salvage<\/span>/);
   assert.match(html, /atlases\/standard_rgba_atlas\/ShardIcon\.png/);
   assert.equal(run(`bonusWaveRowsHTML({ id: 'x' })`), '');
 });
@@ -498,7 +529,7 @@ test('assault and omega battles show yellow as Resource, not Era', () => {
     const html = run(`liveCardHTML(
       { id: 'm', name: 'Some Event', kind: '${kind}', startMs: ${NOW - H}, endMs: ${NOW + H} },
       'Now')`);
-    assert.match(html, /<div class="xcard-kicker">Resource<\/div>/, kind);
+    assert.match(html, new RegExp(`<div class="xcard-kicker">${kind === 'assault' ? 'Assault Battle' : 'Omega Battle'}<\\/div>`), kind);
     assert.match(html, /--accent:var\(--amber\)/, kind);
   }
   // Unknown kinds keep the Era fallback.
@@ -550,7 +581,7 @@ test('explorer day view overlays live events touching that day', () => {
   // Rendered: viewed day leads with live image cards carrying the same
   // relative-day pill as hardcoded cards.
   run('renderExplorer(getGameStatus())');
-  assert.match(els.dayDetail.innerHTML, /class="xcard"/);
+  assert.match(els.dayDetail.innerHTML, /class="xcard game-event-card/);
   assert.match(els.dayDetail.innerHTML, /Live Thing/);
   assert.match(els.dayDetail.innerHTML, /xcard-rel is-today">Now</);
   assert.doesNotMatch(els.dayStrip.innerHTML, /has-live/);
@@ -564,7 +595,7 @@ test('explorer renders rotation-only when no live snapshot is loaded', () => {
   assert.doesNotMatch(els.dayStrip.innerHTML, /has-live/);
 });
 
-test('mid-span long runners show as boss-row badges, not cards', () => {
+test('mid-span long runners show as cards outside the boss row', () => {
   const { ctx, els } = loadRenderEngine();
   const run = src => vm.runInContext(src, ctx);
   const dayStart = run('getGameStatus().currentDayStartMs');
@@ -577,14 +608,13 @@ test('mid-span long runners show as boss-row badges, not cards', () => {
   assert.equal(run(`splitLiveDay(liveEventsForDay(${dayStart}), ${dayStart}).starting.length`), 0);
   assert.equal(run(`splitLiveDay(liveEventsForDay(${dayStart}), ${dayStart}).ongoing.length`), 1);
   run('renderExplorer(getGameStatus())');
-  assert.match(els.dayDetail.innerHTML, /day-boss day-live/);
+  assert.doesNotMatch(els.dayDetail.innerHTML, /day-boss day-live/);
   assert.match(els.dayDetail.innerHTML, /Long Thing/);
-  assert.match(els.dayDetail.innerHTML, /Day 3 of 7/);
-  assert.doesNotMatch(els.dayDetail.innerHTML, /<h4>Long Thing<\/h4>/);
+  assert.match(els.dayDetail.innerHTML, /<article[^>]*aria-label="Long Thing"/);
   assert.doesNotMatch(els.dayStrip.innerHTML, /has-live/);
 });
 
-test('live conquest badges keep the conquest purple, others use boss orange', () => {
+test('ongoing Conquest and marquees render their own card families', () => {
   const { ctx, els } = loadRenderEngine();
   const run = src => vm.runInContext(src, ctx);
   const dayStart = run('getGameStatus().currentDayStartMs');
@@ -595,8 +625,9 @@ test('live conquest badges keep the conquest purple, others use boss orange', ()
       startMs: ${dayStart} - 2 * 86400000 + 3600000, endMs: ${dayStart} + 5 * 86400000 }
   ] }`);
   run('renderExplorer(getGameStatus())');
-  assert.match(els.dayDetail.innerHTML, /day-boss day-live day-live-cq/);
-  assert.match(els.dayDetail.innerHTML, /day-boss day-live" title="Live Marquee/);
+  assert.match(els.dayDetail.innerHTML, /<article[^>]*--accent:var\(--purple\)[^>]*aria-label="Live Conquest"/);
+  assert.match(els.dayDetail.innerHTML, /<article[^>]*aria-label="Live Marquee"/);
+  assert.doesNotMatch(els.dayDetail.innerHTML, /day-boss day-live/);
 });
 
 test('events that ended before the changeover read Expired, not Now', () => {
@@ -613,7 +644,7 @@ test('events that ended before the changeover read Expired, not Now', () => {
   assert.match(els.dayDetail.innerHTML, /xcard-rel is-expired">Expired</);
 });
 
-test('short mid-span events show nothing that day', () => {
+test('overnight events do not repeat just because they end a few hours into the next day', () => {
   const { ctx, els } = loadRenderEngine();
   const run = src => vm.runInContext(src, ctx);
   const dayStart = run('getGameStatus().currentDayStartMs');
@@ -694,10 +725,10 @@ test('rotation cards wear the matched live art and marquee name', () => {
   run('liveEventsCache = null');
   const plain = run(`explorerCardHTML({ icon: 'marquee_5', label: 'Jaxxon Marquee' }, ${dayStart}, 'Now', null, ${NOW})`);
   assert.match(plain, /live\/events-jaxxon\.png/);
-  assert.match(plain, /<h4>Jaxxon Marquee<\/h4>/);
+  assert.match(plain, /<h4>Jaxxon<\/h4>/);
 });
 
-test('ongoing live matches suppress the rotation card, badge represents', () => {
+test('ongoing live cards replace the matching rotation without badges or duplicates', () => {
   const { ctx, els } = loadRenderEngine();
   const run = src => vm.runInContext(src, ctx);
   // Era day 71 carries a journey_guide rotation card; Terrible Tings
@@ -715,7 +746,8 @@ test('ongoing live matches suppress the rotation card, badge represents', () => 
   run('renderExplorer(getGameStatus())');
   assert.doesNotMatch(els.dayDetail.innerHTML, /Journey Guide<\/h4>/);
   assert.match(els.dayDetail.innerHTML, /Terrible Tings Legendary Event/);
-  assert.match(els.dayDetail.innerHTML, /day-badge/);
+  assert.equal((els.dayDetail.innerHTML.match(/<article[^>]*aria-label="Terrible Tings Legendary Event"/g) || []).length, 1);
+  assert.doesNotMatch(els.dayDetail.innerHTML, /day-badge|day-live/);
 });
 
 test('journey rotation badge yields to the matched live event', () => {
@@ -780,7 +812,7 @@ test('live cards mirror rotation structure, art and accents', () => {
     assert.match(marquee, new RegExp(cls), cls);
   }
   assert.match(marquee, /marquee\/marquee4event\.png/);
-  assert.match(marquee, /art-badge">ERA</);
+  assert.match(marquee, /art-badge" aria-hidden="true">ERA</);
   assert.match(marquee, /<h4>Blade And Bastion<\/h4>/);
   assert.match(marquee, /xcard-rel is-today">Now</);
   assert.doesNotMatch(marquee, /xcard-cat/);
@@ -818,7 +850,7 @@ test('datacron drop cards wear the update tag, not era', () => {
   const { ctx } = loadRenderEngine();
   const run = src => vm.runInContext(src, ctx);
   const card = run(`explorerCardHTML({ icon: 'datacron_set_orange', label: 'New Datacron Set Added (Duty and Defiance)' }, ${NOW}, 'Now', null, ${NOW})`);
-  assert.match(card, /<div class="xcard-kicker">UPDATE<\/div>/);
+  assert.match(card, /<div class="xcard-kicker">Datacron Set<\/div>/);
   assert.match(card, /--accent:var\(--steel\)/);
 });
 test('live conquest surfaces wear the banner, never promo art', () => {
@@ -851,11 +883,11 @@ test('cards carry a family kicker above the title', () => {
   const { ctx } = loadRenderEngine();
   const run = src => vm.runInContext(src, ctx);
   const rotation = run(`explorerCardHTML({ icon: 'marquee_1', label: 'Marquee' }, ${NOW}, 'Now', null, ${NOW})`);
-  assert.match(rotation, /xcard-kicker">ERA</);
+  assert.match(rotation, /xcard-kicker">Special Marquee Event</);
   const live = run(`liveCardHTML(
     { id: 'm', name: 'Blade And Bastion', kind: 'marquee', startMs: ${NOW - H}, endMs: ${NOW + H} },
     'Now')`);
-  assert.match(live, /xcard-kicker">ERA</);
+  assert.match(live, /xcard-kicker">Special Marquee Event</);
 });
 
 test('TB is always Rise of the Empire with no selector buttons', () => {
@@ -919,7 +951,7 @@ test('shared fallback icons never pre-empt specific textures', async () => {
   }
 });
 
-test('live conquest suppresses the rotation conquest badge', () => {
+test('live conquest replaces the ongoing rotation Conquest card', () => {
   const { ctx, els } = loadRenderEngine();
   const run = src => vm.runInContext(src, ctx);
   // Find a visible pill day inside an active conquest run.
@@ -932,10 +964,10 @@ test('live conquest suppresses the rotation conquest badge', () => {
     return null;
   })()`);
   assert.ok(target, 'expected a conquest rotation day in range');
-  // Control: rotation badge shows without live data.
+  // Control: the ongoing rotation supplies a card without live data.
   run(`explorerOffset = ${target.o};`);
   run('renderExplorer(getGameStatus())');
-  assert.match(els.dayDetail.innerHTML, /day-conquest/);
+  assert.match(els.dayDetail.innerHTML, /data-event-rewards="conquest_start\|/);
   // With live conquest touching the day: rotation badge gone, live shown.
   run(`liveEventsCache = { pulledAt: Date.now(), gameDataVersion: 'v', events: [
     { id: 'CONQUEST_VOL24', name: 'Conquest Live', kind: 'conquest', art: 'live/x.png',
@@ -943,6 +975,7 @@ test('live conquest suppresses the rotation conquest badge', () => {
   ] };`);
   run('renderExplorer(getGameStatus())');
   assert.doesNotMatch(els.dayDetail.innerHTML, /day-conquest/);
+  assert.equal((els.dayDetail.innerHTML.match(/data-event-rewards="conquest_start\|/g) || []).length, 1);
   // Run label derives from the event's own start day — compute it the
   // same way instead of pinning a date-sensitive literal.
   const want = run(`conquestRunLabel('Conquest Live', 'CONQUEST_VOL24', conquestRunForDate(${target.dMs} - 86400000))`);
@@ -982,6 +1015,7 @@ test('era icon art tracks the newest premium era, never breaking the pull', asyn
     // Newest premium era wins and lands as era-icon.png.
     assert.equal(await ensureEraIconArt(100050, { artDir: dirUrl, aeUrl: base }), true);
     assert.ok((await readFile(path.join(dir, 'era-icon.png'))).subarray(0, 8).equals(png.subarray(0, 8)));
+    assert.deepEqual(await readFile(path.join(dir, 'era-09-icon.png')), png);
     // A failed refresh keeps the committed file and reports false.
     mode = 'down';
     assert.equal(await ensureEraIconArt(100050, { artDir: dirUrl, aeUrl: base }), false);

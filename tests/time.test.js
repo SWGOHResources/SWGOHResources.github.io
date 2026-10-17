@@ -686,7 +686,7 @@ test('bonus proving grounds runs the day before proving grounds', () => {
     start: eventDisplayMs({ icon: 'proving_ground' }, ${Date.parse('2026-08-10T00:00:00Z')}) })`);
   assert.equal(
     bonus,
-    JSON.stringify({ art: 'events/provingground.png', cat: 'conquest', start: Date.parse('2026-08-10T18:00:00Z') })
+    JSON.stringify({ art: 'live/events-stranger.png', cat: 'conquest', start: Date.parse('2026-08-10T18:00:00Z') })
   );
 });
 
@@ -913,9 +913,10 @@ test('transparent-subject cards render contained over a blurred fill', () => {
   const tall = run(`explorerCardHTML({icon:"marquee_1",label:"Marquee"}, Date.parse("2026-08-04T00:00:00Z"), "Now", null, 0)`);
   const cover = run(`explorerCardHTML({icon:"tw_offense",label:"Offense Phase Starts"}, Date.parse("2026-08-04T00:00:00Z"), "Now", null, 0)`);
   assert.ok(fit.includes('xcard-art fit'));
-  assert.ok(fit.includes('art-fill'));
+  assert.ok(fit.includes('game-backdrop'));
   assert.ok(square.includes('xcard-art fit'));
-  assert.ok(square.includes('art-fill'));
+  assert.ok(square.includes('game-backdrop'));
+  assert.ok(!square.includes('art-fill'));
   for (const plain of [tall, cover]) {
     assert.ok(!plain.includes('xcard-art fit'));
     assert.ok(!plain.includes('art-fill'));
@@ -956,23 +957,41 @@ test('datacron skip dates are validated', () => {
   assert.ok(engine.validateScheduleConfig().some(issue => issue.includes('DATACRON_SKIP_DATES[0]')));
 });
 
-test('era ends with its own card wearing the era splash', () => {
+test('The Legend Codex releases early with FDCs and expires at the game timestamp', () => {
   const { ctx, els } = loadRenderEngine();
   const run = src => vm.runInContext(src, ctx);
-  // Last day of the era (Ep3 day 28) carries the end-of-era card…
+  const release = Date.parse('2026-10-14T00:00:00Z');
+  const drops = run(`getEventsForDay(${release}, 3, 23).filter(e => e.icon.startsWith('datacron_set'))`);
+  assert.equal(drops.length, 1);
+  assert.equal(drops[0].icon, 'datacron_set_pink');
+  assert.equal(drops[0].label, 'New Datacron Set Added (The Legend Codex + FDC)');
+  assert.equal(run(`getEventsForDay(Date.parse('2026-10-21T00:00:00Z'), 1, 2).some(e => e.icon.startsWith('datacron_set'))`), false);
+  const set = run(`getCurrentDatacronSet(Date.parse('2026-12-18T12:00:00Z'))`);
+  assert.equal(set.name, 'The Legend Codex');
+  assert.equal(set.hasFDC, true);
+  assert.equal(set.expiresMs, Date.parse('2027-01-20T08:00:00Z'));
+  run(`renderUnlockWindows(getGameStatus(Date.parse('2026-12-18T12:00:00Z')))`);
+  assert.match(els.unlockWindows.innerHTML, /The Legend Codex \+ FDC expires to inbox/);
+  assert.equal(run(`assetFor('proving_ground')`), 'live/events-stranger.png');
+});
+
+test('era markers share a backdrop while retaining their own emblems', () => {
+  const { ctx, els } = loadRenderEngine();
+  const run = src => vm.runInContext(src, ctx);
   const target = run(`(() => {
     const st = getGameStatus();
-    const dMs = st.currentEraStartMs + (84 - 1) * 86400000;
-    return { o: 84 - st.eraDay, dMs };
+    const dMs = Date.parse('2026-10-20T00:00:00Z');
+    return { o: Math.round((dMs - st.currentDayStartMs) / 86400000), dMs };
   })()`);
   run(`explorerOffset = ${target.o}; renderExplorer(getGameStatus())`);
-  assert.match(els.dayDetail.innerHTML, /Ends<\/h4>/);
-  assert.match(els.dayDetail.innerHTML, /live\/era-icon\.png/);
-  // …and the changeover shares the splash instead of the tiny icon.
+  assert.match(els.dayDetail.innerHTML, /<p>Era Ends<\/p>/);
+  assert.match(els.dayDetail.innerHTML, /eras\/myths-and-legends\.png/);
   const changeover = run(`explorerCardHTML({ icon: 'era_changeover', label: 'Start of New Era' }, ${target.dMs}, 'Now', null, 0)`);
-  assert.match(changeover, /live\/era-icon\.png/);
+  assert.match(changeover, /eras\/mandalorian-and-grogu\.png/);
   assert.match(changeover, /xcard-art fit/);
-  assert.match(changeover, /art-fill/);
+  assert.match(changeover, /game-backdrop/);
+  assert.match(changeover, /squads\/cantina-background\.png/);
+  assert.doesNotMatch(changeover, /art-fill/);
   assert.ok(run('validateScheduleConfig()').length === 0);
 });
 
@@ -994,10 +1013,81 @@ test('era end uses the rollover day everywhere', () => {
   run('renderMergedHero(getGameStatus(Date.parse("2026-09-26T12:00:00Z")))');
   assert.equal(els.mhEndDate.textContent, 'Tue 20th Oct');
   assert.equal(els.staleBanner.hidden, true);
-  // Post-era: the stale banner names the same rollover day.
   run('renderMergedHero(getGameStatus(Date.parse("2026-10-21T00:00:00Z")))');
+  assert.equal(els.staleBanner.hidden, true);
+  assert.equal(els.mhEndDate.textContent, 'Tue 17th Nov');
+  run('renderMergedHero(getGameStatus(Date.parse("2026-11-18T00:00:00Z")))');
   assert.equal(els.staleBanner.hidden, false);
-  assert.match(els.staleBannerText.innerHTML, /20th October/);
+  assert.equal(els.mhEndDate.textContent, 'TBA');
+});
+
+test('the 28-day Mandalorian era activates exactly at changeover', () => {
+  const { ctx } = loadRenderEngine();
+  const run = src => vm.runInContext(src, ctx);
+  const before = run(`getGameStatus(Date.parse('2026-10-20T17:59:59Z'))`);
+  const after = run(`getGameStatus(Date.parse('2026-10-20T18:00:00Z'))`);
+  assert.equal(before.eraName, 'Era of Myths & Legends');
+  assert.equal(before.eraDay, 84);
+  assert.equal(after.eraName, 'Era of The Mandalorian and Grogu');
+  assert.equal(after.eraDay, 1);
+  assert.equal(after.eraLength, 28);
+  assert.equal(after.episode, 1);
+  assert.equal(after.era.journeyGuideUnit, null);
+  assert.equal(after.gacCycleDay, before.gacCycleDay);
+  assert.equal(after.gacFormat, before.gacFormat);
+  assert.equal(run(`getGameStatus(Date.parse('2026-11-17T17:59:59Z')).eraDay`), 28);
+  assert.equal(run(`getGameStatus(Date.parse('2026-11-17T18:00:00Z')).eraKnown`), false);
+});
+
+test('era endings fall on Tuesday and old era slots do not repeat', () => {
+  const { ctx } = loadRenderEngine();
+  const run = src => vm.runInContext(src, ctx);
+  assert.equal(run(`getEventsForDay(Date.parse('2026-10-19T00:00:00Z'), 3, 28).some(e => e.icon === 'era_end')`), false);
+  const boundary = run(`getEventsForDay(Date.parse('2026-10-20T00:00:00Z'), 1, 1)`);
+  assert.equal(boundary.filter(e => e.icon === 'era_end').length, 1);
+  assert.ok(boundary.some(e => e.icon === 'marquee_7' && e.label.includes('Adelphi Ranger')));
+  assert.ok(boundary.some(e => e.icon === 'era_changeover'));
+  assert.ok(run(`getEventsForDay(Date.parse('2026-11-03T00:00:00Z'), 1, 15).some(e => e.icon === 'marquee_8' && e.label.includes('B1 Mercenary Droid'))`));
+  for(let day = 0; day < 28; day++){
+    const items = run(`getEventsForDay(${Date.parse('2026-10-20T00:00:00Z') + day * dayMs}, 1, ${day + 1})`);
+    assert.ok(!items.some(e => /^journey_|^era_battle_|^era_challenge_|^marquee_[1-6]$/.test(e.icon)));
+  }
+  assert.equal(run(`assetFor('era_end', Date.parse('2026-10-20T00:00:00Z'))`), 'eras/myths-and-legends.png');
+  assert.equal(run(`assetFor('era_changeover', Date.parse('2026-10-20T00:00:00Z'))`), 'eras/mandalorian-and-grogu.png');
+});
+
+test('the explorer and full schedule continue across the era boundary', () => {
+  const { ctx, els } = loadRenderEngine();
+  const run = src => vm.runInContext(src, ctx);
+  run(`var fixedStatus = getGameStatus(Date.parse('2026-10-16T20:00:00Z'));
+    explorerOffset = 4; renderExplorer(fixedStatus); renderFullSchedule(fixedStatus);`);
+  assert.match(els.dayDetail.innerHTML, /Tuesday, 20th October/);
+  assert.match(els.dayDetail.innerHTML, /Era of The Mandalorian and Grogu/);
+  assert.match(els.dayDetail.innerHTML, /Adelphi Ranger/);
+  assert.match(els.dayDetail.innerHTML, /Myths &amp; Legends Ends/);
+  assert.match(els.dayStrip.innerHTML, /dp-num">20<\/span>/);
+  assert.doesNotMatch(els.dayDetail.innerHTML, /Day 1 \/ 84/);
+  assert.match(els.eventJump.innerHTML, /B1 Mercenary Droid Marquee.*Tue 3rd Nov/);
+  assert.match(els.fullSchedule.innerHTML, /Era of The Mandalorian and Grogu · Episode 1/);
+  assert.equal(run(`dateFromHash('#date-2026-10-20')`), Date.parse('2026-10-20T00:00:00Z'));
+  assert.equal(run(`dateFromHash('#date-2026-02-31')`), null);
+  run(`explorerOffset = 18; renderExplorer(fixedStatus);`);
+  assert.match(els.dayDetail.innerHTML, /B1 Mercenary Droid/);
+  assert.doesNotMatch(els.dayDetail.innerHTML, /Darth Jar Jar|The Ronin|Mara Jade Skywalker/);
+});
+
+test('unannounced eras retain recurring events without reusing era content', () => {
+  const { ctx, els } = loadRenderEngine();
+  const run = src => vm.runInContext(src, ctx);
+  const items = run(`getEventsForDay(Date.parse('2026-11-18T00:00:00Z'), 2, 2)`);
+  assert.ok(items.some(e => e.icon.startsWith('gac_')));
+  assert.ok(items.every(e => run(`categoryFor(${JSON.stringify(e.icon)})`) !== 'era'));
+  assert.ok(!items.some(e => /^(marquee_|journey_|era_challenge_|era_battle_)/.test(e.icon)));
+  run(`var futureStatus = getGameStatus(Date.parse('2026-11-24T20:00:00Z'));
+    renderStaticMeta(futureStatus); renderMergedHero(futureStatus); renderUnlockWindows(futureStatus);`);
+  assert.equal(els.eraTitle.textContent, 'Event Schedule for Upcoming era');
+  assert.equal(els.mhEndDate.textContent, 'TBA');
+  assert.match(els.unlockWindows.innerHTML, /data-clock="era-end">TBA/);
 });
 
 test('footer flags live data older than 48h', () => {
@@ -1054,7 +1144,8 @@ test('era battle slots carry event names and match live events', () => {
   // Labels bracket the configured event name, tensing like other cards.
   const day = Date.parse('2026-09-14T00:00:00Z');
   const card = run(`explorerCardHTML({ icon: 'era_battle_1', label: 'Era Battle 1 (Call Answered) Starts' }, ${day}, 'Now', null, ${day})`);
-  assert.match(card, /<h4>Era Battle 1 \(Call Answered\) Starts<\/h4>/);
+  assert.match(card, /<h4>Call Answered<\/h4>/);
+  assert.match(card, /<p>Era Battle 1 \(Call Answered\) Starts<\/p>/);
   // A live era battle (plain kind=event) matches its slot by name…
   const dayStart = run('getGameStatus().currentDayStartMs');
   run(`liveEventsCache = { pulledAt: 1, gameDataVersion: 'v', events: [

@@ -117,6 +117,7 @@ export function resolveName(nameKey, nameMap, fallbackId) {
 }
 export function eventKind(id) {
   const s = String(id ?? '');
+  if (isDropEvent({ id: s })) return 'special';
   if (/^EVENT_MARQUEE_/.test(s)) return 'marquee';
   if (/^EC\d+_/.test(s) || /ERACHALLENGE|ERA_CHALLENGE/.test(s)) return 'era-challenge';
   if (/FLEET_MASTERY|shipevent_SC/.test(s)) return 'fleet';
@@ -126,9 +127,9 @@ export function eventKind(id) {
   if (/^EVENT_CREDIT_HEIST/.test(s)) return 'credit-heist';
   if (/^CHAMPIONSHIPS_GRAND_ARENA/.test(s)) return 'gac';
   if (/^GA\d+_SEASON_/.test(s)) return 'gac';
+  if (/PROVING_GROUND|^CONQUEST_UNIT_TRIALS/i.test(s)) return 'proving-grounds';
   if (/^CONQUEST_/.test(s)) return 'conquest';
   if (/^challenge_/.test(s)) return 'daily-challenge';
-  if (/PROVING_GROUND/i.test(s)) return 'proving-grounds';
   if (/JOURNEY|HERO_|GALACTICLEGEND|LEGEND/i.test(s)) return 'journey';
   return 'event';
 }
@@ -143,6 +144,13 @@ export function parseBonusDropId(id) {
   const m = BONUS_DROP_RE.exec(String(id ?? ''));
   if (!m) return null;
   return { unit: m[1], category: m[2], cost: Number(m[3]), wave: m[4] };
+}
+
+export function isDropEvent(e) {
+  return !!e && (!!parseBonusDropId(e.id)
+    || /^EVENT_BONUS_/i.test(e.id || '')
+    || /(?:^|_)(?:ADDITIVE|BONUS|DOUBLE|TRIPLE)_DROPS?(?:_|$)/i.test(e.id || '')
+    || /\b(?:additive|bonus|double|triple)[\s-]+drops?\b/i.test(e.name || ''));
 }
 
 // Display names for the Droid Destruction raid-prep bonus units
@@ -195,8 +203,8 @@ const BONUS_CATEGORY_ORDER = ['HARD_LIGHT', 'HARD_DARK', 'CANTINA', 'MOD', 'HARD
 // for the Droid Destruction raid-prep waves). Shown per unit in the wave
 // popup and digest embeds. Units missing here simply omit the line.
 const BONUS_MAXED_DROP = {
-  '4LOM': 'Mk 7 Kyrotech',
-  ZUCKUSS: 'Mk 9 Kyrotech',
+  '4LOM': 'Mk 7 Kyrotech Salvage',
+  ZUCKUSS: 'Mk 9 Kyrotech Salvage',
   STORMTROOPERLUKE: 'Flawed Signal Data',
   YODACHEWBACCA: 'Flawed Signal Data',
   CINTA: 'Flawed Signal Data',
@@ -223,11 +231,7 @@ const BONUS_MAXED_DROP = {
   THERONIN: 'Coaxial',
 };
 
-// Wave card art: the per-event newsletter portrait (bartender) says
-// nothing about shards, so waves share a shard icon built for the
-// schedule (assets/img/live/bonus-drops.png) rendered contained like
-// the other event icons (see FIT_ART_ICONS), not cover-cropped.
-const BONUS_WAVE_ART = 'bonus_drops';
+const BONUS_WAVE_ART = 'atlases/standard_rgba_atlas/icon_gift.png';
 
 // Shard-frame tint per bonus unit (light = blue, dark = red), matching
 // the conquest shard tiles. Unknown units default to light.
@@ -296,7 +300,7 @@ export function mergeBonusDrops(entries) {
     let w = waves.get(key);
     if (!w) {
       w = { startMs: e.startMs, endMs: e.endMs, live: e.live,
-        art: e.art, suffix: p.wave, units: new Map() };
+        suffix: p.wave, units: new Map() };
       waves.set(key, w);
     }
     let u = w.units.get(p.unit);
@@ -345,15 +349,14 @@ export function mergeBonusDrops(entries) {
     const out = {
       id: n ? `EVENT_BONUS_WAVE_${n}_${w.suffix}` : `EVENT_BONUS_${w.suffix}`,
       name: n ? `Additive Drops: Wave ${n}` : 'Additive Drops',
-      kind: 'event',
+      kind: 'special',
       units,
       startMs: w.startMs,
       endMs: w.endMs,
       live: w.live,
       fit: true,
     };
-    if (w.art !== undefined) out.art = w.art;
-    out.assetName = BONUS_WAVE_ART;
+    out.art = BONUS_WAVE_ART;
     return out;
   });
   return [...rest, ...merged].sort((a, b) => a.startMs - b.startMs || String(a.id).localeCompare(String(b.id)));
@@ -419,7 +422,16 @@ export function selectLiveEvents(gameEvents, nameMap, nowMs) {
   out.sort((a, b) => a.startMs - b.startMs);
   // Bonus drops arrive per node-cost; the schedule shows one card per
   // unit per wave instead (see mergeBonusDrops).
-  return mergeBonusDrops(out);
+  return mergeBonusDrops(out).map(e => {
+    if (isDropEvent(e)) {
+      e.kind = 'special';
+      e.art = BONUS_WAVE_ART;
+      e.fit = true;
+      delete e.assetName;
+      delete e.iconAsset;
+    }
+    return e;
+  });
 }
 
 export function artSlug(assetName) {
@@ -637,12 +649,9 @@ export async function pullEventArt(events, assetVersion, opts = {}) {
   return events;
 }
 
-// Episode pass premium emblem for the changeover/end-of-era cards,
-// which have no live event of their own. Picks the newest
-// icon_episode_era_premium_NN texture so new eras adopt automatically —
-// no config edits, no hand-added files. Re-downloads every pull — one
-// tiny file — and never throws: a failed refresh keeps the committed
-// file and the pull still succeeds.
+// Archive the newest premium emblem under its era number. The schedule
+// pins each era's artwork separately in ERA_SCHEDULES; the legacy latest
+// image remains available for older clients.
 export async function ensureEraIconArt(assetVersion, opts = {}) {
   const aeUrl = opts.aeUrl ?? AE_URL;
   const { pathToFileURL } = await import('node:url');
@@ -670,6 +679,7 @@ export async function ensureEraIconArt(assetVersion, opts = {}) {
     const { mkdir, writeFile } = await import('node:fs/promises');
     await mkdir(dirUrl, { recursive: true });
     await writeFile(new URL('era-icon.png', dirUrl), buf);
+    await writeFile(new URL(`era-${best[1]}-icon.png`, dirUrl), buf);
     console.log(`art: era icon -> era${best[1]} (${(buf.length / 1024).toFixed(0)}kb)`);
     return true;
   } catch (err) {

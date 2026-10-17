@@ -95,16 +95,18 @@ test('bonus-drop embeds add a full-width Nodes row, others unchanged', () => {
 
 test('wave embeds list every unit with its node line and 7-star drop', () => {
   const d = formatEventPayload({
-    name: 'Additive Drops: Wave 1', kind: 'event',
+    name: 'Additive Drops: Wave 1', kind: 'special',
     units: [
-      { unit: '4LOM', name: '4-LOM', details: 'LS/DS Hard Battles', maxed: 'Mk 7 Kyrotech' },
-      { unit: 'ZUCKUSS', name: 'Zuckuss', details: 'Cantina Battles', maxed: 'Mk 9 Kyrotech' },
+      { unit: '4LOM', name: '4-LOM', details: 'LS/DS Hard Battles', maxed: 'Mk 7 Kyrotech Salvage' },
+      { unit: 'ZUCKUSS', name: 'Zuckuss', details: 'Cantina Battles', maxed: 'Mk 9 Kyrotech Salvage' },
     ],
     startMs: 1789495200000, endMs: 1789581600000, art: null,
   });
   const e = d.embeds[0];
   assert.deepEqual(e.fields.map(f => f.name), ['Type', 'Starts', 'Ends', '4-LOM', 'Zuckuss']);
-  assert.equal(e.fields[3].value, 'LS/DS Hard Battles\n7-star: Mk 7 Kyrotech');
+  assert.equal(e.fields[0].value, 'Special Event');
+  assert.equal(e.color, 0x56B8AD);
+  assert.equal(e.fields[3].value, 'LS/DS Hard Battles\n7-star: Mk 7 Kyrotech Salvage');
   assert.equal(e.fields[4].inline, false);
   assert.doesNotMatch(JSON.stringify(d), EMOJI_RE);
 });

@@ -1,0 +1,45 @@
+@font-face { font-family:GameBold; src:url('/assets/fonts/game-bold.ttf') format('truetype'); font-display:swap; }
+@font-face { font-family:GameCondensed; src:url('/assets/fonts/game-condensed.ttf') format('truetype'); font-display:swap; }
+* { box-sizing:border-box; }
+:root { color-scheme:dark; font-family:Arial,sans-serif; background:#080f24; color:#e9f2ff; }
+body { margin:0; min-height:100vh; background:radial-gradient(ellipse at 50% 65%,#12305466,transparent 65%),linear-gradient(120deg,#080e22,#0e1733 60%,#080f21); }
+main { max-width:1570px; padding:24px 28px 36px; margin:auto; }
+.preview-header { display:flex; flex-wrap:wrap; align-items:center; gap:18px; margin-bottom:20px; }
+h1 { flex:1 1 auto; margin:0; font-size:20px; font-weight:600; }
+a { color:#91c9dc; font-size:13px; text-underline-offset:4px; }
+.preview-controls { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:24px; }
+.preview-controls button { border:1px solid #32536e; border-radius:4px; color:#afc1d5; background:#111f35; padding:9px 14px; font:inherit; font-size:13px; cursor:pointer; }
+.preview-controls button[aria-pressed="true"] { background:#16445b; color:#e7faff; border-color:#66bed4; }
+.image-sizing { align-items:center; margin-top:-12px; }
+.image-sizing > span { color:#afc1d5; font-size:13px; margin-right:6px; }
+.event-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:16px; }
+[hidden] { display:none !important; }
+.game-card { position:relative; isolation:isolate; min-width:0; aspect-ratio:360 / 504; container-type:inline-size; background:#244055; clip-path:polygon(9px 0,100% 0,100% 100%,0 100%,0 9px); }
+.card-inner { position:absolute; inset:1px; overflow:hidden; clip-path:polygon(9px 0,100% 0,100% 100%,0 100%,0 9px); background:#162535; }
+.card-art { position:absolute; inset:0; overflow:hidden; background:radial-gradient(ellipse at 50% 46%,#24424c,#203448 50%,#151e2a); }
+.portrait { position:absolute; inset:0; width:100%; height:100%; display:block; object-fit:fill; }
+.original-proportions .portrait { object-fit:contain; }
+.card-art::after { content:''; position:absolute; inset:0; background:linear-gradient(180deg,#09162744,#07162677 65%,#0a183955); }
+.game-header { position:absolute; inset:0 0 auto; z-index:2; min-height:15.5%; padding:1.6% 3% 2%; text-align:center; background:linear-gradient(#123148a6,#09132482 85%,#08152400); }
+.game-title,.game-subtitle { margin:0; font:normal 6.1cqw/1.02 GameBold,Arial,sans-serif; text-shadow:0 2px 2px #000,2px 0 2px #000,-2px 0 2px #000; }
+.game-title { color:#fff; text-transform:uppercase; }
+.long-title .game-title { font-size:4.7cqw; line-height:1.32; }
+.game-subtitle { color:#f6bd79; }
+.countdown { position:absolute; z-index:2; top:12.4%; left:3%; right:3%; margin:0; text-align:center; color:#ff808a; font:normal 7.8cqw/1.15 GameCondensed,Arial,sans-serif; text-shadow:0 2px 2px #000,1px 0 #000,-1px 0 #000; }
+.game-footer { position:absolute; z-index:2; inset:auto 0 0; height:27%; padding:1% 4% 4%; display:flex; flex-direction:column; align-items:stretch; justify-content:space-between; background:linear-gradient(transparent,#14172a22); }
+.game-footer p { margin:0; text-align:center; color:white; font:normal 7.5cqw/1.1 GameCondensed,Arial,sans-serif; text-shadow:0 2px 2px #000,2px 0 2px #000,-2px 0 2px #000; }
+.game-action { position:relative; isolation:isolate; height:18cqw; padding:0 12%; border:0; color:#fff; background:none; font:normal 9cqw/1 GameCondensed,Arial,sans-serif; cursor:pointer; }
+.game-action::before { content:''; position:absolute; z-index:-1; inset:0; border-style:solid; border-width:0 10cqw; border-image:url('/assets/img/atlases/resourcesshared_atlas/button_56.png') 0 36 fill / 0 10cqw stretch; }
+.game-action:hover { filter:brightness(1.2); }
+.game-action:active { transform:translateY(1px); }
+button:focus-visible,a:focus-visible { outline:2px solid #b9f3ff; outline-offset:3px; }
+.game-backdrop { position:absolute; inset:-8px; background:url('/assets/img/squads/cantina-background.png') center/auto 100% no-repeat; opacity:.65; filter:blur(4px) brightness(1.15) saturate(.5); }
+.custom .card-art::after { background:radial-gradient(ellipse at 50% 43%,#e0a55224,transparent 53%),linear-gradient(#18314580,#18314559 70%,#0a131d8c); }
+.custom-icon { position:absolute; z-index:1; left:13%; top:24%; width:74%; height:47%; object-fit:contain; filter:drop-shadow(0 6px 12px #07101da8) drop-shadow(0 0 14px #74bfdb33); }
+.gift .custom-icon { left:18%; top:27%; width:64%; height:42%; }
+.update-icon .custom-icon { left:3%; top:21%; width:94%; height:52%; }
+.era-emblem .custom-icon { left:-20%; top:0; width:140%; height:100%; filter:drop-shadow(0 0 16px #e0a55255); }
+.datacron .custom-icon { left:3%; top:12%; width:94%; height:auto; clip-path:polygon(50% 20%,78% 38.5%,71.5% 63.5%,50% 80%,28.5% 63.5%,22% 38.5%); }
+.custom .game-footer { background:repeating-linear-gradient(0deg,#467bb312 0 1px,transparent 1px 4px),linear-gradient(transparent,#15396166); }
+@media(max-width:900px) { .event-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } main { max-width:800px; padding:20px; } }
+@media(max-width:460px) { main { padding:16px 12px; } .event-grid { gap:10px; } .preview-header { gap:12px; } h1 { flex-basis:100%; } }

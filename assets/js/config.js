@@ -78,8 +78,9 @@ const DATACRON_ANCHOR_COLOR = 'orange'; // …this color
    early: the engine flags every Wednesday 5-11 days before a
    conquest start, so the skipped pattern-week must be listed here
    or it renders a phantom "New Datacron Set Added" card.
-   2026-09-23 never dropped — Duty and Defiance came out 09-16. */
-const DATACRON_SKIP_DATES = ['2026-09-23'];
+   Duty and Defiance came out 09-16 instead of 09-23;
+   The Legend Codex came out 10-14 instead of 10-21. */
+const DATACRON_SKIP_DATES = ['2026-09-23', '2026-10-21'];
 
 /* =========================================================
  DATACRON SET CONFIGURATION — EDIT WHEN A NEW SET IS ANNOUNCED
@@ -91,8 +92,9 @@ const DATACRON_SKIP_DATES = ['2026-09-23'];
   is removed. "added" is the drop Wednesday that introduced the set
   (drives the name on the "New Datacron Set Added" schedule card —
   drops with no matching entry fall back to the color). Set hasFDC:
-  true for sets that add Fleet/Faction Datacrons (FDCs) on top of
-  the normal set — adjust manually.
+  true for sets that add Focused Datacrons (FDCs) on top of
+  the normal set — adjust manually. expiresHourUTC optionally overrides
+  the standard changeover when the game's expiration uses another hour.
   ========================================================= */
 
 const DATACRON_SETS = [
@@ -101,6 +103,7 @@ const DATACRON_SETS = [
   { name: 'Supremacy Directive', color: 'green',  added: '2026-07-29', expires: '2026-10-29', hasFDC: true  },
   { name: 'Art of Command',      color: 'blue',   added: '2026-08-26', expires: '2026-11-26', hasFDC: false },
   { name: 'Duty and Defiance',   color: 'orange', added: '2026-09-16', expires: '2026-12-17', hasFDC: false },
+  { name: 'The Legend Codex',    color: 'pink',   added: '2026-10-14', expires: '2027-01-20', expiresHourUTC: 8, hasFDC: true },
 ];
 
 const CRON_COLOR_META = {
@@ -125,6 +128,8 @@ const MARQUEE_NAMES = {
   marquee_4: 'Stormtrooper (Concept)',
   marquee_5: 'Jaxxon',
   marquee_6: 'The Ronin',
+  marquee_7: 'Adelphi Ranger',
+  marquee_8: 'B1 Mercenary Droid',
 };
 
 // Journey Guide unlocks (4★→7★) are the same unit each era.
@@ -144,6 +149,21 @@ const ERA_BATTLE_NAMES = {
 
 // Image base + unit tile images (paths relative to IMG_BASE in assets/img/)
 const IMG_BASE = 'assets/img/';
+const DROP_EVENT_ART = 'atlases/standard_rgba_atlas/icon_gift.png';
+const BONUS_REWARD_ICONS = {
+  'Mk 7 Kyrotech Salvage': 'live/reward-shockprod-salvage.png',
+  'Mk 9 Kyrotech Salvage': 'live/reward-battlecomputer-salvage.png',
+  'Flawed Signal Data': 'materials/RM_003_scavenger_data03.png',
+  'Zinbiddle': 'materials/SCV_006_scavenger_zinbiddlecard.png',
+  'Impulse Detector': 'materials/SCV_007_scavenger_impulsedetector.png',
+  'Aeromagnifier': 'materials/SCV_008_scavenger_aeromagnifier.png',
+  'Zeta': 'live/reward-zeta.png',
+  'Omicron': 'live/reward-omicron.png',
+  'Gyrda Keypad': 'materials/SCV_009_scavenger_gyrdakeypad.png',
+  'Droid Brain': 'materials/SCV_010_scavenger_droidbrain.png',
+  'Corrupted Signal': 'materials/RM_004_scavenger_data04.png',
+  'Coaxial': 'materials/SCV_011_scavenger_servomotor.png',
+};
 const CONQUEST_UNIT_IMAGE = 'events/conquest.png';
 const ERA_UNIT_IMAGE = 'events/eraicon.png';
 
@@ -224,7 +244,6 @@ const EPISODE_OVERRIDES = {
     20: [ev('tw_payout','Payout'), ev('proving_ground','Bonus Proving Grounds (Conquest Pass+ Only)')],
     21: [ev('conquest_end','1st Conquest of New Volume Ends'), ev('proving_ground','Proving Grounds'), ev('ultimate_journey','Ultimate Journey'), ev('smugglersrun',"Smuggler's Run I"), ev('rote','Phase 1 Starts')],
     22: [ev('era_challenge_6'), ev('rote','Phase 2 Starts')],
-    28: [ev('era_end',`${ERA_NAME} Ends`)],
   }
 };
 
@@ -268,6 +287,7 @@ const BOSS_ICONS = {
 
 /* ICON / CATEGORY SYSTEM */
 const CATEGORY_META = {
+  special:  { label: 'Special Event', glyph: 'SPC', accent: 'var(--cyan)', dim: 'var(--cyan-dim)', border: 'var(--cyan-border)' },
   gac:      { label: 'GAC',      glyph: 'GAC', accent: 'var(--red)',    dim: 'var(--red-dim)',    border: 'var(--red-border)' },
   conquest: { label: 'CONQUEST', glyph: 'CQ',  accent: 'var(--purple)', dim: 'var(--purple-dim)', border: 'var(--purple-border)' },
   guild:    { label: 'GUILD',    glyph: 'GLD', accent: 'var(--amber)',  dim: 'var(--amber-dim)',  border: 'var(--amber-border)' },
@@ -277,6 +297,7 @@ const CATEGORY_META = {
 };
 
 const CATEGORY_ICONS = {
+  special:  DROP_EVENT_ART,
   gac:      'events/gac.png',
   conquest: 'events/conquest.png',
   guild:    'events/tw.png',
@@ -328,10 +349,10 @@ const EVENT_ICONS = {
   conquest_start: 'events/conquest.png',
   conquest_end: 'events/conquest.png',
   // Era splash frames: bot-pulled seasons emblem
-  // (assets/img/live/era-icon.png, refreshed by the live-events bot),
+// (assets/img/eras/, pinned separately for each era),
   // rendered contained like the other transparent icons.
-  era_changeover: 'live/era-icon.png',
-  era_end: 'live/era-icon.png',
+  era_changeover: 'eras/myths-and-legends.png',
+  era_end: 'eras/myths-and-legends.png',
   era_battle_1: 'events/erabattle1.png',
   era_battle_2: 'events/erabattle2.png',
   era_challenge_1: 'marquee/marquee1event.png',
@@ -346,12 +367,16 @@ const EVENT_ICONS = {
   marquee_4: 'marquee/marquee4event.png',
   marquee_5: 'live/events-jaxxon.png',
   marquee_6: 'marquee/marquee6event.png',
-  proving_ground: 'events/provingground.png',
+  marquee_7: 'eras/mandalorian-and-grogu.png',
+  marquee_8: 'eras/mandalorian-and-grogu.png',
+  era_challenge_7: 'eras/mandalorian-and-grogu.png',
+  era_challenge_8: 'eras/mandalorian-and-grogu.png',
+  proving_ground: 'live/events-stranger.png',
   ultimate_journey: 'events/ultimatejourney.png',
-  journey_rerun_1: 'events/journeyrerun1.png',
-  journey_rerun_2: 'events/journeyrerun2.png',
-  journey_rerun_3: 'events/erajourney.png',
-  journey_guide: 'events/erajourney.png',
+  journey_rerun_1: 'events/journey-maul-hate-fueled.png',
+  journey_rerun_2: 'events/journey-cassian-undercover.png',
+  journey_rerun_3: 'live/events-darthjarjar.png',
+  journey_guide: 'live/events-darthjarjar.png',
   fleet_executor: 'events/executor.png',
   fleet_leviathan: 'events/leviathan.png',
   fleet_profundity: 'events/profundity.png',
@@ -374,6 +399,8 @@ const FIT_ART_ICONS = [
   'client_update', 'shipment_update',
   'era_changeover', 'era_end',
 ];
+
+const ICON_CARD_BACKDROP = 'squads/cantina-background.png';
 
 /* =========================================================
  TIME ENGINE
@@ -479,3 +506,21 @@ const UTC_OFFSET_OPTIONS = (() => {
   [5 * 60 + 45, 8 * 60 + 45, 12 * 60 + 45, 13 * 60 + 45].forEach(m => { if(!minutes.includes(m)) minutes.push(m); });
   return minutes.sort((a, b) => a - b).map(fmt);
 })();
+
+const SCHEDULE_LOOKAHEAD_DAYS = 42;
+const ERA_SCHEDULES = [
+  {
+    id: 'myths-and-legends', name: ERA_NAME, startDate: ERA_START_DATE,
+    lengthDays: ERA_LENGTH_DAYS, baseline: true,
+    icon: 'eras/myths-and-legends.png', journeyGuideUnit: JOURNEY_GUIDE_UNIT,
+  },
+  {
+    id: 'mandalorian-and-grogu', name: 'Era of The Mandalorian and Grogu',
+    startDate: '2026-10-20', lengthDays: 28,
+    icon: 'eras/mandalorian-and-grogu.png', journeyGuideUnit: null,
+    events: {
+      1: [ev('marquee_7')],
+      15: [ev('marquee_8')],
+    },
+  },
+];

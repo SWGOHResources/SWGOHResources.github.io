@@ -200,12 +200,15 @@ if(jumpToggle && explorerTools){
    pasted links and back/forward work while the page is open. */
 function applyDayHash(){
   if(typeof dayFromHash !== 'function') return;
-  const day = dayFromHash(typeof location !== 'undefined' ? location.hash : '');
-  if(day == null) return;
+  const hash = typeof location !== 'undefined' ? location.hash : '';
+  const day = dayFromHash(hash);
+  const dateMs = dateFromHash(hash);
+  if(day == null && dateMs == null) return;
   try {
     const st = getGameStatus();
     const bounds = explorerBoundsFor(st);
-    explorerOffset = Math.min(bounds.maxOffset, Math.max(bounds.minOffset, day - st.eraDay));
+    const offset = dateMs == null ? day - st.eraDay : Math.round((dateMs - st.currentDayStartMs) / 86400000);
+    explorerOffset = Math.min(bounds.maxOffset, Math.max(bounds.minOffset, offset));
   } catch(e){}
 }
 if(typeof window !== 'undefined' && typeof window.addEventListener === 'function'){
@@ -332,7 +335,8 @@ applyDayHash();
 // jumps back to the in-game day.
 function applyDefaultExplorerOffset(liveEvents){
   if(typeof dayFromHash === 'function'
-    && dayFromHash(typeof location !== 'undefined' ? location.hash : '') != null)
+    && (dayFromHash(typeof location !== 'undefined' ? location.hash : '') != null
+      || dateFromHash(typeof location !== 'undefined' ? location.hash : '') != null))
     return false;
   if(typeof defaultExplorerOffset !== 'function'
     || typeof getGameStatus !== 'function'
@@ -360,7 +364,8 @@ if(typeof loadLiveEvents === 'function'){
     if(pending && typeof pending.then === 'function') pending.then(() => {
       try {
         if(typeof dayFromHash === 'function'
-          && dayFromHash(typeof location !== 'undefined' ? location.hash : '') != null)
+          && (dayFromHash(typeof location !== 'undefined' ? location.hash : '') != null
+            || dateFromHash(typeof location !== 'undefined' ? location.hash : '') != null))
           return;
         if(explorerOffset !== initExplorerOffset) return;
         const live = (typeof liveEventsCache !== 'undefined' && liveEventsCache

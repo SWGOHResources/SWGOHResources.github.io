@@ -97,6 +97,46 @@ function episodeLengthDays(){
     ? EPISODE_LENGTH_DAYS : 28;
 }
 
+function configuredEras(){
+  const entries = typeof ERA_SCHEDULES !== 'undefined' && Array.isArray(ERA_SCHEDULES) ? ERA_SCHEDULES : [];
+  return entries.map(era => {
+    const startMs = parseDateOnlyMs(era.startDate);
+    return { ...era, startMs, endMs: startMs + era.lengthDays * 86400000 };
+  }).filter(era => Number.isFinite(era.startMs) && Number.isInteger(era.lengthDays) && era.lengthDays > 0)
+    .sort((a, b) => a.startMs - b.startMs);
+}
+
+function eraForDay(dateMs){
+  if(!Number.isFinite(dateMs)) return null;
+  return configuredEras().find(era => dateMs >= era.startMs && dateMs < era.endMs) || null;
+}
+
+function scheduleInfoForDay(dateMs){
+  const base = parseDateOnlyMs(typeof ERA_START_DATE !== 'undefined' ? ERA_START_DATE : '2026-07-28');
+  const rawDay = Math.floor((dateMs - base) / 86400000) + 1;
+  const rotationDay = posMod(rawDay - 1, eraLengthDays()) + 1;
+  const rotationEpisode = Math.floor((rotationDay - 1) / episodeLengthDays()) + 1;
+  const dayInEp = posMod(rotationDay - 1, episodeLengthDays()) + 1;
+  const era = eraForDay(dateMs);
+  const eraDay = era ? Math.floor((dateMs - era.startMs) / 86400000) + 1 : rotationDay;
+  return {
+    era, eraDay, rawDay, rotationEpisode, dayInEp,
+    episode: era ? Math.floor((eraDay - 1) / episodeLengthDays()) + 1 : rotationEpisode,
+    week: Math.floor((dayInEp - 1) / 7) + 1,
+  };
+}
+
+function dateFromHash(hash){
+  const match = /^#date-(\d{4}-\d{2}-\d{2})$/.exec(hash || '');
+  if(!match) return null;
+  const ms = parseDateOnlyMs(match[1]);
+  return Number.isFinite(ms) ? ms : null;
+}
+
+function dateKey(dateMs){
+  return new Date(dateMs).toISOString().slice(0, 10);
+}
+
 function getMonthlyEvents(dateMs){
   const monthly = (typeof MONTHLY_EVENTS !== 'undefined' && Array.isArray(MONTHLY_EVENTS)) ? MONTHLY_EVENTS : [];
   if(monthly.length === 0) return [];
@@ -182,7 +222,11 @@ function gacEventsForDate(dateMs){
   return [];
 }
 
-function assetFor(icon){
+function assetFor(icon, dateMs){
+  if(Number.isFinite(dateMs) && (icon === 'era_changeover' || icon === 'era_end')){
+    const era = eraForDay(icon === 'era_end' ? dateMs - 86400000 : dateMs);
+    if(era && era.icon) return era.icon;
+  }
   const cat = categoryFor(icon);
   return EVENT_ICONS[icon] || CATEGORY_ICONS[cat] || null;
 }
@@ -232,8 +276,8 @@ function conquestRunForDate(dateMs){
   try {
     const st = getGameStatus(dateMs);
     if(st.preEra) return null;
-    const info = dateMsToEraInfo(dateMs, st.eraBaseStartMs);
-    const cq = conquestInfoForDay(info.episode, info.dayInEp);
+    const info = scheduleInfoForDay(dateMs);
+    const cq = conquestInfoForDay(info.rotationEpisode, info.dayInEp);
     return cq ? cq.cNum : null;
   } catch(e){ return null; }
 }
@@ -388,7 +432,12 @@ function getGameStatus(nowMsInput){
     daysUntilEra = Math.max(0, Math.round((displayDayMarker(stdStartMs) - displayDayMarker(nowMs)) / msPerDay));
   }
 
-  const eraDay = posMod(rawDayIndex - 1, eraLen) + 1;
+  const activeEra = eraForDay(nowMs - stdHour() * 3600000);
+  const lastEra = configuredEras().at(-1);
+  const unknownStart = !activeEra && lastEra && nowMs >= lastEra.endMs + stdHour() * 3600000 ? lastEra.endMs : null;
+  const eraDay = activeEra ? Math.max(1, Math.floor((nowMs - stdStartMs - (activeEra.startMs - eraStartMs)) / msPerDay) + 1)
+    : unknownStart != null ? Math.floor((nowMs - unknownStart - stdHour() * 3600000) / msPerDay) + 1
+    : posMod(rawDayIndex - 1, eraLen) + 1;
   const cycleNum = Math.floor((rawDayIndex - 1) / eraLen);
 
   const episode = Math.floor((eraDay - 1) / epLen) + 1;
@@ -418,7 +467,12 @@ function getGameStatus(nowMsInput){
     weekdayName,
     preEra,
     daysUntilEra,
-    currentEraStartMs: eraStartMs + (cycleNum * eraLen * msPerDay),
+    era: activeEra,
+    eraKnown: configuredEras().length === 0 || !!activeEra || preEra,
+    eraName: activeEra ? activeEra.name : (configuredEras().length && !preEra ? 'Upcoming era' : (typeof ERA_NAME !== 'undefined' ? ERA_NAME : 'Current Era')),
+    eraLength: activeEra ? activeEra.lengthDays : unknownStart != null ? 42 : eraLen,
+    eraEndMs: activeEra ? activeEra.endMs : unknownStart != null ? null : eraStartMs + ((cycleNum + 1) * eraLen * msPerDay),
+    currentEraStartMs: activeEra ? activeEra.startMs : unknownStart != null ? unknownStart : eraStartMs + (cycleNum * eraLen * msPerDay),
     eraBaseStartMs: eraStartMs,
     currentDayStartMs,
     cycleNum,
@@ -458,6 +512,11 @@ function absDayToInfo(absDay, eraBaseStartMs){
   const dayInEp = posMod(eraDay - 1, epLen) + 1;
   const week = Math.floor((dayInEp - 1) / 7) + 1;
   const dateMs = eraBaseStartMs + (absDay - 1) * 86400000;
+  const known = eraForDay(dateMs);
+  if(known){
+    const info = scheduleInfoForDay(dateMs);
+    return { eraDay: info.eraDay, episode: info.episode, dayInEp: info.dayInEp, week: info.week, dateMs, era: known };
+  }
   return { eraDay, episode, dayInEp, week, dateMs };
 }
 
@@ -480,7 +539,8 @@ function getCurrentDatacronSet(nowMs){
   if(typeof DATACRON_SETS === 'undefined' || !Array.isArray(DATACRON_SETS) || DATACRON_SETS.length === 0) return null;
   const withMs = DATACRON_SETS.filter(s => s && typeof s.expires === 'string').map(s => ({
     ...s,
-    expiresMs: parseDateOnlyMs(s.expires) + (stdHour() * 3600000)
+    expiresMs: parseDateOnlyMs(s.expires) + ((Number.isInteger(s.expiresHourUTC) && s.expiresHourUTC >= 0 && s.expiresHourUTC <= 23
+      ? s.expiresHourUTC : stdHour()) * 3600000)
   })).filter(s => Number.isFinite(s.expiresMs)).sort((a, b) => a.expiresMs - b.expiresMs);
 
   if(!withMs.length) return null;
@@ -694,6 +754,8 @@ function datacronColorOrder(){
 
 function datacronColorForDrop(dateMs){
   const order = datacronColorOrder();
+  const announced = datacronSetForDrop(dateMs);
+  if(announced && order.includes(announced.color)) return announced.color;
   const anchor = parseDateOnlyMs(typeof DATACRON_ANCHOR_DATE !== 'undefined' ? DATACRON_ANCHOR_DATE : null);
   const anchorColor = (typeof DATACRON_ANCHOR_COLOR !== 'undefined' && order.includes(DATACRON_ANCHOR_COLOR))
     ? DATACRON_ANCHOR_COLOR : order[order.length - 1];
@@ -708,26 +770,32 @@ function datacronSetIconForDrop(dateMs){
   return 'datacron_set';
 }
 
-/* Name of the set introduced by the drop on dateMs, matched by the
+/* Set introduced by the drop on dateMs, matched by the
    set's "added" date (and color, guarding against typos). Drops
    with no matching entry — future sets not yet announced — return
    null so the card falls back to the color. */
-function datacronNameForDrop(dateMs, color){
+function datacronSetForDrop(dateMs, color){
   if(!Number.isFinite(dateMs)) return null;
   const sets = (typeof DATACRON_SETS !== 'undefined' && Array.isArray(DATACRON_SETS)) ? DATACRON_SETS : [];
   for(const s of sets){
     if(!s || typeof s.name !== 'string' || !s.name.length || typeof s.added !== 'string') continue;
-    if(parseDateOnlyMs(s.added) === dateMs && (!color || s.color === color)) return s.name;
+    if(parseDateOnlyMs(s.added) === dateMs && (!color || s.color === color)) return s;
   }
   return null;
 }
 
+function datacronNameForDrop(dateMs, color){
+  const set = datacronSetForDrop(dateMs, color);
+  return set ? set.name : null;
+}
+
 function getClientUpdateEvents(dateMs, episode, dayInEp){
-  const eraDay = eraDayForEpisode(episode, dayInEp);
+  const era = eraForDay(dateMs);
+  const eraDay = era ? Math.floor((dateMs - era.startMs) / 86400000) + 1 : eraDayForEpisode(episode, dayInEp);
   if(!Number.isInteger(eraDay) || !Number.isFinite(dateMs)) return [];
   // Single shared client_update card: a day that is both a special
   // Wednesday and a cadence Wednesday must not emit it twice.
-  const shipment = isShipmentUpdateDay(dateMs, eraDay);
+  const shipment = (!configuredEras().length || !!era) && isShipmentUpdateDay(dateMs, eraDay);
   const datacron = isDatacronDropDay(dateMs, eraDay);
   const biweekly = isBiweeklyClientUpdateDay(dateMs);
   const out = [];
@@ -735,9 +803,10 @@ function getClientUpdateEvents(dateMs, episode, dayInEp){
   if(shipment) out.push(ev('shipment_update', 'Previous Era Shards Added to Shipments'));
   if(datacron){
     const color = datacronColorForDrop(dateMs);
-    const name = datacronNameForDrop(dateMs, color);
+    const set = datacronSetForDrop(dateMs, color);
+    const name = set && set.name;
     const bracket = name || (color.charAt(0).toUpperCase() + color.slice(1));
-    out.push(ev(datacronSetIconForDrop(dateMs), `New Datacron Set Added (${bracket})`));
+    out.push(ev(datacronSetIconForDrop(dateMs), `New Datacron Set Added (${bracket}${set && set.hasFDC ? ' + FDC' : ''})`));
   }
   return out;
 }
@@ -761,8 +830,25 @@ function getDayEvents(episode, dayInEp){
 }
 
 function getEventsForDay(dateMs, episode, dayInEp){
-  const runCtx = tbRunContext(dateMs, episode, dayInEp);
-  return applyTbLabels([...getDayEvents(episode, dayInEp), ...getClientUpdateEvents(dateMs, episode, dayInEp), ...gacEventsForDate(dateMs), ...getMonthlyEvents(dateMs)], runCtx);
+  const eras = configuredEras();
+  const info = eras.length ? scheduleInfoForDay(dateMs) : { rotationEpisode: episode, dayInEp, era: null };
+  let items = getDayEvents(info.rotationEpisode, info.dayInEp);
+  if(eras.length){
+    items = items.filter(it => it.icon !== 'era_end' && it.icon !== 'era_changeover'
+      && (info.era && info.era.baseline || categoryFor(it.icon) !== 'era'));
+    if(info.era && info.era.events) items = [...items, ...(info.era.events[info.eraDay] || [])];
+    for(const era of eras){
+      if(dateMs === era.startMs) items.push({ icon: 'era_changeover', label: `${era.name} Starts`, art: era.icon });
+      if(dateMs === era.endMs) items.push({ icon: 'era_end', label: `${era.name} Ends`, art: era.icon });
+      const elapsed = (dateMs - era.startMs) / 86400000;
+      if(elapsed > 0 && elapsed < era.lengthDays && elapsed % episodeLengthDays() === 0){
+        const episode = elapsed / episodeLengthDays() + 1;
+        items.push({ icon: 'episode_start', label: `Episode ${episode} Starts`, art: era.icon, episode, eraName: era.name });
+      }
+    }
+  }
+  const runCtx = tbRunContext(dateMs, info.rotationEpisode, info.dayInEp);
+  return applyTbLabels([...items, ...getClientUpdateEvents(dateMs, info.rotationEpisode, info.dayInEp), ...gacEventsForDate(dateMs), ...getMonthlyEvents(dateMs)], runCtx);
 }
 
 function ordinal(n){
@@ -1357,9 +1443,23 @@ function conquestInfoForDay(episode, dayInEp){
    start day; journey guide unlocks run 14 days. Start days are read
    from the episode tables (not hardcoded), so rotation edits flow
    through. Returns [{ icon, day, total }]. */
-function rotationWindowsForDay(episode, dayInEp){
+function rotationWindowsForDay(episode, dayInEp, dateMs){
   const out = [];
   if(!Number.isInteger(episode) || !Number.isInteger(dayInEp)) return out;
+  if(Number.isFinite(dateMs) && configuredEras().length){
+    const era = eraForDay(dateMs);
+    if(!era) return out;
+    if(!era.baseline){
+      const eraDay = Math.floor((dateMs - era.startMs) / 86400000) + 1;
+      for(const [day, items] of Object.entries(era.events || {})){
+        for(const item of items){
+          if(/^marquee_/.test(item.icon) && eraDay >= Number(day) && eraDay < Number(day) + 7)
+            out.push({ icon: item.icon, day: eraDay - Number(day) + 1, total: 7 });
+        }
+      }
+      return out;
+    }
+  }
   const overrides = (typeof EPISODE_OVERRIDES !== 'undefined' && EPISODE_OVERRIDES) || {};
   const epTable = overrides[episode] || {};
   const starts = {}; // icon -> sorted start days within the episode
@@ -1389,7 +1489,8 @@ function getConquestStatus(st){
   const start = conquestStartDay(), end = conquestEndDay();
   const total = conquestDurationDays();
   const episodeCount = Math.ceil(eraLengthDays() / episodeLengthDays());
-  let targetEp = st.episode;
+  let targetEp = typeof ERA_SCHEDULES !== 'undefined'
+    ? scheduleInfoForDay(st.currentDayStartMs).rotationEpisode : st.episode;
   let targetDay = st.dayInEp;
   let isUpcomingNextEp = false;
 
@@ -1591,6 +1692,9 @@ function validateScheduleConfig(){
       if(colors.length && !colors.includes(s.color)) issues.push(`DATACRON_SETS[${i}] has unknown color "${s.color}".`);
       if(!isDateStr(s && s.expires)) issues.push(`DATACRON_SETS[${i}] has a bad expires date.`);
       if(s && typeof s.added !== 'undefined' && !isDateStr(s.added)) issues.push(`DATACRON_SETS[${i}] has a bad added date.`);
+      if(s && typeof s.expiresHourUTC !== 'undefined'
+        && (!Number.isInteger(s.expiresHourUTC) || s.expiresHourUTC < 0 || s.expiresHourUTC > 23))
+        issues.push(`DATACRON_SETS[${i}] has a bad expiresHourUTC.`);
     });
   }
 
@@ -1702,6 +1806,25 @@ function validateScheduleConfig(){
       if(!def || !(def.phases > 0) || !(def.hoursPerPhase > 0))
         issues.push(`TB_DEFS["${id}"] needs positive phases and hoursPerPhase.`);
     });
+  }
+
+  if(typeof ERA_SCHEDULES !== 'undefined'){
+    let previousEnd = -Infinity;
+    for(const [index, era] of ERA_SCHEDULES.entries()){
+      const start = parseDateOnlyMs(era.startDate);
+      if(!Number.isFinite(start) || typeof era.name !== 'string' || !era.name
+        || !Number.isInteger(era.lengthDays) || era.lengthDays <= 0 || era.lengthDays % episodeLength !== 0){
+        issues.push(`ERA_SCHEDULES[${index}] needs a name, valid startDate and whole episodes.`);
+        continue;
+      }
+      if(start < previousEnd) issues.push(`ERA_SCHEDULES[${index}] overlaps the previous era.`);
+      previousEnd = start + era.lengthDays * 86400000;
+      for(const [day, items] of Object.entries(era.events || {})){
+        if(!Number.isInteger(Number(day)) || Number(day) < 1 || Number(day) > era.lengthDays)
+          issues.push(`ERA_SCHEDULES[${index}] has an event outside its dates.`);
+        checkEventList(`ERA_SCHEDULES[${index}].events[${day}]`, items);
+      }
+    }
   }
 
   return issues;

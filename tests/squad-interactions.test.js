@@ -5,7 +5,7 @@ import { JSDOM } from 'jsdom';
 import * as model from '../assets/js/squad-model.js';
 const html = await readFile(new URL('../squads.html', import.meta.url), 'utf8');
 const source = (await readFile(new URL('../assets/js/squads.js', import.meta.url), 'utf8'))
-  .replace(/^import[\s\S]*?from ['"][^'"]+['"];\n/gm, '');
+  .replace(/^import[\s\S]*?from ['"][^'"]+['"];\r?\n/gm, '');
 const data = JSON.parse(await readFile(new URL('../assets/data/squad-planner.json', import.meta.url), 'utf8'));
 const settle = async () => { await new Promise(resolve => setTimeout(resolve, 0)); };
 async function fixture(url = 'https://example.test/squads/', saved) {

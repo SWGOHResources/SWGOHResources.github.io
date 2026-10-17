@@ -7,6 +7,10 @@
 const withAssetV = (typeof assetUrl === 'function') ? assetUrl : (p => p);
 const imgPath = f => withAssetV(((typeof IMG_BASE !== 'undefined' && IMG_BASE) || 'assets/img/') + f);
 
+function iconCardBackdropHTML(){
+  return `<div class="game-backdrop" aria-hidden="true" style="background-image:url(&quot;${imgPath(ICON_CARD_BACKDROP)}&quot;)"></div>`;
+}
+
 // A datacron set can only ever be equipped/used for Territory War and
 // GAC — never Territory Battle, Conquest, etc. This scans backward day
 // by day from the set's expiry date to find the most recent TW or GAC
@@ -53,7 +57,8 @@ function renderUnlockWindows(st, opts){
   // --- ERA UNIT ---
   // Finds the NEXT era-start day (Start of New Era / Tuesday)
   const nextEraFromDay = st.preEra ? st.rawDayIndex : st.rawDayIndex + 1;
-  const eraAbs = nextOccurrenceAbs(ERA_START_OFFSETS, nextEraFromDay, eraLengthDays());
+  const eraAbs = st.era ? Math.round((st.era.endMs - st.eraBaseStartMs) / 86400000) + 1
+    : nextOccurrenceAbs(ERA_START_OFFSETS, nextEraFromDay, eraLengthDays());
   const eraInf = absDayToInfo(eraAbs, st.eraBaseStartMs);
   const eraDateMs = eraInf.dateMs;
   
@@ -64,10 +69,10 @@ function renderUnlockWindows(st, opts){
   const eraCountLabel = st.preEra
     ? (st.daysUntilEra <= 0 ? 'Today' : `In ${st.daysUntilEra} day${st.daysUntilEra === 1 ? '' : 's'}`)
     : (eraAbs <= st.rawDayIndex || eraDays <= 0 ? 'Live now' : subDayCount(st.nowMs, eraUnlockMs, `In ${eraDays} day${eraDays === 1 ? '' : 's'}`));
-  const eraBadge = st.preEra ? 'UPCOMING' : (eraDays <= 7 ? 'ENDING' : 'ACTIVE');
-  const eraMain = eraCountLabel;
-  const eraDateLine = fmtDateLongUTC(gameDayDisplayMs(eraDateMs));
-  const eraSub = st.preEra ? 'The new era begins' : 'Current era ends, units enter legacy modes';
+  const eraBadge = st.eraKnown === false ? 'TBA' : st.preEra ? 'UPCOMING' : (eraDays <= 7 ? 'ENDING' : 'ACTIVE');
+  const eraMain = st.eraKnown === false ? 'TBA' : eraCountLabel;
+  const eraDateLine = st.eraKnown === false ? '' : fmtDateLongUTC(gameDayDisplayMs(eraDateMs));
+  const eraSub = st.eraKnown === false ? '' : st.preEra ? 'The new era begins' : 'Current era ends, units enter legacy modes';
 
   // Roster locks at the configured defense-phase offset.
   const eraNextSignupDate = eraDateMs + (86400000 * eraLockOffsetDays());
@@ -128,10 +133,10 @@ function renderUnlockWindows(st, opts){
     <div class="status-card orange-card">
       <div class="sc-header"><span class="sc-title">End of Current Era</span><span class="sc-badge orange">${eraBadge}</span></div>
       <div class="uw-body" style="--accent:var(--orange);--accent-dim:var(--orange-dim);--accent-border:var(--orange-border)">
-        <div class="uw-img"><div class="art-badge">ERA</div><img src="${imgPath(ERA_UNIT_IMAGE)}" alt="" loading="lazy" decoding="async" onerror="this.remove()"></div>
+        <div class="uw-img"><div class="art-badge">ERA</div><img src="${imgPath(st.era ? st.era.icon : ERA_UNIT_IMAGE)}" alt="" loading="lazy" decoding="async" onerror="this.remove()"></div>
         <div class="uw-text">
           <div class="sc-main"><div class="sc-val" data-clock="era-end">${eraMain}</div><div class="uw-date">${eraDateLine}</div><div class="sc-sub">${eraSub}</div></div>
-          <div class="sc-footer" style="flex-direction:column;align-items:flex-start;gap:2px;">
+          <div class="sc-footer" style="flex-direction:column;align-items:flex-start;gap:2px;${st.eraKnown === false ? 'display:none;' : ''}">
             <span>Usable in GAC: <span class="highlight">Week ${eraGacWeek} (${eraGac.format})</span></span>
             <span>Roster locks: ${fmtDayMonthUTC(gameDayDisplayMs(eraNextSignupDate))} (Defense Starts)</span>
           </div>
@@ -230,11 +235,12 @@ function guildPhaseTrackerHTML(st){
    Re-applied on every render so a config edit or era rollover never
    leaves stale hardcoded text behind. Missing elements are skipped so
    this stays safe on pages with partial markup. */
-function renderStaticMeta(){
+function renderStaticMeta(status){
+  const st = status || getGameStatus();
   const setText = (id, text) => { const el = document.getElementById(id); if(el) el.textContent = text; };
-  if(typeof ERA_NAME !== 'undefined') setText('eraTitle', `Event Schedule for ${ERA_NAME}`);
-  setText('mhOfVal', `/ ${eraLengthDays()}`);
-  setText('fullScheduleCount', `All ${eraLengthDays()} days of the current Era baseline.`);
+  setText('eraTitle', `Event Schedule for ${st.eraName || ERA_NAME}`);
+  setText('mhOfVal', st.eraKnown === false ? '' : `/ ${st.eraLength || eraLengthDays()}`);
+  setText('fullScheduleCount', `${fmtDateUTC(gameDayDisplayMs(st.currentEraStartMs))} – ${fmtDateUTC(gameDayDisplayMs(st.currentDayStartMs + explorerBoundsFor(st).maxOffset * 86400000))}`);
   const h = (typeof stdHour === 'function') ? stdHour() : 18;
   setText('cbLabel', `Next Changeover (${h}:00 UTC)`);
   const tzNote = `Changeovers happen at the same moment worldwide (${h}:00 UTC) — this only changes how times are shown`;
@@ -246,44 +252,44 @@ function renderStaticMeta(){
 
 function renderMergedHero(st){
   if(!document.getElementById('mhDayVal')) return;
-  const episodeCount = Math.ceil(eraLengthDays() / episodeLengthDays());
+  const length = st.eraLength || eraLengthDays();
+  const episodeCount = Math.ceil(length / episodeLengthDays());
   const weeksPerEpisode = Math.ceil(episodeLengthDays() / 7);
   document.getElementById('mhDayVal').textContent = st.bossEraDay;
   document.getElementById('mhEpVal').textContent = `${st.episode} of ${episodeCount}`;
   document.getElementById('mhWeekVal').textContent = `${st.week} of ${weeksPerEpisode}`;
   document.getElementById('mhWeekdayVal').textContent = st.weekdayName;
 
-  const fillPct = Math.min(100, Math.max(0, (st.bossEraDay / eraLengthDays()) * 100));
+  const fillPct = Math.min(100, Math.max(0, (st.bossEraDay / length) * 100));
   document.getElementById('mhFill').style.width = fillPct + '%';
 
   // Rollover day: the era's last game day closes at this changeover
   // (day 84 spans the 19th 18:00 UTC to the 20th 18:00 UTC), matching
   // the Important Dates card and the digest "ends" line.
-  const eraEndMs = st.currentEraStartMs + (eraLengthDays() * 86400000);
+  const eraEndMs = st.currentEraStartMs + (length * 86400000);
   document.getElementById('mhStartDate').textContent = fmtDateUTC(gameDayDisplayMs(st.currentEraStartMs));
   document.getElementById('mhEndDate').textContent = fmtDateUTC(gameDayDisplayMs(eraEndMs));
   document.getElementById('mhDaysRemaining').textContent = st.preEra
     ? (st.daysUntilEra <= 0 ? 'Era starts today' : `Era starts in ${st.daysUntilEra} day${st.daysUntilEra === 1 ? '' : 's'}`)
-    : `${eraLengthDays() - st.bossEraDay} days remaining`;
+    : `${length - st.bossEraDay} days remaining`;
+  if(st.eraKnown === false){
+    document.getElementById('mhDayVal').textContent = '—';
+    document.getElementById('mhEpVal').textContent = 'TBA';
+    document.getElementById('mhWeekVal').textContent = 'TBA';
+    document.getElementById('mhEndDate').textContent = 'TBA';
+    document.getElementById('mhDaysRemaining').textContent = 'Dates TBA';
+    document.getElementById('mhFill').style.width = '0%';
+  }
 
-  // Stale-era banner: the engine rolls into a phantom next cycle once the
-  // configured era ends. Anchor staleness to the configured BASE era
-  // (not the rolling cycle, which would hide the banner again after
-  // rollover): any now past the base era's final changeover means the
-  // config is outdated. Hidden again once ERA_START_DATE is updated.
   const staleBanner = document.getElementById('staleBanner');
   if(staleBanner){
     const baseLastMs = st.eraBaseStartMs + ((eraLengthDays() - 1) * 86400000);
     const baseOverMs = baseLastMs + 86400000 + (stdHour() * 3600000);
-    const stale = !st.preEra && st.nowMs >= baseOverMs;
+    const stale = !st.preEra && !st.era && st.nowMs >= baseOverMs;
     staleBanner.hidden = !stale;
     if(stale){
-      // The rollover moment itself (baseOverMs already includes the
-      // changeover hour) — the day the era actually ended on.
-      const endLabel = fmtDateLongUTC(baseOverMs);
-      const eraName = (typeof ERA_NAME !== 'undefined' && ERA_NAME) ? ERA_NAME : 'This era';
       const textEl = document.getElementById('staleBannerText');
-      if(textEl) textEl.innerHTML = `<strong>${escHTML(eraName)}</strong> ended ${endLabel} — dates below are the old rotation until the schedule is updated.`;
+      if(textEl) textEl.innerHTML = `Next era: TBA`;
     }
   }
 }
@@ -317,16 +323,16 @@ function renderStatusDashboard(st, opts){
   }
 
   container.innerHTML = `
-    <div class="status-card red-card">
-      <div class="sc-header"><span class="sc-title">${gac.title}</span><span class="sc-badge ${gac.badgeClass}">${gac.status}</span></div>
-      <div class="sc-main" style="margin-bottom:0"><div class="sc-val">${gac.main}</div><div class="sc-sub" data-clock="gac-sub">${gac.sub}</div></div>
-      ${gacRoundTrackerHTML(gac)}
-    </div>
-
     <div class="status-card purple-card">
       <div class="sc-header"><span class="sc-title">${conq.title}</span><span class="sc-badge ${conq.badgeClass}">${conq.status}</span></div>
       <div class="sc-main" style="margin-bottom:0"><div class="sc-val" data-clock="conquest-main">${conq.main}</div><div class="sc-sub" data-clock="conquest-sub">${conq.sub}</div></div>
       ${conquestVolumeTrackerHTML(conq.cNum)}
+    </div>
+
+    <div class="status-card red-card">
+      <div class="sc-header"><span class="sc-title">${gac.title}</span><span class="sc-badge ${gac.badgeClass}">${gac.status}</span></div>
+      <div class="sc-main" style="margin-bottom:0"><div class="sc-val">${gac.main}</div><div class="sc-sub" data-clock="gac-sub">${gac.sub}</div></div>
+      ${gacRoundTrackerHTML(gac)}
     </div>
 
     <div class="status-card amber-card">
@@ -471,11 +477,15 @@ function liveRotationIcon(e){
 }
 
 function liveCardMeta(e){
+  if(e && (e.kind === 'special' || isDropEvent(e))){
+    const meta = CATEGORY_META.special;
+    return { cat: 'special', glyph: meta.glyph, label: meta.label, art: CATEGORY_ICONS.special };
+  }
   const icon = liveRotationIcon(e);
   if(icon){
     const cat = categoryFor(icon);
     const tag = tagFor(icon);
-    return { cat, glyph: tag.glyph, label: tag.label, art: assetFor(icon) || 'events/eraicon.png' };
+    return { cat, glyph: tag.glyph, label: tag.label, art: assetFor(icon, e.startMs) || 'events/eraicon.png' };
   }
   const kindTag = (typeof LIVE_KIND_TAG !== 'undefined' && e) ? LIVE_KIND_TAG[e.kind] : null;
   if(kindTag) return { cat: kindTag.cat || 'era', glyph: kindTag.glyph, label: kindTag.label, art: 'events/eraicon.png' };
@@ -490,7 +500,14 @@ function liveCardMeta(e){
 /* Display art for a live event. Conquest always wears the CONQUEST
    banner — the pulled promo art (conquest pass ads) is the wrong
    image on every schedule surface. */
+function isDropEvent(e){
+  return !!e && (/^EVENT_BONUS_/i.test(e.id || '')
+    || /(?:^|_)(?:ADDITIVE|BONUS|DOUBLE|TRIPLE)_DROPS?(?:_|$)/i.test(e.id || '')
+    || /\b(?:additive|bonus|double|triple)[\s-]+drops?\b/i.test(e.name || ''));
+}
+
 function liveDisplayArt(e, meta){
+  if(isDropEvent(e)) return DROP_EVENT_ART;
   if(e && e.kind === 'conquest') return meta.art;
   return (e && e.art) || meta.art;
 }
@@ -508,7 +525,89 @@ function liveDisplayName(e){
   return (e && e.name) || '';
 }
 
+const eventRewardDetails = new Map();
+
+function gameEventCopy(icon, title, dateMs, live){
+  const caption = title;
+  if(live && isDropEvent(live)) return { title, type:'Special Event', caption:'Bonus Rewards Event!' };
+  if(icon === 'client_update') return { title:'Client Update', type:'Game Update', caption:'Client Update Expected' };
+  if(icon === 'shipment_update') return { title:'Shipment Update', type:'Shipments', caption:'Previous Era Shards Added' };
+  if(icon && icon.startsWith('datacron_set')){
+    const set = typeof DATACRON_SETS !== 'undefined' && DATACRON_SETS.find(entry=>dateKey(dateMs)===entry.added);
+    return { title:set ? set.name : 'New Datacron Set', type:'Datacron Set', caption:'New Datacrons Expected' };
+  }
+  if(icon === 'era_changeover' || icon === 'era_end'){
+    const era = eraForDay(icon === 'era_end' ? dateMs - 86400000 : dateMs);
+    return { title:era ? era.name.replace(/^Era of /,'') : title, type:icon === 'era_end'?'Era Ends':'Era Release', caption:icon === 'era_end'?'Era Ends':'Episode 1 Begins' };
+  }
+  if(icon === 'episode_start'){
+    const info = scheduleInfoForDay(dateMs);
+    return { title:`Episode ${info.episode}`, type:'Episode Release', caption:`Episode ${info.episode} Begins` };
+  }
+  if(icon && icon.startsWith('tw_')) return { title:'Territory War', type:'Guild Event', caption:title.replace(/^Territory War\s*/i,'') };
+  if(icon && icon.startsWith('gac_')) return { title:'Grand Arena', type:'Grand Arena Championship', caption:title.replace(/^GAC\s*/i,'') };
+  if(icon === 'rote' || icon === 'tb_ends') return { title:'Rise of the Empire', type:'Territory Battle', caption:title.replace(/^Rise of the Empire\s*/i,'') };
+  if(icon && icon.startsWith('conquest_')) return { title:'Conquest', type:'Conquest', caption };
+  if(icon && icon.startsWith('era_battle_')) return { title:ERA_BATTLE_NAMES[icon] || title, type:'Era Battle', caption };
+  if(icon && icon.startsWith('era_challenge_')) return { title:MARQUEE_NAMES[icon.replace('era_challenge_','marquee_')] || title, type:'Era Challenge', caption:'Earn Era Currency!' };
+  if(icon === 'journey_guide' || icon === 'journey_rerun_3') return { title:'Terrible Tings', type:'Legendary Event', caption:'Earn Darth Jar Jar Shards!' };
+  if(icon === 'journey_rerun_1') return { title:'Web of Hate', type:'Legendary Event', caption:'Earn Maul (Hate-Fueled) Shards!' };
+  if(icon === 'journey_rerun_2') return { title:'The Price of Hope', type:'Legendary Event', caption:'Earn Cassian Andor (Undercover) Shards!' };
+  if((icon && icon.startsWith('marquee_')) || (live && live.kind === 'marquee')) return { title:title.replace(/ Marquee$/i,''), type:'Special Marquee Event', caption:'Earn Rewards Daily!' };
+  const liveTypes = { 'era-challenge':'Era Challenge', assault:'Assault Battle', omega:'Omega Battle', fleet:'Fleet Mastery', conquest:'Conquest' };
+  return { title, type:live && liveTypes[live.kind] || (icon ? tagFor(icon).label : 'Event'), caption:live && live.details || '' };
+}
+
+function gameEventRewardUnit(icon, live){
+  const portraits = { marquee_1:'marajadeskywalker', marquee_2:'yodadsv', marquee_3:'lukestarkiller', marquee_4:'stormtrooperconcept', marquee_5:'jaxxon', marquee_6:'theronin' };
+  const names = { journey_guide:'Darth Jar Jar', journey_rerun_3:'Darth Jar Jar', journey_rerun_1:'Maul (Hate-Fueled)', journey_rerun_2:'Cassian Andor (Undercover)' };
+  const name = names[icon] || (icon && icon.startsWith('marquee_') && MARQUEE_NAMES[icon]);
+  if(!name) return null;
+  return { name, portrait:portraits[icon] ? `live/bonus-${portraits[icon]}.png` : null };
+}
+
+function gameEventCardHTML(model){
+  const key = `${model.icon || model.liveId || model.title}|${model.startMs}`;
+  if(eventRewardDetails.size > 1000) eventRewardDetails.clear();
+  eventRewardDetails.set(key, model);
+  const relCls = model.relLabel === 'Now' ? 'xcard-rel is-today' : model.relLabel === 'Expired' ? 'xcard-rel is-expired' : 'xcard-rel';
+  const bonus = model.bonusId;
+  const action = bonus ? `openBonusWave('${bonus}')` : 'openEventRewards(this.dataset.eventRewards)';
+  const facts = cardWhenRow(model.startMs, model.duration);
+  const accessibleTiming = `${fmtEventStart(model.startMs)}${model.duration == null ? '' : ' · '+formatDurationHours(model.duration)}`;
+  return `<article class="xcard game-event-card${model.copy.title.length > 22 ? ' long-title' : ''}${bonus ? ' is-clickable' : ''}" style="${model.style}" aria-label="${escAttr(model.title)}">
+    <div class="xcard-art${model.fit ? ' fit' : ''}${model.shared ? ' icon-art' : ''}${model.drop ? ' drop-art' : ''}${model.era ? ' era-art' : ''}${model.datacron ? ' datacron-art' : ''}${model.icon === 'client_update' ? ' update-art' : ''}">
+      ${model.shared ? iconCardBackdropHTML() : `<div class="art-badge" aria-hidden="true">${escHTML(model.glyph)}</div>`}
+      ${model.art ? `<img src="${imgPath(model.art)}" alt="" loading="${model.shared ? 'eager' : 'lazy'}" decoding="async" onerror="this.remove()">` : ''}
+      <div class="xcard-shade"></div>
+      <div class="xcard-art-meta"><span data-clock-start="${model.startMs}"${Number.isFinite(model.endMs) ? ` data-clock-end="${model.endMs}"` : ''} data-timing-kind="${/\d/.test(model.relLabel) ? 'time' : 'status'}" class="${relCls}">${model.relLabel}</span></div>
+    </div>
+    <div class="xcard-body"><h4>${escHTML(model.copy.title)}</h4><div class="xcard-kicker">${escHTML(model.copy.type)}</div>${model.description ? `<div class="xcard-sub">${escHTML(model.description)}</div>` : ''}<div class="game-event-facts">${facts}</div></div>
+    <div class="game-event-footer"><p>${escHTML(model.copy.caption)}</p><button type="button" class="game-event-action" data-event-rewards="${escAttr(key)}"${bonus ? ` data-bonus-wave="${escAttr(bonus)}"` : ''} onclick="${action}" aria-label="Details for ${escAttr(model.title)}" title="${escAttr(accessibleTiming)}">DETAILS</button></div>
+  </article>`;
+}
+
+function openEventRewards(key){
+  const model = eventRewardDetails.get(key);
+  if(!model || typeof document === 'undefined') return;
+  const body = document.getElementById('bonusWaveBody');
+  const modal = document.getElementById('bonusWaveModal');
+  if(!body || !modal) return;
+  document.getElementById('bonusWaveTitle').textContent = model.title;
+  const type = document.getElementById('bonusWaveType');
+  if(type) type.textContent = model.copy.type;
+  const count = document.getElementById('bonusWaveCount');
+  if(count) count.textContent = '';
+  document.getElementById('bonusWaveWindow').innerHTML = bonusWaveWindowHTML(model);
+  const unit = model.rewardUnit;
+  body.innerHTML = unit
+    ? `<li class="bdrop-row marquee-reward"><div class="bdrop-unit"><span class="bdrop-shard" aria-hidden="true"><img class="bdrop-shard-background" src="${imgPath('atlases/standard_rgba_atlas/ShardIcon.png')}" alt="">${unit.portrait ? `<img class="bdrop-shard-unit" src="${imgPath(unit.portrait)}" alt="">` : ''}</span><div><h4 class="bdrop-name">${escHTML(unit.name)}</h4><p class="reward-kind">Character shards</p></div></div><dl class="bdrop-details"><div class="bdrop-field"><dt>Event</dt><dd>${escHTML(model.copy.type)}</dd></div></dl></li>`
+    : '<li class="reward-empty">Reward details unavailable</li>';
+  if(typeof openModal === 'function') openModal(modal);
+}
+
 function liveCardHTML(e, relLabel){
+  const drop = isDropEvent(e);
   const meta = liveCardMeta(e);
   const catMeta = (typeof CATEGORY_META !== 'undefined' && CATEGORY_META[meta.cat]) || {};
   const style = `--accent:${catMeta.accent || 'var(--text3)'};--accent-dim:${catMeta.dim || 'transparent'};--accent-border:${catMeta.border || 'var(--border)'}`;
@@ -518,34 +617,15 @@ function liveCardHTML(e, relLabel){
   // Additive-drop waves open a unit breakdown popup (see openBonusWave).
   const bonus = e && Array.isArray(e.units) && e.units.length ? e : null;
   const bonusId = bonus ? String(bonus.id).replace(/[^A-Z0-9_]/gi, '') : '';
-  const bonusAttrs = bonus
-    ? ` data-bonus-wave="${escHTML(bonusId)}" tabindex="0" role="button" aria-label="${escHTML(liveDisplayName(e))} — show units"`
-      + ` onclick="openBonusWave('${bonusId}')"`
-      + ` onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openBonusWave('${bonusId}')}"`
-    : '';
-  // Icon-style art (wave shard, like the FIT_ART_ICONS rotation icons)
-  // renders contained over a blurred fill of itself instead of
-  // cover-cropped into the portrait frame.
-  const fit = !!(e && e.fit && art);
-  const fillTag = fit
-    ? `<div class="art-fill" aria-hidden="true" style="background-image:url(&quot;${imgPath(art)}&quot;)"></div>` : '';
-  return `<article class="xcard${bonus ? ' is-clickable' : ''}"${bonusAttrs} style="${style}">
-    <div class="xcard-art${fit ? ' fit' : ''}">
-      <div class="art-badge">${escHTML(meta.glyph)}</div>
-      ${fillTag}
-      <img src="${imgPath(art)}" alt="" loading="lazy" fetchpriority="low" decoding="async" onerror="this.remove()">
-      <div class="xcard-shade"></div>
-      <div class="xcard-art-meta">
-        <span data-clock-start="${e.startMs}" data-clock-end="${e.endMs}" class="${relCls}">${relLabel}</span>
-      </div>
-    </div>
-    <div class="xcard-body">
-      <div class="xcard-kicker">${escHTML(meta.label)}</div>
-      <h4>${escHTML(liveDisplayName(e))}</h4>
-      ${(e && e.details) ? `<div class="xcard-sub">${escHTML(e.details)}</div>` : ''}
-      ${cardWhenRow(e.startMs, liveDurationHours(e))}
-    </div>
-  </article>`;
+  const icon = liveRotationIcon(e);
+  const era = /^eras\//.test(art || '');
+  const shared = drop || meta.cat === 'update' || era || art === 'events/eraicon.png' || (icon && icon.startsWith('gac_'));
+  const copy = gameEventCopy(icon, liveDisplayName(e), e.startMs, e);
+  if(copy.type === 'Event') copy.type = meta.label;
+  return gameEventCardHTML({ title:liveDisplayName(e), copy,
+    icon, liveId:e.id, art, glyph:meta.glyph, style, fit:shared || !!e.fit, shared, drop, era,
+    datacron:!!(icon && icon.startsWith('datacron_set')), startMs:e.startMs, endMs:e.endMs,
+    duration:liveDurationHours(e), relLabel, bonusId, description:e.details, rewardUnit:gameEventRewardUnit(icon, e) });
 }
 
 /* Additive-drop wave popup: one row per featured unit — shard icon
@@ -562,15 +642,28 @@ function bonusWaveRowsHTML(entry){
       ? `<img class="bdrop-energy" src="${imgPath(u.energy)}" alt="" loading="lazy" decoding="async" onerror="this.remove()">`
       : '';
     const tint = (u && (u.alignment === 'dark' || u.alignment === 'neutral')) ? u.alignment : 'light';
-    const maxed = (u && u.maxed)
-      ? `<div class="bdrop-maxed">7-star: ${escHTML(u.maxed)}</div>`
+    const maxed = escHTML((u && u.maxed) || '—');
+    const rewardArt = u && BONUS_REWARD_ICONS[u.maxed];
+    const rewardIcon = rewardArt
+      ? `<img class="bdrop-reward-icon" src="${imgPath(rewardArt)}" alt="" loading="lazy" decoding="async" onerror="this.remove()">`
       : '';
-    return `<div class="bdrop-row">`
+    const star = `<img class="bdrop-star" src="${imgPath('atlases/standard_rgba_atlas/icon_rendered_star.png')}" alt="" aria-hidden="true">`;
+    return `<li class="bdrop-row">`
+      + `<div class="bdrop-unit">`
       + `<span class="bdrop-shard ${tint}" aria-hidden="true"><img class="bdrop-shard-background" src="${imgPath('atlases/standard_rgba_atlas/ShardIcon.png')}" alt="">${shard}</span>`
-      + `<div class="bdrop-text"><div class="bdrop-name">${escHTML((u && u.name) || '')}</div>`
-      + `<div class="bdrop-nodes">${energy}<span>${escHTML((u && u.details) || '')}</span></div>${maxed}</div>`
-      + `</div>`;
+      + `<h4 class="bdrop-name">${escHTML((u && u.name) || '')}</h4></div>`
+      + `<dl class="bdrop-details">`
+      + `<div class="bdrop-field"><dt>Farm in</dt><dd class="bdrop-nodes">${energy}<span>${escHTML((u && u.details) || '—')}</span></dd></div>`
+      + `<div class="bdrop-field bdrop-reward"><dt><span class="bdrop-rarity" aria-label="7 stars">7${star}</span> replacement</dt><dd class="bdrop-maxed">${rewardIcon}<span>${maxed}</span></dd></div>`
+      + `</dl></li>`;
   }).join('');
+}
+
+function bonusWaveWindowHTML(entry){
+  return `<dl class="bdrop-window">` + [['Starts', entry && entry.startMs], ['Ends', entry && entry.endMs]]
+    .filter(([, ms]) => Number.isFinite(ms) && Number.isFinite(new Date(ms).getTime()))
+    .map(([label, ms]) => `<div><dt>${label}</dt><dd><time datetime="${new Date(ms).toISOString()}">${escHTML(fmtEventStart(ms))}</time></dd></div>`)
+    .join('') + `</dl>`;
 }
 
 function openBonusWave(id){
@@ -580,8 +673,17 @@ function openBonusWave(id){
   const title = document.getElementById('bonusWaveTitle');
   const body = document.getElementById('bonusWaveBody');
   const modal = document.getElementById('bonusWaveModal');
+  const timing = document.getElementById('bonusWaveWindow');
+  const count = document.getElementById('bonusWaveCount');
   if(!body || !modal) return;
   if(title) title.textContent = liveDisplayName(entry);
+  const type = document.getElementById('bonusWaveType');
+  if(type) type.textContent = 'Special Event';
+  if(timing) timing.innerHTML = bonusWaveWindowHTML(entry);
+  if(count){
+    const n = Array.isArray(entry.units) ? entry.units.length : 0;
+    count.textContent = `${n} unit${n === 1 ? '' : 's'}`;
+  }
   body.innerHTML = bonusWaveRowsHTML(entry);
   if(typeof openModal === 'function') openModal(modal);
   else {
@@ -650,9 +752,12 @@ const EXPLORER_PILL_WIDTH = 44;
 const EXPLORER_GAP = 4;
 
 function explorerBoundsFor(st){
+  const length = st.eraLength || eraLengthDays();
+  const forward = typeof SCHEDULE_LOOKAHEAD_DAYS !== 'undefined' ? SCHEDULE_LOOKAHEAD_DAYS : 42;
+  const last = configuredEras().at(-1);
   return {
     minOffset: -(st.eraDay - 1),
-    maxOffset: eraLengthDays() - st.eraDay
+    maxOffset: Math.max(length - st.eraDay, forward, last ? Math.ceil((last.endMs - st.currentDayStartMs) / 86400000) - 1 : 0)
   };
 }
 
@@ -662,11 +767,10 @@ function explorerWindowSize(strip){
 
 function explorerDayAt(st, offset){
   const dMs = st.currentDayStartMs + (offset * 86400000);
-  const dIdx = ((st.eraDay - 1 + offset) % eraLengthDays() + eraLengthDays()) % eraLengthDays() + 1;
-  const ep = Math.floor((dIdx - 1) / episodeLengthDays()) + 1;
-  const dayInEp = ((dIdx - 1) % episodeLengthDays()) + 1;
-  const week = Math.floor((dayInEp - 1) / 7) + 1;
-  return { offset, dMs, dIdx, ep, dayInEp, week, items: getEventsForDay(dMs, ep, dayInEp) };
+  const info = scheduleInfoForDay(dMs);
+  const crossEra = !info.era || !st.era || info.era.id !== st.era.id;
+  return { offset, dMs, dIdx: info.eraDay, ep: info.episode, rotationEpisode: info.rotationEpisode, dayInEp: info.dayInEp, week: info.week,
+    era: info.era, crossEra, items: getEventsForDay(dMs, info.episode, info.dayInEp) };
 }
 
 function shiftExplorer(delta){
@@ -683,15 +787,15 @@ function jumpExplorer(offset){
   renderAll();
 }
 
-/* Shareable day links: every explorer move publishes #day-N (absolute
-   era day) via replaceState — no history spam, and the URL is always
-   copy-pasteable. app.js reads it on load and on hashchange. */
+/* Current-era links use #day-N; dates outside it use #date-YYYY-MM-DD.
+   app.js restores either form on load and on hashchange. */
 function syncDayHash(){
   try {
     if(typeof location === 'undefined' || typeof history === 'undefined') return;
     const st = getGameStatus();
-    const want = '#day-' + (st.eraDay + explorerOffset);
-    if(location.hash !== want) history.replaceState(null, '', want);
+    const viewed = explorerDayAt(st, explorerOffset);
+    const want = viewed.crossEra ? '#date-' + dateKey(viewed.dMs) : '#day-' + (st.eraDay + explorerOffset);
+    if(location.hash !== want) history.replaceState(null, '', location.pathname + location.search + want);
   } catch(e){}
 }
 
@@ -710,41 +814,19 @@ function explorerCardHTML(item, dateMs, relLabel, tbCtx, nowMs){
   const meta = CATEGORY_META[cat];
   const tag = tagFor(item.icon);
   const isTbCard = tbCtx && (item.icon === 'rote' || item.icon === 'tb_ends');
-  // A live event touching the viewed day speaks for its rotation slot:
-  // the card wears the live art (never a stale placeholder) and, for
-  // marquees, the live marquee name. Era/journey labels stay
-  // constructed — they carry tense and window wording live names lack.
   const liveMatch = liveMatchesForSlot(item.icon, dateMs)[0] || null;
-  const asset = isTbCard ? tbCtx.art : (liveMatch && liveMatch.art) || assetFor(item.icon);
-  const style = `--accent:${meta.accent};--accent-dim:${meta.dim};--accent-border:${meta.border}`;
-  const imgTag = asset ? `<img src="${imgPath(asset)}" alt="" loading="lazy" fetchpriority="low" decoding="async" onerror="this.remove()">` : '';
-  // Contained sources (transparent subjects, square scenes) render over
-  // a blurred fill of themselves: uniform card size, whole image
-  // visible, nothing stretched, nothing sliced. See FIT_ART_ICONS.
-  const fillTag = (asset && isFitArt(item.icon))
-    ? `<div class="art-fill" aria-hidden="true" style="background-image:url(&quot;${imgPath(asset)}&quot;)"></div>` : '';
-  const relCls = relLabel === 'Now' ? 'xcard-rel is-today' : 'xcard-rel';
-  const baseItem = (liveMatch && liveMatch.kind === 'marquee' && liveMatch.name)
-    ? { icon: item.icon, label: liveMatch.name }
-    : item;
+  const art = isTbCard ? tbCtx.art : item.art || (liveMatch && liveMatch.art) || assetFor(item.icon, dateMs);
+  const era = item.icon === 'era_changeover' || item.icon === 'era_end' || item.icon === 'episode_start' || /^eras\//.test(art || '');
+  const shared = era || cat === 'update' || item.icon.startsWith('gac_') || art === 'events/eraicon.png';
+  const baseItem = liveMatch && liveMatch.kind === 'marquee' && liveMatch.name ? { icon:item.icon, label:liveMatch.name } : item;
   const title = tenseByStart(getFullScheduleLabel(baseItem), baseItem, dateMs, nowMs);
-
-  return `<article class="xcard" style="${style}">
-    <div class="xcard-art${isFitArt(item.icon) ? ' fit' : ''}">
-      <div class="art-badge">${tag.glyph}</div>
-      ${fillTag}
-      ${imgTag}
-      <div class="xcard-shade"></div>
-      <div class="xcard-art-meta">
-        <span data-clock-start="${eventStartMs(item, dateMs)}" class="${relCls}">${relLabel}</span>
-      </div>
-    </div>
-    <div class="xcard-body">
-      <div class="xcard-kicker">${escHTML(tag.label)}</div>
-      <h4>${title}</h4>
-      ${cardWhenRow(eventStartMs(item, dateMs), (typeof eventDurationHours === 'function') ? eventDurationHours(item, dateMs, isTbCard ? tbCtx : null) : null)}
-    </div>
-  </article>`;
+  const startMs = eventStartMs(item, dateMs);
+  const duration = eventDurationHours(item, dateMs, isTbCard ? tbCtx : null);
+  return gameEventCardHTML({ title, copy:gameEventCopy(item.icon, title, dateMs, liveMatch),
+    icon:item.icon, art, glyph:tag.glyph, style:`--accent:${meta.accent};--accent-dim:${meta.dim};--accent-border:${meta.border}`,
+    fit:shared || isFitArt(item.icon), shared, era, datacron:item.icon.startsWith('datacron_set'),
+    startMs, endMs:duration == null ? null : startMs+duration*3600000, duration, relLabel,
+    rewardUnit:gameEventRewardUnit(item.icon, liveMatch) });
 }
 
 /* Live snapshot overlay for the day-by-day explorer: every event from
@@ -816,7 +898,7 @@ function liveBadgesHTML(ongoing, dayStartMs){
       const art = liveDisplayArt(e, meta);
       const total = liveDayTotal(e);
       const day = Math.min(Math.max(liveDayNum(e, dayStartMs), 1), total);
-      const kindCls = e.kind === 'conquest' ? ' day-live-cq' : '';
+      const kindCls = e.kind === 'conquest' ? ' day-live-cq' : meta.cat === 'special' ? ' day-live-special' : '';
       const badgeName = liveDisplayName(e);
       const badgeTitle = (e && e.details) ? `${badgeName} — ${e.details}` : `${badgeName}`;
       return `<div class="day-boss day-live${kindCls}" title="${escHTML(badgeTitle)}, day ${day} of ${total}">`
@@ -876,6 +958,28 @@ function rotationBadgesHTML(windows, dayLive, dayStartMs){
     }).join('');
 }
 
+function rotationEventsForDay(dayStartMs){
+  const entries = [];
+  for(let ago = 0; ago <= 32; ago++){
+    const dateMs = dayStartMs - ago * 86400000;
+    const info = scheduleInfoForDay(dateMs);
+    const run = tbRunContext(dateMs, info.rotationEpisode, info.dayInEp);
+    const def = run ? tbChoiceForRun() : null;
+    const tbCtx = run ? { def, offset:run.offset, phase1Ms:run.phase1Ms, art:def.art } : null;
+    const sourceCovered = ago ? liveCoveredIcons(liveEventsForDay(dateMs)) : new Set();
+    for(const item of getEventsForDay(dateMs, info.episode, info.dayInEp)){
+      const startMs = eventStartMs(item, dateMs);
+      const duration = eventDurationHours(item, dateMs, tbCtx);
+      const endMs = duration == null ? null : startMs + duration * 3600000;
+      if(startMs >= dayStartMs + 86400000) continue;
+      const repeatsDaily = /^(marquee_|era_challenge_|journey_guide$|journey_rerun_[12]$|conquest_start$)/.test(item.icon);
+      if(ago && (!repeatsDaily || duration <= 24 || endMs == null || endMs <= dayStartMs || sourceCovered.has(item.icon))) continue;
+      entries.push({ item, dateMs, startMs, endMs, tbCtx });
+    }
+  }
+  return entries;
+}
+
 function renderExplorer(st){
   const strip = document.getElementById('dayStrip');
   const detail = document.getElementById('dayDetail');
@@ -885,10 +989,11 @@ function renderExplorer(st){
   explorerOffset = Math.min(bounds.maxOffset, Math.max(bounds.minOffset, explorerOffset));
   const windowSize = explorerWindowSize(strip);
   const selectedEraDay = st.eraDay - 1 + explorerOffset;
-  const winStart = Math.min(
+  const totalDays = st.eraDay + bounds.maxOffset;
+  const winStart = Math.max(0, Math.min(
     Math.floor(selectedEraDay / windowSize) * windowSize,
-    eraLengthDays() - windowSize);
-  const winEnd = Math.min(eraLengthDays(), winStart + windowSize);
+    totalDays - windowSize));
+  const winEnd = Math.min(totalDays, winStart + windowSize);
   strip.scrollLeft = 0;
   let pills = '';
   for(let eraDay = winStart; eraDay < winEnd; eraDay++){
@@ -899,22 +1004,24 @@ function renderExplorer(st){
       + (o === 0 ? ' is-today' : '')
       + (o === explorerOffset ? ' is-selected' : '')
       + (d.items.length ? ' has-events' : '');
-    pills += `<button type="button" class="${cls}" onclick="jumpExplorer(${o})" aria-label="Day ${d.dIdx}, ${fmtDateUTC(gameDayDisplayMs(d.dMs))}${o === 0 ? ', today' : ''}" aria-pressed="${o === explorerOffset}"${o === explorerOffset ? ' aria-current="date"' : ''}>`
+    pills += `<button type="button" class="${cls}" onclick="jumpExplorer(${o})" aria-label="${d.crossEra ? '' : `Day ${d.dIdx}, `}${fmtDateUTC(gameDayDisplayMs(d.dMs))}${o === 0 ? ', today' : ''}" aria-pressed="${o === explorerOffset}"${o === explorerOffset ? ' aria-current="date"' : ''}>`
       + `<span class="dp-dow">${parts.dow}</span>`
-      + `<span class="dp-num">${d.dIdx}</span>`
-      + `<span class="dp-date">${parts.num} ${parts.month}</span>`
+      + `<span class="dp-num">${d.crossEra ? parts.num : d.dIdx}</span>`
+      + `<span class="dp-date">${d.crossEra ? parts.month + (o > 0 ? ` · +${o}d` : '') : `${parts.num} ${parts.month}`}</span>`
       + `<span class="dp-dot"></span></button>`;
   }
   strip.innerHTML = pills;
 
   const dayJump = document.getElementById('dayJump');
   if(dayJump){
-    const jumpKey = `${st.eraBaseStartMs}|${eraLengthDays()}|${tz()}`;
+    const jumpKey = `${st.currentEraStartMs}|${totalDays}|${tz()}`;
     if(dayJump.dataset.scheduleKey !== jumpKey){
       let opts = '<option value="">Select day…</option>';
-      for(let idx = 1; idx <= eraLengthDays(); idx++){
+      for(let idx = 1; idx <= totalDays; idx++){
         const dMs = st.currentEraStartMs + ((idx - 1) * 86400000);
-        opts += `<option value="${idx}">Day ${idx} · ${fmtDateUTC(gameDayDisplayMs(dMs))}</option>`;
+        const era = eraForDay(dMs);
+        const same = st.era && era && era.id === st.era.id;
+        opts += `<option value="${idx}">${same ? `Day ${idx} · ` : ''}${fmtDateUTC(gameDayDisplayMs(dMs))}${same ? '' : ` · ${escHTML(era ? era.name : 'Upcoming era')}`}</option>`;
       }
       dayJump.innerHTML = opts;
       dayJump.dataset.scheduleKey = jumpKey;
@@ -928,7 +1035,7 @@ function renderExplorer(st){
   // as days pass (only the tense flips, hence eraDay in the key).
   const eventJump = document.getElementById('eventJump');
   if(eventJump){
-    const eventKey = `${st.eraBaseStartMs}|${eraLengthDays()}|${tz()}|${st.eraDay}`;
+    const eventKey = `${st.currentEraStartMs}|${totalDays}|${tz()}|${st.eraDay}`;
     if(eventJump.dataset.scheduleKey !== eventKey){
       const epLen = episodeLengthDays();
       const groups = [
@@ -938,7 +1045,7 @@ function renderExplorer(st){
         { title: 'Proving Grounds', test: icon => icon === 'proving_ground' },
       ];
       const hits = groups.map(() => []);
-      for(let idx = 1; idx <= eraLengthDays(); idx++){
+      for(let idx = 1; idx <= totalDays; idx++){
         const ep = Math.floor((idx - 1) / epLen) + 1;
         const dep = ((idx - 1) % epLen) + 1;
         const dateMs = st.currentEraStartMs + ((idx - 1) * 86400000);
@@ -946,7 +1053,9 @@ function renderExplorer(st){
           .filter(it => isJumpToEvent(it.icon))
           .forEach(it => {
             const gi = groups.findIndex(g => g.test(it.icon));
-            if(gi >= 0) hits[gi].push(`<option value="${idx}">${escHTML(tenseByStart(it.label, it, dateMs, st.nowMs))} · Day ${idx}</option>`);
+            const era = eraForDay(dateMs);
+            const same = st.era && era && era.id === st.era.id;
+            if(gi >= 0) hits[gi].push(`<option value="${idx}">${escHTML(tenseByStart(it.label, it, dateMs, st.nowMs))} · ${same ? `Day ${idx}` : fmtDateUTC(gameDayDisplayMs(dateMs))}</option>`);
           });
       }
       let opts = '<option value="">Select event…</option>';
@@ -973,23 +1082,6 @@ function renderExplorer(st){
     : `${relCap}: ${fmtDateLongUTC(gameDayDisplayMs(cur.dMs))}`;
   const bossName = BOSS_LOOP[posMod(st.bossDayIndex - 1 + cur.offset, BOSS_LOOP.length)];
   const bossIcon = BOSS_ICONS[bossName];
-  // Conquest indicator (mirrors the boss badge): shown on days 7-20
-  // of each episode while a run is active.
-  const cq = conquestInfoForDay(cur.ep, cur.dayInEp);
-  const cqBadge = cq
-    ? `<div class="day-conquest" title="Conquest ${cq.cNum} — ${cq.note}${cq.finalDay ? ' (final day)' : ''}">`
-      + `<img src="${imgPath(CONQUEST_UNIT_IMAGE)}" alt="" loading="lazy" fetchpriority="low" decoding="async" onerror="this.remove()">`
-      + `<div class="db-text"><span class="db-label">Conquest · C${cq.cNum}</span><span class="db-name">Day ${cq.day} of ${cq.total}${cq.finalDay ? ' — Final' : ''}</span></div>`
-      + `</div>`
-    : '';
-  // TB context for this day: drives the RotE card art and phase
-  // labels. Null off-TB days.
-  const runCtx = tbRunContext(cur.dMs, cur.ep, cur.dayInEp);
-  const tbDef = runCtx ? tbChoiceForRun() : null;
-  const tbCtx = runCtx ? {
-    def: tbDef, offset: runCtx.offset,
-    phase1Ms: runCtx.phase1Ms, art: tbDef.art
-  } : null;
   const dayLive = liveEventsForDay(cur.dMs);
   const { starting, ongoing } = splitLiveDay(dayLive, cur.dMs);
   // Card pills count to each event's own start instant (eventStartMs:
@@ -1000,48 +1092,30 @@ function renderExplorer(st){
   // is over — "Expired", never "Now".
   const liveRel = e => (Number.isFinite(e.endMs) && Number.isFinite(st.nowMs) && e.endMs <= st.nowMs)
     ? 'Expired' : cardRel(e.startMs);
-  const liveCards = starting.map(e => liveCardHTML(e, liveRel(e))).join('');
-  const liveBadges = liveBadgesHTML(ongoing, cur.dMs);
-  // Live conquest data replaces the rotation estimate — never show both
-  // conquest badges side by side.
-  const showCqBadge = !dayLive.some(e => e.kind === 'conquest');
-  // Multi-day rotation windows (marquee, era challenges, journey
-  // guides) covering the day, unless live data already badges them —
-  // matched by unit/name, so a journey-ish live event for the guide
-  // unit suppresses the guide window even though kinds differ.
-  const windowBadges = (typeof rotationWindowsForDay === 'function')
-    ? rotationBadgesHTML(rotationWindowsForDay(cur.ep, cur.dayInEp), dayLive, cur.dMs) : '';
-  const covered = liveCoveredIcons(starting);
-  // Same happening, longer run: an ongoing live event that matches a
-  // rotation slot suppresses that slot's card too — the live "Day X of
-  // Y" badge already represents it, so the day never shows both.
-  for(const e of ongoing){
-    for(const slot of liveSlotKeys()){
-      if(slotMatchesEvent(slot, e)) covered.add(slot);
-    }
-  }
-  const rotationCards = cur.items
-    .filter(it => !covered.has(it.icon))
-    .map(it => explorerCardHTML(it, cur.dMs, cardRel(eventStartMs(it, cur.dMs)), tbCtx, st.nowMs)).join('');
+  const liveCards = [...starting, ...ongoing.filter(e => e.endMs - e.startMs > 86400000)]
+    .map(e => liveCardHTML(e, liveRel(e))).join('');
+  const covered = liveCoveredIcons(dayLive);
+  const rotationCards = rotationEventsForDay(cur.dMs)
+    .filter(entry => !covered.has(entry.item.icon))
+    .map(entry => explorerCardHTML(entry.item, entry.dateMs,
+      entry.endMs != null && entry.endMs <= st.nowMs ? 'Expired' : cardRel(entry.startMs),
+      entry.tbCtx, st.nowMs)).join('');
   detail.innerHTML = `
     <div class="day-detail-head">
       <div>
         <h3>${headTitle}</h3>
-        <p>Day ${cur.dIdx} / ${eraLengthDays()} · Episode ${cur.ep}, Week ${cur.week}</p>
+        <p>${cur.crossEra ? escHTML(cur.era ? cur.era.name : 'Upcoming era · TBA') : `Day ${cur.dIdx} / ${st.eraLength || eraLengthDays()}`}${cur.era ? ` · Episode ${cur.ep}, Week ${cur.week}` : ''}</p>
       </div>
       <div class="day-indicators">
         <div class="day-boss" title="Coliseum boss rotates daily at 18:00 UTC">
         <img src="${imgPath(bossIcon)}" alt="" loading="lazy" fetchpriority="low" decoding="async" onerror="this.remove()">
         <div class="db-text"><span class="db-label">Coliseum boss</span><span class="db-name">${bossName}</span></div>
         </div>
-        ${showCqBadge ? cqBadge : ''}
-        ${windowBadges}
-        ${liveBadges}
       </div>
     </div>
     ${liveCards || rotationCards
       ? `<div class="xcard-deck" tabindex="0" role="region" aria-label="Events this day">${liveCards}${rotationCards}</div>`
-      : `<p class="empty-note">No changeovers this day — nothing starts or ends.</p>`}`;
+      : `<p class="empty-note">No events scheduled for this day.</p>`}`;
 }
 
 function getFullScheduleLabel(item){
@@ -1107,21 +1181,28 @@ function renderFullSchedule(st){
   // rebuild rather than reuse the cached markup. Changeover hours and
   // era/episode lengths also shift every timestamp, so they join the key.
   const tzKey = (typeof getTimeZoneSetting === 'function') ? getTimeZoneSetting() : 'local';
-  const cfgKey = [stdHour(), gacHour(), eraLengthDays(), episodeLengthDays()].join('|');
+  const totalDays = st.eraDay + explorerBoundsFor(st).maxOffset;
+  const cfgKey = [stdHour(), gacHour(), totalDays, episodeLengthDays(), st.eraName].join('|');
   const sameEra = fullScheduleCache.eraStartMs === st.currentEraStartMs
     && fullScheduleCache.tzKey === tzKey
     && fullScheduleCache.cfgKey === cfgKey;
 
   if(!sameEra){
     let html = '';
-    const episodeCount = Math.ceil(eraLengthDays() / episodeLengthDays());
+    const episodeCount = Math.ceil(totalDays / episodeLengthDays());
+    const filters = document.getElementById('scheduleFilters');
+    let filterHTML = `<button type="button" class="sf-pill" data-ep="0" onclick="setScheduleFilter(0)">All</button>`;
     for(let ep = 1; ep <= episodeCount; ep++){
       const firstDay = ((ep - 1) * episodeLengthDays()) + 1;
-      const lastDay = Math.min(ep * episodeLengthDays(), eraLengthDays());
+      const lastDay = Math.min(ep * episodeLengthDays(), totalDays);
       const epStartMs = st.currentEraStartMs + ((firstDay - 1) * 86400000);
       const epEndMs = st.currentEraStartMs + ((lastDay - 1) * 86400000);
+      const info = scheduleInfoForDay(epStartMs);
+      const same = info.era && st.era && info.era.id === st.era.id;
+      const heading = info.era ? `${info.era.name} · Episode ${info.episode}` : 'Upcoming era · TBA';
+      filterHTML += `<button type="button" class="sf-pill" data-ep="${ep}" onclick="setScheduleFilter(${ep})">${escHTML(same ? `Ep ${info.episode}` : info.era ? info.era.name.replace(/^Era of /i, '') : 'Upcoming')}</button>`;
       html += `<div class="tl-ep" data-ep="${ep}">`
-        + `<div class="tl-ep-head"><span>Episode ${ep}</span><span class="tl-ep-dates">${fmtDayMonthUTC(gameDayDisplayMs(epStartMs))} → ${fmtDayMonthUTC(gameDayDisplayMs(epEndMs))}</span></div>`;
+        + `<div class="tl-ep-head"><span>${escHTML(heading)}</span><span class="tl-ep-dates">${fmtDayMonthUTC(gameDayDisplayMs(epStartMs))} → ${fmtDayMonthUTC(gameDayDisplayMs(epEndMs))}</span></div>`;
       const weekCount = Math.ceil((lastDay - firstDay + 1) / 7);
       for(let week = 1; week <= weekCount; week++){
         html += `<div class="tl-week-head">Week ${week}</div>`;
@@ -1132,7 +1213,7 @@ function renderFullSchedule(st){
           const dateMs = st.currentEraStartMs + ((idx - 1) * 86400000);
           const items = getEventsForDay(dateMs, ep, dayInEp);
           html += `<div class="tl-day${idx === st.eraDay ? ' is-today' : ''}" data-day="${idx}">`
-            + `<span class="tl-daynum">${idx}</span>`
+            + `<span class="tl-daynum">${same ? idx : tzDayParts(gameDayDisplayMs(dateMs)).num}</span>`
             + `<span class="tl-date">${fmtDateUTC(gameDayDisplayMs(dateMs))}</span>`
             + `<span class="tl-events">${items.length ? items.map(it => timelineChipHTML(it, dateMs, st.nowMs)).join('') : '<span class="tl-none">—</span>'}</span></div>`;
         }
@@ -1140,6 +1221,7 @@ function renderFullSchedule(st){
       html += `</div>`;
     }
     container.innerHTML = html;
+    if(filters) filters.innerHTML = filterHTML + `<button type="button" class="sf-today" id="scheduleTodayBtn" onclick="scrollScheduleToToday()">Today</button>`;
     fullScheduleCache.eraStartMs = st.currentEraStartMs;
     fullScheduleCache.activeDay = st.eraDay;
     fullScheduleCache.tzKey = tzKey;
@@ -1219,6 +1301,7 @@ function preloadCardAssets(){
     if(typeof CRON_COLOR_META !== 'undefined') Object.values(CRON_COLOR_META).forEach(m => m && add(m.asset));
     if(typeof CONQUEST_UNIT_IMAGE !== 'undefined') add(CONQUEST_UNIT_IMAGE);
     if(typeof ERA_UNIT_IMAGE !== 'undefined') add(ERA_UNIT_IMAGE);
+    if(typeof ICON_CARD_BACKDROP !== 'undefined') add(ICON_CARD_BACKDROP);
     urls.forEach(url => {
       const im = new Image();
       im.decoding = 'async';
@@ -1263,6 +1346,7 @@ function refreshClockDisplays(st){
       const label = Number.isFinite(endMs) && endMs <= st.nowMs ? 'Expired'
         : explorerOffset > 0 ? relForEventStart(Number(node.dataset.clockStart), st.nowMs, rel) : rel;
       if(node.textContent !== label) node.textContent = label;
+      node.dataset.timingKind = /\d/.test(label) ? 'time' : 'status';
       node.classList.toggle('is-today', label === 'Now');
       node.classList.toggle('is-expired', label === 'Expired');
     });
@@ -1281,12 +1365,14 @@ function renderAll(opts){
   const active = (typeof document !== 'undefined' && document.activeElement) || null;
   let deferred = false;
   const focused = el => {
-    const skip = !!(preserveFocus && active && el && el.contains(active));
+    const rewardsOpen = document.getElementById('bonusWaveModal')?.classList.contains('open');
+    const skip = !!(preserveFocus && active && el && (el.contains(active)
+      || (el.id === 'dayDetail' && rewardsOpen)));
     if(skip) deferred = true;
     return skip;
   };
   const st = getGameStatus();
-  renderStaticMeta();
+  renderStaticMeta(st);
   renderMergedHero(st);
   if(!focused(document.getElementById('statusDashboard'))) renderStatusDashboard(st);
   if(!focused(document.getElementById('unlockWindows'))) renderUnlockWindows(st);

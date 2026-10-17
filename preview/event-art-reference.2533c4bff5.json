@@ -1,0 +1,317 @@
+[
+  {
+    "art": "events/clientupdate.png",
+    "width": 512,
+    "height": 512
+  },
+  {
+    "art": "events/conquest.png",
+    "width": 200,
+    "height": 265
+  },
+  {
+    "art": "events/erabattle1.png",
+    "width": 512,
+    "height": 1024
+  },
+  {
+    "art": "events/erabattle2.png",
+    "width": 512,
+    "height": 1024
+  },
+  {
+    "art": "events/eraicon.png",
+    "width": 128,
+    "height": 128
+  },
+  {
+    "art": "live/events-darthjarjar.png",
+    "width": 512,
+    "height": 1024
+  },
+  {
+    "art": "events/executor.png",
+    "width": 512,
+    "height": 1024
+  },
+  {
+    "art": "events/gac.png",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "art": "events/journey-maul-hate-fueled.png",
+    "width": 512,
+    "height": 1024
+  },
+  {
+    "art": "events/journey-cassian-undercover.png",
+    "width": 512,
+    "height": 1024
+  },
+  {
+    "art": "events/leviathan.png",
+    "width": 512,
+    "height": 1024
+  },
+  {
+    "art": "events/profundity.png",
+    "width": 512,
+    "height": 1024
+  },
+  {
+    "art": "events/provingground.png",
+    "width": 512,
+    "height": 1024
+  },
+  {
+    "art": "events/shipmentchange.png",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "art": "events/smugglersrun.png",
+    "width": 512,
+    "height": 512
+  },
+  {
+    "art": "events/tw.png",
+    "width": 512,
+    "height": 512
+  },
+  {
+    "art": "events/ultimatejourney.png",
+    "width": 512,
+    "height": 1024
+  },
+  {
+    "art": "marquee/marquee1event.png",
+    "width": 512,
+    "height": 1024
+  },
+  {
+    "art": "marquee/marquee2event.png",
+    "width": 512,
+    "height": 1024
+  },
+  {
+    "art": "marquee/marquee3event.png",
+    "width": 512,
+    "height": 1024
+  },
+  {
+    "art": "marquee/marquee4event.png",
+    "width": 512,
+    "height": 1024
+  },
+  {
+    "art": "marquee/marquee6event.png",
+    "width": 512,
+    "height": 1024
+  },
+  {
+    "art": "tb/geonosis-republic-offensive.png",
+    "width": 256,
+    "height": 512
+  },
+  {
+    "art": "tb/hoth-imperial-retaliation.png",
+    "width": 256,
+    "height": 512
+  },
+  {
+    "art": "tb/hoth-rebel-assault.png",
+    "width": 256,
+    "height": 512
+  },
+  {
+    "art": "tb/rise-of-the-empire.png",
+    "width": 512,
+    "height": 1024
+  },
+  {
+    "art": "tb/separatist-might.png",
+    "width": 256,
+    "height": 512
+  },
+  {
+    "art": "live/events-adelphiranger.png",
+    "width": 512,
+    "height": 1024
+  },
+  {
+    "art": "live/events-contrabandcargo.png",
+    "width": 512,
+    "height": 512
+  },
+  {
+    "art": "live/events-creditheist.png",
+    "width": 512,
+    "height": 512
+  },
+  {
+    "art": "live/events-dathomir-battle.png",
+    "width": 512,
+    "height": 512
+  },
+  {
+    "art": "live/events-droid-smuggle.png",
+    "width": 512,
+    "height": 512
+  },
+  {
+    "art": "live/events-empirehorde.png",
+    "width": 512,
+    "height": 512
+  },
+  {
+    "art": "live/events-ewok-heroic.png",
+    "width": 512,
+    "height": 512
+  },
+  {
+    "art": "live/events-executor.png",
+    "width": 512,
+    "height": 1024
+  },
+  {
+    "art": "live/events-forestmoon.png",
+    "width": 512,
+    "height": 512
+  },
+  {
+    "art": "live/events-galactic-challenges-bespin.png",
+    "width": 512,
+    "height": 1024
+  },
+  {
+    "art": "live/events-galactic-challenges-coruscant.png",
+    "width": 512,
+    "height": 1024
+  },
+  {
+    "art": "live/events-galactic-challenges-deathstar.png",
+    "width": 512,
+    "height": 1024
+  },
+  {
+    "art": "live/events-galactic-challenges-hoth.png",
+    "width": 512,
+    "height": 1024
+  },
+  {
+    "art": "live/events-galactic-challenges-jakku.png",
+    "width": 512,
+    "height": 1024
+  },
+  {
+    "art": "live/events-galacticbounties.png",
+    "width": 512,
+    "height": 512
+  },
+  {
+    "art": "live/events-galacticchallenges-dathomir.png",
+    "width": 512,
+    "height": 1024
+  },
+  {
+    "art": "live/events-galacticchallenges-endor.png",
+    "width": 512,
+    "height": 1024
+  },
+  {
+    "art": "live/events-groundwar.png",
+    "width": 512,
+    "height": 512
+  },
+  {
+    "art": "live/events-halloween2025.png",
+    "width": 512,
+    "height": 1024
+  },
+  {
+    "art": "live/events-inquisitor-assault-battle.png",
+    "width": 512,
+    "height": 1024
+  },
+  {
+    "art": "live/events-jaxxon.png",
+    "width": 512,
+    "height": 1024
+  },
+  {
+    "art": "live/events-leviathan.png",
+    "width": 512,
+    "height": 1024
+  },
+  {
+    "art": "live/events-nightsisters-assault.png",
+    "width": 512,
+    "height": 512
+  },
+  {
+    "art": "live/events-nightsisters-halloween.png",
+    "width": 512,
+    "height": 512
+  },
+  {
+    "art": "live/events-profundity.png",
+    "width": 512,
+    "height": 1024
+  },
+  {
+    "art": "live/events-rebelassult.png",
+    "width": 512,
+    "height": 512
+  },
+  {
+    "art": "live/events-smugglersrun.png",
+    "width": 512,
+    "height": 512
+  },
+  {
+    "art": "live/events-stormtrooperconcept.png",
+    "width": 512,
+    "height": 1024
+  },
+  {
+    "art": "live/events-stranger.png",
+    "width": 512,
+    "height": 1024
+  },
+  {
+    "art": "live/events-theronin.png",
+    "width": 512,
+    "height": 1024
+  },
+  {
+    "art": "datacrons/datacron_blue.png",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "art": "datacrons/datacron_green.png",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "art": "datacrons/datacron_orange.png",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "art": "datacrons/datacron_pink.png",
+    "width": 256,
+    "height": 256
+  },
+  {
+    "art": "eras/mandalorian-and-grogu.png",
+    "width": 128,
+    "height": 128
+  },
+  {
+    "art": "eras/myths-and-legends.png",
+    "width": 128,
+    "height": 128
+  }
+]
