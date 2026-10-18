@@ -1,5 +1,5 @@
 {
- "pulledAt": 1792307834531,
+ "pulledAt": 1792344336619,
  "gameDataVersion": "0.40.6:i9YYIijBSxuHHNoSmCMBoQ",
  "events": [
   {
@@ -167,6 +167,26 @@
    "art": "live/events-smugglersrun.png"
   },
   {
+   "id": "EVENT_CREDIT_HEIST_GETAWAY_V2",
+   "name": "Credit Heist",
+   "kind": "credit-heist",
+   "unit": "CREDITHEIST",
+   "startMs": 1792663200000,
+   "endMs": 1792749600000,
+   "live": false,
+   "art": "live/events-creditheist.png"
+  },
+  {
+   "id": "EVENT_RESOURCE_CONTRABAND_CARGO",
+   "name": "Contraband Cargo",
+   "kind": "event",
+   "unit": "CONTRABANDCARGO",
+   "startMs": 1792663200000,
+   "endMs": 1792749600000,
+   "live": false,
+   "art": "live/events-contrabandcargo.png"
+  },
+  {
    "id": "EVENT_ASSAULT_SEPARATIST",
    "name": "Ground War Assault Battles",
    "kind": "assault",
@@ -195,6 +215,16 @@
    "endMs": 1793084400000,
    "live": false,
    "art": "live/events-galacticchallenges-endor.png"
+  },
+  {
+   "id": "SPECIAL_EVENT_COVEN_OF_SHADOWS",
+   "name": "Coven of Shadows",
+   "kind": "event",
+   "unit": "HALLOWEEN2025",
+   "startMs": 1793084400000,
+   "endMs": 1793170800000,
+   "live": false,
+   "art": "live/events-halloween2025.png"
   }
  ]
 }
