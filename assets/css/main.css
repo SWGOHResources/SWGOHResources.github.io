@@ -34,9 +34,9 @@
   --orange-dim: rgba(221, 123, 59, 0.14);
   --orange-border: rgba(221, 123, 59, 0.45);
   --discord: #5865F2;
-  --text: #f1eee7;
-  --text2: #bcc3cf;
-  --text3: #aab4c2;
+  --text: #fff;
+  --text2: #fff;
+  --text3: #fff;
   --radius: 8px;
   --radius-lg: 14px;
   --disp: 'Sora', sans-serif;
@@ -45,7 +45,8 @@
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { height: 100%; scroll-behavior: smooth; }
+html { height: 100%; scroll-behavior: smooth; -webkit-user-select:none; user-select:none; }
+input, textarea, [contenteditable="true"] { -webkit-user-select:text; user-select:text; }
 
 /* Skip link — visible on keyboard focus only */
 .skip-link {
@@ -317,47 +318,35 @@ input:focus-visible, summary:focus-visible, [tabindex]:focus-visible {
   padding: 20px 28px; margin-bottom: 24px; display: grid; grid-template-columns: 1fr auto;
   gap: 28px; align-items: center;
 }
-.mh-left { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
-.mh-tag { font-family: var(--body); font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text3); }
-.mh-title-row { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
-.mh-main-val { font-family: var(--disp); font-size: 32px; font-weight: 700; color: var(--text); line-height: 1.1; letter-spacing: -0.01em; white-space: nowrap; }
-.mh-main-val .mh-of { font-size: 16px; font-weight: 600; color: var(--text3); margin-left: 4px; letter-spacing: 0; }
-.mh-main-val span:not(.mh-of) { color: var(--amber); }
-.mh-remaining { font-family: var(--body); font-size: 10px; font-weight: 600; color: var(--text2); white-space: nowrap; }
-.mh-sub { font-size: 12.5px; color: var(--text2); }
-.mh-sub span { color: var(--text); font-weight: 600; }
-
-.mh-progress-wrap { width: 100%; max-width: 560px; }
-.mh-progress-bar {
-  width: 100%; height: 6px; background: var(--void3); border-radius: 4px;
-  overflow: hidden; border: 1px solid var(--border); position: relative; margin-top: 6px;
-}
-.mh-progress-fill {
-  height: 100%; background: linear-gradient(90deg, var(--amber), #f0c06a);
-  border-radius: 4px; transition: width 0.3s; box-shadow: 0 0 8px rgba(224, 165, 82, 0.45);
-}
-.mh-progress-labels { display: flex; justify-content: space-between; font-family: var(--body); font-size: 10px; color: var(--text3); margin-top: 6px; }
-
-.mh-right {
-  display: flex; flex-direction: row; align-items: center; gap: 16px;
-  background: transparent; border: none; border-left: 1px solid var(--border); border-radius: 0;
-  padding: 4px 0 4px 28px; text-align: left;
-}
-.mh-right .cb-text { display: flex; flex-direction: column; gap: 2px; }
-.mh-right .cb-label { font-family: var(--body); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text3); white-space: nowrap; }
-.mh-right .cb-timer {
-  font-family: var(--mono); font-size: 30px; font-weight: 700; color: var(--amber);
-  letter-spacing: 0.05em; font-variant-numeric: tabular-nums; white-space: nowrap;
-}
-.mh-right .cb-sub { font-size: 11px; color: var(--text2); white-space: nowrap; }
+#mergedHero { grid-template-columns:minmax(0,1fr) minmax(250px,.45fr); gap:28px; padding:24px 28px; }
+.mh-left { display:flex; flex-direction:column; gap:16px; min-width:0; }
+.mh-tag { margin:0; font:600 18px/1.4 var(--disp); color:var(--text); letter-spacing:0; text-transform:none; overflow-wrap:anywhere; }
+.mh-title-row { display:flex; align-items:baseline; justify-content:space-between; gap:8px 20px; flex-wrap:wrap; }
+.mh-main-val { font-family:var(--disp); font-size:38px; font-weight:700; color:var(--text); line-height:1.15; letter-spacing:-.025em; white-space:nowrap; }
+.mh-main-val .mh-of { font-size:19px; font-weight:500; color:var(--text2); margin-left:6px; letter-spacing:0; }
+.mh-main-val span:not(.mh-of) { color:var(--amber); }
+.mh-remaining { font:500 13px/1.5 var(--body); color:var(--text2); }
+.mh-meta { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:18px; margin:0; }
+.mh-meta > div { min-width:0; }
+.mh-meta > div + div { border-left:1px solid var(--border2); padding-left:18px; }
+.mh-meta dt { margin:0 0 3px; color:var(--text3); font:500 11px/1.5 var(--body); }
+.mh-meta dd { margin:0; color:var(--text); font:600 14px/1.5 var(--body); }
+.mh-progress-wrap { width:100%; }
+.mh-progress-bar { width:100%; height:7px; background:var(--void3); border-radius:4px; overflow:hidden; border:1px solid var(--border); position:relative; }
+.mh-progress-fill { height:100%; background:linear-gradient(90deg,var(--amber),#f0c06a); border-radius:4px; transition:width .3s; }
+.mh-progress-labels { display:grid; grid-template-columns:minmax(0,1fr) auto minmax(0,1fr); align-items:baseline; gap:8px; margin-top:8px; font:400 12px/1.5 var(--body); color:var(--text2); }
+.mh-progress-labels .mh-remaining { text-align:center; }
+.mh-progress-labels > :last-child { text-align:right; }
+.mh-right { display:flex; flex-direction:column; align-items:flex-start; justify-content:center; gap:14px; min-width:0; height:100%; border-left:1px solid var(--border2); padding-left:28px; text-align:left; }
+.mh-right .cb-text { display:flex; flex-direction:column; gap:5px; min-width:0; }
+.mh-right .cb-label { font:600 11px/1.5 var(--body); text-transform:uppercase; letter-spacing:.05em; color:var(--text2); white-space:normal; }
+.mh-right .cb-sub { font:400 13px/1.5 var(--body); color:var(--text2); white-space:normal; }
+.mh-right .cb-timer { font:600 38px/1.15 var(--mono); color:var(--amber); letter-spacing:.01em; font-variant-numeric:tabular-nums; white-space:nowrap; }
 
 .hero-grid {
   display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 24px;
 }
-/* Dashboard cards keep natural heights — the Guild card grows with
-   the TB picker instead of stretching empty space into GAC/Conquest. */
-#statusDashboard { align-items: start; }
-section[aria-label="Important dates"] .unlock-grid { margin-bottom:14px; }
+section[aria-label="Important dates"] .unlock-grid { margin-bottom:0; }
 .status-card {
   background: var(--void1);
   border: 1px solid var(--border); border-radius: var(--radius-lg);
@@ -511,8 +500,6 @@ section[aria-label="Important dates"] .unlock-grid { margin-bottom:14px; }
 .day-pill .dp-dow { font-size: 9px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text3); }
 .day-pill .dp-num { font-family: var(--disp); font-size: 14px; font-weight: 700; color: var(--text); }
 .day-pill .dp-date { font-family: var(--mono); font-size: 9px; color: var(--text3); white-space: nowrap; }
-.day-pill .dp-dot { width: 4px; height: 4px; border-radius: 50%; background: transparent; margin-top: 2px; }
-.day-pill.has-events .dp-dot { background: var(--text3); }
 .day-pill.is-today { border-color: var(--cyan-border); }
 .day-pill.is-today .dp-num { color: var(--cyan); }
 .day-pill.is-selected {
@@ -520,7 +507,6 @@ section[aria-label="Important dates"] .unlock-grid { margin-bottom:14px; }
   box-shadow: inset 0 0 0 1px var(--amber-border);
 }
 .day-pill.is-selected .dp-dow, .day-pill.is-selected .dp-num { color: var(--amber); }
-.day-pill.is-selected .dp-dot { background: var(--amber); }
 .day-pill.is-today.is-selected {
   border-color: var(--amber); background: var(--amber-dim);
 }
@@ -540,6 +526,40 @@ section[aria-label="Important dates"] .unlock-grid { margin-bottom:14px; }
 }
 .day-today:hover:not(:disabled) { border-color: var(--amber-border); color: var(--amber); }
 .day-today:disabled { color: var(--text3); cursor: default; opacity: 0.55; }
+.schedule-search-tools { display:flex; align-items:flex-start; gap:12px; margin:12px 50px 0; }
+.schedule-search { position:relative; flex:1; min-width:0; z-index:60; }
+.schedule-search-controls { display:flex; align-items:center; gap:10px; }
+.schedule-search-field { display:flex; align-items:center; gap:9px; flex:1; min-width:0; padding:0 12px; min-height:38px; border:1px solid var(--border2); border-radius:var(--radius); background:var(--void2); }
+.schedule-search-field:focus-within { border-color:var(--amber); box-shadow:0 0 0 2px var(--amber-dim); }
+.schedule-search-field svg { width:16px; height:16px; flex:none; fill:none; stroke:var(--text3); stroke-width:1.7; stroke-linecap:round; }
+.schedule-search-field input { appearance:none; -webkit-appearance:none; width:100%; min-width:0; padding:9px 0; border:0; border-radius:0; outline:0; box-shadow:none; color:var(--text); background:transparent; font:12px var(--body); }
+.schedule-search-field input::placeholder { color:var(--text3); opacity:1; }
+.schedule-search-field input::-webkit-search-cancel-button,.schedule-search-field input::-webkit-search-decoration { appearance:none; -webkit-appearance:none; display:none; }
+.schedule-search-clear { appearance:none; display:grid; place-items:center; flex:none; width:26px; height:26px; padding:0; border:0; border-radius:4px; color:var(--text3); background:transparent; cursor:pointer; }
+.schedule-search-clear[hidden] { display:none; }
+.schedule-search-clear svg { stroke:currentColor; }
+.schedule-search-clear:hover { background:var(--void3); color:var(--text); }
+.schedule-search-clear:focus-visible { outline:2px solid var(--amber); outline-offset:1px; }
+.schedule-search-scope { display:flex; flex:none; gap:3px; padding:3px; border:1px solid var(--border); border-radius:var(--radius); background:var(--void2); }
+.schedule-search-scope button { appearance:none; min-height:30px; padding:5px 10px; border:1px solid transparent; border-radius:5px; color:var(--text3); background:none; font:600 11px var(--body); cursor:pointer; white-space:nowrap; }
+.schedule-search-scope button[aria-pressed="true"] { color:var(--amber); border-color:var(--amber-border); background:var(--amber-dim); }
+.schedule-search-scope button:hover { color:var(--text); }
+.schedule-search-scope button:focus-visible,.schedule-search-result:focus-visible { outline:2px solid var(--amber); outline-offset:-2px; }
+.schedule-search-tools > .day-today { align-self:flex-start; min-height:38px; }
+.schedule-search-results { position:absolute; top:calc(100% + 8px); left:0; right:0; max-height:350px; overflow-y:auto; overscroll-behavior:contain; padding:6px; border:1px solid var(--border2); border-radius:var(--radius); background:var(--void1); box-shadow:0 16px 40px #0009; }
+.schedule-search-results[hidden] { display:none; }
+.schedule-search-result { appearance:none; display:flex; flex-direction:column; align-items:flex-start; gap:5px; width:100%; min-width:0; padding:12px; text-align:left; border:0; border-radius:5px; color:var(--text); background:none; cursor:pointer; font:600 12px/1.4 var(--body); }
+.schedule-search-result + .schedule-search-result { border-top:1px solid var(--border); }
+.schedule-search-result:hover,.schedule-search-result:focus-visible { background:var(--void2); }
+.schedule-search-result span { overflow-wrap:anywhere; }
+.schedule-search-result small { color:var(--text3); font:400 11px/1.4 var(--body); }
+.schedule-search-empty { padding:18px 12px; color:var(--text3); font-size:12px; }
+@media(max-width:760px) {
+  .schedule-search-tools { margin:12px 0 0; gap:8px; }
+  .schedule-search-controls { flex-direction:column; align-items:stretch; gap:8px; }
+  .schedule-search-scope { align-self:flex-start; }
+  .schedule-search-tools > .day-today { min-height:38px; }
+}
 .day-help { color: var(--text3); font-size: 10.5px; }
 
 /* Jump toggle: hidden on desktop (jump controls always visible there),
@@ -964,18 +984,11 @@ section[aria-label="Important dates"] .unlock-grid { margin-bottom:14px; }
 
 @media (max-width: 900px) {
   .merged-hero { grid-template-columns: 1fr; gap: 14px; padding: 16px; }
-  .mh-left { gap: 8px; }
-  .mh-title-row { gap: 10px; }
-  .mh-right { border-left: none; border-top: 1px solid var(--border); width: 100%; padding: 12px 0 0; justify-content: space-between; }
-  .mh-right .cb-timer { font-size: 26px; }
   .hero-grid { grid-template-columns: 1fr; }
   .explorer { padding: 12px; }
   .xcard { flex-basis: 168px; }
   .tl-date { min-width: 0; }
   .discord-copy-btn { width: 100%; justify-content: center; }
-  /* Adjust era overview layout on mobile to prevent content cutoff */
-  .mh-right { flex-direction: column; align-items: flex-start; gap: 4px; }
-  .mh-right .cb-label, .mh-right .cb-sub { white-space: normal; }
 }
 
 @media (max-width: 600px) {
@@ -994,7 +1007,6 @@ section[aria-label="Important dates"] .unlock-grid { margin-bottom:14px; }
   .day-pill { padding-left: 1px; padding-right: 1px; }
   .day-pill .dp-dow { font-size: 8px; }
   .day-pill .dp-num { font-size: 13px; }
-  .day-pill .dp-date { display: none; }
   .jump-toggle { display: flex; margin: 10px 39px 0; width: auto; }
   .explorer-tools { display: none; margin-left: 39px; margin-right: 39px; flex-wrap: wrap; }
   .explorer-tools.open { display: flex; }
@@ -1017,14 +1029,6 @@ section[aria-label="Important dates"] .unlock-grid { margin-bottom:14px; }
   .policy-page .section-head h1 { font-size: 26px; }
   .policy-page .section-head .rule { max-width: none; }
   .policy-content { padding-left: 20px; }
-  .mh-main-val { font-size: 28px; }
-  .mh-right {
-    border-left: none; border-top: 1px solid var(--border); width: 100%; padding: 12px 0 0; justify-content: space-between;
-    /* Stack elements vertically on very small screens */
-    flex-direction: column; align-items: flex-start; gap: 4px;
-  }
-  .mh-right .cb-timer { font-size: 26px; }
-  .mh-right .cb-label, .mh-right .cb-sub { white-space: normal; }
   .tl-day { flex-wrap: wrap; gap: 6px; }
   /* Minimum touch targets on mobile + clearance under the sticky
      explorer nav so focused pills are never hidden behind it. */
@@ -1035,3 +1039,27 @@ section[aria-label="Important dates"] .unlock-grid { margin-bottom:14px; }
   .day-pill, .day-detail-head h3, .tl-day { scroll-margin-top: 130px; }
 }
 
+
+@media(max-width:900px) {
+  #mergedHero { grid-template-columns:minmax(0,1fr); padding:22px; gap:20px; }
+  #mergedHero .mh-right { display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; height:auto; border-left:0; border-top:1px solid var(--border2); padding:18px 0 0; gap:20px; }
+  #mergedHero .cb-timer { font-size:34px; }
+}
+@media(max-width:520px) {
+  #mergedHero { padding:18px; gap:18px; margin-bottom:18px; }
+  #mergedHero .mh-left { gap:14px; }
+  #mergedHero .mh-tag { font-size:17px; }
+  #mergedHero .mh-main-val { font-size:32px; }
+  #mergedHero .mh-main-val .mh-of { font-size:17px; }
+  #mergedHero .mh-remaining { font-size:12px; }
+  #mergedHero .mh-meta { gap:12px; }
+  #mergedHero .mh-meta > div + div { padding-left:12px; }
+  #mergedHero .mh-meta dd { font-size:13px; }
+  #mergedHero .mh-progress-labels { grid-template-columns:repeat(2,minmax(0,1fr)); gap:6px 12px; font-size:11px; }
+  #mergedHero .mh-progress-labels .mh-remaining { grid-column:1 / -1; grid-row:2; }
+  #mergedHero .mh-progress-labels > :last-child { grid-column:2; grid-row:1; }
+  #mergedHero .mh-right { padding-top:16px; gap:12px; }
+  #mergedHero .cb-label { font-size:10px; letter-spacing:.025em; }
+  #mergedHero .cb-sub { font-size:12px; }
+  #mergedHero .cb-timer { font-size:28px; }
+}

@@ -173,10 +173,45 @@ A day shows cards for events starting that day and multi-day events with
 daily activity, including marquees, era challenges, journeys, Conquest and
 bonus drops. Short events do not repeat merely because their end time falls
 on the following calendar day. Live event windows replace matching rotation
-estimates, and each card retains its original start and end dates. Only the
+estimates, and each card retains its original start and end dates. Daily events
+continue through their last full activity day and do not linger on their
+handover date. Timers count to the start before launch and to the end while
+running, including clock-only refreshes. Only the
 Coliseum boss remains in the indicators row. The schedule sits directly below
-era progress; Important Dates contains date cards followed by Conquest, GAC
-and Guild mode status.
+era progress; Important Dates contains the three date cards without a separate
+Conquest, GAC or Guild status row.
+
+Conquest cards show the volume number and ordinal run description. The volume
+anchor is configured in `CONQUEST_VOLUME_ANCHOR_DATE` and `CONQUEST_VOLUME_ANCHOR`;
+live feed volume IDs take precedence. TB end markers and TW payouts drive guild
+timing internally but are omitted from schedule cards, search and the full schedule.
+
+Daily cards combine live and expected events before sorting. Additive drops
+come first regardless of when they began, followed by events starting on the
+selected date and then continuing events. Each group uses the family ranks in
+`EVENT_DISPLAY_PRIORITY` (releases and unlocks, competitive and guild modes,
+limited-time rewards, then routine activities); equal ranks use start time and
+name for a stable order.
+
+Only additive-drop cards with a unit breakdown show the Details button.
+Cards use short event captions from `EVENT_CAPTIONS`, with family fallbacks
+when no specific caption is known. Shipment changes retain their client update
+but no longer create a separate Shipment Update card.
+
+Event titles and types are separated in `render.js` for cards, event details
+and search. `MARQUEE_EVENT_NAMES`, `JOURNEY_EVENT_NAMES` and `FLEET_EVENT_NAMES`
+in `config.js` hold known event titles independently of the reward units.
+Live names keep their source data unchanged; display normalization removes type
+suffixes, recognizes the known era legendary events, and preserves raw names
+and unit names as search aliases. Unknown marquee titles fall back to their unit
+until live data supplies the event name.
+
+The schedule search replaces the day and event jump menus. Search names,
+units, calendar dates or era days, then select a result to open its date.
+All dates, Future and Past controls filter by the event's start time.
+Search includes previous configured eras as well as the normal lookahead;
+live occurrences replace matching estimates. Results and clearing controls
+use the site's custom styling and support keyboard navigation.
 Where a live card covers a rotation entry (same smuggling run, marquee,
 fleet ship…) the rotation card is suppressed so nothing shows twice.
 Rotation marquee, era-challenge and journey-guide slots are matched to

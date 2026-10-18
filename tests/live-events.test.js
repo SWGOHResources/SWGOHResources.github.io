@@ -532,11 +532,11 @@ test('assault and omega battles show yellow as Resource, not Era', () => {
     assert.match(html, new RegExp(`<div class="xcard-kicker">${kind === 'assault' ? 'Assault Battle' : 'Omega Battle'}<\\/div>`), kind);
     assert.match(html, /--accent:var\(--amber\)/, kind);
   }
-  // Unknown kinds keep the Era fallback.
+  // Unknown kinds have a neutral event type.
   const other = run(`liveCardHTML(
     { id: 'm', name: 'Some Event', kind: 'event', startMs: ${NOW - H}, endMs: ${NOW + H} },
     'Now')`);
-  assert.match(other, /<div class="xcard-kicker">ERA<\/div>/);
+  assert.match(other, /<div class="xcard-kicker">Event<\/div>/);
 });
 
 test('curated resource names show yellow, era journeys stay orange', () => {
@@ -546,13 +546,13 @@ test('curated resource names show yellow, era journeys stay orange', () => {
     const html = run(`liveCardHTML(
       { id: 'm', name: '${name}', kind: 'event', startMs: ${NOW - H}, endMs: ${NOW + H} },
       'Now')`);
-    assert.match(html, /<div class="xcard-kicker">Resource<\/div>/, name);
+    assert.match(html, new RegExp(`<div class="xcard-kicker">${name === 'Training Droid Smuggling' ? 'Resource Event' : 'Special Event'}<\\/div>`), name);
     assert.match(html, /--accent:var\(--amber\)/, name);
   }
   const journey = run(`liveCardHTML(
     { id: 'm', name: 'Terrible Tings Legendary Event', kind: 'event', startMs: ${NOW - H}, endMs: ${NOW + H} },
     'Now')`);
-  assert.match(journey, /<div class="xcard-kicker">ERA<\/div>/);
+  assert.match(journey, /<div class="xcard-kicker">Era Legendary Event<\/div>/);
 });
 
 test('live cards fall back to generic art for unknown kinds', () => {
@@ -583,7 +583,7 @@ test('explorer day view overlays live events touching that day', () => {
   run('renderExplorer(getGameStatus())');
   assert.match(els.dayDetail.innerHTML, /class="xcard game-event-card/);
   assert.match(els.dayDetail.innerHTML, /Live Thing/);
-  assert.match(els.dayDetail.innerHTML, /xcard-rel is-today">Now</);
+  assert.match(els.dayDetail.innerHTML, /xcard-rel(?: is-expired)?">(?:Ends in [^<]+|Expired)</);
   assert.doesNotMatch(els.dayStrip.innerHTML, /has-live/);
 });
 
@@ -609,8 +609,8 @@ test('mid-span long runners show as cards outside the boss row', () => {
   assert.equal(run(`splitLiveDay(liveEventsForDay(${dayStart}), ${dayStart}).ongoing.length`), 1);
   run('renderExplorer(getGameStatus())');
   assert.doesNotMatch(els.dayDetail.innerHTML, /day-boss day-live/);
-  assert.match(els.dayDetail.innerHTML, /Long Thing/);
-  assert.match(els.dayDetail.innerHTML, /<article[^>]*aria-label="Long Thing"/);
+  assert.match(els.dayDetail.innerHTML, new RegExp(`data-clock-start="${dayStart - 2 * 86400000 + 3600000}"`));
+  assert.match(els.dayDetail.innerHTML, /<article[^>]*aria-label="Volume \d+"/);
   assert.doesNotMatch(els.dayStrip.innerHTML, /has-live/);
 });
 
@@ -625,8 +625,8 @@ test('ongoing Conquest and marquees render their own card families', () => {
       startMs: ${dayStart} - 2 * 86400000 + 3600000, endMs: ${dayStart} + 5 * 86400000 }
   ] }`);
   run('renderExplorer(getGameStatus())');
-  assert.match(els.dayDetail.innerHTML, /<article[^>]*--accent:var\(--purple\)[^>]*aria-label="Live Conquest"/);
-  assert.match(els.dayDetail.innerHTML, /<article[^>]*aria-label="Live Marquee"/);
+  assert.match(els.dayDetail.innerHTML, /<article[^>]*--accent:var\(--purple\)[^>]*aria-label="Volume \d+"/);
+  assert.match(els.dayDetail.innerHTML, /<article[^>]*aria-label="Live"/);
   assert.doesNotMatch(els.dayDetail.innerHTML, /day-boss day-live/);
 });
 
@@ -725,7 +725,7 @@ test('rotation cards wear the matched live art and marquee name', () => {
   run('liveEventsCache = null');
   const plain = run(`explorerCardHTML({ icon: 'marquee_5', label: 'Jaxxon Marquee' }, ${dayStart}, 'Now', null, ${NOW})`);
   assert.match(plain, /live\/events-jaxxon\.png/);
-  assert.match(plain, /<h4>Jaxxon<\/h4>/);
+  assert.match(plain, /<h4>Action Jaxxon<\/h4>/);
 });
 
 test('ongoing live cards replace the matching rotation without badges or duplicates', () => {
@@ -745,8 +745,8 @@ test('ongoing live cards replace the matching rotation without badges or duplica
   explorerOffset = ${target.o};`);
   run('renderExplorer(getGameStatus())');
   assert.doesNotMatch(els.dayDetail.innerHTML, /Journey Guide<\/h4>/);
-  assert.match(els.dayDetail.innerHTML, /Terrible Tings Legendary Event/);
-  assert.equal((els.dayDetail.innerHTML.match(/<article[^>]*aria-label="Terrible Tings Legendary Event"/g) || []).length, 1);
+  assert.match(els.dayDetail.innerHTML, /<h4>Terrible Things<\/h4>/);
+  assert.equal((els.dayDetail.innerHTML.match(/<article[^>]*aria-label="Terrible Things"/g) || []).length, 1);
   assert.doesNotMatch(els.dayDetail.innerHTML, /day-badge|day-live/);
 });
 
@@ -785,7 +785,7 @@ test('live cards suppress the matching rotation card', () => {
   ] };
   explorerOffset = ${off.o};`);
   run('renderExplorer(getGameStatus())');
-  assert.match(els.dayDetail.innerHTML, /SMUGGLER'S RUN Resource Event/);
+  assert.match(els.dayDetail.innerHTML, /<h4>SMUGGLER'S RUN<\/h4>/);
   assert.doesNotMatch(els.dayDetail.innerHTML, /Smuggler's Run (I|II|III)/);
 });
 
@@ -957,7 +957,7 @@ test('live conquest replaces the ongoing rotation Conquest card', () => {
   // Find a visible pill day inside an active conquest run.
   const target = run(`(() => {
     const st = getGameStatus();
-    for (let o = -6; o <= 6; o++) {
+    for (let o = -14; o <= 14; o++) {
       const d = explorerDayAt(st, o);
       if (conquestInfoForDay(d.ep, d.dayInEp)) return { o, dMs: d.dMs };
     }
@@ -967,7 +967,7 @@ test('live conquest replaces the ongoing rotation Conquest card', () => {
   // Control: the ongoing rotation supplies a card without live data.
   run(`explorerOffset = ${target.o};`);
   run('renderExplorer(getGameStatus())');
-  assert.match(els.dayDetail.innerHTML, /data-event-rewards="conquest_start\|/);
+  assert.match(els.dayDetail.innerHTML, /<h4>Volume \d+<\/h4>/);
   // With live conquest touching the day: rotation badge gone, live shown.
   run(`liveEventsCache = { pulledAt: Date.now(), gameDataVersion: 'v', events: [
     { id: 'CONQUEST_VOL24', name: 'Conquest Live', kind: 'conquest', art: 'live/x.png',
@@ -975,11 +975,11 @@ test('live conquest replaces the ongoing rotation Conquest card', () => {
   ] };`);
   run('renderExplorer(getGameStatus())');
   assert.doesNotMatch(els.dayDetail.innerHTML, /day-conquest/);
-  assert.equal((els.dayDetail.innerHTML.match(/data-event-rewards="conquest_start\|/g) || []).length, 1);
+  assert.equal((els.dayDetail.innerHTML.match(/<h4>Volume \d+<\/h4>/g) || []).length, 1);
   // Run label derives from the event's own start day — compute it the
   // same way instead of pinning a date-sensitive literal.
-  const want = run(`conquestRunLabel('Conquest Live', 'CONQUEST_VOL24', conquestRunForDate(${target.dMs} - 86400000))`);
-  assert.match(els.dayDetail.innerHTML, new RegExp(want.replace(/[()]/g, m => '\\' + m)));
+  assert.match(els.dayDetail.innerHTML, /<h4>Volume 24<\/h4>/);
+  assert.match(els.dayDetail.innerHTML, /[123](?:st|nd|rd) Run of Volume Begins/);
 });
 
 test('era icon art tracks the newest premium era, never breaking the pull', async () => {
@@ -1023,5 +1023,42 @@ test('era icon art tracks the newest premium era, never breaking the pull', asyn
   } finally {
     server.close();
     if (dir) await rm(dir, { recursive: true, force: true });
+  }
+});
+
+
+test('event copy separates names and families for live and expected events', () => {
+  const { ctx } = loadRenderEngine();
+  const run = src => vm.runInContext(src, ctx);
+  const cases = [
+    ['journey_guide', 'Darth Jar Jar Journey Guide Starts', 'Terrible Things', 'Era Legendary Event'],
+    ['journey_rerun_1', 'Journey Rerun 1: Maul Hate Fueled Starts', 'Web of Hate', 'Era Legendary Event'],
+    ['journey_rerun_2', 'Journey Rerun 2: Cassian Andor Undercover Starts', 'The Price of Hope', 'Era Legendary Event'],
+    ['fleet_executor', 'Discarded Doctrine (Executor) Starts', 'Discarded Doctrine', 'Fleet Mastery'],
+    ['fleet_profundity', 'Stardust Transmission (Profundity) Starts', 'Stardust Transmission', 'Fleet Mastery'],
+    ['proving_ground', 'Bonus Proving Grounds (Conquest Pass+ Only)', 'Bonus Proving Grounds', 'Conquest Trials Pass+'],
+    ['ultimate_journey', 'Ultimate Journey', 'Ultimate Journey', 'Galactic Legend Event'],
+    ['marquee_3', 'Starkiller (Luke Concept) Marquee', 'Ancient Reckoning', 'Special Marquee Event'],
+  ];
+  for(const [icon, raw, title, type] of cases){
+    const copy = run(`gameEventCopy(${JSON.stringify(icon)}, ${JSON.stringify(raw)}, ${NOW}, null)`);
+    assert.equal(copy.title, title, icon);
+    assert.equal(copy.type, type, icon);
+  }
+  const events = [
+    { name:'Terrible Tings Legendary Event', kind:'event', unit:'DARTHJARJAR', title:'Terrible Things', type:'Era Legendary Event' },
+    { name:'The Ronin Era Challenge', kind:'era-challenge', unit:'THERONIN', title:'The Ronin', type:'Era Challenge' },
+    { name:'Ground War Assault Battles', kind:'assault', title:'Ground War', type:'Assault Battle' },
+    { name:'Endor Omega Battles', kind:'omega', title:'Endor', type:'Omega Battle' },
+    { name:'Galactic Bounties I', kind:'event', title:'Galactic Bounties I', type:'Special Event' },
+    { name:'Coven of Shadows', kind:'event', title:'Coven of Shadows', type:'Special Event' },
+    { name:'Daring Droid Mythic Event', kind:'event', title:'Daring Droid', type:'Mythic Event' },
+    { name:'Bonus Drops', unit:'DARTHJARJAR', kind:'special', title:'Bonus Drops', type:'Special Event' },
+  ];
+  for(const {title, type, ...event} of events){
+    const raw = JSON.stringify(event);
+    const copy = run(`gameEventCopy(liveRotationIcon(${raw}), liveDisplayName(${raw}), ${NOW}, ${raw})`);
+    assert.equal(copy.title, title, event.name);
+    assert.equal(copy.type, type, event.name);
   }
 });

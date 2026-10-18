@@ -268,6 +268,17 @@ function conquestRunLabel(eventName, eventId, runNum){
   return `Conquest Run ${runNum} (Volume ${volume})`;
 }
 
+/* Calendar volume/run identity; a live feed volume overrides the anchor. */
+function conquestVolumeInfo(dateMs, eventId){
+  const anchor = parseDateOnlyMs(typeof CONQUEST_VOLUME_ANCHOR_DATE !== 'undefined' ? CONQUEST_VOLUME_ANCHOR_DATE : null);
+  const anchorVolume = typeof CONQUEST_VOLUME_ANCHOR !== 'undefined' ? CONQUEST_VOLUME_ANCHOR : null;
+  if(!Number.isFinite(dateMs) || !Number.isFinite(anchor) || !Number.isInteger(anchorVolume)) return null;
+  const runIndex = Math.floor((Math.floor(dateMs / 86400000) * 86400000 - anchor) / (episodeLengthDays() * 86400000));
+  const match = /^CONQUEST_VOL(\d+)$/i.exec(eventId || '');
+  const volume = match ? Number(match[1]) : anchorVolume + Math.floor(runIndex / 3);
+  return volume > 0 ? { volume, run:posMod(runIndex, 3) + 1 } : null;
+}
+
 /* Run number (1-3) of the conquest active on a calendar day, or null
    when no run covers it. Used to label live conquest data by the
    event's own start day. */
@@ -649,8 +660,7 @@ function validScheduleItem(item){
  CLIENT UPDATES + DATACRON DROPS (Wednesday rules)
   - Shipment update: Wednesday of era week 2 (era days 8-14),
     once per 84-day era. Previous era's shards go to shipments.
-    Shown as TWO cards: the regular client update plus a
-    separate shipment change card.
+    Adds the regular client update without a shipment change card.
   - Datacron drop: Wednesday of the calendar week before a
     conquest starts (any conquest of any volume). Currently
     conquests start Monday (Day 7), so this is the prior
@@ -800,7 +810,6 @@ function getClientUpdateEvents(dateMs, episode, dayInEp){
   const biweekly = isBiweeklyClientUpdateDay(dateMs);
   const out = [];
   if(shipment || datacron || biweekly) out.push(ev('client_update', 'Client Update'));
-  if(shipment) out.push(ev('shipment_update', 'Previous Era Shards Added to Shipments'));
   if(datacron){
     const color = datacronColorForDrop(dateMs);
     const set = datacronSetForDrop(dateMs, color);
@@ -1133,6 +1142,15 @@ function relForEventStart(startMs, nowMs, dayFallback){
   return until.charAt(0).toUpperCase() + until.slice(1);
 }
 
+function eventTimerLabel(startMs, endMs, nowMs){
+  if(!Number.isFinite(startMs) || !Number.isFinite(nowMs)) return '';
+  if(startMs > nowMs) return relForEventStart(startMs, nowMs, '');
+  if(!Number.isFinite(endMs) || endMs <= startMs) return 'Now';
+  if(endMs <= nowMs) return 'Expired';
+  const remaining = relForEventStart(endMs, nowMs, '');
+  return `Ends ${remaining.charAt(0).toLowerCase()}${remaining.slice(1)}`;
+}
+
 /* Terse sub-day duration ("2h 45m", "45m", "2h" when exact) so events
    minutes apart never share one label. Floored, like the dashboard's
    truncation convention — never claims sooner than reality. */
@@ -1237,7 +1255,8 @@ function eventDurationHours(item, dateMs, tbCtx){
     endMs.setUTCDate(Math.min(originalDay, daysInEndMonth));
     return Math.max(1, Math.round((endMs.getTime() - dateMs) / 3600000));
   }
-  if(icon === 'rote' || icon === 'tb_ends'){
+  if(icon === 'tb_ends') return null;
+  if(icon === 'rote'){
     if(item.tbEndMoment != null) return null;
     const def = tbCtx && tbCtx.def;
     return (def && Number.isFinite(def.hoursPerPhase)) ? def.hoursPerPhase : 24;

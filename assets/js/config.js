@@ -132,6 +132,28 @@ const MARQUEE_NAMES = {
   marquee_8: 'B1 Mercenary Droid',
 };
 
+const MARQUEE_EVENT_NAMES = {
+  marquee_1: 'The Last Command',
+  marquee_2: 'A Dark Reflection',
+  marquee_3: 'Ancient Reckoning',
+  marquee_4: 'Blade and Bastion',
+  marquee_5: 'Action Jaxxon',
+  marquee_6: "The Wanderer's Blade",
+  marquee_7: 'Green Ranger',
+};
+
+const JOURNEY_EVENT_NAMES = {
+  journey_guide: { title:'Terrible Things', unit:'Darth Jar Jar', unitId:'DARTHJARJAR', aliases:['Terrible Tings', 'Terrible Things'] },
+  journey_rerun_1: { title:'Web of Hate', unit:'Maul (Hate-Fueled)', unitId:'MAULHATEFUELED', aliases:['Web of Hate'] },
+  journey_rerun_2: { title:'The Price of Hope', unit:'Cassian Andor (Undercover)', unitId:'CASSIANUNDERCOVER', aliases:['The Price of Hope'] },
+};
+
+const FLEET_EVENT_NAMES = {
+  fleet_executor:'Discarded Doctrine',
+  fleet_leviathan:'Dark Sovereign',
+  fleet_profundity:'Stardust Transmission',
+};
+
 // Journey Guide unlocks (4★→7★) are the same unit each era.
 // Update this when a new Era / Journey Guide unit is announced.
 const JOURNEY_GUIDE_UNIT = 'Darth Jar Jar';
@@ -150,6 +172,56 @@ const ERA_BATTLE_NAMES = {
 // Image base + unit tile images (paths relative to IMG_BASE in assets/img/)
 const IMG_BASE = 'assets/img/';
 const DROP_EVENT_ART = 'atlases/standard_rgba_atlas/icon_gift.png';
+const EVENT_CAPTIONS = {
+  'Military Might':'Battle Empire!',
+  'Forest Moon':'Battle Ewoks!',
+  'Ground War':'Battle Separatists!',
+  'Rebel Roundup':'Battle Rebels!',
+  'Secrets and Shadows':'Battle Dark Side Followers!',
+  'Places of Power':'Battle Jedi!',
+  'Fanatical Devotion':'Battle Force Users!',
+  'Duel of the Fates':'Battle Darth Maul!',
+  'Peridea Patrol':'Battle Ezra Bridger (Exile)!',
+  'Discarded Doctrine':'Earn Executor Blueprints!',
+  'Dark Sovereign':'Earn Leviathan Blueprints!',
+  'Stardust Transmission':'Earn Profundity Blueprints!',
+  "General's Command":'Earn Finalizer Blueprints!',
+  "Admiral's Maneuver":'Earn Raddus Blueprints!',
+  'Proving Grounds':'Earn Conquest Unit Shards!',
+  'Bonus Proving Grounds':'Earn Conquest Unit Shards!',
+  'Ultimate Journey':'Earn Legend Tokens!',
+  'Galactic Bounties I':'Very Rare Event!',
+  'Galactic Bounties II':'Very Rare Event!',
+  'Credit Heist':'Earn Credits!',
+  'Training Droid Smuggling':'Earn Training Droids!',
+  'Contraband Cargo':'Earn Rare Rewards!',
+  'Defense of Dathomir':'Earn Mother Talzin Shards!',
+  'Ghosts of Dathomir':'Investigate Dathomir!',
+  'Endor Escalation':'Face off against an AT-ST!',
+  'Coven of Shadows':'Battle the Witch Kingdom of Dathomir!',
+};
+
+const EVENT_DISPLAY_PRIORITY = {
+  additive:0,
+  era:10,
+  marquee:20,
+  legendary:30,
+  provingGrounds:40,
+  gac:50,
+  conquest:60,
+  guild:70,
+  special:80,
+  assault:90,
+  fleet:100,
+  eraChallenge:110,
+  eraBattle:120,
+  datacron:130,
+  resource:140,
+  omega:150,
+  update:160,
+  event:170,
+};
+
 const BONUS_REWARD_ICONS = {
   'Mk 7 Kyrotech Salvage': 'live/reward-shockprod-salvage.png',
   'Mk 9 Kyrotech Salvage': 'live/reward-battlecomputer-salvage.png',
@@ -412,6 +484,8 @@ const EPISODE_LENGTH_DAYS = 28;
 
 /* Conquest runs Day 7-20 of each episode (14 days). Keep these two in
    sync with EPISODE_OVERRIDES labels ('conquest_start' / 'conquest_end'). */
+const CONQUEST_VOLUME_ANCHOR_DATE = '2026-09-28';
+const CONQUEST_VOLUME_ANCHOR = 25;
 const CONQUEST_START_DAY_IN_EP = 7;
 const CONQUEST_END_DAY_IN_EP = 20;
 const CONQUEST_DURATION_DAYS = 14;

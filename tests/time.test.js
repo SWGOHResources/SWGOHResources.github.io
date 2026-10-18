@@ -794,21 +794,23 @@ test('future cards count to their own start instant, not the changeover', () => 
   // Every pill counts forward on a future day — never past wording…
   const pills = [...els.dayDetail.innerHTML.matchAll(/xcard-rel[^"]*">([^<]+)</g)].map(m => m[1]);
   assert.ok(pills.length > 0, 'expected cards on the GAC day');
-  for (const p of pills) assert.match(p, /^(Now|In )/);
+  for (const p of pills) assert.match(p, /^(Now|In |Ends in )/);
   assert.ok(!pills.some(p => /Yesterday|ago/.test(p)), 'no past wording on a future day');
   // …and GAC pills never claim the 18:00 changeover moment.
   assert.ok(pills.some(p => /^In /.test(p)), 'expected countdown pills');
 });
 
-test('day pills show era-day numbers with a calendar caption', () => {
+test('day pills show weekday, calendar date and month across the month boundary', () => {
   const { ctx, els } = loadRenderEngine();
   const run = src => vm.runInContext(src, ctx);
   const st = run('getGameStatus()');
   run(`explorerOffset = ${-(st.eraDay - 1)}; renderExplorer(getGameStatus())`);
   const nums = [...els.dayStrip.innerHTML.matchAll(/dp-num">(\d+)/g)].map(m => Number(m[1]));
-  assert.deepEqual(nums, [1, 2, 3, 4, 5, 6, 7]);
-  assert.match(els.dayStrip.innerHTML, /dp-date">28 Jul</);
-  assert.match(els.dayStrip.innerHTML, /aria-label="Day 1, /);
+  assert.deepEqual(nums, [28, 29, 30, 31, 1, 2, 3]);
+  assert.match(els.dayStrip.innerHTML, /dp-date">Jul</);
+  assert.match(els.dayStrip.innerHTML, /dp-date">Aug</);
+  assert.doesNotMatch(els.dayStrip.innerHTML, /dp-dot|\+\d+d|has-events/);
+  assert.match(els.dayStrip.innerHTML, /aria-label="Tue 28th Jul/);
 });
 
 test('timezone parts include the calendar month', () => {
@@ -869,7 +871,7 @@ test('event durations read in whole hours, markers read null', () => {
   }
   assert.equal(engine.eventDurationHours({ icon: 'rote' }, day, { def: { hoursPerPhase: 36 } }), 36);
   assert.equal(engine.eventDurationHours({ icon: 'rote', tbEndMoment: day }, day, { def: { hoursPerPhase: 36 } }), null);
-  for (const icon of ['tw_payout', 'client_update', 'era_changeover', null, '']) {
+  for (const icon of ['tw_payout', 'tb_ends', 'client_update', 'era_changeover', null, '']) {
     assert.equal(engine.eventDurationHours({ icon }, day, null), null, String(icon));
   }
 });
@@ -1063,7 +1065,7 @@ test('the explorer and full schedule continue across the era boundary', () => {
     explorerOffset = 4; renderExplorer(fixedStatus); renderFullSchedule(fixedStatus);`);
   assert.match(els.dayDetail.innerHTML, /Tuesday, 20th October/);
   assert.match(els.dayDetail.innerHTML, /Era of The Mandalorian and Grogu/);
-  assert.match(els.dayDetail.innerHTML, /Adelphi Ranger/);
+  assert.match(els.dayDetail.innerHTML, /Green Ranger/);
   assert.match(els.dayDetail.innerHTML, /Myths &amp; Legends Ends/);
   assert.match(els.dayStrip.innerHTML, /dp-num">20<\/span>/);
   assert.doesNotMatch(els.dayDetail.innerHTML, /Day 1 \/ 84/);
@@ -1085,7 +1087,7 @@ test('unannounced eras retain recurring events without reusing era content', () 
   assert.ok(!items.some(e => /^(marquee_|journey_|era_challenge_|era_battle_)/.test(e.icon)));
   run(`var futureStatus = getGameStatus(Date.parse('2026-11-24T20:00:00Z'));
     renderStaticMeta(futureStatus); renderMergedHero(futureStatus); renderUnlockWindows(futureStatus);`);
-  assert.equal(els.eraTitle.textContent, 'Event Schedule for Upcoming era');
+  assert.equal(els.eraTitle.textContent, 'Upcoming era');
   assert.equal(els.mhEndDate.textContent, 'TBA');
   assert.match(els.unlockWindows.innerHTML, /data-clock="era-end">TBA/);
 });

@@ -31,7 +31,7 @@ test('next-day navigation crosses day 84 and dated links survive live refresh', 
     assert.equal(f.w.location.hash, '#date-2026-10-20');
     assert.equal(f.w.location.pathname, '/preview/card-layout.html');
     assert.ok(f.doc.querySelector('#dayDetail .xcard[aria-label="Era of Myths & Legends Ends"]'));
-    assert.match(f.doc.querySelector('#dayDetail').textContent, /Adelphi Ranger/);
+    assert.match(f.doc.querySelector('#dayDetail').textContent, /Green Ranger/);
     f.doc.querySelector('#dayNext').click();
     assert.equal(f.w.location.hash, '#date-2026-10-21');
     assert.doesNotMatch(f.doc.querySelector('#dayDetail').textContent, /Darth Jar Jar|The Ronin/);
@@ -89,18 +89,19 @@ test('main schedule details open the additive layout and restore keyboard focus'
   } finally { f.dom.window.close(); }
 });
 
-test('other details buttons show the selected event timing and clear wave rewards', async () => {
-  const f = await fixture('#day-79');
+test('only additive-drop cards offer details, including when other events carry unit data', async () => {
+  const live = JSON.parse(fs.readFileSync(new URL('../assets/data/live-events.json', import.meta.url), 'utf8'));
+  const nonDrop = { ...live.events.find(e=>Array.isArray(e.units)), id:'SPECIAL_REWARD_EVENT', name:'Special Reward Event' };
+  const f = await fixture('#day-82', '2026-10-17T20:00:00Z', [...live.events, nonDrop]);
   try {
-    const button = [...f.doc.querySelectorAll('.game-event-action')].find(item=>item.getAttribute('aria-label')==='Details for Client Update');
-    assert.ok(button);
-    button.click();
-    const modal = f.doc.querySelector('#bonusWaveModal');
-    assert.equal(modal.getAttribute('aria-hidden'), 'false');
-    assert.equal(f.doc.querySelector('#bonusWaveTitle').textContent, 'Client Update');
-    assert.match(f.doc.querySelector('#bonusWaveWindow').textContent, /14th Oct/);
-    assert.equal(modal.querySelectorAll('.bdrop-row').length, 0);
-    assert.match(modal.textContent, /Reward details unavailable/);
+    const buttons = f.doc.querySelectorAll('#dayDetail .game-event-action');
+    assert.equal(buttons.length, 1);
+    assert.equal(buttons[0].getAttribute('aria-label'), 'Details for Additive Drops: Wave 1');
+    assert.ok(!f.doc.querySelector('.game-event-card[aria-label="Special Reward Event"] button'));
+    assert.ok(!f.doc.querySelector('.game-event-card[aria-label="Terrible Things"] button'));
+    f.w.jumpExplorer(79 - f.w.getGameStatus().eraDay);
+    assert.ok(f.doc.querySelector('.game-event-card[aria-label="Client Update"]'));
+    assert.equal(f.doc.querySelectorAll('#dayDetail .game-event-action').length, 0);
   } finally { f.dom.window.close(); }
 });
 
@@ -117,6 +118,47 @@ test('card timing switches from countdown to expired status without replacing th
     assert.equal(timer.dataset.timingKind, 'status');
     assert.ok(timer.classList.contains('is-expired'));
   } finally { f.dom.window.close(); }
+});
+
+test('card clocks switch from start countdown to end countdown in place', async () => {
+  const startMs = Date.parse('2026-10-20T18:00:00Z');
+  const endMs = Date.parse('2026-10-27T18:00:00Z');
+  const f = await fixture('#date-2026-10-20', '2026-10-20T17:59:00Z', [{
+    id:'EVENT_MARQUEE_ADELPHIRANGER', name:'Adelphi Ranger Marquee', unit:'ADELPHIRANGER', kind:'marquee', startMs, endMs
+  }]);
+  try {
+    const timer = f.doc.querySelector(`[data-clock-start="${startMs}"][data-clock-end="${endMs}"]`);
+    assert.ok(timer);
+    assert.equal(timer.textContent, 'In 1m');
+    const card = timer.closest('.game-event-card');
+    f.w.refreshClockDisplays(f.w.getGameStatus(startMs));
+    assert.match(timer.textContent, /^Ends in /);
+    assert.equal(timer.dataset.timingKind, 'time');
+    f.w.refreshClockDisplays(f.w.getGameStatus(endMs - 3600000));
+    assert.equal(timer.textContent, 'Ends in 1h');
+    assert.ok(f.doc.contains(card));
+    f.w.refreshClockDisplays(f.w.getGameStatus(endMs));
+    assert.equal(timer.textContent, 'Expired');
+    assert.equal(timer.dataset.timingKind, 'status');
+  } finally { f.dom.window.close(); }
+});
+
+test('marquees appear on their last daily run but not on the challenge handover date', async () => {
+  const f = await fixture('#day-77', '2026-10-12T20:00:00Z', [{
+    id:'EVENT_MARQUEE_THERONIN', name:'The Ronin Marquee', unit:'THERONIN', kind:'marquee',
+    startMs:Date.parse('2026-10-06T18:00:00Z'), endMs:Date.parse('2026-10-13T18:00:00Z')
+  }]);
+  try {
+    assert.ok(f.doc.querySelector(".game-event-card[aria-label=\"The Wanderer's Blade\"]"));
+    f.doc.querySelector('#dayNext').click();
+    assert.ok(!f.doc.querySelector(".game-event-card[aria-label=\"The Wanderer's Blade\"]"));
+    assert.match(f.doc.querySelector('#dayDetail').textContent, /Era Challenge/);
+  } finally { f.dom.window.close(); }
+  const rotation = await fixture('#day-77', '2026-10-12T20:00:00Z');
+  try {
+    assert.ok(rotation.w.rotationEventsForDay(Date.parse('2026-10-12T00:00:00Z')).some(entry=>entry.item.icon==='marquee_6'));
+    assert.ok(!rotation.w.rotationEventsForDay(Date.parse('2026-10-13T00:00:00Z')).some(entry=>entry.item.icon==='marquee_6'));
+  } finally { rotation.dom.window.close(); }
 });
 
 test('ongoing cards retain their original schedule window and leave only Coliseum in the boss row', async () => {
@@ -162,8 +204,199 @@ test('the active shorter era has one episode and preserves the independent Conqu
     assert.match(f.doc.querySelector('#eraTitle').textContent, /Mandalorian and Grogu/);
     assert.equal(f.doc.querySelector('#mhOfVal').textContent, '/ 28');
     assert.equal(f.doc.querySelector('#mhEpVal').textContent, '1 of 1');
-    assert.doesNotMatch(f.doc.querySelector('#eventJump').textContent, /Darth Jar Jar/);
+    assert.equal(f.w.searchSchedule('Darth Jar Jar', 'future', f.w.getGameStatus()).length, 0);
     const status = f.w.getGameStatus(Date.parse('2026-11-23T20:00:00Z'));
     assert.match(f.w.getConquestStatus(status).title, /3/);
+  } finally { f.dom.window.close(); }
+});
+
+test('schedule search filters dates and opens a future event using the keyboard', async () => {
+  const live = JSON.parse(fs.readFileSync(new URL('../assets/data/live-events.json', import.meta.url), 'utf8'));
+  const f = await fixture('#day-83', '2026-10-17T20:00:00Z', live.events);
+  try {
+    assert.equal(f.doc.querySelector('#dayJump'), null);
+    assert.equal(f.doc.querySelector('#eventJump'), null);
+    const input = f.doc.querySelector('#scheduleSearchInput');
+    const results = f.doc.querySelector('#scheduleSearchResults');
+    const query = value => { input.value=value; input.dispatchEvent(new f.w.Event('input', { bubbles:true })); };
+    query('additive drops');
+    assert.equal(results.querySelectorAll('button').length, 2);
+    f.doc.querySelector('[data-search-scope="future"]').click();
+    assert.equal(results.querySelectorAll('button').length, 1);
+    assert.match(results.textContent, /Wave 2/);
+    f.doc.querySelector('[data-search-scope="past"]').click();
+    assert.equal(results.querySelectorAll('button').length, 1);
+    assert.match(results.textContent, /Wave 1/);
+    query('B1 Mercenary');
+    assert.match(results.textContent, /No matching events/);
+    f.doc.querySelector('[data-search-scope="future"]').click();
+    assert.equal(results.querySelectorAll('button').length, 1);
+    input.focus();
+    input.dispatchEvent(new f.w.KeyboardEvent('keydown', { key:'ArrowDown', bubbles:true }));
+    assert.ok(f.doc.activeElement.classList.contains('schedule-search-result'));
+    f.doc.activeElement.click();
+    assert.equal(f.w.location.hash, '#date-2026-11-03');
+    assert.match(f.doc.querySelector('#dayDetail').textContent, /B1 Mercenary Droid/);
+    assert.equal(results.hidden, true);
+    assert.equal(f.doc.activeElement, input);
+    input.dispatchEvent(new f.w.Event('input', { bubbles:true }));
+    input.dispatchEvent(new f.w.KeyboardEvent('keydown', { key:'Escape', bubbles:true }));
+    assert.equal(results.hidden, true);
+  } finally { f.dom.window.close(); }
+});
+
+test('past search reaches previous eras and dates without duplicate live and expected results', async () => {
+  const f = await fixture('#day-15', '2026-11-03T20:00:00Z', [{
+    id:'EVENT_MARQUEE_MARAJADE', name:'Mara Jade Skywalker Marquee', unit:'MARAJADESKYWALKER', kind:'marquee',
+    startMs:Date.parse('2026-07-28T18:00:00Z'), endMs:Date.parse('2026-08-04T18:00:00Z')
+  }]);
+  try {
+    const input = f.doc.querySelector('#scheduleSearchInput');
+    input.value='Mara Jade Marquee';
+    input.dispatchEvent(new f.w.Event('input', { bubbles:true }));
+    f.doc.querySelector('[data-search-scope="past"]').click();
+    const matches = f.doc.querySelectorAll('.schedule-search-result');
+    assert.equal(matches.length, 1);
+    matches[0].click();
+    assert.equal(f.w.location.hash, '#date-2026-07-28');
+    assert.match(f.doc.querySelector('.day-pill.is-selected').getAttribute('aria-label'), /28th Jul/);
+    assert.match(f.doc.querySelector('#dayDetail').textContent, /The Last Command/);
+    input.value='2026-10-20';
+    input.dispatchEvent(new f.w.Event('input', { bubbles:true }));
+    assert.match(f.doc.querySelector('#scheduleSearchResults').textContent, /Green Ranger/);
+    input.value='no such event';
+    input.dispatchEvent(new f.w.Event('input', { bubbles:true }));
+    assert.match(f.doc.querySelector('#scheduleSearchResults').textContent, /No matching events/);
+    f.doc.querySelector('#scheduleSearchClear').click();
+    assert.equal(input.value, '');
+    assert.equal(f.doc.querySelector('#scheduleSearchClear').hidden, true);
+    assert.equal(f.doc.querySelector('#scheduleSearchResults').hidden, true);
+  } finally { f.dom.window.close(); }
+});
+
+
+test('event names and types agree across cards and search while raw names remain searchable', async () => {
+  const live = JSON.parse(fs.readFileSync(new URL('../assets/data/live-events.json', import.meta.url), 'utf8'));
+  const f = await fixture('#day-82', '2026-10-17T20:00:00Z', live.events);
+  try {
+    const legendary = f.doc.querySelector('.game-event-card[aria-label="Terrible Things"]');
+    assert.ok(legendary);
+    assert.equal(legendary.querySelector('h4').textContent, 'Terrible Things');
+    assert.equal(legendary.querySelector('.xcard-kicker').textContent, 'Era Legendary Event');
+    assert.doesNotMatch(legendary.textContent, /Terrible Tings Legendary Event/);
+    assert.equal(legendary.querySelector('button'), null);
+    const input = f.doc.querySelector('#scheduleSearchInput');
+    for(const query of ['Terrible Things', 'Terrible Tings', 'Darth Jar Jar']){
+      input.value = query;
+      input.dispatchEvent(new f.w.Event('input', { bubbles:true }));
+      const result = f.doc.querySelector('.schedule-search-result');
+      assert.ok(result, query);
+      assert.equal(result.querySelector('span').textContent, 'Terrible Things');
+      assert.match(result.querySelector('small').textContent, /Era Legendary Event/);
+    }
+    const assault = f.doc.querySelector('.game-event-card[aria-label="Military Might"]');
+    assert.ok(assault);
+    assert.equal(assault.querySelector('.xcard-kicker').textContent, 'Assault Battle');
+    assert.equal(assault.querySelector('button'), null);
+  } finally { f.dom.window.close(); }
+});
+
+
+test('shipment Wednesdays retain the client update without a separate shipment card', async () => {
+  const f = await fixture('#date-2026-10-28');
+  try {
+    assert.ok(f.doc.querySelector('.game-event-card[aria-label="Client Update"]'));
+    assert.doesNotMatch(f.doc.querySelector('#dayDetail').textContent, /Shipment Update|Previous Era Shards/);
+    assert.doesNotMatch(f.doc.querySelector('#fullSchedule').textContent, /Previous Era Shards Added to Shipments/);
+    assert.equal(f.w.searchSchedule('shipments', 'all', f.w.getGameStatus()).length, 0);
+  } finally { f.dom.window.close(); }
+});
+
+
+test('Conquest cards use volume titles and run descriptions across rollover and live overrides', async () => {
+  const f = await fixture('#date-2026-10-27');
+  try {
+    const conquest = () => [...f.doc.querySelectorAll('.game-event-card')].find(e=>e.querySelector('.xcard-kicker').textContent === 'Conquest');
+    assert.equal(conquest().querySelector('h4').textContent, 'Volume 25');
+    assert.equal(conquest().querySelector('.game-event-footer p').textContent, '2nd Run of Volume Begins');
+    const next = f.w.conquestVolumeInfo(Date.parse('2026-12-21T18:00:00Z'));
+    assert.equal(next.volume, 26);
+    assert.equal(next.run, 1);
+    const input = f.doc.querySelector('#scheduleSearchInput');
+    input.value = 'Volume 25 Conquest';
+    input.dispatchEvent(new f.w.Event('input', { bubbles:true }));
+    assert.match(f.doc.querySelector('.schedule-search-result').textContent, /Volume 25.*Conquest/);
+  } finally { f.dom.window.close(); }
+  const live = await fixture('#date-2026-10-27', '2026-10-17T20:00:00Z', [{
+    id:'CONQUEST_VOL26', name:'Conquest', kind:'conquest',
+    startMs:Date.parse('2026-10-26T18:00:00Z'), endMs:Date.parse('2026-11-09T18:00:00Z')
+  }]);
+  try {
+    const cards = [...live.doc.querySelectorAll('.game-event-card')].filter(e=>e.querySelector('.xcard-kicker').textContent === 'Conquest');
+    assert.equal(cards.length, 1);
+    assert.equal(cards[0].querySelector('h4').textContent, 'Volume 26');
+    assert.equal(cards[0].querySelector('.game-event-footer p').textContent, '2nd Run of Volume Begins');
+  } finally { live.dom.window.close(); }
+});
+
+test('TB end and TW payout markers stay in the timing engine but leave schedule views', async () => {
+  const f = await fixture('#day-75');
+  try {
+    const dates = Array.from({length:28}, (_, i)=>Date.parse('2026-10-01T00:00:00Z')+i*86400000);
+    const payoutDate = dates.find(date=>f.w.getEventsForDay(date).some(e=>e.icon === 'tw_payout'));
+    assert.ok(Number.isFinite(payoutDate));
+    f.w.jumpExplorer((payoutDate-f.w.getGameStatus().currentDayStartMs)/86400000);
+    assert.ok(!f.doc.querySelector('.game-event-card[aria-label*="Payout"]'));
+    assert.doesNotMatch(f.doc.querySelector('#fullSchedule').textContent, /Territory War Payout|TW Payout|Territory Battle End/);
+    assert.equal(f.w.searchSchedule('TW Payout', 'all', f.w.getGameStatus()).length, 0);
+    f.w.jumpExplorer(83 - f.w.getGameStatus().eraDay);
+    assert.ok(!f.doc.querySelector('.game-event-card[aria-label*="Ends"]'));
+    assert.ok(!f.doc.querySelector('.game-event-card[aria-label*="Ended"]'));
+    assert.equal(f.doc.querySelector('#statusDashboard'), null);
+    assert.equal(f.doc.querySelectorAll('#unlockWindows > div').length, 3);
+    assert.ok(f.w.getGuildPhaseInfo(f.w.getGameStatus()));
+  } finally { f.dom.window.close(); }
+});
+
+
+test('day cards pin additive drops, then sort new starts ahead of continuing events by importance across sources', async () => {
+  const start = Date.parse('2026-10-26T00:00:00Z'), day = 86400000;
+  const events = [
+    { id:'legendary', name:'Terrible Tings Legendary Event', kind:'event', unit:'DARTHJARJAR', startMs:start-6*day, endMs:start+10*day },
+    { id:'omega', name:'Endor Omega Battles', kind:'omega', startMs:start+7*3600000, endMs:start+day+7*3600000 },
+    { id:'marquee', name:'Action Jaxxon', kind:'marquee', unit:'JAXXON', startMs:start-6*day, endMs:start+3*day },
+    { id:'EVENT_BONUS_PRIORITY_TEST', name:'Additive Drops', kind:'special', startMs:start-2*day, endMs:start+3*day },
+    { id:'assault', name:'Military Might Assault Battles', kind:'assault', startMs:start+8*3600000, endMs:start+day+8*3600000 },
+    { id:'EVENT_MARQUEE_ADELPHIRANGER', name:'Green Ranger', kind:'marquee', unit:'ADELPHIRANGER', startMs:start+18*3600000, endMs:start+7*day },
+    { id:'fleet_LEVIATHAN', name:'Dark Sovereign', kind:'fleet', startMs:start+10*3600000, endMs:start+day+10*3600000 },
+    { id:'bounties', name:'Galactic Bounties I', kind:'event', startMs:start+11*3600000, endMs:start+day+11*3600000 },
+  ];
+  const f = await fixture('#date-2026-10-26', '2026-10-17T20:00:00Z', events);
+  try {
+    const cards = () => [...f.doc.querySelectorAll('#dayDetail .game-event-card')];
+    const names = () => cards().map(e=>e.getAttribute('aria-label'));
+    const before = (a,b) => {
+      const order = names();
+      assert.ok(order.includes(a), a);
+      assert.ok(order.includes(b), b);
+      assert.ok(order.indexOf(a)<order.indexOf(b), `${a} before ${b}: ${order.join(', ')}`);
+    };
+    assert.equal(names()[0], 'Additive Drops');
+    before('Green Ranger', 'Volume 25');
+    before('Volume 25', 'Rise of the Empire Phase 1 Starts');
+    before('Rise of the Empire Phase 1 Starts', 'Galactic Bounties I');
+    before('Galactic Bounties I', 'Military Might');
+    before('Military Might', 'Dark Sovereign');
+    before('Dark Sovereign', "Smuggler's Run I");
+    before("Smuggler's Run I", 'Endor');
+    before('Endor', 'Action Jaxxon');
+    before('Action Jaxxon', 'Terrible Things');
+    const groups = cards().slice(1).map(e=>Number(e.querySelector('[data-clock-start]').dataset.clockStart)>=start ? 0 : 1);
+    assert.deepEqual(groups, [...groups].sort());
+    f.doc.querySelector('#dayNext').click();
+    assert.equal(names()[0], 'Additive Drops');
+    before('Rise of the Empire Phase 2 Starts', 'Green Ranger');
+    before('Green Ranger', 'Terrible Things');
+    assert.equal(names().filter(name=>name === 'Green Ranger').length, 1);
   } finally { f.dom.window.close(); }
 });

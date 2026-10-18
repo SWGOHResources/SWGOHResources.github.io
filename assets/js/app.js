@@ -195,6 +195,59 @@ if(jumpToggle && explorerTools){
   });
 }
 
+const scheduleSearch = document.getElementById('scheduleSearch');
+const scheduleSearchInput = document.getElementById('scheduleSearchInput');
+if(scheduleSearch && scheduleSearchInput){
+  scheduleSearchInput.addEventListener('input', () => renderScheduleSearch());
+  scheduleSearchInput.addEventListener('focus', () => renderScheduleSearch());
+  scheduleSearch.addEventListener('click', event => {
+    if(event.target.closest('#scheduleSearchClear')){
+      scheduleSearchInput.value = '';
+      scheduleSearchInput.focus({ preventScroll:true });
+      renderScheduleSearch();
+      return;
+    }
+    const scope = event.target.closest('[data-search-scope]');
+    if(scope){
+      scheduleSearchScope = scope.dataset.searchScope;
+      scheduleSearch.querySelectorAll('[data-search-scope]').forEach(button => button.setAttribute('aria-pressed', String(button === scope)));
+      renderScheduleSearch();
+    }
+    const result = event.target.closest('[data-search-date]');
+    if(result){
+      jumpExplorer(Math.round((Number(result.dataset.searchDate)-getGameStatus().currentDayStartMs)/86400000));
+      scheduleSearchInput.focus({ preventScroll:true });
+      closeScheduleSearch();
+    }
+  });
+  scheduleSearch.addEventListener('keydown', event => {
+    const results = document.getElementById('scheduleSearchResults');
+    if(event.key === 'Escape'){
+      event.preventDefault();
+      event.stopPropagation();
+      scheduleSearchInput.focus({ preventScroll:true });
+      closeScheduleSearch();
+      return;
+    }
+    if(results.hidden) return;
+    const buttons = [...results.querySelectorAll('[data-search-date]')];
+    if(event.key === 'Enter' && event.target === scheduleSearchInput){
+      event.preventDefault();
+      if(buttons[0]) buttons[0].click();
+    }
+    if((event.key === 'ArrowDown' || event.key === 'ArrowUp') && buttons.length){
+      event.preventDefault();
+      const at = buttons.indexOf(document.activeElement);
+      const next = at < 0 ? (event.key === 'ArrowDown' ? 0 : buttons.length-1) : at + (event.key === 'ArrowDown' ? 1 : -1);
+      if(next < 0 || next >= buttons.length) scheduleSearchInput.focus({ preventScroll:true });
+      else buttons[next].focus();
+    }
+  });
+  document.addEventListener('click', event => {
+    if(!scheduleSearch.contains(event.target)) closeScheduleSearch();
+  });
+}
+
 /* Shareable day links (#day-N): honour the hash on load (set the offset
    directly to avoid a double render) and follow it on hashchange so
    pasted links and back/forward work while the page is open. */

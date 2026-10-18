@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta name="swgoh-asset-v" content="b18e0f198f">
+    <meta name="swgoh-asset-v" content="a1373131af">
   <meta charset="UTF-8">
   <base href="/">
   <script src="/assets/js/clean-urls.js?v=b3d876d73a"></script>
@@ -52,8 +52,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@700;800&family=Inter:wght@400;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/main.css?v=a6621baa92">
-<link rel="stylesheet" href="assets/css/game-events.cfd3fa6f29.css?v=3eec6b6a09">
+  <link rel="stylesheet" href="assets/css/main.css?v=17311a98e9">
+<link rel="stylesheet" href="assets/css/game-events.106714b66c.css?v=106714b66c">
 </head>
 <body>
 
@@ -116,14 +116,18 @@
       <div class="mh-title-row">
         <div class="mh-main-val">Day <span id="mhDayVal">--</span><span class="mh-of" id="mhOfVal">/ 84</span></div>
       </div>
-      <p class="mh-sub">Episode <span id="mhEpVal">--</span> · Week <span id="mhWeekVal">--</span> · In-game <span id="mhWeekdayVal">--</span></p>
+      <dl class="mh-meta">
+        <div><dt>Episode</dt><dd id="mhEpVal">--</dd></div>
+        <div><dt>Week</dt><dd id="mhWeekVal">--</dd></div>
+        <div><dt>Game day</dt><dd id="mhWeekdayVal">--</dd></div>
+      </dl>
       <div class="mh-progress-wrap">
         <div class="mh-progress-bar">
           <div class="mh-progress-fill" id="mhFill" style="width: 0%"></div>
         </div>
         <div class="mh-progress-labels">
           <span id="mhStartDate">Start</span>
-          <span class="mh-remaining" id="mhDaysRemaining">-- days left in Era</span>
+          <span class="mh-remaining" id="mhDaysRemaining">-- days remaining</span>
           <span id="mhEndDate">End</span>
         </div>
       </div>
@@ -140,10 +144,6 @@
 
   <!-- Day-by-day schedule explorer -->
   <section aria-label="Event Schedule explorer">
-  <div class="section-head">
-    <h2>Event Schedule</h2>
-    <div class="rule"></div>
-  </div>
   <div class="explorer">
     <div class="explorer-note" role="note">
       <span class="en-dot" aria-hidden="true">!</span>
@@ -154,15 +154,22 @@
       <div class="day-strip" id="dayStrip" role="group" aria-label="Choose a day"></div>
       <button type="button" class="day-arrow" id="dayNext" onclick="shiftExplorer(1)" aria-label="Next day" title="Next day">→</button>
     </div>
-    <button type="button" class="jump-toggle" id="jumpToggle" aria-expanded="false" aria-controls="explorerTools"><span>Jump to day / event</span><span class="jt-chev" aria-hidden="true">▾</span></button>
-    <div class="explorer-tools" id="explorerTools">
-      <div class="jump-field jump-field-day">
-        <label class="day-jump-label" for="dayJump">Jump to day</label>
-        <select class="tz-select day-jump" id="dayJump" aria-label="Jump to a schedule date" oninput="onJumpSelect(this)" onchange="onJumpSelect(this)"></select>
-      </div>
-      <div class="jump-field jump-field-event">
-        <label class="day-jump-label" for="eventJump">Jump to event</label>
-        <select class="tz-select day-jump" id="eventJump" aria-label="Jump to a marquee, journey, fleet or Proving Grounds event" oninput="onJumpSelect(this)" onchange="onJumpSelect(this)"></select>
+    <div class="schedule-search-tools">
+      <div class="schedule-search" id="scheduleSearch" role="search" aria-label="Event schedule">
+        <div class="schedule-search-controls">
+          <div class="schedule-search-field">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="m16 16 4.5 4.5"></path></svg>
+            <input type="search" id="scheduleSearchInput" placeholder="Search events, units or dates…" aria-label="Search events, units or dates" aria-controls="scheduleSearchResults" aria-expanded="false" autocomplete="off" spellcheck="false">
+            <button type="button" class="schedule-search-clear" id="scheduleSearchClear" aria-label="Clear search" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 7 10 10M17 7 7 17"></path></svg></button>
+          </div>
+          <div class="schedule-search-scope" role="group" aria-label="Search dates">
+            <button type="button" data-search-scope="all" aria-pressed="true">All dates</button>
+            <button type="button" data-search-scope="future" aria-pressed="false">Future</button>
+            <button type="button" data-search-scope="past" aria-pressed="false">Past</button>
+          </div>
+        </div>
+        <div class="schedule-search-results" id="scheduleSearchResults" hidden></div>
+        <span class="sr-only" id="scheduleSearchStatus" role="status" aria-live="polite"></span>
       </div>
       <button type="button" class="day-today" id="dayToday" onclick="jumpExplorer(0)">Today</button>
     </div>
@@ -177,8 +184,6 @@
     <div class="rule"></div>
   </div>
   <div class="hero-grid unlock-grid" id="unlockWindows">
-  </div>
-  <div class="hero-grid" id="statusDashboard">
   </div>
   </section>
 
@@ -279,9 +284,9 @@
   <div class="modal bonus-modal game-rewards-modal" role="dialog" aria-modal="true" aria-labelledby="bonusWaveTitle">
     <div class="reward-header">
       <h3>EVENT DETAILS</h3>
-      <button class="game-rewards-close" id="closeBonusWaveBtn" aria-label="Close event details"></button>
+      <button type="button" class="modal-close-x" id="closeBonusWaveBtn" aria-label="Close event details"><span aria-hidden="true"></span><span aria-hidden="true"></span></button>
     </div>
-    <div class="reward-content">
+    <div class="reward-content" tabindex="0" role="region" aria-label="Event information">
     <div class="reward-heading"><h3 id="bonusWaveTitle">Additive Drops</h3><div class="bdrop-heading-meta"><span id="bonusWaveType">Special Event</span><span id="bonusWaveCount"></span></div></div>
     <div id="bonusWaveWindow"></div>
     <ul class="bdrop-list" id="bonusWaveBody" aria-label="Featured units"></ul>
@@ -293,9 +298,9 @@
      so browsers fetch fresh copies instead of cached ones. -->
 <script src="firebase-config.js?v=2"></script>
 <script defer src="assets/js/asseturl.js?v=6ac46532a1"></script>
-<script defer src="assets/js/config.js?v=97ccc0897f"></script>
-<script defer src="assets/js/time.js?v=71d931162d"></script>
-<script defer src="assets/js/render.js?v=67d110855f"></script>
-<script defer src="assets/js/app.js?v=ccd0cbc237"></script>
+<script defer src="assets/js/config.js?v=316fae1453"></script>
+<script defer src="assets/js/time.js?v=3223849aa0"></script>
+<script defer src="assets/js/render.js?v=91d5ae23f9"></script>
+<script defer src="assets/js/app.js?v=c9ee5eb0fa"></script>
 </body>
 </html>

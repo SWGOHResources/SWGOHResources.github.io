@@ -238,7 +238,7 @@ function guildPhaseTrackerHTML(st){
 function renderStaticMeta(status){
   const st = status || getGameStatus();
   const setText = (id, text) => { const el = document.getElementById(id); if(el) el.textContent = text; };
-  setText('eraTitle', `Event Schedule for ${st.eraName || ERA_NAME}`);
+  setText('eraTitle', st.eraName || ERA_NAME);
   setText('mhOfVal', st.eraKnown === false ? '' : `/ ${st.eraLength || eraLengthDays()}`);
   setText('fullScheduleCount', `${fmtDateUTC(gameDayDisplayMs(st.currentEraStartMs))} – ${fmtDateUTC(gameDayDisplayMs(st.currentDayStartMs + explorerBoundsFor(st).maxOffset * 86400000))}`);
   const h = (typeof stdHour === 'function') ? stdHour() : 18;
@@ -271,7 +271,7 @@ function renderMergedHero(st){
   document.getElementById('mhEndDate').textContent = fmtDateUTC(gameDayDisplayMs(eraEndMs));
   document.getElementById('mhDaysRemaining').textContent = st.preEra
     ? (st.daysUntilEra <= 0 ? 'Era starts today' : `Era starts in ${st.daysUntilEra} day${st.daysUntilEra === 1 ? '' : 's'}`)
-    : `${length - st.bossEraDay} days remaining`;
+    : `${length - st.bossEraDay} day${length - st.bossEraDay === 1 ? '' : 's'} remaining`;
   if(st.eraKnown === false){
     document.getElementById('mhDayVal').textContent = '—';
     document.getElementById('mhEpVal').textContent = 'TBA';
@@ -522,12 +522,69 @@ function liveDisplayName(e){
       ? conquestRunForDate(Number(e.startMs)) : null;
     return conquestRunLabel(e.name, e.id, run);
   }
-  return (e && e.name) || '';
+  return eventDisplayTitle(e ? liveRotationIcon(e) : null, (e && e.name) || '', e);
 }
 
 const eventRewardDetails = new Map();
 
+function journeyEventIdentity(icon, live){
+  const entries = typeof JOURNEY_EVENT_NAMES === 'object' ? JOURNEY_EVENT_NAMES : {};
+  if(live){
+    if(live.kind && !['event', 'journey'].includes(live.kind)) return null;
+    const norm = value => String(value || '').toLowerCase().replace(/[^a-z0-9]/g,'');
+    const unit = norm(live.unit), name = norm(cleanEventTitle(live.name));
+    return Object.values(entries).find(entry => (unit && unit === norm(entry.unitId))
+      || entry.aliases.some(alias => name === norm(alias))) || null;
+  }
+  return entries[icon === 'journey_rerun_3' ? 'journey_guide' : icon] || null;
+}
+
+function cleanEventTitle(title){
+  return String(title || '').replace(/\s+(?:Era Legendary Event|Legendary Event|Special Marquee Event|Marquee Event|Era Challenge|Journey Guide Fleet Mastery|Advanced Fleet Mastery|Fleet Mastery|Assault Battles?|Omega Battles?|Mythic Event|Heroic Battle|Galactic Legend Event|Resource Event|Special Event|Conquest Trials(?: Pass\+)?)$/i,'').trim();
+}
+
+function eventDisplayTitle(icon, title, live){
+  const journey = journeyEventIdentity(icon, live);
+  if(journey) return journey.title;
+  const clean = cleanEventTitle(title);
+  if(icon && icon.startsWith('fleet_')) return live ? clean : FLEET_EVENT_NAMES[icon] || clean;
+  if(icon === 'ultimate_journey') return 'Ultimate Journey';
+  if(icon === 'proving_ground' || (live && live.kind === 'proving-grounds')) return /bonus/i.test(title) ? 'Bonus Proving Grounds' : 'Proving Grounds';
+  if((icon && icon.startsWith('marquee_')) || (live && live.kind === 'marquee')){
+    const unit = icon && MARQUEE_NAMES[icon];
+    return (!live || clean === unit) && typeof MARQUEE_EVENT_NAMES === 'object' && MARQUEE_EVENT_NAMES[icon]
+      || clean.replace(/ Marquee$/i,'');
+  }
+  if(icon && icon.startsWith('era_challenge_')) return MARQUEE_NAMES[icon.replace('era_challenge_','marquee_')] || clean;
+  return clean;
+}
+
+function liveEventType(live){
+  if(!live) return 'Event';
+  const types = { 'era-challenge':'Era Challenge', marquee:'Special Marquee Event', assault:'Assault Battle', omega:'Omega Battle', fleet:'Fleet Mastery', conquest:'Conquest', 'smugglers-run':'Resource Event', 'credit-heist':'Resource Event', 'proving-grounds':/bonus/i.test(live.name || '') ? 'Conquest Trials Pass+' : 'Conquest Trials', special:'Special Event' };
+  if(types[live.kind]) return types[live.kind];
+  const explicit = /\b(Era Legendary Event|Legendary Event|Mythic Event|Heroic Battle|Galactic Legend Event|Resource Event|Special Event)$/i.exec(live.name || '');
+  if(explicit) return explicit[1];
+  if(live.kind === 'journey') return 'Journey Guide Event';
+  if(/^EVENT_MYTHIC_/i.test(live.id || '')) return 'Mythic Event';
+  if(/^EVENT_HEROIC_/i.test(live.id || '') || /^Endor Escalation$/i.test(live.name || '')) return 'Heroic Battle';
+  if(/^(?:Galactic Bounties(?: I{1,2})?|Coven of Shadows|Defense of Dathomir|Ghosts of Dathomir)$/i.test(live.name || '')) return 'Special Event';
+  if(typeof isResourceLiveName === 'function' && isResourceLiveName(live.name)) return 'Resource Event';
+  return 'Event';
+}
+
+function gameEventCaption(title, live){
+  if(live && typeof live.details === 'string' && live.details.trim()) return live.details.trim();
+  const captions = typeof EVENT_CAPTIONS === 'object' ? EVENT_CAPTIONS : {};
+  if(captions[title]) return captions[title];
+  if(live && live.kind === 'omega') return 'Now with Zetas!';
+  if(live && live.kind === 'era-challenge') return 'Earn Era Currency!';
+  if(live && live.kind === 'fleet') return 'Earn Ship Blueprints!';
+  return 'Earn Rare Rewards!';
+}
+
 function gameEventCopy(icon, title, dateMs, live){
+  title = eventDisplayTitle(icon, title, live);
   const caption = title;
   if(live && isDropEvent(live)) return { title, type:'Special Event', caption:'Bonus Rewards Event!' };
   if(icon === 'client_update') return { title:'Client Update', type:'Game Update', caption:'Client Update Expected' };
@@ -547,34 +604,40 @@ function gameEventCopy(icon, title, dateMs, live){
   if(icon && icon.startsWith('tw_')) return { title:'Territory War', type:'Guild Event', caption:title.replace(/^Territory War\s*/i,'') };
   if(icon && icon.startsWith('gac_')) return { title:'Grand Arena', type:'Grand Arena Championship', caption:title.replace(/^GAC\s*/i,'') };
   if(icon === 'rote' || icon === 'tb_ends') return { title:'Rise of the Empire', type:'Territory Battle', caption:title.replace(/^Rise of the Empire\s*/i,'') };
-  if(icon && icon.startsWith('conquest_')) return { title:'Conquest', type:'Conquest', caption };
+  if((icon && icon.startsWith('conquest_')) || (live && live.kind === 'conquest')){
+    const info = conquestVolumeInfo(live ? live.startMs : dateMs, live && live.id);
+    const action = icon === 'conquest_end' ? 'Ends' : 'Begins';
+    return { title:info ? `Volume ${info.volume}` : 'Conquest', type:'Conquest', caption:`${info ? conquestOrdinal(info.run)+' ' : ''}Run of Volume ${action}` };
+  }
   if(icon && icon.startsWith('era_battle_')) return { title:ERA_BATTLE_NAMES[icon] || title, type:'Era Battle', caption };
   if(icon && icon.startsWith('era_challenge_')) return { title:MARQUEE_NAMES[icon.replace('era_challenge_','marquee_')] || title, type:'Era Challenge', caption:'Earn Era Currency!' };
-  if(icon === 'journey_guide' || icon === 'journey_rerun_3') return { title:'Terrible Tings', type:'Legendary Event', caption:'Earn Darth Jar Jar Shards!' };
-  if(icon === 'journey_rerun_1') return { title:'Web of Hate', type:'Legendary Event', caption:'Earn Maul (Hate-Fueled) Shards!' };
-  if(icon === 'journey_rerun_2') return { title:'The Price of Hope', type:'Legendary Event', caption:'Earn Cassian Andor (Undercover) Shards!' };
-  if((icon && icon.startsWith('marquee_')) || (live && live.kind === 'marquee')) return { title:title.replace(/ Marquee$/i,''), type:'Special Marquee Event', caption:'Earn Rewards Daily!' };
-  const liveTypes = { 'era-challenge':'Era Challenge', assault:'Assault Battle', omega:'Omega Battle', fleet:'Fleet Mastery', conquest:'Conquest' };
-  return { title, type:live && liveTypes[live.kind] || (icon ? tagFor(icon).label : 'Event'), caption:live && live.details || '' };
+  const journey = journeyEventIdentity(icon, live);
+  if(journey) return { title:journey.title, type:'Era Legendary Event', caption:`Earn ${journey.unit} Shards!` };
+  if((icon && icon.startsWith('marquee_')) || (live && live.kind === 'marquee')) return { title, type:'Special Marquee Event', caption:'Earn Rewards Daily!' };
+  if(icon && icon.startsWith('fleet_')) return { title, type:'Fleet Mastery', caption:gameEventCaption(title, live) };
+  if(icon === 'proving_ground') return { title, type:/bonus/i.test(title) ? 'Conquest Trials Pass+' : 'Conquest Trials', caption:gameEventCaption(title, live) };
+  if(icon === 'ultimate_journey') return { title, type:'Galactic Legend Event', caption:gameEventCaption(title, live) };
+  if(icon === 'smugglersrun') return { title, type:'Resource Event', caption:gameEventCaption(title, live) };
+  return { title, type:live ? liveEventType(live) : (icon ? tagFor(icon).label : 'Event'), caption:gameEventCaption(title, live) };
 }
 
 function gameEventRewardUnit(icon, live){
   const portraits = { marquee_1:'marajadeskywalker', marquee_2:'yodadsv', marquee_3:'lukestarkiller', marquee_4:'stormtrooperconcept', marquee_5:'jaxxon', marquee_6:'theronin' };
-  const names = { journey_guide:'Darth Jar Jar', journey_rerun_3:'Darth Jar Jar', journey_rerun_1:'Maul (Hate-Fueled)', journey_rerun_2:'Cassian Andor (Undercover)' };
-  const name = names[icon] || (icon && icon.startsWith('marquee_') && MARQUEE_NAMES[icon]);
+  const journey = journeyEventIdentity(icon, live);
+  const name = (journey && journey.unit) || (icon && icon.startsWith('marquee_') && MARQUEE_NAMES[icon]);
   if(!name) return null;
   return { name, portrait:portraits[icon] ? `live/bonus-${portraits[icon]}.png` : null };
 }
 
 function gameEventCardHTML(model){
+  model.title = model.copy.type === 'Conquest' ? model.copy.title : eventDisplayTitle(model.icon, model.title, model.liveEvent);
   const key = `${model.icon || model.liveId || model.title}|${model.startMs}`;
   if(eventRewardDetails.size > 1000) eventRewardDetails.clear();
   eventRewardDetails.set(key, model);
   const relCls = model.relLabel === 'Now' ? 'xcard-rel is-today' : model.relLabel === 'Expired' ? 'xcard-rel is-expired' : 'xcard-rel';
   const bonus = model.bonusId;
-  const action = bonus ? `openBonusWave('${bonus}')` : 'openEventRewards(this.dataset.eventRewards)';
+  const action = bonus ? `<button type="button" class="game-event-action" data-bonus-wave="${escAttr(bonus)}" onclick="openBonusWave('${bonus}')" aria-label="Details for ${escAttr(model.title)}">DETAILS</button>` : '';
   const facts = cardWhenRow(model.startMs, model.duration);
-  const accessibleTiming = `${fmtEventStart(model.startMs)}${model.duration == null ? '' : ' · '+formatDurationHours(model.duration)}`;
   return `<article class="xcard game-event-card${model.copy.title.length > 22 ? ' long-title' : ''}${bonus ? ' is-clickable' : ''}" style="${model.style}" aria-label="${escAttr(model.title)}">
     <div class="xcard-art${model.fit ? ' fit' : ''}${model.shared ? ' icon-art' : ''}${model.drop ? ' drop-art' : ''}${model.era ? ' era-art' : ''}${model.datacron ? ' datacron-art' : ''}${model.icon === 'client_update' ? ' update-art' : ''}">
       ${model.shared ? iconCardBackdropHTML() : `<div class="art-badge" aria-hidden="true">${escHTML(model.glyph)}</div>`}
@@ -583,7 +646,7 @@ function gameEventCardHTML(model){
       <div class="xcard-art-meta"><span data-clock-start="${model.startMs}"${Number.isFinite(model.endMs) ? ` data-clock-end="${model.endMs}"` : ''} data-timing-kind="${/\d/.test(model.relLabel) ? 'time' : 'status'}" class="${relCls}">${model.relLabel}</span></div>
     </div>
     <div class="xcard-body"><h4>${escHTML(model.copy.title)}</h4><div class="xcard-kicker">${escHTML(model.copy.type)}</div>${model.description ? `<div class="xcard-sub">${escHTML(model.description)}</div>` : ''}<div class="game-event-facts">${facts}</div></div>
-    <div class="game-event-footer"><p>${escHTML(model.copy.caption)}</p><button type="button" class="game-event-action" data-event-rewards="${escAttr(key)}"${bonus ? ` data-bonus-wave="${escAttr(bonus)}"` : ''} onclick="${action}" aria-label="Details for ${escAttr(model.title)}" title="${escAttr(accessibleTiming)}">DETAILS</button></div>
+    <div class="game-event-footer"><p>${escHTML(model.copy.caption)}</p>${action}</div>
   </article>`;
 }
 
@@ -615,15 +678,14 @@ function liveCardHTML(e, relLabel){
   const relCls = relLabel === 'Now' ? 'xcard-rel is-today'
     : relLabel === 'Expired' ? 'xcard-rel is-expired' : 'xcard-rel';
   // Additive-drop waves open a unit breakdown popup (see openBonusWave).
-  const bonus = e && Array.isArray(e.units) && e.units.length ? e : null;
+  const bonus = drop && Array.isArray(e.units) && e.units.length ? e : null;
   const bonusId = bonus ? String(bonus.id).replace(/[^A-Z0-9_]/gi, '') : '';
   const icon = liveRotationIcon(e);
   const era = /^eras\//.test(art || '');
   const shared = drop || meta.cat === 'update' || era || art === 'events/eraicon.png' || (icon && icon.startsWith('gac_'));
   const copy = gameEventCopy(icon, liveDisplayName(e), e.startMs, e);
-  if(copy.type === 'Event') copy.type = meta.label;
   return gameEventCardHTML({ title:liveDisplayName(e), copy,
-    icon, liveId:e.id, art, glyph:meta.glyph, style, fit:shared || !!e.fit, shared, drop, era,
+    icon, liveId:e.id, liveEvent:e, art, glyph:meta.glyph, style, fit:shared || !!e.fit, shared, drop, era,
     datacron:!!(icon && icon.startsWith('datacron_set')), startMs:e.startMs, endMs:e.endMs,
     duration:liveDurationHours(e), relLabel, bonusId, description:e.details, rewardUnit:gameEventRewardUnit(icon, e) });
 }
@@ -755,8 +817,9 @@ function explorerBoundsFor(st){
   const length = st.eraLength || eraLengthDays();
   const forward = typeof SCHEDULE_LOOKAHEAD_DAYS !== 'undefined' ? SCHEDULE_LOOKAHEAD_DAYS : 42;
   const last = configuredEras().at(-1);
+  const first = configuredEras()[0];
   return {
-    minOffset: -(st.eraDay - 1),
+    minOffset: Math.min(-(st.eraDay - 1), first ? Math.floor((first.startMs - st.currentDayStartMs) / 86400000) : 0),
     maxOffset: Math.max(length - st.eraDay, forward, last ? Math.ceil((last.endMs - st.currentDayStartMs) / 86400000) - 1 : 0)
   };
 }
@@ -809,6 +872,91 @@ function onJumpSelect(select){
   select.value = '';
 }
 
+let scheduleSearchScope = 'all';
+const scheduleSearchCache = { key:null, entries:[] };
+
+function normalizeScheduleSearch(value){
+  return String(value || '').normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+}
+
+function scheduleSearchEntries(st){
+  const bounds = explorerBoundsFor(st);
+  const firstMs = st.currentDayStartMs + bounds.minOffset * 86400000;
+  const lastMs = st.currentDayStartMs + bounds.maxOffset * 86400000;
+  const key = `${firstMs}|${lastMs}|${tz()}|${liveEventsCache && liveEventsCache.pulledAt}`;
+  if(scheduleSearchCache.key === key) return scheduleSearchCache.entries;
+  const entries = [];
+  const add = (label, type, dateMs, startMs, aliases = '') => {
+    const info = scheduleInfoForDay(dateMs);
+    const dateLabel = fmtDateLongUTC(gameDayDisplayMs(dateMs));
+    const eraName = info.era ? info.era.name : 'Upcoming era';
+    entries.push({ label, type, dateMs, startMs, dateLabel,
+      search:normalizeScheduleSearch(`${label} ${type} ${aliases} ${dateLabel} ${dateKey(dateMs)} ${eraName} day ${info.eraDay} day${info.eraDay}`) });
+  };
+  for(const e of (liveEventsCache && liveEventsCache.events) || []){
+    if(e.kind === 'gac' || !Number.isFinite(e.startMs)) continue;
+    const dateMs = Math.floor(e.startMs / 86400000) * 86400000;
+    if(dateMs < firstMs || dateMs > lastMs) continue;
+    const expected = getEventsForDay(dateMs).filter(item => liveCoveredIcons([e]).has(item.icon));
+    const copy = gameEventCopy(liveRotationIcon(e), liveDisplayName(e), e.startMs, e);
+    add(e.kind === 'conquest' ? copy.title : liveDisplayName(e), copy.type, dateMs, e.startMs,
+      `${e.name || ''} ${e.unit || ''} ${copy.title} ${copy.caption} ${expected.map(item=>getFullScheduleLabel(item)).join(' ')}`);
+  }
+  for(let dateMs = firstMs; dateMs <= lastMs; dateMs += 86400000){
+    const covered = liveCoveredIcons(visibleLiveEventsForDay(dateMs));
+    for(const item of getEventsForDay(dateMs)){
+      if(covered.has(item.icon) || !isVisibleScheduleEvent(item)) continue;
+      const label = getFullScheduleLabel(item);
+      const copy = gameEventCopy(item.icon, label, dateMs, null);
+      add(copy.type === 'Conquest' ? copy.title : eventDisplayTitle(item.icon, label), copy.type, dateMs, eventStartMs(item, dateMs), `${label} ${copy.title} ${copy.caption}`);
+    }
+  }
+  scheduleSearchCache.key = key;
+  scheduleSearchCache.entries = entries;
+  return entries;
+}
+
+function searchSchedule(query, scope, st){
+  const terms = normalizeScheduleSearch(query).split(' ').filter(Boolean);
+  if(!terms.length) return [];
+  const exactDate = /^\d{4}-\d{2}-\d{2}$/.test(query.trim()) ? query.trim() : null;
+  return scheduleSearchEntries(st)
+    .filter(entry => (exactDate ? dateKey(entry.dateMs) === exactDate
+      : terms.every(term=>/^\d+$/.test(term) ? new RegExp(`\\b${term}\\b`).test(entry.search) : entry.search.includes(term)))
+      && (scope === 'future' ? entry.startMs >= st.nowMs : scope === 'past' ? entry.startMs < st.nowMs : true))
+    .sort((a,b) => scope === 'past' ? b.startMs-a.startMs : scope === 'future' ? a.startMs-b.startMs
+      : Math.abs(a.startMs-st.nowMs)-Math.abs(b.startMs-st.nowMs));
+}
+
+function closeScheduleSearch(){
+  const results = document.getElementById('scheduleSearchResults');
+  const input = document.getElementById('scheduleSearchInput');
+  if(results) results.hidden = true;
+  if(input) input.setAttribute('aria-expanded', 'false');
+}
+
+function renderScheduleSearch(st = getGameStatus()){
+  const input = document.getElementById('scheduleSearchInput');
+  const results = document.getElementById('scheduleSearchResults');
+  const status = document.getElementById('scheduleSearchStatus');
+  if(!input || !results) return;
+  const clear = document.getElementById('scheduleSearchClear');
+  if(clear) clear.hidden = !input.value;
+  if(!input.value.trim()){
+    closeScheduleSearch();
+    results.innerHTML = '';
+    if(status) status.textContent = '';
+    return;
+  }
+  const matches = searchSchedule(input.value, scheduleSearchScope, st);
+  results.innerHTML = matches.slice(0,20).map(entry =>
+    `<button type="button" class="schedule-search-result" data-search-date="${entry.dateMs}"><span>${escHTML(entry.label)}</span><small>${escHTML(entry.dateLabel)} · ${escHTML(entry.type)}</small></button>`
+  ).join('') || '<p class="schedule-search-empty">No matching events</p>';
+  results.hidden = false;
+  input.setAttribute('aria-expanded', 'true');
+  if(status) status.textContent = `${matches.length} matching event${matches.length === 1 ? '' : 's'}${matches.length > 20 ? ', showing the nearest 20' : ''}`;
+}
+
 function explorerCardHTML(item, dateMs, relLabel, tbCtx, nowMs){
   const cat = categoryFor(item.icon);
   const meta = CATEGORY_META[cat];
@@ -823,7 +971,7 @@ function explorerCardHTML(item, dateMs, relLabel, tbCtx, nowMs){
   const startMs = eventStartMs(item, dateMs);
   const duration = eventDurationHours(item, dateMs, isTbCard ? tbCtx : null);
   return gameEventCardHTML({ title, copy:gameEventCopy(item.icon, title, dateMs, liveMatch),
-    icon:item.icon, art, glyph:tag.glyph, style:`--accent:${meta.accent};--accent-dim:${meta.dim};--accent-border:${meta.border}`,
+    icon:item.icon, liveEvent:liveMatch, art, glyph:tag.glyph, style:`--accent:${meta.accent};--accent-dim:${meta.dim};--accent-border:${meta.border}`,
     fit:shared || isFitArt(item.icon), shared, era, datacron:item.icon.startsWith('datacron_set'),
     startMs, endMs:duration == null ? null : startMs+duration*3600000, duration, relLabel,
     rewardUnit:gameEventRewardUnit(item.icon, liveMatch) });
@@ -852,6 +1000,11 @@ function splitLiveDay(dayEvents, dayStartMs){
     starting: dayEvents.filter(e => e.startMs >= dayStartMs && e.startMs < dayEndMs),
     ongoing: dayEvents.filter(e => !(e.startMs >= dayStartMs && e.startMs < dayEndMs)),
   };
+}
+
+function visibleLiveEventsForDay(dayStartMs){
+  const { starting, ongoing } = splitLiveDay(liveEventsForDay(dayStartMs), dayStartMs);
+  return [...starting, ...ongoing.filter(e => e.endMs-e.startMs > 86400000 && e.endMs >= dayStartMs+86400000)];
 }
 
 /* Rotation icons a live starting card already covers — the hardcoded
@@ -958,6 +1111,11 @@ function rotationBadgesHTML(windows, dayLive, dayStartMs){
     }).join('');
 }
 
+function isVisibleScheduleEvent(item){
+  return item.icon !== 'tb_ends' && item.icon !== 'tw_payout'
+    && !(item.icon === 'rote' && /\b(?:Ends?|Ended)\b/i.test(item.label));
+}
+
 function rotationEventsForDay(dayStartMs){
   const entries = [];
   for(let ago = 0; ago <= 32; ago++){
@@ -968,16 +1126,52 @@ function rotationEventsForDay(dayStartMs){
     const tbCtx = run ? { def, offset:run.offset, phase1Ms:run.phase1Ms, art:def.art } : null;
     const sourceCovered = ago ? liveCoveredIcons(liveEventsForDay(dateMs)) : new Set();
     for(const item of getEventsForDay(dateMs, info.episode, info.dayInEp)){
+      if(!isVisibleScheduleEvent(item)) continue;
       const startMs = eventStartMs(item, dateMs);
       const duration = eventDurationHours(item, dateMs, tbCtx);
       const endMs = duration == null ? null : startMs + duration * 3600000;
       if(startMs >= dayStartMs + 86400000) continue;
       const repeatsDaily = /^(marquee_|era_challenge_|journey_guide$|journey_rerun_[12]$|conquest_start$)/.test(item.icon);
-      if(ago && (!repeatsDaily || duration <= 24 || endMs == null || endMs <= dayStartMs || sourceCovered.has(item.icon))) continue;
+      if(ago && (!repeatsDaily || duration <= 24 || endMs == null || endMs < dayStartMs + 86400000 || sourceCovered.has(item.icon))) continue;
       entries.push({ item, dateMs, startMs, endMs, tbCtx });
     }
   }
   return entries;
+}
+
+function scheduleCardPriority(entry){
+  const live = entry.live;
+  const icon = live ? liveRotationIcon(live) || liveSlotKeys().find(slot=>slotMatchesEvent(slot, live)) || '' : entry.item.icon;
+  const type = live ? liveEventType(live) : '';
+  const ranks = EVENT_DISPLAY_PRIORITY;
+  if(live && isDropEvent(live)) return ranks.additive;
+  if(/^(era_changeover|era_end|episode_start)$/.test(icon)) return ranks.era;
+  if(icon.startsWith('marquee_') || (live && live.kind === 'marquee')) return ranks.marquee;
+  if(journeyEventIdentity(icon, live) || (live && live.kind === 'journey') || /^(?:Era )?Legendary Event$/.test(type)) return ranks.legendary;
+  if(icon === 'proving_ground' || icon === 'ultimate_journey') return ranks.provingGrounds;
+  if(icon.startsWith('gac_')) return ranks.gac;
+  if(icon.startsWith('conquest_')) return ranks.conquest;
+  if(icon.startsWith('tw_') || icon === 'rote' || icon === 'tb_ends') return ranks.guild;
+  if(type === 'Special Event' || type === 'Heroic Battle') return ranks.special;
+  if((live && live.kind === 'assault') || type === 'Mythic Event') return ranks.assault;
+  if(icon.startsWith('fleet_')) return ranks.fleet;
+  if(icon.startsWith('era_challenge_') || (live && live.kind === 'era-challenge')) return ranks.eraChallenge;
+  if(icon.startsWith('era_battle_')) return ranks.eraBattle;
+  if(icon.startsWith('datacron_set')) return ranks.datacron;
+  if(icon === 'smugglersrun' || type === 'Resource Event') return ranks.resource;
+  if(live && live.kind === 'omega') return ranks.omega;
+  if(icon === 'client_update' || icon === 'shipment_update') return ranks.update;
+  return ranks.event;
+}
+
+function orderScheduleCards(entries, dayStartMs){
+  const group = entry => entry.live && isDropEvent(entry.live) ? -1
+    : entry.startMs >= dayStartMs && entry.startMs < dayStartMs + 86400000 ? 0 : 1;
+  const name = entry => entry.live ? liveDisplayName(entry.live) : entry.item.label;
+  return [...entries].sort((a,b) => group(a)-group(b)
+    || scheduleCardPriority(a)-scheduleCardPriority(b)
+    || a.startMs-b.startMs
+    || name(a).localeCompare(name(b), 'en'));
 }
 
 function renderExplorer(st){
@@ -988,27 +1182,26 @@ function renderExplorer(st){
   const bounds = explorerBoundsFor(st);
   explorerOffset = Math.min(bounds.maxOffset, Math.max(bounds.minOffset, explorerOffset));
   const windowSize = explorerWindowSize(strip);
-  const selectedEraDay = st.eraDay - 1 + explorerOffset;
+  const selectedEraDay = explorerOffset - bounds.minOffset;
   const totalDays = st.eraDay + bounds.maxOffset;
+  const stripDays = bounds.maxOffset - bounds.minOffset + 1;
   const winStart = Math.max(0, Math.min(
     Math.floor(selectedEraDay / windowSize) * windowSize,
-    totalDays - windowSize));
-  const winEnd = Math.min(totalDays, winStart + windowSize);
+    stripDays - windowSize));
+  const winEnd = Math.min(stripDays, winStart + windowSize);
   strip.scrollLeft = 0;
   let pills = '';
   for(let eraDay = winStart; eraDay < winEnd; eraDay++){
-    const o = eraDay - (st.eraDay - 1);
+    const o = eraDay + bounds.minOffset;
     const d = explorerDayAt(st, o);
     const parts = tzDayParts(gameDayDisplayMs(d.dMs));
     const cls = 'day-pill'
       + (o === 0 ? ' is-today' : '')
-      + (o === explorerOffset ? ' is-selected' : '')
-      + (d.items.length ? ' has-events' : '');
-    pills += `<button type="button" class="${cls}" onclick="jumpExplorer(${o})" aria-label="${d.crossEra ? '' : `Day ${d.dIdx}, `}${fmtDateUTC(gameDayDisplayMs(d.dMs))}${o === 0 ? ', today' : ''}" aria-pressed="${o === explorerOffset}"${o === explorerOffset ? ' aria-current="date"' : ''}>`
+      + (o === explorerOffset ? ' is-selected' : '');
+    pills += `<button type="button" class="${cls}" onclick="jumpExplorer(${o})" aria-label="${fmtDateUTC(gameDayDisplayMs(d.dMs))}${o === 0 ? ', today' : ''}" aria-pressed="${o === explorerOffset}"${o === explorerOffset ? ' aria-current="date"' : ''}>`
       + `<span class="dp-dow">${parts.dow}</span>`
-      + `<span class="dp-num">${d.crossEra ? parts.num : d.dIdx}</span>`
-      + `<span class="dp-date">${d.crossEra ? parts.month + (o > 0 ? ` · +${o}d` : '') : `${parts.num} ${parts.month}`}</span>`
-      + `<span class="dp-dot"></span></button>`;
+      + `<span class="dp-num">${parts.num}</span>`
+      + `<span class="dp-date">${parts.month}</span></button>`;
   }
   strip.innerHTML = pills;
 
@@ -1082,24 +1275,17 @@ function renderExplorer(st){
     : `${relCap}: ${fmtDateLongUTC(gameDayDisplayMs(cur.dMs))}`;
   const bossName = BOSS_LOOP[posMod(st.bossDayIndex - 1 + cur.offset, BOSS_LOOP.length)];
   const bossIcon = BOSS_ICONS[bossName];
-  const dayLive = liveEventsForDay(cur.dMs);
-  const { starting, ongoing } = splitLiveDay(dayLive, cur.dMs);
-  // Card pills count to each event's own start instant (eventStartMs:
-  // GAC at 21:00 UTC, TB transition moments) — not the day's generic
-  // changeover. Today and past days keep the shared day wording.
-  const cardRel = startMs => cur.offset > 0 ? relForEventStart(startMs, st.nowMs, rel) : rel;
-  // An event whose end passed but whose changeover day is still showing
-  // is over — "Expired", never "Now".
-  const liveRel = e => (Number.isFinite(e.endMs) && Number.isFinite(st.nowMs) && e.endMs <= st.nowMs)
-    ? 'Expired' : cardRel(e.startMs);
-  const liveCards = [...starting, ...ongoing.filter(e => e.endMs - e.startMs > 86400000)]
-    .map(e => liveCardHTML(e, liveRel(e))).join('');
-  const covered = liveCoveredIcons(dayLive);
-  const rotationCards = rotationEventsForDay(cur.dMs)
-    .filter(entry => !covered.has(entry.item.icon))
-    .map(entry => explorerCardHTML(entry.item, entry.dateMs,
-      entry.endMs != null && entry.endMs <= st.nowMs ? 'Expired' : cardRel(entry.startMs),
-      entry.tbCtx, st.nowMs)).join('');
+  const visibleLive = visibleLiveEventsForDay(cur.dMs);
+  const covered = liveCoveredIcons(visibleLive);
+  const entries = [
+    ...visibleLive.map(live => ({ live, startMs:live.startMs, endMs:live.endMs })),
+    ...rotationEventsForDay(cur.dMs).filter(entry => !covered.has(entry.item.icon)),
+  ];
+  const cards = orderScheduleCards(entries, cur.dMs).map(entry => {
+    const timing = eventTimerLabel(entry.startMs, entry.endMs, st.nowMs);
+    return entry.live ? liveCardHTML(entry.live, timing)
+      : explorerCardHTML(entry.item, entry.dateMs, timing, entry.tbCtx, st.nowMs);
+  }).join('');
   detail.innerHTML = `
     <div class="day-detail-head">
       <div>
@@ -1113,9 +1299,10 @@ function renderExplorer(st){
         </div>
       </div>
     </div>
-    ${liveCards || rotationCards
-      ? `<div class="xcard-deck" tabindex="0" role="region" aria-label="Events this day">${liveCards}${rotationCards}</div>`
+    ${cards
+      ? `<div class="xcard-deck" tabindex="0" role="region" aria-label="Events this day">${cards}</div>`
       : `<p class="empty-note">No events scheduled for this day.</p>`}`;
+  if(document.activeElement === document.getElementById('scheduleSearchInput')) renderScheduleSearch(st);
 }
 
 function getFullScheduleLabel(item){
@@ -1211,7 +1398,7 @@ function renderFullSchedule(st){
           const dayInEp = (week - 1) * 7 + d;
           const idx = (ep - 1) * episodeLengthDays() + dayInEp;
           const dateMs = st.currentEraStartMs + ((idx - 1) * 86400000);
-          const items = getEventsForDay(dateMs, ep, dayInEp);
+          const items = getEventsForDay(dateMs, ep, dayInEp).filter(isVisibleScheduleEvent);
           html += `<div class="tl-day${idx === st.eraDay ? ' is-today' : ''}" data-day="${idx}">`
             + `<span class="tl-daynum">${same ? idx : tzDayParts(gameDayDisplayMs(dateMs)).num}</span>`
             + `<span class="tl-date">${fmtDateUTC(gameDayDisplayMs(dateMs))}</span>`
@@ -1340,11 +1527,9 @@ function refreshClockDisplays(st){
   renderUnlockWindows(st, { clockOnly: true });
   const detail = document.getElementById('dayDetail');
   if(detail){
-    const rel = relativeDayLabel(explorerOffset, st.nowMs, st.currentDayStartMs);
     detail.querySelectorAll('[data-clock-start]').forEach(node => {
       const endMs = Number(node.dataset.clockEnd);
-      const label = Number.isFinite(endMs) && endMs <= st.nowMs ? 'Expired'
-        : explorerOffset > 0 ? relForEventStart(Number(node.dataset.clockStart), st.nowMs, rel) : rel;
+      const label = eventTimerLabel(Number(node.dataset.clockStart), endMs, st.nowMs);
       if(node.textContent !== label) node.textContent = label;
       node.dataset.timingKind = /\d/.test(label) ? 'time' : 'status';
       node.classList.toggle('is-today', label === 'Now');
