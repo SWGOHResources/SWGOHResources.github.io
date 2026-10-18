@@ -1,5 +1,5 @@
 {
- "pulledAt": 1792269686848,
+ "pulledAt": 1792307834531,
  "gameDataVersion": "0.40.6:i9YYIijBSxuHHNoSmCMBoQ",
  "events": [
   {
@@ -55,23 +55,13 @@
    "art": "live/bonus-drops.png"
   },
   {
-   "id": "EVENT_OMEGA_BATTLES_07_HOTH",
-   "name": "Hoth Omega Battles",
-   "kind": "omega",
-   "unit": "GALACTICCHALLENGESHOTH",
-   "startMs": 1792134000000,
-   "endMs": 1792220400000,
-   "live": false,
-   "art": "live/events-galactic-challenges-hoth.png"
-  },
-  {
    "id": "EVENT_ASSAULT_EMPIRE",
    "name": "Military Might Assault Battles",
    "kind": "assault",
    "unit": "EMPIREHORDE",
    "startMs": 1792220400000,
    "endMs": 1792306800000,
-   "live": true,
+   "live": false,
    "art": "live/events-empirehorde.png"
   },
   {
