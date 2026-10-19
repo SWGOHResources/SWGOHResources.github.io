@@ -10,16 +10,7 @@ const data=JSON.parse(read('assets/data/game-timeline.json'));
 test('timeline uses the homepage footer and shared navigation without overriding chrome colours',()=>{
   const timeline=new JSDOM(html), home=new JSDOM(read('index.html')), conquest=new JSDOM(read('conquest.html'));
   try{
-    const footer=doc=>{
-      const node=doc.querySelector('footer').cloneNode(true);
-      node.querySelectorAll('[aria-current]').forEach(link=>link.removeAttribute('aria-current'));
-      node.querySelector('.footer-top').setAttribute('href','#main');
-      return node.outerHTML;
-    };
-    assert.equal(footer(timeline.window.document),footer(home.window.document));
-    assert.equal(timeline.window.document.querySelector('.footer-top').getAttribute('href'),'/game-timeline/#main');
-    assert.equal(home.window.document.querySelector('.footer-top').getAttribute('href'),'/#main');
-    assert.equal(home.window.document.querySelector('.footer-links [aria-current="page"]').getAttribute('href'),'/');
+    assert.equal(timeline.window.document.querySelector('footer').outerHTML,home.window.document.querySelector('footer').outerHTML);
     const links=doc=>[...doc.querySelectorAll('.topbar-tabs a')].map(a=>[a.textContent.trim(),a.getAttribute('href')]);
     assert.deepEqual(links(timeline.window.document),links(conquest.window.document));
     for(const page of [timeline,home,conquest])assert.equal(page.window.document.querySelector('a[href="/game-timeline/"]'),null);

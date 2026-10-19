@@ -160,7 +160,23 @@ function copyDiscordHandle(btnEl) {
   });
 }
 
-function closeMobilePanel(){ window.closeSiteNavigation?.(); }
+/* Mobile Nav Panel (null-safe: a missing toggle must not halt init) */
+const navToggle = document.getElementById('navToggle');
+
+const mobilePanel = document.getElementById('mobilePanel');
+
+function closeMobilePanel(){
+  if(!navToggle || !mobilePanel) return;
+  navToggle.classList.remove('open'); mobilePanel.classList.remove('open'); navToggle.setAttribute('aria-expanded', 'false');
+}
+if(navToggle && mobilePanel){
+  navToggle.addEventListener('click', () => {
+    const willOpen = !mobilePanel.classList.contains('open');
+    navToggle.classList.toggle('open', willOpen);
+    mobilePanel.classList.toggle('open', willOpen);
+    navToggle.setAttribute('aria-expanded', String(willOpen));
+  });
+}
 
 /* Jump-to collapse (small screens only; the toggle is hidden on
    desktop where the jump controls are always visible). The tools

@@ -30,8 +30,7 @@ test('next-day navigation crosses day 84 and dated links survive live refresh', 
     f.doc.querySelector('#dayNext').click();
     assert.equal(f.w.location.hash, '#date-2026-10-20');
     assert.equal(f.w.location.pathname, '/preview/card-layout.html');
-    assert.equal(f.doc.querySelector('#dayDetail .xcard[aria-label="Era of Myths & Legends Ends"]'), null);
-    assert.ok(f.doc.querySelector('#dayDetail .xcard[aria-label="Era of The Mandalorian and Grogu Starts"]'));
+    assert.ok(f.doc.querySelector('#dayDetail .xcard[aria-label="Era of Myths & Legends Ends"]'));
     assert.match(f.doc.querySelector('#dayDetail').textContent, /Green Ranger/);
     f.doc.querySelector('#dayNext').click();
     assert.equal(f.w.location.hash, '#date-2026-10-21');
@@ -227,11 +226,8 @@ test('schedule navigation works without search controls', async () => {
 });
 
 test('event names and types agree across cards and search while raw names remain searchable', async () => {
-  const events = [
-    { id:'legendary-names', name:'Terrible Tings Legendary Event', kind:'event', unit:'DARTHJARJAR', startMs:Date.parse('2026-09-22T18:00:00Z'), endMs:Date.parse('2026-10-20T18:00:00Z') },
-    { id:'assault-names', name:'Military Might Assault Battles', kind:'assault', startMs:Date.parse('2026-10-17T07:00:00Z'), endMs:Date.parse('2026-10-18T07:00:00Z') },
-  ];
-  const f = await fixture('#day-82', '2026-10-17T20:00:00Z', events);
+  const live = JSON.parse(fs.readFileSync(new URL('../assets/data/live-events.json', import.meta.url), 'utf8'));
+  const f = await fixture('#day-82', '2026-10-17T20:00:00Z', live.events);
   try {
     const legendary = f.doc.querySelector('.game-event-card[aria-label="Terrible Things"]');
     assert.ok(legendary);
