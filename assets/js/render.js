@@ -25,140 +25,65 @@ function setClockText(container, key, value){
 function renderUnlockWindows(st, opts){
   const el = document.getElementById('unlockWindows');
   if(!el) return;
-
-  // --- CONQUEST UNIT ---
-  // Finds the NEXT conquest-end day (End of Episode 2 / Monday)
   const cqAbs = nextOccurrenceAbs(CONQUEST_END_OFFSETS, st.rawDayIndex, eraLengthDays());
   const cqInf = absDayToInfo(cqAbs, st.eraBaseStartMs);
-  const cqChapter = conquestChapterForEpisode(cqInf.episode);
   const cqDateMs = cqInf.dateMs;
-  
   const cqDays = Math.round((cqDateMs - st.currentDayStartMs) / 86400000);
   const cqUnlocked = cqAbs <= st.rawDayIndex || cqDays <= 0;
-  const cqUnlockMs = cqDateMs + (stdHour() * 3600000);
-  // The unit itself is never in the data feed — once its conquest ends
-  // the name is still unannounced, so never claim it is playable.
-  const cqBadge = cqUnlocked ? 'TBA' : 'UPCOMING';
-  const cqBadgeClass = cqUnlocked ? 'off' : 'purple';
-  const cqMain = cqUnlocked
-    ? 'Unit yet to be announced'
+  const cqUnlockMs = cqDateMs + stdHour() * 3600000;
+  const cqMain = cqUnlocked ? 'Unit yet to be announced'
     : subDayCount(st.nowMs, cqUnlockMs, `In ${cqDays} day${cqDays === 1 ? '' : 's'}`);
-  const cqDateLine = fmtDateLongUTC(gameDayDisplayMs(cqDateMs));
-  const cqSub = cqUnlocked
-    ? 'Conquest over — new unit yet to be announced'
-    : 'The new conquest unit becomes playable';
+  const cqLockDate = cqDateMs + 86400000 * conquestLockOffsetDays();
+  const cqInfo = gacInfoForDate(cqLockDate);
+  const cqGac = gacUsableWeek(cqInfo.cycleDay, cqInfo.format);
 
-  // Roster locks at the configured defense-phase offset.
-  const cqNextSignupDate = cqDateMs + (86400000 * conquestLockOffsetDays());
-  const cqGacInfo = gacInfoForDate(cqNextSignupDate);
-  const cqGac = gacUsableWeek(cqGacInfo.cycleDay, cqGacInfo.format);
-  const cqGacWeek = cqGac.week;
-
-  // --- ERA UNIT ---
-  // Finds the NEXT era-start day (Start of New Era / Tuesday)
   const nextEraFromDay = st.preEra ? st.rawDayIndex : st.rawDayIndex + 1;
   const eraAbs = st.era ? Math.round((st.era.endMs - st.eraBaseStartMs) / 86400000) + 1
     : nextOccurrenceAbs(ERA_START_OFFSETS, nextEraFromDay, eraLengthDays());
-  const eraInf = absDayToInfo(eraAbs, st.eraBaseStartMs);
-  const eraDateMs = eraInf.dateMs;
-  
-  const eraDays = Math.round((eraDateMs - st.currentDayStartMs) / 86400000);
-  // Before launch the era hasn't started: count down to it instead of
-  // claiming THIS ERA. daysUntilEra already counts display-zone days.
-  const eraUnlockMs = eraDateMs + (stdHour() * 3600000);
-  const eraCountLabel = st.preEra
-    ? (st.daysUntilEra <= 0 ? 'Today' : `In ${st.daysUntilEra} day${st.daysUntilEra === 1 ? '' : 's'}`)
-    : (eraAbs <= st.rawDayIndex || eraDays <= 0 ? 'Live now' : subDayCount(st.nowMs, eraUnlockMs, `In ${eraDays} day${eraDays === 1 ? '' : 's'}`));
-  const eraBadge = st.eraKnown === false ? 'TBA' : st.preEra ? 'UPCOMING' : (eraDays <= 7 ? 'ENDING' : 'ACTIVE');
-  const eraMain = st.eraKnown === false ? 'TBA' : eraCountLabel;
-  const eraDateLine = st.eraKnown === false ? '' : fmtDateLongUTC(gameDayDisplayMs(eraDateMs));
-  const eraSub = st.eraKnown === false ? '' : st.preEra ? 'The new era begins' : 'Current era ends, units enter legacy modes';
+  const eraDateMs = absDayToInfo(eraAbs, st.eraBaseStartMs).dateMs;
+  const eraLockDate = eraDateMs + 86400000 * eraLockOffsetDays();
+  const eraInfo = gacInfoForDate(eraLockDate);
+  const eraGac = gacUsableWeek(eraInfo.cycleDay, eraInfo.format);
 
-  // Roster locks at the configured defense-phase offset.
-  const eraNextSignupDate = eraDateMs + (86400000 * eraLockOffsetDays());
-  const eraGacInfo = gacInfoForDate(eraNextSignupDate);
-  const eraGac = gacUsableWeek(eraGacInfo.cycleDay, eraGacInfo.format);
-  const eraGacWeek = eraGac.week;
-
-  // --- DATACRON EXPIRATIONS ---
   const cron = getCurrentDatacronSet(st.nowMs);
   const cronMeta = (cron && CRON_COLOR_META[cron.color]) || CRON_COLOR_META.orange;
-  // Truncated like the other dashboard counts: 28d 23h out reads
-  // "Expires in 28 days".
   const daysLeft = cron ? Math.floor((cron.expiresMs - st.nowMs) / 86400000) : 0;
-  const cronCountLabel = !cron ? ''
-    : cron.allExpired ? 'Expired'
+  const cronMain = !cron ? 'Dates TBA' : cron.allExpired ? 'Expired'
     : subDayCount(st.nowMs, cron.expiresMs, daysLeft <= 0 ? 'Expires today' : `In ${daysLeft} day${daysLeft === 1 ? '' : 's'}`);
-  const cronBadge = !cron ? 'NONE' : cron.allExpired ? 'EXPIRED' : 'ACTIVE';
-  const cronBadgeClass = (!cron || cron.allExpired) ? 'off' : 'orange';
-  const cronMain = cron ? cronCountLabel : 'No set configured';
-  const cronDateLine = cron ? fmtDateLongUTC(cron.expiresMs) : '';
-  const cronSub = !cron ? 'Add the next set to DATACRON_SETS in config.js'
-    : cron.allExpired ? `${cron.name} has expired, add the next set to DATACRON_SETS`
-    : `${cron.name}${cron.hasFDC ? ' + FDC' : ''} expires to inbox`;
   const lastUsable = cron ? getLastUsableGuildEvent(cron.expiresMs, st.eraBaseStartMs) : null;
-  let lastUsableLabel = '—';
-  if(lastUsable){
-    const labels = [];
-    if(lastUsable.gac){
-      const gacInfo = gacInfoForTimestamp(lastUsable.gac.startMs);
-      const usable = gacUsableWeek(gacInfo.cycleDay, gacInfo.format);
-      labels.push(`GAC Week ${usable.week} (${usable.format})`);
-    }
-    if(lastUsable.tw) labels.push(lastUsable.tw.twNumber ? `TW ${lastUsable.tw.twNumber}` : 'TW');
-    lastUsableLabel = labels.join(' + ');
+  let cronGac = null;
+  if(lastUsable && lastUsable.gac){
+    const info = gacInfoForTimestamp(lastUsable.gac.startMs);
+    cronGac = gacUsableWeek(info.cycleDay, info.format);
   }
+  const lastTw = lastUsable && lastUsable.tw
+    ? (lastUsable.tw.twNumber ? `TW ${lastUsable.tw.twNumber}` : 'TW') : '';
 
   if(opts && opts.clockOnly){
     setClockText(el, 'cq-unlock', cqMain);
-    setClockText(el, 'era-end', eraMain);
     setClockText(el, 'cron-expiry', cronMain);
     return;
   }
-
+  const eraEl = document.getElementById('eraEligibility');
+  if(eraEl){
+    eraEl.innerHTML = `<div><span>Era units</span><div class="era-gac"><span>First usable in GAC</span><strong>${st.eraKnown === false ? 'TBA' : `Week ${eraGac.week} (${eraGac.format})`}</strong></div></div>`;
+  }
   el.innerHTML = `
-    <div class="status-card purple-card">
-      <div class="sc-header"><span class="sc-title">Conquest Unit (${conquestOrdinal(cqChapter.cNum)} of Volume)</span><span class="sc-badge ${cqBadgeClass}">${cqBadge}</span></div>
-      <div class="uw-body" style="--accent:var(--purple);--accent-dim:var(--purple-dim);--accent-border:var(--purple-border)">
-        <div class="uw-img"><div class="art-badge">CQ</div><img src="${imgPath(CONQUEST_UNIT_IMAGE)}" alt="" loading="lazy" decoding="async" onerror="this.remove()"></div>
-        <div class="uw-text">
-          <div class="sc-main"><div class="sc-val" data-clock="cq-unlock">${cqMain}</div><div class="uw-date">${cqDateLine}</div><div class="sc-sub">${cqSub}</div></div>
-          <div class="sc-footer" style="flex-direction:column;align-items:flex-start;gap:2px;">
-            <span>Usable in GAC: <span class="highlight">Week ${cqGacWeek} (${cqGac.format})</span></span>
-            <span>Roster locks: ${fmtDayMonthUTC(gameDayDisplayMs(cqNextSignupDate))} (Defense Starts)</span>
-          </div>
-        </div>
+    <div class="schedule-deadline" style="--deadline-accent:var(--purple)">
+      <div class="deadline-heading">
+        <img class="deadline-icon" src="${imgPath(CONQUEST_UNIT_IMAGE)}" alt="" decoding="async" onerror="this.remove()">
+        <div class="deadline-title"><h2>Conquest Unit Unlock</h2><p class="deadline-date">${cqUnlocked ? 'Conquest ended' : 'Unlocks'} ${fmtDateUTC(gameDayDisplayMs(cqDateMs))}</p></div>
+        <strong class="deadline-count" data-clock="cq-unlock">${cqMain}</strong>
       </div>
+      <div class="deadline-eligibility"><span>First usable in GAC</span><strong>Week ${cqGac.week} (${cqGac.format})</strong></div>
     </div>
-    <div class="status-card orange-card">
-      <div class="sc-header"><span class="sc-title">End of Current Era</span><span class="sc-badge orange">${eraBadge}</span></div>
-      <div class="uw-body" style="--accent:var(--orange);--accent-dim:var(--orange-dim);--accent-border:var(--orange-border)">
-        <div class="uw-img"><div class="art-badge">ERA</div><img src="${imgPath(st.era ? st.era.icon : ERA_UNIT_IMAGE)}" alt="" loading="lazy" decoding="async" onerror="this.remove()"></div>
-        <div class="uw-text">
-          <div class="sc-main"><div class="sc-val" data-clock="era-end">${eraMain}</div><div class="uw-date">${eraDateLine}</div><div class="sc-sub">${eraSub}</div></div>
-          <div class="sc-footer" style="flex-direction:column;align-items:flex-start;gap:2px;${st.eraKnown === false ? 'display:none;' : ''}">
-            <span>Usable in GAC: <span class="highlight">Week ${eraGacWeek} (${eraGac.format})</span></span>
-            <span>Roster locks: ${fmtDayMonthUTC(gameDayDisplayMs(eraNextSignupDate))} (Defense Starts)</span>
-          </div>
-        </div>
+    <div class="schedule-deadline" style="--deadline-accent:${cronMeta.accent}">
+      <div class="deadline-heading">
+        <img class="deadline-icon" src="${imgPath(cronMeta.asset)}" alt="" decoding="async" onerror="this.remove()">
+        <div class="deadline-title"><h2>${cron ? `${escHTML(cron.name)}${cron.hasFDC ? ' + FDC' : ''}` : 'Datacron expiration'}</h2>${cron ? `<p class="deadline-date">Expires ${escHTML(fmtEventStart(cron.expiresMs))}</p>` : '<p class="deadline-date">No datacron set announced</p>'}</div>
+        <strong class="deadline-count" data-clock="cron-expiry">${cronMain}</strong>
       </div>
-    </div>
-    <div class="status-card" style="border-color:${cronMeta.border}">
-      <div class="sc-header"><span class="sc-title">Datacron Expirations</span><span class="sc-badge ${cronBadgeClass}">${cronBadge}</span></div>
-      <div class="uw-body" style="--accent:${cronMeta.accent};--accent-dim:${cronMeta.dim};--accent-border:${cronMeta.border}">
-        <div class="uw-img"><div class="art-badge">${cronMeta.label.slice(0,3).toUpperCase()}</div><img src="${imgPath(cronMeta.asset)}" alt="" loading="lazy" decoding="async" onerror="this.remove()"></div>
-        <div class="uw-text">
-          <div class="sc-main">
-            <div class="sc-val" data-clock="cron-expiry">${cronMain}</div>
-            ${cron ? `<div class="uw-date">${cronDateLine}</div>` : ''}
-            <div class="sc-sub">${cronSub}</div>
-          </div>
-          <div class="sc-footer" style="flex-direction:column;align-items:flex-start;gap:2px;">
-            <span>Last usable: <span class="highlight">${lastUsableLabel}</span></span>
-            <span>Tip: dismantle unused datacrons manually</span>
-          </div>
-        </div>
-      </div>
+      <div class="deadline-eligibility"><span>Last usable in GAC</span><strong>${cronGac ? `Week ${cronGac.week} (${cronGac.format})` : 'TBA'}</strong>${lastTw ? `<span class="deadline-tw"><span>Last TW</span><strong>${lastTw}</strong></span>` : ''}</div>
     </div>`;
 }
 
@@ -269,15 +194,11 @@ function renderMergedHero(st){
   const eraEndMs = st.currentEraStartMs + (length * 86400000);
   document.getElementById('mhStartDate').textContent = fmtDateUTC(gameDayDisplayMs(st.currentEraStartMs));
   document.getElementById('mhEndDate').textContent = fmtDateUTC(gameDayDisplayMs(eraEndMs));
-  document.getElementById('mhDaysRemaining').textContent = st.preEra
-    ? (st.daysUntilEra <= 0 ? 'Era starts today' : `Era starts in ${st.daysUntilEra} day${st.daysUntilEra === 1 ? '' : 's'}`)
-    : `${length - st.bossEraDay} day${length - st.bossEraDay === 1 ? '' : 's'} remaining`;
   if(st.eraKnown === false){
     document.getElementById('mhDayVal').textContent = '—';
     document.getElementById('mhEpVal').textContent = 'TBA';
     document.getElementById('mhWeekVal').textContent = 'TBA';
     document.getElementById('mhEndDate').textContent = 'TBA';
-    document.getElementById('mhDaysRemaining').textContent = 'Dates TBA';
     document.getElementById('mhFill').style.width = '0%';
   }
 

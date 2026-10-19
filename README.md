@@ -178,8 +178,11 @@ continue through their last full activity day and do not linger on their
 handover date. Timers count to the start before launch and to the end while
 running, including clock-only refreshes. Only the
 Coliseum boss remains in the indicators row. The schedule sits directly below
-era progress; Important Dates contains the three date cards without a separate
-Conquest, GAC or Guild status row.
+era progress. Era-unit GAC eligibility lives inside the era
+panel; the schedule includes Conquest unlock and datacron expiry deadlines, with
+GAC usage emphasized and dates grouped into their headings. Roster-lock dates
+are omitted from these summaries. There is no separate Important Dates or
+mode-status section.
 
 Conquest cards show the volume number and ordinal run description. The volume
 anchor is configured in `CONQUEST_VOLUME_ANCHOR_DATE` and `CONQUEST_VOLUME_ANCHOR`;

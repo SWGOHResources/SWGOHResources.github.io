@@ -954,32 +954,26 @@ function tzDisplayName(){
   return s === 'UTC' ? 'UTC (game time)' : s;
 }
 
-/* Short zone tag for event start times ("UTC", "BST", "UTC+05:30").
-   Cached per setting; manual offsets echo the setting itself since
-   they render shifted through UTC. */
-let tzShortCache = { key: null, abbr: '' };
-function tzShort(){
+/* Short zone tag at the event instant, including daylight-saving changes. */
+let tzShortCache = { key: null, formatter: null };
+function tzShort(ms){
   const setting = (typeof getTimeZoneSetting === 'function') ? getTimeZoneSetting() : 'local';
-  if(tzShortCache.key !== setting){
-    let abbr = setting;
-    if(tzOffsetMinutes(setting) == null){
-      const zone = (typeof tz === 'function') ? tz() : 'UTC';
-      abbr = zone;
-      try {
-        const parts = new Intl.DateTimeFormat('en-GB', { timeZone: zone, timeZoneName: 'short' }).formatToParts(new Date());
-        const tzPart = parts.find(p => p.type === 'timeZoneName');
-        if(tzPart && tzPart.value) abbr = tzPart.value;
-      } catch(e){}
+  if(tzOffsetMinutes(setting) != null) return setting;
+  const zone = (typeof tz === 'function') ? tz() : 'UTC';
+  const key = `${setting}|${zone}`;
+  try {
+    if(tzShortCache.key !== key){
+      tzShortCache = { key, formatter: new Intl.DateTimeFormat('en-GB', { timeZone: zone, timeZoneName: 'short' }) };
     }
-    tzShortCache = { key: setting, abbr };
-  }
-  return tzShortCache.abbr;
+    const part = tzShortCache.formatter.formatToParts(new Date(ms)).find(p => p.type === 'timeZoneName');
+    return part && part.value ? part.value.replace(/^GMT[+-]0$/, 'GMT') : zone;
+  } catch(e){ return zone; }
 }
 
 /* Absolute start instant in the display zone: "Sat, 12th Sep, 18:00
    UTC". Card rows + live labels share it — one source of truth. */
 function fmtEventStart(ms){
-  return `${withOrdinal(__formatter('wdS|day|monS|hhmm').format(new Date(dms(ms))))} ${tzShort()}`;
+  return `${withOrdinal(__formatter('wdS|day|monS|hhmm').format(new Date(dms(ms))))} ${tzShort(ms)}`;
 }
 
 function setTimeZone(v){

@@ -353,7 +353,7 @@ test('TB end and TW payout markers stay in the timing engine but leave schedule 
     assert.ok(!f.doc.querySelector('.game-event-card[aria-label*="Ends"]'));
     assert.ok(!f.doc.querySelector('.game-event-card[aria-label*="Ended"]'));
     assert.equal(f.doc.querySelector('#statusDashboard'), null);
-    assert.equal(f.doc.querySelectorAll('#unlockWindows > div').length, 3);
+    assert.equal(f.doc.querySelectorAll('#unlockWindows > div').length, 2);
     assert.ok(f.w.getGuildPhaseInfo(f.w.getGameStatus()));
   } finally { f.dom.window.close(); }
 });
@@ -399,4 +399,42 @@ test('day cards pin additive drops, then sort new starts ahead of continuing eve
     before('Green Ranger', 'Terrible Things');
     assert.equal(names().filter(name=>name === 'Green Ranger').length, 1);
   } finally { f.dom.window.close(); }
+});
+
+
+test('GAC eligibility stays integrated without roster-lock dates', async () => {
+  const f = await fixture('#day-83', '2026-10-18T12:00:00Z');
+  try {
+    const hero = f.doc.querySelector('#mergedHero');
+    const deadlines = f.doc.querySelector('#unlockWindows');
+    assert.ok(hero.contains(f.doc.querySelector('#eraEligibility')));
+    assert.match(f.doc.querySelector('#eraEligibility').textContent, /First usable in GAC.*Week 3 \(5v5\)/s);
+    assert.doesNotMatch(hero.textContent, /Roster locks/);
+    assert.equal(f.doc.querySelector('[data-clock="era-end"]'), null);
+    assert.equal(f.doc.querySelector('section[aria-label="Important dates"]'), null);
+    assert.ok(deadlines.closest('.explorer'));
+    assert.equal(deadlines.children.length, 2);
+    assert.equal(deadlines.children[0].querySelector('h2').textContent, 'Conquest Unit Unlock');
+    assert.equal(deadlines.children[1].querySelector('h2').textContent, 'Supremacy Directive + FDC');
+    assert.doesNotMatch(deadlines.textContent, /3rd of volume|Datacron expiration/);
+    assert.match(deadlines.children[0].textContent, /First usable in GAC.*Week 2 \(5v5\)/s);
+    assert.match(deadlines.children[1].textContent, /Last usable in GAC.*Week 3 \(5v5\)/s);
+    assert.match(deadlines.children[1].textContent, /Supremacy Directive/);
+    const clock = deadlines.querySelector('[data-clock="cron-expiry"]');
+    assert.match(clock.textContent, /In .*days/);
+    f.w.refreshClockDisplays(f.w.getGameStatus());
+    assert.equal(deadlines.querySelector('[data-clock="cron-expiry"]'), clock);
+    f.w.localStorage.setItem('swgoh-tz', 'Europe/London');
+    f.w.renderAll();
+    assert.doesNotMatch(f.doc.querySelector('#eraEligibility').textContent, /Roster locks|21st Oct/);
+    assert.doesNotMatch(deadlines.textContent, /Roster locks|9th Dec/);
+    assert.match(deadlines.querySelector('.deadline-heading').textContent, /Unlocks Mon 7th Dec/);
+    assert.match(deadlines.children[1].textContent, /29th Oct, 18:00 GMT/);
+  } finally { f.dom.window.close(); }
+
+  const unknown = await fixture('', '2026-11-20T12:00:00Z');
+  try {
+    assert.match(unknown.doc.querySelector('#eraEligibility').textContent, /TBA/);
+    assert.doesNotMatch(unknown.doc.querySelector('#eraEligibility').textContent, /NaN|Invalid Date/);
+  } finally { unknown.dom.window.close(); }
 });

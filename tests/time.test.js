@@ -973,7 +973,7 @@ test('The Legend Codex releases early with FDCs and expires at the game timestam
   assert.equal(set.hasFDC, true);
   assert.equal(set.expiresMs, Date.parse('2027-01-20T08:00:00Z'));
   run(`renderUnlockWindows(getGameStatus(Date.parse('2026-12-18T12:00:00Z')))`);
-  assert.match(els.unlockWindows.innerHTML, /The Legend Codex \+ FDC expires to inbox/);
+  assert.match(els.unlockWindows.innerHTML, /The Legend Codex \+ FDC.*20th Jan, 08:00 UTC/s);
   assert.equal(run(`assetFor('proving_ground')`), 'live/events-stranger.png');
 });
 
@@ -1089,7 +1089,8 @@ test('unannounced eras retain recurring events without reusing era content', () 
     renderStaticMeta(futureStatus); renderMergedHero(futureStatus); renderUnlockWindows(futureStatus);`);
   assert.equal(els.eraTitle.textContent, 'Upcoming era');
   assert.equal(els.mhEndDate.textContent, 'TBA');
-  assert.match(els.unlockWindows.innerHTML, /data-clock="era-end">TBA/);
+  assert.match(els.eraEligibility.innerHTML, /TBA/);
+  assert.doesNotMatch(els.unlockWindows.innerHTML, /data-clock="era-end"/);
 });
 
 test('footer flags live data older than 48h', () => {
@@ -1161,4 +1162,14 @@ test('era battle slots carry event names and match live events', () => {
   assert.deepEqual(run('JSON.stringify([...liveCoveredIcons(' + JSON.stringify(starting).replace(/"/g, "'") + ')])'), '["era_battle_1"]');
   const live = run(`explorerCardHTML({ icon: 'era_battle_1', label: 'Era Battle 1 (Call Answered) Starts' }, ${dayStart}, 'Now', null, ${dayStart})`);
   assert.match(live, /live\/x\.png/);
+});
+
+
+test('event timezone tags follow the event date across daylight-saving changes', () => {
+  const engine = loadTimeEngine({ timeZone: 'Europe/London' });
+  assert.match(engine.fmtEventStart(Date.parse('2026-10-21T21:00:00Z')), /22:00 BST$/);
+  assert.match(engine.fmtEventStart(Date.parse('2026-12-09T21:00:00Z')), /21:00 GMT$/);
+  assert.match(engine.fmtEventStart(Date.parse('2026-10-21T21:00:00Z')), /22:00 BST$/);
+  engine.setTimeZone('UTC+05:30');
+  assert.match(engine.fmtEventStart(Date.parse('2026-12-09T21:00:00Z')), /02:30 UTC\+05:30$/);
 });

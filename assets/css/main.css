@@ -45,7 +45,7 @@
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { height: 100%; scroll-behavior: smooth; -webkit-user-select:none; user-select:none; }
+html { height: 100%; zoom: 0.9; scroll-behavior: smooth; -webkit-user-select:none; user-select:none; }
 input, textarea, [contenteditable="true"] { -webkit-user-select:text; user-select:text; }
 
 /* Skip link — visible on keyboard focus only */
@@ -325,7 +325,6 @@ input:focus-visible, summary:focus-visible, [tabindex]:focus-visible {
 .mh-main-val { font-family:var(--disp); font-size:38px; font-weight:700; color:var(--text); line-height:1.15; letter-spacing:-.025em; white-space:nowrap; }
 .mh-main-val .mh-of { font-size:19px; font-weight:500; color:var(--text2); margin-left:6px; letter-spacing:0; }
 .mh-main-val span:not(.mh-of) { color:var(--amber); }
-.mh-remaining { font:500 13px/1.5 var(--body); color:var(--text2); }
 .mh-meta { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:18px; margin:0; }
 .mh-meta > div { min-width:0; }
 .mh-meta > div + div { border-left:1px solid var(--border2); padding-left:18px; }
@@ -334,8 +333,7 @@ input:focus-visible, summary:focus-visible, [tabindex]:focus-visible {
 .mh-progress-wrap { width:100%; }
 .mh-progress-bar { width:100%; height:7px; background:var(--void3); border-radius:4px; overflow:hidden; border:1px solid var(--border); position:relative; }
 .mh-progress-fill { height:100%; background:linear-gradient(90deg,var(--amber),#f0c06a); border-radius:4px; transition:width .3s; }
-.mh-progress-labels { display:grid; grid-template-columns:minmax(0,1fr) auto minmax(0,1fr); align-items:baseline; gap:8px; margin-top:8px; font:400 12px/1.5 var(--body); color:var(--text2); }
-.mh-progress-labels .mh-remaining { text-align:center; }
+.mh-progress-labels { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); align-items:baseline; gap:8px; margin-top:8px; font:400 12px/1.5 var(--body); color:var(--text2); }
 .mh-progress-labels > :last-child { text-align:right; }
 .mh-right { display:flex; flex-direction:column; align-items:flex-start; justify-content:center; gap:14px; min-width:0; height:100%; border-left:1px solid var(--border2); padding-left:28px; text-align:left; }
 .mh-right .cb-text { display:flex; flex-direction:column; gap:5px; min-width:0; }
@@ -346,7 +344,6 @@ input:focus-visible, summary:focus-visible, [tabindex]:focus-visible {
 .hero-grid {
   display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 24px;
 }
-section[aria-label="Important dates"] .unlock-grid { margin-bottom:0; }
 .status-card {
   background: var(--void1);
   border: 1px solid var(--border); border-radius: var(--radius-lg);
@@ -420,52 +417,38 @@ section[aria-label="Important dates"] .unlock-grid { margin-bottom:0; }
 .pip-track-labels span.current { font-weight: 700; }
 .pip-track-labels span.done { color: var(--text2); }
 
-/* ─── Unlock Window Tiles (image + text) ─── */
-.uw-body { display: flex; gap: 12px; align-items: flex-start; }
-.uw-img {
-  width: 56px; height: 56px; border-radius: 10px; overflow: hidden; flex: 0 0 auto;
-  background: var(--accent-dim, var(--void3)); border: 1px solid var(--accent-border, var(--border2));
-  position: relative;
+.mh-eligibility { grid-column:1 / -1; display:flex; gap:16px 28px; padding-top:16px; border-top:1px solid var(--amber-border); }
+.mh-eligibility > div { display:flex; align-items:baseline; flex-wrap:wrap; gap:4px 14px; min-width:0; }
+.mh-eligibility span { font:500 11px/1.5 var(--body); }
+.mh-eligibility .era-gac { display:flex; align-items:baseline; flex-wrap:wrap; gap:4px 10px; }
+.mh-eligibility strong { color:var(--amber); font:600 15px/1.5 var(--disp); overflow-wrap:anywhere; }
+.schedule-deadlines { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:0; margin-bottom:16px; border:1px solid var(--border2); border-radius:var(--radius); background:var(--void2); overflow:hidden; }
+.schedule-deadline { display:flex; flex-direction:column; min-width:0; }
+.schedule-deadline + .schedule-deadline { border-left:1px solid var(--border2); }
+.deadline-heading { display:grid; grid-template-columns:40px minmax(0,1fr) auto; align-items:center; gap:12px; padding:14px 16px; flex:1; }
+.deadline-icon { width:40px; height:40px; object-fit:contain; }
+.deadline-title { min-width:0; }
+.deadline-title h2 { display:flex; align-items:baseline; flex-wrap:wrap; gap:3px 10px; font:600 13px/1.4 var(--body); }
+.deadline-date { margin-top:4px; font:400 11px/1.5 var(--body); overflow-wrap:anywhere; }
+.deadline-count { align-self:start; color:var(--deadline-accent); background:var(--void1); border:1px solid var(--border); border-radius:5px; padding:5px 8px; font:600 12px/1.4 var(--disp); max-width:140px; }
+.deadline-eligibility { display:flex; align-items:baseline; justify-content:space-between; gap:4px 12px; flex-wrap:wrap; padding:9px 16px; border-top:1px solid var(--border); background:var(--void1); }
+.deadline-eligibility > span { font:400 11px/1.5 var(--body); }
+.deadline-eligibility strong { font:600 15px/1.5 var(--disp); }
+.deadline-tw { display:flex; align-items:baseline; gap:8px; padding-left:12px; border-left:1px solid var(--border2); }
+.deadline-tw > span { font:400 11px/1.5 var(--body); }
+.deadline-tw strong { font:600 12px/1.5 var(--body); }
+@media(max-width:760px) {
+  .schedule-deadlines { grid-template-columns:1fr; }
+  .schedule-deadline + .schedule-deadline { border-left:0; border-top:1px solid var(--border2); }
 }
-.uw-img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; z-index: 2; }
-.uw-img .art-badge {
-  position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%;
-  display: flex; align-items: center; justify-content: center;
-  font-family: var(--disp); font-size: 10px; font-weight: 700; color: var(--accent, var(--text3));
+@media(max-width:520px) {
+  .mh-eligibility strong { font-size:14px; }
+  .deadline-heading { grid-template-columns:32px minmax(0,1fr) auto; gap:10px; padding:12px; }
+  .deadline-icon { width:32px; height:32px; }
+  .deadline-count { max-width:110px; padding:4px 6px; font-size:11px; }
+  .deadline-eligibility { padding:8px 12px; }
+  .deadline-eligibility strong { font-size:14px; }
 }
-.uw-text { flex: 1; min-width: 0; }
-/* Standalone calendar line on the Important Dates cards: weekday +
-   full date in mono so the countdown (sc-val) and the explanation
-   (sc-sub) never share one cramped line. */
-.uw-date { font-family: var(--mono); font-size: 12px; font-weight: 500; color: var(--text); margin-top: 5px; }
-/* Big countdown line on the Important Dates cards. Hero-style display
-   type (like .mh-main-val): large accent value with a smaller muted
-   date suffix. Every accent clears large-text contrast (5.3:1+). */
-.big-count { font-family: var(--disp); font-size: 28px; font-weight: 700; color: var(--accent, var(--text)); line-height: 1.15; letter-spacing: -0.01em; margin-top: 2px; display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 8px; }
-.big-count .bc-main, .big-count .bc-date { min-width: 0; }
-.big-count .bc-date { font-size: 14px; font-weight: 600; color: var(--text3); letter-spacing: 0; white-space: nowrap; }
-
-/* ─── Important Dates Grid ───
-   Intentionally left to inherit .hero-grid's plain
-   `grid-template-columns: repeat(3, 1fr)` (and its matching
-   single-column mobile override) — this is the exact same rule the
-   status dashboard above uses, and it doesn't have any gap issue,
-   so we mirror it rather than introducing a separate flex/auto-fit
-   track-sizing algorithm that can leave unclaimed space on wide
-   viewports. */
-.unlock-grid {
-  /* Equal-height cards: stretch every card to the tallest in the row,
-     then pin each card's footer to the bottom via margin-top:auto
-     below — so uneven text lengths never leave an awkward gap. */
-  align-items: stretch;
-}
-.unlock-grid > .status-card {
-  min-width: 0;
-}
-.unlock-grid .uw-body { flex: 1; align-items: stretch; }
-.unlock-grid .uw-img { align-self: center; }
-.unlock-grid .uw-text { display: flex; flex-direction: column; }
-.unlock-grid .uw-text .sc-footer { margin-top: auto; }
 
 /* ─── Section Labels ─── */
 .section-head { display: flex; align-items: center; gap: 12px; margin: 32px 0 16px; }
@@ -541,6 +524,7 @@ section[aria-label="Important dates"] .unlock-grid { margin-bottom:0; }
 .schedule-search-clear:hover { background:var(--void3); color:var(--text); }
 .schedule-search-clear:focus-visible { outline:2px solid var(--amber); outline-offset:1px; }
 .schedule-search-scope { display:flex; flex:none; gap:3px; padding:3px; border:1px solid var(--border); border-radius:var(--radius); background:var(--void2); }
+.schedule-search-scope-label { display:none; color:var(--text2); font:500 11px var(--body); }
 .schedule-search-scope button { appearance:none; min-height:30px; padding:5px 10px; border:1px solid transparent; border-radius:5px; color:var(--text3); background:none; font:600 11px var(--body); cursor:pointer; white-space:nowrap; }
 .schedule-search-scope button[aria-pressed="true"] { color:var(--amber); border-color:var(--amber-border); background:var(--amber-dim); }
 .schedule-search-scope button:hover { color:var(--text); }
@@ -557,7 +541,8 @@ section[aria-label="Important dates"] .unlock-grid { margin-bottom:0; }
 @media(max-width:760px) {
   .schedule-search-tools { margin:12px 0 0; gap:8px; }
   .schedule-search-controls { flex-direction:column; align-items:stretch; gap:8px; }
-  .schedule-search-scope { align-self:flex-start; }
+  .schedule-search-scope { align-self:flex-start; align-items:center; max-width:100%; flex-wrap:wrap; }
+  .schedule-search-scope-label { display:block; padding:0 6px; }
   .schedule-search-tools > .day-today { min-height:38px; }
 }
 .day-help { color: var(--text3); font-size: 10.5px; }
@@ -582,7 +567,7 @@ section[aria-label="Important dates"] .unlock-grid { margin-bottom:0; }
 
 .xcard-deck {
   display: flex; gap: 12px; overflow-x: auto; align-items: stretch;
-  scroll-snap-type: x proximity; padding: 2px 2px 8px;
+  scroll-snap-type: x proximity; overscroll-behavior-x: contain; padding: 2px 2px 8px;
 }
 .xcard {
   flex: 0 0 196px; scroll-snap-align: start;
@@ -590,12 +575,10 @@ section[aria-label="Important dates"] .unlock-grid { margin-bottom:0; }
   background: var(--void2); border: 1px solid var(--border);
   border-radius: var(--radius-lg); overflow: hidden;
   transition: border-color 0.2s, transform 0.2s;
-  /* Skip layout/paint for offscreen cards in the horizontal deck and the
-     84-row timeline until they near the viewport. */
-  content-visibility: auto;
-  contain-intrinsic-size: auto 320px;
 }
-.xcard:hover { border-color: var(--accent-border, var(--border2)); transform: translateY(-2px); }
+@media (hover: hover) and (pointer: fine) {
+  .xcard:hover { border-color: var(--accent-border, var(--border2)); transform: translateY(-2px); }
+}
 .xcard-art {
   position: relative; aspect-ratio: 3 / 4; overflow: hidden;
   background: var(--accent-dim, var(--void3));
@@ -995,13 +978,8 @@ section[aria-label="Important dates"] .unlock-grid { margin-bottom:0; }
   .wrap { padding: 16px 12px; }
   .explorer { padding: 12px 10px; }
   .explorer-nav { gap: 5px; }
-  /* Sticky day changer: pills + arrows stay pinned under the site
-     header while the cards scroll, so you can flip days and read
-     event names at the same time. Top offset clears the 56px header. */
-  .explorer-nav {
-    position: sticky; top: 62px; z-index: 50;
-    background: var(--void1); padding: 6px 0;
-  }
+  .explorer-nav { padding: 6px 0; }
+  .xcard-deck { scroll-snap-type: none; }
   .day-arrow { width: 34px; }
   .day-strip { gap: 3px; }
   .day-pill { padding-left: 1px; padding-right: 1px; }
@@ -1030,13 +1008,11 @@ section[aria-label="Important dates"] .unlock-grid { margin-bottom:0; }
   .policy-page .section-head .rule { max-width: none; }
   .policy-content { padding-left: 20px; }
   .tl-day { flex-wrap: wrap; gap: 6px; }
-  /* Minimum touch targets on mobile + clearance under the sticky
-     explorer nav so focused pills are never hidden behind it. */
   .day-today, .jump-toggle, .sf-pill, .modal-close-x { min-height: 44px; }
   .modal-close-x { min-width: 44px; }
   .gear-btn.mp-btn, .nav-toggle { min-height: 44px; }
   .nav-toggle { width: 44px; }
-  .day-pill, .day-detail-head h3, .tl-day { scroll-margin-top: 130px; }
+  .day-pill, .day-detail-head h3, .tl-day { scroll-margin-top: 72px; }
 }
 
 
@@ -1051,12 +1027,10 @@ section[aria-label="Important dates"] .unlock-grid { margin-bottom:0; }
   #mergedHero .mh-tag { font-size:17px; }
   #mergedHero .mh-main-val { font-size:32px; }
   #mergedHero .mh-main-val .mh-of { font-size:17px; }
-  #mergedHero .mh-remaining { font-size:12px; }
   #mergedHero .mh-meta { gap:12px; }
   #mergedHero .mh-meta > div + div { padding-left:12px; }
   #mergedHero .mh-meta dd { font-size:13px; }
   #mergedHero .mh-progress-labels { grid-template-columns:repeat(2,minmax(0,1fr)); gap:6px 12px; font-size:11px; }
-  #mergedHero .mh-progress-labels .mh-remaining { grid-column:1 / -1; grid-row:2; }
   #mergedHero .mh-progress-labels > :last-child { grid-column:2; grid-row:1; }
   #mergedHero .mh-right { padding-top:16px; gap:12px; }
   #mergedHero .cb-label { font-size:10px; letter-spacing:.025em; }
