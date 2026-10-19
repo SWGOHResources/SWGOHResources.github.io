@@ -210,70 +210,20 @@ test('the active shorter era has one episode and preserves the independent Conqu
   } finally { f.dom.window.close(); }
 });
 
-test('schedule search filters dates and opens a future event using the keyboard', async () => {
-  const live = JSON.parse(fs.readFileSync(new URL('../assets/data/live-events.json', import.meta.url), 'utf8'));
-  const f = await fixture('#day-83', '2026-10-17T20:00:00Z', live.events);
+test('schedule navigation works without search controls', async () => {
+  const f = await fixture('#day-83', '2026-10-17T20:00:00Z');
   try {
-    assert.equal(f.doc.querySelector('#dayJump'), null);
-    assert.equal(f.doc.querySelector('#eventJump'), null);
-    const input = f.doc.querySelector('#scheduleSearchInput');
-    const results = f.doc.querySelector('#scheduleSearchResults');
-    const query = value => { input.value=value; input.dispatchEvent(new f.w.Event('input', { bubbles:true })); };
-    query('additive drops');
-    assert.equal(results.querySelectorAll('button').length, 2);
-    f.doc.querySelector('[data-search-scope="future"]').click();
-    assert.equal(results.querySelectorAll('button').length, 1);
-    assert.match(results.textContent, /Wave 2/);
-    f.doc.querySelector('[data-search-scope="past"]').click();
-    assert.equal(results.querySelectorAll('button').length, 1);
-    assert.match(results.textContent, /Wave 1/);
-    query('B1 Mercenary');
-    assert.match(results.textContent, /No matching events/);
-    f.doc.querySelector('[data-search-scope="future"]').click();
-    assert.equal(results.querySelectorAll('button').length, 1);
-    input.focus();
-    input.dispatchEvent(new f.w.KeyboardEvent('keydown', { key:'ArrowDown', bubbles:true }));
-    assert.ok(f.doc.activeElement.classList.contains('schedule-search-result'));
-    f.doc.activeElement.click();
-    assert.equal(f.w.location.hash, '#date-2026-11-03');
-    assert.match(f.doc.querySelector('#dayDetail').textContent, /B1 Mercenary Droid/);
-    assert.equal(results.hidden, true);
-    assert.equal(f.doc.activeElement, input);
-    input.dispatchEvent(new f.w.Event('input', { bubbles:true }));
-    input.dispatchEvent(new f.w.KeyboardEvent('keydown', { key:'Escape', bubbles:true }));
-    assert.equal(results.hidden, true);
+    assert.equal(f.doc.querySelector('#scheduleSearch'), null);
+    assert.equal(f.doc.querySelector('[data-search-scope]'), null);
+    assert.ok(f.doc.querySelector('.day-detail-title #dayToday'));
+    assert.equal(f.doc.querySelectorAll('#dayToday').length, 1);
+    f.doc.querySelector('#dayNext').click();
+    assert.equal(f.w.location.hash, '#day-84');
+    f.doc.querySelector('#dayToday').click();
+    assert.equal(f.w.location.hash, `#day-${f.w.getGameStatus().eraDay}`);
+    assert.equal(f.doc.querySelector('#dayToday').disabled, true);
   } finally { f.dom.window.close(); }
 });
-
-test('past search reaches previous eras and dates without duplicate live and expected results', async () => {
-  const f = await fixture('#day-15', '2026-11-03T20:00:00Z', [{
-    id:'EVENT_MARQUEE_MARAJADE', name:'Mara Jade Skywalker Marquee', unit:'MARAJADESKYWALKER', kind:'marquee',
-    startMs:Date.parse('2026-07-28T18:00:00Z'), endMs:Date.parse('2026-08-04T18:00:00Z')
-  }]);
-  try {
-    const input = f.doc.querySelector('#scheduleSearchInput');
-    input.value='Mara Jade Marquee';
-    input.dispatchEvent(new f.w.Event('input', { bubbles:true }));
-    f.doc.querySelector('[data-search-scope="past"]').click();
-    const matches = f.doc.querySelectorAll('.schedule-search-result');
-    assert.equal(matches.length, 1);
-    matches[0].click();
-    assert.equal(f.w.location.hash, '#date-2026-07-28');
-    assert.match(f.doc.querySelector('.day-pill.is-selected').getAttribute('aria-label'), /28th Jul/);
-    assert.match(f.doc.querySelector('#dayDetail').textContent, /The Last Command/);
-    input.value='2026-10-20';
-    input.dispatchEvent(new f.w.Event('input', { bubbles:true }));
-    assert.match(f.doc.querySelector('#scheduleSearchResults').textContent, /Green Ranger/);
-    input.value='no such event';
-    input.dispatchEvent(new f.w.Event('input', { bubbles:true }));
-    assert.match(f.doc.querySelector('#scheduleSearchResults').textContent, /No matching events/);
-    f.doc.querySelector('#scheduleSearchClear').click();
-    assert.equal(input.value, '');
-    assert.equal(f.doc.querySelector('#scheduleSearchClear').hidden, true);
-    assert.equal(f.doc.querySelector('#scheduleSearchResults').hidden, true);
-  } finally { f.dom.window.close(); }
-});
-
 
 test('event names and types agree across cards and search while raw names remain searchable', async () => {
   const live = JSON.parse(fs.readFileSync(new URL('../assets/data/live-events.json', import.meta.url), 'utf8'));
@@ -285,14 +235,11 @@ test('event names and types agree across cards and search while raw names remain
     assert.equal(legendary.querySelector('.xcard-kicker').textContent, 'Era Legendary Event');
     assert.doesNotMatch(legendary.textContent, /Terrible Tings Legendary Event/);
     assert.equal(legendary.querySelector('button'), null);
-    const input = f.doc.querySelector('#scheduleSearchInput');
     for(const query of ['Terrible Things', 'Terrible Tings', 'Darth Jar Jar']){
-      input.value = query;
-      input.dispatchEvent(new f.w.Event('input', { bubbles:true }));
-      const result = f.doc.querySelector('.schedule-search-result');
+      const result = f.w.searchSchedule(query, 'all', f.w.getGameStatus())[0];
       assert.ok(result, query);
-      assert.equal(result.querySelector('span').textContent, 'Terrible Things');
-      assert.match(result.querySelector('small').textContent, /Era Legendary Event/);
+      assert.equal(result.label, 'Terrible Things');
+      assert.match(result.type, /Era Legendary Event/);
     }
     const assault = f.doc.querySelector('.game-event-card[aria-label="Military Might"]');
     assert.ok(assault);
@@ -322,10 +269,8 @@ test('Conquest cards use volume titles and run descriptions across rollover and 
     const next = f.w.conquestVolumeInfo(Date.parse('2026-12-21T18:00:00Z'));
     assert.equal(next.volume, 26);
     assert.equal(next.run, 1);
-    const input = f.doc.querySelector('#scheduleSearchInput');
-    input.value = 'Volume 25 Conquest';
-    input.dispatchEvent(new f.w.Event('input', { bubbles:true }));
-    assert.match(f.doc.querySelector('.schedule-search-result').textContent, /Volume 25.*Conquest/);
+    const matches = f.w.searchSchedule('Volume 25 Conquest', 'all', f.w.getGameStatus());
+    assert.ok(matches.some(result=>result.label === 'Volume 25' && result.type === 'Conquest'));
   } finally { f.dom.window.close(); }
   const live = await fixture('#date-2026-10-27', '2026-10-17T20:00:00Z', [{
     id:'CONQUEST_VOL26', name:'Conquest', kind:'conquest',
@@ -408,18 +353,24 @@ test('GAC eligibility stays integrated without roster-lock dates', async () => {
     const hero = f.doc.querySelector('#mergedHero');
     const deadlines = f.doc.querySelector('#unlockWindows');
     assert.ok(hero.contains(f.doc.querySelector('#eraEligibility')));
-    assert.match(f.doc.querySelector('#eraEligibility').textContent, /First usable in GAC.*Week 3 \(5v5\)/s);
+    assert.match(f.doc.querySelector('#eraEligibility').textContent, /Era units first GAC.*Week 3 \(5v5\)/s);
     assert.doesNotMatch(hero.textContent, /Roster locks/);
     assert.equal(f.doc.querySelector('[data-clock="era-end"]'), null);
     assert.equal(f.doc.querySelector('section[aria-label="Important dates"]'), null);
     assert.ok(deadlines.closest('.explorer'));
+    assert.equal(f.doc.querySelector('.explorer-note'), null);
     assert.equal(deadlines.children.length, 2);
     assert.equal(deadlines.children[0].querySelector('h2').textContent, 'Conquest Unit Unlock');
     assert.equal(deadlines.children[1].querySelector('h2').textContent, 'Supremacy Directive + FDC');
     assert.doesNotMatch(deadlines.textContent, /3rd of volume|Datacron expiration/);
-    assert.match(deadlines.children[0].textContent, /First usable in GAC.*Week 2 \(5v5\)/s);
-    assert.match(deadlines.children[1].textContent, /Last usable in GAC.*Week 3 \(5v5\)/s);
+    assert.match(deadlines.children[0].textContent, /First GAC.*Week 2 \(5v5\)/s);
+    assert.match(deadlines.children[1].textContent, /Last GAC.*Week 3 \(5v5\).*Last TW.*War 2/s);
     assert.match(deadlines.children[1].textContent, /Supremacy Directive/);
+    assert.match(deadlines.querySelector('.usage-tw dd').textContent, /^War 2Signup 22 Oct$/);
+    assert.equal(deadlines.children[1].querySelector('.usage-gac .usage-dates').textContent, '20–26 Oct');
+    assert.equal(deadlines.children[0].querySelector('.usage-gac .usage-dates').textContent, '8–14 Dec');
+    assert.equal(deadlines.querySelectorAll('.usage-gac').length, 2);
+    assert.doesNotMatch(deadlines.textContent, /Payout/);
     const clock = deadlines.querySelector('[data-clock="cron-expiry"]');
     assert.match(clock.textContent, /In .*days/);
     f.w.refreshClockDisplays(f.w.getGameStatus());
@@ -428,8 +379,8 @@ test('GAC eligibility stays integrated without roster-lock dates', async () => {
     f.w.renderAll();
     assert.doesNotMatch(f.doc.querySelector('#eraEligibility').textContent, /Roster locks|21st Oct/);
     assert.doesNotMatch(deadlines.textContent, /Roster locks|9th Dec/);
-    assert.match(deadlines.querySelector('.deadline-heading').textContent, /Unlocks Mon 7th Dec/);
-    assert.match(deadlines.children[1].textContent, /29th Oct, 18:00 GMT/);
+    assert.match(deadlines.querySelector('.deadline-heading').textContent, /Unlocks 7 Dec/);
+    assert.match(deadlines.children[1].textContent, /29 Oct, 18:00 GMT/);
   } finally { f.dom.window.close(); }
 
   const unknown = await fixture('', '2026-11-20T12:00:00Z');

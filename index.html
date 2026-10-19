@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta name="swgoh-asset-v" content="b3c727257c">
+    <meta name="swgoh-asset-v" content="071077b6e7">
   <meta charset="UTF-8">
   <base href="/">
   <script src="/assets/js/clean-urls.js?v=b3d876d73a"></script>
@@ -52,7 +52,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@700;800&family=Inter:wght@400;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/main.css?v=e7427baf1f">
+  <link rel="stylesheet" href="assets/css/main.css?v=58b0bbc2c1">
 <link rel="stylesheet" href="assets/css/game-events.106714b66c.css?v=106714b66c">
 </head>
 <body>
@@ -146,34 +146,10 @@
   <section aria-label="Event Schedule explorer">
   <div class="explorer">
     <div class="schedule-deadlines" id="unlockWindows" aria-label="Upcoming unlocks and expirations"></div>
-    <div class="explorer-note" role="note">
-      <span class="en-dot" aria-hidden="true">!</span>
-      <p>Days roll over at 18:00 UTC. Cards with a start/end time come from live game data; times below show in your selected timezone.</p>
-    </div>
     <div class="explorer-nav">
       <button type="button" class="day-arrow" id="dayPrev" onclick="shiftExplorer(-1)" aria-label="Previous day" title="Previous day">←</button>
       <div class="day-strip" id="dayStrip" role="group" aria-label="Choose a day"></div>
       <button type="button" class="day-arrow" id="dayNext" onclick="shiftExplorer(1)" aria-label="Next day" title="Next day">→</button>
-    </div>
-    <div class="schedule-search-tools">
-      <div class="schedule-search" id="scheduleSearch" role="search" aria-label="Event schedule">
-        <div class="schedule-search-controls">
-          <div class="schedule-search-field">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="m16 16 4.5 4.5"></path></svg>
-            <input type="search" id="scheduleSearchInput" placeholder="Search events, units or dates…" aria-label="Search events, units or dates" aria-controls="scheduleSearchResults" aria-expanded="false" autocomplete="off" spellcheck="false">
-            <button type="button" class="schedule-search-clear" id="scheduleSearchClear" aria-label="Clear search" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 7 10 10M17 7 7 17"></path></svg></button>
-          </div>
-          <div class="schedule-search-scope" role="group" aria-label="Search dates">
-            <span class="schedule-search-scope-label" aria-hidden="true">Search:</span>
-            <button type="button" data-search-scope="all" aria-pressed="true">All dates</button>
-            <button type="button" data-search-scope="future" aria-pressed="false">Future</button>
-            <button type="button" data-search-scope="past" aria-pressed="false">Past</button>
-          </div>
-        </div>
-        <div class="schedule-search-results" id="scheduleSearchResults" hidden></div>
-        <span class="sr-only" id="scheduleSearchStatus" role="status" aria-live="polite"></span>
-      </div>
-      <button type="button" class="day-today" id="dayToday" onclick="jumpExplorer(0)">Today</button>
     </div>
     <div class="day-detail" id="dayDetail"></div>
   </div>
@@ -290,8 +266,8 @@
 <script src="firebase-config.js?v=2"></script>
 <script defer src="assets/js/asseturl.js?v=6ac46532a1"></script>
 <script defer src="assets/js/config.js?v=316fae1453"></script>
-<script defer src="assets/js/time.js?v=0704b21bfe"></script>
-<script defer src="assets/js/render.js?v=625f08fc61"></script>
+<script defer src="assets/js/time.js?v=56ae81c9cb"></script>
+<script defer src="assets/js/render.js?v=812b71488d"></script>
 <script defer src="assets/js/app.js?v=c9ee5eb0fa"></script>
 </body>
 </html>

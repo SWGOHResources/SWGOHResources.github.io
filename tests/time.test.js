@@ -973,7 +973,7 @@ test('The Legend Codex releases early with FDCs and expires at the game timestam
   assert.equal(set.hasFDC, true);
   assert.equal(set.expiresMs, Date.parse('2027-01-20T08:00:00Z'));
   run(`renderUnlockWindows(getGameStatus(Date.parse('2026-12-18T12:00:00Z')))`);
-  assert.match(els.unlockWindows.innerHTML, /The Legend Codex \+ FDC.*20th Jan, 08:00 UTC/s);
+  assert.match(els.unlockWindows.innerHTML, /The Legend Codex \+ FDC.*20 Jan, 08:00 UTC/s);
   assert.equal(run(`assetFor('proving_ground')`), 'live/events-stranger.png');
 });
 
@@ -1172,4 +1172,15 @@ test('event timezone tags follow the event date across daylight-saving changes',
   assert.match(engine.fmtEventStart(Date.parse('2026-10-21T21:00:00Z')), /22:00 BST$/);
   engine.setTimeZone('UTC+05:30');
   assert.match(engine.fmtEventStart(Date.parse('2026-12-09T21:00:00Z')), /02:30 UTC\+05:30$/);
+});
+
+
+test('compact usability dates handle months, years, and display zones', () => {
+  const e = loadTimeEngine();
+  assert.equal(e.fmtDateRange(Date.parse('2026-10-20T21:00Z'), Date.parse('2026-10-26T21:00Z')), '20–26 Oct');
+  assert.equal(e.fmtDateRange(Date.parse('2026-10-29T21:00Z'), Date.parse('2026-11-04T21:00Z')), '29 Oct – 4 Nov');
+  assert.equal(e.fmtDateRange(Date.parse('2026-12-29T21:00Z'), Date.parse('2027-01-04T21:00Z')), '29 Dec 2026 – 4 Jan 2027');
+  assert.equal(e.fmtShortDate(Date.parse('2026-10-22T17:00Z')), '22 Oct');
+  e.setTimeZone('UTC+14:00');
+  assert.equal(e.fmtDateRange(Date.parse('2026-10-20T21:00Z'), Date.parse('2026-10-26T21:00Z')), '21–27 Oct');
 });

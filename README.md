@@ -209,12 +209,10 @@ suffixes, recognizes the known era legendary events, and preserves raw names
 and unit names as search aliases. Unknown marquee titles fall back to their unit
 until live data supplies the event name.
 
-The schedule search replaces the day and event jump menus. Search names,
-units, calendar dates or era days, then select a result to open its date.
-All dates, Future and Past controls filter by the event's start time.
-Search includes previous configured eras as well as the normal lookahead;
-live occurrences replace matching estimates. Results and clearing controls
-use the site's custom styling and support keyboard navigation.
+The main schedule uses the calendar strip, previous/next arrows and Today
+button, without search, date-scope options or jump menus. Legacy search helpers
+remain available to existing preview pages. Usability summaries use compact date
+ranges and show the final TW signup date without its payout date.
 Where a live card covers a rotation entry (same smuggling run, marquee,
 fleet ship…) the rotation card is suppressed so nothing shows twice.
 Rotation marquee, era-challenge and journey-guide slots are matched to

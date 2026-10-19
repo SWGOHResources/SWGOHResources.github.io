@@ -417,37 +417,38 @@ input:focus-visible, summary:focus-visible, [tabindex]:focus-visible {
 .pip-track-labels span.current { font-weight: 700; }
 .pip-track-labels span.done { color: var(--text2); }
 
-.mh-eligibility { grid-column:1 / -1; display:flex; gap:16px 28px; padding-top:16px; border-top:1px solid var(--amber-border); }
-.mh-eligibility > div { display:flex; align-items:baseline; flex-wrap:wrap; gap:4px 14px; min-width:0; }
-.mh-eligibility span { font:500 11px/1.5 var(--body); }
-.mh-eligibility .era-gac { display:flex; align-items:baseline; flex-wrap:wrap; gap:4px 10px; }
-.mh-eligibility strong { color:var(--amber); font:600 15px/1.5 var(--disp); overflow-wrap:anywhere; }
+.mh-eligibility { grid-column:1 / -1; padding-top:14px; border-top:1px solid var(--border2); }
+.usage-fields { display:grid; grid-auto-flow:column; grid-auto-columns:minmax(0,1fr); margin:0; color:var(--text); }
+.usage-fields > div { min-width:0; padding:10px 16px; }
+.usage-fields > div + div { border-left:1px solid var(--border2); }
+.usage-fields dt { font:600 10px/1.5 var(--body); letter-spacing:.055em; text-transform:uppercase; }
+.usage-fields dd { margin:4px 0 0; font:500 13px/1.5 var(--body); overflow-wrap:anywhere; }
+.usage-fields .usage-dates { display:block; margin-top:4px; color:var(--text); font:400 11px/1.6 var(--mono); }
+.usage-dates > span { display:block; }
+.usage-gac dd,.usage-tw dd { color:#9ac8ee; }
+.mh-eligibility .usage-fields > div { padding:0; }
 .schedule-deadlines { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:0; margin-bottom:16px; border:1px solid var(--border2); border-radius:var(--radius); background:var(--void2); overflow:hidden; }
 .schedule-deadline { display:flex; flex-direction:column; min-width:0; }
 .schedule-deadline + .schedule-deadline { border-left:1px solid var(--border2); }
 .deadline-heading { display:grid; grid-template-columns:40px minmax(0,1fr) auto; align-items:center; gap:12px; padding:14px 16px; flex:1; }
 .deadline-icon { width:40px; height:40px; object-fit:contain; }
 .deadline-title { min-width:0; }
-.deadline-title h2 { display:flex; align-items:baseline; flex-wrap:wrap; gap:3px 10px; font:600 13px/1.4 var(--body); }
-.deadline-date { margin-top:4px; font:400 11px/1.5 var(--body); overflow-wrap:anywhere; }
-.deadline-count { align-self:start; color:var(--deadline-accent); background:var(--void1); border:1px solid var(--border); border-radius:5px; padding:5px 8px; font:600 12px/1.4 var(--disp); max-width:140px; }
-.deadline-eligibility { display:flex; align-items:baseline; justify-content:space-between; gap:4px 12px; flex-wrap:wrap; padding:9px 16px; border-top:1px solid var(--border); background:var(--void1); }
-.deadline-eligibility > span { font:400 11px/1.5 var(--body); }
-.deadline-eligibility strong { font:600 15px/1.5 var(--disp); }
-.deadline-tw { display:flex; align-items:baseline; gap:8px; padding-left:12px; border-left:1px solid var(--border2); }
-.deadline-tw > span { font:400 11px/1.5 var(--body); }
-.deadline-tw strong { font:600 12px/1.5 var(--body); }
+.deadline-title h2 { margin:0; color:var(--deadline-accent,var(--text)); font:700 16px/1.35 var(--disp); }
+.deadline-date { margin-top:6px; color:var(--text); font:400 12px/1.6 var(--body); overflow-wrap:anywhere; }
+.deadline-date time { font-weight:400; }
+.deadline-count { align-self:start; color:var(--amber); background:var(--void1); border:1px solid var(--border2); border-radius:5px; padding:5px 8px; font:600 12px/1.4 var(--body); max-width:140px; }
+.deadline-eligibility { border-top:1px solid var(--border2); background:var(--void1); }
 @media(max-width:760px) {
   .schedule-deadlines { grid-template-columns:1fr; }
   .schedule-deadline + .schedule-deadline { border-left:0; border-top:1px solid var(--border2); }
 }
 @media(max-width:520px) {
-  .mh-eligibility strong { font-size:14px; }
   .deadline-heading { grid-template-columns:32px minmax(0,1fr) auto; gap:10px; padding:12px; }
   .deadline-icon { width:32px; height:32px; }
+  .deadline-title h2 { font-size:15px; }
+  .deadline-date { font-size:11.5px; }
   .deadline-count { max-width:110px; padding:4px 6px; font-size:11px; }
-  .deadline-eligibility { padding:8px 12px; }
-  .deadline-eligibility strong { font-size:14px; }
+  .usage-fields > div { padding:9px 12px; }
 }
 
 /* ─── Section Labels ─── */
@@ -562,6 +563,9 @@ input:focus-visible, summary:focus-visible, [tabindex]:focus-visible {
 .jump-toggle:focus-visible { outline: 2px solid var(--amber-border); outline-offset: 1px; }
 .day-detail { margin-top: 16px; }
 .day-detail-head { margin-bottom: 12px; }
+.day-detail-title { display:flex; align-items:center; gap:12px; flex:1; min-width:0; }
+.day-detail-title > div { flex:1; min-width:0; }
+.day-detail-title .day-today { flex:none; align-self:center; }
 .day-detail-head h3 { font-family: var(--disp); font-size: 17px; font-weight: 700; color: var(--text); }
 .day-detail-head p { font-size: 11.5px; color: var(--text3); margin-top: 2px; }
 
@@ -991,6 +995,7 @@ input:focus-visible, summary:focus-visible, [tabindex]:focus-visible {
   .jump-field, .jump-field-event { flex: 1 1 100%; min-width: 0; }
   .explorer-tools .day-today { width: 100%; align-self: stretch; }
   .day-detail-head { flex-direction: column; gap: 8px; }
+  .day-detail-title { width:100%; }
   .day-detail-head h3 { font-size: 15px; }
   /* One compact horizontally-scrolling badge row instead of a tall
      wrapping stack, so the event cards start higher up the screen. */

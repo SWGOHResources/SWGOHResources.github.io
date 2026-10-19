@@ -1027,6 +1027,23 @@ function fmtDateUTC(ms){
   return withOrdinal(__formatter('wdS|day|monS').format(new Date(dms(ms))));
 }
 
+function fmtShortDate(ms){
+  return __formatter('day|monS').format(new Date(dms(ms)));
+}
+
+function fmtDateRange(startMs, endMs){
+  const parts = ms => Object.fromEntries(__formatter('day|monS|yearN')
+    .formatToParts(new Date(dms(ms))).filter(p => ['day','month','year'].includes(p.type)).map(p => [p.type,p.value]));
+  const a = parts(startMs), b = parts(endMs);
+  if(a.year !== b.year) return `${a.day} ${a.month} ${a.year} – ${b.day} ${b.month} ${b.year}`;
+  if(a.month !== b.month) return `${a.day} ${a.month} – ${b.day} ${b.month}`;
+  return `${a.day}–${b.day} ${b.month}`;
+}
+
+function fmtShortEventStart(ms){
+  return `${fmtShortDate(ms)}, ${__formatter('hhmm').format(new Date(dms(ms)))} ${tzShort(ms)}`;
+}
+
 function fmtDateLongUTC(ms){
   return withOrdinal(__formatter('wdL|day|monL|yearN').format(new Date(dms(ms))));
 }

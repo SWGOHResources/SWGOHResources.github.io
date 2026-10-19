@@ -44,6 +44,11 @@ function renderUnlockWindows(st, opts){
   const eraLockDate = eraDateMs + 86400000 * eraLockOffsetDays();
   const eraInfo = gacInfoForDate(eraLockDate);
   const eraGac = gacUsableWeek(eraInfo.cycleDay, eraInfo.format);
+  const gacWeekDates = (dateMs, info) => {
+    const startMs = dateMs - ((info.cycleDay - 1) % 7) * 86400000
+      + (info.cycleDay > 21 ? 7 * 86400000 : 0) + gacHour() * 3600000;
+    return fmtDateRange(startMs, startMs + 6 * 86400000);
+  };
 
   const cron = getCurrentDatacronSet(st.nowMs);
   const cronMeta = (cron && CRON_COLOR_META[cron.color]) || CRON_COLOR_META.orange;
@@ -52,12 +57,20 @@ function renderUnlockWindows(st, opts){
     : subDayCount(st.nowMs, cron.expiresMs, daysLeft <= 0 ? 'Expires today' : `In ${daysLeft} day${daysLeft === 1 ? '' : 's'}`);
   const lastUsable = cron ? getLastUsableGuildEvent(cron.expiresMs, st.eraBaseStartMs) : null;
   let cronGac = null;
+  let cronGacDates = '';
   if(lastUsable && lastUsable.gac){
     const info = gacInfoForTimestamp(lastUsable.gac.startMs);
     cronGac = gacUsableWeek(info.cycleDay, info.format);
+    cronGacDates = gacWeekDates(lastUsable.gac.dateMs, info);
   }
   const lastTw = lastUsable && lastUsable.tw
-    ? (lastUsable.tw.twNumber ? `TW ${lastUsable.tw.twNumber}` : 'TW') : '';
+    ? (lastUsable.tw.twNumber ? `War ${lastUsable.tw.twNumber}` : 'TBA') : '';
+  let twDates = '';
+  if(lastUsable && lastUsable.tw){
+    const phaseOffset = { tw_signup:0, tw_defense:1, tw_offense:2, tw_payout:3 }[lastUsable.tw.item.icon] ?? 0;
+    const signupMs = lastUsable.tw.dateMs - phaseOffset * 86400000 + twTbHour() * 3600000;
+    twDates = `Signup ${fmtShortDate(signupMs)}`;
+  }
 
   if(opts && opts.clockOnly){
     setClockText(el, 'cq-unlock', cqMain);
@@ -66,24 +79,24 @@ function renderUnlockWindows(st, opts){
   }
   const eraEl = document.getElementById('eraEligibility');
   if(eraEl){
-    eraEl.innerHTML = `<div><span>Era units</span><div class="era-gac"><span>First usable in GAC</span><strong>${st.eraKnown === false ? 'TBA' : `Week ${eraGac.week} (${eraGac.format})`}</strong></div></div>`;
+    eraEl.innerHTML = `<dl class="usage-fields"><div class="usage-gac"><dt>Era units first GAC</dt><dd>${st.eraKnown === false ? 'TBA' : `Week ${eraGac.week} (${eraGac.format})`}${st.eraKnown === false ? '' : `<span class="usage-dates">${gacWeekDates(eraLockDate, eraInfo)}</span>`}</dd></div></dl>`;
   }
   el.innerHTML = `
-    <div class="schedule-deadline" style="--deadline-accent:var(--purple)">
+    <div class="schedule-deadline" style="--deadline-accent:${CATEGORY_META.conquest.accent}">
       <div class="deadline-heading">
         <img class="deadline-icon" src="${imgPath(CONQUEST_UNIT_IMAGE)}" alt="" decoding="async" onerror="this.remove()">
-        <div class="deadline-title"><h2>Conquest Unit Unlock</h2><p class="deadline-date">${cqUnlocked ? 'Conquest ended' : 'Unlocks'} ${fmtDateUTC(gameDayDisplayMs(cqDateMs))}</p></div>
+        <div class="deadline-title"><h2>Conquest Unit Unlock</h2><p class="deadline-date"><span>${cqUnlocked ? 'Conquest ended' : 'Unlocks'}</span> <time datetime="${new Date(cqUnlockMs).toISOString()}">${fmtShortDate(cqUnlockMs)}</time></p></div>
         <strong class="deadline-count" data-clock="cq-unlock">${cqMain}</strong>
       </div>
-      <div class="deadline-eligibility"><span>First usable in GAC</span><strong>Week ${cqGac.week} (${cqGac.format})</strong></div>
+      <dl class="deadline-eligibility usage-fields"><div class="usage-gac"><dt>First GAC</dt><dd>Week ${cqGac.week} (${cqGac.format})<span class="usage-dates">${gacWeekDates(cqLockDate, cqInfo)}</span></dd></div></dl>
     </div>
     <div class="schedule-deadline" style="--deadline-accent:${cronMeta.accent}">
       <div class="deadline-heading">
         <img class="deadline-icon" src="${imgPath(cronMeta.asset)}" alt="" decoding="async" onerror="this.remove()">
-        <div class="deadline-title"><h2>${cron ? `${escHTML(cron.name)}${cron.hasFDC ? ' + FDC' : ''}` : 'Datacron expiration'}</h2>${cron ? `<p class="deadline-date">Expires ${escHTML(fmtEventStart(cron.expiresMs))}</p>` : '<p class="deadline-date">No datacron set announced</p>'}</div>
+        <div class="deadline-title"><h2>${cron ? `${escHTML(cron.name)}${cron.hasFDC ? ' + FDC' : ''}` : 'Datacron expiration'}</h2>${cron ? `<p class="deadline-date"><span>Expires</span> <time datetime="${new Date(cron.expiresMs).toISOString()}">${escHTML(fmtShortEventStart(cron.expiresMs))}</time></p>` : '<p class="deadline-date">No datacron set announced</p>'}</div>
         <strong class="deadline-count" data-clock="cron-expiry">${cronMain}</strong>
       </div>
-      <div class="deadline-eligibility"><span>Last usable in GAC</span><strong>${cronGac ? `Week ${cronGac.week} (${cronGac.format})` : 'TBA'}</strong>${lastTw ? `<span class="deadline-tw"><span>Last TW</span><strong>${lastTw}</strong></span>` : ''}</div>
+      <dl class="deadline-eligibility usage-fields"><div class="usage-gac"><dt>Last GAC</dt><dd>${cronGac ? `Week ${cronGac.week} (${cronGac.format})` : 'TBA'}${cronGacDates ? `<span class="usage-dates">${cronGacDates}</span>` : ''}</dd></div>${lastTw ? `<div class="usage-tw"><dt>Last TW</dt><dd>${lastTw}<span class="usage-dates">${twDates}</span></dd></div>` : ''}</dl>
     </div>`;
 }
 
@@ -1184,6 +1197,7 @@ function renderExplorer(st){
   const dayPrev = document.getElementById('dayPrev');
   const dayNext = document.getElementById('dayNext');
   const dayToday = document.getElementById('dayToday');
+  const todayInHeader = !dayToday || detail.contains(dayToday);
   if(dayPrev) dayPrev.disabled = explorerOffset <= bounds.minOffset;
   if(dayNext) dayNext.disabled = explorerOffset >= bounds.maxOffset;
   if(dayToday) dayToday.disabled = explorerOffset === 0;
@@ -1209,9 +1223,12 @@ function renderExplorer(st){
   }).join('');
   detail.innerHTML = `
     <div class="day-detail-head">
-      <div>
-        <h3>${headTitle}</h3>
-        <p>${cur.crossEra ? escHTML(cur.era ? cur.era.name : 'Upcoming era · TBA') : `Day ${cur.dIdx} / ${st.eraLength || eraLengthDays()}`}${cur.era ? ` · Episode ${cur.ep}, Week ${cur.week}` : ''}</p>
+      <div class="day-detail-title">
+        <div>
+          <h3>${headTitle}</h3>
+          <p>${cur.crossEra ? escHTML(cur.era ? cur.era.name : 'Upcoming era · TBA') : `Day ${cur.dIdx} / ${st.eraLength || eraLengthDays()}`}${cur.era ? ` · Episode ${cur.ep}, Week ${cur.week}` : ''}</p>
+        </div>
+        ${todayInHeader ? `<button type="button" class="day-today" id="dayToday" onclick="jumpExplorer(0)"${explorerOffset === 0 ? ' disabled' : ''}>Today</button>` : ''}
       </div>
       <div class="day-indicators">
         <div class="day-boss" title="Coliseum boss rotates daily at 18:00 UTC">
