@@ -41,17 +41,6 @@
     }
   }
 
-  const navToggle = document.getElementById('navToggle');
-  const mobilePanel = document.getElementById('mobilePanel');
-  if(navToggle && mobilePanel){
-    navToggle.addEventListener('click', () => {
-      const willOpen = !mobilePanel.classList.contains('open');
-      navToggle.classList.toggle('open', willOpen);
-      mobilePanel.classList.toggle('open', willOpen);
-      navToggle.setAttribute('aria-expanded', String(willOpen));
-    });
-  }
-
   const COOKIE_NOTICE_KEY = 'swgoh_cookie_notice';
   const cookieNotice = document.getElementById('cookieNotice');
   const dismissBtn = document.getElementById('dismissCookieNotice');

@@ -1,22 +1,7 @@
-const navToggle = document.getElementById('navToggle');
-const mobilePanel = document.getElementById('mobilePanel');
 const aboutModal = document.getElementById('aboutModal');
 let lastFocusedElement = null;
 
-function closeMobilePanel(){
-  if(!navToggle || !mobilePanel) return;
-  navToggle.classList.remove('open');
-  mobilePanel.classList.remove('open');
-  navToggle.setAttribute('aria-expanded', 'false');
-}
-
-navToggle?.addEventListener('click', () => {
-  if(!mobilePanel) return;
-  const willOpen = !mobilePanel.classList.contains('open');
-  navToggle.classList.toggle('open', willOpen);
-  mobilePanel.classList.toggle('open', willOpen);
-  navToggle.setAttribute('aria-expanded', String(willOpen));
-});
+function closeMobilePanel(){ window.closeSiteNavigation?.(); }
 
 function closeAboutModal(){
   if(!aboutModal) return;

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta name="swgoh-asset-v" content="dd0d1a634d">
+    <meta name="swgoh-asset-v" content="ff53b645c2">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Page not found | SWGOH Resources</title>
@@ -16,7 +16,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/assets/css/main.css?v=58b0bbc2c1">
+  <link rel="stylesheet" href="/assets/css/main.css?v=b68bcdb914">
 </head>
 <body>
 
@@ -24,24 +24,23 @@
 
 <header class="top-header">
   <div class="topbar">
-    <a href="/" class="topbar-title">
-      <img src="/assets/img/icons/favicon-32.png?v=514d88f067" alt="SWGOH Resources" class="topbar-logo" width="20" height="20">
-      SWGOH<span class="divider-glyph">::</span><span>RESOURCES</span>
-    </a>
+    <a href="/" class="topbar-title"><img src="/assets/img/icons/favicon-32.png?v=514d88f067" alt="" class="topbar-logo" width="24" height="24"><span class="brand-wordmark">SWGOH<span class="divider-glyph">::</span><span class="brand-accent">RESOURCES</span></span></a>
     <nav class="topbar-tabs" id="topbarTabs" aria-label="Primary">
       <a class="tab-btn" href="/">Home</a>
       <a class="tab-btn" href="/conquest/">Conquest</a>
       <a class="tab-btn" href="/materials/">Materials</a>
       <a class="tab-btn" href="/era-chart/">Era Chart</a>
     </nav>
-    <button class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false" aria-controls="mobilePanel"><span></span><span></span><span></span></button>
+    <button type="button" class="nav-toggle" id="navToggle" aria-label="Open navigation" aria-expanded="false" aria-controls="mobilePanel"><span></span><span></span><span></span></button>
   </div>
-  <div class="mobile-panel" id="mobilePanel">
+  <div class="mobile-panel" id="mobilePanel" hidden inert>
+    <nav class="mobile-links" aria-label="Mobile">
       <a class="mp-link" href="/">Home</a>
       <a class="mp-link" href="/conquest/">Conquest</a>
       <a class="mp-link" href="/materials/">Materials</a>
       <a class="mp-link" href="/era-chart/">Era Chart</a>
-    </div>
+    </nav>
+  </div>
 </header>
 
 <main class="wrap" id="main">
@@ -58,26 +57,34 @@
   <div class="footer-inner">
     <div class="footer-main">
       <div class="footer-brand-col">
-        <div class="footer-brand">SWGOH<span>::</span>RESOURCES</div>
-        <p class="footer-tagline">Day-by-day GAC, Territory War, Territory Battle, Conquest and Marquee event tracker.</p>
+        <a class="footer-brand" href="/"><img src="/assets/img/icons/favicon-32.png?v=514d88f067" alt="" class="topbar-logo" width="24" height="24"><span class="brand-wordmark">SWGOH<span class="divider-glyph">::</span><span class="brand-accent">RESOURCES</span></span></a>
+        <span class="creator-line">Maintained by <strong>Dom</strong></span>
       </div>
       <nav class="footer-links" aria-label="Footer">
-        <span class="footer-links-label">Navigate</span>
+        <span class="footer-links-label">Explore</span>
         <a href="/">Home</a>
         <a href="/conquest/">Conquest</a>
         <a href="/materials/">Materials</a>
         <a href="/era-chart/">Era Chart</a>
       </nav>
+      <div class="footer-contact">
+        <span class="footer-links-label">Connect</span>
+        <a class="discord-copy-btn" href="https://discord.gg/uE6Estxmaw" target="_blank" rel="noopener">Join our Discord<span aria-hidden="true"> ↗</span></a>
+        <button type="button" class="discord-copy-btn discord-handle" onclick="copyDiscordHandle(this)" aria-label="Copy Discord handle granddom"><span>@granddom</span><span class="copy-glyph" aria-hidden="true">⧉</span></button>
+      </div>
     </div>
-    <div class="footer-rule"></div>
     <div class="footer-legal">
       <p class="footer-note">Schedule mixes expected rotation dates with live game data — check live event timings at <a href="https://swgoh.gg/events/" target="_blank" rel="noopener">swgoh.gg/events</a>. Fan-made planning tool for Star Wars: Galaxy of Heroes. Not affiliated with, endorsed, sponsored, or specifically approved by Electronic Arts, Capital Games, Disney, or Lucasfilm. All game assets, trademarks, and character names are property of their respective owners.</p>
-      <nav class="legal-links" aria-label="Legal"><a href="/privacy/">Privacy</a><a href="/cookie-policy/">Cookies</a><a href="/terms/">Terms</a></nav>
-      <div class="footer-bottom"><span id="footerYear">© 2026 SWGOH::RESOURCES</span></div>
+      <div class="footer-bottom">
+        <span id="footerYear"></span>
+        <nav class="legal-links" aria-label="Legal"><a href="/privacy/">Privacy</a><a href="/cookie-policy/">Cookies</a><a href="/terms/">Terms</a></nav>
+        <a class="footer-top" href="#main">Back to top<span aria-hidden="true"> ↑</span></a>
+      </div>
     </div>
   </div>
 </footer>
 
-<script src="/assets/js/site.js?v=03a3061ae6"></script>
+<script src="/assets/js/navigation.js?v=3204723fed"></script>
+<script src="/assets/js/site.js?v=85283e0a5a"></script>
 </body>
 </html>

@@ -30,7 +30,8 @@ test('next-day navigation crosses day 84 and dated links survive live refresh', 
     f.doc.querySelector('#dayNext').click();
     assert.equal(f.w.location.hash, '#date-2026-10-20');
     assert.equal(f.w.location.pathname, '/preview/card-layout.html');
-    assert.ok(f.doc.querySelector('#dayDetail .xcard[aria-label="Era of Myths & Legends Ends"]'));
+    assert.equal(f.doc.querySelector('#dayDetail .xcard[aria-label="Era of Myths & Legends Ends"]'), null);
+    assert.ok(f.doc.querySelector('#dayDetail .xcard[aria-label="Era of The Mandalorian and Grogu Starts"]'));
     assert.match(f.doc.querySelector('#dayDetail').textContent, /Green Ranger/);
     f.doc.querySelector('#dayNext').click();
     assert.equal(f.w.location.hash, '#date-2026-10-21');

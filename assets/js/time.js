@@ -848,7 +848,6 @@ function getEventsForDay(dateMs, episode, dayInEp){
     if(info.era && info.era.events) items = [...items, ...(info.era.events[info.eraDay] || [])];
     for(const era of eras){
       if(dateMs === era.startMs) items.push({ icon: 'era_changeover', label: `${era.name} Starts`, art: era.icon });
-      if(dateMs === era.endMs) items.push({ icon: 'era_end', label: `${era.name} Ends`, art: era.icon });
       const elapsed = (dateMs - era.startMs) / 86400000;
       if(elapsed > 0 && elapsed < era.lengthDays && elapsed % episodeLengthDays() === 0){
         const episode = elapsed / episodeLengthDays() + 1;
