@@ -1,5 +1,5 @@
 {
- "pulledAt": 1792356688104,
+ "pulledAt": 1792368829725,
  "gameDataVersion": "0.40.6:i9YYIijBSxuHHNoSmCMBoQ",
  "events": [
   {
@@ -50,7 +50,7 @@
    ],
    "startMs": 1792108800000,
    "endMs": 1792368000000,
-   "live": true,
+   "live": false,
    "fit": true,
    "art": "atlases/standard_rgba_atlas/icon_gift.png"
   },
@@ -205,15 +205,6 @@
    "endMs": 1792998000000,
    "live": false,
    "art": "live/events-galacticbounties.png"
-  },
-  {
-   "id": "CONQUEST_VOL25",
-   "name": "Conquest",
-   "kind": "conquest",
-   "unit": "CONQUESTGENERIC",
-   "startMs": 1792951200000,
-   "endMs": 1794160800000,
-   "live": false
   },
   {
    "id": "EVENT_OMEGA_BATTLES_04_ENDOR",
