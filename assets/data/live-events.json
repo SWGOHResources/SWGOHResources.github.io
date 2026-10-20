@@ -1,5 +1,5 @@
 {
- "pulledAt": 1792448756904,
+ "pulledAt": 1792482077165,
  "gameDataVersion": "0.40.6:i9YYIijBSxuHHNoSmCMBoQ",
  "events": [
   {
@@ -23,45 +23,13 @@
    "art": "live/events-theronin.png"
   },
   {
-   "id": "EVENT_BONUS_WAVE_1_101626",
-   "name": "Additive Drops: Wave 1",
-   "kind": "special",
-   "units": [
-    {
-     "unit": "4LOM",
-     "name": "4-LOM",
-     "alignment": "dark",
-     "portrait": "live/bonus-4lom.png",
-     "details": "LS/DS Hard Battles",
-     "energy": "live/energy-pve.png",
-     "energyLabel": "Energy",
-     "maxed": "Mk 7 Kyrotech Salvage"
-    },
-    {
-     "unit": "ZUCKUSS",
-     "name": "Zuckuss",
-     "alignment": "dark",
-     "portrait": "live/bonus-zuckuss.png",
-     "details": "Cantina Battles",
-     "energy": "live/energy-cantina.png",
-     "energyLabel": "Cantina Energy",
-     "maxed": "Mk 9 Kyrotech Salvage"
-    }
-   ],
-   "startMs": 1792108800000,
-   "endMs": 1792368000000,
-   "live": false,
-   "fit": true,
-   "art": "atlases/standard_rgba_atlas/icon_gift.png"
-  },
-  {
    "id": "EVENT_OMEGA_BATTLES_03_DATHOMIR",
    "name": "Dathomir Omega Battles",
    "kind": "omega",
    "unit": "GALACTICCHALLENGESDATHOMIR",
    "startMs": 1792393200000,
    "endMs": 1792479600000,
-   "live": true,
+   "live": false,
    "art": "live/events-galacticchallenges-dathomir.png"
   },
   {
@@ -112,7 +80,7 @@
    ],
    "startMs": 1792454400000,
    "endMs": 1792713600000,
-   "live": false,
+   "live": true,
    "fit": true,
    "art": "atlases/standard_rgba_atlas/icon_gift.png"
   },
@@ -123,7 +91,7 @@
    "unit": "LEVIATHAN",
    "startMs": 1792479600000,
    "endMs": 1792566000000,
-   "live": false,
+   "live": true,
    "art": "live/events-leviathan.png"
   },
   {
