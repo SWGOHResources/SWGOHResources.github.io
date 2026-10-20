@@ -1,5 +1,5 @@
 {
- "pulledAt": 1792482077165,
+ "pulledAt": 1792532525686,
  "gameDataVersion": "0.40.6:i9YYIijBSxuHHNoSmCMBoQ",
  "events": [
   {
@@ -9,7 +9,7 @@
    "unit": "DARTHJARJAR",
    "startMs": 1790100000000,
    "endMs": 1792519200000,
-   "live": true,
+   "live": false,
    "art": "live/events-darthjarjar.png"
   },
   {
@@ -19,7 +19,7 @@
    "unit": "THERONIN",
    "startMs": 1791914400000,
    "endMs": 1792519200000,
-   "live": true,
+   "live": false,
    "art": "live/events-theronin.png"
   },
   {
@@ -101,7 +101,7 @@
    "unit": "ADELPHIRANGER",
    "startMs": 1792519200000,
    "endMs": 1793124000000,
-   "live": false,
+   "live": true,
    "art": "live/events-adelphiranger.png"
   },
   {
@@ -264,6 +264,16 @@
    "endMs": 1793170800000,
    "live": false,
    "art": "live/events-halloween2025.png"
+  },
+  {
+   "id": "EVENT_HOLIDAY_GHOSTS_OF_DATHOMIR",
+   "name": "Ghosts of Dathomir",
+   "kind": "event",
+   "unit": "NIGHTSISTERSHALLOWEEN",
+   "startMs": 1793257200000,
+   "endMs": 1793343600000,
+   "live": false,
+   "art": "live/events-nightsisters-halloween.png"
   }
  ]
 }
