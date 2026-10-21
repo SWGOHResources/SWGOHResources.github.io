@@ -1,5 +1,5 @@
 {
- "pulledAt": 1792568720083,
+ "pulledAt": 1792595995377,
  "gameDataVersion": "0.40.6:i9YYIijBSxuHHNoSmCMBoQ",
  "events": [
   {
@@ -111,7 +111,7 @@
    "unit": "SMUGGLERSRUN",
    "startMs": 1792576800000,
    "endMs": 1792663200000,
-   "live": false,
+   "live": true,
    "art": "live/events-smugglersrun.png"
   },
   {
