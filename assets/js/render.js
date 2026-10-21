@@ -1047,6 +1047,7 @@ function rotationBadgesHTML(windows, dayLive, dayStartMs){
 
 function isVisibleScheduleEvent(item){
   return item.icon !== 'tb_ends' && item.icon !== 'tw_payout'
+    && item.icon !== 'era_end'
     && !(item.icon === 'rote' && /\b(?:Ends?|Ended)\b/i.test(item.label));
 }
 
