@@ -1,27 +1,7 @@
 {
- "pulledAt": 1792595995377,
- "gameDataVersion": "0.40.6:i9YYIijBSxuHHNoSmCMBoQ",
+ "pulledAt": 1792619289431,
+ "gameDataVersion": "0.40.6:tAj6zvcnT7GKXm7VxX_QIQ",
  "events": [
-  {
-   "id": "progressionevent_MEESALESS_MASSACRE",
-   "name": "Terrible Tings Legendary Event",
-   "kind": "event",
-   "unit": "DARTHJARJAR",
-   "startMs": 1790100000000,
-   "endMs": 1792519200000,
-   "live": false,
-   "art": "live/events-darthjarjar.png"
-  },
-  {
-   "id": "EC24_SithSithManaan_1778480386",
-   "name": "The Ronin Era Challenge",
-   "kind": "era-challenge",
-   "unit": "THERONIN",
-   "startMs": 1791914400000,
-   "endMs": 1792519200000,
-   "live": false,
-   "art": "live/events-theronin.png"
-  },
   {
    "id": "EVENT_BONUS_WAVE_2_102026",
    "name": "Additive Drops: Wave 2",
@@ -254,6 +234,16 @@
    "endMs": 1793170800000,
    "live": false,
    "art": "live/events-halloween2025.png"
+  },
+  {
+   "id": "EC25_NewRepublicImperialRemnantNevarro_1789453958",
+   "name": "Adelphi Ranger Era Challenge",
+   "kind": "era-challenge",
+   "unit": "ADELPHIRANGER",
+   "startMs": 1793124000000,
+   "endMs": 1793728800000,
+   "live": false,
+   "art": "live/events-adelphiranger.png"
   },
   {
    "id": "EVENT_HOLIDAY_GHOSTS_OF_DATHOMIR",
