@@ -1,5 +1,5 @@
 {
- "pulledAt": 1792532525686,
+ "pulledAt": 1792568720083,
  "gameDataVersion": "0.40.6:i9YYIijBSxuHHNoSmCMBoQ",
  "events": [
   {
@@ -21,16 +21,6 @@
    "endMs": 1792519200000,
    "live": false,
    "art": "live/events-theronin.png"
-  },
-  {
-   "id": "EVENT_OMEGA_BATTLES_03_DATHOMIR",
-   "name": "Dathomir Omega Battles",
-   "kind": "omega",
-   "unit": "GALACTICCHALLENGESDATHOMIR",
-   "startMs": 1792393200000,
-   "endMs": 1792479600000,
-   "live": false,
-   "art": "live/events-galacticchallenges-dathomir.png"
   },
   {
    "id": "EVENT_BONUS_WAVE_2_102026",
@@ -91,7 +81,7 @@
    "unit": "LEVIATHAN",
    "startMs": 1792479600000,
    "endMs": 1792566000000,
-   "live": true,
+   "live": false,
    "art": "live/events-leviathan.png"
   },
   {
@@ -111,7 +101,7 @@
    "unit": "REBELASSULT",
    "startMs": 1792566000000,
    "endMs": 1792652400000,
-   "live": false,
+   "live": true,
    "art": "live/events-rebelassult.png"
   },
   {
