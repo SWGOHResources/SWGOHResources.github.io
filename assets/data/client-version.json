@@ -1,12 +1,12 @@
 {
- "checkedAt": 1792528185791,
+ "checkedAt": 1792613066844,
  "store": {
   "version": "0.40.6",
   "releaseDate": "2026-09-15T17:04:59Z",
   "releaseNotes": "Hey, Galaxy of Heroes fans! This update includes some back-end optimizations and performance improvements. Have fun, and see you on the Holotables!"
  },
  "server": {
-  "gamedata": "0.40.6:i9YYIijBSxuHHNoSmCMBoQ",
+  "gamedata": "0.40.6:tAj6zvcnT7GKXm7VxX_QIQ",
   "asset": 100054,
   "serverVersion": "2105545",
   "loc": "3P4tM7xJQIiKyjTJUjE-xg"
