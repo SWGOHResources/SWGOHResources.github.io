@@ -24,6 +24,29 @@ function setup({shared=null, stored=null, blocked=false, entry=data.conquests[0]
 }
 function use(t,options){ const h=setup(options); t.after(()=>h.dom.window.close()); return h; }
 
+test('malformed shared and saved values cannot stop the planner rendering', t => {
+  for(const value of [{d:{toString:null}}, {s:{toString:null,valueOf:null}}, {d:'__proto__'}, {d:'constructor'}, {d:['hard']}, {f:Array(1001).fill('hot')}]) {
+    const h=use(t,{shared:value});
+    assert.ok(h.app.querySelector('[data-map-feat]'));
+    assert.ok(Number.isFinite(h.total()));
+  }
+  for(const stored of [{difficulty:{toString:null}}, {stars:{toString:null,valueOf:null}}, {difficulty:'constructor'}]) {
+    const h=use(t,{stored});
+    assert.ok(h.app.querySelector('[data-map-feat]'));
+    assert.ok(Number.isFinite(h.total()));
+  }
+});
+
+test('oversized and malformed share links are discarded before use', t => {
+  const h=use(t);
+  h.w.location.hash='p='+'a'.repeat(100001);
+  assert.equal(h.w.decodePlanHash(),null);
+  for(const input of [[], {d:{toString:null}}, {s:[]}, {f:[{}]}]) {
+    h.w.location.hash='p='+h.w.btoa(JSON.stringify(input));
+    assert.equal(h.w.decodePlanHash(),null);
+  }
+});
+
 test('all legacy view links preserve selections in the sole diagram planner',t=>{
   for(const v of [undefined,'planner','coverage']){
     const h=use(t,{shared:{v,f:['hot'],s:330,t:'Reward Crate Tier 7',g:'Sector 2'}});

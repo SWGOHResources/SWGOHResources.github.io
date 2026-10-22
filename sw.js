@@ -1,95 +1,62 @@
-/* SWGOH Resources service worker — makes the schedule installable and
-   usable offline. Same-origin static assets are cached on first use
-   (this automatically picks up ?v= cache-busters); page navigations
-   and live data go network-first so the schedule stays fresh, falling
-   back to cache offline. Bump CACHE below on deploys that change the
-   app shell. */
-const CACHE = 'swgoh-schedule-v9';
-
+const CACHE_PREFIX = 'swgoh-schedule-';
+const CACHE = CACHE_PREFIX + 'v10';
 const CORE = ['/', '/index.html', '/site.webmanifest'];
+const FONT_ORIGINS = new Set(['https://fonts.googleapis.com', 'https://fonts.gstatic.com']);
 
 self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(CACHE).then(cache => cache.addAll(CORE)).then(() => self.skipWaiting())
-  );
+  event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(CORE)).then(() => self.skipWaiting()));
 });
 
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys()
-      .then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k))))
+      .then(keys => Promise.all(keys.filter(k => k.startsWith(CACHE_PREFIX) && k !== CACHE).map(k => caches.delete(k))))
       .then(() => self.clients.claim())
   );
 });
 
+function storeResponse(req, res) {
+  return caches.open(CACHE).then(cache => cache.put(req, res)).catch(() => {});
+}
+
 self.addEventListener('fetch', event => {
   const req = event.request;
-  if (req.method !== 'GET') return;
+  if(req.method !== 'GET' || req.headers?.has('range')) return;
   const url = new URL(req.url);
+  if(!['http:', 'https:'].includes(url.protocol)) return;
+  if(url.origin !== self.location.origin && !FONT_ORIGINS.has(url.origin)) return;
 
-  // Google Fonts: stale-while-revalidate (opaque responses are fine).
-  if (url.origin !== self.location.origin) {
-    event.respondWith(
-      caches.open(CACHE).then(cache =>
-        cache.match(req).then(hit => {
-          const net = fetch(req).then(res => {
-            if (res && (res.ok || res.type === 'opaque')) cache.put(req, res.clone());
-            return res;
-          }).catch(() => hit);
-          return hit || net;
-        })
-      )
-    );
-    return;
-  }
-
-  // Navigations: network-first, cache fallback (offline still opens).
-  if (req.mode === 'navigate') {
-    event.respondWith(
-      fetch(req).then(res => {
-        const copy = res.clone();
-        caches.open(CACHE).then(cache => cache.put(req, copy));
-        return res;
-      }).catch(() => caches.match(req).then(hit => hit || caches.match('/index.html')))
-    );
-    return;
-  }
-
-  // Live data snapshots refresh every few hours — a cache-first rule
-  // would pin the first copy served and never pick up the 4-hourly
-  // refresh, so they go network-first (cache fallback keeps them
-  // available offline).
-  // The era emblem is overwritten in-place by the live-event pull.
-  // Revalidate it as well so an installed browser sees the next era.
-  // ES module imports have stable relative URLs, unlike the versioned
-  // script entry in HTML. Revalidate these too so a planner update cannot
-  // combine new UI code with an old model or export implementation.
-  const plannerModule = url.pathname === '/assets/js/squad-model.js'
-    || url.pathname === '/assets/js/squad-export.js';
-  if (url.pathname.startsWith('/assets/data/') || url.pathname === '/assets/img/live/era-icon.png' || plannerModule) {
-    event.respondWith(
-      fetch(req, { cache: 'no-cache' }).then(res => {
-        if (res && res.ok) {
-          const copy = res.clone();
-          event.waitUntil(caches.open(CACHE).then(cache => cache.put(req, copy)).catch(() => {}));
-        }
-        return res;
-      }).catch(() => caches.match(req))
-    );
-    return;
-  }
-
-  // Local assets (CSS/JS/images): cache-first, network fallback.
-  event.respondWith(
-    caches.match(req).then(hit => {
-      if (hit) return hit;
-      return fetch(req).then(res => {
-        if (res && res.ok) {
-          const copy = res.clone();
-          caches.open(CACHE).then(cache => cache.put(req, copy));
-        }
-        return res;
-      });
-    })
-  );
+  const writes = [];
+  const save = res => {
+    if(res && res.status !== 206 && (res.ok || res.type === 'opaque')) writes.push(storeResponse(req, res.clone()));
+    return res;
+  };
+  const response = (async () => {
+    const cache = await caches.open(CACHE).catch(() => null);
+    const hit = cache ? await cache.match(req).catch(() => undefined) : undefined;
+    if(url.origin !== self.location.origin) {
+      const net = fetch(req).then(save).catch(() => hit || Response.error());
+      writes.push(net.then(() => undefined));
+      return hit || net;
+    }
+    const mutable = req.mode === 'navigate'
+      || url.pathname.startsWith('/assets/data/')
+      || url.pathname === '/assets/img/live/era-icon.png'
+      || (url.pathname.endsWith('.js') && !url.searchParams.has('v'));
+    if(!mutable && hit) return hit;
+    try {
+      return save(await fetch(req, { cache: mutable ? 'no-cache' : 'default' }));
+    } catch(error) {
+      if(hit) return hit;
+      if(req.mode === 'navigate' && url.pathname === '/') {
+        const home = cache ? await cache.match('/index.html').catch(() => undefined) : undefined;
+        if(home) return home;
+      }
+      return Response.error();
+    }
+  })();
+  event.respondWith(response);
+  event.waitUntil(response.then(async () => {
+    while(writes.length) await Promise.all(writes.splice(0));
+  }).catch(() => {}));
 });

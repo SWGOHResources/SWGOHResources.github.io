@@ -5,10 +5,10 @@ const loader = new GLTFLoader();
 const cache = new Map();
 let catalog;
 function modelCatalog() {
-  return catalog ??= fetch('/assets/data/game-models.json',{cache:'no-cache'}).then(async response=>{
+  return catalog ??= fetch('/assets/data/game-models.json',{cache:'no-cache',signal:AbortSignal.timeout(30000)}).then(async response=>{
     if(!response.ok) throw new Error('Model catalog unavailable');
     return response.json();
-  });
+  }).catch(error=>{catalog=undefined;throw error;});
 }
 const assets = new Map();
 function trimCache() {
@@ -30,6 +30,17 @@ function trimCache() {
   }
 }
 const fullPacks = new Map();
+const MAX_FULL_PACK_BYTES = 16 * 1024 * 1024;
+function rememberPack(key, bytes) {
+  if(bytes.byteLength > MAX_FULL_PACK_BYTES) return;
+  fullPacks.delete(key);
+  fullPacks.set(key, bytes);
+  let total = [...fullPacks.values()].reduce((sum, value)=>sum+value.byteLength, 0);
+  for(const [oldKey, oldBytes] of fullPacks) {
+    if(total <= MAX_FULL_PACK_BYTES) break;
+    fullPacks.delete(oldKey); total -= oldBytes.byteLength;
+  }
+}
 let renderer, views = [], frame, generation = 0;
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
 
@@ -39,13 +50,17 @@ function load(id) {
     if(!entry) throw new Error('No original model for '+id);
     if(!entry.pack) return loader.loadAsync(entry.path);
     let buffer;
-    if(fullPacks.has(entry.pack)) buffer=fullPacks.get(entry.pack).slice(entry.offset,entry.offset+entry.bytes);
+    if(fullPacks.has(entry.pack)) {
+      const bytes=fullPacks.get(entry.pack);
+      rememberPack(entry.pack,bytes);
+      buffer=bytes.slice(entry.offset,entry.offset+entry.bytes);
+    }
     else {
-      const response=await fetch(entry.pack,{headers:{Range:'bytes='+entry.offset+'-'+(entry.offset+entry.bytes-1)}});
+      const response=await fetch(entry.pack,{headers:{Range:'bytes='+entry.offset+'-'+(entry.offset+entry.bytes-1)},signal:AbortSignal.timeout(30000)});
       if(!response.ok) throw new Error('Model download failed');
       const bytes=await response.arrayBuffer();
       if(response.status===206)buffer=bytes;
-      else { fullPacks.set(entry.pack,bytes); buffer=bytes.slice(entry.offset,entry.offset+entry.bytes); }
+      else { rememberPack(entry.pack,bytes); buffer=bytes.slice(entry.offset,entry.offset+entry.bytes); }
     }
     if(buffer.byteLength!==entry.bytes)throw new Error('Incomplete model data');
     return loader.parseAsync(buffer,'');
@@ -81,7 +96,7 @@ export async function mountModelPreviews(root) {
   views.forEach(view=>view.mixer?.stopAllAction());
   cancelAnimationFrame(frame); views = []; draw.last = 0;
   const canvases = [...root.querySelectorAll('canvas[data-model]')];
-  if (!canvases.length) return;
+  if (!canvases.length) { trimCache(); return; }
   if (!renderer) {
     renderer = new THREE.WebGLRenderer({ alpha:true, antialias:true, powerPreference:'low-power' });
     renderer.setPixelRatio(1); renderer.setClearColor(0x000000, 0);
@@ -122,5 +137,6 @@ export async function mountModelPreviews(root) {
       canvas.closest('.sp-slot').classList.add('model-ready');
     }).catch(error => { console.error('Model preview',canvas.dataset.model,error); canvas.closest('.sp-slot')?.classList.add('model-unavailable'); });
   }
+  trimCache();
   frame = requestAnimationFrame(draw);
 }

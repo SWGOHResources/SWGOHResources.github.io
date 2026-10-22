@@ -198,8 +198,9 @@ function findConquestEntry(data, nowMs){
 function loadPlans(){
   try {
     const raw = typeof localStorage !== 'undefined' ? localStorage.getItem(CQ_PLAN_KEY) : null;
+    if(raw && raw.length > 100000) return {};
     const parsed = raw ? JSON.parse(raw) : null;
-    if(parsed && typeof parsed === 'object' && parsed.plans) return parsed.plans;
+    if(parsed && (parsed.version === undefined || parsed.version === 1) && parsed.plans && typeof parsed.plans === 'object' && !Array.isArray(parsed.plans)) return parsed.plans;
   } catch(e){}
   return {};
 }
@@ -425,23 +426,25 @@ async function initConquestPage(){
 function renderPlanner(app, sel, nowMs, shared){
   document.documentElement.classList.remove('cq-modal-open'); document.body.classList.remove('cq-modal-open');
   const entry = sel.entry, diffs = entry.difficulties || {};
-  const saved = loadPlans()[entry.id] || {};
-  const incoming = shared && (!shared.c || shared.c === entry.id) ? shared : null;
-  let difficulty = incoming?.d || saved.difficulty || entry.difficulty;
-  if(!diffs[difficulty]) difficulty = Object.keys(diffs)[0];
+  const stored = loadPlans()[entry.id];
+  const saved = normalizeConquestPlan(stored && { d: stored.difficulty, s: stored.stars, t: stored.target, g: stored.tab, f: stored.feats }) || {};
+  const checked = normalizeConquestPlan(shared);
+  const incoming = checked && (!checked.c || checked.c === entry.id) ? checked : null;
+  let difficulty = incoming?.d || saved.d || entry.difficulty;
+  if(typeof difficulty !== 'string' || !Object.hasOwn(diffs, difficulty)) difficulty = Object.keys(diffs)[0];
   const diff = diffs[difficulty] || { groups: [], crates: [] };
   const groups = diff.groups || [], crates = [...(diff.crates || [])].sort((a,b) => a.at-b.at);
   const topCrate = crates.length ? crates[crates.length - 1].name : null;
   const cap = Math.max(0, Number(entry.maxStars) || 0);
   const clampStars = value => Math.min(cap, Math.max(0, Math.trunc(Number(value) || 0)));
-  let stars = clampStars(incoming ? incoming.s : (saved.stars ?? cap));
+  let stars = clampStars(incoming ? incoming.s : (saved.s ?? cap));
   const validIds = new Set(groups.flatMap(g => g.feats.map(f => f.id)));
   const featById = new Map(groups.flatMap(g => g.feats.map(f => [f.id, f])));
-  const rawIds = incoming ? incoming.f : saved.feats;
+  const rawIds = incoming ? incoming.f : saved.f;
   let picked = new Set((Array.isArray(rawIds) ? rawIds : []).filter(id => validIds.has(id)));
-  const rawTarget = incoming ? incoming.t : saved.target;
+  const rawTarget = incoming ? incoming.t : saved.t;
   let target = crates.some(c => c.name === rawTarget) ? rawTarget : (rawTarget === undefined ? topCrate : null);
-  let tab = incoming?.g || saved.tab;
+  let tab = incoming?.g || saved.g;
   if(!groups.some(g => g.name === tab)) tab = groups[0]?.name;
   let coverageActive = 'all';
   let lastTouchStart = 0;
@@ -798,8 +801,19 @@ function b64urlEncode(str){
   return '';
 }
 
+function normalizeConquestPlan(p){
+  if(!p || typeof p !== 'object' || Array.isArray(p)) return null;
+  for(const key of ['c','d','t','g','v']){
+    if(p[key] != null && (typeof p[key] !== 'string' || p[key].length > 160)) return null;
+  }
+  if(p.s !== undefined && (typeof p.s !== 'number' || !Number.isFinite(p.s))) return null;
+  if(p.f !== undefined && (!Array.isArray(p.f) || p.f.length > 1000 || p.f.some(id => typeof id !== 'string' || id.length > 160))) return null;
+  return { c:p.c, d:p.d, s:p.s, t:p.t, g:p.g, v:p.v, f:p.f };
+}
+
 function decodePlanHash(){
   if(typeof location === 'undefined' || !location.hash) return null;
+  if(location.hash.length > 100000) return null;
   const m = location.hash.match(/[#&]p=([A-Za-z0-9\-_]+)/);
   if(!m) return null;
   try {
@@ -808,7 +822,7 @@ function decodePlanHash(){
       : '';
     if(!raw) return null;
     const p = JSON.parse(raw);
-    return (p && typeof p === 'object') ? p : null;
+    return normalizeConquestPlan(p);
   } catch(e) { return null; }
 }
 

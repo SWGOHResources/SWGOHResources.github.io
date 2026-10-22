@@ -341,7 +341,7 @@ const configSource = fs.readFileSync(new URL('../assets/js/config.js', import.me
 const timeSource = fs.readFileSync(new URL('../assets/js/time.js', import.meta.url), 'utf8');
 const renderSource = fs.readFileSync(new URL('../assets/js/render.js', import.meta.url), 'utf8');
 
-function loadRenderEngine() {
+function loadRenderEngine(nowMs = NOW) {
   const storage = new Map([['swgoh-tz', 'UTC']]);
   const mkEl = () => ({
     innerHTML: '', textContent: '', hidden: false, disabled: false,
@@ -352,7 +352,10 @@ function loadRenderEngine() {
   });
   const els = {};
   const context = {
-    console, Intl, Date, Math, Number, String, Object, Array, Set, parseInt,
+    console, Intl, Date: class extends Date {
+      constructor(...args) { super(...(args.length ? args : [nowMs])); }
+      static now() { return nowMs; }
+    }, Math, Number, String, Object, Array, Set, parseInt,
     localStorage: {
       getItem: key => storage.get(key) ?? null,
       setItem: (key, value) => storage.set(key, value),

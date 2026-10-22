@@ -842,7 +842,9 @@ function scheduleSearchEntries(st){
       if(covered.has(item.icon) || !isVisibleScheduleEvent(item)) continue;
       const label = getFullScheduleLabel(item);
       const copy = gameEventCopy(item.icon, label, dateMs, null);
-      add(copy.type === 'Conquest' ? copy.title : eventDisplayTitle(item.icon, label), copy.type, dateMs, eventStartMs(item, dateMs), `${label} ${copy.title} ${copy.caption}`);
+      const journey = typeof JOURNEY_EVENT_NAMES !== 'undefined' ? JOURNEY_EVENT_NAMES[item.icon] : null;
+      const aliases = journey ? [journey.unit, journey.unitId, ...(journey.aliases || [])].join(' ') : '';
+      add(copy.type === 'Conquest' ? copy.title : eventDisplayTitle(item.icon, label), copy.type, dateMs, eventStartMs(item, dateMs), `${label} ${copy.title} ${copy.caption} ${aliases}`);
     }
   }
   scheduleSearchCache.key = key;

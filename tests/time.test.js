@@ -450,13 +450,14 @@ test('important-dates labels count hours under 24h out', () => {
 test('day counts own their rounding', () => {
   const engine = loadTimeEngine();
   const day = 86400000;
+  const now = Date.parse('2026-09-14T14:55:00Z');
   assert.equal(engine.formatDayCount(2 * day), 'in 2 days');
   assert.equal(engine.formatDayCount(1 * day), 'in 1 day');
   assert.equal(engine.formatDayCount(2.04 * day), 'in over 2 days');
   assert.equal(engine.formatDayCount(2.92 * day), 'in under 3 days');
   // Important Dates fall back to plain day wording without a clock.
-  assert.equal(engine.subDayCount(null, Date.now() + 3 * day, 'In 3 days'), 'In 3 days');
-  assert.equal(engine.subDayCount(Date.now(), Date.now() + 3 * day, 'In 3 days'), 'In 3 days');
+  assert.equal(engine.subDayCount(null, now + 3 * day, 'In 3 days'), 'In 3 days');
+  assert.equal(engine.subDayCount(now, now + 3 * day, 'In 3 days'), 'In 3 days');
 });
 
 test('explorer opens on the latest day with an event that started', () => {

@@ -5,6 +5,7 @@ import vm from 'node:vm';
 import { JSDOM } from 'jsdom';
 
 const html = fs.readFileSync(new URL('../index.html', import.meta.url), 'utf8');
+const historicalEvents = JSON.parse(fs.readFileSync(new URL('fixtures/historical-live-events.json', import.meta.url), 'utf8'));
 async function fixture(hash, now = '2026-10-16T20:00:00Z', events = []) {
   const dom = new JSDOM(html, { url: `https://example.test/${hash}`, runScripts: 'dangerously' });
   const w = dom.window, NativeDate = w.Date;
@@ -30,7 +31,8 @@ test('next-day navigation crosses day 84 and dated links survive live refresh', 
     f.doc.querySelector('#dayNext').click();
     assert.equal(f.w.location.hash, '#date-2026-10-20');
     assert.equal(f.w.location.pathname, '/preview/card-layout.html');
-    assert.ok(f.doc.querySelector('#dayDetail .xcard[aria-label="Era of Myths & Legends Ends"]'));
+    assert.equal(f.doc.querySelector('#dayDetail .xcard[aria-label="Era of Myths & Legends Ends"]'), null);
+    assert.match(f.doc.querySelector('#dayDetail').textContent, /Mandalorian and Grogu/);
     assert.match(f.doc.querySelector('#dayDetail').textContent, /Green Ranger/);
     f.doc.querySelector('#dayNext').click();
     assert.equal(f.w.location.hash, '#date-2026-10-21');
@@ -66,8 +68,7 @@ test('episode cards follow configured era lengths without repeating into the nex
 });
 
 test('main schedule details open the additive layout and restore keyboard focus', async () => {
-  const live = JSON.parse(fs.readFileSync(new URL('../assets/data/live-events.json', import.meta.url), 'utf8'));
-  const f = await fixture('#day-81', '2026-10-16T20:00:00Z', live.events);
+  const f = await fixture('#day-81', '2026-10-16T20:00:00Z', historicalEvents);
   try {
     const button = f.doc.querySelector('button[data-bonus-wave]');
     assert.ok(button);
@@ -90,9 +91,8 @@ test('main schedule details open the additive layout and restore keyboard focus'
 });
 
 test('only additive-drop cards offer details, including when other events carry unit data', async () => {
-  const live = JSON.parse(fs.readFileSync(new URL('../assets/data/live-events.json', import.meta.url), 'utf8'));
-  const nonDrop = { ...live.events.find(e=>Array.isArray(e.units)), id:'SPECIAL_REWARD_EVENT', name:'Special Reward Event' };
-  const f = await fixture('#day-82', '2026-10-17T20:00:00Z', [...live.events, nonDrop]);
+  const nonDrop = { ...historicalEvents.find(e=>Array.isArray(e.units)), id:'SPECIAL_REWARD_EVENT', name:'Special Reward Event' };
+  const f = await fixture('#day-82', '2026-10-17T20:00:00Z', [...historicalEvents, nonDrop]);
   try {
     const buttons = f.doc.querySelectorAll('#dayDetail .game-event-action');
     assert.equal(buttons.length, 1);
@@ -106,8 +106,7 @@ test('only additive-drop cards offer details, including when other events carry 
 });
 
 test('card timing switches from countdown to expired status without replacing the card', async () => {
-  const live = JSON.parse(fs.readFileSync(new URL('../assets/data/live-events.json', import.meta.url), 'utf8'));
-  const f = await fixture('#day-82', '2026-10-16T20:00:00Z', live.events);
+  const f = await fixture('#day-82', '2026-10-16T20:00:00Z', historicalEvents);
   try {
     const timer = [...f.doc.querySelectorAll('[data-clock-end]')].find(node => node.dataset.timingKind === 'time');
     assert.ok(timer);
@@ -162,8 +161,7 @@ test('marquees appear on their last daily run but not on the challenge handover 
 });
 
 test('ongoing cards retain their original schedule window and leave only Coliseum in the boss row', async () => {
-  const live = JSON.parse(fs.readFileSync(new URL('../assets/data/live-events.json', import.meta.url), 'utf8'));
-  const f = await fixture('#day-83', '2026-10-17T20:00:00Z', live.events);
+  const f = await fixture('#day-83', '2026-10-17T20:00:00Z', historicalEvents);
   try {
     assert.equal(f.doc.querySelectorAll('.day-indicators > *').length, 1);
     assert.match(f.doc.querySelector('.day-indicators').textContent, /Coliseum boss/);
@@ -172,7 +170,7 @@ test('ongoing cards retain their original schedule window and leave only Coliseu
     bonus.click();
     assert.equal(f.doc.querySelectorAll('#bonusWaveBody .bdrop-row').length, 2);
     assert.match(f.doc.querySelector('#bonusWaveWindow').textContent, /16th Oct/);
-    assert.match(f.doc.querySelector('#dayDetail').textContent, /The Ronin|Terrible Tings/);
+    assert.match(f.doc.querySelector('#dayDetail').textContent, /Terrible Things/);
   } finally { f.dom.window.close(); }
 });
 
@@ -226,8 +224,7 @@ test('schedule navigation works without search controls', async () => {
 });
 
 test('event names and types agree across cards and search while raw names remain searchable', async () => {
-  const live = JSON.parse(fs.readFileSync(new URL('../assets/data/live-events.json', import.meta.url), 'utf8'));
-  const f = await fixture('#day-82', '2026-10-17T20:00:00Z', live.events);
+  const f = await fixture('#day-82', '2026-10-17T20:00:00Z', historicalEvents);
   try {
     const legendary = f.doc.querySelector('.game-event-card[aria-label="Terrible Things"]');
     assert.ok(legendary);
@@ -245,6 +242,18 @@ test('event names and types agree across cards and search while raw names remain
     assert.ok(assault);
     assert.equal(assault.querySelector('.xcard-kicker').textContent, 'Assault Battle');
     assert.equal(assault.querySelector('button'), null);
+  } finally { f.dom.window.close(); }
+});
+
+test('journey search retains raw aliases after the live event leaves the snapshot', async () => {
+  const f = await fixture('#day-82', '2026-10-17T20:00:00Z', []);
+  try {
+    for(const query of ['Terrible Things', 'Terrible Tings', 'Darth Jar Jar']) {
+      const result = f.w.searchSchedule(query, 'all', f.w.getGameStatus())[0];
+      assert.ok(result, query);
+      assert.equal(result.label, 'Terrible Things');
+      assert.equal(result.type, 'Era Legendary Event');
+    }
   } finally { f.dom.window.close(); }
 });
 
