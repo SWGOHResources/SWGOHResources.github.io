@@ -1,5 +1,5 @@
 {
- "pulledAt": 1792619289431,
+ "pulledAt": 1792654878304,
  "gameDataVersion": "0.40.6:tAj6zvcnT7GKXm7VxX_QIQ",
  "events": [
   {
@@ -55,16 +55,6 @@
    "art": "atlases/standard_rgba_atlas/icon_gift.png"
   },
   {
-   "id": "EVENT_FLEET_MASTERY_LEVIATHAN",
-   "name": "Dark Sovereign",
-   "kind": "fleet",
-   "unit": "LEVIATHAN",
-   "startMs": 1792479600000,
-   "endMs": 1792566000000,
-   "live": false,
-   "art": "live/events-leviathan.png"
-  },
-  {
    "id": "EVENT_MARQUEE_ADELPHIRANGER",
    "name": "Green Ranger",
    "kind": "marquee",
@@ -81,7 +71,7 @@
    "unit": "REBELASSULT",
    "startMs": 1792566000000,
    "endMs": 1792652400000,
-   "live": true,
+   "live": false,
    "art": "live/events-rebelassult.png"
   },
   {
