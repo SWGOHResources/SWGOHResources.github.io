@@ -22,6 +22,25 @@ function setClockText(container, key, value){
   if(node && node.textContent !== value) node.textContent = value;
 }
 
+function deadlineFactHTML(label, value, note = ''){
+  return `<div class="deadline-fact"><dt>${escHTML(label)}</dt><dd>${value}${note ? `<span class="deadline-note">${escHTML(note)}</span>` : ''}</dd></div>`;
+}
+
+function deadlineGacHTML(label, window){
+  return deadlineFactHTML(label, window
+    ? `<time datetime="${new Date(window.startMs).toISOString()}">${escHTML(fmtDateRange(window.startMs, window.endMs))}</time>` : 'TBA',
+    window ? `Week ${window.week} (${window.format})` : '');
+}
+
+function renderEraEligibility(st){
+  const el = document.getElementById('eraEligibility');
+  if(!el) return;
+  const endMs = st.era ? st.era.endMs : st.eraEndMs;
+  const window = st.eraKnown !== false && Number.isFinite(endMs)
+    ? firstGacForUnlock(endMs + stdHour() * 3600000) : null;
+  el.innerHTML = `<dl><dt>Era units first GAC</dt><dd>${window ? `Week ${window.week} (${window.format})<time datetime="${new Date(window.startMs).toISOString()}">${escHTML(fmtDateRange(window.startMs, window.endMs))}</time>` : 'TBA'}</dd></dl>`;
+}
+
 function renderUnlockWindows(st, opts){
   const el = document.getElementById('unlockWindows');
   if(!el) return;
@@ -32,44 +51,26 @@ function renderUnlockWindows(st, opts){
   const cqUnlocked = cqAbs <= st.rawDayIndex || cqDays <= 0;
   const cqUnlockMs = cqDateMs + stdHour() * 3600000;
   const cqMain = cqUnlocked ? 'Unit yet to be announced'
-    : subDayCount(st.nowMs, cqUnlockMs, `In ${cqDays} day${cqDays === 1 ? '' : 's'}`);
-  const cqLockDate = cqDateMs + 86400000 * conquestLockOffsetDays();
-  const cqInfo = gacInfoForDate(cqLockDate);
-  const cqGac = gacUsableWeek(cqInfo.cycleDay, cqInfo.format);
-
-  const nextEraFromDay = st.preEra ? st.rawDayIndex : st.rawDayIndex + 1;
-  const eraAbs = st.era ? Math.round((st.era.endMs - st.eraBaseStartMs) / 86400000) + 1
-    : nextOccurrenceAbs(ERA_START_OFFSETS, nextEraFromDay, eraLengthDays());
-  const eraDateMs = absDayToInfo(eraAbs, st.eraBaseStartMs).dateMs;
-  const eraLockDate = eraDateMs + 86400000 * eraLockOffsetDays();
-  const eraInfo = gacInfoForDate(eraLockDate);
-  const eraGac = gacUsableWeek(eraInfo.cycleDay, eraInfo.format);
-  const gacWeekDates = (dateMs, info) => {
-    const startMs = dateMs - ((info.cycleDay - 1) % 7) * 86400000
-      + (info.cycleDay > 21 ? 7 * 86400000 : 0) + gacHour() * 3600000;
-    return fmtDateRange(startMs, startMs + 6 * 86400000);
-  };
+    : `Unlocks in ${formatEventCountdown(cqUnlockMs - st.nowMs)}`;
+  const cqGac = firstGacForUnlock(cqUnlockMs);
 
   const cron = getCurrentDatacronSet(st.nowMs);
   const cronMeta = (cron && CRON_COLOR_META[cron.color]) || CRON_COLOR_META.orange;
-  const daysLeft = cron ? Math.floor((cron.expiresMs - st.nowMs) / 86400000) : 0;
   const cronMain = !cron ? 'Dates TBA' : cron.allExpired ? 'Expired'
-    : subDayCount(st.nowMs, cron.expiresMs, daysLeft <= 0 ? 'Expires today' : `In ${daysLeft} day${daysLeft === 1 ? '' : 's'}`);
+    : `Expires in ${formatEventCountdown(cron.expiresMs - st.nowMs)}`;
   const lastUsable = cron ? getLastUsableGuildEvent(cron.expiresMs, st.eraBaseStartMs) : null;
   let cronGac = null;
-  let cronGacDates = '';
   if(lastUsable && lastUsable.gac){
     const info = gacInfoForTimestamp(lastUsable.gac.startMs);
-    cronGac = gacUsableWeek(info.cycleDay, info.format);
-    cronGacDates = gacWeekDates(lastUsable.gac.dateMs, info);
+    const startMs = lastUsable.gac.dateMs - ((info.cycleDay - 1) % 7) * 86400000 + gacHour() * 3600000;
+    cronGac = { ...gacUsableWeek(info.cycleDay, info.format), startMs, endMs:startMs + 6 * 86400000 };
   }
   const lastTw = lastUsable && lastUsable.tw
     ? (lastUsable.tw.twNumber ? `War ${lastUsable.tw.twNumber}` : 'TBA') : '';
-  let twDates = '';
+  let twSignupMs = null;
   if(lastUsable && lastUsable.tw){
     const phaseOffset = { tw_signup:0, tw_defense:1, tw_offense:2, tw_payout:3 }[lastUsable.tw.item.icon] ?? 0;
-    const signupMs = lastUsable.tw.dateMs - phaseOffset * 86400000 + twTbHour() * 3600000;
-    twDates = `Signup ${fmtShortDate(signupMs)}`;
+    twSignupMs = lastUsable.tw.dateMs - phaseOffset * 86400000 + twTbHour() * 3600000;
   }
 
   if(opts && opts.clockOnly){
@@ -77,27 +78,28 @@ function renderUnlockWindows(st, opts){
     setClockText(el, 'cron-expiry', cronMain);
     return;
   }
-  const eraEl = document.getElementById('eraEligibility');
-  if(eraEl){
-    eraEl.innerHTML = `<dl class="usage-fields"><div class="usage-gac"><dt>Era units first GAC</dt><dd>${st.eraKnown === false ? 'TBA' : `Week ${eraGac.week} (${eraGac.format})`}${st.eraKnown === false ? '' : `<span class="usage-dates">${gacWeekDates(eraLockDate, eraInfo)}</span>`}</dd></div></dl>`;
-  }
   el.innerHTML = `
-    <div class="schedule-deadline" style="--deadline-accent:${CATEGORY_META.conquest.accent}">
+    <article class="schedule-deadline" style="--deadline-accent:${CATEGORY_META.conquest.accent}">
       <div class="deadline-heading">
-        <img class="deadline-icon" src="${imgPath(CONQUEST_UNIT_IMAGE)}" alt="" decoding="async" onerror="this.remove()">
-        <div class="deadline-title"><h2>Conquest Unit Unlock</h2><p class="deadline-date"><span>${cqUnlocked ? 'Conquest ended' : 'Unlocks'}</span> <time datetime="${new Date(cqUnlockMs).toISOString()}">${fmtShortDate(cqUnlockMs)}</time></p></div>
-        <strong class="deadline-count" data-clock="cq-unlock">${cqMain}</strong>
+        <img class="deadline-icon is-unit" src="${imgPath(CONQUEST_UNIT_IMAGE)}" alt="${escAttr(CONQUEST_UNIT_NAME)}" decoding="async" onerror="this.remove()">
+        <div class="deadline-title"><h2>Conquest Unit Unlock</h2><p class="deadline-count" data-clock="cq-unlock">${cqMain}</p></div>
       </div>
-      <dl class="deadline-eligibility usage-fields"><div class="usage-gac"><dt>First GAC</dt><dd>Week ${cqGac.week} (${cqGac.format})<span class="usage-dates">${gacWeekDates(cqLockDate, cqInfo)}</span></dd></div></dl>
-    </div>
-    <div class="schedule-deadline" style="--deadline-accent:${cronMeta.accent}">
+      <dl class="deadline-facts">
+        ${deadlineFactHTML(cqUnlocked ? 'Conquest ended' : 'Unlocks', `<time datetime="${new Date(cqUnlockMs).toISOString()}">${escHTML(fmtShortEventStart(cqUnlockMs))}</time>`)}
+        ${deadlineGacHTML('First GAC', cqGac)}
+      </dl>
+    </article>
+    <article class="schedule-deadline" style="--deadline-accent:${cronMeta.accent}">
       <div class="deadline-heading">
         <img class="deadline-icon" src="${imgPath(cronMeta.asset)}" alt="" decoding="async" onerror="this.remove()">
-        <div class="deadline-title"><h2>${cron ? `${escHTML(cron.name)}${cron.hasFDC ? ' + FDC' : ''}` : 'Datacron expiration'}</h2>${cron ? `<p class="deadline-date"><span>Expires</span> <time datetime="${new Date(cron.expiresMs).toISOString()}">${escHTML(fmtShortEventStart(cron.expiresMs))}</time></p>` : '<p class="deadline-date">No datacron set announced</p>'}</div>
-        <strong class="deadline-count" data-clock="cron-expiry">${cronMain}</strong>
+        <div class="deadline-title"><h2>${cron ? `${escHTML(cron.name)}${cron.hasFDC ? ' + FDC' : ''}` : 'Datacron expiration'}</h2><p class="deadline-count" data-clock="cron-expiry">${cronMain}</p></div>
       </div>
-      <dl class="deadline-eligibility usage-fields"><div class="usage-gac"><dt>Last GAC</dt><dd>${cronGac ? `Week ${cronGac.week} (${cronGac.format})` : 'TBA'}${cronGacDates ? `<span class="usage-dates">${cronGacDates}</span>` : ''}</dd></div>${lastTw ? `<div class="usage-tw"><dt>Last TW</dt><dd>${lastTw}<span class="usage-dates">${twDates}</span></dd></div>` : ''}</dl>
-    </div>`;
+      <dl class="deadline-facts">
+        ${deadlineFactHTML('Expires', cron ? `<time datetime="${new Date(cron.expiresMs).toISOString()}">${escHTML(fmtShortEventStart(cron.expiresMs))}</time>` : 'TBA')}
+        ${deadlineGacHTML('Last GAC', cronGac)}
+        ${lastTw ? deadlineFactHTML('Last TW', `<time datetime="${new Date(twSignupMs).toISOString()}">${escHTML(fmtShortEventStart(twSignupMs))}</time>`, `${lastTw} signup`) : ''}
+      </dl>
+    </article>`;
 }
 
 function gacRoundTrackerHTML(gac){
@@ -197,6 +199,7 @@ function renderMergedHero(st){
   document.getElementById('mhEpVal').textContent = `${st.episode} of ${episodeCount}`;
   document.getElementById('mhWeekVal').textContent = `${st.week} of ${weeksPerEpisode}`;
   document.getElementById('mhWeekdayVal').textContent = st.weekdayName;
+  renderEraEligibility(st);
 
   const fillPct = Math.min(100, Math.max(0, (st.bossEraDay / length) * 100));
   document.getElementById('mhFill').style.width = fillPct + '%';
@@ -563,6 +566,10 @@ function gameEventRewardUnit(icon, live){
   return { name, portrait:portraits[icon] ? `live/bonus-${portraits[icon]}.png` : null };
 }
 
+function eventTimerEndVerb(event){
+  return isDropEvent(event) || /\bexpir(?:es?|ation)\b/i.test(event && (event.name || event.label) || '') ? 'Expires' : 'Ends';
+}
+
 function gameEventCardHTML(model){
   model.title = model.copy.type === 'Conquest' ? model.copy.title : eventDisplayTitle(model.icon, model.title, model.liveEvent);
   const key = `${model.icon || model.liveId || model.title}|${model.startMs}`;
@@ -572,12 +579,13 @@ function gameEventCardHTML(model){
   const bonus = model.bonusId;
   const action = bonus ? `<button type="button" class="game-event-action" data-bonus-wave="${escAttr(bonus)}" onclick="openBonusWave('${bonus}')" aria-label="Details for ${escAttr(model.title)}">DETAILS</button>` : '';
   const facts = cardWhenRow(model.startMs, model.duration);
+  const endVerb = eventTimerEndVerb(model.liveEvent || { label:model.title });
   return `<article class="xcard game-event-card${model.copy.title.length > 22 ? ' long-title' : ''}${bonus ? ' is-clickable' : ''}" style="${model.style}" aria-label="${escAttr(model.title)}">
     <div class="xcard-art${model.fit ? ' fit' : ''}${model.shared ? ' icon-art' : ''}${model.drop ? ' drop-art' : ''}${model.era ? ' era-art' : ''}${model.datacron ? ' datacron-art' : ''}${model.icon === 'client_update' ? ' update-art' : ''}">
       ${model.shared ? iconCardBackdropHTML() : `<div class="art-badge" aria-hidden="true">${escHTML(model.glyph)}</div>`}
       ${model.art ? `<img src="${imgPath(model.art)}" alt="" loading="${model.shared ? 'eager' : 'lazy'}" decoding="async" onerror="this.remove()">` : ''}
       <div class="xcard-shade"></div>
-      <div class="xcard-art-meta"><span data-clock-start="${model.startMs}"${Number.isFinite(model.endMs) ? ` data-clock-end="${model.endMs}"` : ''} data-timing-kind="${/\d/.test(model.relLabel) ? 'time' : 'status'}" class="${relCls}">${model.relLabel}</span></div>
+      ${model.relLabel ? `<div class="xcard-art-meta"><span data-clock-start="${model.startMs}"${Number.isFinite(model.endMs) ? ` data-clock-end="${model.endMs}"` : ''} data-clock-end-verb="${endVerb}" data-timing-kind="${/\d/.test(model.relLabel) ? 'time' : 'status'}" class="${relCls}">${model.relLabel}</span></div>` : ''}
     </div>
     <div class="xcard-body"><h4>${escHTML(model.copy.title)}</h4><div class="xcard-kicker">${escHTML(model.copy.type)}</div>${model.description ? `<div class="xcard-sub">${escHTML(model.description)}</div>` : ''}<div class="game-event-facts">${facts}</div></div>
     <div class="game-event-footer"><p>${escHTML(model.copy.caption)}</p>${action}</div>
@@ -591,11 +599,6 @@ function openEventRewards(key){
   const modal = document.getElementById('bonusWaveModal');
   if(!body || !modal) return;
   document.getElementById('bonusWaveTitle').textContent = model.title;
-  const type = document.getElementById('bonusWaveType');
-  if(type) type.textContent = model.copy.type;
-  const count = document.getElementById('bonusWaveCount');
-  if(count) count.textContent = '';
-  document.getElementById('bonusWaveWindow').innerHTML = bonusWaveWindowHTML(model);
   const unit = model.rewardUnit;
   body.innerHTML = unit
     ? `<li class="bdrop-row marquee-reward"><div class="bdrop-unit"><span class="bdrop-shard" aria-hidden="true"><img class="bdrop-shard-background" src="${imgPath('atlases/standard_rgba_atlas/ShardIcon.png')}" alt="">${unit.portrait ? `<img class="bdrop-shard-unit" src="${imgPath(unit.portrait)}" alt="">` : ''}</span><div><h4 class="bdrop-name">${escHTML(unit.name)}</h4><p class="reward-kind">Character shards</p></div></div><dl class="bdrop-details"><div class="bdrop-field"><dt>Event</dt><dd>${escHTML(model.copy.type)}</dd></div></dl></li>`
@@ -649,17 +652,10 @@ function bonusWaveRowsHTML(entry){
       + `<span class="bdrop-shard ${tint}" aria-hidden="true"><img class="bdrop-shard-background" src="${imgPath('atlases/standard_rgba_atlas/ShardIcon.png')}" alt="">${shard}</span>`
       + `<h4 class="bdrop-name">${escHTML((u && u.name) || '')}</h4></div>`
       + `<dl class="bdrop-details">`
-      + `<div class="bdrop-field"><dt>Farm in</dt><dd class="bdrop-nodes">${energy}<span>${escHTML((u && u.details) || '—')}</span></dd></div>`
+      + `<div class="bdrop-field"><dt>Farm on</dt><dd class="bdrop-nodes">${energy}<span>${escHTML((u && u.details) || '—')}</span></dd></div>`
       + `<div class="bdrop-field bdrop-reward"><dt><span class="bdrop-rarity" aria-label="7 stars">7${star}</span> replacement</dt><dd class="bdrop-maxed">${rewardIcon}<span>${maxed}</span></dd></div>`
       + `</dl></li>`;
   }).join('');
-}
-
-function bonusWaveWindowHTML(entry){
-  return `<dl class="bdrop-window">` + [['Starts', entry && entry.startMs], ['Ends', entry && entry.endMs]]
-    .filter(([, ms]) => Number.isFinite(ms) && Number.isFinite(new Date(ms).getTime()))
-    .map(([label, ms]) => `<div><dt>${label}</dt><dd><time datetime="${new Date(ms).toISOString()}">${escHTML(fmtEventStart(ms))}</time></dd></div>`)
-    .join('') + `</dl>`;
 }
 
 function openBonusWave(id){
@@ -669,17 +665,8 @@ function openBonusWave(id){
   const title = document.getElementById('bonusWaveTitle');
   const body = document.getElementById('bonusWaveBody');
   const modal = document.getElementById('bonusWaveModal');
-  const timing = document.getElementById('bonusWaveWindow');
-  const count = document.getElementById('bonusWaveCount');
   if(!body || !modal) return;
   if(title) title.textContent = liveDisplayName(entry);
-  const type = document.getElementById('bonusWaveType');
-  if(type) type.textContent = 'Special Event';
-  if(timing) timing.innerHTML = bonusWaveWindowHTML(entry);
-  if(count){
-    const n = Array.isArray(entry.units) ? entry.units.length : 0;
-    count.textContent = `${n} unit${n === 1 ? '' : 's'}`;
-  }
   body.innerHTML = bonusWaveRowsHTML(entry);
   if(typeof openModal === 'function') openModal(modal);
   else {
@@ -1220,10 +1207,11 @@ function renderExplorer(st){
     ...rotationEventsForDay(cur.dMs).filter(entry => !covered.has(entry.item.icon)),
   ];
   const cards = orderScheduleCards(entries, cur.dMs).map(entry => {
-    const timing = eventTimerLabel(entry.startMs, entry.endMs, st.nowMs);
+    const timing = cur.offset < 0 ? '' : eventTimerLabel(entry.startMs, entry.endMs, st.nowMs, eventTimerEndVerb(entry.live || entry.item));
     return entry.live ? liveCardHTML(entry.live, timing)
       : explorerCardHTML(entry.item, entry.dateMs, timing, entry.tbCtx, st.nowMs);
   }).join('');
+  detail.dataset.clockDay = String(cur.dMs);
   detail.innerHTML = `
     <div class="day-detail-head">
       <div class="day-detail-title">
@@ -1469,8 +1457,12 @@ function refreshClockDisplays(st){
   const detail = document.getElementById('dayDetail');
   if(detail){
     detail.querySelectorAll('[data-clock-start]').forEach(node => {
+      if(Number(detail.dataset.clockDay) < st.currentDayStartMs){
+        node.closest('.xcard-art-meta').remove();
+        return;
+      }
       const endMs = Number(node.dataset.clockEnd);
-      const label = eventTimerLabel(Number(node.dataset.clockStart), endMs, st.nowMs);
+      const label = eventTimerLabel(Number(node.dataset.clockStart), endMs, st.nowMs, node.dataset.clockEndVerb);
       if(node.textContent !== label) node.textContent = label;
       node.dataset.timingKind = /\d/.test(label) ? 'time' : 'status';
       node.classList.toggle('is-today', label === 'Now');

@@ -81,6 +81,8 @@ test('main schedule details open the additive layout and restore keyboard focus'
     assert.equal(modal.querySelectorAll('.bdrop-row').length, 2);
     assert.equal(modal.querySelectorAll('.bdrop-reward-icon').length, 2);
     assert.match(modal.textContent, /Mk 7 Kyrotech Salvage/);
+    assert.equal(modal.querySelector('#bonusWaveWindow, #bonusWaveType, #bonusWaveCount, .bdrop-window, .bdrop-heading-meta'), null);
+    assert.doesNotMatch(modal.textContent, /Special Event|\d+ units|Starts|Ends/);
     assert.equal(modal.querySelectorAll('button').length, 1);
     f.w.renderAll({ preserveFocus:true });
     assert.ok(f.doc.contains(button));
@@ -106,9 +108,13 @@ test('only additive-drop cards offer details, including when other events carry 
 });
 
 test('card timing switches from countdown to expired status without replacing the card', async () => {
-  const f = await fixture('#day-82', '2026-10-16T20:00:00Z', historicalEvents);
+  const endMs = Date.parse('2026-10-16T22:00:00Z');
+  const f = await fixture('#day-81', '2026-10-16T20:00:00Z', [{
+    id:'EVENT_ASSAULT_TEST', name:'Assault Test', kind:'assault',
+    startMs:Date.parse('2026-10-16T19:00:00Z'), endMs
+  }]);
   try {
-    const timer = [...f.doc.querySelectorAll('[data-clock-end]')].find(node => node.dataset.timingKind === 'time');
+    const timer = f.doc.querySelector(`[data-clock-end="${endMs}"]`);
     assert.ok(timer);
     const card = timer.closest('.game-event-card');
     f.w.refreshClockDisplays(f.w.getGameStatus(Number(timer.dataset.clockEnd) + 1));
@@ -121,14 +127,14 @@ test('card timing switches from countdown to expired status without replacing th
 
 test('card clocks switch from start countdown to end countdown in place', async () => {
   const startMs = Date.parse('2026-10-20T18:00:00Z');
-  const endMs = Date.parse('2026-10-27T18:00:00Z');
+  const endMs = Date.parse('2026-10-20T22:00:00Z');
   const f = await fixture('#date-2026-10-20', '2026-10-20T17:59:00Z', [{
     id:'EVENT_MARQUEE_ADELPHIRANGER', name:'Adelphi Ranger Marquee', unit:'ADELPHIRANGER', kind:'marquee', startMs, endMs
   }]);
   try {
     const timer = f.doc.querySelector(`[data-clock-start="${startMs}"][data-clock-end="${endMs}"]`);
     assert.ok(timer);
-    assert.equal(timer.textContent, 'In 1m');
+    assert.equal(timer.textContent, 'Starts in 1m');
     const card = timer.closest('.game-event-card');
     f.w.refreshClockDisplays(f.w.getGameStatus(startMs));
     assert.match(timer.textContent, /^Ends in /);
@@ -139,6 +145,50 @@ test('card clocks switch from start countdown to end countdown in place', async 
     f.w.refreshClockDisplays(f.w.getGameStatus(endMs));
     assert.equal(timer.textContent, 'Expired');
     assert.equal(timer.dataset.timingKind, 'status');
+  } finally { f.dom.window.close(); }
+});
+
+test('past days omit all timer badges even for events still running today', async () => {
+  const f = await fixture('#day-81', '2026-10-17T20:00:00Z', historicalEvents);
+  try {
+    const detail = f.doc.querySelector('#dayDetail');
+    assert.ok(detail.querySelectorAll('.game-event-card').length > 0);
+    assert.ok(detail.querySelector('button[data-bonus-wave]'));
+    assert.equal(detail.querySelector('.xcard-rel, .xcard-art-meta, [data-clock-start]'), null);
+    f.w.refreshClockDisplays(f.w.getGameStatus());
+    assert.equal(detail.querySelector('.xcard-rel, [data-clock-start]'), null);
+    f.w.renderAll({ preserveFocus:true });
+    assert.equal(detail.querySelector('.xcard-rel, [data-clock-start]'), null);
+    f.doc.querySelector('#dayToday').click();
+    assert.ok(detail.querySelector('[data-clock-start]'));
+    assert.match(detail.querySelector('.game-event-card[aria-label="Additive Drops: Wave 1"] .xcard-rel').textContent, /^Expires in /);
+  } finally { f.dom.window.close(); }
+});
+
+test('clock refresh removes yesterday timers at the Today boundary without replacing cards', async () => {
+  const f = await fixture('#date-2026-10-17', '2026-10-18T17:59:00Z', historicalEvents);
+  try {
+    const card = f.doc.querySelector('.game-event-card[aria-label="Additive Drops: Wave 1"]');
+    assert.ok(card.querySelector('[data-clock-start]'));
+    f.w.refreshClockDisplays(f.w.getGameStatus(Date.parse('2026-10-18T18:00:00Z')));
+    assert.ok(f.doc.contains(card));
+    assert.equal(f.doc.querySelector('#dayDetail .xcard-rel, #dayDetail [data-clock-start]'), null);
+  } finally { f.dom.window.close(); }
+});
+
+test('additive countdowns retain expiration wording during clock refreshes', async () => {
+  const startMs = Date.parse('2026-10-23T00:00:00Z');
+  const endMs = Date.parse('2026-10-26T00:00:00Z');
+  const f = await fixture('#date-2026-10-23', '2026-10-22T23:59:00Z', [{
+    id:'EVENT_BONUS_WAVE_3_102326', name:'Additive Drops: Wave 3', kind:'special', startMs, endMs
+  }]);
+  try {
+    const timer = f.doc.querySelector(`[data-clock-start="${startMs}"]`);
+    assert.equal(timer.textContent, 'Starts in 1m');
+    f.w.refreshClockDisplays(f.w.getGameStatus(startMs));
+    assert.equal(timer.textContent, 'Expires in 3d 0h');
+    f.w.refreshClockDisplays(f.w.getGameStatus(startMs + 3600000));
+    assert.equal(timer.textContent, 'Expires in 2d 23h');
   } finally { f.dom.window.close(); }
 });
 
@@ -169,7 +219,7 @@ test('ongoing cards retain their original schedule window and leave only Coliseu
     assert.ok(bonus);
     bonus.click();
     assert.equal(f.doc.querySelectorAll('#bonusWaveBody .bdrop-row').length, 2);
-    assert.match(f.doc.querySelector('#bonusWaveWindow').textContent, /16th Oct/);
+    assert.equal(f.doc.querySelector('#bonusWaveWindow'), null);
     assert.match(f.doc.querySelector('#dayDetail').textContent, /Terrible Things/);
   } finally { f.dom.window.close(); }
 });
@@ -307,7 +357,7 @@ test('TB end and TW payout markers stay in the timing engine but leave schedule 
     assert.ok(!f.doc.querySelector('.game-event-card[aria-label*="Ends"]'));
     assert.ok(!f.doc.querySelector('.game-event-card[aria-label*="Ended"]'));
     assert.equal(f.doc.querySelector('#statusDashboard'), null);
-    assert.equal(f.doc.querySelectorAll('#unlockWindows > div').length, 2);
+    assert.equal(f.doc.querySelectorAll('#unlockWindows > article').length, 2);
     assert.ok(f.w.getGuildPhaseInfo(f.w.getGameStatus()));
   } finally { f.dom.window.close(); }
 });
@@ -356,17 +406,19 @@ test('day cards pin additive drops, then sort new starts ahead of continuing eve
 });
 
 
-test('GAC eligibility stays integrated without roster-lock dates', async () => {
+test('eligibility summaries follow the schedule with consistent facts and an integrated era date', async () => {
   const f = await fixture('#day-83', '2026-10-18T12:00:00Z');
   try {
     const hero = f.doc.querySelector('#mergedHero');
     const deadlines = f.doc.querySelector('#unlockWindows');
     assert.ok(hero.contains(f.doc.querySelector('#eraEligibility')));
+    assert.ok(f.doc.querySelector('.mh-title-row #eraEligibility'));
     assert.match(f.doc.querySelector('#eraEligibility').textContent, /Era units first GAC.*Week 3 \(5v5\)/s);
     assert.doesNotMatch(hero.textContent, /Roster locks/);
     assert.equal(f.doc.querySelector('[data-clock="era-end"]'), null);
     assert.equal(f.doc.querySelector('section[aria-label="Important dates"]'), null);
-    assert.ok(deadlines.closest('.explorer'));
+    assert.equal(deadlines.closest('.explorer'), null);
+    assert.ok(f.doc.querySelector('.explorer').compareDocumentPosition(deadlines) & f.w.Node.DOCUMENT_POSITION_FOLLOWING);
     assert.equal(f.doc.querySelector('.explorer-note'), null);
     assert.equal(deadlines.children.length, 2);
     assert.equal(deadlines.children[0].querySelector('h2').textContent, 'Conquest Unit Unlock');
@@ -375,20 +427,24 @@ test('GAC eligibility stays integrated without roster-lock dates', async () => {
     assert.match(deadlines.children[0].textContent, /First GAC.*Week 2 \(5v5\)/s);
     assert.match(deadlines.children[1].textContent, /Last GAC.*Week 3 \(5v5\).*Last TW.*War 2/s);
     assert.match(deadlines.children[1].textContent, /Supremacy Directive/);
-    assert.match(deadlines.querySelector('.usage-tw dd').textContent, /^War 2Signup 22 Oct$/);
-    assert.equal(deadlines.children[1].querySelector('.usage-gac .usage-dates').textContent, '20–26 Oct');
-    assert.equal(deadlines.children[0].querySelector('.usage-gac .usage-dates').textContent, '8–14 Dec');
-    assert.equal(deadlines.querySelectorAll('.usage-gac').length, 2);
+    assert.deepEqual([...deadlines.children[0].querySelectorAll('.deadline-fact dt')].map(el=>el.textContent), ['Unlocks', 'First GAC']);
+    assert.deepEqual([...deadlines.children[1].querySelectorAll('.deadline-fact dt')].map(el=>el.textContent), ['Expires', 'Last GAC', 'Last TW']);
+    assert.equal(deadlines.children[1].querySelectorAll('.deadline-fact time')[1].textContent, '20–26 Oct');
+    assert.equal(deadlines.children[0].querySelectorAll('.deadline-fact time')[1].textContent, '8–14 Dec');
+    assert.match(deadlines.children[1].querySelectorAll('.deadline-fact dd')[2].textContent, /22 Oct.*War 2 signup/s);
+    assert.doesNotMatch(deadlines.textContent, /[·•]/);
+    assert.match(deadlines.querySelector('img.is-unit').getAttribute('src'), /live\/conquest-embokeibu\.png/);
+    assert.equal(deadlines.querySelector('img.is-unit').alt, 'Embo & Keibu');
     assert.doesNotMatch(deadlines.textContent, /Payout/);
     const clock = deadlines.querySelector('[data-clock="cron-expiry"]');
-    assert.match(clock.textContent, /In .*days/);
+    assert.match(clock.textContent, /^Expires in \d+d \d+h$/);
     f.w.refreshClockDisplays(f.w.getGameStatus());
     assert.equal(deadlines.querySelector('[data-clock="cron-expiry"]'), clock);
     f.w.localStorage.setItem('swgoh-tz', 'Europe/London');
     f.w.renderAll();
     assert.doesNotMatch(f.doc.querySelector('#eraEligibility').textContent, /Roster locks|21st Oct/);
     assert.doesNotMatch(deadlines.textContent, /Roster locks|9th Dec/);
-    assert.match(deadlines.querySelector('.deadline-heading').textContent, /Unlocks 7 Dec/);
+    assert.match(deadlines.children[0].textContent, /Unlocks.*7 Dec, 18:00 GMT/s);
     assert.match(deadlines.children[1].textContent, /29 Oct, 18:00 GMT/);
   } finally { f.dom.window.close(); }
 
@@ -397,4 +453,17 @@ test('GAC eligibility stays integrated without roster-lock dates', async () => {
     assert.match(unknown.doc.querySelector('#eraEligibility').textContent, /TBA/);
     assert.doesNotMatch(unknown.doc.querySelector('#eraEligibility').textContent, /NaN|Invalid Date/);
   } finally { unknown.dom.window.close(); }
+});
+
+test('the current mini-era units first enter the 17 November 3v3 signup week', async () => {
+  const f = await fixture('#date-2026-10-23', '2026-10-22T18:00:00Z');
+  try {
+    const eligibility = f.doc.querySelector('#eraEligibility');
+    assert.match(eligibility.textContent, /Week 3 \(3v3\).*17–23 Nov/s);
+    assert.equal(eligibility.querySelector('time').dateTime, '2026-11-17T21:00:00.000Z');
+    const status = f.w.getGameStatus();
+    assert.equal(status.era.endMs, Date.parse('2026-11-17T00:00:00Z'));
+    const first = f.w.firstGacForUnlock(status.era.endMs + f.w.stdHour() * 3600000);
+    assert.equal(first.lockMs, Date.parse('2026-11-18T21:00:00Z'));
+  } finally { f.dom.window.close(); }
 });

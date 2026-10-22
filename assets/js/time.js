@@ -208,6 +208,23 @@ function gacUsableWeek(cycleDay, format){
   return { week: 1, format: format === '5v5' ? '3v3' : '5v5' };
 }
 
+function firstGacForUnlock(unlockMs){
+  if(!Number.isFinite(unlockMs)) return null;
+  const dayMs = 86400000;
+  const firstDay = Math.floor(unlockMs / dayMs) * dayMs;
+  for(let offset = 0; offset <= 35; offset++){
+    const dateMs = firstDay + offset * dayMs;
+    const info = gacInfoForDate(dateMs);
+    const round = getGacRoundInfo(info.cycleDay);
+    const lockMs = dateMs + gacHour() * 3600000;
+    if(round.phase === 'defense' && round.round === 1 && lockMs > unlockMs){
+      const startMs = lockMs - dayMs;
+      return { week:round.week, format:info.format, startMs, endMs:startMs + 6 * dayMs, lockMs };
+    }
+  }
+  return null;
+}
+
 function gacEventsForDate(dateMs){
   const info = gacInfoForDate(dateMs);
   const rnd = getGacRoundInfo(info.cycleDay);
@@ -1153,13 +1170,19 @@ function relForEventStart(startMs, nowMs, dayFallback){
   return until.charAt(0).toUpperCase() + until.slice(1);
 }
 
-function eventTimerLabel(startMs, endMs, nowMs){
+function formatEventCountdown(ms){
+  if(ms < 86400000) return formatHoursMinutes(ms);
+  const days = Math.floor(ms / 86400000);
+  const hours = Math.floor((ms % 86400000) / 3600000);
+  return `${days}d ${hours}h`;
+}
+
+function eventTimerLabel(startMs, endMs, nowMs, endVerb = 'Ends'){
   if(!Number.isFinite(startMs) || !Number.isFinite(nowMs)) return '';
-  if(startMs > nowMs) return relForEventStart(startMs, nowMs, '');
+  if(startMs > nowMs) return `Starts in ${formatEventCountdown(startMs - nowMs)}`;
   if(!Number.isFinite(endMs) || endMs <= startMs) return 'Now';
   if(endMs <= nowMs) return 'Expired';
-  const remaining = relForEventStart(endMs, nowMs, '');
-  return `Ends ${remaining.charAt(0).toLowerCase()}${remaining.slice(1)}`;
+  return `${endVerb === 'Expires' ? 'Expires' : 'Ends'} in ${formatEventCountdown(endMs - nowMs)}`;
 }
 
 /* Terse sub-day duration ("2h 45m", "45m", "2h" when exact) so events

@@ -732,6 +732,26 @@ test('off-week GAC locks roll into Week 1 of the next cycle', () => {
   }
 });
 
+test('first eligible GAC uses the actual roster lock and skips closed weeks', () => {
+  const engine = loadTimeEngine();
+  const cases = [
+    ['2026-11-17T18:00:00Z', '2026-11-18T21:00:00Z', '2026-11-17T21:00:00Z', 3, '3v3'],
+    ['2026-11-18T20:59:59Z', '2026-11-18T21:00:00Z', '2026-11-17T21:00:00Z', 3, '3v3'],
+    ['2026-11-18T21:00:00Z', '2026-12-02T21:00:00Z', '2026-12-01T21:00:00Z', 1, '5v5'],
+    ['2026-11-25T18:00:00Z', '2026-12-02T21:00:00Z', '2026-12-01T21:00:00Z', 1, '5v5'],
+    ['2026-12-07T18:00:00Z', '2026-12-09T21:00:00Z', '2026-12-08T21:00:00Z', 2, '5v5'],
+  ];
+  for(const [unlock, lock, signup, week, format] of cases){
+    const result = engine.firstGacForUnlock(Date.parse(unlock));
+    assert.equal(result.lockMs, Date.parse(lock), unlock);
+    assert.equal(result.startMs, Date.parse(signup), unlock);
+    assert.equal(result.endMs, result.startMs + 6 * dayMs);
+    assert.equal(result.week, week);
+    assert.equal(result.format, format);
+  }
+  assert.equal(engine.firstGacForUnlock(NaN), null);
+});
+
 test('validator flags malformed schedule tables', () => {
   const engine = loadTimeEngine({
     commonDays: { 3: 'oops', 4: [{ icon: 'tw_signup' }] },
@@ -778,6 +798,26 @@ test('day hash bounds follow the configured era length', () => {
   assert.equal(engine.dayFromHash('#day-57'), null);
 });
 
+test('event countdowns use compact game durations and explicit start, end and expiration labels', () => {
+  const engine = loadTimeEngine();
+  const start = Date.parse('2026-10-23T18:00:00Z');
+  const end = start + 3 * dayMs;
+  const cases = [
+    [start - 2 * dayMs - 3 * 3600000, 'Ends', 'Starts in 2d 3h'],
+    [start - 60000, 'Expires', 'Starts in 1m'],
+    [start, 'Ends', 'Ends in 3d 0h'],
+    [start + 3600000, 'Expires', 'Expires in 2d 23h'],
+    [end - 4 * 3600000 - 20 * 60000, 'Ends', 'Ends in 4h 20m'],
+    [end - 1000, 'Ends', 'Ends in 1m'],
+    [end, 'Expires', 'Expired'],
+  ];
+  for(const [now, verb, expected] of cases){
+    assert.equal(engine.eventTimerLabel(start, end, now, verb), expected);
+  }
+  assert.equal(engine.eventTimerLabel(NaN, end, start), '');
+  assert.equal(engine.eventTimerLabel(start, null, start), 'Now');
+});
+
 test('future cards count to their own start instant, not the changeover', () => {
   const { ctx, els } = loadRenderEngine();
   const run = src => vm.runInContext(src, ctx);
@@ -795,10 +835,10 @@ test('future cards count to their own start instant, not the changeover', () => 
   // Every pill counts forward on a future day — never past wording…
   const pills = [...els.dayDetail.innerHTML.matchAll(/xcard-rel[^"]*">([^<]+)</g)].map(m => m[1]);
   assert.ok(pills.length > 0, 'expected cards on the GAC day');
-  for (const p of pills) assert.match(p, /^(Now|In |Ends in )/);
+  for (const p of pills) assert.match(p, /^(Now|Starts in |Ends in |Expires in )/);
   assert.ok(!pills.some(p => /Yesterday|ago/.test(p)), 'no past wording on a future day');
   // …and GAC pills never claim the 18:00 changeover moment.
-  assert.ok(pills.some(p => /^In /.test(p)), 'expected countdown pills');
+  assert.ok(pills.some(p => /^Starts in /.test(p)), 'expected countdown pills');
 });
 
 test('day pills show weekday, calendar date and month across the month boundary', () => {

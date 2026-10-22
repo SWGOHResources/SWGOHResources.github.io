@@ -62,7 +62,6 @@ html:has(#bonusWaveModal.open) { overflow:hidden; scrollbar-gutter:stable; }
 .game-rewards-modal .bdrop-shard-background { position:absolute; inset:0; width:100%; height:100%; object-fit:contain; }
 .game-rewards-modal .bdrop-shard.dark::before { content:''; position:absolute; inset:0; background:#ed354a; mask:url('/assets/img/atlases/standard_rgba_atlas/ShardIcon.png') center/contain no-repeat; }
 .game-rewards-modal .bdrop-shard.dark .bdrop-shard-background { filter:grayscale(1); mix-blend-mode:multiply; }
-.game-rewards-modal .bdrop-shard-unit { position:absolute; top:8%; left:8%; width:84%; height:84%; object-fit:contain; }
 .game-rewards-modal .bdrop-name { margin:0; color:var(--text); font:600 13px/1.5 var(--body); overflow-wrap:anywhere; }
 .game-rewards-modal .bdrop-details { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; min-width:0; margin:0; }
 .game-rewards-modal .bdrop-field { min-width:0; }

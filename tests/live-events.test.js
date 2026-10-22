@@ -470,7 +470,7 @@ test('wave popup rows show shard icon, name, energy icon, nodes and 7-star drop'
   assert.match(html, /<h4 class="bdrop-name">4-LOM<\/h4>/);
   assert.match(html, /live\/energy-pve\.png/);
   assert.match(html, /<span>LS\/DS Hard Battles<\/span>/);
-  assert.match(html, /<dt>Farm in<\/dt>/);
+  assert.match(html, /<dt>Farm on<\/dt>/);
   assert.match(html, /aria-label="7 stars"/);
   assert.match(html, /atlases\/standard_rgba_atlas\/icon_rendered_star\.png/);
   assert.doesNotMatch(html, /★/);
