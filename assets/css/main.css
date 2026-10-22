@@ -420,7 +420,7 @@ input:focus-visible, summary:focus-visible, [tabindex]:focus-visible {
 .mh-eligibility { min-width:0; margin-left:auto; text-align:right; }
 .mh-eligibility dl { margin:0; }
 .mh-eligibility dt { color:var(--text3); font:600 11px/1.5 var(--body); }
-.mh-eligibility dd { margin:3px 0 0; color:var(--steel); font:700 13px/1.5 var(--body); }
+.mh-eligibility dd { margin:3px 0 0; color:var(--text); font:700 13px/1.5 var(--body); }
 .mh-eligibility time { display:block; margin-top:2px; color:var(--text); font:600 12px/1.5 var(--body); }
 .schedule-deadlines { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); align-items:start; gap:12px; margin-top:18px; }
 .schedule-deadline { min-width:0; border:1px solid var(--border2); border-radius:var(--radius-lg); background:var(--void1); overflow:hidden; }
@@ -435,7 +435,7 @@ input:focus-visible, summary:focus-visible, [tabindex]:focus-visible {
 .deadline-fact + .deadline-fact { border-top:1px solid var(--border); }
 .deadline-fact dt { margin:0; color:var(--text3); font:600 10px/1.45 var(--body); letter-spacing:.04em; text-transform:uppercase; }
 .deadline-fact dd { display:flex; flex-wrap:wrap; align-items:baseline; gap:2px 10px; margin:0; color:var(--text); font:600 12px/1.45 var(--body); overflow-wrap:anywhere; }
-.deadline-note { color:var(--steel); font:700 12px/1.45 var(--body); }
+.deadline-note { color:var(--text); font:700 12px/1.45 var(--body); }
 @media(max-width:680px) {
   .schedule-deadlines { grid-template-columns:1fr; }
 }
