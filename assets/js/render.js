@@ -649,7 +649,7 @@ function bonusWaveRowsHTML(entry){
       + `<span class="bdrop-shard ${tint}" aria-hidden="true"><img class="bdrop-shard-background" src="${imgPath('atlases/standard_rgba_atlas/ShardIcon.png')}" alt="">${shard}</span>`
       + `<h4 class="bdrop-name">${escHTML((u && u.name) || '')}</h4></div>`
       + `<dl class="bdrop-details">`
-      + `<div class="bdrop-field"><dt>Farm in</dt><dd class="bdrop-nodes">${energy}<span>${escHTML((u && u.details) || '—')}</span></dd></div>`
+      + `<div class="bdrop-field"><dt>Farm on</dt><dd class="bdrop-nodes">${energy}<span>${escHTML((u && u.details) || '—')}</span></dd></div>`
       + `<div class="bdrop-field bdrop-reward"><dt><span class="bdrop-rarity" aria-label="7 stars">7${star}</span> replacement</dt><dd class="bdrop-maxed">${rewardIcon}<span>${maxed}</span></dd></div>`
       + `</dl></li>`;
   }).join('');

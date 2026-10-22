@@ -842,7 +842,7 @@ input:focus-visible, summary:focus-visible, [tabindex]:focus-visible {
    bust fills the frame with no black square. */
 .bdrop-shard.dark::before { content: ""; position: absolute; inset: 0; background: #ed354a; mask: url("../img/atlases/standard_rgba_atlas/ShardIcon.png") center / contain no-repeat; }
 .bdrop-shard.dark .bdrop-shard-background { filter: grayscale(1); mix-blend-mode: multiply; }
-.bdrop-shard-unit { position: absolute; top: 8%; left: 8%; width: 84%; height: 84%; object-fit: contain; }
+.bdrop-shard-unit { position: absolute; top: 12%; left: 12%; width: 76%; height: 76%; object-fit: contain; clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%); }
 .bdrop-name { font-size: 14px; font-weight: 600; line-height: 1.45; color: var(--text); overflow-wrap: anywhere; }
 .bdrop-nodes { display: flex; align-items: flex-start; gap: 7px; font-size: 12px; line-height: 1.5; color: var(--text2); }
 .bdrop-nodes .bdrop-energy { width: 20px; height: 20px; object-fit: contain; flex: 0 0 auto; }
