@@ -1,5 +1,5 @@
 const CACHE_PREFIX = 'swgoh-schedule-';
-const CACHE = CACHE_PREFIX + 'v10';
+const CACHE = CACHE_PREFIX + 'v11';
 const CORE = ['/', '/index.html', '/site.webmanifest'];
 const FONT_ORIGINS = new Set(['https://fonts.googleapis.com', 'https://fonts.gstatic.com']);
 

@@ -1,36 +1,5 @@
 # SWGOH::RESOURCES — Event Schedule
 
-## Era material calculator
-
-`/era-chart/` uses the homepage styling and a single material table. Target
-level and unit count determine upgrade costs; a linked G12/G13/Relic 1–8
-selector uses the mini-era's gear conversion bands. Full episode tracks, Adelphi
-Ranger first-clear rewards and per-tier daily claims reduce the remaining
-amounts. Regular marquee claims include the first day and default to one
-when a tier is selected. Claims are capped at the seven-day event duration;
-one selector sets all tiers. Set Custom Daily Claims edits individual tiers in a
-modal; Finish closes it and returns focus to the opener. B1 Mercenary Droid
-shows matching inactive controls while unreleased, and its placeholder
-rewards are excluded from the runtime data.
-
-Each Coliseum boss has independent tier/percentage inputs. Completed tiers
-and reached milestones count once per boss, including fixed prize-box
-contents. Tier 7's 10–90% milestones include materials; its 100% milestone
-and every Tier 8 milestone contribute only to that boss's separate Era
-Currency payout. `ERA_CURRENCY` is never subtracted from upgrade currency.
-MK VII and VIII upgrade material rows remain visible at every target level.
-
-Regenerate from the retained game extracts with
-`node scripts/build-era-marquees.mjs`,
-`node scripts/build-era-coliseum.mjs`, then `npm run cache:bust`.
-The prize-box subset records its pinned mirror revision and source blob.
-`tests/era-chart.test.js` checks source parity, reward thresholds, daily vs
-first-clear rewards, persistence and input behavior. Plans stay in this
-browser under `swgoh-era-checklist-v2`.
-
-G12 +1–5 start at Era Levels 56, 58, 60, 62 and 64, respectively, per
-[CG's Mini-Era announcement](https://swgoh.gg/news/the-mandalorian-and-grogu-mini-era/).
-
 ## Squad planner
 
 `/squads/` (source `squads.html`) provides a faction roster and squad board

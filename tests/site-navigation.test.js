@@ -5,11 +5,17 @@ import { JSDOM } from 'jsdom';
 import { CLEAN_ROUTES } from '../scripts/cache-bust.mjs';
 
 const root = new URL('../', import.meta.url);
-const expected = [['/', 'Home'], ['/conquest/', 'Conquest'], ['/materials/', 'Materials'], ['/era-chart/', 'Era Chart']];
+const expected = [['/', 'Home'], ['/conquest/', 'Conquest']];
 const legal = [['/privacy/', 'Privacy'], ['/cookie-policy/', 'Cookies'], ['/terms/', 'Terms']];
 const links = (doc, selector) => [...doc.querySelectorAll(selector)].map(a => [a.getAttribute('href'), a.textContent.trim()]);
 
 test('every published page has the same visible navigation and footer, with legal links and no hidden pages', () => {
+  for (const route of ['materials', 'era-chart']) {
+    assert.ok(!CLEAN_ROUTES.includes(route), route + ' must not be generated');
+    assert.ok(!fs.existsSync(new URL(route + '.html', root)), route + ' source must be removed');
+    assert.ok(!fs.existsSync(new URL(route + '/index.html', root)), route + ' published page must be removed');
+    assert.ok(!fs.readFileSync(new URL('sitemap.xml', root), 'utf8').includes('/' + route + '/'), route + ' sitemap entry must be removed');
+  }
   const pages = ['index.html', '404.html', ...CLEAN_ROUTES.flatMap(route => [route + '.html', route + '/index.html'])];
   for (const page of pages) {
     const dom = new JSDOM(fs.readFileSync(new URL(page, root), 'utf8'));

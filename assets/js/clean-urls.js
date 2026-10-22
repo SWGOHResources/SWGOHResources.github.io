@@ -6,10 +6,8 @@
   const routes = {
     '/index.html': '/',
     '/conquest.html': '/conquest/',
-    '/era-chart.html': '/era-chart/',
     '/squads.html': '/squads/',
     '/game-timeline.html': '/game-timeline/',
-    '/materials.html': '/materials/',
     '/privacy.html': '/privacy/',
     '/cookie-policy.html': '/cookie-policy/',
     '/terms.html': '/terms/',

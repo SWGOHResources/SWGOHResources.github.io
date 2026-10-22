@@ -10,7 +10,7 @@ function worker({failWrites=false}={}) {
   const cache={match:async req=>entries.get(key(req))?.clone(),put:async(req,res)=>{if(failWrites)throw Error('quota');entries.set(key(req),res);}};
   const context=vm.createContext({URL,Response,
     self:{location:{origin:'https://example.test'},clients:{claim:async()=>{}},addEventListener:(name,fn)=>{handlers[name]=fn;}},
-    caches:{open:async()=>cache,keys:async()=>['another-app','swgoh-schedule-v9','swgoh-schedule-v10'],delete:async name=>deleted.push(name)},
+    caches:{open:async()=>cache,keys:async()=>['another-app','swgoh-schedule-v9','swgoh-schedule-v10','swgoh-schedule-v11'],delete:async name=>deleted.push(name)},
     fetch:async()=>{fetches++;if(offline)throw Error('offline');return new Response(body,{status});}
   });
   vm.runInContext(fs.readFileSync(new URL('../sw.js',import.meta.url),'utf8'),context);
@@ -26,7 +26,7 @@ function worker({failWrites=false}={}) {
 
 test('activation deletes only caches owned by this app',async()=>{
   const h=worker();let pending;h.handlers.activate({waitUntil:p=>{pending=p;}});await pending;
-  assert.deepEqual(h.deleted,['swgoh-schedule-v9']);
+  assert.deepEqual(h.deleted,['swgoh-schedule-v9','swgoh-schedule-v10']);
 });
 test('partial model requests and unrelated external requests bypass app caching',async()=>{
   const h=worker();
