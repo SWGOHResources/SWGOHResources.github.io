@@ -236,7 +236,8 @@ const BONUS_REWARD_ICONS = {
   'Corrupted Signal': 'materials/RM_004_scavenger_data04.png',
   'Coaxial': 'materials/SCV_011_scavenger_servomotor.png',
 };
-const CONQUEST_UNIT_IMAGE = 'events/conquest.png';
+const CONQUEST_UNIT_IMAGE = 'live/conquest-embokeibu.png';
+const CONQUEST_UNIT_NAME = 'Embo & Keibu';
 const ERA_UNIT_IMAGE = 'events/eraicon.png';
 
 function ev(icon, label){

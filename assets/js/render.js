@@ -22,6 +22,25 @@ function setClockText(container, key, value){
   if(node && node.textContent !== value) node.textContent = value;
 }
 
+function deadlineFactHTML(label, value, note = ''){
+  return `<div class="deadline-fact"><dt>${escHTML(label)}</dt><dd>${value}${note ? `<span class="deadline-note">${escHTML(note)}</span>` : ''}</dd></div>`;
+}
+
+function deadlineGacHTML(label, window){
+  return deadlineFactHTML(label, window
+    ? `<time datetime="${new Date(window.startMs).toISOString()}">${escHTML(fmtDateRange(window.startMs, window.endMs))}</time>` : 'TBA',
+    window ? `Week ${window.week} (${window.format})` : '');
+}
+
+function renderEraEligibility(st){
+  const el = document.getElementById('eraEligibility');
+  if(!el) return;
+  const endMs = st.era ? st.era.endMs : st.eraEndMs;
+  const window = st.eraKnown !== false && Number.isFinite(endMs)
+    ? firstGacForUnlock(endMs + stdHour() * 3600000) : null;
+  el.innerHTML = `<dl><dt>Era units first GAC</dt><dd>${window ? `Week ${window.week} (${window.format})<time datetime="${new Date(window.startMs).toISOString()}">${escHTML(fmtDateRange(window.startMs, window.endMs))}</time>` : 'TBA'}</dd></dl>`;
+}
+
 function renderUnlockWindows(st, opts){
   const el = document.getElementById('unlockWindows');
   if(!el) return;
@@ -32,44 +51,26 @@ function renderUnlockWindows(st, opts){
   const cqUnlocked = cqAbs <= st.rawDayIndex || cqDays <= 0;
   const cqUnlockMs = cqDateMs + stdHour() * 3600000;
   const cqMain = cqUnlocked ? 'Unit yet to be announced'
-    : subDayCount(st.nowMs, cqUnlockMs, `In ${cqDays} day${cqDays === 1 ? '' : 's'}`);
-  const cqLockDate = cqDateMs + 86400000 * conquestLockOffsetDays();
-  const cqInfo = gacInfoForDate(cqLockDate);
-  const cqGac = gacUsableWeek(cqInfo.cycleDay, cqInfo.format);
-
-  const nextEraFromDay = st.preEra ? st.rawDayIndex : st.rawDayIndex + 1;
-  const eraAbs = st.era ? Math.round((st.era.endMs - st.eraBaseStartMs) / 86400000) + 1
-    : nextOccurrenceAbs(ERA_START_OFFSETS, nextEraFromDay, eraLengthDays());
-  const eraDateMs = absDayToInfo(eraAbs, st.eraBaseStartMs).dateMs;
-  const eraLockDate = eraDateMs + 86400000 * eraLockOffsetDays();
-  const eraInfo = gacInfoForDate(eraLockDate);
-  const eraGac = gacUsableWeek(eraInfo.cycleDay, eraInfo.format);
-  const gacWeekDates = (dateMs, info) => {
-    const startMs = dateMs - ((info.cycleDay - 1) % 7) * 86400000
-      + (info.cycleDay > 21 ? 7 * 86400000 : 0) + gacHour() * 3600000;
-    return fmtDateRange(startMs, startMs + 6 * 86400000);
-  };
+    : `Unlocks in ${formatEventCountdown(cqUnlockMs - st.nowMs)}`;
+  const cqGac = firstGacForUnlock(cqUnlockMs);
 
   const cron = getCurrentDatacronSet(st.nowMs);
   const cronMeta = (cron && CRON_COLOR_META[cron.color]) || CRON_COLOR_META.orange;
-  const daysLeft = cron ? Math.floor((cron.expiresMs - st.nowMs) / 86400000) : 0;
   const cronMain = !cron ? 'Dates TBA' : cron.allExpired ? 'Expired'
-    : subDayCount(st.nowMs, cron.expiresMs, daysLeft <= 0 ? 'Expires today' : `In ${daysLeft} day${daysLeft === 1 ? '' : 's'}`);
+    : `Expires in ${formatEventCountdown(cron.expiresMs - st.nowMs)}`;
   const lastUsable = cron ? getLastUsableGuildEvent(cron.expiresMs, st.eraBaseStartMs) : null;
   let cronGac = null;
-  let cronGacDates = '';
   if(lastUsable && lastUsable.gac){
     const info = gacInfoForTimestamp(lastUsable.gac.startMs);
-    cronGac = gacUsableWeek(info.cycleDay, info.format);
-    cronGacDates = gacWeekDates(lastUsable.gac.dateMs, info);
+    const startMs = lastUsable.gac.dateMs - ((info.cycleDay - 1) % 7) * 86400000 + gacHour() * 3600000;
+    cronGac = { ...gacUsableWeek(info.cycleDay, info.format), startMs, endMs:startMs + 6 * 86400000 };
   }
   const lastTw = lastUsable && lastUsable.tw
     ? (lastUsable.tw.twNumber ? `War ${lastUsable.tw.twNumber}` : 'TBA') : '';
-  let twDates = '';
+  let twSignupMs = null;
   if(lastUsable && lastUsable.tw){
     const phaseOffset = { tw_signup:0, tw_defense:1, tw_offense:2, tw_payout:3 }[lastUsable.tw.item.icon] ?? 0;
-    const signupMs = lastUsable.tw.dateMs - phaseOffset * 86400000 + twTbHour() * 3600000;
-    twDates = `Signup ${fmtShortDate(signupMs)}`;
+    twSignupMs = lastUsable.tw.dateMs - phaseOffset * 86400000 + twTbHour() * 3600000;
   }
 
   if(opts && opts.clockOnly){
@@ -77,27 +78,28 @@ function renderUnlockWindows(st, opts){
     setClockText(el, 'cron-expiry', cronMain);
     return;
   }
-  const eraEl = document.getElementById('eraEligibility');
-  if(eraEl){
-    eraEl.innerHTML = `<dl class="usage-fields"><div class="usage-gac"><dt>Era units first GAC</dt><dd>${st.eraKnown === false ? 'TBA' : `Week ${eraGac.week} (${eraGac.format})`}${st.eraKnown === false ? '' : `<span class="usage-dates">${gacWeekDates(eraLockDate, eraInfo)}</span>`}</dd></div></dl>`;
-  }
   el.innerHTML = `
-    <div class="schedule-deadline" style="--deadline-accent:${CATEGORY_META.conquest.accent}">
+    <article class="schedule-deadline" style="--deadline-accent:${CATEGORY_META.conquest.accent}">
       <div class="deadline-heading">
-        <img class="deadline-icon" src="${imgPath(CONQUEST_UNIT_IMAGE)}" alt="" decoding="async" onerror="this.remove()">
-        <div class="deadline-title"><h2>Conquest Unit Unlock</h2><p class="deadline-date"><span>${cqUnlocked ? 'Conquest ended' : 'Unlocks'}</span> <time datetime="${new Date(cqUnlockMs).toISOString()}">${fmtShortDate(cqUnlockMs)}</time></p></div>
-        <strong class="deadline-count" data-clock="cq-unlock">${cqMain}</strong>
+        <img class="deadline-icon is-unit" src="${imgPath(CONQUEST_UNIT_IMAGE)}" alt="${escAttr(CONQUEST_UNIT_NAME)}" decoding="async" onerror="this.remove()">
+        <div class="deadline-title"><h2>Conquest Unit Unlock</h2><p class="deadline-count" data-clock="cq-unlock">${cqMain}</p></div>
       </div>
-      <dl class="deadline-eligibility usage-fields"><div class="usage-gac"><dt>First GAC</dt><dd>Week ${cqGac.week} (${cqGac.format})<span class="usage-dates">${gacWeekDates(cqLockDate, cqInfo)}</span></dd></div></dl>
-    </div>
-    <div class="schedule-deadline" style="--deadline-accent:${cronMeta.accent}">
+      <dl class="deadline-facts">
+        ${deadlineFactHTML(cqUnlocked ? 'Conquest ended' : 'Unlocks', `<time datetime="${new Date(cqUnlockMs).toISOString()}">${escHTML(fmtShortEventStart(cqUnlockMs))}</time>`)}
+        ${deadlineGacHTML('First GAC', cqGac)}
+      </dl>
+    </article>
+    <article class="schedule-deadline" style="--deadline-accent:${cronMeta.accent}">
       <div class="deadline-heading">
         <img class="deadline-icon" src="${imgPath(cronMeta.asset)}" alt="" decoding="async" onerror="this.remove()">
-        <div class="deadline-title"><h2>${cron ? `${escHTML(cron.name)}${cron.hasFDC ? ' + FDC' : ''}` : 'Datacron expiration'}</h2>${cron ? `<p class="deadline-date"><span>Expires</span> <time datetime="${new Date(cron.expiresMs).toISOString()}">${escHTML(fmtShortEventStart(cron.expiresMs))}</time></p>` : '<p class="deadline-date">No datacron set announced</p>'}</div>
-        <strong class="deadline-count" data-clock="cron-expiry">${cronMain}</strong>
+        <div class="deadline-title"><h2>${cron ? `${escHTML(cron.name)}${cron.hasFDC ? ' + FDC' : ''}` : 'Datacron expiration'}</h2><p class="deadline-count" data-clock="cron-expiry">${cronMain}</p></div>
       </div>
-      <dl class="deadline-eligibility usage-fields"><div class="usage-gac"><dt>Last GAC</dt><dd>${cronGac ? `Week ${cronGac.week} (${cronGac.format})` : 'TBA'}${cronGacDates ? `<span class="usage-dates">${cronGacDates}</span>` : ''}</dd></div>${lastTw ? `<div class="usage-tw"><dt>Last TW</dt><dd>${lastTw}<span class="usage-dates">${twDates}</span></dd></div>` : ''}</dl>
-    </div>`;
+      <dl class="deadline-facts">
+        ${deadlineFactHTML('Expires', cron ? `<time datetime="${new Date(cron.expiresMs).toISOString()}">${escHTML(fmtShortEventStart(cron.expiresMs))}</time>` : 'TBA')}
+        ${deadlineGacHTML('Last GAC', cronGac)}
+        ${lastTw ? deadlineFactHTML('Last TW', `<time datetime="${new Date(twSignupMs).toISOString()}">${escHTML(fmtShortEventStart(twSignupMs))}</time>`, `${lastTw} signup`) : ''}
+      </dl>
+    </article>`;
 }
 
 function gacRoundTrackerHTML(gac){
@@ -197,6 +199,7 @@ function renderMergedHero(st){
   document.getElementById('mhEpVal').textContent = `${st.episode} of ${episodeCount}`;
   document.getElementById('mhWeekVal').textContent = `${st.week} of ${weeksPerEpisode}`;
   document.getElementById('mhWeekdayVal').textContent = st.weekdayName;
+  renderEraEligibility(st);
 
   const fillPct = Math.min(100, Math.max(0, (st.bossEraDay / length) * 100));
   document.getElementById('mhFill').style.width = fillPct + '%';

@@ -732,6 +732,26 @@ test('off-week GAC locks roll into Week 1 of the next cycle', () => {
   }
 });
 
+test('first eligible GAC uses the actual roster lock and skips closed weeks', () => {
+  const engine = loadTimeEngine();
+  const cases = [
+    ['2026-11-17T18:00:00Z', '2026-11-18T21:00:00Z', '2026-11-17T21:00:00Z', 3, '3v3'],
+    ['2026-11-18T20:59:59Z', '2026-11-18T21:00:00Z', '2026-11-17T21:00:00Z', 3, '3v3'],
+    ['2026-11-18T21:00:00Z', '2026-12-02T21:00:00Z', '2026-12-01T21:00:00Z', 1, '5v5'],
+    ['2026-11-25T18:00:00Z', '2026-12-02T21:00:00Z', '2026-12-01T21:00:00Z', 1, '5v5'],
+    ['2026-12-07T18:00:00Z', '2026-12-09T21:00:00Z', '2026-12-08T21:00:00Z', 2, '5v5'],
+  ];
+  for(const [unlock, lock, signup, week, format] of cases){
+    const result = engine.firstGacForUnlock(Date.parse(unlock));
+    assert.equal(result.lockMs, Date.parse(lock), unlock);
+    assert.equal(result.startMs, Date.parse(signup), unlock);
+    assert.equal(result.endMs, result.startMs + 6 * dayMs);
+    assert.equal(result.week, week);
+    assert.equal(result.format, format);
+  }
+  assert.equal(engine.firstGacForUnlock(NaN), null);
+});
+
 test('validator flags malformed schedule tables', () => {
   const engine = loadTimeEngine({
     commonDays: { 3: 'oops', 4: [{ icon: 'tw_signup' }] },

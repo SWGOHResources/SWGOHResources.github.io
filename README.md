@@ -178,11 +178,13 @@ continue through their last full activity day and do not linger on their
 handover date. Timers count to the start before launch and to the end while
 running, including clock-only refreshes. Only the
 Coliseum boss remains in the indicators row. The schedule sits directly below
-era progress. Era-unit GAC eligibility lives inside the era
-panel; the schedule includes Conquest unlock and datacron expiry deadlines, with
-GAC usage emphasized and dates grouped into their headings. Roster-lock dates
-are omitted from these summaries. There is no separate Important Dates or
-mode-status section.
+era progress. Era-unit GAC eligibility sits beside the day count. Conquest
+unlock and datacron expiry summaries follow the schedule, with matching date
+and eligibility rows and the Conquest reward unit's portrait. First-GAC dates
+use the first Round 1 defense roster lock after the unit becomes available,
+skipping closed weeks and the off-week. Roster-lock dates are omitted from
+the displayed summaries. For the current mini-era this gives the 17–23 November
+2026 signup week (3v3), with its roster lock on 18 November at 21:00 UTC.
 
 Conquest cards show the volume number and ordinal run description. The volume
 anchor is configured in `CONQUEST_VOLUME_ANCHOR_DATE` and `CONQUEST_VOLUME_ANCHOR`;

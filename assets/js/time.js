@@ -208,6 +208,23 @@ function gacUsableWeek(cycleDay, format){
   return { week: 1, format: format === '5v5' ? '3v3' : '5v5' };
 }
 
+function firstGacForUnlock(unlockMs){
+  if(!Number.isFinite(unlockMs)) return null;
+  const dayMs = 86400000;
+  const firstDay = Math.floor(unlockMs / dayMs) * dayMs;
+  for(let offset = 0; offset <= 35; offset++){
+    const dateMs = firstDay + offset * dayMs;
+    const info = gacInfoForDate(dateMs);
+    const round = getGacRoundInfo(info.cycleDay);
+    const lockMs = dateMs + gacHour() * 3600000;
+    if(round.phase === 'defense' && round.round === 1 && lockMs > unlockMs){
+      const startMs = lockMs - dayMs;
+      return { week:round.week, format:info.format, startMs, endMs:startMs + 6 * dayMs, lockMs };
+    }
+  }
+  return null;
+}
+
 function gacEventsForDate(dateMs){
   const info = gacInfoForDate(dateMs);
   const rnd = getGacRoundInfo(info.cycleDay);

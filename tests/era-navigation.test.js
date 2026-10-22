@@ -357,7 +357,7 @@ test('TB end and TW payout markers stay in the timing engine but leave schedule 
     assert.ok(!f.doc.querySelector('.game-event-card[aria-label*="Ends"]'));
     assert.ok(!f.doc.querySelector('.game-event-card[aria-label*="Ended"]'));
     assert.equal(f.doc.querySelector('#statusDashboard'), null);
-    assert.equal(f.doc.querySelectorAll('#unlockWindows > div').length, 2);
+    assert.equal(f.doc.querySelectorAll('#unlockWindows > article').length, 2);
     assert.ok(f.w.getGuildPhaseInfo(f.w.getGameStatus()));
   } finally { f.dom.window.close(); }
 });
@@ -406,17 +406,19 @@ test('day cards pin additive drops, then sort new starts ahead of continuing eve
 });
 
 
-test('GAC eligibility stays integrated without roster-lock dates', async () => {
+test('eligibility summaries follow the schedule with consistent facts and an integrated era date', async () => {
   const f = await fixture('#day-83', '2026-10-18T12:00:00Z');
   try {
     const hero = f.doc.querySelector('#mergedHero');
     const deadlines = f.doc.querySelector('#unlockWindows');
     assert.ok(hero.contains(f.doc.querySelector('#eraEligibility')));
+    assert.ok(f.doc.querySelector('.mh-title-row #eraEligibility'));
     assert.match(f.doc.querySelector('#eraEligibility').textContent, /Era units first GAC.*Week 3 \(5v5\)/s);
     assert.doesNotMatch(hero.textContent, /Roster locks/);
     assert.equal(f.doc.querySelector('[data-clock="era-end"]'), null);
     assert.equal(f.doc.querySelector('section[aria-label="Important dates"]'), null);
-    assert.ok(deadlines.closest('.explorer'));
+    assert.equal(deadlines.closest('.explorer'), null);
+    assert.ok(f.doc.querySelector('.explorer').compareDocumentPosition(deadlines) & f.w.Node.DOCUMENT_POSITION_FOLLOWING);
     assert.equal(f.doc.querySelector('.explorer-note'), null);
     assert.equal(deadlines.children.length, 2);
     assert.equal(deadlines.children[0].querySelector('h2').textContent, 'Conquest Unit Unlock');
@@ -425,20 +427,24 @@ test('GAC eligibility stays integrated without roster-lock dates', async () => {
     assert.match(deadlines.children[0].textContent, /First GAC.*Week 2 \(5v5\)/s);
     assert.match(deadlines.children[1].textContent, /Last GAC.*Week 3 \(5v5\).*Last TW.*War 2/s);
     assert.match(deadlines.children[1].textContent, /Supremacy Directive/);
-    assert.match(deadlines.querySelector('.usage-tw dd').textContent, /^War 2Signup 22 Oct$/);
-    assert.equal(deadlines.children[1].querySelector('.usage-gac .usage-dates').textContent, '20–26 Oct');
-    assert.equal(deadlines.children[0].querySelector('.usage-gac .usage-dates').textContent, '8–14 Dec');
-    assert.equal(deadlines.querySelectorAll('.usage-gac').length, 2);
+    assert.deepEqual([...deadlines.children[0].querySelectorAll('.deadline-fact dt')].map(el=>el.textContent), ['Unlocks', 'First GAC']);
+    assert.deepEqual([...deadlines.children[1].querySelectorAll('.deadline-fact dt')].map(el=>el.textContent), ['Expires', 'Last GAC', 'Last TW']);
+    assert.equal(deadlines.children[1].querySelectorAll('.deadline-fact time')[1].textContent, '20–26 Oct');
+    assert.equal(deadlines.children[0].querySelectorAll('.deadline-fact time')[1].textContent, '8–14 Dec');
+    assert.match(deadlines.children[1].querySelectorAll('.deadline-fact dd')[2].textContent, /22 Oct.*War 2 signup/s);
+    assert.doesNotMatch(deadlines.textContent, /[·•]/);
+    assert.match(deadlines.querySelector('img.is-unit').getAttribute('src'), /live\/conquest-embokeibu\.png/);
+    assert.equal(deadlines.querySelector('img.is-unit').alt, 'Embo & Keibu');
     assert.doesNotMatch(deadlines.textContent, /Payout/);
     const clock = deadlines.querySelector('[data-clock="cron-expiry"]');
-    assert.match(clock.textContent, /In .*days/);
+    assert.match(clock.textContent, /^Expires in \d+d \d+h$/);
     f.w.refreshClockDisplays(f.w.getGameStatus());
     assert.equal(deadlines.querySelector('[data-clock="cron-expiry"]'), clock);
     f.w.localStorage.setItem('swgoh-tz', 'Europe/London');
     f.w.renderAll();
     assert.doesNotMatch(f.doc.querySelector('#eraEligibility').textContent, /Roster locks|21st Oct/);
     assert.doesNotMatch(deadlines.textContent, /Roster locks|9th Dec/);
-    assert.match(deadlines.querySelector('.deadline-heading').textContent, /Unlocks 7 Dec/);
+    assert.match(deadlines.children[0].textContent, /Unlocks.*7 Dec, 18:00 GMT/s);
     assert.match(deadlines.children[1].textContent, /29 Oct, 18:00 GMT/);
   } finally { f.dom.window.close(); }
 
@@ -447,4 +453,17 @@ test('GAC eligibility stays integrated without roster-lock dates', async () => {
     assert.match(unknown.doc.querySelector('#eraEligibility').textContent, /TBA/);
     assert.doesNotMatch(unknown.doc.querySelector('#eraEligibility').textContent, /NaN|Invalid Date/);
   } finally { unknown.dom.window.close(); }
+});
+
+test('the current mini-era units first enter the 17 November 3v3 signup week', async () => {
+  const f = await fixture('#date-2026-10-23', '2026-10-22T18:00:00Z');
+  try {
+    const eligibility = f.doc.querySelector('#eraEligibility');
+    assert.match(eligibility.textContent, /Week 3 \(3v3\).*17–23 Nov/s);
+    assert.equal(eligibility.querySelector('time').dateTime, '2026-11-17T21:00:00.000Z');
+    const status = f.w.getGameStatus();
+    assert.equal(status.era.endMs, Date.parse('2026-11-17T00:00:00Z'));
+    const first = f.w.firstGacForUnlock(status.era.endMs + f.w.stdHour() * 3600000);
+    assert.equal(first.lockMs, Date.parse('2026-11-18T21:00:00Z'));
+  } finally { f.dom.window.close(); }
 });
