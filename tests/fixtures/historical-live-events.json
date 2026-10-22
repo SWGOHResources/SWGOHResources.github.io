@@ -1,0 +1,32 @@
+[
+  {
+    "id": "EVENT_BONUS_WAVE_1_101626",
+    "name": "Additive Drops: Wave 1",
+    "kind": "special",
+    "startMs": 1792108800000,
+    "endMs": 1792368000000,
+    "art": "atlases/standard_rgba_atlas/icon_gift.png",
+    "units": [
+      { "unit": "4LOM", "name": "4-LOM", "alignment": "dark", "portrait": "live/bonus-4lom.png", "details": "LS/DS Hard Battles", "energy": "live/energy-pve.png", "energyLabel": "Energy", "maxed": "Mk 7 Kyrotech Salvage" },
+      { "unit": "ZUCKUSS", "name": "Zuckuss", "alignment": "dark", "portrait": "live/bonus-zuckuss.png", "details": "Cantina Battles", "energy": "live/energy-cantina.png", "energyLabel": "Cantina Energy", "maxed": "Mk 9 Kyrotech Salvage" }
+    ]
+  },
+  {
+    "id": "progressionevent_MEESALESS_MASSACRE",
+    "name": "Terrible Tings Legendary Event",
+    "kind": "event",
+    "unit": "DARTHJARJAR",
+    "startMs": 1790100000000,
+    "endMs": 1792519200000,
+    "art": "live/events-darthjarjar.png"
+  },
+  {
+    "id": "EVENT_ASSAULT_EMPIRE",
+    "name": "Military Might Assault Battles",
+    "kind": "assault",
+    "unit": "EMPIREHORDE",
+    "startMs": 1792220400000,
+    "endMs": 1792306800000,
+    "art": "live/events-empirehorde.png"
+  }
+]

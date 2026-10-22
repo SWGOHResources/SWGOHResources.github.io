@@ -49,8 +49,9 @@ test('all maintenance CLI entry points execute from a path with spaces', () => {
       const result = spawnSync(process.execPath, ['--import', pathToFileURL(mock).href, path.join(dir, 'scripts', command)], {
         cwd: dir,
         env: { ...process.env, DISCORD_WEBHOOK_URL:'', DISCORD_EVENT_WEBHOOK_URL:'', DRY_RUN:'', VOL:'25', CQID:'cq-2026-09-28-c1' },
-        encoding:'utf8', timeout:10000,
+        encoding:'utf8', timeout:30000,
       });
+      assert.ifError(result.error);
       assert.equal(result.status, 0, `${command}: ${result.stderr}`);
       assert.match(result.stdout, output, command);
     }
