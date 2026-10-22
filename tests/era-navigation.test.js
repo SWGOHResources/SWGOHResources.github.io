@@ -81,6 +81,8 @@ test('main schedule details open the additive layout and restore keyboard focus'
     assert.equal(modal.querySelectorAll('.bdrop-row').length, 2);
     assert.equal(modal.querySelectorAll('.bdrop-reward-icon').length, 2);
     assert.match(modal.textContent, /Mk 7 Kyrotech Salvage/);
+    assert.equal(modal.querySelector('#bonusWaveWindow, #bonusWaveType, #bonusWaveCount, .bdrop-window, .bdrop-heading-meta'), null);
+    assert.doesNotMatch(modal.textContent, /Special Event|\d+ units|Starts|Ends/);
     assert.equal(modal.querySelectorAll('button').length, 1);
     f.w.renderAll({ preserveFocus:true });
     assert.ok(f.doc.contains(button));
@@ -106,9 +108,13 @@ test('only additive-drop cards offer details, including when other events carry 
 });
 
 test('card timing switches from countdown to expired status without replacing the card', async () => {
-  const f = await fixture('#day-82', '2026-10-16T20:00:00Z', historicalEvents);
+  const endMs = Date.parse('2026-10-16T22:00:00Z');
+  const f = await fixture('#day-81', '2026-10-16T20:00:00Z', [{
+    id:'EVENT_ASSAULT_TEST', name:'Assault Test', kind:'assault',
+    startMs:Date.parse('2026-10-16T19:00:00Z'), endMs
+  }]);
   try {
-    const timer = [...f.doc.querySelectorAll('[data-clock-end]')].find(node => node.dataset.timingKind === 'time');
+    const timer = f.doc.querySelector(`[data-clock-end="${endMs}"]`);
     assert.ok(timer);
     const card = timer.closest('.game-event-card');
     f.w.refreshClockDisplays(f.w.getGameStatus(Number(timer.dataset.clockEnd) + 1));
@@ -121,14 +127,14 @@ test('card timing switches from countdown to expired status without replacing th
 
 test('card clocks switch from start countdown to end countdown in place', async () => {
   const startMs = Date.parse('2026-10-20T18:00:00Z');
-  const endMs = Date.parse('2026-10-27T18:00:00Z');
+  const endMs = Date.parse('2026-10-20T22:00:00Z');
   const f = await fixture('#date-2026-10-20', '2026-10-20T17:59:00Z', [{
     id:'EVENT_MARQUEE_ADELPHIRANGER', name:'Adelphi Ranger Marquee', unit:'ADELPHIRANGER', kind:'marquee', startMs, endMs
   }]);
   try {
     const timer = f.doc.querySelector(`[data-clock-start="${startMs}"][data-clock-end="${endMs}"]`);
     assert.ok(timer);
-    assert.equal(timer.textContent, 'In 1m');
+    assert.equal(timer.textContent, 'Starts in 1m');
     const card = timer.closest('.game-event-card');
     f.w.refreshClockDisplays(f.w.getGameStatus(startMs));
     assert.match(timer.textContent, /^Ends in /);
@@ -139,6 +145,50 @@ test('card clocks switch from start countdown to end countdown in place', async 
     f.w.refreshClockDisplays(f.w.getGameStatus(endMs));
     assert.equal(timer.textContent, 'Expired');
     assert.equal(timer.dataset.timingKind, 'status');
+  } finally { f.dom.window.close(); }
+});
+
+test('past days omit all timer badges even for events still running today', async () => {
+  const f = await fixture('#day-81', '2026-10-17T20:00:00Z', historicalEvents);
+  try {
+    const detail = f.doc.querySelector('#dayDetail');
+    assert.ok(detail.querySelectorAll('.game-event-card').length > 0);
+    assert.ok(detail.querySelector('button[data-bonus-wave]'));
+    assert.equal(detail.querySelector('.xcard-rel, .xcard-art-meta, [data-clock-start]'), null);
+    f.w.refreshClockDisplays(f.w.getGameStatus());
+    assert.equal(detail.querySelector('.xcard-rel, [data-clock-start]'), null);
+    f.w.renderAll({ preserveFocus:true });
+    assert.equal(detail.querySelector('.xcard-rel, [data-clock-start]'), null);
+    f.doc.querySelector('#dayToday').click();
+    assert.ok(detail.querySelector('[data-clock-start]'));
+    assert.match(detail.querySelector('.game-event-card[aria-label="Additive Drops: Wave 1"] .xcard-rel').textContent, /^Expires in /);
+  } finally { f.dom.window.close(); }
+});
+
+test('clock refresh removes yesterday timers at the Today boundary without replacing cards', async () => {
+  const f = await fixture('#date-2026-10-17', '2026-10-18T17:59:00Z', historicalEvents);
+  try {
+    const card = f.doc.querySelector('.game-event-card[aria-label="Additive Drops: Wave 1"]');
+    assert.ok(card.querySelector('[data-clock-start]'));
+    f.w.refreshClockDisplays(f.w.getGameStatus(Date.parse('2026-10-18T18:00:00Z')));
+    assert.ok(f.doc.contains(card));
+    assert.equal(f.doc.querySelector('#dayDetail .xcard-rel, #dayDetail [data-clock-start]'), null);
+  } finally { f.dom.window.close(); }
+});
+
+test('additive countdowns retain expiration wording during clock refreshes', async () => {
+  const startMs = Date.parse('2026-10-23T00:00:00Z');
+  const endMs = Date.parse('2026-10-26T00:00:00Z');
+  const f = await fixture('#date-2026-10-23', '2026-10-22T23:59:00Z', [{
+    id:'EVENT_BONUS_WAVE_3_102326', name:'Additive Drops: Wave 3', kind:'special', startMs, endMs
+  }]);
+  try {
+    const timer = f.doc.querySelector(`[data-clock-start="${startMs}"]`);
+    assert.equal(timer.textContent, 'Starts in 1m');
+    f.w.refreshClockDisplays(f.w.getGameStatus(startMs));
+    assert.equal(timer.textContent, 'Expires in 3d 0h');
+    f.w.refreshClockDisplays(f.w.getGameStatus(startMs + 3600000));
+    assert.equal(timer.textContent, 'Expires in 2d 23h');
   } finally { f.dom.window.close(); }
 });
 
@@ -169,7 +219,7 @@ test('ongoing cards retain their original schedule window and leave only Coliseu
     assert.ok(bonus);
     bonus.click();
     assert.equal(f.doc.querySelectorAll('#bonusWaveBody .bdrop-row').length, 2);
-    assert.match(f.doc.querySelector('#bonusWaveWindow').textContent, /16th Oct/);
+    assert.equal(f.doc.querySelector('#bonusWaveWindow'), null);
     assert.match(f.doc.querySelector('#dayDetail').textContent, /Terrible Things/);
   } finally { f.dom.window.close(); }
 });

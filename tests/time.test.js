@@ -778,6 +778,26 @@ test('day hash bounds follow the configured era length', () => {
   assert.equal(engine.dayFromHash('#day-57'), null);
 });
 
+test('event countdowns use compact game durations and explicit start, end and expiration labels', () => {
+  const engine = loadTimeEngine();
+  const start = Date.parse('2026-10-23T18:00:00Z');
+  const end = start + 3 * dayMs;
+  const cases = [
+    [start - 2 * dayMs - 3 * 3600000, 'Ends', 'Starts in 2d 3h'],
+    [start - 60000, 'Expires', 'Starts in 1m'],
+    [start, 'Ends', 'Ends in 3d 0h'],
+    [start + 3600000, 'Expires', 'Expires in 2d 23h'],
+    [end - 4 * 3600000 - 20 * 60000, 'Ends', 'Ends in 4h 20m'],
+    [end - 1000, 'Ends', 'Ends in 1m'],
+    [end, 'Expires', 'Expired'],
+  ];
+  for(const [now, verb, expected] of cases){
+    assert.equal(engine.eventTimerLabel(start, end, now, verb), expected);
+  }
+  assert.equal(engine.eventTimerLabel(NaN, end, start), '');
+  assert.equal(engine.eventTimerLabel(start, null, start), 'Now');
+});
+
 test('future cards count to their own start instant, not the changeover', () => {
   const { ctx, els } = loadRenderEngine();
   const run = src => vm.runInContext(src, ctx);
@@ -795,10 +815,10 @@ test('future cards count to their own start instant, not the changeover', () => 
   // Every pill counts forward on a future day — never past wording…
   const pills = [...els.dayDetail.innerHTML.matchAll(/xcard-rel[^"]*">([^<]+)</g)].map(m => m[1]);
   assert.ok(pills.length > 0, 'expected cards on the GAC day');
-  for (const p of pills) assert.match(p, /^(Now|In |Ends in )/);
+  for (const p of pills) assert.match(p, /^(Now|Starts in |Ends in |Expires in )/);
   assert.ok(!pills.some(p => /Yesterday|ago/.test(p)), 'no past wording on a future day');
   // …and GAC pills never claim the 18:00 changeover moment.
-  assert.ok(pills.some(p => /^In /.test(p)), 'expected countdown pills');
+  assert.ok(pills.some(p => /^Starts in /.test(p)), 'expected countdown pills');
 });
 
 test('day pills show weekday, calendar date and month across the month boundary', () => {

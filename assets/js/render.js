@@ -563,6 +563,10 @@ function gameEventRewardUnit(icon, live){
   return { name, portrait:portraits[icon] ? `live/bonus-${portraits[icon]}.png` : null };
 }
 
+function eventTimerEndVerb(event){
+  return isDropEvent(event) || /\bexpir(?:es?|ation)\b/i.test(event && (event.name || event.label) || '') ? 'Expires' : 'Ends';
+}
+
 function gameEventCardHTML(model){
   model.title = model.copy.type === 'Conquest' ? model.copy.title : eventDisplayTitle(model.icon, model.title, model.liveEvent);
   const key = `${model.icon || model.liveId || model.title}|${model.startMs}`;
@@ -572,12 +576,13 @@ function gameEventCardHTML(model){
   const bonus = model.bonusId;
   const action = bonus ? `<button type="button" class="game-event-action" data-bonus-wave="${escAttr(bonus)}" onclick="openBonusWave('${bonus}')" aria-label="Details for ${escAttr(model.title)}">DETAILS</button>` : '';
   const facts = cardWhenRow(model.startMs, model.duration);
+  const endVerb = eventTimerEndVerb(model.liveEvent || { label:model.title });
   return `<article class="xcard game-event-card${model.copy.title.length > 22 ? ' long-title' : ''}${bonus ? ' is-clickable' : ''}" style="${model.style}" aria-label="${escAttr(model.title)}">
     <div class="xcard-art${model.fit ? ' fit' : ''}${model.shared ? ' icon-art' : ''}${model.drop ? ' drop-art' : ''}${model.era ? ' era-art' : ''}${model.datacron ? ' datacron-art' : ''}${model.icon === 'client_update' ? ' update-art' : ''}">
       ${model.shared ? iconCardBackdropHTML() : `<div class="art-badge" aria-hidden="true">${escHTML(model.glyph)}</div>`}
       ${model.art ? `<img src="${imgPath(model.art)}" alt="" loading="${model.shared ? 'eager' : 'lazy'}" decoding="async" onerror="this.remove()">` : ''}
       <div class="xcard-shade"></div>
-      <div class="xcard-art-meta"><span data-clock-start="${model.startMs}"${Number.isFinite(model.endMs) ? ` data-clock-end="${model.endMs}"` : ''} data-timing-kind="${/\d/.test(model.relLabel) ? 'time' : 'status'}" class="${relCls}">${model.relLabel}</span></div>
+      ${model.relLabel ? `<div class="xcard-art-meta"><span data-clock-start="${model.startMs}"${Number.isFinite(model.endMs) ? ` data-clock-end="${model.endMs}"` : ''} data-clock-end-verb="${endVerb}" data-timing-kind="${/\d/.test(model.relLabel) ? 'time' : 'status'}" class="${relCls}">${model.relLabel}</span></div>` : ''}
     </div>
     <div class="xcard-body"><h4>${escHTML(model.copy.title)}</h4><div class="xcard-kicker">${escHTML(model.copy.type)}</div>${model.description ? `<div class="xcard-sub">${escHTML(model.description)}</div>` : ''}<div class="game-event-facts">${facts}</div></div>
     <div class="game-event-footer"><p>${escHTML(model.copy.caption)}</p>${action}</div>
@@ -591,11 +596,6 @@ function openEventRewards(key){
   const modal = document.getElementById('bonusWaveModal');
   if(!body || !modal) return;
   document.getElementById('bonusWaveTitle').textContent = model.title;
-  const type = document.getElementById('bonusWaveType');
-  if(type) type.textContent = model.copy.type;
-  const count = document.getElementById('bonusWaveCount');
-  if(count) count.textContent = '';
-  document.getElementById('bonusWaveWindow').innerHTML = bonusWaveWindowHTML(model);
   const unit = model.rewardUnit;
   body.innerHTML = unit
     ? `<li class="bdrop-row marquee-reward"><div class="bdrop-unit"><span class="bdrop-shard" aria-hidden="true"><img class="bdrop-shard-background" src="${imgPath('atlases/standard_rgba_atlas/ShardIcon.png')}" alt="">${unit.portrait ? `<img class="bdrop-shard-unit" src="${imgPath(unit.portrait)}" alt="">` : ''}</span><div><h4 class="bdrop-name">${escHTML(unit.name)}</h4><p class="reward-kind">Character shards</p></div></div><dl class="bdrop-details"><div class="bdrop-field"><dt>Event</dt><dd>${escHTML(model.copy.type)}</dd></div></dl></li>`
@@ -655,13 +655,6 @@ function bonusWaveRowsHTML(entry){
   }).join('');
 }
 
-function bonusWaveWindowHTML(entry){
-  return `<dl class="bdrop-window">` + [['Starts', entry && entry.startMs], ['Ends', entry && entry.endMs]]
-    .filter(([, ms]) => Number.isFinite(ms) && Number.isFinite(new Date(ms).getTime()))
-    .map(([label, ms]) => `<div><dt>${label}</dt><dd><time datetime="${new Date(ms).toISOString()}">${escHTML(fmtEventStart(ms))}</time></dd></div>`)
-    .join('') + `</dl>`;
-}
-
 function openBonusWave(id){
   const entry = (typeof liveEventsCache !== 'undefined' && liveEventsCache && Array.isArray(liveEventsCache.events))
     ? liveEventsCache.events.find(e => e && e.id === id) : null;
@@ -669,17 +662,8 @@ function openBonusWave(id){
   const title = document.getElementById('bonusWaveTitle');
   const body = document.getElementById('bonusWaveBody');
   const modal = document.getElementById('bonusWaveModal');
-  const timing = document.getElementById('bonusWaveWindow');
-  const count = document.getElementById('bonusWaveCount');
   if(!body || !modal) return;
   if(title) title.textContent = liveDisplayName(entry);
-  const type = document.getElementById('bonusWaveType');
-  if(type) type.textContent = 'Special Event';
-  if(timing) timing.innerHTML = bonusWaveWindowHTML(entry);
-  if(count){
-    const n = Array.isArray(entry.units) ? entry.units.length : 0;
-    count.textContent = `${n} unit${n === 1 ? '' : 's'}`;
-  }
   body.innerHTML = bonusWaveRowsHTML(entry);
   if(typeof openModal === 'function') openModal(modal);
   else {
@@ -1220,10 +1204,11 @@ function renderExplorer(st){
     ...rotationEventsForDay(cur.dMs).filter(entry => !covered.has(entry.item.icon)),
   ];
   const cards = orderScheduleCards(entries, cur.dMs).map(entry => {
-    const timing = eventTimerLabel(entry.startMs, entry.endMs, st.nowMs);
+    const timing = cur.offset < 0 ? '' : eventTimerLabel(entry.startMs, entry.endMs, st.nowMs, eventTimerEndVerb(entry.live || entry.item));
     return entry.live ? liveCardHTML(entry.live, timing)
       : explorerCardHTML(entry.item, entry.dateMs, timing, entry.tbCtx, st.nowMs);
   }).join('');
+  detail.dataset.clockDay = String(cur.dMs);
   detail.innerHTML = `
     <div class="day-detail-head">
       <div class="day-detail-title">
@@ -1469,8 +1454,12 @@ function refreshClockDisplays(st){
   const detail = document.getElementById('dayDetail');
   if(detail){
     detail.querySelectorAll('[data-clock-start]').forEach(node => {
+      if(Number(detail.dataset.clockDay) < st.currentDayStartMs){
+        node.closest('.xcard-art-meta').remove();
+        return;
+      }
       const endMs = Number(node.dataset.clockEnd);
-      const label = eventTimerLabel(Number(node.dataset.clockStart), endMs, st.nowMs);
+      const label = eventTimerLabel(Number(node.dataset.clockStart), endMs, st.nowMs, node.dataset.clockEndVerb);
       if(node.textContent !== label) node.textContent = label;
       node.dataset.timingKind = /\d/.test(label) ? 'time' : 'status';
       node.classList.toggle('is-today', label === 'Now');

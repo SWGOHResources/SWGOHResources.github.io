@@ -166,8 +166,8 @@ of the expected rotation: live events render first as standard cards
 with the same game-style layout and relative-time label as rotation cards.
 Artwork fills the complete portrait panel, matching SWGOH.GG sizing; icon
 events share a tinted cantina backdrop with a clear foreground asset.
-Details buttons open a game-styled panel with exact event timing and the
-additive-drop unit, farming and replacement-reward rows where available.
+Details buttons open a game-styled panel with the additive-drop unit,
+farming and replacement-reward rows where available.
 Each configured episode gets a start card without extending beyond its era.
 A day shows cards for events starting that day and multi-day events with
 daily activity, including marquees, era challenges, journeys, Conquest and
@@ -233,7 +233,9 @@ returning to a tab once that interval has elapsed. Failed requests retry
 after a minute and keep the last good snapshot; simultaneous requests
 share one fetch. Countdown text updates in place each minute, while
 standard, GAC and guild phase transitions trigger a full refresh even
-if a timer was delayed. Automatically replaced era artwork is
+if a timer was delayed. Event cards show compact Starts in / Ends in
+countdowns, or Expires in for additive drops. Days before the Today marker
+omit timer badges, including after a clock refresh. Automatically replaced era artwork is
 revalidated online and remains cached for offline use.
 
 Manual refresh works the same way:

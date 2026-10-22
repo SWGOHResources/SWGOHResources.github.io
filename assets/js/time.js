@@ -1153,13 +1153,19 @@ function relForEventStart(startMs, nowMs, dayFallback){
   return until.charAt(0).toUpperCase() + until.slice(1);
 }
 
-function eventTimerLabel(startMs, endMs, nowMs){
+function formatEventCountdown(ms){
+  if(ms < 86400000) return formatHoursMinutes(ms);
+  const days = Math.floor(ms / 86400000);
+  const hours = Math.floor((ms % 86400000) / 3600000);
+  return `${days}d ${hours}h`;
+}
+
+function eventTimerLabel(startMs, endMs, nowMs, endVerb = 'Ends'){
   if(!Number.isFinite(startMs) || !Number.isFinite(nowMs)) return '';
-  if(startMs > nowMs) return relForEventStart(startMs, nowMs, '');
+  if(startMs > nowMs) return `Starts in ${formatEventCountdown(startMs - nowMs)}`;
   if(!Number.isFinite(endMs) || endMs <= startMs) return 'Now';
   if(endMs <= nowMs) return 'Expired';
-  const remaining = relForEventStart(endMs, nowMs, '');
-  return `Ends ${remaining.charAt(0).toLowerCase()}${remaining.slice(1)}`;
+  return `${endVerb === 'Expires' ? 'Expires' : 'Ends'} in ${formatEventCountdown(endMs - nowMs)}`;
 }
 
 /* Terse sub-day duration ("2h 45m", "45m", "2h" when exact) so events
