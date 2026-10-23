@@ -1,5 +1,5 @@
 {
- "pulledAt": 1792768199309,
+ "pulledAt": 1792790964796,
  "gameDataVersion": "0.40.6:tAj6zvcnT7GKXm7VxX_QIQ",
  "events": [
   {
@@ -204,6 +204,58 @@
    "endMs": 1793095200000,
    "live": false,
    "art": "live/events-smugglersrun.png"
+  },
+  {
+   "id": "EVENT_BONUS_WAVE_4_102726",
+   "name": "Additive Drops: Wave 4",
+   "kind": "special",
+   "units": [
+    {
+     "unit": "CINTA",
+     "name": "Cinta Kaz",
+     "alignment": "light",
+     "portrait": "live/bonus-cinta.png",
+     "details": "LS/DS Hard Battles",
+     "energy": "live/energy-pve.png",
+     "energyLabel": "Energy",
+     "maxed": "Flawed Signal Data"
+    },
+    {
+     "unit": "DEDRAMEERO",
+     "name": "Dedra Meero",
+     "alignment": "dark",
+     "portrait": "live/bonus-dedrameero.png",
+     "details": "Cantina Battles",
+     "energy": "live/energy-cantina.png",
+     "energyLabel": "Cantina Energy",
+     "maxed": "Zinbiddle"
+    },
+    {
+     "unit": "MAJORPARTAGAZ",
+     "name": "Major Partagaz",
+     "alignment": "dark",
+     "portrait": "live/bonus-majorpartagaz.png",
+     "details": "Mod Battles",
+     "energy": "live/energy-mod.png",
+     "energyLabel": "Mod Energy",
+     "maxed": "Impulse Detector"
+    },
+    {
+     "unit": "KXSECURITYDROID",
+     "name": "KX Security Droid",
+     "alignment": "dark",
+     "portrait": "live/bonus-kxsecuritydroid.png",
+     "details": "Hard Fleet Battles",
+     "energy": "live/energy-ship.png",
+     "energyLabel": "Ship Energy",
+     "maxed": "Aeromagnifier"
+    }
+   ],
+   "startMs": 1793059200000,
+   "endMs": 1793318400000,
+   "live": false,
+   "fit": true,
+   "art": "atlases/standard_rgba_atlas/icon_gift.png"
   },
   {
    "id": "SPECIAL_EVENT_COVEN_OF_SHADOWS",
