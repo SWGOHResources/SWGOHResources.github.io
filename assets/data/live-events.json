@@ -1,5 +1,5 @@
 {
- "pulledAt": 1792741106975,
+ "pulledAt": 1792768199309,
  "gameDataVersion": "0.40.6:tAj6zvcnT7GKXm7VxX_QIQ",
  "events": [
   {
@@ -65,23 +65,13 @@
    "art": "live/events-adelphiranger.png"
   },
   {
-   "id": "EVENT_RESOURCE_SMUGGLERS_RUN_2",
-   "name": "Smuggler's Run II",
-   "kind": "smugglers-run",
-   "unit": "SMUGGLERSRUN",
-   "startMs": 1792576800000,
-   "endMs": 1792663200000,
-   "live": false,
-   "art": "live/events-smugglersrun.png"
-  },
-  {
    "id": "EVENT_CREDIT_HEIST_GETAWAY_V2",
    "name": "Credit Heist",
    "kind": "credit-heist",
    "unit": "CREDITHEIST",
    "startMs": 1792663200000,
    "endMs": 1792749600000,
-   "live": true,
+   "live": false,
    "art": "live/events-creditheist.png"
   },
   {
@@ -91,7 +81,7 @@
    "unit": "CONTRABANDCARGO",
    "startMs": 1792663200000,
    "endMs": 1792749600000,
-   "live": true,
+   "live": false,
    "art": "live/events-contrabandcargo.png"
   },
   {
@@ -153,7 +143,7 @@
    "unit": "SMUGGLERSRUN",
    "startMs": 1792749600000,
    "endMs": 1792836000000,
-   "live": false,
+   "live": true,
    "art": "live/events-smugglersrun.png"
   },
   {
@@ -163,7 +153,7 @@
    "unit": "DROIDSMUGGLE",
    "startMs": 1792749600000,
    "endMs": 1792836000000,
-   "live": false,
+   "live": true,
    "art": "live/events-droid-smuggle.png"
   },
   {
