@@ -1,5 +1,5 @@
 {
- "pulledAt": 1792705380282,
+ "pulledAt": 1792716202746,
  "gameDataVersion": "0.40.6:tAj6zvcnT7GKXm7VxX_QIQ",
  "events": [
   {
@@ -50,7 +50,7 @@
    ],
    "startMs": 1792454400000,
    "endMs": 1792713600000,
-   "live": true,
+   "live": false,
    "fit": true,
    "art": "atlases/standard_rgba_atlas/icon_gift.png"
   },
@@ -152,7 +152,7 @@
    ],
    "startMs": 1792713600000,
    "endMs": 1792972800000,
-   "live": false,
+   "live": true,
    "fit": true,
    "art": "atlases/standard_rgba_atlas/icon_gift.png"
   },
