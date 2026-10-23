@@ -1,5 +1,5 @@
 {
- "pulledAt": 1792716202746,
+ "pulledAt": 1792741106975,
  "gameDataVersion": "0.40.6:tAj6zvcnT7GKXm7VxX_QIQ",
  "events": [
   {
@@ -63,16 +63,6 @@
    "endMs": 1793124000000,
    "live": true,
    "art": "live/events-adelphiranger.png"
-  },
-  {
-   "id": "EVENT_ASSAULT_REBEL",
-   "name": "Rebel Roundup Assault Battle",
-   "kind": "assault",
-   "unit": "REBELASSULT",
-   "startMs": 1792566000000,
-   "endMs": 1792652400000,
-   "live": false,
-   "art": "live/events-rebelassult.png"
   },
   {
    "id": "EVENT_RESOURCE_SMUGGLERS_RUN_2",
