@@ -1,59 +1,7 @@
 {
- "pulledAt": 1792790964796,
+ "pulledAt": 1792802791466,
  "gameDataVersion": "0.40.6:tAj6zvcnT7GKXm7VxX_QIQ",
  "events": [
-  {
-   "id": "EVENT_BONUS_WAVE_2_102026",
-   "name": "Additive Drops: Wave 2",
-   "kind": "special",
-   "units": [
-    {
-     "unit": "STORMTROOPERLUKE",
-     "name": "Stormtrooper Luke",
-     "alignment": "light",
-     "portrait": "live/bonus-stormtrooperluke.png",
-     "details": "LS/DS Hard Battles",
-     "energy": "live/energy-pve.png",
-     "energyLabel": "Energy",
-     "maxed": "Flawed Signal Data"
-    },
-    {
-     "unit": "IG90",
-     "name": "IG-90",
-     "alignment": "dark",
-     "portrait": "live/bonus-ig90.png",
-     "details": "Cantina Battles",
-     "energy": "live/energy-cantina.png",
-     "energyLabel": "Cantina Energy",
-     "maxed": "Zinbiddle"
-    },
-    {
-     "unit": "ASAJJDARKDISCIPLE",
-     "name": "Asajj Ventress (Dark Disciple)",
-     "alignment": "dark",
-     "portrait": "live/bonus-asajjdarkdisciple.png",
-     "details": "Mod Battles",
-     "energy": "live/energy-mod.png",
-     "energyLabel": "Mod Energy",
-     "maxed": "Impulse Detector"
-    },
-    {
-     "unit": "INQUISITORBARRISS",
-     "name": "Inquisitor Barriss",
-     "alignment": "dark",
-     "portrait": "live/bonus-inquisitorbarriss.png",
-     "details": "Hard Fleet Battles",
-     "energy": "live/energy-ship.png",
-     "energyLabel": "Ship Energy",
-     "maxed": "Aeromagnifier"
-    }
-   ],
-   "startMs": 1792454400000,
-   "endMs": 1792713600000,
-   "live": false,
-   "fit": true,
-   "art": "atlases/standard_rgba_atlas/icon_gift.png"
-  },
   {
    "id": "EVENT_MARQUEE_ADELPHIRANGER",
    "name": "Green Ranger",
