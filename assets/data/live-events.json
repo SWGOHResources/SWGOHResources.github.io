@@ -1,5 +1,5 @@
 {
- "pulledAt": 1792802791466,
+ "pulledAt": 1792826547645,
  "gameDataVersion": "0.40.6:tAj6zvcnT7GKXm7VxX_QIQ",
  "events": [
   {
@@ -111,7 +111,7 @@
    "unit": "GROUNDWAR",
    "startMs": 1792825200000,
    "endMs": 1792911600000,
-   "live": false,
+   "live": true,
    "art": "live/events-groundwar.png"
   },
   {
